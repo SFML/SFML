@@ -38,12 +38,8 @@
 
 namespace sf
 {
-namespace priv
-{
-    class SoundFile;
-}
-
 class Sound;
+class InputSoundFile;
 class InputStream;
 
 ////////////////////////////////////////////////////////////
@@ -52,7 +48,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundBuffer : AlResource
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -77,9 +73,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file
     ///
-    /// Here is a complete list of all the supported audio formats:
-    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
-    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
     ///
     /// \param filename Path of the sound file to load
     ///
@@ -93,9 +88,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
     ///
-    /// Here is a complete list of all the supported audio formats:
-    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
-    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -110,9 +104,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
     ///
-    /// Here is a complete list of all the supported audio formats:
-    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
-    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
     ///
     /// \param stream Source stream to read from
     ///
@@ -139,14 +132,13 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
     ///
-    /// Here is a complete list of all the supported audio formats:
-    /// ogg, wav, flac, aiff, au, raw, paf, svx, nist, voc, ircam,
-    /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
+    /// See the documentation of sf::OutputSoundFile for the list
+    /// of supported formats.
     ///
     /// \param filename Path of the sound file to write
     ///
@@ -182,7 +174,7 @@ public:
     /// \see getSamples
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getSampleCount() const;
+    Uint64 getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -231,7 +223,7 @@ public:
     ////////////////////////////////////////////////////////////
     SoundBuffer& operator =(const SoundBuffer& right);
 
-private:
+private :
 
     friend class Sound;
 
@@ -243,7 +235,7 @@ private:
     /// \return True on succesful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool initialize(priv::SoundFile& file);
+    bool initialize(InputSoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
