@@ -221,10 +221,13 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
         if (type == AINPUT_EVENT_TYPE_KEY)
         {
             int32_t action = AKeyEvent_getAction(_event);
+            int32_t key = AKeyEvent_getKeyCode(_event);
 
-            if (action == AKEY_EVENT_ACTION_DOWN || action == AKEY_EVENT_ACTION_UP || action == AKEY_EVENT_ACTION_MULTIPLE)
+            if ((action == AKEY_EVENT_ACTION_DOWN || action == AKEY_EVENT_ACTION_UP || action == AKEY_EVENT_ACTION_MULTIPLE) &&
+                key != AKEYCODE_VOLUME_UP && key != AKEYCODE_VOLUME_DOWN)
             {
                 processKeyEvent(_event, states);
+                handled = 1;
             }
         }
         else if (type == AINPUT_EVENT_TYPE_MOTION)
@@ -236,6 +239,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_SCROLL:
                 {
                     processScrollEvent(_event, states);
+                    handled = 1;
                     break;
                 }
 
@@ -243,6 +247,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_MOVE:
                 {
                     processMotionEvent(_event, states);
+                    handled = 1;
                     break;
                 }
 
@@ -251,6 +256,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_DOWN:
                 {
                     processPointerEvent(true, _event, states);
+                    handled = 1;
                     break;
                 }
 
@@ -259,13 +265,13 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_CANCEL:
                 {
                     processPointerEvent(false, _event, states);
+                    handled = 1;
                     break;
                 }
             }
 
         }
 
-        handled = 1;
         AInputQueue_finishEvent(states->inputQueue, _event, handled);
     }
 
@@ -340,20 +346,57 @@ void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* sta
     int32_t metakey = AKeyEvent_getMetaState(_event);
 
     Event event;
-    event.type = (action == AKEY_EVENT_ACTION_DOWN) ? Event::KeyPressed : Event::KeyReleased;
     event.key.code    = androidKeyToSF(key);
     event.key.alt     = metakey & AMETA_ALT_ON;
     event.key.control = false;
     event.key.shift   = metakey & AMETA_SHIFT_ON;
 
-    forwardEvent(event);
-
-    if (int unicode = getUnicode(_event))
+    switch (action)
     {
-        Event event;
-        event.type = Event::TextEntered;
-        event.text.unicode = unicode;
+    case AKEY_EVENT_ACTION_DOWN:
+        event.type = Event::KeyPressed;
         forwardEvent(event);
+        break;
+    case AKEY_EVENT_ACTION_UP:
+        event.type = Event::KeyReleased;
+        forwardEvent(event);
+
+        if (int unicode = getUnicode(_event))
+        {
+            event.type = Event::TextEntered;
+            event.text.unicode = unicode;
+            forwardEvent(event);
+        }
+        break;
+    case AKEY_EVENT_ACTION_MULTIPLE:
+        // Since complex inputs don't get separate key down/up events
+        // both have to be faked at once
+        event.type = Event::KeyPressed;
+        forwardEvent(event);
+        event.type = Event::KeyReleased;
+        forwardEvent(event);
+
+        // This requires some special treatment, since this might represent
+        // a repetition of key presses or a complete sequence
+        if (key == AKEYCODE_UNKNOWN)
+        {
+            // This is a unique sequence, which is not yet exposed in the NDK
+            // http://code.google.com/p/android/issues/detail?id=33998
+        }
+        else
+        {
+            // This is a repeated sequence
+            if (int unicode = getUnicode(_event))
+            {
+                event.type = Event::TextEntered;
+                event.text.unicode = unicode;
+
+                int32_t repeats = AKeyEvent_getRepeatCount(_event);
+                for (int32_t i = 0; i < repeats; ++i)
+                    forwardEvent(event);
+            }
+        }
+        break;
     }
 }
 
@@ -475,8 +518,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_UNKNOWN            :
         case AKEYCODE_SOFT_LEFT          :
         case AKEYCODE_SOFT_RIGHT         :
-        case AKEYCODE_HOME               :
-        case AKEYCODE_BACK               :
+        case AKEYCODE_HOME               : return Keyboard::Unknown;
+        case AKEYCODE_BACK               : return Keyboard::Escape;
         case AKEYCODE_CALL               :
         case AKEYCODE_ENDCALL            : return Keyboard::Unknown;
         case AKEYCODE_0                  : return Keyboard::Num0;
