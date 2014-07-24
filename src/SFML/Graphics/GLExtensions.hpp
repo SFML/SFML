@@ -34,8 +34,14 @@
 
     #include <SFML/OpenGL.hpp>
 
+#ifdef SFML_SYSTEM_ANDROID
+    // Hack to make transparency working on some Android devices
+    #define GLEXT_blend_func_separate              false
+    #define GLEXT_blend_equation_separate          false
+#else
     #define GLEXT_blend_func_separate              GL_OES_blend_func_separate
     #define GLEXT_blend_equation_separate          GL_OES_blend_equation_separate
+#endif
     #define GLEXT_glBlendFuncSeparate              glBlendFuncSeparateOES
     #define GLEXT_glBlendEquationSeparate          glBlendEquationSeparateOES
     #define GLEXT_framebuffer_object               GL_OES_framebuffer_object

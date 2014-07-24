@@ -157,7 +157,7 @@ add_definitions(-DSTBI_FAILURE_USERMSG)
 
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing
 # when gcc is used; otherwise saving PNGs may crash in stb_image_write
-if(SFML_OS_COMPILER_GCC)
+if(SFML_COMPILER_GCC)
     set_source_files_properties(${SRCROOT}/ImageLoader.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 endif()
 

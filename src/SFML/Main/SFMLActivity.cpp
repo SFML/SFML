@@ -22,6 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
+#include <SFML/Config.hpp>
 #include <string>
 #include <android/native_activity.h>
 #include <android/log.h>
@@ -38,12 +39,12 @@ namespace {
 
 std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 {
-    // This function reads the value of meta-data "sfml.app.lib_name" 
-    // found in the Android Manifest file and returns it. It performs the 
+    // This function reads the value of meta-data "sfml.app.lib_name"
+    // found in the Android Manifest file and returns it. It performs the
     // following java code using the JNI interface:
     //
     // ai.metaData.getString("sfml.app.lib_name");
-    
+
     // Get metaData instance from the ActivityInfo object
     jclass classActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
     jfieldID fieldMetaData = lJNIEnv->GetFieldID(classActivityInfo, "metaData", "Landroid/os/Bundle;");
@@ -51,25 +52,25 @@ std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 
     // Create a java string object containing "sfml.app.lib_name"
     jobject objectName = lJNIEnv->NewStringUTF("sfml.app.lib_name");
-    
+
     // Get the value of meta-data named "sfml.app.lib_name"
     jclass classBundle = lJNIEnv->FindClass("android/os/Bundle");
     jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
-    
+
     // No meta-data "sfml.app.lib_name" was found so we abord and inform the user
     if (valueString == NULL)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
         exit(1);
     }
-        
+
     // Convert the application name to a C++ string and return it
     const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
     const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, NULL);
     std::string ret(applicationName, applicationNameLength);
     lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
-    
+
     return ret;
 }
 
@@ -151,24 +152,31 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     jclass ClassPackageManager = lJNIEnv->FindClass("android/content/pm/PackageManager");
 
-    //jfieldID FieldGET_META_DATA = lJNIEnv->GetStaticFieldID(ClassPackageManager, "GET_META_DATA", "L");
-    //jobject GET_META_DATA = lJNIEnv->GetStaticObjectField(ClassPackageManager, FieldGET_META_DATA);
-    // getActivityInfo(getIntent().getComponent(), PackageManager.GET_META_DATA) -> ActivityInfo object
-    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager, "getActivityInfo", "(Landroid/content/ComponentName;I)Landroid/content/pm/ActivityInfo;");
+    jfieldID FieldGET_META_DATA = lJNIEnv->GetStaticFieldID(ClassPackageManager, "GET_META_DATA", "I");
+    jint GET_META_DATA = lJNIEnv->GetStaticIntField(ClassPackageManager, FieldGET_META_DATA);
 
-    // todo: do not hardcode the GET_META_DATA integer value but retrieve it instead
-    jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, (jint)128);
+    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager, "getActivityInfo", "(Landroid/content/ComponentName;I)Landroid/content/pm/ActivityInfo;");
+    jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, GET_META_DATA);
 
     // Load our libraries in reverse order
     loadLibrary("c++_shared", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("sndfile", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
+
+#if !defined(SFML_DEBUG)
     loadLibrary("sfml-system", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-window", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-graphics", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("sndfile", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-audio", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-network", lJNIEnv, ObjectActivityInfo);
-    
+#else
+    loadLibrary("sfml-system-d", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("sfml-window-d", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("sfml-graphics-d", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("sfml-audio-d", lJNIEnv, ObjectActivityInfo);
+    loadLibrary("sfml-network-d", lJNIEnv, ObjectActivityInfo);
+#endif
+
     std::string libName = getLibraryName(lJNIEnv, ObjectActivityInfo);
     void* handle = loadLibrary(libName.c_str(), lJNIEnv, ObjectActivityInfo);
 

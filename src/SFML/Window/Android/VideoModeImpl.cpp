@@ -55,20 +55,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     priv::ActivityStates* states = priv::getActivity(NULL);
     Lock lock(states->mutex);
 
-    // Wait for a window if there's none
-    while (!states->window)
-    {
-        states->mutex.unlock();
-        sleep(milliseconds(10));
-        states->mutex.lock();
-    }
-
-    // Get size from the window
-    Vector2i size;
-    size.x = ANativeWindow_getWidth(states->window);
-    size.y = ANativeWindow_getHeight(states->window);
-
-    return VideoMode(size.x, size.y);
+    return VideoMode(states->screenSize.x, states->screenSize.y);
 }
 
 } // namespace priv

@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
 
     music.play();
 
+    sf::View view = window.getDefaultView();
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -32,6 +34,13 @@ int main(int argc, char *argv[])
             if (event.type == sf::Event::Closed)
             {
                 window.close();
+            }
+
+            if (event.type == sf::Event::Resized)
+            {
+                view.setSize(event.size.width, event.size.height);
+                view.setCenter(event.size.width/2, event.size.height/2);
+                window.setView(view);
             }
         }
 

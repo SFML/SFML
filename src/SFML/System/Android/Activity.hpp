@@ -36,7 +36,19 @@
 #include <EGL/egl.h>
 #include <vector>
 #include <map>
+#include <string>
+#include <fstream>
 
+class SFML_SYSTEM_API LogcatStream : public std::streambuf
+{
+public:
+    LogcatStream();
+
+    std::streambuf::int_type overflow (std::streambuf::int_type c);
+
+private:
+    std::string m_message;
+};
 
 namespace sf
 {
@@ -59,7 +71,7 @@ struct ActivityStates
 
     Mutex mutex;
 
-    std::vector<Event> pendingEvents;
+    void (*forwardEvent)(const Event& event);
     int (*processEvent)(int fd, int events, void* data);
 
     std::map<int, Vector2i> touchEvents;
@@ -68,13 +80,19 @@ struct ActivityStates
 
     bool mainOver;
 
+    Vector2i screenSize;
+
     bool initialized;
     bool terminated;
 
+    bool fullscreen;
+
     bool updated;
+
+    LogcatStream logcat;
 };
 
-SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL);
+SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);
 
 } // namespace priv
 } // namespace sf

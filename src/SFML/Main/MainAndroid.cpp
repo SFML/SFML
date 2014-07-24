@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Android specific: we define the ANativeActivity_onCreate
 // entry point, handling all the native activity stuff, then
-// we call the user defined (and poratble) main function in
+// we call the user defined (and portable) main function in
 // an external thread so developers can keep a portable code
 ////////////////////////////////////////////////////////////
 
@@ -38,12 +38,13 @@
 
 #ifdef SFML_SYSTEM_ANDROID
 
-#include <SFML/Window/EGLCheck.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Err.hpp>
+#include <android/window.h>
+#include <android/native_activity.h>
 
 
 extern int main(int argc, char *argv[]);
@@ -94,12 +95,6 @@ void* main(ActivityStates* states)
     // Initialize the thread before giving the hand
     initializeMain(states);
 
-    {
-        Lock lock(states->mutex);
-
-        states->initialized = true;
-    }
-
     sleep(seconds(0.5));
     ::main(0, NULL);
 
@@ -120,6 +115,80 @@ void* main(ActivityStates* states)
 
 
 ////////////////////////////////////////////////////////////
+void goToFullscreenMode(ANativeActivity* activity)
+{
+    // Hide the status bar
+    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
+        AWINDOW_FLAG_FULLSCREEN);
+
+    // Hide the navigation bar
+    JavaVM* lJavaVM = activity->vm;
+    JNIEnv* lJNIEnv = activity->env;
+
+    jobject objectActivity = activity->clazz;
+    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
+
+    jmethodID methodGetWindow = lJNIEnv->GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
+    jobject objectWindow = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindow);
+
+    jclass classWindow = lJNIEnv->FindClass("android/view/Window");
+    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
+    jobject objectDecorView = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
+
+    jclass classView = lJNIEnv->FindClass("android/view/View");
+
+    jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
+    jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
+
+    jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+    jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
+
+    //jfieldID FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY  = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_IMMERSIVE_STICKY", "I");
+    //jint SYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+    jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
+    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, SYSTEM_UI_FLAG_LOW_PROFILE | SYSTEM_UI_FLAG_FULLSCREEN | 0x00001000);
+}
+
+////////////////////////////////////////////////////////////
+
+void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
+{
+    // Perform the following java code:
+    //
+    // DisplayMetrics dm = new DisplayMetrics();
+    // getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+    JavaVM* lJavaVM = activity->vm;
+    JNIEnv* lJNIEnv = activity->env;
+
+    jobject objectActivity = activity->clazz;
+    jclass classActivity = lJNIEnv->GetObjectClass(objectActivity);
+
+    jclass classDisplayMetrics = lJNIEnv->FindClass("android/util/DisplayMetrics");
+    jmethodID initDisplayMetrics = lJNIEnv->GetMethodID(classDisplayMetrics, "<init>", "()V");
+    jobject objectDisplayMetrics = lJNIEnv->NewObject(classDisplayMetrics, initDisplayMetrics);
+
+    jmethodID methodGetWindowManager = lJNIEnv->GetMethodID(classActivity, "getWindowManager", "()Landroid/view/WindowManager;");
+    jobject objectWindowManager = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindowManager);
+
+    jclass classWindowManager = lJNIEnv->FindClass("android/view/WindowManager");
+    jmethodID methodGetDefaultDisplay = lJNIEnv->GetMethodID(classWindowManager, "getDefaultDisplay", "()Landroid/view/Display;");
+    jobject objectDisplay = lJNIEnv->CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
+
+    jclass classDisplay = lJNIEnv->FindClass("android/view/Display");
+    jmethodID methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
+    lJNIEnv->CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
+
+    jfieldID fieldWidthPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "widthPixels", "I");
+    jfieldID fieldHeightPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "heightPixels", "I");
+
+    *width = lJNIEnv->GetIntField(objectDisplayMetrics, fieldWidthPixels);
+    *height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
+}
+
+
+////////////////////////////////////////////////////////////
 static void onStart(ANativeActivity* activity)
 {
 }
@@ -132,11 +201,14 @@ static void onResume(ANativeActivity* activity)
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
 
+    if (states->fullscreen)
+        goToFullscreenMode(activity);
+
     // Send an event to warn people the activity has been resumed
     sf::Event event;
     event.type = sf::Event::MouseEntered;
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
@@ -151,7 +223,7 @@ static void onPause(ANativeActivity* activity)
     sf::Event event;
     event.type = sf::Event::MouseLeft;
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
@@ -178,7 +250,7 @@ static void onDestroy(ANativeActivity* activity)
             sf::Event event;
             event.type = sf::Event::Closed;
 
-            states->pendingEvents.push_back(event);
+            states->forwardEvent(event);
         }
     }
 
@@ -195,10 +267,13 @@ static void onDestroy(ANativeActivity* activity)
     states->mutex.unlock();
 
     // Terminate EGL display
-    eglCheck(eglTerminate(states->display));
+    eglTerminate(states->display);
 
     // Delete our allocated states
     delete states;
+
+    // Reset the activity pointer for all modules
+    sf::priv::getActivity(NULL, true);
 
     // The application should now terminate
 }
@@ -216,7 +291,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     // Notify SFML mechanism
     sf::Event event;
     event.type = sf::Event::GainedFocus;
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
@@ -241,7 +316,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     // Notify SFML mechanism
     sf::Event event;
     event.type = sf::Event::LostFocus;
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
@@ -317,7 +392,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     event.size.width = ANativeWindow_getWidth(states->window);
     event.size.height = ANativeWindow_getHeight(states->window);
 
-    states->pendingEvents.push_back(event);
+    states->forwardEvent(event);
 }
 
 
@@ -343,14 +418,6 @@ static void onLowMemory(ANativeActivity* activity)
 
 
 ////////////////////////////////////////////////////////////
-int dummyProcessEvent(int fd, int events, void* data)
-{
-    // Do nothing
-    return 0;
-}
-
-
-////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
@@ -366,15 +433,11 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
         states->isButtonPressed[i] = false;
-        
-    states->display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 
-    // As the input queue will be created before the SFML window, we need to use
-    // this dummy function that will be replaced later by the first created
-    // SFML window
-    states->processEvent = dummyProcessEvent;
+    states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    if (savedState != NULL) {
+    if (savedState != NULL)
+    {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
         memcpy(states->savedState, savedState, savedStateSize);
@@ -386,7 +449,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->terminated = false;
 
     // Share it across the SFML modules
-    sf::priv::getActivity(states);
+    sf::priv::getActivity(states, true);
 
     // These functions will update the activity states and therefore, will allow
     // SFML to be kept in the know
@@ -414,8 +477,17 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Share this activity with the callback functions
     states->activity = activity;
 
+    // Keep the screen turned on and bright
+    ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_KEEP_SCREEN_ON,
+        AWINDOW_FLAG_KEEP_SCREEN_ON);
+
     // Initialize the display
-    eglCheck(eglInitialize(states->display, NULL, NULL));
+    eglInitialize(states->display, NULL, NULL);
+
+    getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
+
+    // Redirect error messages to logcat
+    sf::err().rdbuf(&states->logcat);
 
     // Launch the main thread
     sf::Thread* thread = new sf::Thread(sf::priv::main, states);

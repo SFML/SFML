@@ -176,6 +176,27 @@ int SensorImpl::processSensorEvents(int fd, int events, void* data)
                 data.y = event.magnetic.y;
                 data.z = event.magnetic.z;
                 break;
+
+            case ASENSOR_TYPE_GRAVITY:
+                type = Sensor::Gravity;
+                data.x = event.vector.x;
+                data.y = event.vector.y;
+                data.z = event.vector.z;
+                break;
+
+            case ASENSOR_TYPE_LINEAR_ACCELERATION:
+                type = Sensor::UserAcceleration;
+                data.x = event.acceleration.x;
+                data.y = event.acceleration.y;
+                data.z = event.acceleration.z;
+                break;
+
+            case ASENSOR_TYPE_ORIENTATION:
+                type = Sensor::Orientation;
+                data.x = event.vector.x;
+                data.y = event.vector.y;
+                data.z = event.vector.z;
+                break;
         }
 
         // An unknown sensor event has been detected, we don't know how to process it
