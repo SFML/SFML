@@ -49,6 +49,8 @@ WindowImplAndroid* WindowImplAndroid::singleInstance = NULL;
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
 : m_size(0, 0)
+, m_windowBeingCreated(false)
+, m_windowBeingDestroyed(false)
 {
 }
 
@@ -56,6 +58,8 @@ WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings)
 : m_size(mode.width, mode.height)
+, m_windowBeingCreated(false)
+, m_windowBeingDestroyed(false)
 {
     ActivityStates* states = getActivity(NULL);
     Lock lock(states->mutex);
@@ -94,6 +98,23 @@ void WindowImplAndroid::processEvents()
 {
     // Process incoming OS events
     ALooper_pollAll(0, NULL, NULL, NULL);
+
+    ActivityStates* states = getActivity(NULL);
+    sf::Lock lock(states->mutex);
+
+    if (m_windowBeingCreated)
+    {
+        states->context->createSurface(states->window);
+        m_windowBeingCreated = false;
+    }
+
+    if (m_windowBeingDestroyed)
+    {
+        states->context->destroySurface();
+        m_windowBeingDestroyed = false;
+    }
+
+    states->updated = true;
 }
 
 
@@ -164,21 +185,16 @@ void WindowImplAndroid::setKeyRepeatEnabled(bool enabled)
 void WindowImplAndroid::forwardEvent(const Event& event)
 {
     ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
 
     if (event.type == Event::GainedFocus)
     {
-        states->context->createSurface(states->window);
-
         WindowImplAndroid::singleInstance->m_size.x = ANativeWindow_getWidth(states->window);
         WindowImplAndroid::singleInstance->m_size.y = ANativeWindow_getHeight(states->window);
-
-        states->updated = true;
+        WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
     }
     else if (event.type == Event::LostFocus)
     {
-        states->context->destroySurface();
-        states->updated = true;
+        WindowImplAndroid::singleInstance->m_windowBeingDestroyed = true;
     }
 
     WindowImplAndroid::singleInstance->pushEvent(event);

@@ -289,12 +289,12 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     states->window = window;
 
     // Notify SFML mechanism
-    states->updated = false;
     sf::Event event;
     event.type = sf::Event::GainedFocus;
     states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
+    states->updated = false;
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -314,12 +314,12 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     states->window = NULL;
 
     // Notify SFML mechanism
-    states->updated = false;
     sf::Event event;
     event.type = sf::Event::LostFocus;
     states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
+    states->updated = false;
     while(!states->updated)
     {
         states->mutex.unlock();
