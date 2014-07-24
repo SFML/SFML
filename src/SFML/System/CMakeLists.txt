@@ -90,7 +90,7 @@ if(SFML_OS_WINDOWS)
     list(APPEND SYSTEM_EXT_LIBS winmm)
 endif()
 if(SFML_OS_ANDROID)
-    list(APPEND SYSTEM_EXT_LIBS android)
+    list(APPEND SYSTEM_EXT_LIBS android log)
 endif()
 
 # define the sfml-system target

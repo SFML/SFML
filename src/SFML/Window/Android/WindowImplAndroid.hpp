@@ -154,6 +154,9 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled);
 
+    static void forwardEvent(const Event& event);
+    static WindowImplAndroid* singleInstance;
+
 protected :
 
     ////////////////////////////////////////////////////////////
@@ -190,7 +193,7 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key androidKeyToSF(int32_t key);
-   
+
     ////////////////////////////////////////////////////////////
     /// \brief Get unicode decoded from the input event
     ///
@@ -200,6 +203,10 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     static int getUnicode(AInputEvent* event);
+
+    Vector2u m_size;
+    bool m_windowBeingCreated;
+    bool m_windowBeingDestroyed;
 };
 
 } // namespace priv
