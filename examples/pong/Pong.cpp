@@ -165,12 +165,12 @@ int main()
             if (ball.getPosition().x - ballRadius < 0.f)
             {
                 isPlaying = false;
-                pauseMessage.setString("You lost !\nPress space to restart or\nescape to exit");
+                pauseMessage.setString("You lost!\nPress space to restart or\nescape to exit");
             }
             if (ball.getPosition().x + ballRadius > gameWidth)
             {
                 isPlaying = false;
-                pauseMessage.setString("You won !\nPress space to restart or\nescape to exit");
+                pauseMessage.setString("You won!\nPress space to restart or\nescape to exit");
             }
             if (ball.getPosition().y - ballRadius < 0.f)
             {
