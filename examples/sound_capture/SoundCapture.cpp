@@ -84,7 +84,7 @@ int main()
         }
     }
 
-    // Finished !
+    // Finished!
     std::cout << std::endl << "Done!" << std::endl;
 
     // Wait until the user presses 'enter' key
