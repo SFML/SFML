@@ -84,8 +84,8 @@ int main()
         }
     }
 
-    // Finished !
-    std::cout << std::endl << "Done !" << std::endl;
+    // Finished!
+    std::cout << std::endl << "Done!" << std::endl;
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
