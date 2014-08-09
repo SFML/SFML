@@ -64,7 +64,7 @@ namespace
             }
 
             // Not a valid address nor a host name
-            return 0;
+            return INADDR_NONE;
         }
     }
 }
@@ -74,17 +74,15 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 const IpAddress IpAddress::None;
+const IpAddress IpAddress::Any(INADDR_ANY);
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-m_address(0)
+m_address(INADDR_NONE)
 {
-    // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
-    // because the latter is also the broadcast address (255.255.255.255); it's ok because
-    // SFML doesn't publicly use INADDR_ANY (it is always used implicitely)
 }
 
 

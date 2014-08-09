@@ -61,13 +61,13 @@ unsigned short TcpListener::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpListener::listen(unsigned short port)
+Socket::Status TcpListener::listen(unsigned short port, const sf::IpAddress& ip)
 {
     // Create the internal socket if it doesn't exist
     create();
 
     // Bind the socket to the specified port
-    sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, port);
+    sockaddr_in address = priv::SocketImpl::createAddress(ip.toInteger(), port);
     if (bind(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         // Not likely to happen, but...
