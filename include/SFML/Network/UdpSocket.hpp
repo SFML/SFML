@@ -30,12 +30,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <vector>
 
 
 namespace sf
 {
-class IpAddress;
 class Packet;
 
 ////////////////////////////////////////////////////////////
@@ -82,14 +82,15 @@ public:
     /// system to automatically pick an available port, and then
     /// call getLocalPort to retrieve the chosen port.
     ///
-    /// \param port Port to bind the socket to
+    /// \param port    Port to bind the socket to
+    /// \param address Address of the interface to bind to
     ///
     /// \return Status code
     ///
     /// \see unbind, getLocalPort
     ///
     ////////////////////////////////////////////////////////////
-    Status bind(unsigned short port);
+    Status bind(unsigned short port, const IpAddress& address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the socket from the local port to which it is bound
