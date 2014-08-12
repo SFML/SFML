@@ -182,7 +182,6 @@ public :
     // Static member data
     ////////////////////////////////////////////////////////////
     static const IpAddress None;      ///< Value representing an empty/invalid address
-    static const IpAddress Any;       ///< Value representing any address (used for binding)
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
 

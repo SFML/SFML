@@ -79,7 +79,20 @@ public :
     /// \see accept, close
     ///
     ////////////////////////////////////////////////////////////
-    Status listen(unsigned short port, const sf::IpAddress& ip=sf::IpAddress::Any);
+    Status listen(unsigned short port);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Listen on specific address
+    ///
+    /// \param port Port to listen for new connections
+    /// \param ip Address on which to listen
+    ///
+    /// \return Status code
+    ///
+    /// \see listen
+    ///
+    ////////////////////////////////////////////////////////////
+    Status listen(unsigned short port, const IpAddress& ip);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket
