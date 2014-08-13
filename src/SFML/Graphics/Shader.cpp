@@ -31,6 +31,8 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/InputStream.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
 #include <vector>
@@ -40,11 +42,25 @@
 
 namespace
 {
+    sf::Mutex mutex;
+
+    GLint checkMaxTextureUnits()
+    {
+        GLint maxUnits = 0;
+
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+
+        return maxUnits;
+    }
+
     // Retrieve the maximum number of texture units available
     GLint getMaxTextureUnits()
     {
-        GLint maxUnits = 0;
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &maxUnits));
+        // TODO: Remove this lock when it becomes unnecessary in C++11
+        sf::Lock lock(mutex);
+
+        static GLint maxUnits = checkMaxTextureUnits();
+
         return maxUnits;
     }
 
@@ -85,6 +101,24 @@ namespace
         }
         buffer.push_back('\0');
         return success;
+    }
+
+    bool checkShadersAvailable()
+    {
+        // Create a temporary context in case the user checks
+        // before a GlResource is created, thus initializing
+        // the shared context
+        sf::Context context;
+
+        // Make sure that extensions are initialized
+        sf::priv::ensureExtensionsInit();
+
+        bool available = GLEW_ARB_shading_language_100 &&
+                         GLEW_ARB_shader_objects       &&
+                         GLEW_ARB_vertex_shader        &&
+                         GLEW_ARB_fragment_shader;
+
+        return available;
     }
 }
 
@@ -378,7 +412,7 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
-                static const GLint maxUnits = getMaxTextureUnits();
+                GLint maxUnits = getMaxTextureUnits();
                 if (m_textures.size() + 1 >= static_cast<std::size_t>(maxUnits))
                 {
                     err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
@@ -438,27 +472,10 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    static bool available = false;
-    static bool checked = false;
+    // TODO: Remove this lock when it becomes unnecessary in C++11
+    Lock lock(mutex);
 
-    // Make sure we only have to check once
-    if (!checked)
-    {
-        // Create a temporary context in case the user checks
-        // before a GlResource is created, thus initializing
-        // the shared context
-        Context context;
-
-        // Make sure that extensions are initialized
-        priv::ensureExtensionsInit();
-
-        available = GLEW_ARB_shading_language_100 &&
-                    GLEW_ARB_shader_objects       &&
-                    GLEW_ARB_vertex_shader        &&
-                    GLEW_ARB_fragment_shader;
-
-        checked = true;
-    }
+    static bool available = checkShadersAvailable();
 
     return available;
 }
@@ -603,7 +620,7 @@ int Shader::getParamLocation(const std::string& name)
         // Not in cache, request the location from OpenGL
         int location = glGetUniformLocationARB(m_shaderProgram, name.c_str());
         m_params.insert(std::make_pair(name, location));
-        
+
         if (location == -1)
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
 

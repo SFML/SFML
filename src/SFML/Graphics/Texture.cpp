@@ -40,15 +40,30 @@
 
 namespace
 {
+    sf::Mutex mutex;
+
     // Thread-safe unique identifier generator,
     // is used for states cache (see RenderTarget)
     sf::Uint64 getUniqueId()
     {
-        static sf::Uint64 id = 1; // start at 1, zero is "no texture"
-        static sf::Mutex mutex;
-
         sf::Lock lock(mutex);
+
+        static sf::Uint64 id = 1; // start at 1, zero is "no texture"
+
         return id++;
+    }
+
+    unsigned int checkMaximumTextureSize()
+    {
+        // Create a temporary context in case the user queries
+        // the size before a GlResource is created, thus
+        // initializing the shared context
+        sf::Context context;
+
+        GLint size;
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
+
+        return static_cast<unsigned int>(size);
     }
 }
 
@@ -523,24 +538,10 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    static unsigned int size = 0;
-    static bool checked = false;
+    // TODO: Remove this lock when it becomes unnecessary in C++11
+    Lock lock(mutex);
 
-    // Make sure we only have to check once
-    if (!checked)
-    {
-        // Create a temporary context in case the user queries
-        // the size before a GlResource is created, thus
-        // initializing the shared context
-        Context context;
-
-        GLint glSize;
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &glSize));
-
-        size = static_cast<unsigned int>(glSize);
-
-        checked = true;
-    }
+    static unsigned int size = checkMaximumTextureSize();
 
     return size;
 }
