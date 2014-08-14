@@ -106,6 +106,8 @@ void runAtThreadExit(threadExitFunction func, void* arg)
 
     if (!thread)
         err() << "Failed to create thread" << std::endl;
+
+    CloseHandle(thread);
 }
 
 } // namespace priv
