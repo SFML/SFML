@@ -73,6 +73,16 @@
 
 #endif
 
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #include <SFML/Window/Win32/GlContextImpl.hpp>
+
+#else
+
+    #include <SFML/Window/Unix/GlContextImpl.hpp>
+
+#endif
+
 
 namespace
 {
@@ -99,6 +109,14 @@ namespace
         return internalContexts.find(internalContext) != internalContexts.end();
     }
 
+    void removeInternalContext(void* data)
+    {
+        sf::Lock lock(internalContextsMutex);
+        sf::priv::GlContext* context = static_cast<sf::priv::GlContext*>(data);
+        delete context;
+        internalContexts.erase(context);
+    }
+
     // Retrieve the internal context for the current thread
     sf::priv::GlContext* getInternalContext()
     {
@@ -107,6 +125,7 @@ namespace
             internalContext = sf::priv::GlContext::create();
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
+            runAtThreadExit(&removeInternalContext, internalContext);
         }
 
         return internalContext;

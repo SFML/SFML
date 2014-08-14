@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/ThreadImpl.hpp>
 #include <SFML/System/Thread.hpp>
-#include <iostream>
+#include <SFML/System/Err.hpp>
 #include <cassert>
 
 
@@ -42,7 +42,7 @@ m_isActive(true)
     m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
 
     if (!m_isActive)
-        std::cerr << "Failed to create thread" << std::endl;
+        err() << "Failed to create thread" << std::endl;
 }
 
 

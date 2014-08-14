@@ -180,6 +180,21 @@ elseif(SFML_OS_ANDROID)
     )
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
+if(SFML_OS_WINDOWS)
+    set(PLATFORM_SRC
+        ${PLATFORM_SRC}
+        ${SRCROOT}/Win32/GlContextImpl.cpp
+        ${SRCROOT}/Win32/GlContextImpl.hpp
+    )
+    source_group("windows" FILES ${SRCROOT}/Win32/GlContextImpl.cpp ${SRCROOT}/Win32/GlContextImpl.hpp)
+else()
+    set(PLATFORM_SRC
+        ${PLATFORM_SRC}
+        ${SRCROOT}/Unix/GlContextImpl.cpp
+        ${SRCROOT}/Unix/GlContextImpl.hpp
+    )
+    source_group("unix" FILES ${SRCROOT}/Unix/GlContextImpl.cpp ${SRCROOT}/Unix/GlContextImpl.hpp)
+endif()
 
 # find external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
@@ -214,6 +229,9 @@ if(SFML_OPENGL_ES AND SFML_OS_LINUX)
 endif()
 
 # build the list of external libraries to link
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
+    list(APPEND WINDOW_EXT_LIBS pthread)
+endif()
 if(SFML_OS_WINDOWS)
     list(APPEND WINDOW_EXT_LIBS winmm gdi32)
 elseif(SFML_OS_LINUX)
