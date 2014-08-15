@@ -564,6 +564,13 @@ Texture& Texture::operator =(const Texture& right)
 
 
 ////////////////////////////////////////////////////////////
+unsigned int Texture::getNativeHandle() const
+{
+    return m_texture;
+}
+
+
+////////////////////////////////////////////////////////////
 unsigned int Texture::getValidSize(unsigned int size)
 {
     ensureGlContext();

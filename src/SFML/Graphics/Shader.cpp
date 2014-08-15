@@ -457,6 +457,13 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
 
 
 ////////////////////////////////////////////////////////////
+unsigned int Shader::getNativeHandle() const
+{
+    return m_shaderProgram;
+}
+
+
+////////////////////////////////////////////////////////////
 void Shader::bind(const Shader* shader)
 {
     ensureGlContext();
@@ -775,6 +782,13 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Shader::setParameter(const std::string& name, CurrentTextureType)
 {
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int Shader::getNativeHandle() const
+{
+    return 0;
 }
 
 
