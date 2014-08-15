@@ -486,6 +486,9 @@ public :
     /// the shader features. If it returns false, then
     /// any attempt to use sf::Shader will fail.
     ///
+    /// Note: The first call to this function, whether by your
+    /// code or SFML will result in a context switch.
+    ///
     /// \return True if shaders are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
