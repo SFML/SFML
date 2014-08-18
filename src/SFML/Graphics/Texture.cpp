@@ -29,6 +29,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
+#include <SFML/Window/Context.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
@@ -522,12 +523,26 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    ensureGlContext();
+    static unsigned int size = 0;
+    static bool checked = false;
 
-    GLint size;
-    glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
+    // Make sure we only have to check once
+    if (!checked)
+    {
+        // Create a temporary context in case the user queries
+        // the size before a GlResource is created, thus
+        // initializing the shared context
+        Context context;
 
-    return static_cast<unsigned int>(size);
+        GLint glSize;
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &glSize));
+
+        size = static_cast<unsigned int>(glSize);
+
+        checked = true;
+    }
+
+    return size;
 }
 
 
