@@ -57,6 +57,25 @@ namespace
     unsigned int               windowCount      = 0;
     const wchar_t*             className        = L"SFML_Window";
     sf::priv::WindowImplWin32* fullscreenWindow = NULL;
+
+    void setProcessDpiAware()
+    {
+        HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
+
+        if (user32Dll)
+        {
+            typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
+            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = GetProcAddress(user32Dll, "SetProcessDPIAware");
+
+            if (SetProcessDPIAwareFunc)
+            {
+                if (!SetProcessDPIAwareFunc())
+                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+            }
+
+            FreeLibrary(user32Dll);
+        }
+    }
 }
 
 namespace sf
@@ -75,6 +94,9 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Set that this process is DPI aware and can handle DPI scaling
+    setProcessDpiAware();
+
     if (m_handle)
     {
         // We change the event procedure of the control (it is important to save the old one)
@@ -96,6 +118,9 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Set that this process is DPI aware and can handle DPI scaling
+    setProcessDpiAware();
+
     // Register the window class at first call
     if (windowCount == 0)
         registerWindowClass();
