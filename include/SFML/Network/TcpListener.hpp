@@ -85,14 +85,14 @@ public :
     /// \brief Listen on specific address
     ///
     /// \param port Port to listen for new connections
-    /// \param ip Address on which to listen
+    /// \param address Address on which to listen
     ///
     /// \return Status code
     ///
-    /// \see listen
+    /// \see listen(unsigned short port)
     ///
     ////////////////////////////////////////////////////////////
-    Status listen(unsigned short port, const IpAddress& ip);
+    Status listen(unsigned short port, const IpAddress& address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket
