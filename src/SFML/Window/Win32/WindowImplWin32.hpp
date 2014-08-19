@@ -213,6 +213,17 @@ private :
     static Keyboard::Key virtualKeyCodeToSF(WPARAM key, LPARAM flags);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a Win32 scan code to a SFML scan code
+    ///
+    /// \param key   Key code
+    /// \param flags Additional flags (scan code)
+    ///
+    /// \return SFML scan code corresponding to the key
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::ScanCode scanCodeToSF(WPARAM key, LPARAM flags);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Function called whenever one of our windows receives a message
     ///
     /// \param handle  Win32 handle of the window

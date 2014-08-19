@@ -61,11 +61,12 @@ public :
     ////////////////////////////////////////////////////////////
     struct KeyEvent
     {
-        Keyboard::Key code;    ///< Code of the key that has been pressed
-        bool          alt;     ///< Is the Alt key pressed?
-        bool          control; ///< Is the Control key pressed?
-        bool          shift;   ///< Is the Shift key pressed?
-        bool          system;  ///< Is the System key pressed?
+        Keyboard::Key      code;     ///< Code of the key that has been pressed
+        Keyboard::ScanCode scancode; ///< Scan code of the key
+        bool               alt;      ///< Is the Alt key pressed?
+        bool               control;  ///< Is the Control key pressed?
+        bool               shift;    ///< Is the Shift key pressed?
+        bool               system;   ///< Is the System key pressed?
     };
 
     ////////////////////////////////////////////////////////////
