@@ -234,10 +234,10 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
             int nbConfigs = 0;
             int fbAttributes[] =
             {
-                GLX_DEPTH_SIZE, settings.depthBits,
-                GLX_STENCIL_SIZE, settings.stencilBits,
+                GLX_DEPTH_SIZE, static_cast<int>(settings.depthBits),
+                GLX_STENCIL_SIZE, static_cast<int>(settings.stencilBits),
                 GLX_SAMPLE_BUFFERS, settings.antialiasingLevel > 0,
-                GLX_SAMPLES, settings.antialiasingLevel,
+                GLX_SAMPLES, static_cast<int>(settings.antialiasingLevel),
                 GLX_RED_SIZE, 8,
                 GLX_GREEN_SIZE, 8,
                 GLX_BLUE_SIZE, 8,
