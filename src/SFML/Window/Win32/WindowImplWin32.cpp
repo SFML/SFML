@@ -60,6 +60,42 @@ namespace
 
     void setProcessDpiAware()
     {
+        // Try SetProcessDpiAwareness first
+        HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
+
+        if (shCoreDll)
+        {
+            enum ProcessDpiAwareness
+            {
+                ProcessDpiUnaware         = 0,
+                ProcessSystemDpiAware     = 1,
+                ProcessPerMonitorDpiAware = 2
+            };
+
+            typedef HRESULT (WINAPI* SetProcessDpiAwarenessFuncType)(ProcessDpiAwareness);
+            SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness"));
+
+            if (SetProcessDpiAwarenessFunc)
+            {
+                // We only check for E_INVALIDARG because we would get
+                // E_ACCESSDENIED if the DPI was already set previously
+                // and S_OK means the call was successful
+                if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
+                {
+                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+                }
+                else
+                {
+                    FreeLibrary(shCoreDll);
+                    return;
+                }
+            }
+
+            FreeLibrary(shCoreDll);
+        }
+
+        // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
+        // is not available on this system
         HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
 
         if (user32Dll)
