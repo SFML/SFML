@@ -57,6 +57,61 @@ namespace
     unsigned int               windowCount      = 0;
     const wchar_t*             className        = L"SFML_Window";
     sf::priv::WindowImplWin32* fullscreenWindow = NULL;
+
+    void setProcessDpiAware()
+    {
+        // Try SetProcessDpiAwareness first
+        HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
+
+        if (shCoreDll)
+        {
+            enum ProcessDpiAwareness
+            {
+                ProcessDpiUnaware         = 0,
+                ProcessSystemDpiAware     = 1,
+                ProcessPerMonitorDpiAware = 2
+            };
+
+            typedef HRESULT (WINAPI* SetProcessDpiAwarenessFuncType)(ProcessDpiAwareness);
+            SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness"));
+
+            if (SetProcessDpiAwarenessFunc)
+            {
+                // We only check for E_INVALIDARG because we would get
+                // E_ACCESSDENIED if the DPI was already set previously
+                // and S_OK means the call was successful
+                if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
+                {
+                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+                }
+                else
+                {
+                    FreeLibrary(shCoreDll);
+                    return;
+                }
+            }
+
+            FreeLibrary(shCoreDll);
+        }
+
+        // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
+        // is not available on this system
+        HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
+
+        if (user32Dll)
+        {
+            typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
+            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = GetProcAddress(user32Dll, "SetProcessDPIAware");
+
+            if (SetProcessDPIAwareFunc)
+            {
+                if (!SetProcessDPIAwareFunc())
+                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+            }
+
+            FreeLibrary(user32Dll);
+        }
+    }
 }
 
 namespace sf
@@ -75,6 +130,9 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Set that this process is DPI aware and can handle DPI scaling
+    setProcessDpiAware();
+
     if (m_handle)
     {
         // We change the event procedure of the control (it is important to save the old one)
@@ -96,6 +154,9 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Set that this process is DPI aware and can handle DPI scaling
+    setProcessDpiAware();
+
     // Register the window class at first call
     if (windowCount == 0)
         registerWindowClass();
