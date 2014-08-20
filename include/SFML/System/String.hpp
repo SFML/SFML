@@ -50,11 +50,20 @@ public :
     ////////////////////////////////////////////////////////////
     typedef std::basic_string<Uint32>::iterator       Iterator;      ///< Iterator type
     typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Constant iterator type
+    typedef std::basic_string<Uint32>::value_type     ValueType;     ///< Internal character type
+    
+    ////////////////////////////////////////////////////////////
+    // Types for standard library compatibility
+    ////////////////////////////////////////////////////////////
+    typedef Iterator                                  iterator;       ///< Iterator type
+    typedef ConstIterator                             const_iterator; ///< Constant iterator type
+    typedef ValueType                                 value_type;     ///< Internal character type
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const std::size_t InvalidPos; ///< Represents an invalid position in the string
+    static const std::size_t npos;       ///< Provided for standard library compatibility
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -418,7 +427,7 @@ public :
     /// and spans \a length characters with the string \a replaceWith.
     ///
     /// \param position    Index of the first character to be replaced
-    /// \param length      Number of characters to replace. You can pass InvalidPos to 
+    /// \param length      Number of characters to replace. You can pass InvalidPos to
     ///                    replace all characters until the end of the string.
     /// \param replaceWith String that replaces the given substring.
     ///
@@ -440,13 +449,13 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Return a part of the string
     ///
-    /// This function returns the substring that starts at index \a position 
+    /// This function returns the substring that starts at index \a position
     /// and spans \a length characters.
     ///
-    /// \param position Index of the first character 
+    /// \param position Index of the first character
     /// \param length   Number of characters to include in the substring (if
     ///                 the string is shorter, as many characters as possible
-    ///                 are included). \ref InvalidPos can be used to include all 
+    ///                 are included). \ref InvalidPos can be used to include all
     ///                 characters until the end of the string.
     ///
     /// \return String object containing a substring of this object

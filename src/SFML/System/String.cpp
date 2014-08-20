@@ -35,6 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 const std::size_t String::InvalidPos = std::basic_string<Uint32>::npos;
+const std::size_t String::npos       = std::basic_string<Uint32>::npos;
 
 
 ////////////////////////////////////////////////////////////
