@@ -512,6 +512,18 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 }
 
 
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setTopmost(bool topmost)
+{
+    // To be implemented
+    if (topmost) {
+        
+    } else {
+        
+    }
+}
+
+
 } // namespace priv
 
 } // namespace sf
