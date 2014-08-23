@@ -101,7 +101,7 @@ namespace
         if (user32Dll)
         {
             typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
-			SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = (SetProcessDPIAwareFuncType)GetProcAddress(user32Dll, "SetProcessDPIAware");
+            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(GetProcAddress(user32Dll, "SetProcessDPIAware"));
 
             if (SetProcessDPIAwareFunc)
             {
