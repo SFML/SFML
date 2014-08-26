@@ -69,6 +69,9 @@ sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentatio
 # add an option for choosing the OpenGL implementation
 sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 
+# add an option for building the test suite
+sfml_set_option(SFML_BUILD_TEST TRUE BOOL "TRUE to build the SFML test suite, FALSE to ignore them")
+
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
@@ -223,6 +226,9 @@ if(SFML_BUILD_EXAMPLES)
 endif()
 if(SFML_BUILD_DOC)
     add_subdirectory(doc)
+endif()
+if(SFML_BUILD_TEST)
+    add_subdirectory(test)
 endif()
 
 # setup the install rules
