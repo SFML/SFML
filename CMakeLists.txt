@@ -122,9 +122,6 @@ if(SFML_OS_WINDOWS)
     endif()
 endif()
 
-# disable the rpath stuff
-set(CMAKE_SKIP_BUILD_RPATH TRUE)
-
 # setup Mac OS X stuff
 if(SFML_OS_MACOSX)
     # SFML_BUILD_FRAMEWORKS needs two things :
