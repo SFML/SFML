@@ -314,11 +314,11 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 
 
 ////////////////////////////////////////////////////////////
-int Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const
+float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const
 {
     // Special case where first or second is 0 (null character)
     if (first == 0 || second == 0)
-        return 0;
+        return 0.f;
 
     FT_Face face = static_cast<FT_Face>(m_face);
 
@@ -334,37 +334,37 @@ int Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) co
 
         // X advance is already in pixels for bitmap fonts
         if (!FT_IS_SCALABLE(face))
-            return kerning.x;
+            return static_cast<float>(kerning.x);
 
         // Return the X advance
-        return kerning.x >> 6;
+        return static_cast<float>(kerning.x) / static_cast<float>(1 << 6);
     }
     else
     {
         // Invalid font, or no kerning
-        return 0;
+        return 0.f;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-int Font::getLineSpacing(unsigned int characterSize) const
+float Font::getLineSpacing(unsigned int characterSize) const
 {
     FT_Face face = static_cast<FT_Face>(m_face);
 
     if (face && setCurrentSize(characterSize))
     {
-        return (face->size->metrics.height >> 6);
+        return static_cast<float>(face->size->metrics.height) / static_cast<float>(1 << 6);
     }
     else
     {
-        return 0;
+        return 0.f;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-int Font::getUnderlinePosition(unsigned int characterSize) const
+float Font::getUnderlinePosition(unsigned int characterSize) const
 {
     FT_Face face = static_cast<FT_Face>(m_face);
 
@@ -372,19 +372,19 @@ int Font::getUnderlinePosition(unsigned int characterSize) const
     {
         // Return a fixed position if font is a bitmap font
         if (!FT_IS_SCALABLE(face))
-            return characterSize / 10;
+            return characterSize / 10.f;
 
-        return (FT_MulFix(face->underline_position, face->size->metrics.y_scale) >> 6);
+        return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) / static_cast<float>(1 << 6);
     }
     else
     {
-        return 0;
+        return 0.f;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-int Font::getUnderlineThickness(unsigned int characterSize) const
+float Font::getUnderlineThickness(unsigned int characterSize) const
 {
     FT_Face face = static_cast<FT_Face>(m_face);
 
@@ -392,13 +392,13 @@ int Font::getUnderlineThickness(unsigned int characterSize) const
     {
         // Return a fixed thickness if font is a bitmap font
         if (!FT_IS_SCALABLE(face))
-            return characterSize / 14;
+            return characterSize / 14.f;
 
-        return (FT_MulFix(face->underline_thickness, face->size->metrics.y_scale) >> 6);
+        return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) / static_cast<float>(1 << 6);
     }
     else
     {
-        return 0;
+        return 0.f;
     }
 }
 
@@ -501,8 +501,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
 
     // Convert the glyph to a bitmap (i.e. rasterize it)
     FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
-    FT_BitmapGlyph bitmapGlyph = (FT_BitmapGlyph)glyphDesc;
-    FT_Bitmap& bitmap = bitmapGlyph->bitmap;
+    FT_Bitmap& bitmap = reinterpret_cast<FT_BitmapGlyph>(glyphDesc)->bitmap;
 
     // Apply bold if necessary -- fallback technique using bitmap (lower quality)
     if (bold && !outline)
@@ -511,17 +510,12 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
     }
 
     // Compute the glyph's advance offset
-    glyph.advance = glyphDesc->advance.x >> 16;
+    glyph.advance = static_cast<float>(face->glyph->metrics.horiAdvance) / static_cast<float>(1 << 6);
     if (bold)
-        glyph.advance += weight >> 6;
+        glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
 
     int width  = bitmap.width;
     int height = bitmap.rows;
-    int ascender = face->size->metrics.ascender >> 6;
-
-    // Offset to make up for empty space between ascender and virtual top of the typeface
-    // Only applied to scalable fonts i.e. not to bitmap fonts
-    int offset = FT_IS_SCALABLE(face) ? (characterSize - ascender) : 0;
 
     if ((width > 0) && (height > 0))
     {
@@ -535,11 +529,18 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         // Find a good position for the new glyph into the texture
         glyph.textureRect = findGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
+        // Make sure the texture data is positioned in the centre
+        // of the allocated texture rectangle
+        glyph.textureRect.left += padding;
+        glyph.textureRect.top += padding;
+        glyph.textureRect.width -= 2 * padding;
+        glyph.textureRect.height -= 2 * padding;
+
         // Compute the glyph's bounding box
-        glyph.bounds.left   = bitmapGlyph->left - padding;
-        glyph.bounds.top    = -bitmapGlyph->top - padding - offset;
-        glyph.bounds.width  = width + 2 * padding;
-        glyph.bounds.height = height + 2 * padding;
+        glyph.bounds.left   = static_cast<float>(face->glyph->metrics.horiBearingX) / static_cast<float>(1 << 6);
+        glyph.bounds.top    = -static_cast<float>(face->glyph->metrics.horiBearingY) / static_cast<float>(1 << 6);
+        glyph.bounds.width  = static_cast<float>(face->glyph->metrics.width) / static_cast<float>(1 << 6);
+        glyph.bounds.height = static_cast<float>(face->glyph->metrics.height) / static_cast<float>(1 << 6);
 
         // Extract the glyph's pixels from the bitmap
         m_pixelBuffer.resize(width * height * 4, 255);
@@ -574,10 +575,10 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         }
 
         // Write the pixels to the texture
-        unsigned int x = glyph.textureRect.left + padding;
-        unsigned int y = glyph.textureRect.top + padding;
-        unsigned int w = glyph.textureRect.width - 2 * padding;
-        unsigned int h = glyph.textureRect.height - 2 * padding;
+        unsigned int x = glyph.textureRect.left;
+        unsigned int y = glyph.textureRect.top;
+        unsigned int w = glyph.textureRect.width;
+        unsigned int h = glyph.textureRect.height;
         page.texture.update(&m_pixelBuffer[0], w, h, x, y);
     }
 

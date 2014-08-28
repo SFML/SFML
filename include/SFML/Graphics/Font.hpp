@@ -181,7 +181,7 @@ public :
     /// \return Kerning value for \a first and \a second, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
+    float getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
@@ -194,7 +194,7 @@ public :
     /// \return Line spacing, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    int getLineSpacing(unsigned int characterSize) const;
+    float getLineSpacing(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the underline
@@ -209,7 +209,7 @@ public :
     /// \see getUnderlineThickness
     ///
     ////////////////////////////////////////////////////////////
-    int getUnderlinePosition(unsigned int characterSize) const;
+    float getUnderlinePosition(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the thickness of the underline
@@ -223,7 +223,7 @@ public :
     /// \see getUnderlinePosition
     ///
     ////////////////////////////////////////////////////////////
-    int getUnderlineThickness(unsigned int characterSize) const;
+    float getUnderlineThickness(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
