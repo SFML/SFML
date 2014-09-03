@@ -984,6 +984,61 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     return DefWindowProcW(handle, message, wParam, lParam);
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setClipboard(const String& clipboard)
+{
+    if(!m_handle)
+        return;
+
+    if(!OpenClipboard(m_handle))
+        return;
+    EmptyClipboard();
+
+    HANDLE strh;
+    size_t wsize;
+
+    wsize = (clipboard.getSize()+1) * sizeof(WCHAR);
+
+    strh = GlobalAlloc(GMEM_MOVEABLE, wsize);
+
+    if(!strh)
+    {
+        CloseClipboard();
+        return;
+    }
+
+    memcpy(GlobalLock(strh), clipboard.toWideString().data(), wsize);
+    GlobalUnlock(strh);
+
+    SetClipboardData(CF_UNICODETEXT, strh);
+    CloseClipboard();
+}
+
+////////////////////////////////////////////////////////////
+String WindowImplWin32::getClipboard() const
+{
+    if(!m_handle)
+        return String();
+
+    if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
+        return String();
+
+    if(!OpenClipboard(m_handle))
+        return String();
+
+    HANDLE strh = GetClipboardData(CF_UNICODETEXT);
+    if(!strh)
+    {
+        CloseClipboard();
+        return String();
+    }
+
+    String clipboard(static_cast<wchar_t*>(GlobalLock(strh)));
+    GlobalUnlock(strh);
+    CloseClipboard();
+    return clipboard;
+}
+
 } // namespace priv
 
 } // namespace sf

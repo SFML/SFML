@@ -414,4 +414,19 @@ void Window::initialize()
     onCreate();
 }
 
+////////////////////////////////////////////////////////////
+void Window::setClipboard(const String& clipboard)
+{
+    if(m_impl)
+        m_impl->setClipboard(clipboard);
+}
+
+////////////////////////////////////////////////////////////
+String Window::getClipboard() const
+{
+    if(m_impl)
+        return m_impl->getClipboard();
+    return String();
+}
+
 } // namespace sf
