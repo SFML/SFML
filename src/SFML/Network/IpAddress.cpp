@@ -31,56 +31,19 @@
 #include <cstring>
 
 
-namespace
-{
-    sf::Uint32 resolve(const std::string& address)
-    {
-        if (address == "255.255.255.255")
-        {
-            // The broadcast address needs to be handled explicitely,
-            // because it is also the value returned by inet_addr on error
-            return INADDR_BROADCAST;
-        }
-        else
-        {
-            // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-            sf::Uint32 ip = inet_addr(address.c_str());
-            if (ip != INADDR_NONE)
-                return ip;
-
-            // Not a valid address, try to convert it as a host name
-            addrinfo hints;
-            std::memset(&hints, 0, sizeof(hints));
-            hints.ai_family = AF_INET;
-            addrinfo* result = NULL;
-            if (getaddrinfo(address.c_str(), NULL, &hints, &result) == 0)
-            {
-                if (result)
-                {
-                    ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
-                    freeaddrinfo(result);
-                    return ip;
-                }
-            }
-
-            // Not a valid address nor a host name
-            return 0;
-        }
-    }
-}
-
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 const IpAddress IpAddress::None;
+const IpAddress IpAddress::Any(0, 0, 0, 0);
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-m_address(0)
+m_address(0),
+m_valid(false)
 {
     // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
     // because the latter is also the broadcast address (255.255.255.255); it's ok because
@@ -104,14 +67,16 @@ m_address(resolve(address))
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
+m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)),
+m_valid(true)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint32 address) :
-m_address(htonl(address))
+m_address(htonl(address)),
+m_valid(true)
 {
 }
 
@@ -130,6 +95,13 @@ std::string IpAddress::toString() const
 Uint32 IpAddress::toInteger() const
 {
     return ntohl(m_address);
+}
+
+
+////////////////////////////////////////////////////////////
+bool IpAddress::isValid() const
+{
+    return m_valid;
 }
 
 
@@ -194,9 +166,50 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
+Uint32 IpAddress::resolve(const std::string& address)
+{
+    // assume all addresses are valid, unless proven otherwise
+    m_valid = true;
+    if (address == "255.255.255.255")
+    {
+        // The broadcast address needs to be handled explicitely,
+        // because it is also the value returned by inet_addr on error
+        return INADDR_BROADCAST;
+    }
+    else
+    {
+        // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
+        Uint32 ip = inet_addr(address.c_str());
+        if (ip != INADDR_NONE)
+            return ip;
+
+        // Not a valid address, try to convert it as a host name
+        addrinfo hints;
+        std::memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET;
+        addrinfo* result = NULL;
+        if (getaddrinfo(address.c_str(), NULL, &hints, &result) == 0)
+        {
+            if (result)
+            {
+                ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
+                freeaddrinfo(result);
+                return ip;
+            }
+        }
+
+        // Not a valid address nor a host name
+        m_valid = false;
+        return 0;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 bool operator ==(const IpAddress& left, const IpAddress& right)
 {
-    return left.toInteger() == right.toInteger();
+    return left.isValid() && right.isValid() &&
+           left.toInteger() == right.toInteger();
 }
 
 
@@ -210,7 +223,8 @@ bool operator !=(const IpAddress& left, const IpAddress& right)
 ////////////////////////////////////////////////////////////
 bool operator <(const IpAddress& left, const IpAddress& right)
 {
-    return left.toInteger() < right.toInteger();
+    return left.isValid() && right.isValid() &&
+           left.toInteger() < right.toInteger();
 }
 
 
