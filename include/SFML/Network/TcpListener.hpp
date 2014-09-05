@@ -73,26 +73,14 @@ public :
     /// it will be stopped first and bound to the new port.
     ///
     /// \param port Port to listen for new connections
+    /// \param address Address of interface to listen
     ///
     /// \return Status code
     ///
     /// \see accept, close
     ///
     ////////////////////////////////////////////////////////////
-    Status listen(unsigned short port);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Listen on specific address
-    ///
-    /// \param port Port to listen for new connections
-    /// \param address Address on which to listen
-    ///
-    /// \return Status code
-    ///
-    /// \see listen(unsigned short port)
-    ///
-    ////////////////////////////////////////////////////////////
-    Status listen(unsigned short port, const IpAddress& address);
+    Status listen(unsigned short port, const IpAddress& address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket

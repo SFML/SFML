@@ -61,13 +61,6 @@ unsigned short TcpListener::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpListener::listen(unsigned short port)
-{
-    listen(port, IpAddress::None);
-}
-
-
-////////////////////////////////////////////////////////////
 Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address)
 {
     // Create the internal socket if it doesn't exist
