@@ -99,7 +99,7 @@ public :
     /// This constructor uses the internal representation of
     /// the address directly. It should be used for optimization
     /// purposes, and only if you got that representation from
-    /// IpAddress::ToInteger().
+    /// IpAddress::toInteger().
     ///
     /// \param address 4 bytes of the address packed into a 32-bits integer
     ///
