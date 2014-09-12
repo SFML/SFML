@@ -152,10 +152,6 @@ m_useSizeHints(false)
     int width  = mode.width;
     int height = mode.height;
 
-    // Switch to fullscreen if necessary
-    if (fullscreen)
-        switchToFullscreen(mode);
-
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
@@ -166,7 +162,7 @@ m_useSizeHints(false)
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
     // Create the window
-    m_window = XCreateWindow(m_display,
+    /*m_window = XCreateWindow(m_display,
                              root,
                              left, top,
                              width, height,
@@ -175,11 +171,23 @@ m_useSizeHints(false)
                              InputOutput,
                              visualInfo.visual,
                              CWEventMask | CWOverrideRedirect | CWColormap, &attributes);
+    */
+    m_window = XCreateSimpleWindow( m_display,
+                                    RootWindow(m_display, 0),
+                                    left, top, width, height.
+                                    0,
+                                    BlackPixel(m_display, 0), 
+                                    BlackPixel(m_display, 0));
+    
     if (!m_window)
     {
         err() << "Failed to create window" << std::endl;
         return;
     }
+    
+    // Switch to fullscreen if necessary
+    if (fullscreen)
+        switchToFullscreen(mode);
 
     // Set the window's name
     setTitle(title);
@@ -268,11 +276,11 @@ m_useSizeHints(false)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    /*if (fullscreen)
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
-    }
+    }*/
 }
 
 
@@ -486,52 +494,25 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 {
-    // Check if the XRandR extension is present
-    int version;
-    if (XQueryExtension(m_display, "RANDR", &version, &version, &version))
-    {
-        // Get the current configuration
-        XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-        if (config)
-        {
-            // Get the current rotation
-            Rotation currentRotation;
-            m_oldVideoMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+    Atom atom_wm_state   = XInternAtom(m_display, "_NET_WM_STATE", false);
+    Atom atom_fullscreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", false);
+    
+    XEvent xev;
+    memset(&xev, 0, sizeof(xev));
 
-            // Get the available screen sizes
-            int nbSizes;
-            XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
-            if (sizes && (nbSizes > 0))
-            {
-                // Search a matching size
-                for (int i = 0; i < nbSizes; ++i)
-                {
-                    if ((sizes[i].width == static_cast<int>(mode.width)) && (sizes[i].height == static_cast<int>(mode.height)))
-                    {
-                        // Switch to fullscreen mode
-                        XRRSetScreenConfig(m_display, config, RootWindow(m_display, m_screen), i, currentRotation, CurrentTime);
+    xev.type                    = ClientMessage;
+    xev.xclient.window          = m_window;
+    xev.xclient.message_type    = atom_wm_state;
+    xev.xclient.format          = 32;
+    xev.xclient.data.l[0]       = 1;
+    xev.xclient.data.l[1]       = atom_fullscreen;
+    xev.xclient.data.l[2]       = 0;
 
-                        // Set "this" as the current fullscreen window
-                        fullscreenWindow = this;
-                        break;
-                    }
-                }
-            }
+    XMapWindow(m_display, m_window);
 
-            // Free the configuration instance
-            XRRFreeScreenConfigInfo(config);
-        }
-        else
-        {
-            // Failed to get the screen configuration
-            err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
-        }
-    }
-    else
-    {
-        // XRandr extension is not supported : we cannot use fullscreen mode
-        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
-    }
+    XSendEvent(m_display, DefaultRootWindow(m_display), false, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+    XFlush(m_display);
 }
 
 
