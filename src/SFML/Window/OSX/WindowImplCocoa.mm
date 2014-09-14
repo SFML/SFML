@@ -112,6 +112,41 @@ void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
     scaleOut(out.y, delegate);
 }
 
+
+////////////////////////////////////////////////////////////
+/// According to Apple's documentation, each invocation of
+/// unhide must be balanced by an invocation of hide in
+/// order for the cursor display to be correct.
+/// So we keep track of those calls ourself.
+////////////////////////////////////////////////////////////
+
+namespace
+{
+    bool isCursorHidden = false; // initially, the cursor is visible
+}
+
+
+////////////////////////////////////////////////////////
+void hideMouseCursor()
+{
+    if (!isCursorHidden)
+    {
+        [NSCursor hide];
+        isCursorHidden = true;
+    }
+}
+
+
+////////////////////////////////////////////////////////
+void showMouseCursor()
+{
+    if (isCursorHidden)
+    {
+        [NSCursor unhide];
+        isCursorHidden = false;
+    }
+}
+
 #pragma mark
 #pragma mark WindowImplCocoa's ctor/dtor
 
@@ -268,8 +303,8 @@ void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::windowLostFocus(void)
 {
-    if (!m_showCursor)
-        [m_delegate showMouseCursor]; // Make sure the cursor is visible
+    if (!m_showCursor && [m_delegate isMouseInside])
+        showMouseCursor(); // Make sure the cursor is visible
 
     Event event;
     event.type = Event::LostFocus;
@@ -281,8 +316,8 @@ void WindowImplCocoa::windowLostFocus(void)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::windowGainedFocus(void)
 {
-    if (!m_showCursor)
-        [m_delegate hideMouseCursor]; // Restore user's setting
+    if (!m_showCursor && [m_delegate isMouseInside])
+        hideMouseCursor(); // Restore user's setting
 
     Event event;
     event.type = Event::GainedFocus;
@@ -351,7 +386,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
 void WindowImplCocoa::mouseMovedIn(void)
 {
     if (!m_showCursor)
-        [m_delegate hideMouseCursor]; // Restore user's setting
+        hideMouseCursor(); // Restore user's setting
 
     Event event;
     event.type = Event::MouseEntered;
@@ -363,7 +398,7 @@ void WindowImplCocoa::mouseMovedIn(void)
 void WindowImplCocoa::mouseMovedOut(void)
 {
     if (!m_showCursor)
-        [m_delegate showMouseCursor]; // Make sure the cursor is visible
+        showMouseCursor(); // Make sure the cursor is visible
 
     Event event;
     event.type = Event::MouseLeft;
@@ -496,10 +531,14 @@ void WindowImplCocoa::setMouseCursorVisible(bool visible)
 {
     m_showCursor = visible;
 
-    if (m_showCursor)
-        [m_delegate showMouseCursor];
-    else
-        [m_delegate hideMouseCursor];
+    // If the mouse is over the window, we apply the new setting
+    if ([m_delegate isMouseInside])
+    {
+        if (m_showCursor)
+            showMouseCursor();
+        else
+            hideMouseCursor();
+    }
 }
 
 

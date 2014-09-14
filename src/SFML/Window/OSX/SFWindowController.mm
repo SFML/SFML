@@ -332,16 +332,9 @@
 
 
 ////////////////////////////////////////////////////////
--(void)hideMouseCursor
+-(BOOL)isMouseInside
 {
-    [NSCursor hide];
-}
-
-
-////////////////////////////////////////////////////////
--(void)showMouseCursor
-{
-    [NSCursor unhide];
+    return [m_oglView isMouseInside];
 }
 
 
