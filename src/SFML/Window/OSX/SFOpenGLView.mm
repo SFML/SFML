@@ -68,14 +68,6 @@ BOOL isValidTextUnicode(NSEvent* event);
 -(void)viewDidEndLiveResize;
 
 ////////////////////////////////////////////////////////////
-/// \brief Determine where the mouse is
-///
-/// \return true when the mouse is inside the OpenGL view, false otherwise
-///
-////////////////////////////////////////////////////////////
--(BOOL)isMouseInside;
-
-////////////////////////////////////////////////////////////
 /// \brief Update the mouse state (in or out)
 ///
 /// Fire an event if its state has changed.
