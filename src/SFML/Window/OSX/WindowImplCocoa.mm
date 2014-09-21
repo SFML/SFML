@@ -225,7 +225,7 @@ void WindowImplCocoa::setUpProcess(void)
 
         // Register an application delegate if there is none
         if (![[SFApplication sharedApplication] delegate])
-            [NSApp setDelegate:[[[SFApplicationDelegate alloc] init] autorelease]];
+            [[NSApplication sharedApplication] setDelegate:[[SFApplicationDelegate alloc] init]];
 
         // Create menus for the application (before finishing launching!)
         [SFApplication setUpMenuBar];
