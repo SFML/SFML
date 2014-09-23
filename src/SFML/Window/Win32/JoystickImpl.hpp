@@ -41,7 +41,6 @@
 #include <SFML/System/String.hpp>
 #include <windows.h>
 #include <mmsystem.h>
-#include <cmath>
 
 
 namespace sf
@@ -121,31 +120,10 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Get the joystick's name
-    ///
-    /// \param index Index of the joystick
-    /// \param caps JOYCAPS
-    ///
-    /// \return Joystick name
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::String getDeviceName(unsigned int index, JOYCAPS caps);
-
-    ////////////////////////////////////////////////////////////
-    /// Get a system error string from an error code
-    ///
-    /// \param errorCode Error code
-    ///
-    /// \return Error message string
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::String getErrorString(DWORD errorCode);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_index;                      ///< Index of the joystick
-    JOYCAPS      m_caps;                       ///< Joystick capabilities
+    unsigned int             m_index;          ///< Index of the joystick
+    JOYCAPS                  m_caps;           ///< Joystick capabilities
     Joystick::Identification m_identification; ///< Joystick identification
 };
 

@@ -109,9 +109,9 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl  joystick;                  ///< Joystick implementation
-        JoystickState state;                     ///< The current joystick state
-        JoystickCaps  capabilities;              ///< The joystick capabilities
+        JoystickImpl             joystick;       ///< Joystick implementation
+        JoystickState            state;          ///< The current joystick state
+        JoystickCaps             capabilities;   ///< The joystick capabilities
         Joystick::Identification identification; ///< The joystick identification
     };
 

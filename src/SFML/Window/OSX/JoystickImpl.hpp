@@ -114,47 +114,15 @@ public :
 private :
 
     ////////////////////////////////////////////////////////////
-    /// Get HID device property key as a string
-    ///
-    /// \param ref HID device
-    /// \param prop Property to retrieve from the device
-    ///
-    /// \return Value of the property
-    ///
-    ////////////////////////////////////////////////////////////
-    std::string getDeviceString(IOHIDDeviceRef ref, CFStringRef prop);
-
-    ////////////////////////////////////////////////////////////
-    /// Get HID device property key as an unsigned int
-    ///
-    /// \param ref HID device
-    /// \param prop Property to retrieve from the device
-    ///
-    /// \return Value of the property
-    ///
-    ////////////////////////////////////////////////////////////
-    unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop);
-
-    ////////////////////////////////////////////////////////////
-    /// Convert a CFStringRef to std::string
-    ///
-    /// \param cfString CFStringRef to convert
-    ///
-    /// \return std::string
-    ///
-    ////////////////////////////////////////////////////////////
-    std::string stringFromCFString(CFStringRef cfString);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     typedef long                                          Location;
     typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
     typedef std::vector<IOHIDElementRef>                  ButtonsVector;
 
-    AxisMap       m_axis;                      ///< Axis (IOHIDElementRef) connected to the joystick
-    ButtonsVector m_buttons;                   ///< Buttons (IOHIDElementRef) connected to the joystick
-    unsigned int  m_index;                     ///< SFML index
+    AxisMap                  m_axis;           ///< Axis (IOHIDElementRef) connected to the joystick
+    ButtonsVector            m_buttons;        ///< Buttons (IOHIDElementRef) connected to the joystick
+    unsigned int             m_index;          ///< SFML index
     Joystick::Identification m_identification; ///< Joystick identification
 
     static Location m_locationIDs[sf::Joystick::Count]; ///< Global Joystick register

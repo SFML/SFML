@@ -25,19 +25,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <windows.h>
-#include <stdlib.h>
-#include <cmath>
-#include <stdio.h>
-#include <regstr.h>
 #include <tchar.h>
-#include <string>
+#include <regstr.h>
+#include <algorithm>
+#include <cmath>
 #include <sstream>
-#include <vector>
+#include <string>
 
 namespace
 {
@@ -50,6 +47,98 @@ namespace
 
     const sf::Time connectionRefreshDelay = sf::milliseconds(500);
     ConnectionCache connectionCache[sf::Joystick::Count];
+
+    // Get a system error string from an error code
+    std::string getErrorString(DWORD error)
+    {
+        TCHAR errorMessage[256];
+        DWORD messageLength = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, errorMessage, 256, NULL);
+        errorMessage[std::min<DWORD>(messageLength, 255)] = 0;
+        return sf::String(errorMessage).toAnsiString();
+    }
+
+    // Get the joystick's name
+    sf::String getDeviceName(unsigned int index, JOYCAPS caps)
+    {
+        // Give the joystick a default name
+        sf::String joystickDescription = "Unknown Joystick";
+
+        LONG result;
+        HKEY rootKey;
+        HKEY currentKey;
+        std::basic_string<TCHAR> subkey;
+
+        subkey  = REGSTR_PATH_JOYCONFIG;
+        subkey += TEXT("\\");
+        subkey += caps.szRegKey;
+        subkey += TEXT("\\");
+        subkey += REGSTR_KEY_JOYCURR;
+        subkey.erase(256);
+
+        rootKey = HKEY_LOCAL_MACHINE;
+        result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+
+        if (result != ERROR_SUCCESS)
+        {
+            rootKey = HKEY_CURRENT_USER;
+            result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+
+            if (result != ERROR_SUCCESS)
+            {
+                sf::err() << "Unable to open registry for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+                return joystickDescription;
+            }
+        }
+
+        std::basic_ostringstream<TCHAR> indexString;
+        indexString << index + 1;
+
+        subkey  = TEXT("Joystick");
+        subkey += indexString.str();
+        subkey += REGSTR_VAL_JOYOEMNAME;
+        subkey.erase(256);
+
+        TCHAR keyData[256];
+        DWORD keyDataSize = sizeof(keyData);
+
+        result = RegQueryValueEx(currentKey, subkey.c_str(), NULL, NULL, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+        RegCloseKey(currentKey);
+
+        if (result != ERROR_SUCCESS)
+        {
+            sf::err() << "Unable to query registry key for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            return joystickDescription;
+        }
+
+        subkey  = REGSTR_PATH_JOYOEM;
+        subkey += TEXT("\\");
+        subkey.append(keyData, keyDataSize / sizeof(TCHAR));
+        subkey.erase(256);
+
+        result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+
+        if (result != ERROR_SUCCESS)
+        {
+            sf::err() << "Unable to open registry key for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            return joystickDescription;
+        }
+
+        keyDataSize = sizeof(keyData);
+
+        result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, NULL, NULL, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+        RegCloseKey(currentKey);
+
+        if (result != ERROR_SUCCESS)
+        {
+            sf::err() << "Unable to query name for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            return joystickDescription;
+        }
+
+        keyData[_tcsnlen(keyData, 255)] = 0;
+        joystickDescription = keyData;
+
+        return joystickDescription;
+    }
 }
 
 namespace sf
@@ -119,9 +208,9 @@ bool JoystickImpl::open(unsigned int index)
 
     if (success)
     {
-        m_identification.name = getDeviceName(m_index, m_caps);
+        m_identification.name      = getDeviceName(m_index, m_caps);
         m_identification.productId = m_caps.wPid;
-        m_identification.vendorId = m_caps.wMid;
+        m_identification.vendorId  = m_caps.wMid;
     }
 
     return success;
@@ -205,101 +294,6 @@ JoystickState JoystickImpl::update()
     }
 
     return state;
-}
-
-
-////////////////////////////////////////////////////////////
-sf::String JoystickImpl::getDeviceName(unsigned int index, JOYCAPS caps)
-{
-    // Give the joystick a default name
-    sf::String joystickDescription = "Unknown Joystick";
-
-    std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
-    ss << REGSTR_PATH_JOYCONFIG << "\\" << caps.szRegKey << "\\" << REGSTR_KEY_JOYCURR;
-    std::basic_string<TCHAR> subkey = ss.str().substr(0, 255);
-
-    HKEY currentKey;
-    LONG result;
-    HKEY rootKey = HKEY_LOCAL_MACHINE;
-
-    result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
-    if (result != ERROR_SUCCESS)
-    {
-        rootKey = HKEY_CURRENT_USER;
-        result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
-    }
-
-    if (result == ERROR_SUCCESS)
-    {
-        ss.clear();
-        ss.str(_T(""));
-        ss << "Joystick" << index + 1 << REGSTR_VAL_JOYOEMNAME;
-        std::basic_string<TCHAR> keyName = ss.str().substr(0, 255);
-
-        TCHAR keyData[256];
-        DWORD keyNameSize = sizeof(keyData);
-        result = RegQueryValueEx(currentKey, keyName.c_str(), NULL, NULL, (LPBYTE)keyData, &keyNameSize);
-        RegCloseKey(currentKey);
-
-        if (result == ERROR_SUCCESS)
-        {
-            ss.clear();
-            ss.str(_T(""));
-            ss << REGSTR_PATH_JOYOEM << "\\" << keyData;
-            subkey = ss.str().substr(0, 255);
-
-            result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
-            if (result == ERROR_SUCCESS)
-            {
-                keyNameSize = sizeof(keyData);
-                unsigned int productKeyLength = keyNameSize / sizeof(TCHAR);
-                std::vector<TCHAR> productKey(productKeyLength);
-
-                result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, NULL, NULL, (LPBYTE) &productKey[0], &keyNameSize);
-                if (result == ERROR_SUCCESS)
-                {
-                    while (productKeyLength > 0 && productKey[productKeyLength - 1] == 0)
-                    {
-                        --productKeyLength;
-                    }
-
-                    joystickDescription = std::basic_string<TCHAR>(&productKey[0], productKeyLength);
-                }
-                else
-                {
-                    err() << "Unable to query name for joystick at index " << index << ": " << getErrorString(GetLastError()).toAnsiString() << std::endl;
-                }
-                RegCloseKey(currentKey);
-            }
-            else
-            {
-                err() << "Unable to open registry key for joystick at index " << index << ": " << getErrorString(GetLastError()).toAnsiString() << std::endl;
-            }
-        }
-        else
-        {
-            err() << "Unable to query registry key for joystick at index " << index << ": " << getErrorString(GetLastError()).toAnsiString() << std::endl;
-        }
-    }
-    else
-    {
-        err() << "Unable to open registry for joystick at index " << index << ": " << getErrorString(GetLastError()).toAnsiString() << std::endl;
-    }
-
-    return joystickDescription;
-}
-
-
-////////////////////////////////////////////////////////////
-sf::String JoystickImpl::getErrorString(DWORD /*errorCode*/)
-{
-    std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
-    TCHAR errBuff[256];
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, errBuff, sizeof(errBuff), NULL);
-    ss << errBuff;
-    sf::String errMsg(ss.str());
-
-    return errMsg;
 }
 
 } // namespace priv
