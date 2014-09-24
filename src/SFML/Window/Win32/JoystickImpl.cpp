@@ -73,7 +73,9 @@ namespace
         subkey += caps.szRegKey;
         subkey += TEXT("\\");
         subkey += REGSTR_KEY_JOYCURR;
-        subkey.erase(256);
+
+        if (subkey.size() > 255)
+            subkey.erase(255);
 
         rootKey = HKEY_LOCAL_MACHINE;
         result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
@@ -96,7 +98,9 @@ namespace
         subkey  = TEXT("Joystick");
         subkey += indexString.str();
         subkey += REGSTR_VAL_JOYOEMNAME;
-        subkey.erase(256);
+
+        if (subkey.size() > 255)
+            subkey.erase(255);
 
         TCHAR keyData[256];
         DWORD keyDataSize = sizeof(keyData);
@@ -113,7 +117,9 @@ namespace
         subkey  = REGSTR_PATH_JOYOEM;
         subkey += TEXT("\\");
         subkey.append(keyData, keyDataSize / sizeof(TCHAR));
-        subkey.erase(256);
+
+        if (subkey.size() > 255)
+            subkey.erase(255);
 
         result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
