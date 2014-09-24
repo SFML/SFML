@@ -60,4 +60,11 @@ Context::Context(const ContextSettings& settings, unsigned int width, unsigned i
     setActive(true);
 }
 
+
+////////////////////////////////////////////////////////////
+void Context::releaseThreadContext()
+{
+    priv::GlContext::releaseInternalThreadContext();
+}
+
 } // namespace sf
