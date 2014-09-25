@@ -33,6 +33,9 @@
 #include <locale>
 #include <string>
 #include <cstdlib>
+#include <vector>
+#include <iterator>
+#include <cassert>
 
 
 namespace sf
