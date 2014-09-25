@@ -28,6 +28,7 @@
 #include <SFML/Window/Win32/GlContextImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <windows.h>
+#include <process.h>
 
 namespace sf
 {
