@@ -581,11 +581,11 @@ BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
 -(void)moveCursor:(NSPoint)destination
 {
     // Convert the point from SFML coord system to screen coord system
-    CGPoint screenLocation = [self computeGlobalPositionOfRelativePoint:destination];
+    NSPoint screenLocation = [self computeGlobalPositionOfRelativePoint:destination];
 
     // Move the cursor without generating any event
     CGAssociateMouseAndMouseCursorPosition(NO);
-    CGDisplayMoveCursorToPoint([self displayId], screenLocation);
+    CGDisplayMoveCursorToPoint([self displayId], NSPointToCGPoint(screenLocation));
     CGAssociateMouseAndMouseCursorPosition(YES);
 }
 
@@ -604,8 +604,8 @@ BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
 -(NSPoint)projectPointIntoView:(NSPoint)point
 {
     NSSize size = [self frame].size;
-    point.x = std::min(std::max(1.0, point.x), size.width - 1);
-    point.y = std::min(std::max(1.0, point.y), size.height - 1);
+    point.x = std::min(std::max(CGFloat(1), point.x), size.width  - 1);
+    point.y = std::min(std::max(CGFloat(1), point.y), size.height - 1);
     return point;
 }
 
