@@ -51,10 +51,14 @@ namespace
     // Get a system error string from an error code
     std::string getErrorString(DWORD error)
     {
-        TCHAR errorMessage[256];
-        DWORD messageLength = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, errorMessage, 256, NULL);
-        errorMessage[std::min<DWORD>(messageLength, 255)] = 0;
-        return sf::String(errorMessage).toAnsiString();
+        PTCHAR buffer;
+
+        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, reinterpret_cast<PTCHAR>(&buffer), 0, NULL) == 0)
+            return "Unknown error.";
+
+        sf::String message = buffer;
+        LocalFree(buffer);
+        return message.toAnsiString();
     }
 
     // Get the joystick's name
@@ -69,20 +73,17 @@ namespace
         std::basic_string<TCHAR> subkey;
 
         subkey  = REGSTR_PATH_JOYCONFIG;
-        subkey += TEXT("\\");
+        subkey += TEXT('\\');
         subkey += caps.szRegKey;
-        subkey += TEXT("\\");
+        subkey += TEXT('\\');
         subkey += REGSTR_KEY_JOYCURR;
 
-        if (subkey.size() > 255)
-            subkey.erase(255);
-
-        rootKey = HKEY_LOCAL_MACHINE;
+        rootKey = HKEY_CURRENT_USER;
         result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
         if (result != ERROR_SUCCESS)
         {
-            rootKey = HKEY_CURRENT_USER;
+            rootKey = HKEY_LOCAL_MACHINE;
             result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
             if (result != ERROR_SUCCESS)
@@ -99,9 +100,6 @@ namespace
         subkey += indexString.str();
         subkey += REGSTR_VAL_JOYOEMNAME;
 
-        if (subkey.size() > 255)
-            subkey.erase(255);
-
         TCHAR keyData[256];
         DWORD keyDataSize = sizeof(keyData);
 
@@ -115,11 +113,8 @@ namespace
         }
 
         subkey  = REGSTR_PATH_JOYOEM;
-        subkey += TEXT("\\");
+        subkey += TEXT('\\');
         subkey.append(keyData, keyDataSize / sizeof(TCHAR));
-
-        if (subkey.size() > 255)
-            subkey.erase(255);
 
         result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
@@ -140,7 +135,7 @@ namespace
             return joystickDescription;
         }
 
-        keyData[_tcsnlen(keyData, 255)] = 0;
+        keyData[255] = TEXT('\0'); // Ensure null terminator in case the data is too long.
         joystickDescription = keyData;
 
         return joystickDescription;
