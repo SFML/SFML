@@ -118,11 +118,6 @@ unsigned short TcpSocket::getRemotePort() const
 ////////////////////////////////////////////////////////////
 Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout)
 {
-    if (!remoteAddress.isValid())
-    {
-        return Error;
-    }
-
     // Create the internal socket if it doesn't exist
     create();
 
