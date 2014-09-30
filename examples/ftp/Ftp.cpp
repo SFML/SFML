@@ -29,7 +29,7 @@ int main()
     sf::IpAddress address;
     do
     {
-        std::cout << "Enter the FTP server address : ";
+        std::cout << "Enter the FTP server address: ";
         std::cin  >> address;
     }
     while (address == sf::IpAddress::None);
@@ -43,9 +43,9 @@ int main()
 
     // Ask for user name and password
     std::string user, password;
-    std::cout << "User name : ";
+    std::cout << "User name: ";
     std::cin  >> user;
-    std::cout << "Password : ";
+    std::cout << "Password: ";
     std::cin  >> password;
 
     // Login to the server
@@ -79,7 +79,7 @@ int main()
 
         switch (choice)
         {
-            default :
+            default:
             {
                 // Wrong choice
                 std::cout << "Invalid choice!" << std::endl;
@@ -88,7 +88,7 @@ int main()
                 break;
             }
 
-            case 1 :
+            case 1:
             {
                 // Print the current server directory
                 sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
@@ -97,7 +97,7 @@ int main()
                 break;
             }
 
-            case 2 :
+            case 2:
             {
                 // Print the contents of the current server directory
                 sf::Ftp::ListingResponse response = server.getDirectoryListing();
@@ -108,7 +108,7 @@ int main()
                 break;
             }
 
-            case 3 :
+            case 3:
             {
                 // Change the current directory
                 std::string directory;
@@ -118,7 +118,7 @@ int main()
                 break;
             }
 
-            case 4 :
+            case 4:
             {
                 // Create a new directory
                 std::string directory;
@@ -128,7 +128,7 @@ int main()
                 break;
             }
 
-            case 5 :
+            case 5:
             {
                 // Remove an existing directory
                 std::string directory;
@@ -138,7 +138,7 @@ int main()
                 break;
             }
 
-            case 6 :
+            case 6:
             {
                 // Rename a file
                 std::string source, destination;
@@ -150,7 +150,7 @@ int main()
                 break;
             }
 
-            case 7 :
+            case 7:
             {
                 // Remove an existing directory
                 std::string filename;
@@ -160,7 +160,7 @@ int main()
                 break;
             }
 
-            case 8 :
+            case 8:
             {
                 // Download a file from server
                 std::string filename, directory;
@@ -172,7 +172,7 @@ int main()
                 break;
             }
 
-            case 9 :
+            case 9:
             {
                 // Upload a file to server
                 std::string filename, directory;
@@ -184,7 +184,7 @@ int main()
                 break;
             }
 
-            case 0 :
+            case 0:
             {
                 // Disconnect
                 break;

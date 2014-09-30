@@ -36,7 +36,7 @@ namespace
 // it outputs to stderr by default (to keep the default behaviour)
 class DefaultErrStreamBuf : public std::streambuf
 {
-public :
+public:
 
     DefaultErrStreamBuf() 
     {
@@ -55,7 +55,7 @@ public :
         delete[] pbase();
     }
 
-private :
+private:
 
     virtual int overflow(int character)
     {

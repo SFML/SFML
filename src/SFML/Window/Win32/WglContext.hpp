@@ -43,7 +43,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WglContext : public GlContext
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
@@ -103,12 +103,12 @@ public :
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context

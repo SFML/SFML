@@ -46,7 +46,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Texture : GlResource
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Types of texture coordinates that can be used for rendering
@@ -58,7 +58,7 @@ public :
         Pixels      ///< Texture coordinates in range [0 .. size]
     };
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -468,7 +468,7 @@ public :
     ////////////////////////////////////////////////////////////
     static unsigned int getMaximumSize();
 
-private :
+private:
 
     friend class RenderTexture;
     friend class RenderTarget;

@@ -36,7 +36,7 @@ namespace sf
 template <typename T>
 class Vector2
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

@@ -14,7 +14,7 @@ const sf::Font* Effect::s_font = NULL;
 ////////////////////////////////////////////////////////////
 class Pixelate : public Effect
 {
-public :
+public:
 
     Pixelate() :
     Effect("pixelate")
@@ -60,7 +60,7 @@ private:
 ////////////////////////////////////////////////////////////
 class WaveBlur : public Effect
 {
-public :
+public:
 
     WaveBlur() :
     Effect("wave + blur")
@@ -124,7 +124,7 @@ private:
 ////////////////////////////////////////////////////////////
 class StormBlink : public Effect
 {
-public :
+public:
 
     StormBlink() :
     Effect("storm + blink")
@@ -179,7 +179,7 @@ private:
 ////////////////////////////////////////////////////////////
 class Edge : public Effect
 {
-public :
+public:
 
     Edge() :
     Effect("edge post-effect")

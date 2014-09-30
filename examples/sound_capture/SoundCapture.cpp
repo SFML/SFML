@@ -45,7 +45,7 @@ int main()
     const sf::SoundBuffer& buffer = recorder.getBuffer();
 
     // Display captured sound informations
-    std::cout << "Sound information :" << std::endl;
+    std::cout << "Sound information:" << std::endl;
     std::cout << " " << buffer.getDuration().asSeconds() << " seconds"           << std::endl;
     std::cout << " " << buffer.getSampleRate()           << " samples / seconds" << std::endl;
     std::cout << " " << buffer.getChannelCount()         << " channels"          << std::endl;
@@ -60,7 +60,7 @@ int main()
     {
         // Choose the filename
         std::string filename;
-        std::cout << "Choose the file to create : ";
+        std::cout << "Choose the file to create: ";
         std::getline(std::cin, filename);
 
         // Save the buffer

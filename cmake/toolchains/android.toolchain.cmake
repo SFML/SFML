@@ -1095,57 +1095,57 @@ endif()
 set(LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_LIBRARY_DIR})
 
 # Variables controlling behavior or set by cmake toolchain:
-#   ANDROID_ABI : "armeabi-v7a" (default), "armeabi", "armeabi-v7a with NEON", "armeabi-v7a with VFPV3", "armeabi-v6 with VFP", "x86", "mips"
-#   ANDROID_NATIVE_API_LEVEL : 3,4,5,8,9,14 (depends on NDK version)
-#   ANDROID_SET_OBSOLETE_VARIABLES : ON/OFF
-#   ANDROID_USE_STLPORT : OFF/ON - EXPERIMENTAL!!!
-#   ANDROID_FORBID_SYGWIN : ON/OFF
-#   ANDROID_NO_UNDEFINED : ON/OFF
-#   ANDROID_SO_UNDEFINED : OFF/ON  (default depends on NDK version)
-#   ANDROID_FUNCTION_LEVEL_LINKING : ON/OFF
+#   ANDROID_ABI: "armeabi-v7a" (default), "armeabi", "armeabi-v7a with NEON", "armeabi-v7a with VFPV3", "armeabi-v6 with VFP", "x86", "mips"
+#   ANDROID_NATIVE_API_LEVEL: 3,4,5,8,9,14 (depends on NDK version)
+#   ANDROID_SET_OBSOLETE_VARIABLES: ON/OFF
+#   ANDROID_USE_STLPORT: OFF/ON - EXPERIMENTAL!!!
+#   ANDROID_FORBID_SYGWIN: ON/OFF
+#   ANDROID_NO_UNDEFINED: ON/OFF
+#   ANDROID_SO_UNDEFINED: OFF/ON  (default depends on NDK version)
+#   ANDROID_FUNCTION_LEVEL_LINKING: ON/OFF
 # Variables that takes effect only at first run:
-#   ANDROID_FORCE_ARM_BUILD : ON/OFF
-#   LIBRARY_OUTPUT_PATH_ROOT : <any valid path>
+#   ANDROID_FORCE_ARM_BUILD: ON/OFF
+#   LIBRARY_OUTPUT_PATH_ROOT: <any valid path>
 # Can be set only at the first run:
 #   ANDROID_NDK
 #   ANDROID_STANDALONE_TOOLCHAIN
-#   ANDROID_TOOLCHAIN_NAME : "arm-linux-androideabi-4.4.3" or "arm-linux-androideabi-4.6" or "mipsel-linux-android-4.4.3" or "mipsel-linux-android-4.6" or "x86-4.4.3" or "x86-4.6"
+#   ANDROID_TOOLCHAIN_NAME: "arm-linux-androideabi-4.4.3" or "arm-linux-androideabi-4.6" or "mipsel-linux-android-4.4.3" or "mipsel-linux-android-4.6" or "x86-4.4.3" or "x86-4.6"
 # Obsolete:
-#   ANDROID_API_LEVEL : superseded by ANDROID_NATIVE_API_LEVEL
-#   ARM_TARGET : superseded by ANDROID_ABI
-#   ARM_TARGETS : superseded by ANDROID_ABI (can be set only)
-#   ANDROID_NDK_TOOLCHAIN_ROOT : superseded by ANDROID_STANDALONE_TOOLCHAIN (can be set only)
-#   ANDROID_LEVEL : superseded by ANDROID_NATIVE_API_LEVEL (completely removed)
+#   ANDROID_API_LEVEL: superseded by ANDROID_NATIVE_API_LEVEL
+#   ARM_TARGET: superseded by ANDROID_ABI
+#   ARM_TARGETS: superseded by ANDROID_ABI (can be set only)
+#   ANDROID_NDK_TOOLCHAIN_ROOT: superseded by ANDROID_STANDALONE_TOOLCHAIN (can be set only)
+#   ANDROID_LEVEL: superseded by ANDROID_NATIVE_API_LEVEL (completely removed)
 #
 # Primary read-only variables:
-#   ANDROID : always TRUE
-#   ARMEABI : TRUE for arm v6 and older devices
-#   ARMEABI_V6 : TRUE for arm v6
-#   ARMEABI_V7A : TRUE for arm v7a
-#   NEON : TRUE if NEON unit is enabled
-#   VFPV3 : TRUE if VFP version 3 is enabled
-#   X86 : TRUE if configured for x86
-#   BUILD_ANDROID : always TRUE
-#   BUILD_WITH_ANDROID_NDK : TRUE if NDK is used
-#   BUILD_WITH_STANDALONE_TOOLCHAIN : TRUE if standalone toolchain is used
-#   ANDROID_NDK_HOST_SYSTEM_NAME : "windows", "linux-x86" or "darwin-x86" depending on host platform
-#   ANDROID_NDK_HOST_SYSTEM_ARCH : "x86", "x64" depending on host platform
-#   ANDROID_NDK_ABI_NAME : "armeabi", "armeabi-v7a" or "x86" depending on ANDROID_ABI
-#   ANDROID_ARCH_NAME : "arm" or "x86" or "mips" depending on ANDROID_ABI
-#   TOOL_OS_SUFFIX : "" or ".exe" depending on host platform
-#   ANDROID_SYSROOT : path to the compiler sysroot
+#   ANDROID: always TRUE
+#   ARMEABI: TRUE for arm v6 and older devices
+#   ARMEABI_V6: TRUE for arm v6
+#   ARMEABI_V7A: TRUE for arm v7a
+#   NEON: TRUE if NEON unit is enabled
+#   VFPV3: TRUE if VFP version 3 is enabled
+#   X86: TRUE if configured for x86
+#   BUILD_ANDROID: always TRUE
+#   BUILD_WITH_ANDROID_NDK: TRUE if NDK is used
+#   BUILD_WITH_STANDALONE_TOOLCHAIN: TRUE if standalone toolchain is used
+#   ANDROID_NDK_HOST_SYSTEM_NAME: "windows", "linux-x86" or "darwin-x86" depending on host platform
+#   ANDROID_NDK_HOST_SYSTEM_ARCH: "x86", "x64" depending on host platform
+#   ANDROID_NDK_ABI_NAME: "armeabi", "armeabi-v7a" or "x86" depending on ANDROID_ABI
+#   ANDROID_ARCH_NAME: "arm" or "x86" or "mips" depending on ANDROID_ABI
+#   TOOL_OS_SUFFIX: "" or ".exe" depending on host platform
+#   ANDROID_SYSROOT: path to the compiler sysroot
 #   ANDROID_SYSTEM_INCLUDE_DIRS
 #   ANDROID_SYSTEM_LIB_DIRS
 # Obsolete:
-#   ARMEABI_NDK_NAME : superseded by ANDROID_NDK_ABI_NAME
+#   ARMEABI_NDK_NAME: superseded by ANDROID_NDK_ABI_NAME
 #
 # Secondary (less stable) read-only variables:
-#   ANDROID_COMPILER_VERSION : GCC version used
-#   ANDROID_CXX_FLAGS : C/C++ compiler flags required by Android platform
-#   ANDROID_SUPPORTED_ABIS : list of currently allowed values for ANDROID_ABI
-#   ANDROID_TOOLCHAIN_MACHINE_NAME : "arm-linux-androideabi", "arm-eabi" or "i686-android-linux"
-#   ANDROID_TOOLCHAIN_ROOT : path to the top level of toolchain (standalone or placed inside NDK)
-#   ANDROID_SUPPORTED_NATIVE_API_LEVELS : list of native API levels found inside NDK
+#   ANDROID_COMPILER_VERSION: GCC version used
+#   ANDROID_CXX_FLAGS: C/C++ compiler flags required by Android platform
+#   ANDROID_SUPPORTED_ABIS: list of currently allowed values for ANDROID_ABI
+#   ANDROID_TOOLCHAIN_MACHINE_NAME: "arm-linux-androideabi", "arm-eabi" or "i686-android-linux"
+#   ANDROID_TOOLCHAIN_ROOT: path to the top level of toolchain (standalone or placed inside NDK)
+#   ANDROID_SUPPORTED_NATIVE_API_LEVELS: list of native API levels found inside NDK
 #
 # Defaults:
 #   ANDROID_DEFAULT_NDK_API_LEVEL

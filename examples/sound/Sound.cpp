@@ -19,7 +19,7 @@ void playSound()
         return;
 
     // Display sound informations
-    std::cout << "canary.wav :" << std::endl;
+    std::cout << "canary.wav:" << std::endl;
     std::cout << " " << buffer.getDuration().asSeconds() << " seconds"       << std::endl;
     std::cout << " " << buffer.getSampleRate()           << " samples / sec" << std::endl;
     std::cout << " " << buffer.getChannelCount()         << " channels"      << std::endl;
@@ -54,7 +54,7 @@ void playMusic()
         return;
 
     // Display music informations
-    std::cout << "orchestral.ogg :" << std::endl;
+    std::cout << "orchestral.ogg:" << std::endl;
     std::cout << " " << music.getDuration().asSeconds() << " seconds"       << std::endl;
     std::cout << " " << music.getSampleRate()           << " samples / sec" << std::endl;
     std::cout << " " << music.getChannelCount()         << " channels"      << std::endl;

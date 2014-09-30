@@ -367,7 +367,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         }
 
         ////////////////////////////////////////////////////////////
-        // These are known to be unbound :
+        // These are known to be unbound:
         //    Supposed Virtual | HID  | Supposed Key
         //    ===============================================
         //          0x1b       | 0x2d | Hyphen
@@ -390,7 +390,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     } /* if (error == noErr) */
     else
     {
-        sf::err() << "Cannot translate the virtual key code, error : "
+        sf::err() << "Cannot translate the virtual key code, error: "
                   << error
                   << std::endl;
     }

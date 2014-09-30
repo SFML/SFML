@@ -274,7 +274,7 @@ bool JoystickImpl::open(unsigned int index)
     // HID Usage (assigned by manufacturer and/or a driver).
     std::sort(m_buttons.begin(), m_buttons.end(), JoystickButtonSortPredicate);
 
-    // Note : Joy::AxisPovX/Y are not supported (yet).
+    // Note: Joy::AxisPovX/Y are not supported (yet).
     // Maybe kIOHIDElementTypeInput_Axis is the corresponding type but I can't test.
 
     // Retain all these objects for personal use
@@ -283,7 +283,7 @@ bool JoystickImpl::open(unsigned int index)
     for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
         CFRetain(it->second);
 
-    // Note : we didn't retain element in the switch because we might have multiple
+    // Note: we didn't retain element in the switch because we might have multiple
     // Axis X (for example) and we want to keep only the last one. So to prevent
     // leaking we retain objects 'only' now.
 
@@ -411,7 +411,7 @@ JoystickState JoystickImpl::update()
         //
         // General formula to bind [a,b] to [c,d] with a linear progression:
         //
-        // f : [a, b] -> [c, d]
+        // f: [a, b] -> [c, d]
         //        x  |->  (x-a)(d-c)/(b-a)+c
         //
         // This method might not be very accurate (the "0 position" can be

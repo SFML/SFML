@@ -41,7 +41,7 @@ namespace sf
 template <typename T>
 class Rect
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

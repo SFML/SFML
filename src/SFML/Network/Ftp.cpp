@@ -41,7 +41,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class Ftp::DataChannel : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     DataChannel(Ftp& owner);
@@ -55,7 +55,7 @@ public :
     ////////////////////////////////////////////////////////////
     void receive(std::ostream& stream);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -499,7 +499,7 @@ Ftp::Response Ftp::getResponse()
             }
             else
             {
-                // Error : cannot extract the code, and we are not in a multiline response
+                // Error: cannot extract the code, and we are not in a multiline response
                 return Response(Response::InvalidResponse);
             }
         }
@@ -558,9 +558,9 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
                 std::string modeStr;
                 switch (mode)
                 {
-                    case Ftp::Binary : modeStr = "I"; break;
-                    case Ftp::Ascii :  modeStr = "A"; break;
-                    case Ftp::Ebcdic : modeStr = "E"; break;
+                    case Ftp::Binary: modeStr = "I"; break;
+                    case Ftp::Ascii:  modeStr = "A"; break;
+                    case Ftp::Ebcdic: modeStr = "E"; break;
                 }
 
                 // Set the transfer mode

@@ -40,7 +40,7 @@ namespace sf
 template <typename T>
 class ThreadLocalPtr : private ThreadLocal
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

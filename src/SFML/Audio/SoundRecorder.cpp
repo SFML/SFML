@@ -33,7 +33,7 @@
 #include <cstring>
 
 #ifdef _MSC_VER
-    #pragma warning(disable : 4355) // 'this' used in base member initializer list
+    #pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
 
@@ -71,7 +71,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
     // Check if the device can do audio capture
     if (!isAvailable())
     {
-        err() << "Failed to start capture : your system cannot capture audio data (call SoundRecorder::isAvailable to check it)" << std::endl;
+        err() << "Failed to start capture: your system cannot capture audio data (call SoundRecorder::isAvailable to check it)" << std::endl;
         return false;
     }
 
@@ -245,7 +245,7 @@ void SoundRecorder::record()
         sleep(m_processingInterval);
     }
 
-    // Capture is finished : clean up everything
+    // Capture is finished: clean up everything
     cleanup();
 }
 

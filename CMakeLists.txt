@@ -124,7 +124,7 @@ endif()
 
 # setup Mac OS X stuff
 if(SFML_OS_MACOSX)
-    # SFML_BUILD_FRAMEWORKS needs two things :
+    # SFML_BUILD_FRAMEWORKS needs two things:
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
     # secondly, it works only with BUILD_SHARED_LIBS enabled
@@ -229,7 +229,7 @@ else()
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* $<TARGET_FILE_DIR:SFML>/Headers)
 
     # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
-    # NOTE : it's not required to link agains SFML.framework
+    # NOTE: it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1
                           INSTALL_NAME_DIR "@executable_path/../Frameworks")

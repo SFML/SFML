@@ -43,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_SYSTEM_API String
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     // Types
@@ -515,7 +515,7 @@ public :
     ////////////////////////////////////////////////////////////
     ConstIterator end() const;
 
-private :
+private:
 
     friend SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
     friend SFML_SYSTEM_API bool operator <(const String& left, const String& right);

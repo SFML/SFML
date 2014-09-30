@@ -49,7 +49,7 @@ class SFML_NETWORK_API Packet
     // A bool-like type that cannot be converted to integer or pointer types
     typedef bool (Packet::*BoolType)(std::size_t);
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -252,7 +252,7 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onReceive(const void* data, std::size_t size);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// Disallow comparisons between packets

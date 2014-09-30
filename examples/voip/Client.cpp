@@ -17,7 +17,7 @@ const sf::Uint8 endOfStream = 2;
 ////////////////////////////////////////////////////////////
 class NetworkRecorder : public sf::SoundRecorder
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// Constructor
@@ -32,7 +32,7 @@ public :
     {
     }
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// /see SoundRecorder::OnStart
@@ -108,7 +108,7 @@ void doClient(unsigned short port)
     sf::IpAddress server;
     do
     {
-        std::cout << "Type address or name of the server to connect to : ";
+        std::cout << "Type address or name of the server to connect to: ";
         std::cin  >> server;
     }
     while (server == sf::IpAddress::None);

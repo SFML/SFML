@@ -190,9 +190,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         // Handle special characters
         switch (curChar)
         {
-            case ' ' :  position.x += hspace;                 continue;
-            case '\t' : position.x += hspace * 4;             continue;
-            case '\n' : position.y += vspace; position.x = 0; continue;
+            case ' ':  position.x += hspace;                 continue;
+            case '\t': position.x += hspace * 4;             continue;
+            case '\n': position.y += vspace; position.x = 0; continue;
         }
 
         // For regular characters, add the advance offset of the glyph
@@ -329,9 +329,9 @@ void Text::ensureGeometryUpdate() const
 
             switch (curChar)
             {
-                case ' ' :  x += hspace;        break;
-                case '\t' : x += hspace * 4;    break;
-                case '\n' : y += vspace; x = 0; break;
+                case ' ':  x += hspace;        break;
+                case '\t': x += hspace * 4;    break;
+                case '\n': y += vspace; x = 0; break;
             }
 
             // Update the current bounds (max coordinates)

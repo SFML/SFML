@@ -82,7 +82,7 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
 set(SFML_VERSION_OK TRUE)
 if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
     # extract the major and minor version numbers from SFML/Config.hpp
-    # we have to handle framework a little bit differently :
+    # we have to handle framework a little bit differently:
     if("${SFML_INCLUDE_DIR}" MATCHES "SFML.framework")
         set(SFML_CONFIG_HPP_INPUT "${SFML_INCLUDE_DIR}/Headers/Config.hpp")
     else()

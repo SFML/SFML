@@ -43,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API IpAddress
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -185,7 +185,7 @@ public :
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -6,7 +6,7 @@
 // This code will work only if you selected window, graphics and audio.
 //
 // In order to load the resources like cute_image.png, you have to set up
-// your target scheme :
+// your target scheme:
 //
 // - Select "Edit Scheme…" in the "Product" menu;
 // - Check the box "use custom working directory";
@@ -61,12 +61,12 @@ int main(int argc, char const** argv)
         sf::Event event;
         while (window.pollEvent(event))
         {
-            // Close window : exit
+            // Close window: exit
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
 
-            // Escape pressed : exit
+            // Escape pressed: exit
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }

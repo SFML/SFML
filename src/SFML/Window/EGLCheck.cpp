@@ -50,55 +50,55 @@ void eglCheckError(const char* file, unsigned int line)
         // Decode the error code returned
         switch (errorCode)
         {
-            case EGL_NOT_INITIALIZED :
+            case EGL_NOT_INITIALIZED:
             {
                 error = "EGL_NOT_INITIALIZED";
                 description = "EGL is not initialized, or could not be initialized, for the specified display";
                 break;
             }
 
-            case EGL_BAD_ACCESS :
+            case EGL_BAD_ACCESS:
             {
                 error = "EGL_BAD_ACCESS";
                 description = "EGL cannot access a requested resource (for example, a context is bound in another thread)";
                 break;
             }
 
-            case EGL_BAD_ALLOC :
+            case EGL_BAD_ALLOC:
             {
                 error = "EGL_BAD_ALLOC";
                 description = "EGL failed to allocate resources for the requested operation";
                 break;
             }
-            case EGL_BAD_ATTRIBUTE :
+            case EGL_BAD_ATTRIBUTE:
             {
                 error = "EGL_BAD_ATTRIBUTE";
                 description = "an unrecognized attribute or attribute value was passed in an attribute list";
                 break;
             }
 
-            case EGL_BAD_CONTEXT :
+            case EGL_BAD_CONTEXT:
             {
                 error = "EGL_BAD_CONTEXT";
                 description = "an EGLContext argument does not name a valid EGLContext";
                 break;
             }
 
-            case EGL_BAD_CONFIG :
+            case EGL_BAD_CONFIG:
             {
                 error = "EGL_BAD_CONFIG";
                 description = "an EGLConfig argument does not name a valid EGLConfig";
                 break;
             }
 
-            case EGL_BAD_CURRENT_SURFACE :
+            case EGL_BAD_CURRENT_SURFACE:
             {
                 error = "EGL_BAD_CURRENT_SURFACE";
                 description = "the current surface of the calling thread is a window, pbuffer, or pixmap that is no longer valid";
                 break;
             }
 
-            case EGL_BAD_DISPLAY :
+            case EGL_BAD_DISPLAY:
             {
                 error = "EGL_BAD_DISPLAY";
                 description = "an EGLDisplay argument does not name a valid EGLDisplay; or, EGL is not initialized on the specified EGLDisplay";
@@ -106,42 +106,42 @@ void eglCheckError(const char* file, unsigned int line)
             }
 
 
-            case EGL_BAD_SURFACE :
+            case EGL_BAD_SURFACE:
             {
                 error = "EGL_BAD_SURFACE";
                 description = "an EGLSurface argument does not name a valid surface (window, pbuffer, or pixmap) configured for rendering";
                 break;
             }
 
-            case EGL_BAD_MATCH :
+            case EGL_BAD_MATCH:
             {
                 error = "EGL_BAD_MATCH";
                 description = "arguments are inconsistent; for example, an otherwise valid context requires buffers (e.g. depth or stencil) not allocated by an otherwise valid surface";
                 break;
             }
 
-            case EGL_BAD_PARAMETER :
+            case EGL_BAD_PARAMETER:
             {
                 error = "EGL_BAD_PARAMETER";
                 description = "one or more argument values are invalid";
                 break;
             }
 
-            case EGL_BAD_NATIVE_PIXMAP :
+            case EGL_BAD_NATIVE_PIXMAP:
             {
                 error = "EGL_BAD_NATIVE_PIXMAP";
                 description = "an EGLNativePixmapType argument does not refer to a valid native pixmap";
                 break;
             }
 
-            case EGL_BAD_NATIVE_WINDOW :
+            case EGL_BAD_NATIVE_WINDOW:
             {
                 error = "EGL_BAD_NATIVE_WINDOW";
                 description = "an EGLNativeWindowType argument does not refer to a valid native window";
                 break;
             }
 
-            case EGL_CONTEXT_LOST :
+            case EGL_CONTEXT_LOST:
             {
                 error = "EGL_CONTEXT_LOST";
                 description = "a power management event has occured. The application must destroy all contexts and reinitialise client API state and objects to continue rendering";

@@ -51,7 +51,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundBuffer
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -230,7 +230,7 @@ public :
     ////////////////////////////////////////////////////////////
     SoundBuffer& operator =(const SoundBuffer& right);
 
-private :
+private:
 
     friend class Sound;
 

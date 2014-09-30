@@ -47,7 +47,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class SFML_SYSTEM_API Thread : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the thread from a functor with no argument
@@ -111,7 +111,7 @@ public :
     /// \code
     /// class MyClass
     /// {
-    /// public :
+    /// public:
     ///
     ///     void function();
     /// };
@@ -171,7 +171,7 @@ public :
     ////////////////////////////////////////////////////////////
     void terminate();
 
-private :
+private:
 
     friend class priv::ThreadImpl;
 
@@ -244,7 +244,7 @@ private :
 ///
 /// class Task
 /// {
-/// public :
+/// public:
 ///     void run()
 ///     {
 ///         ...

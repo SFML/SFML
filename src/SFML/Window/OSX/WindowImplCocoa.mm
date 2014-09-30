@@ -267,7 +267,7 @@ void WindowImplCocoa::setUpProcess(void)
 
         // Tell the application to stop bouncing in the Dock.
         [[SFApplication sharedApplication] finishLaunching];
-        // NOTE : This last call won't harm anything even if SFML window was
+        // NOTE: This last call won't harm anything even if SFML window was
         // created with an external handle.
     }
 }

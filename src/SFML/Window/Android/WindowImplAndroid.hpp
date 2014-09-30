@@ -45,7 +45,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WindowImplAndroid : public WindowImpl
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation from an existing control
@@ -157,7 +157,7 @@ public :
     static void forwardEvent(const Event& event);
     static WindowImplAndroid* singleInstance;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system

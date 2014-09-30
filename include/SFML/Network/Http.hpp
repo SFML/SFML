@@ -45,7 +45,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API Http : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Define a HTTP request
@@ -53,7 +53,7 @@ public :
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API Request
     {
-    public :
+    public:
 
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate the available HTTP methods for a request
@@ -143,7 +143,7 @@ public :
         ////////////////////////////////////////////////////////////
         void setBody(const std::string& body);
 
-    private :
+    private:
 
         friend class Http;
 
@@ -192,7 +192,7 @@ public :
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API Response
     {
-    public :
+    public:
 
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate all the valid status codes for a response
@@ -303,7 +303,7 @@ public :
         ////////////////////////////////////////////////////////////
         const std::string& getBody() const;
 
-    private :
+    private:
 
         friend class Http;
 
@@ -404,7 +404,7 @@ public :
     ////////////////////////////////////////////////////////////
     Response sendRequest(const Request& request, Time timeout = Time::Zero);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

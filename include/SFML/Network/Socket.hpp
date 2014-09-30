@@ -44,7 +44,7 @@ class SocketSelector;
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API Socket : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Status codes that may be returned by socket functions
@@ -67,7 +67,7 @@ public :
         AnyPort = 0 ///< Special value that tells the system to pick any available port
     };
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -104,7 +104,7 @@ public :
     ////////////////////////////////////////////////////////////
     bool isBlocking() const;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Types of protocols that the socket can use
@@ -165,7 +165,7 @@ protected :
     ////////////////////////////////////////////////////////////
     void close();
 
-private :
+private:
 
     friend class SocketSelector;
 

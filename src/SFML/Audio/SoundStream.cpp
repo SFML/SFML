@@ -33,7 +33,7 @@
 #include <SFML/System/Lock.hpp>
 
 #ifdef _MSC_VER
-    #pragma warning(disable : 4355) // 'this' used in base member initializer list
+    #pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
 

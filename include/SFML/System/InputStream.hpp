@@ -39,7 +39,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class InputStream
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
@@ -114,7 +114,7 @@ public :
 /// // custom stream class that reads from inside a zip file
 /// class ZipStream : public sf::InputStream
 /// {
-/// public :
+/// public:
 /// 
 ///     ZipStream(std::string archive);
 ///
@@ -128,7 +128,7 @@ public :
 /// 
 ///     Int64 getSize();
 ///
-/// private :
+/// private:
 ///
 ///     ...
 /// };

@@ -96,7 +96,7 @@ public:
     /// This function must be called whenever the containing view
     /// changes (typically after an orientation change)
     ///
-    /// \param glView : Container of the context
+    /// \param glView: Container of the context
     ///
     ////////////////////////////////////////////////////////////
     void recreateRenderBuffers(SFView* glView);
@@ -115,7 +115,7 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);

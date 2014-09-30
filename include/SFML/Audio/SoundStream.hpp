@@ -44,7 +44,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundStream : public SoundSource
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a chunk of audio data to stream
@@ -178,7 +178,7 @@ public :
     ////////////////////////////////////////////////////////////
     bool getLoop() const;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -234,7 +234,7 @@ protected :
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset) = 0;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called as the entry point of the thread
@@ -342,7 +342,7 @@ private :
 /// \code
 /// class CustomStream : public sf::SoundStream
 /// {
-/// public :
+/// public:
 ///
 ///     bool open(const std::string& location)
 ///     {
@@ -355,7 +355,7 @@ private :
 ///         initialize(channelCount, sampleRate);
 ///     }
 ///
-/// private :
+/// private:
 ///
 ///     virtual bool onGetData(Chunk& data)
 ///     {

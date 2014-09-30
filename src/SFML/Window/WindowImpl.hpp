@@ -54,7 +54,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WindowImpl : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on the current OS
@@ -79,7 +79,7 @@ public :
     ////////////////////////////////////////////////////////////
     static WindowImpl* create(WindowHandle handle);
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -91,7 +91,7 @@ public :
     /// \brief Change the joystick threshold, ie. the value below which
     ///        no move event will be generated
     ///
-    /// \param threshold : New threshold, in range [0, 100]
+    /// \param threshold: New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
     void setJoystickThreshold(float threshold);
@@ -194,7 +194,7 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled) = 0;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -220,7 +220,7 @@ protected :
     ////////////////////////////////////////////////////////////
     virtual void processEvents() = 0;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events

@@ -42,7 +42,7 @@ class Socket;
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API SocketSelector
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -151,7 +151,7 @@ public :
     ////////////////////////////////////////////////////////////
     SocketSelector& operator =(const SocketSelector& right);
 
-private :
+private:
 
     struct SocketSelectorImpl;
 
