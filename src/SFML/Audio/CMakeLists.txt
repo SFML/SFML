@@ -39,15 +39,19 @@ set(CODECS_SRC
     ${INCROOT}/SoundFileFactory.hpp
     ${INCROOT}/SoundFileFactory.inl
     ${INCROOT}/SoundFileReader.hpp
+    ${SRCROOT}/SoundFileReaderFlac.hpp
+    ${SRCROOT}/SoundFileReaderFlac.cpp
     ${SRCROOT}/SoundFileReaderOgg.hpp
     ${SRCROOT}/SoundFileReaderOgg.cpp
     ${SRCROOT}/SoundFileReaderWav.hpp
     ${SRCROOT}/SoundFileReaderWav.cpp
     ${INCROOT}/SoundFileWriter.hpp
-    ${SRCROOT}/SoundFileWriterWav.hpp
-    ${SRCROOT}/SoundFileWriterWav.cpp
+    ${SRCROOT}/SoundFileWriterFlac.hpp
+    ${SRCROOT}/SoundFileWriterFlac.cpp
     ${SRCROOT}/SoundFileWriterOgg.hpp
     ${SRCROOT}/SoundFileWriterOgg.cpp
+    ${SRCROOT}/SoundFileWriterWav.hpp
+    ${SRCROOT}/SoundFileWriterWav.cpp
 )
 source_group("codecs" FILES ${CODECS_SRC})
 
@@ -64,19 +68,23 @@ endif()
 if(NOT SFML_OS_ANDROID)
     find_package(OpenAL REQUIRED)
     find_package(Vorbis REQUIRED)
+    find_package(FLAC REQUIRED)
 else()
     find_host_package(OpenAL REQUIRED)
     find_host_package(Vorbis REQUIRED)
+    find_host_package(FLAC REQUIRED)
 endif()
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${VORBIS_INCLUDE_DIRS})
+include_directories(${FLAC_INCLUDE_DIR})
 add_definitions(-DOV_EXCLUDE_STATIC_CALLBACKS) # avoids warnings in vorbisfile.h
+add_definitions(-DFLAC__NO_DLL)
 
 # build the list of external libraries to link
 if(SFML_OS_ANDROID)
     list(APPEND AUDIO_EXT_LIBS android OpenSLES)
 endif()
-list(APPEND AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${VORBIS_LIBRARIES})
+list(APPEND AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${VORBIS_LIBRARIES} ${FLAC_LIBRARY})
 
 # define the sfml-audio target
 sfml_add_library(sfml-audio

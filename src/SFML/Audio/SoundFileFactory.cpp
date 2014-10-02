@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileFactory.hpp>
+#include <SFML/Audio/SoundFileReaderFlac.hpp>
+#include <SFML/Audio/SoundFileWriterFlac.hpp>
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileReaderWav.hpp>
@@ -42,6 +44,8 @@ namespace
         static bool registered = false;
         if (!registered)
         {
+            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
+            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();

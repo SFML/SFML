@@ -325,9 +325,10 @@ if(SFML_STATIC_LIBRARIES)
         find_sfml_dependency(OGG_LIBRARY "Ogg" ogg)
         find_sfml_dependency(VORBIS_LIBRARY "Vorbis" vorbis)
         find_sfml_dependency(VORBISFILE_LIBRARY "VorbisFile" vorbisfile)
+        find_sfml_dependency(FLAC_LIBRARY "FLAC" flac)
 
         # update the list
-        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${FLAC_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
         set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_AUDIO_DEPENDENCIES})
     endif()
 

@@ -22,15 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEWRITEROGG_HPP
-#define SFML_SOUNDFILEWRITEROGG_HPP
+#ifndef SFML_SOUNDFILEREADERFLAC_HPP
+#define SFML_SOUNDFILEREADERFLAC_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundFileWriter.hpp>
-#include <vorbis/vorbisenc.h>
-#include <fstream>
+#include <SFML/Audio/SoundFileReader.hpp>
+#include <flac/stream_decoder.h>
+#include <string>
+#include <vector>
 
 
 namespace sf
@@ -38,22 +39,22 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Implementation of sound file writer that handles OGG/Vorbis files
+/// \brief Implementation of sound file reader that handles FLAC files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileWriterOgg : public SoundFileWriter
+class SoundFileReaderFlac : public SoundFileReader
 {
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if this writer can handle a file on disk
+    /// \brief Check if this reader can handle a file given by an input stream
     ///
-    /// \param filename Path of the sound file to check
+    /// \param stream Source stream to check
     ///
-    /// \return True if the file can be written by this writer
+    /// \return True if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
-    static bool check(const std::string& filename);
+    static bool check(InputStream& stream);
 
 public :
 
@@ -61,45 +62,65 @@ public :
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    SoundFileWriterOgg();
+    SoundFileReaderFlac();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
+    /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SoundFileWriterOgg();
+    ~SoundFileReaderFlac();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open a sound file for writing
+    /// \brief Open a sound file for reading
     ///
-    /// \param filename     Path of the file to open
-    /// \param sampleRate   Sample rate of the sound
-    /// \param channelCount Number of channels of the sound
-    ///
-    /// \return True if the file was successfully opened
+    /// \param stream Stream to open
+    /// \param info   Structure to fill with the attributes of the loaded sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
+    virtual bool open(sf::InputStream& stream, Info& info);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Write audio samples to the open file
+    /// \brief Change the current read position to the given sample offset
     ///
-    /// \param samples Pointer to the sample array to write
-    /// \param count   Number of samples to write
+    /// If the given offset exceeds to total number of samples,
+    /// this function must jump to the end of the file.
+    ///
+    /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void write(const Int16* samples, Uint64 count);
+    virtual void seek(Uint64 sampleOffset);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Read audio samples from the open file
+    ///
+    /// \param samples  Pointer to the sample array to fill
+    /// \param maxCount Maximum number of samples to read
+    ///
+    /// \return Number of samples actually read (may be less than \a maxCount)
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Uint64 read(Int16* samples, Uint64 maxCount);
+
+public:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Hold the state that is passed to the decoder callbacks
+    ///
+    ////////////////////////////////////////////////////////////
+    struct ClientData
+    {
+        InputStream*          stream;
+        SoundFileReader::Info info;
+        Int16*                buffer;
+        Uint64                remaining;
+        std::vector<Int16>    leftovers;
+        bool                  error;
+    };
 
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Flush blocks produced by the ogg stream, if any
-    ///
-    ////////////////////////////////////////////////////////////
-    void flushBlocks();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Close the file
+    /// \brief Close the open FLAC file
     ///
     ////////////////////////////////////////////////////////////
     void close();
@@ -107,11 +128,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount; // channel count of the sound being written
-    std::ofstream    m_file;         // output file
-    ogg_stream_state m_ogg;          // ogg stream
-    vorbis_info      m_vorbis;       // vorbis handle
-    vorbis_dsp_state m_state;        // current encoding state
+    FLAC__StreamDecoder* m_decoder;    ///< FLAC decoder
+    ClientData           m_clientData; ///< Structure passed to the decoder callbacks
 };
 
 } // namespace priv
@@ -119,4 +137,4 @@ private:
 } // namespace sf
 
 
-#endif // SFML_SOUNDFILEWRITEROGG_HPP
+#endif // SFML_SOUNDFILEREADERFLAC_HPP

@@ -22,15 +22,15 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEWRITEROGG_HPP
-#define SFML_SOUNDFILEWRITEROGG_HPP
+#ifndef SFML_SOUNDFILEWRITERFLAC_HPP
+#define SFML_SOUNDFILEWRITERFLAC_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
-#include <vorbis/vorbisenc.h>
-#include <fstream>
+#include <flac/stream_encoder.h>
+#include <vector>
 
 
 namespace sf
@@ -38,10 +38,10 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Implementation of sound file writer that handles OGG/Vorbis files
+/// \brief Implementation of sound file writer that handles FLAC files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileWriterOgg : public SoundFileWriter
+class SoundFileWriterFlac : public SoundFileWriter
 {
 public:
 
@@ -61,13 +61,13 @@ public :
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    SoundFileWriterOgg();
+    SoundFileWriterFlac();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SoundFileWriterOgg();
+    ~SoundFileWriterFlac();
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for writing
@@ -93,12 +93,6 @@ public :
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Flush blocks produced by the ogg stream, if any
-    ///
-    ////////////////////////////////////////////////////////////
-    void flushBlocks();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Close the file
     ///
     ////////////////////////////////////////////////////////////
@@ -107,11 +101,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount; // channel count of the sound being written
-    std::ofstream    m_file;         // output file
-    ogg_stream_state m_ogg;          // ogg stream
-    vorbis_info      m_vorbis;       // vorbis handle
-    vorbis_dsp_state m_state;        // current encoding state
+    FLAC__StreamEncoder* m_encoder;      ///< FLAC stream encoder
+    unsigned int         m_channelCount; ///< Number of channels
+    std::vector<Int32>   m_samples32;    ///< Conversion buffer
 };
 
 } // namespace priv
@@ -119,4 +111,4 @@ private:
 } // namespace sf
 
 
-#endif // SFML_SOUNDFILEWRITEROGG_HPP
+#endif // SFML_SOUNDFILEWRITERFLAC_HPP
