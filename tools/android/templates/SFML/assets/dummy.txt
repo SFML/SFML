@@ -1,0 +1,3 @@
+Place your assets (textures, sounds, fonts, etc.) in this directory.
+
+You'll be able to directly load them using sf::Texture::loadFromFile() and similar methods.
