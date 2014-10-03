@@ -74,13 +74,15 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 const IpAddress IpAddress::None;
+const IpAddress IpAddress::Any(0, 0, 0, 0);
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-m_address(0)
+m_address(0),
+m_valid(false)
 {
     // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
     // because the latter is also the broadcast address (255.255.255.255); it's ok because
@@ -90,28 +92,32 @@ m_address(0)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const std::string& address) :
-m_address(resolve(address))
+m_address(resolve(address)),
+m_valid(true)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const char* address) :
-m_address(resolve(address))
+m_address(resolve(address)),
+m_valid(true)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
+m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)),
+m_valid(true)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint32 address) :
-m_address(htonl(address))
+m_address(htonl(address)),
+m_valid(true)
 {
 }
 
@@ -194,44 +200,44 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-bool operator ==(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator ==(const IpAddress& right) const
 {
-    return left.toInteger() == right.toInteger();
+    return m_valid && right.m_valid && toInteger() == right.toInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator !=(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator !=(const IpAddress& right) const
 {
-    return !(left == right);
+    return !(*this == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator <(const IpAddress& right) const
 {
-    return left.toInteger() < right.toInteger();
+    return m_valid && right.m_valid && toInteger() < right.toInteger();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator >(const IpAddress& right) const
 {
-    return right < left;
+    return right < *this;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <=(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator <=(const IpAddress& right) const
 {
-    return !(right < left);
+    return !(right < *this);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >=(const IpAddress& left, const IpAddress& right)
+bool IpAddress::operator >=(const IpAddress& right) const
 {
-    return !(left < right);
+    return !(*this < right);
 }
 
 

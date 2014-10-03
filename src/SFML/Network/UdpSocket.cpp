@@ -64,14 +64,14 @@ unsigned short UdpSocket::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::bind(unsigned short port)
+Socket::Status UdpSocket::bind(unsigned short port, const IpAddress& address)
 {
     // Create the internal socket if it doesn't exist
     create();
 
     // Bind the socket
-    sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, port);
-    if (::bind(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+    sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
+    if (::bind(getHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
     {
         err() << "Failed to bind socket to port " << port << std::endl;
         return Error;

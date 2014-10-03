@@ -99,7 +99,7 @@ public :
     /// This constructor uses the internal representation of
     /// the address directly. It should be used for optimization
     /// purposes, and only if you got that representation from
-    /// IpAddress::ToInteger().
+    /// IpAddress::toInteger().
     ///
     /// \param address 4 bytes of the address packed into a 32-bits integer
     ///
@@ -182,8 +182,69 @@ public :
     // Static member data
     ////////////////////////////////////////////////////////////
     static const IpAddress None;      ///< Value representing an empty/invalid address
+    static const IpAddress Any;       ///< Value representing any (valid) address
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of == operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if \a *this and \a right are equal
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator ==(const IpAddress& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of != operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if both \a *this and \a right are different
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator !=(const IpAddress& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of < operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if \a *this is lesser than \a right
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator <(const IpAddress& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of > operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if \a *this is greater than \a right
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator >(const IpAddress& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of <= operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if \a *this is lesser or equal than \a right
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator <=(const IpAddress& right) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of >= operator to compare two IP addresses
+    ///
+    /// \param right Right operand (a IP address)
+    ///
+    /// \return True if \a *this is greater or equal than \a right
+    ///
+    ////////////////////////////////////////////////////////////
+    bool operator >=(const IpAddress& right) const;
 
 private :
 
@@ -191,73 +252,9 @@ private :
     // Member data
     ////////////////////////////////////////////////////////////
     Uint32 m_address; ///< Address stored as an unsigned 32 bits integer
+    bool   m_valid;   ///< Flag indicating if it's valid address
 };
 
-////////////////////////////////////////////////////////////
-/// \brief Overload of == operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if both addresses are equal
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator ==(const IpAddress& left, const IpAddress& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of != operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if both addresses are different
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator !=(const IpAddress& left, const IpAddress& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of < operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if \a left is lesser than \a right
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator <(const IpAddress& left, const IpAddress& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of > operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if \a left is greater than \a right
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator >(const IpAddress& left, const IpAddress& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of <= operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if \a left is lesser or equal than \a right
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator <=(const IpAddress& left, const IpAddress& right);
-
-////////////////////////////////////////////////////////////
-/// \brief Overload of >= operator to compare two IP addresses
-///
-/// \param left  Left operand (a IP address)
-/// \param right Right operand (a IP address)
-///
-/// \return True if \a left is greater or equal than \a right
-///
-////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator >=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of >> operator to extract an IP address from an input stream
