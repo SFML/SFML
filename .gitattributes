@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+extlibs/**/* -text -eol
+src/SFML/Graphics/stb_image/**/* -text -eol
