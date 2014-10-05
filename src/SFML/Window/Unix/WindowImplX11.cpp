@@ -30,6 +30,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Clock.hpp>
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
@@ -584,6 +585,141 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
     m_keyRepeat = enabled;
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplX11::setClipboard(const String& clipboard)
+{
+    // Set the internal clipboard string
+    m_clipboardString = clipboard;
+
+    // Get ownership of the CLIPBOARD selection
+    xcb_set_selection_owner(m_connection, m_window, m_atomClipboard, XCB_CURRENT_TIME);
+
+    // If we don't own the CLIPBOARD selection, we can't set the contents of the selection, so that's an error.
+    xcb_get_selection_owner_cookie_t get_selection_owner_cookie = xcb_get_selection_owner(m_connection, m_atomClipboard);
+    if(xcb_get_selection_owner_reply(m_connection, get_selection_owner_cookie, 0)->owner != m_window)
+    {
+        std::cerr << "Failed to get ownership of the CLIPBOARD selection." << std::endl;
+    }
+    return;
+}
+
+////////////////////////////////////////////////////////////
+String WindowImplX11::getClipboard()
+{
+    // If we own the CLIPBOARD selection, no point in requesting it from ourselves, just return the
+    //  internal cache.
+    xcb_get_selection_owner_cookie_t get_selection_owner_cookie = xcb_get_selection_owner(m_connection, m_atomClipboard);
+    if(xcb_get_selection_owner_reply(m_connection, get_selection_owner_cookie, 0)->owner == m_window)
+    {
+        return m_clipboardString;
+    }
+
+    // If we don't own the CLIPBOARD selection, request that it be converted to the desired format, then
+    //  sent to us.
+    xcb_convert_selection(m_connection, m_window, m_atomClipboard, m_atomText, m_atomUtf8String, XCB_CURRENT_TIME);
+
+    xcb_generic_event_t* event = NULL;
+    xcb_key_release_event_t* lastKeyReleaseEvent = NULL;
+    uint8_t eventType = 0;
+
+    sf::Clock timer;
+
+    // Wait for an event from the selection owner containing the clipboard data.
+    // If no event is received in 1s, return cached string.
+    while((event = xcb_poll_for_event(m_connection)) && timer.getElapsedTime().asMilliseconds() < 1000)
+    {
+        eventType = event->response_type & ~0x80;
+
+        // Check if the latest event is a reply to our request for the selection contents
+        if (eventType == XCB_SELECTION_NOTIFY)
+        {
+            xcb_selection_notify_event_t* selection_notify = reinterpret_cast<xcb_selection_notify_event_t*>(event);
+
+            // Check that we're getting the right selection and format
+            if (selection_notify->selection != m_atomClipboard)
+            {
+                free(event);
+                event = NULL;
+                continue;
+            }
+            if (selection_notify->target != m_atomText)
+            {
+                free(event);
+                event = NULL;
+                continue;
+            }
+
+            // If the conversion failed, return the cached string
+            if(selection_notify->target == XCB_NONE)
+            {
+                free(event);
+                event = NULL;
+                break;
+            }
+
+            // Get the selection_notify property text
+            xcb_get_property_cookie_t property = xcb_icccm_get_text_property(m_connection, m_window, selection_notify->property);
+            xcb_icccm_get_text_property_reply_t property_reply;
+
+            // If we can successfully obtain the text data
+            if(xcb_icccm_get_text_property_reply(m_connection, property, &property_reply, 0))
+            {
+                // Update the cache
+                m_clipboardString = String(property_reply.name);
+            }
+
+            free(event);
+            event = NULL;
+            break;
+        }
+
+        // Key was pressed and one has been released prior to that.
+        if (eventType == XCB_KEY_PRESS && lastKeyReleaseEvent)
+        {
+            // If the key press event matches the held back key release event,
+            // then we have a key repeat and discard the held back release
+            // event.
+            if (lastKeyReleaseEvent->time == reinterpret_cast<xcb_key_press_event_t*>(event)->time &&
+                lastKeyReleaseEvent->detail == reinterpret_cast<xcb_key_press_event_t*>(event)->detail)
+            {
+                free(lastKeyReleaseEvent);
+                lastKeyReleaseEvent = NULL;
+            }
+        }
+
+        // If there's still a key release event held back, process it now.
+        if (lastKeyReleaseEvent)
+        {
+            processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
+            free(lastKeyReleaseEvent);
+            lastKeyReleaseEvent = NULL;
+        }
+
+        if (eventType == XCB_KEY_RELEASE)
+        {
+            // Remember this key release event.
+            lastKeyReleaseEvent = reinterpret_cast<xcb_key_release_event_t*>(event);
+            event = NULL; // For safety reasons.
+        }
+        else
+        {
+            processEvent(event);
+            free(event);
+        }
+    }
+
+    // Process any held back release event.
+    if (lastKeyReleaseEvent)
+    {
+        processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
+        free(lastKeyReleaseEvent);
+        lastKeyReleaseEvent = NULL;
+    }
+
+    // If no SelectionNotify event was received, send the cache
+    return m_clipboardString;
+}
+
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen(const VideoMode& mode)
@@ -648,6 +784,171 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
+    // Get the atoms for using the clipboard
+    static const std::string CLIPBOARD_NAME = "CLIPBOARD";
+    xcb_intern_atom_cookie_t clipboardAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        CLIPBOARD_NAME.size(),
+        CLIPBOARD_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* clipboardAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        clipboardAtomRequest,
+        NULL
+    );
+
+    static const std::string TEXT_NAME = "TEXT";
+    xcb_intern_atom_cookie_t textAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        TEXT_NAME.size(),
+        TEXT_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* textAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        textAtomRequest,
+        NULL
+    );
+
+    static const std::string UTF8_STRING_NAME = "UTF8_STRING";
+    xcb_intern_atom_cookie_t utf8stringAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        UTF8_STRING_NAME.size(),
+        UTF8_STRING_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* utf8stringAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        utf8stringAtomRequest,
+        NULL
+    );
+
+    static const std::string STRING_NAME = "STRING";
+    xcb_intern_atom_cookie_t stringAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        STRING_NAME.size(),
+        STRING_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* stringAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        stringAtomRequest,
+        NULL
+    );
+
+    static const std::string C_STRING_NAME = "C_STRING";
+    xcb_intern_atom_cookie_t cStringAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        C_STRING_NAME.size(),
+        C_STRING_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* cStringAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        cStringAtomRequest,
+        NULL
+    );
+
+    static const std::string COMPOUND_STRING_NAME = "COMPOUND_STRING";
+    xcb_intern_atom_cookie_t compoundStringAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        COMPOUND_STRING_NAME.size(),
+        COMPOUND_STRING_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* compoundStringAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        compoundStringAtomRequest,
+        NULL
+    );
+
+    static const std::string TARGETS_NAME = "TARGETS";
+    xcb_intern_atom_cookie_t targetsAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        TARGETS_NAME.size(),
+        TARGETS_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* targetsAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        targetsAtomRequest,
+        NULL
+    );
+
+    static const std::string MULTIPLE_NAME = "MULTIPLE";
+    xcb_intern_atom_cookie_t multipleAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        MULTIPLE_NAME.size(),
+        MULTIPLE_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* multipleAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        multipleAtomRequest,
+        NULL
+    );
+
+    static const std::string ATOM_PAIR_NAME = "ATOM_PAIR";
+    xcb_intern_atom_cookie_t atomPairAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        ATOM_PAIR_NAME.size(),
+        ATOM_PAIR_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* atomPairAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        atomPairAtomRequest,
+        NULL
+    );
+
+    static const std::string SAVE_TARGETS_NAME = "SAVE_TARGETS";
+    xcb_intern_atom_cookie_t saveTargetsAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        SAVE_TARGETS_NAME.size(),
+        SAVE_TARGETS_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* saveTargetsAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        saveTargetsAtomRequest,
+        NULL
+    );
+
+    static const std::string NULL_NAME = "NULL";
+    xcb_intern_atom_cookie_t nullAtomRequest = xcb_intern_atom(
+        m_connection,
+        0,
+        NULL_NAME.size(),
+        NULL_NAME.c_str()
+    );
+    xcb_intern_atom_reply_t* nullAtomReply = xcb_intern_atom_reply(
+        m_connection,
+        nullAtomRequest,
+        NULL
+    );
+
+    if (utf8stringAtomReply && clipboardAtomReply && textAtomReply && cStringAtomReply && stringAtomReply && targetsAtomReply 
+        && atomPairAtomReply && saveTargetsAtomReply && nullAtomReply)
+    {
+        m_atomClipboard = clipboardAtomReply->atom;
+        m_atomText = textAtomReply->atom;
+        m_atomUtf8String = utf8stringAtomReply->atom;
+        m_atomTargets = targetsAtomReply->atom;
+        m_atomCString = cStringAtomReply->atom;
+        m_atomString = stringAtomReply->atom;
+        m_atomMultiple = multipleAtomReply->atom;
+        m_atomCompundString = compoundStringAtomReply->atom;
+        m_atomAtomPair = atomPairAtomReply->atom;
+        m_atomSaveTargets = saveTargetsAtomReply->atom;
+        m_atomNULL = nullAtomReply->atom;
+    }
+    else
+    {
+        // Should not happen, but better safe than sorry.
+        std::cerr << "Failed to request UTF8_STRING/TEXT/CLIPBOARD/STRING/C_STRING/TARGETS/MULTIPLE atoms." << std::endl;
+    }
+
     // Get the atoms for registering the close event
     static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
 
@@ -1046,6 +1347,135 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 event.type = Event::MouseLeft;
                 pushEvent(event);
             }
+            break;
+        }
+
+        // Someone is requesting the contents of the clipboard
+        case XCB_SELECTION_REQUEST:
+        {
+            xcb_selection_request_event_t* request = reinterpret_cast<xcb_selection_request_event_t*>(windowEvent);
+
+            // If the requested selection isn't the one we own/use, break
+            if(request->selection != m_atomClipboard)
+                break;
+            
+            // Create the response event with all the right details
+            xcb_selection_notify_event_t* response = (xcb_selection_notify_event_t*)calloc(32, 1);
+            response->response_type = XCB_SELECTION_NOTIFY;
+            response->time = request->time;
+            response->selection = request->selection;
+            response->requestor = request->requestor;
+            response->target = request->target;
+            response->property = request->property;
+
+
+            // These are the targets we support
+            const xcb_atom_t targets[] = {
+                (xcb_atom_t)m_atomTargets,
+                (xcb_atom_t)m_atomMultiple,
+                (xcb_atom_t)m_atomUtf8String,
+                (xcb_atom_t)m_atomCompundString,
+                (xcb_atom_t)m_atomCString,
+                (xcb_atom_t)m_atomString,
+                XA_STRING
+            };
+
+            const int targetCount = sizeof(targets)/sizeof(targets[0]);
+
+            // The formats we support..
+            const xcb_atom_t formats[] = {
+                (xcb_atom_t)m_atomUtf8String,
+                (xcb_atom_t)m_atomCompundString,
+                (xcb_atom_t)m_atomCString,
+                (xcb_atom_t)m_atomString,
+                XA_STRING
+            };
+
+            const int formatCount = sizeof(formats)/sizeof(formats[0]);
+
+            bool handled=false;
+
+            if(request->property == XCB_NONE)
+            {
+                // We don't support legacy clients..
+            }
+            else if(request->property == m_atomTargets)
+            {
+                // The requestor is requesting the targets we can provide, so let's send those.
+                handled=true;
+                xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, request->requestor, request->property, XCB_ATOM, 32, targetCount, (unsigned char*)targets);
+            }
+            else if(request->property == m_atomMultiple)
+            {
+                // The requestor is requesting multiple formats
+                handled=true;
+                xcb_atom_t* requestedTargets;
+                unsigned long i, count;
+
+                // Get the list of formats requested
+                xcb_get_property_cookie_t prop = xcb_get_property(m_connection, false, request->requestor, request->property, m_atomAtomPair, 0, INT32_MAX);
+                xcb_get_property_reply_t* propReply = xcb_get_property_reply(m_connection, prop, NULL);
+                requestedTargets = reinterpret_cast<xcb_atom_t*>(xcb_get_property_value(propReply));
+
+                if(propReply->type != m_atomAtomPair)
+                    count = 0;
+                else
+                    count = propReply->value_len;
+
+                // Iterate through the pairs of targets
+                for(i = 0; i < count; i += 2)
+                {
+                    int j;
+
+                    // Look for a target we actually provide..
+                    for (j = 0; j < formatCount; ++j)
+                    {
+                        if(requestedTargets[i] == formats[j])
+                            break;
+                    }
+
+                    if(j < formatCount)
+                    {
+                        // Set the target to the contents of our clipboard.
+                        xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, request->requestor, requestedTargets[i+1], requestedTargets[i], 8, m_clipboardString.getSize(), m_clipboardString.toUtf8().data());
+                    }
+                    else
+                        requestedTargets[i+1] = 0;
+                }
+
+                // Tell the requestor which targets were modified
+                xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, request->requestor, request->property, m_atomAtomPair, 32, count, (unsigned char*)requestedTargets);
+
+                free(propReply);
+                free(requestedTargets);
+            }
+            else if(request->target == m_atomSaveTargets)
+            {
+                handled=true;
+                xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, request->requestor, request->property, m_atomNULL, 32, 0, NULL);
+            }
+            else
+            {
+                // The requestor asked for a regular conversion
+                int i;
+                for(i = 0; i < formatCount; ++i)
+                {
+                    // Check that the requested format is in our targets..
+                    if(request->target == formats[i])
+                    {
+                        xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, request->requestor, request->property, request->target, 8, m_clipboardString.getSize(), m_clipboardString.toAnsiString().data());
+                        handled=true;
+                        break;
+                    }
+                }
+            }
+
+            // In case we didn't handle the target, tell the requestor nothing was changed
+            if(!handled)
+                response->property = XCB_NONE;
+
+            // Finally send the event to the requestor saying that the selection has been sent
+            xcb_send_event(m_connection, false, request->requestor, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (char*)response);
             break;
         }
 

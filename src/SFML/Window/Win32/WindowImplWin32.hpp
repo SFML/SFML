@@ -167,7 +167,7 @@ public :
     /// \return Current contents of the clipboard
     ///
     ////////////////////////////////////////////////////////////
-    virtual String getClipboard() const;
+    virtual String getClipboard();
 
 protected:
 

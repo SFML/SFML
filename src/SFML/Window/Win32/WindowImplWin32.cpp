@@ -1015,7 +1015,7 @@ void WindowImplWin32::setClipboard(const String& clipboard)
 }
 
 ////////////////////////////////////////////////////////////
-String WindowImplWin32::getClipboard() const
+String WindowImplWin32::getClipboard()
 {
     if(!m_handle)
         return String();

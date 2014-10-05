@@ -154,6 +154,22 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the contents of the clipboard
+    ///
+    /// \param clipboard New clipboard content
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setClipboard(const String& clipboard);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the contents of the clipboard as a string
+    ///
+    /// \return Current contents of the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual String getClipboard();
+
 protected :
 
     ////////////////////////////////////////////////////////////
@@ -226,6 +242,18 @@ private :
     bool                    m_keyRepeat;           ///< Is the KeyRepeat feature enabled?
     Vector2i                m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool                    m_useSizeHints;        ///< Is the size of the window fixed with size hints?
+    Atom                    m_atomClipboard;       ///< Atom used to identify the CLIPBOARD selection
+    Atom                    m_atomText;            ///< Atom used to identify the TEXT target
+    Atom                    m_atomString;          ///< Atom used to identify the STRING property
+    Atom                    m_atomCString;         ///< Atom used to identify the C_STRING property
+    Atom                    m_atomCompundString;   ///< Atom used to identify the COMPOUND_STRING property
+    Atom                    m_atomUtf8String;      ///< Atom used to identify the UTF8_STRING property
+    Atom                    m_atomTargets;         ///< Atom used to identify the TARGETS target
+    Atom                    m_atomMultiple;        ///< Atom used to identify the MULTIPLE target
+    Atom                    m_atomAtomPair;        ///< Atom used to identify the ATOM_PAIR target
+    Atom                    m_atomSaveTargets;     ///< Atom used to identify the SAVE_TARGETS target
+    Atom                    m_atomNULL;            ///< Atom used to identify the NULL property
+    String                  m_clipboardString;     ///< Contents of the clipboard while we own it.
 };
 
 } // namespace priv
