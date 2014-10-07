@@ -197,10 +197,10 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Set the contents of the clipboard
     ///
-    /// \param clipboard New clipboard content
+    /// \param value New clipboard content
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setClipboard(const String& clipboard) = 0;
+    virtual void setClipboard(const String& value) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the contents of the clipboard as a string

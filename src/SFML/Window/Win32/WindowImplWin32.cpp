@@ -985,56 +985,78 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 }
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setClipboard(const String& clipboard)
+void WindowImplWin32::setClipboard(const String& value)
 {
-    if(!m_handle)
+    if (!m_handle)
         return;
 
-    if(!OpenClipboard(m_handle))
-        return;
-    EmptyClipboard();
-
-    HANDLE strh;
-    size_t wsize;
-
-    wsize = (clipboard.getSize()+1) * sizeof(WCHAR);
-
-    strh = GlobalAlloc(GMEM_MOVEABLE, wsize);
-
-    if(!strh)
+    // If we can't open the clipboard, exit
+    if (!OpenClipboard(m_handle))
     {
-        CloseClipboard();
+        std::cerr << "Failed to open the Win32 clipboard." << std::endl;
         return;
     }
 
-    memcpy(GlobalLock(strh), clipboard.toWideString().data(), wsize);
-    GlobalUnlock(strh);
+    // Let's be safe and empty the clipboard before setting it
+    EmptyClipboard();
 
-    SetClipboardData(CF_UNICODETEXT, strh);
+    // Create a Win32-compatible string
+    HANDLE string_handle;
+    size_t string_size = (clipboard.getSize()+1) * sizeof(WCHAR);
+    string_handle = GlobalAlloc(GMEM_MOVEABLE, string_size);
+
+    // Only proceed if we successfully created the string
+    if (string_handle)
+    {
+        // Copy value's contents into our Win32 string
+        memcpy(GlobalLock(string_handle), clipboard.toWideString().data(), string_size);
+        GlobalUnlock(string_handle);
+
+        // Set the format for the new clipboard data
+        // SetClipboardData takes care of cleaning up string_handle, so we don't have to.
+        SetClipboardData(CF_UNICODETEXT, string_handle);
+    }
+
+    // Exit
     CloseClipboard();
 }
 
 ////////////////////////////////////////////////////////////
 String WindowImplWin32::getClipboard()
 {
-    if(!m_handle)
+    if (!m_handle)
         return String();
 
-    if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
-        return String();
 
-    if(!OpenClipboard(m_handle))
-        return String();
-
-    HANDLE strh = GetClipboardData(CF_UNICODETEXT);
-    if(!strh)
+    // If we can't get the clipboard in unicode format, exit.
+    if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
     {
+        std::cerr << "Failed to get the clipboard data in Unicode format." << std::endl;
+        return String();
+    }
+
+    // If we can't open the clipboard, exit.
+    if (!OpenClipboard(m_handle))
+    {
+        std::cerr << "Failed to open the Win32 clipboard." << std::endl;
+        return String();
+    }
+
+    // Get the handle for the clipboard's contents
+    HANDLE clipboard_string_handle = GetClipboardData(CF_UNICODETEXT);
+    // If we failed, exit.
+    if (!clipboard_string_handle)
+    {
+        std::cerr << "Failed to get a handle for the clipboard's contents." << std::endl;
         CloseClipboard();
         return String();
     }
 
-    String clipboard(static_cast<wchar_t*>(GlobalLock(strh)));
-    GlobalUnlock(strh);
+    // Convert the Win32 string contents to something we can use.
+    String clipboard(static_cast<wchar_t*>(GlobalLock(clipboard_string_handle)));
+    GlobalUnlock(clipboard_string_handle);
+
+    // Clean up and return
     CloseClipboard();
     return clipboard;
 }

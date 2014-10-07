@@ -586,10 +586,10 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setClipboard(const String& clipboard)
+void WindowImplX11::setClipboard(const String& value)
 {
     // Set the internal clipboard string
-    m_clipboardString = clipboard;
+    m_clipboardString = value;
 
     // Get ownership of the CLIPBOARD selection
     xcb_set_selection_owner(m_connection, m_window, m_atomClipboard, XCB_CURRENT_TIME);
@@ -636,41 +636,32 @@ String WindowImplX11::getClipboard()
             xcb_selection_notify_event_t* selection_notify = reinterpret_cast<xcb_selection_notify_event_t*>(event);
 
             // Check that we're getting the right selection and format
-            if (selection_notify->selection != m_atomClipboard)
+            if (selection_notify->selection == m_atomClipboard && selection_notify->target == m_atomText)
             {
-                free(event);
-                event = NULL;
-                continue;
-            }
-            if (selection_notify->target != m_atomText)
-            {
-                free(event);
-                event = NULL;
-                continue;
-            }
 
-            // If the conversion failed, return the cached string
-            if(selection_notify->target == XCB_NONE)
-            {
-                free(event);
-                event = NULL;
-                break;
-            }
+                // If the conversion failed, return the cached string
+                if(selection_notify->target == XCB_NONE)
+                {
+                    free(event);
+                    event = NULL;
+                    break;
+                }
 
-            // Get the selection_notify property text
-            xcb_get_property_cookie_t property = xcb_icccm_get_text_property(m_connection, m_window, selection_notify->property);
-            xcb_icccm_get_text_property_reply_t property_reply;
+                // Get the selection_notify property text
+                xcb_get_property_cookie_t property = xcb_icccm_get_text_property(m_connection, m_window, selection_notify->property);
+                xcb_icccm_get_text_property_reply_t property_reply;
 
-            // If we can successfully obtain the text data
-            if(xcb_icccm_get_text_property_reply(m_connection, property, &property_reply, 0))
-            {
-                // Update the cache
-                m_clipboardString = String(property_reply.name);
+                // If we can successfully obtain the text data
+                if(xcb_icccm_get_text_property_reply(m_connection, property, &property_reply, 0))
+                {
+                    // Update the cache
+                    m_clipboardString = String(property_reply.name);
+                }
             }
 
             free(event);
             event = NULL;
-            break;
+            continue;
         }
 
         // Key was pressed and one has been released prior to that.
@@ -714,6 +705,13 @@ String WindowImplX11::getClipboard()
         processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
         free(lastKeyReleaseEvent);
         lastKeyReleaseEvent = NULL;
+    }
+
+    // Better safe than sorry
+    if (event)
+    {
+        free(event);
+        event = NULL;
     }
 
     // If no SelectionNotify event was received, send the cache

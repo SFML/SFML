@@ -50,10 +50,8 @@ int main()
         }
 
         // Update the text string with the clipboard's contents
-        text.setString(
-            "Current clipboard contents: \"" + window.getClipboard() + "\"\n" +
-            "Press the 'C' key to set the clipboard to \"SFMLSFMLSFML\"."
-        );
+        text.setString( "Current clipboard contents: \"" + window.getClipboard() + "\"\n" +
+                        "Press the 'C' key to set the clipboard to \"SFMLSFMLSFML\"." );
 
         // Clear the window of previously drawn content
         window.clear();
