@@ -232,7 +232,7 @@ else()
     # NOTE: it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1
-                          INSTALL_NAME_DIR "@executable_path/../Frameworks")
+                          INSTALL_NAME_DIR "@rpath")
 
     # install rule
     install(TARGETS SFML
