@@ -91,7 +91,7 @@ public:
     /// \brief Change the joystick threshold, ie. the value below which
     ///        no move event will be generated
     ///
-    /// \param threshold: New threshold, in range [0, 100]
+    /// \param threshold New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
     void setJoystickThreshold(float threshold);
@@ -227,7 +227,7 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void processJoystickEvents();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Read the sensors state and generate the appropriate events
     ///
