@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/InputStream.hpp>
+#include <SFML/System/Export.hpp>
 #include <fstream>
 
 
@@ -39,7 +40,7 @@ namespace sf
 /// \brief Implementation of input stream based on a file
 ///
 ////////////////////////////////////////////////////////////
-class FileInputStream : public InputStream
+class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public :
 

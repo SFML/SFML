@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/InputStream.hpp>
+#include <SFML/System/Export.hpp>
 #include <cstdlib>
 
 
@@ -39,7 +40,7 @@ namespace sf
 /// \brief Implementation of input stream based on a memory chunk
 ///
 ////////////////////////////////////////////////////////////
-class MemoryInputStream : public InputStream
+class SFML_SYSTEM_API MemoryInputStream : public InputStream
 {
 public :
 

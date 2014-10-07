@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
-#include <flac/stream_encoder.h>
+#include <FLAC/stream_encoder.h>
 #include <vector>
 
 

@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
-#include <flac/stream_decoder.h>
+#include <FLAC/stream_decoder.h>
 #include <string>
 #include <vector>
 
