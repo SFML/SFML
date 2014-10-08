@@ -145,6 +145,11 @@ subject to the following restrictions:
                         <string># This shell script simply copies required SFML dylibs/frameworks into the application bundle frameworks folder.
 # If you're using static libraries (which is not recommended) you should remove this script from your project.
 
+# SETTINGS
+CMAKE_INSTALL_FRAMEWORK_PREFIX="@CMAKE_INSTALL_FRAMEWORK_PREFIX@"
+CMAKE_INSTALL_LIB_PREFIX="@CMAKE_INSTALL_PREFIX@/lib"
+FRAMEWORKS_FULL_PATH="$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/"
+
 # Are we building a project that uses frameworks or dylibs?
 case "$SFML_BINARY_TYPE" in
     DYLIBS)
@@ -166,7 +171,7 @@ assert () # $1 is a boolean, $2...N is an error message
 {
     if [ $# -lt 2 ]
     then
-        error "Internal error in assert : not enough args"
+        error "Internal error in assert: not enough args"
     fi
 
     if [ $1 -ne 0 ]
@@ -194,7 +199,7 @@ copy () # $1 is a source, $2 is a destination
 
 require () # $1 is a SFML module like 'system' or 'audio'
 {
-    dest="$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/Frameworks"
+    dest="$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/"
 
     if [ -z "$1" ]
     then
@@ -207,14 +212,14 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # copy SFML libraries
         if [ "$frameworks" = "true" ]
         then
-            source="/Library/Frameworks/sfml-$1.framework"
+            source="$CMAKE_INSTALL_FRAMEWORK_PREFIX/sfml-$1.framework"
             target="sfml-$1.framework"
         elif [ "$SFML_LINK_DYLIBS_SUFFIX" = "-d" ]
         then
-            source="/usr/local/lib/libsfml-$1-d.dylib"
+            source="$CMAKE_INSTALL_LIB_PREFIX/libsfml-$1-d.dylib"
             target="`readlink $source`"
         else
-            source="/usr/local/lib/libsfml-$1.dylib"
+            source="$CMAKE_INSTALL_LIB_PREFIX/libsfml-$1.dylib"
             target="`readlink $source`"
         fi
 
@@ -223,12 +228,15 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # copy extra dependencies
         if [ "$1" = "audio" ]
         then
-            # copy sndfile framework too
-            copy "/Library/Frameworks/sndfile.framework" "$dest/sndfile.framework"
+            # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" frameworks too
+            for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile"
+            do
+                copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/$f.framework" "$dest/$f.framework"
+            done
         elif [ "$1" = "graphics" ]
         then
             # copy freetype framework too
-            copy "/Library/Frameworks/freetype.framework" "$dest/freetype.framework"
+            copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/freetype.framework" "$dest/freetype.framework"
         fi
     fi
 }

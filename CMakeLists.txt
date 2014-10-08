@@ -330,13 +330,17 @@ elseif(SFML_OS_MACOSX)
 
     # install the Xcode templates if requested
     if(SFML_INSTALL_XCODE_TEMPLATES)
-        configure_file(
-                    "tools/xcode/templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist.in"
-                    "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist"
-                    @ONLY)
+        # configure the templates plist files
+        foreach(TEMPLATE "SFML Compiler" "SFML App")
+            configure_file(
+                        "tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist.in"
+                        "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist"
+                        @ONLY)
+        endforeach()
         install(DIRECTORY "tools/xcode/templates/SFML" "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML"
                 DESTINATION /Library/Developer/Xcode/Templates
-                PATTERN "*.in" EXCLUDE)
+                PATTERN "*.in" EXCLUDE
+                PATTERN ".DS_Store" EXCLUDE)
     endif()
 
 elseif(SFML_OS_IOS)
