@@ -127,6 +127,9 @@ subject to the following restrictions:
                 <dict>
                     <key>INFOPLIST_FILE</key>
                     <string>___PACKAGENAME___/___PACKAGENAME___-Info.plist</string>
+
+                    <key>LD_RUNPATH_SEARCH_PATHS</key>
+                    <string>@loader_path/../Frameworks</string>
                 </dict>
             </dict>
         </array>

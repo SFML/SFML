@@ -84,7 +84,7 @@ macro(sfml_add_library target)
         # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
         set_target_properties(${target} PROPERTIES
                               BUILD_WITH_INSTALL_RPATH 1
-                              INSTALL_NAME_DIR "@executable_path/../Frameworks")
+                              INSTALL_NAME_DIR "@rpath")
     endif()
 
     # enable automatic reference counting on iOS
