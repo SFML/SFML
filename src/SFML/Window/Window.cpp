@@ -337,6 +337,22 @@ bool Window::setActive(bool active) const
 
 
 ////////////////////////////////////////////////////////////
+void Window::requestFocus()
+{
+    if (m_impl)
+        m_impl->requestFocus();
+}
+
+
+////////////////////////////////////////////////////////////
+bool Window::hasFocus() const
+{
+    return m_impl && m_impl->hasFocus();
+}
+
+
+////////////////////////////////////////////////////////////
+
 void Window::display()
 {
     // Display the backbuffer on screen

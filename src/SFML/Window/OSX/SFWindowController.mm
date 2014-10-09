@@ -452,6 +452,23 @@
 
 
 ////////////////////////////////////////////////////////
+-(void)requestFocus
+{
+    [m_window makeKeyAndOrderFront:nil];
+
+    // In case the app is not active, make its dock icon bounce for one sec
+    [NSApp requestUserAttention:NSInformationalRequest];
+}
+
+
+////////////////////////////////////////////////////////////
+-(BOOL)hasFocus
+{
+    return [NSApp keyWindow] == m_window;
+}
+
+
+////////////////////////////////////////////////////////
 -(void)enableKeyRepeat
 {
     [m_oglView enableKeyRepeat];

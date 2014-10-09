@@ -40,6 +40,7 @@
 #include <vector>
 #include <string>
 #include <iterator>
+#include <algorithm>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -54,10 +55,11 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    sf::priv::WindowImplX11* fullscreenWindow = NULL;
-    unsigned long            eventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
-                                                PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                                                EnterWindowMask | LeaveWindowMask;
+    sf::priv::WindowImplX11*              fullscreenWindow = NULL;
+    std::vector<sf::priv::WindowImplX11*> allWindows;
+    unsigned long                         eventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
+                                                             PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
+                                                             EnterWindowMask | LeaveWindowMask;
 
     // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
@@ -192,7 +194,7 @@ m_useSizeHints(false)
         {
             static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
             static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
-    
+
             //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
             static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
             static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
@@ -207,7 +209,7 @@ m_useSizeHints(false)
             static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
             static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
             static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-    
+
             struct WMHints
             {
                 unsigned long flags;
@@ -216,7 +218,7 @@ m_useSizeHints(false)
                 long          inputMode;
                 unsigned long state;
             };
-    
+
             WMHints hints;
             hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.decorations = 0;
@@ -250,11 +252,11 @@ m_useSizeHints(false)
             sizeHints->flags = PMinSize | PMaxSize;
             sizeHints->min_width = sizeHints->max_width = width;
             sizeHints->min_height = sizeHints->max_height = height;
-            XSetWMNormalHints(m_display, m_window, sizeHints); 
+            XSetWMNormalHints(m_display, m_window, sizeHints);
             XFree(sizeHints);
         }
     }
- 
+
     // Set the window's WM class (this can be used by window managers)
     char windowClass[512];
     findExecutableName(windowClass, sizeof(windowClass));
@@ -303,6 +305,9 @@ WindowImplX11::~WindowImplX11()
 
     // Close the connection with the X server
     CloseDisplay(m_display);
+
+    // Remove this window from the global list of windows (required for focus request)
+    allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
 }
 
 
@@ -365,7 +370,7 @@ void WindowImplX11::setSize(const Vector2u& size)
         sizeHints->flags = PMinSize | PMaxSize;
         sizeHints->min_width = sizeHints->max_width = size.x;
         sizeHints->min_height = sizeHints->max_height = size.y;
-        XSetWMNormalHints(m_display, m_window, sizeHints); 
+        XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
     }
 
@@ -379,17 +384,17 @@ void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
     // There is however an option to tell the window manager your unicode title via hints.
-    
+
     // Convert to UTF-8 encoding.
     std::basic_string<Uint8> utf8Title;
     Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
-    
+
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = XInternAtom(m_display, "_NET_WM_NAME", False);
     Atom useUtf8 = XInternAtom(m_display, "UTF8_STRING", False);
     XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
                     PropModeReplace, utf8Title.c_str(), utf8Title.size());
-    
+
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     XStoreName(m_display, m_window, title.toAnsiString().c_str());
 }
@@ -437,7 +442,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                 if (i * 8 + k < width)
                 {
                     Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= (opacity << k);                    
+                    maskPixels[i + j * pitch] |= (opacity << k);
                 }
             }
         }
@@ -480,6 +485,67 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
 void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 {
     m_keyRepeat = enabled;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::requestFocus()
+{
+    // Focus is only stolen among SFML windows, not between applications
+    // Check the global list of windows to find out whether an SFML window has the focus
+    // Note: can't handle console and other non-SFML windows belonging to the application.
+    bool sfmlWindowFocused = false;
+    for (std::vector<WindowImplX11*>::iterator itr = allWindows.begin(); itr != allWindows.end(); ++itr)
+    {
+        if ((*itr)->hasFocus())
+        {
+            sfmlWindowFocused = true;
+            break;
+        }
+    }
+    
+    // Check if window is viewable (not on other desktop, ...)
+    // TODO: Check also if minimized
+    XWindowAttributes attributes;
+    if (XGetWindowAttributes(m_display, m_window, &attributes) == 0)
+    {
+        sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
+        return; // error getting attribute
+    }
+
+    bool windowViewable = (attributes.map_state == IsViewable);
+    
+    if (sfmlWindowFocused && windowViewable)
+    {
+        // Another SFML window of this application has the focus and the current window is viewable:
+        // steal focus (i.e. bring window to the front and give it input focus)
+        XRaiseWindow(m_display, m_window);
+        XSetInputFocus(m_display, m_window, RevertToPointerRoot, CurrentTime);
+    }
+    else
+    {
+        // Otherwise: display urgency hint (flashing application logo)
+        // Ensure WM hints exist, allocate if necessary
+        XWMHints* hints = XGetWMHints(m_display, m_window);
+        if (hints == NULL)
+            hints = XAllocWMHints();
+        
+        // Add urgency (notification) flag to hints
+        hints->flags |= XUrgencyHint;
+        XSetWMHints(m_display, m_window, hints);
+        XFree(hints);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplX11::hasFocus() const
+{
+    ::Window focusedWindow = 0;
+    int revertToReturn = 0;
+    XGetInputFocus(m_display, &focusedWindow, &revertToReturn);
+
+    return m_window == focusedWindow;
 }
 
 
@@ -568,6 +634,9 @@ void WindowImplX11::initialize()
 
     // Flush the commands queue
     XFlush(m_display);
+    
+    // Add this window to the global list of windows (required for focus request)
+    allWindows.push_back(this);
 }
 
 
@@ -599,7 +668,7 @@ void WindowImplX11::cleanup()
     {
         // Get current screen info
         XRRScreenConfiguration* config = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-        if (config) 
+        if (config)
         {
             // Get the current rotation
             Rotation currentRotation;
@@ -610,7 +679,7 @@ void WindowImplX11::cleanup()
 
             // Free the configuration instance
             XRRFreeScreenConfigInfo(config);
-        } 
+        }
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;
@@ -680,6 +749,16 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
+
+            // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
+            XWMHints* hints = XGetWMHints(m_display, m_window);
+            if (hints != NULL)
+            {
+                // Remove urgency (notification) flag from hints
+                hints->flags &= ~XUrgencyHint;
+                XSetWMHints(m_display, m_window, hints);
+                XFree(hints);
+            }
             break;
         }
 
@@ -717,7 +796,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Close event
         case ClientMessage:
         {
-            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))  
+            if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(m_atomClose))
             {
                 Event event;
                 event.type = Event::Closed;
@@ -823,7 +902,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                     case Button2: event.mouseButton.button = Mouse::Middle;   break;
                     case Button3: event.mouseButton.button = Mouse::Right;    break;
                     case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;            
+                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -846,7 +925,7 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                     case Button2: event.mouseButton.button = Mouse::Middle;   break;
                     case Button3: event.mouseButton.button = Mouse::Right;    break;
                     case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;            
+                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }

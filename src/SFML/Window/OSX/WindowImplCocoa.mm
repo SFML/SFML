@@ -552,6 +552,20 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 }
 
 
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::requestFocus()
+{
+    [m_delegate requestFocus];
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplCocoa::hasFocus() const
+{
+    return [m_delegate hasFocus];
+}
+
+
 } // namespace priv
 
 } // namespace sf

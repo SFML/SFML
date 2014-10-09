@@ -367,6 +367,40 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::requestFocus()
+{
+    // Allow focus stealing only within the same process; compare PIDs of current and foreground window
+    DWORD thisPid       = GetWindowThreadProcessId(m_handle, NULL);
+    DWORD foregroundPid = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+     
+    if (thisPid == foregroundPid)
+    {
+        // The window requesting focus belongs to the same process as the current window: steal focus
+        SetForegroundWindow(m_handle);
+    }
+    else
+    {
+        // Different process: don't steal focus, but create a taskbar notification ("flash")
+        FLASHWINFO info;
+        info.cbSize    = sizeof(info);
+        info.hwnd      = m_handle;
+        info.dwFlags   = FLASHW_TRAY;
+        info.dwTimeout = 0;
+        info.uCount    = 3;
+
+        FlashWindowEx(&info);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplWin32::hasFocus() const
+{
+    return m_handle == GetForegroundWindow();
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
