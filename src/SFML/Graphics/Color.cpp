@@ -68,6 +68,17 @@ a(alpha)
 
 
 ////////////////////////////////////////////////////////////
+Color::Color(Uint32 color) :
+r((color & 0xff000000) >> 24),
+g((color & 0x00ff0000) >> 16),
+b((color & 0x0000ff00) >> 8 ),
+a((color & 0x000000ff) >> 0 )
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
 bool operator ==(const Color& left, const Color& right)
 {
     return (left.r == right.r) &&

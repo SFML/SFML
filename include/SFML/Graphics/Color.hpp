@@ -62,6 +62,14 @@ public:
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the color from 32 bit unsigned integer
+    ///
+    /// \param color Number containing the RGBA components (in that order)
+    ///
+    ////////////////////////////////////////////////////////////
+    Color(Uint32 color);
+
+    ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const Color Black;       ///< Black predefined color
