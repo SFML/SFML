@@ -69,11 +69,9 @@ void Transformable::setPosition(const Vector2f& position)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setRotation(float angle)
+void Transformable::setRotation(Angle angle)
 {
-    m_rotation = static_cast<float>(fmod(angle, 360));
-    if (m_rotation < 0)
-        m_rotation += 360.f;
+    m_rotation = angle;
 
     m_transformNeedUpdate = true;
     m_inverseTransformNeedUpdate = true;
@@ -122,7 +120,7 @@ const Vector2f& Transformable::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-float Transformable::getRotation() const
+Angle Transformable::getRotation() const
 {
     return m_rotation;
 }
@@ -157,7 +155,7 @@ void Transformable::move(const Vector2f& offset)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::rotate(float angle)
+void Transformable::rotate(Angle angle)
 {
     setRotation(m_rotation + angle);
 }
@@ -183,9 +181,8 @@ const Transform& Transformable::getTransform() const
     // Recompute the combined transform if needed
     if (m_transformNeedUpdate)
     {
-        float angle  = -m_rotation * 3.141592654f / 180.f;
-        float cosine = static_cast<float>(std::cos(angle));
-        float sine   = static_cast<float>(std::sin(angle));
+        float cosine = static_cast<float>(std::cos(-m_rotation.asRadians()));
+        float sine   = static_cast<float>(std::sin(-m_rotation.asRadians()));
         float sxc    = m_scale.x * cosine;
         float syc    = m_scale.y * cosine;
         float sxs    = m_scale.x * sine;
