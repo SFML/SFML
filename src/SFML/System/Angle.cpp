@@ -48,6 +48,13 @@ m_radians(0)
 
 
 ////////////////////////////////////////////////////////////
+Angle::operator float() const
+{
+    return m_radians * 180 / ::pi;
+}
+
+
+////////////////////////////////////////////////////////////
 float Angle::asDegrees() const
 {
     return m_radians * 180 / ::pi;

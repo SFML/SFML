@@ -60,6 +60,16 @@ public:
     Angle(float angle);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Implicit conversion to a float number representing
+    /// the angle in degrees to provide backward compatibility.
+    /// You should use toDegrees() instead.
+    ///
+    /// \return Angle in degrees
+    ///
+    ////////////////////////////////////////////////////////////
+    operator float () const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the angle's value in degrees
     ///
     /// \return Angle in degrees
