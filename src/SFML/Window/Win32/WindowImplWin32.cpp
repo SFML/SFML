@@ -33,6 +33,7 @@
 #endif
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
+#define WINVER         0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <GL/gl.h>
