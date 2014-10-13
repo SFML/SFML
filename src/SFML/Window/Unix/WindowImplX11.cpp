@@ -428,9 +428,12 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    xcb_get_geometry_reply_t* reply = xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
-    Vector2i result(reply->x, reply->y);
-    free(reply);
+    ::Window rootWindow = RootWindow(m_display, m_screen);
+    xcb_translate_coordinates_cookie_t translateCookie = xcb_translate_coordinates(m_connection, m_window, rootWindow, 0, 0);
+    xcb_translate_coordinates_reply_t* translateReply = xcb_translate_coordinates_reply(m_connection, translateCookie, NULL);
+
+    Vector2i result(translateReply->dst_x, translateReply->dst_y);
+    free(translateReply);
 
     return result;
 }
