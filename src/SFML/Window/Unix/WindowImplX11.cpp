@@ -498,7 +498,7 @@ void WindowImplX11::setTitle(const String& title)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    // X11 wants BGRA pixels : swap red and blue channels
+    // X11 wants BGRA pixels: swap red and blue channels
     Uint8 iconPixels[width * height * 4];
     for (std::size_t i = 0; i < width * height; ++i)
     {
