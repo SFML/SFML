@@ -288,6 +288,8 @@ m_useSizeHints(false)
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
             xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
                                     hintsAtomReply->atom, XA_WM_HINTS, 32, 5, ptr);
+
+            free(hintsAtomReply);
         }
 
         // This is a hack to force some windows managers to disable resizing
@@ -429,11 +431,26 @@ void WindowImplX11::processEvents()
 Vector2i WindowImplX11::getPosition() const
 {
     ::Window rootWindow = RootWindow(m_display, m_screen);
-    xcb_translate_coordinates_cookie_t translateCookie = xcb_translate_coordinates(m_connection, m_window, rootWindow, 0, 0);
-    xcb_translate_coordinates_reply_t* translateReply = xcb_translate_coordinates_reply(m_connection, translateCookie, NULL);
+    ::Window topLevelWindow = m_window;
+    ::Window nextWindow = topLevelWindow;
+    xcb_query_tree_cookie_t treeCookie;
+    xcb_query_tree_reply_t* treeReply = NULL;
 
-    Vector2i result(translateReply->dst_x, translateReply->dst_y);
-    free(translateReply);
+    // Get "top level" window, i.e. the window with the root window as its parent.
+    while (nextWindow != rootWindow)
+    {
+        topLevelWindow = nextWindow;
+
+        treeCookie = xcb_query_tree(m_connection, topLevelWindow);
+        treeReply = xcb_query_tree_reply(m_connection, treeCookie, NULL);
+        nextWindow = treeReply->parent;
+        free(treeReply);
+    }
+
+    xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(m_connection, topLevelWindow);
+    xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(m_connection, geometryCookie, NULL);
+    sf::Vector2i result(geometryReply->x, geometryReply->y);
+    free(geometryReply);
 
     return result;
 }
@@ -763,6 +780,9 @@ void WindowImplX11::initialize()
         // Should not happen, but better safe than sorry.
         std::cerr << "Failed to request WM_PROTOCOLS/WM_DELETE_WINDOW_NAME atoms." << std::endl;
     }
+
+    free(protocolsAtomReply);
+    free(deleteWindowAtomReply);
 
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
