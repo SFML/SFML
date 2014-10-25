@@ -31,7 +31,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDDevice.h>
@@ -48,8 +47,8 @@ typedef std::vector<IOHIDElementRef> IOHIDElements;
 ////////////////////////////////////////////////////////////
 /// \brief sf::priv::InputImpl helper
 ///
-/// This class manage as a singleton instance the keyboard and mouse states.
-/// It's only purpose is to help sf::priv::InputImpl class.
+/// This class manage as a singleton instance the keyboard state.
+/// Its purpose is to help sf::priv::InputImpl class.
 ///
 ////////////////////////////////////////////////////////////
 class HIDInputManager : NonCopyable
@@ -75,16 +74,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool isKeyPressed(Keyboard::Key key);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a mouse button is pressed
-    ///
-    /// \param button Button to check
-    ///
-    /// \return True if the button is pressed, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    bool isMouseButtonPressed(Mouse::Button button);
 
 public:
 
@@ -153,14 +142,6 @@ private:
     void initializeKeyboard();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize the mouse part of this class
-    ///
-    /// If something went wrong freeUp is called
-    ///
-    ////////////////////////////////////////////////////////////
-    void initializeMouse();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load the given keyboard into m_keys
     ///
     /// If the given keyboard has no key this function simply
@@ -172,17 +153,6 @@ private:
     void loadKeyboard(IOHIDDeviceRef keyboard);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the given mouse into m_buttons
-    ///
-    /// If the given mouse has no button this function simply
-    /// returns. freeUp is _not_ called because this is not fatal.
-    ///
-    /// \param mouse Mouse to load
-    ///
-    ////////////////////////////////////////////////////////////
-    void loadMouse(IOHIDDeviceRef mouse);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load the given key into m_keys
     ///
     /// freeUp is _not_ called by this function.
@@ -191,16 +161,6 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void loadKey(IOHIDElementRef key);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Load the given button into m_buttons
-    ///
-    /// freeUp is _not_ called by this function.
-    ///
-    /// \param button Button to load
-    ///
-    ////////////////////////////////////////////////////////////
-    void loadButton(IOHIDElementRef button);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
@@ -224,11 +184,11 @@ private:
     CFSetRef copyDevices(UInt32 page, UInt32 usage);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a key / mouse button is pressed
+    /// \brief Check if a key is pressed
     ///
-    /// \param elements HID elements mapping to this key / mouse button
+    /// \param elements HID elements mapping to this key
     ///
-    /// \return True if the key / button is pressed, false otherwise
+    /// \return True if the key is pressed, false otherwise
     ///
     /// \see isKeyPressed, isMouseButtonPressed
     ///
@@ -258,7 +218,6 @@ private:
     IOHIDManagerRef   m_manager;                    ///< HID Manager
 
     IOHIDElements     m_keys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
-    IOHIDElements     m_buttons[Mouse::ButtonCount];///< All the buttons on any connected mouse
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Key enum.
@@ -266,8 +225,6 @@ private:
     /// if there are several keyboards connected and several HID keys associate
     /// with the same sf::Keyboard::Key then m_keys[XYZ] contains all these
     /// HID keys.
-    ///
-    /// m_buttons works the same way.
     ///
     ////////////////////////////////////////////////////////////
 };
