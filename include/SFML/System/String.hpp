@@ -159,7 +159,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new sf::String from a UTF-8 encoded string
     ///
-    /// \param begin Forward iterator to the begining of the UTF-8 sequence
+    /// \param begin Forward iterator to the beginning of the UTF-8 sequence
     /// \param end   Forward iterator to the end of the UTF-8 sequence
     ///
     /// \return A sf::String containing the source string
@@ -173,7 +173,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new sf::String from a UTF-16 encoded string
     ///
-    /// \param begin Forward iterator to the begining of the UTF-16 sequence
+    /// \param begin Forward iterator to the beginning of the UTF-16 sequence
     /// \param end   Forward iterator to the end of the UTF-16 sequence
     ///
     /// \return A sf::String containing the source string
@@ -191,7 +191,7 @@ public:
     /// using the constructors that takes a const sf::Uint32* or
     /// a std::basic_string<sf::Uint32>.
     ///
-    /// \param begin Forward iterator to the begining of the UTF-32 sequence
+    /// \param begin Forward iterator to the beginning of the UTF-32 sequence
     /// \param end   Forward iterator to the end of the UTF-32 sequence
     ///
     /// \return A sf::String containing the source string
@@ -203,10 +203,10 @@ public:
     static String fromUtf32(T begin, T end);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Implicit cast operator to std::string (ANSI string)
+    /// \brief Implicit conversion operator to std::string (ANSI string)
     ///
     /// The current global locale is used for conversion. If you
-    /// want to explicitely specify a locale, see toAnsiString.
+    /// want to explicitly specify a locale, see toAnsiString.
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     /// This operator is defined for convenience, and is equivalent
@@ -220,7 +220,7 @@ public:
     operator std::string() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Implicit cast operator to std::wstring (wide string)
+    /// \brief Implicit conversion operator to std::wstring (wide string)
     ///
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
@@ -401,7 +401,7 @@ public:
     /// \brief Find a sequence of one or more characters in the string
     ///
     /// This function searches for the characters of \a str
-    /// into the string, starting from \a start.
+    /// in the string, starting from \a start.
     ///
     /// \param str   Characters to find
     /// \param start Where to begin searching
@@ -488,7 +488,7 @@ public:
     ConstIterator begin() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return an iterator to the beginning of the string
+    /// \brief Return an iterator to the end of the string
     ///
     /// The end iterator refers to 1 position past the last character;
     /// thus it represents an invalid character and should never be
@@ -502,7 +502,7 @@ public:
     Iterator end();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return an iterator to the beginning of the string
+    /// \brief Return an iterator to the end of the string
     ///
     /// The end iterator refers to 1 position past the last character;
     /// thus it represents an invalid character and should never be
@@ -557,7 +557,7 @@ SFML_SYSTEM_API bool operator !=(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically lesser than \a right
+/// \return True if \a left is alphabetically less than \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator <(const String& left, const String& right);
@@ -581,7 +581,7 @@ SFML_SYSTEM_API bool operator >(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically lesser or equal than \a right
+/// \return True if \a left is alphabetically less or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
