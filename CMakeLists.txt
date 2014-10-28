@@ -304,12 +304,28 @@ if(SFML_OS_WINDOWS)
 elseif(SFML_OS_MACOSX)
 
     # install extlibs dependencies only when used
-    if("${SNDFILE_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/sndfile.framework")
-        install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    if("${FLAC_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
     endif()
 
     if("${FREETYPE_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
         install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${OGG_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBIS_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBISENC_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBISFILE_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
     endif()
 
     # install the Xcode templates if requested
