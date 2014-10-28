@@ -87,7 +87,7 @@ namespace priv
 bool SoundFileReaderWav::check(InputStream& stream)
 {
     char header[mainChunkSize];
-    if (stream.read(header, sizeof(header)) < sizeof(header))
+    if (stream.read(header, sizeof(header)) < static_cast<Int64>(sizeof(header)))
         return false;
 
     return (header[0] == 'R') && (header[1] == 'I') && (header[2] == 'F') && (header[3] == 'F')

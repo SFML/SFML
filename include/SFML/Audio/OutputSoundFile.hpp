@@ -77,7 +77,7 @@ public :
     /// \brief Write audio samples to the file
     ///
     /// \param samples     Pointer to the sample array to write
-    /// \param sampleCount Number of samples to write
+    /// \param count       Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
     void write(const Int16* samples, Uint64 count);

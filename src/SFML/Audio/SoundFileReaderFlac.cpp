@@ -33,7 +33,7 @@
 
 namespace
 {
-    FLAC__StreamDecoderReadStatus read(const FLAC__StreamDecoder*, FLAC__byte buffer[], std::size_t* bytes, void* clientData)
+    FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte buffer[], std::size_t* bytes, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -53,7 +53,7 @@ namespace
         }
     }
 
-    FLAC__StreamDecoderSeekStatus seek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
+    FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -64,7 +64,7 @@ namespace
             return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
     }
 
-    FLAC__StreamDecoderTellStatus tell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
+    FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -80,7 +80,7 @@ namespace
         }
     }
 
-    FLAC__StreamDecoderLengthStatus length(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
+    FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -96,14 +96,14 @@ namespace
         }
     }
 
-    FLAC__bool eof(const FLAC__StreamDecoder*, void* clientData)
+    FLAC__bool streamEof(const FLAC__StreamDecoder*, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
         return data->stream->tell() == data->stream->getSize();
     }
 
-    FLAC__StreamDecoderWriteStatus write(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
+    FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -159,7 +159,7 @@ namespace
         return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
     }
 
-    void metadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
+    void streamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
@@ -171,7 +171,7 @@ namespace
         }
     }
 
-    void error(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus status, void* clientData)
+    void streamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, void* clientData)
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
         data->error = true;
@@ -194,7 +194,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
     ClientData data;
     data.stream = &stream;
     data.error = false;
-    FLAC__stream_decoder_init_stream(decoder, &::read, &::seek, &::tell, &::length, &::eof, &::write, NULL, &::error, &data);
+    FLAC__stream_decoder_init_stream(decoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, NULL, &streamError, &data);
 
     // Read the header
     bool valid = FLAC__stream_decoder_process_until_end_of_metadata(decoder) != 0;
@@ -234,7 +234,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
 
     // Initialize the decoder with our callbacks
     m_clientData.stream = &stream;
-    FLAC__stream_decoder_init_stream(m_decoder, &::read, &::seek, &::tell, &::length, &::eof, &::write, &::metadata, &::error, &m_clientData);
+    FLAC__stream_decoder_init_stream(m_decoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, &streamMetadata, &streamError, &m_clientData);
 
     // Read the header
     if (!FLAC__stream_decoder_process_until_end_of_metadata(m_decoder))
