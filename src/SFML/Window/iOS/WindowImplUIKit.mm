@@ -41,6 +41,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
 {
+    // Not implemented
 }
 
 
@@ -62,6 +63,7 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     // Create the window
     CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
     m_window = [[UIWindow alloc] initWithFrame:frame];
+    m_hasFocus = true;
 
     // Assign it to the application delegate
     [SFAppDelegate getInstance].sfWindow = this;
@@ -173,18 +175,29 @@ void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::requestFocus()
 {
-    // Not applicable
+    // To implement
 }
 
 
 ////////////////////////////////////////////////////////////
 bool WindowImplUIKit::hasFocus() const
 {
-    // Not applicable
-    return false;
+    return m_hasFocus;
 }
 
-    
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::forwardEvent(Event event)
+{
+    if (event.type == Event::GainedFocus)
+        m_hasFocus = true;
+    else if (event.type == Event::LostFocus)
+        m_hasFocus = false;
+
+    pushEvent(event);
+}
+
+
 ////////////////////////////////////////////////////////////
 SFView* WindowImplUIKit::getGlView() const
 {
