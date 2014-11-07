@@ -103,7 +103,7 @@ namespace
     {
         sf::Event event;
         event.type = sf::Event::LostFocus;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -127,7 +127,7 @@ namespace
     {
         sf::Event event;
         event.type = sf::Event::GainedFocus;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -147,7 +147,7 @@ namespace
     {
         sf::Event event;
         event.type = sf::Event::Closed;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -176,7 +176,7 @@ namespace
             event.type = sf::Event::Resized;
             event.size.width = size.x;
             event.size.height = size.y;
-            sfWindow->pushEvent(event);
+            sfWindow->forwardEvent(event);
         }
     }
 }
@@ -215,7 +215,7 @@ namespace
         event.touch.finger = index;
         event.touch.x = position.x;
         event.touch.y = position.y;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -236,7 +236,7 @@ namespace
         event.touch.finger = index;
         event.touch.x = position.x;
         event.touch.y = position.y;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -256,7 +256,7 @@ namespace
         event.touch.finger = index;
         event.touch.x = position.x;
         event.touch.y = position.y;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
@@ -269,7 +269,7 @@ namespace
         sf::Event event;
         event.type = sf::Event::TextEntered;
         event.text.unicode = character;
-        sfWindow->pushEvent(event);
+        sfWindow->forwardEvent(event);
     }
 }
 
