@@ -40,7 +40,7 @@ m_primitiveType(Points)
 
 
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray(PrimitiveType type, unsigned int vertexCount) :
+VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) :
 m_vertices     (vertexCount),
 m_primitiveType(type)
 {
@@ -48,21 +48,21 @@ m_primitiveType(type)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int VertexArray::getVertexCount() const
+std::size_t VertexArray::getVertexCount() const
 {
-    return static_cast<unsigned int>(m_vertices.size());
+    return m_vertices.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vertex& VertexArray::operator [](unsigned int index)
+Vertex& VertexArray::operator [](std::size_t index)
 {
     return m_vertices[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vertex& VertexArray::operator [](unsigned int index) const
+const Vertex& VertexArray::operator [](std::size_t index) const
 {
     return m_vertices[index];
 }
@@ -76,7 +76,7 @@ void VertexArray::clear()
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::resize(unsigned int vertexCount)
+void VertexArray::resize(std::size_t vertexCount)
 {
     m_vertices.resize(vertexCount);
 }
@@ -144,7 +144,7 @@ FloatRect VertexArray::getBounds() const
 void VertexArray::draw(RenderTarget& target, RenderStates states) const
 {
     if (!m_vertices.empty())
-        target.draw(&m_vertices[0], static_cast<unsigned int>(m_vertices.size()), m_primitiveType, states);
+        target.draw(&m_vertices[0], m_vertices.size(), m_primitiveType, states);
 }
 
 } // namespace sf

@@ -77,7 +77,7 @@ public:
     ///         shapes, this number is always 4.
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int getPointCount() const;
+    virtual std::size_t getPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the rectangle
@@ -92,7 +92,7 @@ public:
     /// \return index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(unsigned int index) const;
+    virtual Vector2f getPoint(std::size_t index) const;
 
 private:
 

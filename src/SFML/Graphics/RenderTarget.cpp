@@ -190,7 +190,7 @@ void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
+void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
                         PrimitiveType type, const RenderStates& states)
 {
     // Nothing to draw?
@@ -218,7 +218,7 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
         if (useVertexCache)
         {
             // Pre-transform the vertices and store them into the vertex cache
-            for (unsigned int i = 0; i < vertexCount; ++i)
+            for (std::size_t i = 0; i < vertexCount; ++i)
             {
                 Vertex& vertex = m_cache.vertexCache[i];
                 vertex.position = states.transform * vertices[i].position;
