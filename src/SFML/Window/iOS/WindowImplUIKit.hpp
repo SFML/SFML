@@ -57,7 +57,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     WindowImplUIKit(WindowHandle handle);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the window implementation
     ///
@@ -68,7 +68,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     WindowImplUIKit(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -82,7 +82,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual WindowHandle getSystemHandle() const;
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
     ///
@@ -216,9 +216,9 @@ private:
     SFViewController* m_viewController; ///< Controller attached to the view
     bool              m_hasFocus;       ///< Current focus state of the window
 };
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 

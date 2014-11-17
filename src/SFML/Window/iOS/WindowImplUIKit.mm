@@ -47,7 +47,7 @@ WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(VideoMode mode,
-                                 const String& title, 
+                                 const String& title,
                                  unsigned long style,
                                  const ContextSettings& /*settings*/)
 {
@@ -67,7 +67,7 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
 
     // Assign it to the application delegate
     [SFAppDelegate getInstance].sfWindow = this;
-    
+
     // Create the view
     m_view = [[SFView alloc] initWithFrame:frame];
     [m_view resignFirstResponder];
@@ -96,14 +96,14 @@ void WindowImplUIKit::processEvents()
         ;
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplUIKit::getSystemHandle() const
 {
     return (__bridge WindowHandle)m_window;
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplUIKit::getPosition() const
 {
@@ -123,7 +123,7 @@ Vector2u WindowImplUIKit::getSize() const
     return Vector2u(m_window.frame.size.width, m_window.frame.size.height);
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setSize(const Vector2u& size)
 {
@@ -136,35 +136,35 @@ void WindowImplUIKit::setSize(const Vector2u& size)
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setTitle(const String& title)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setVisible(bool visible)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setMouseCursorVisible(bool visible)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
 {
@@ -213,7 +213,7 @@ void WindowImplUIKit::setVirtualKeyboardVisible(bool visible)
     else
         [m_view resignFirstResponder];
 }
-    
+
 } // namespace priv
-    
+
 } // namespace sf
