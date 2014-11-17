@@ -177,7 +177,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Notify an event
     ///
-    /// \param event Evenet to forward
+    /// \param event Event to forward
     ///
     ////////////////////////////////////////////////////////////
     void forwardEvent(Event event);
