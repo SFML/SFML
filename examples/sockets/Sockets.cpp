@@ -25,12 +25,12 @@ int main()
 
     // TCP, UDP or connected UDP ?
     char protocol;
-    std::cout << "Do you want to use TCP (t) or UDP (u) ? ";
+    std::cout << "Do you want to use TCP (t) or UDP (u)? ";
     std::cin  >> protocol;
 
     // Client or server ?
     char who;
-    std::cout << "Do you want to be a server (s) or a client (c) ? ";
+    std::cout << "Do you want to be a server (s) or a client (c)? ";
     std::cin  >> who;
 
     if (protocol == 't')

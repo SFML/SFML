@@ -24,7 +24,7 @@ int main()
 
     // Choose the sample rate
     unsigned int sampleRate;
-    std::cout << "Please choose the sample rate for sound capture (44100 is CD quality) : ";
+    std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
     std::cin  >> sampleRate;
     std::cin.ignore(10000, '\n');
 
