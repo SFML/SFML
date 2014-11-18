@@ -85,7 +85,7 @@ public:
         /// \brief Set the value of a field
         ///
         /// The field is created if it doesn't exist. The name of
-        /// the field is case insensitive.
+        /// the field is case-insensitive.
         /// By default, a request doesn't contain any field (but the
         /// mandatory fields are added later by the HTTP client when
         /// sending the request).

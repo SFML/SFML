@@ -193,7 +193,7 @@ public:
     /// \brief Get the text's font
     ///
     /// If the text has no font attached, a NULL pointer is returned.
-    /// The returned reference is const, which means that you
+    /// The returned pointer is const, which means that you
     /// cannot modify the font when you get it from this function.
     ///
     /// \return Pointer to the text's font

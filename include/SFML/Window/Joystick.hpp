@@ -159,7 +159,7 @@ public:
     /// This function is used internally by SFML, so you normally
     /// don't have to call it explicitly. However, you may need to
     /// call it if you have no window yet (or no window at all):
-    /// in this case the joysticks states are not updated automatically.
+    /// in this case the joystick states are not updated automatically.
     ///
     ////////////////////////////////////////////////////////////
     static void update();

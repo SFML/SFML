@@ -39,7 +39,7 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Default specialization of RenderTextureImpl,
-///        using a in-memory context
+///        using an in-memory context
 ///
 ////////////////////////////////////////////////////////////
 class RenderTextureImplDefault : public RenderTextureImpl, GlResource

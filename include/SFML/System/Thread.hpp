@@ -53,7 +53,7 @@ public:
     /// \brief Construct the thread from a functor with no argument
     ///
     /// This constructor works for function objects, as well
-    /// as free function.
+    /// as free functions.
     ///
     /// Use this constructor for this kind of function:
     /// \code
@@ -66,7 +66,7 @@ public:
     ///     void operator()();
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Launch().
+    /// Note: this does *not* run the thread, use launch().
     ///
     /// \param function Functor or free function to use as the entry point of the thread
     ///
@@ -78,7 +78,7 @@ public:
     /// \brief Construct the thread from a functor with an argument
     ///
     /// This constructor works for function objects, as well
-    /// as free function.
+    /// as free functions.
     /// It is a template, which means that the argument can
     /// have any type (int, std::string, void*, Toto, ...).
     ///
@@ -93,7 +93,7 @@ public:
     ///     void operator()(std::string arg);
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Launch().
+    /// Note: this does *not* run the thread, use launch().
     ///
     /// \param function Functor or free function to use as the entry point of the thread
     /// \param argument argument to forward to the function
@@ -105,7 +105,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the thread from a member function and an object
     ///
-    /// This constructor is template, which means that you can
+    /// This constructor is a template, which means that you can
     /// use it with any class.
     /// Use this constructor for this kind of function:
     /// \code
@@ -116,7 +116,7 @@ public:
     ///     void function();
     /// };
     /// \endcode
-    /// Note: this does *not* run the thread, use Launch().
+    /// Note: this does *not* run the thread, use launch().
     ///
     /// \param function Entry point of the thread
     /// \param object Pointer to the object to use
@@ -128,7 +128,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
-    /// This destructor calls Wait(), so that the internal thread
+    /// This destructor calls wait(), so that the internal thread
     /// cannot survive after its sf::Thread instance is destroyed.
     ///
     ////////////////////////////////////////////////////////////
