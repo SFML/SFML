@@ -116,7 +116,7 @@ public:
     /// doesn't store its own copy of the font, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the font is destroyed and the text tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     ///
     /// \param font New font
     ///

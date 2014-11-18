@@ -244,7 +244,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// This constructor is meant ot be called by derived classes only.
+    /// This constructor is meant to be called by derived classes only.
     ///
     ////////////////////////////////////////////////////////////
     SoundSource();

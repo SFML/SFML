@@ -50,7 +50,7 @@
 /// \defgroup system System module
 ///
 /// Base module of SFML, defining various utilities. It provides
-/// vector classes, unicode strings and conversion functions,
+/// vector classes, Unicode strings and conversion functions,
 /// threads and mutexes, timing classes.
 /// 
 ////////////////////////////////////////////////////////////

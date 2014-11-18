@@ -73,7 +73,7 @@ public:
     T* operator ->() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Cast operator to implicitely convert the
+    /// \brief Cast operator to implicitly convert the
     ///        pointer to its raw pointer type (T*)
     ///
     /// \return Pointer to the actual object

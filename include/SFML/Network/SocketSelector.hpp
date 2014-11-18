@@ -188,7 +188,7 @@ private:
 /// (socket classes are not copyable anyway), it simply keeps
 /// a reference to the original sockets that you pass to the
 /// "add" function. Therefore, you can't use the selector as a
-/// socket container, you must store them oustide and make sure
+/// socket container, you must store them outside and make sure
 /// that they are alive as long as they are used in the selector.
 ///
 /// Using a selector is simple:

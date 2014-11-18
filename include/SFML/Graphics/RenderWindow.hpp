@@ -59,7 +59,7 @@ public:
     ///
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
-    /// customize the look and behaviour of the window (borders,
+    /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...).
     ///
     /// The fourth parameter is an optional structure specifying

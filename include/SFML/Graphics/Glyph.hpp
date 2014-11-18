@@ -51,7 +51,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float     advance;     ///< Offset to move horizontically to the next character
+    float     advance;     ///< Offset to move horizontally to the next character
     FloatRect bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
     IntRect   textureRect; ///< Texture coordinates of the glyph inside the font's texture
 };

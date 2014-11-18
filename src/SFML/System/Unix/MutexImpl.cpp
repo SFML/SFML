@@ -35,7 +35,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 MutexImpl::MutexImpl()
 {
-    // Make it recursive to follow the expected behaviour
+    // Make it recursive to follow the expected behavior
     pthread_mutexattr_t attributes;
     pthread_mutexattr_init(&attributes);
     pthread_mutexattr_settype(&attributes, PTHREAD_MUTEX_RECURSIVE);

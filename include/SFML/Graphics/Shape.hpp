@@ -59,7 +59,7 @@ public:
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the shape tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     /// \a texture can be NULL to disable texturing.
     /// If \a resetRect is true, the TextureRect property of
     /// the shape is automatically adjusted to the size of the new
@@ -252,7 +252,7 @@ protected:
     /// \brief Recompute the internal geometry of the shape
     ///
     /// This function must be called by the derived class everytime
-    /// the shape's points change (ie. the result of either
+    /// the shape's points change (i.e. the result of either
     /// getPointCount or getPoint is different).
     ///
     ////////////////////////////////////////////////////////////

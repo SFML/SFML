@@ -157,7 +157,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
         // Get the error status
         Status status = priv::SocketImpl::getErrorStatus();
 
-        // If we were in non-blocking mode, return immediatly
+        // If we were in non-blocking mode, return immediately
         if (!blocking)
             return status;
 

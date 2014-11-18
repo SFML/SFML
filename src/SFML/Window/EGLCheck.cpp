@@ -144,7 +144,7 @@ void eglCheckError(const char* file, unsigned int line)
             case EGL_CONTEXT_LOST:
             {
                 error = "EGL_CONTEXT_LOST";
-                description = "a power management event has occured. The application must destroy all contexts and reinitialise client API state and objects to continue rendering";
+                description = "a power management event has occurred. The application must destroy all contexts and reinitialize client API state and objects to continue rendering";
                 break;
             }
         }

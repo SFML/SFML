@@ -94,7 +94,7 @@ public:
 ///
 /// sf::Touch provides an interface to the state of the
 /// touches. It only contains static functions, so it's not
-/// meant to be instanciated.
+/// meant to be instantiated.
 ///
 /// This class allows users to query the touches state at any
 /// time and directly, without having to deal with a window and

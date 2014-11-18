@@ -107,7 +107,7 @@ private:
 /// } // mutex is unlocked
 /// \endcode
 ///
-/// Because the mutex is not explicitely unlocked in the code,
+/// Because the mutex is not explicitly unlocked in the code,
 /// it may remain locked longer than needed. If the region
 /// of the code that needs to be protected by the mutex is
 /// not the entire function, a good practice is to create a

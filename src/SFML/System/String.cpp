@@ -295,7 +295,7 @@ void String::replace(const String& searchFor, const String& replaceWith)
     std::size_t len = searchFor.getSize();
     std::size_t pos = find(searchFor);
 
-    // Replace each occurence of search
+    // Replace each occurrence of search
     while (pos != InvalidPos)
     {
         replace(pos, len, replaceWith);

@@ -72,7 +72,7 @@ public:
     ///
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
-    /// customize the look and behaviour of the window (borders,
+    /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...). If \a style contains
     /// Style::Fullscreen, then \a mode must be a valid video mode.
     ///
@@ -217,7 +217,7 @@ public:
     ///
     /// This function is blocking: if there's no pending event then
     /// it will wait until an event is received.
-    /// After this function returns (and no error occured),
+    /// After this function returns (and no error occurred),
     /// the \a event object is always valid and filled properly.
     /// This function is typically used when you have a thread that
     /// is dedicated to events handling: you want to make this thread
@@ -232,7 +232,7 @@ public:
     ///
     /// \param event Event to be returned
     ///
-    /// \return False if any error occured
+    /// \return False if any error occurred
     ///
     /// \see pollEvent
     ///

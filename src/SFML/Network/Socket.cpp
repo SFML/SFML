@@ -101,7 +101,7 @@ void Socket::create(SocketHandle handle)
 
         if (m_type == Tcp)
         {
-            // Disable the Nagle algorithm (ie. removes buffering of TCP packets)
+            // Disable the Nagle algorithm (i.e. removes buffering of TCP packets)
             int yes = 1;
             if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&yes), sizeof(yes)) == -1)
             {

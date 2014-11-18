@@ -126,7 +126,7 @@ private:
     Joystick::Identification m_identification; ///< Joystick identification
 
     static Location m_locationIDs[sf::Joystick::Count]; ///< Global Joystick register
-    /// For a corresponding SFML index, m_locationIDs is either some usb
+    /// For a corresponding SFML index, m_locationIDs is either some USB
     /// location or 0 if there isn't currently a connected joystick device
 };
 

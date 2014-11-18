@@ -96,10 +96,10 @@ public:
     unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a list of the names of all availabe audio capture devices
+    /// \brief Get a list of the names of all available audio capture devices
     ///
     /// This function returns a vector of strings, containing
-    /// the names of all availabe audio capture devices.
+    /// the names of all available audio capture devices.
     ///
     /// \return A vector of strings containing the names
     ///
@@ -187,7 +187,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
     ///
-    /// This virtual function may be overriden by a derived class
+    /// This virtual function may be overridden by a derived class
     /// if something has to be done every time a new capture
     /// starts. If not, this function can be ignored; the default
     /// implementation does nothing.
@@ -216,7 +216,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
     ///
-    /// This virtual function may be overriden by a derived class
+    /// This virtual function may be overridden by a derived class
     /// if something has to be done every time the capture
     /// ends. If not, this function can be ignored; the default
     /// implementation does nothing.
@@ -285,7 +285,7 @@ private:
 /// A derived class has only one virtual function to override:
 /// \li onProcessSamples provides the new chunks of audio samples while the capture happens
 ///
-/// Moreover, two additionnal virtual functions can be overriden
+/// Moreover, two additional virtual functions can be overridden
 /// as well if necessary:
 /// \li onStart is called before the capture happens, to perform custom initializations
 /// \li onStop is called after the capture ends, to perform custom cleanup
@@ -303,9 +303,9 @@ private:
 ///
 /// If you have multiple sound input devices connected to your
 /// computer (for example: microphone, external soundcard, webcam mic, ...)
-/// you can get a list of all available devices throught the
+/// you can get a list of all available devices through the
 /// getAvailableDevices() function. You can then select a device
-/// by calling setDevice() with the appropiate device. Otherwise
+/// by calling setDevice() with the appropriate device. Otherwise
 /// the default capturing device will be used.
 ///
 /// It is important to note that the audio capture happens in a

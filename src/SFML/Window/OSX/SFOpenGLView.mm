@@ -665,7 +665,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     }
 
 
-    // Handle text entred event:
+    // Handle text entered event:
     // Ignore event if we don't want repeated keystrokes
     if (m_useKeyRepeat || ![theEvent isARepeat])
     {
@@ -687,7 +687,7 @@ BOOL isValidTextUnicode(NSEvent* event);
         // Backspace
         if (keycode == 0x33)
         {
-            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
+            // Send the correct Unicode value (i.e. 8) instead of 127 (which is 'delete')
             m_requester->textEntered(8);
         }
 
@@ -770,7 +770,7 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
 //    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
-//        sf::err() << "This is an unknow key. Virtual key code is 0x"
+//        sf::err() << "This is an unknown key. Virtual key code is 0x"
 //                  << std::hex
 //                  << [event keyCode]
 //                  << "."

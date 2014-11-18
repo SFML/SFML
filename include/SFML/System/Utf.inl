@@ -339,7 +339,7 @@ Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
     }
     else if (input > 0x0010FFFF)
     {
-        // Invalid character (greater than the maximum unicode value)
+        // Invalid character (greater than the maximum Unicode value)
         if (replacement)
             *output++ = replacement;
     }
@@ -638,7 +638,7 @@ Out Utf<32>::toUtf32(In begin, In end, Out output)
 template <typename In>
 Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
 {
-    // On Windows, gcc's standard library (glibc++) has almost
+    // On Windows, GCC's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
     // context we can only use the default locale and ignore
     // the one passed as parameter.

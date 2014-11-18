@@ -177,7 +177,7 @@ void JoystickImpl::cleanup()
 bool JoystickImpl::isConnected(unsigned int index)
 {
     // We check the connection state of joysticks only every N milliseconds,
-    // because of a strange (buggy?) behaviour of joyGetPosEx when joysticks
+    // because of a strange (buggy?) behavior of joyGetPosEx when joysticks
     // are just plugged/unplugged -- it takes really long and kills the app performances
     ConnectionCache& cache = connectionCache[index];
     if (cache.timer.getElapsedTime() > connectionRefreshDelay)

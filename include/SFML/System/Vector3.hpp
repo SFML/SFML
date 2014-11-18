@@ -280,7 +280,7 @@ typedef Vector3<float> Vector3f;
 /// \li sf::Vector3<int> is sf::Vector3i
 ///
 /// The sf::Vector3 class has a small and simple interface, its x and y members
-/// can be accessed directly (there's no accessor like setX(), getX()) and it
+/// can be accessed directly (there are no accessors like setX(), getX()) and it
 /// contains no mathematical function like dot product, cross product, length, etc.
 ///
 /// Usage example:

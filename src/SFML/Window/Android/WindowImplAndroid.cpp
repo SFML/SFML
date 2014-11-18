@@ -300,7 +300,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* states)
 {
-    // Prepare the java virtual machine
+    // Prepare the Java virtual machine
     jint lResult;
     jint lFlags = 0;
 
@@ -315,9 +315,9 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR)
-        err() << "Failed to initialize JNI, couldn't get the unicode value" << std::endl;
+        err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
-    // Retrieve everything we need to create this MotionEvent in java
+    // Retrieve everything we need to create this MotionEvent in Java
     jlong downTime = AMotionEvent_getDownTime(_event);
     jlong eventTime = AMotionEvent_getEventTime(_event);
     jint action = AMotionEvent_getAction(_event);
@@ -331,7 +331,7 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
     jint deviceId = AInputEvent_getDeviceId(_event);
     jint edgeFlags = AMotionEvent_getEdgeFlags(_event);
 
-    // Create the MotionEvent object in java trough its static constructor obtain()
+    // Create the MotionEvent object in Java trough its static constructor obtain()
     jclass ClassMotionEvent = lJNIEnv->FindClass("android/view/MotionEvent");
     jmethodID StaticMethodObtain = lJNIEnv->GetStaticMethodID(ClassMotionEvent, "obtain", "(JJIFFFFIFFII)Landroid/view/MotionEvent;");
     jobject ObjectMotionEvent = lJNIEnv->CallStaticObjectMethod(ClassMotionEvent, StaticMethodObtain, downTime, eventTime, action, x, y, pressure, size, metaState, xPrecision, yPrecision, deviceId, edgeFlags);
@@ -349,7 +349,7 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
 
     forwardEvent(event);
 
-    // Dettach this thread from the JVM
+    // Detach this thread from the JVM
     lJavaVM->DetachCurrentThread();
 }
 
@@ -670,7 +670,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR)
-        err() << "Failed to initialize JNI, couldn't get the unicode value" << std::endl;
+        err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
     // Retrieve key data from the input event
     jlong downTime = AKeyEvent_getDownTime(event);
@@ -689,11 +689,11 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     jmethodID KeyEventConstructor = lJNIEnv->GetMethodID(ClassKeyEvent, "<init>", "(JJIIIIIIII)V");
     jobject ObjectKeyEvent = lJNIEnv->NewObject(ClassKeyEvent, KeyEventConstructor, downTime, eventTime, action, code, repeat, metaState, deviceId, scancode, flags, source);
 
-    // Call its getUnicodeChar() method to get the unicode value
+    // Call its getUnicodeChar() method to get the Unicode value
     jmethodID MethodGetUnicode = lJNIEnv->GetMethodID(ClassKeyEvent, "getUnicodeChar", "(I)I");
     int unicode = lJNIEnv->CallIntMethod(ObjectKeyEvent, MethodGetUnicode, metaState);
 
-    // Dettach this thread from the JVM
+    // Detach this thread from the JVM
     lJavaVM->DetachCurrentThread();
 
     return unicode;

@@ -133,7 +133,7 @@ public:
     ///        coordinates, using the current view
     ///
     /// This function is an overload of the mapPixelToCoords
-    /// function that implicitely uses the current view.
+    /// function that implicitly uses the current view.
     /// It is equivalent to:
     /// \code
     /// target.mapPixelToCoords(point, target.getView());
@@ -184,7 +184,7 @@ public:
     ///        coordinates, using the current view
     ///
     /// This function is an overload of the mapCoordsToPixel
-    /// function that implicitely uses the current view.
+    /// function that implicitly uses the current view.
     /// It is equivalent to:
     /// \code
     /// target.mapCoordsToPixel(point, target.getView());
@@ -428,7 +428,7 @@ private:
 /// \class sf::RenderTarget
 /// \ingroup graphics
 ///
-/// sf::RenderTarget defines the common behaviour of all the
+/// sf::RenderTarget defines the common behavior of all the
 /// 2D render targets usable in the graphics module. It makes
 /// it possible to draw 2D entities like sprites, shapes, text
 /// without using any OpenGL command directly.
