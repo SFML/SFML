@@ -216,7 +216,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Specialization of FTP response returning a
-    ///        filename lisiting
+    ///        filename listing
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API ListingResponse : public Response
     {

@@ -64,7 +64,7 @@ ActivityStates* retrieveStates(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 static void initializeMain(ActivityStates* states)
 {
-    // Protect from concurent access
+    // Protect from concurrent access
     Lock lock(states->mutex);
 
     // Prepare and share the looper to be read later
@@ -80,7 +80,7 @@ static void initializeMain(ActivityStates* states)
 ////////////////////////////////////////////////////////////
 static void terminateMain(ActivityStates* states)
 {
-    // Protect from concurent access
+    // Protect from concurrent access
     Lock lock(states->mutex);
 
     // The main thread has finished, we must explicitly ask the activity to finish
@@ -154,7 +154,7 @@ void goToFullscreenMode(ANativeActivity* activity)
 
 void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
 {
-    // Perform the following java code:
+    // Perform the following Java code:
     //
     // DisplayMetrics dm = new DisplayMetrics();
     // getWindowManager().getDefaultDisplay().getMetrics(dm);

@@ -197,7 +197,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
         return false;
     }
 
-    // Select the unicode character map
+    // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
@@ -261,7 +261,7 @@ bool Font::loadFromStream(InputStream& stream)
         return false;
     }
 
-    // Select the unicode character map
+    // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
@@ -520,7 +520,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
     if ((width > 0) && (height > 0))
     {
         // Leave a small padding around characters, so that filtering doesn't
-        // pollute them with pixels from neighbours
+        // pollute them with pixels from neighbors
         const unsigned int padding = 1;
 
         // Get the glyphs page corresponding to the character size
@@ -529,7 +529,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) c
         // Find a good position for the new glyph into the texture
         glyph.textureRect = findGlyphRect(page, width + 2 * padding, height + 2 * padding);
 
-        // Make sure the texture data is positioned in the centre
+        // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
         glyph.textureRect.left += padding;
         glyph.textureRect.top += padding;

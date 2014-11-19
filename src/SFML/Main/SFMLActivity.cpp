@@ -41,7 +41,7 @@ std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 {
     // This function reads the value of meta-data "sfml.app.lib_name"
     // found in the Android Manifest file and returns it. It performs the
-    // following java code using the JNI interface:
+    // following Java code using the JNI interface:
     //
     // ai.metaData.getString("sfml.app.lib_name");
 

@@ -88,7 +88,7 @@ public:
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change the joystick threshold, ie. the value below which
+    /// \brief Change the joystick threshold, i.e. the value below which
     ///        no move event will be generated
     ///
     /// \param threshold New threshold, in range [0, 100]
@@ -101,7 +101,7 @@ public:
     ///
     /// If there's no event available, this function calls the
     /// window's internal event processing function.
-    /// The \a block parameter controls the behaviour of the function
+    /// The \a block parameter controls the behavior of the function
     /// if no event is available: if it is true then the function
     /// doesn't return until a new event is triggered; otherwise it
     /// returns false to indicate that no event is available.

@@ -386,7 +386,7 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
-    // Before resizing, remove resizeable mask to be able to resize
+    // Before resizing, remove resizable mask to be able to resize
     // beyond the desktop boundaries.
     NSUInteger styleMask = [m_window styleMask];
 

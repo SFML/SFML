@@ -219,7 +219,7 @@ bool JoystickImpl::open(unsigned int index)
             // And the id
             m_id = hid_get_report_id(m_file);
 
-            // Then allocate a buffer for data retrievement
+            // Then allocate a buffer for data retrieval
             m_length = hid_report_size(m_desc, hid_input, m_id);
             m_buffer.resize(m_length);
 

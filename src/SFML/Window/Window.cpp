@@ -410,7 +410,7 @@ bool Window::filterEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 void Window::initialize()
 {
-    // Setup default behaviours (to get a consistent behaviour across different implementations)
+    // Setup default behaviors (to get a consistent behavior across different implementations)
     setVisible(true);
     setMouseCursorVisible(true);
     setVerticalSyncEnabled(false);

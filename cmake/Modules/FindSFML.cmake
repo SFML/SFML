@@ -10,7 +10,7 @@
 #   find_package(SFML COMPONENTS graphics window system) // find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
-# If nothing is specified, the version won't be checked (ie. any version will be accepted).
+# If nothing is specified, the version won't be checked (i.e. any version will be accepted).
 # example:
 #   find_package(SFML COMPONENTS ...)     // no specific version required
 #   find_package(SFML 2 COMPONENTS ...)   // any 2.x version

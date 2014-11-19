@@ -383,7 +383,7 @@ void WindowImplX11::setSize(const Vector2u& size)
 void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
-    // There is however an option to tell the window manager your unicode title via hints.
+    // There is however an option to tell the window manager your Unicode title via hints.
 
     // Convert to UTF-8 encoding.
     std::basic_string<Uint8> utf8Title;

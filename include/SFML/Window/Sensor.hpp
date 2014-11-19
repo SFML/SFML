@@ -107,7 +107,7 @@ public:
 ///
 /// sf::Sensor provides an interface to the state of the
 /// various sensors that a device provides. It only contains static
-/// functions, so it's not meant to be instanciated.
+/// functions, so it's not meant to be instantiated.
 ///
 /// This class allows users to query the sensors values at any
 /// time and directly, without having to deal with a window and

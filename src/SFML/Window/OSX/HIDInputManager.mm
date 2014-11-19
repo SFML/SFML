@@ -54,7 +54,7 @@ long HIDInputManager::getLocationID(IOHIDDeviceRef device)
 {
     long loc = 0;
 
-    // Get a unique ID: its usb location ID
+    // Get a unique ID: its USB location ID
     CFTypeRef typeRef = IOHIDDeviceGetProperty(device,
                                                CFSTR(kIOHIDLocationIDKey));
     if (!typeRef || (CFGetTypeID(typeRef) != CFNumberGetTypeID()))
@@ -225,7 +225,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     if (virtualCode == 0xff)
         return; // no corresponding virtual code -> skip
 
-    // Now translate the virtual code to unicode according to
+    // Now translate the virtual code to Unicode according to
     // the current keyboard layout
 
     UInt32       deadKeyState = 0;
@@ -286,7 +286,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         //          0x4c       | 0x77 | Select
 
         //if (code == Keyboard::Unknown) { // The key is unknown.
-        //    sf::err() << "This is an unknow key. Virtual key code is 0x"
+        //    sf::err() << "This is an unknown key. Virtual key code is 0x"
         //              << std::hex
         //              << (UInt32)virtualCode
         //              << " and HID usage code is 0x"

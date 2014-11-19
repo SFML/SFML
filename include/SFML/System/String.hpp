@@ -49,7 +49,7 @@ public:
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::basic_string<Uint32>::iterator       Iterator;      ///< Iterator type
-    typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Constant iterator type
+    typedef std::basic_string<Uint32>::const_iterator ConstIterator; ///< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -235,7 +235,7 @@ public:
     operator std::wstring() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to an ANSI string
+    /// \brief Convert the Unicode string to an ANSI string
     ///
     /// The UTF-32 string is converted to an ANSI string in
     /// the encoding defined by \a locale.
@@ -252,7 +252,7 @@ public:
     std::string toAnsiString(const std::locale& locale = std::locale()) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to a wide string
+    /// \brief Convert the Unicode string to a wide string
     ///
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
@@ -265,7 +265,7 @@ public:
     std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to a UTF-8 string
+    /// \brief Convert the Unicode string to a UTF-8 string
     ///
     /// \return Converted UTF-8 string
     ///
@@ -275,7 +275,7 @@ public:
     std::basic_string<Uint8> toUtf8() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to a UTF-16 string
+    /// \brief Convert the Unicode string to a UTF-16 string
     ///
     /// \return Converted UTF-16 string
     ///
@@ -285,7 +285,7 @@ public:
     std::basic_string<Uint16> toUtf16() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert the unicode string to a UTF-32 string
+    /// \brief Convert the Unicode string to a UTF-32 string
     ///
     /// This function doesn't perform any conversion, since the
     /// string is already stored as UTF-32 internally.
@@ -321,7 +321,7 @@ public:
     /// \brief Overload of [] operator to access a character by its position
     ///
     /// This function provides read-only access to characters.
-    /// Note: this function doesn't throw if \a index is out of range.
+    /// Note: the behavior is undefined if \a index is out of range.
     ///
     /// \param index Index of the character to get
     ///
@@ -334,7 +334,7 @@ public:
     /// \brief Overload of [] operator to access a character by its position
     ///
     /// This function provides read and write access to characters.
-    /// Note: this function doesn't throw if \a index is out of range.
+    /// Note: the behavior is undefined if \a index is out of range.
     ///
     /// \param index Index of the character to get
     ///
@@ -418,7 +418,7 @@ public:
     /// and spans \a length characters with the string \a replaceWith.
     ///
     /// \param position    Index of the first character to be replaced
-    /// \param length      Number of characters to replace. You can pass InvalidPos to 
+    /// \param length      Number of characters to replace. You can pass InvalidPos to
     ///                    replace all characters until the end of the string.
     /// \param replaceWith String that replaces the given substring.
     ///
@@ -428,7 +428,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Replace all occurrences of a substring with a replacement string
     ///
-    /// This function replaces all occurences of \a searchFor in this string
+    /// This function replaces all occurrences of \a searchFor in this string
     /// with the string \a replaceWith.
     ///
     /// \param searchFor   The value being searched for
@@ -440,13 +440,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Return a part of the string
     ///
-    /// This function returns the substring that starts at index \a position 
+    /// This function returns the substring that starts at index \a position
     /// and spans \a length characters.
     ///
-    /// \param position Index of the first character 
+    /// \param position Index of the first character
     /// \param length   Number of characters to include in the substring (if
     ///                 the string is shorter, as many characters as possible
-    ///                 are included). \ref InvalidPos can be used to include all 
+    ///                 are included). \ref InvalidPos can be used to include all
     ///                 characters until the end of the string.
     ///
     /// \return String object containing a substring of this object
@@ -557,7 +557,7 @@ SFML_SYSTEM_API bool operator !=(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically less than \a right
+/// \return True if \a left is lexicographically before \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator <(const String& left, const String& right);
@@ -569,7 +569,7 @@ SFML_SYSTEM_API bool operator <(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically greater than \a right
+/// \return True if \a left is lexicographically after \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator >(const String& left, const String& right);
@@ -581,7 +581,7 @@ SFML_SYSTEM_API bool operator >(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically less or equal than \a right
+/// \return True if \a left is lexicographically before or equivalent to \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
@@ -593,7 +593,7 @@ SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is alphabetically greater or equal than \a right
+/// \return True if \a left is lexicographically after or equivalent to \a right
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
@@ -625,7 +625,7 @@ SFML_SYSTEM_API String operator +(const String& left, const String& right);
 /// sf::String is a utility string class defined mainly for
 /// convenience. It is a Unicode string (implemented using
 /// UTF-32), thus it can store any character in the world
-/// (european, chinese, arabic, hebrew, etc.).
+/// (European, Chinese, Arabic, Hebrew, etc.).
 ///
 /// It automatically handles conversions from/to ANSI and
 /// wide strings, so that you can work with standard string

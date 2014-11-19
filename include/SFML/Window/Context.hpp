@@ -66,7 +66,7 @@ public:
     ~Context();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate explicitely the context
+    /// \brief Activate or deactivate explicitly the context
     ///
     /// \param active True to activate, false to deactivate
     ///

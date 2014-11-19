@@ -93,7 +93,7 @@ public:
     /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a data must remain available as long as the
-    /// music is playing (ie. you can't deallocate it right after calling
+    /// music is playing (i.e. you can't deallocate it right after calling
     /// this function).
     ///
     /// \param data        Pointer to the file data in memory
@@ -116,7 +116,7 @@ public:
     /// w64, mat4, mat5 pvf, htk, sds, avr, sd2, caf, wve, mpc2k, rf64.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a stream must remain alive as long as the
-    /// music is playing (ie. you can't destroy it right after calling
+    /// music is playing (i.e. you can't destroy it right after calling
     /// this function).
     ///
     /// \param stream Source stream to read from
@@ -186,13 +186,13 @@ private:
 /// \class sf::Music
 /// \ingroup audio
 ///
-/// Musics are sounds that are streamed rather than completely
-/// loaded in memory. This is especially useful for compressed
-/// musics that usually take hundreds of MB when they are
+/// Music objects are sounds that are streamed rather than
+/// completely loaded in memory. This is especially useful for
+/// compressed music that usually takes hundreds of MB when it is
 /// uncompressed: by streaming it instead of loading it entirely,
 /// you avoid saturating the memory and have almost no loading delay.
 ///
-/// Apart from that, a sf::Music has almost the same features as
+/// Apart from that, sf::Music has almost the same features as
 /// the sf::SoundBuffer / sf::Sound pair: you can play/pause/stop
 /// it, request its parameters (channels, sample rate), change
 /// the way it is played (pitch, volume, 3D position, ...), etc.

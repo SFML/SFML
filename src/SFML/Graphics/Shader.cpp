@@ -632,7 +632,7 @@ int Shader::getParamLocation(const std::string& name)
 
 #else // SFML_OPENGL_ES
 
-// OpenGL ES 1 does't support GLSL shaders at all, we have to provide an empty implementation
+// OpenGL ES 1 doesn't support GLSL shaders at all, we have to provide an empty implementation
 
 namespace sf
 {

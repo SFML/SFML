@@ -235,7 +235,7 @@ private:
 ///
 /// If the socket is bound to a port, it is automatically
 /// unbound from it when the socket is destroyed. However,
-/// you can unbind the socket explicitely with the Unbind
+/// you can unbind the socket explicitly with the Unbind
 /// function if necessary, to stop receiving messages or
 /// make the port available for other sockets.
 ///

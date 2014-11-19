@@ -139,7 +139,7 @@ public:
     /// A packet will be in an invalid state if it has no more
     /// data to read.
     ///
-    /// This behaviour is the same as standard C++ streams.
+    /// This behavior is the same as standard C++ streams.
     ///
     /// Usage example:
     /// \code
@@ -242,7 +242,7 @@ protected:
     ///
     /// This function can be defined by derived classes to
     /// transform the data after it is received; this can be
-    /// used for uncompression, decryption, etc.
+    /// used for decompression, decryption, etc.
     /// The function receives a pointer to the received data,
     /// and must fill the packet with the transformed bytes.
     /// The default implementation fills the packet directly
@@ -300,12 +300,12 @@ private:
 /// (sf::TcpSocket, sf::UdpSocket).
 ///
 /// Packets solve 2 fundamental problems that arise when
-/// transfering data over the network:
+/// transferring data over the network:
 /// \li data is interpreted correctly according to the endianness
 /// \li the bounds of the packet are preserved (one send == one receive)
 ///
 /// The sf::Packet class provides both input and output modes.
-/// It is designed to follow the behaviour of standard C++ streams,
+/// It is designed to follow the behavior of standard C++ streams,
 /// using operators >> and << to extract and insert data.
 ///
 /// It is recommended to use only fixed-size types (like sf::Int32, etc.),

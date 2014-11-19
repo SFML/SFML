@@ -286,7 +286,7 @@ bool ImageLoader::writeJpg(const std::string& filename, const std::vector<Uint8>
     jpeg_set_defaults(&compressInfos);
     jpeg_set_quality(&compressInfos, 90, TRUE);
 
-    // Get rid of the aplha channel
+    // Get rid of the alpha channel
     std::vector<Uint8> buffer(width * height * 3);
     for (std::size_t i = 0; i < width * height; ++i)
     {

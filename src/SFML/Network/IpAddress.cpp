@@ -37,7 +37,7 @@ namespace
     {
         if (address == "255.255.255.255")
         {
-            // The broadcast address needs to be handled explicitely,
+            // The broadcast address needs to be handled explicitly,
             // because it is also the value returned by inet_addr on error
             return INADDR_BROADCAST;
         }
@@ -84,7 +84,7 @@ m_address(0)
 {
     // We're using 0 (INADDR_ANY) instead of INADDR_NONE to represent the invalid address,
     // because the latter is also the broadcast address (255.255.255.255); it's ok because
-    // SFML doesn't publicly use INADDR_ANY (it is always used implicitely)
+    // SFML doesn't publicly use INADDR_ANY (it is always used implicitly)
 }
 
 

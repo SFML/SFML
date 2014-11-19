@@ -220,7 +220,7 @@ private:
     ///
     /// \param symbol Key symbol to convert
     ///
-    /// \return Corrsponding SFML key code
+    /// \return Corresponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key keysymToSF(KeySym symbol);
@@ -232,11 +232,11 @@ private:
     ::Display* m_display;      ///< Pointer to the display
     int        m_screen;       ///< Screen identifier
     XIM        m_inputMethod;  ///< Input method linked to the X display
-    XIC        m_inputContext; ///< Input context used to get unicode input in our window
+    XIC        m_inputContext; ///< Input context used to get Unicode input in our window
     bool       m_isExternal;   ///< Tell whether the window has been created externally or by SFML
     Atom       m_atomClose;    ///< Atom used to identify the close event
     int        m_oldVideoMode; ///< Video mode in use before we switch to fullscreen
-    Cursor     m_hiddenCursor; ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    Cursor     m_hiddenCursor; ///< As X11 doesn't provide cursor hiding, we must create a transparent one
     bool       m_keyRepeat;    ///< Is the KeyRepeat feature enabled?
     Vector2i   m_previousSize; ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool       m_useSizeHints; ///< Is the size of the window fixed with size hints?

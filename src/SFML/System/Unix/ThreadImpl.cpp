@@ -79,7 +79,7 @@ void* ThreadImpl::entryPoint(void* userData)
     Thread* owner = static_cast<Thread*>(userData);
 
     #ifndef SFML_SYSTEM_ANDROID
-        // Tell the thread to handle cancel requests immediatly
+        // Tell the thread to handle cancel requests immediately
         pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     #endif
 

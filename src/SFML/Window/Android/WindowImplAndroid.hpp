@@ -204,17 +204,17 @@ private:
     ///
     /// \param symbol Android key to convert
     ///
-    /// \return Corrsponding SFML key code
+    /// \return Corresponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key androidKeyToSF(int32_t key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get unicode decoded from the input event
+    /// \brief Get Unicode decoded from the input event
     ///
     /// \param Event Input event
     ///
-    /// \return The unicode value
+    /// \return The Unicode value
     ///
     ////////////////////////////////////////////////////////////
     static int getUnicode(AInputEvent* event);

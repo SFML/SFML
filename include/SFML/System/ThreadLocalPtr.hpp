@@ -45,7 +45,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param value Optional value to initalize the variable
+    /// \param value Optional value to initialize the variable
     ///
     ////////////////////////////////////////////////////////////
     ThreadLocalPtr(T* value = NULL);
@@ -54,9 +54,9 @@ public:
     /// \brief Overload of unary operator *
     ///
     /// Like raw pointers, applying the * operator returns a
-    /// reference to the pointed object.
+    /// reference to the pointed-to object.
     ///
-    /// \return Reference to the pointed object
+    /// \return Reference to the thread-local variable
     ///
     ////////////////////////////////////////////////////////////
     T& operator *() const;
@@ -64,16 +64,16 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Overload of operator ->
     ///
-    /// Like raw pointers, applying the -> operator returns the
-    /// pointed object.
+    /// Similarly to raw pointers, applying the -> operator
+    /// returns the pointed-to object.
     ///
-    /// \return Pointed object
+    /// \return Pointer to the thread-local variable
     ///
     ////////////////////////////////////////////////////////////
     T* operator ->() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Cast operator to implicitely convert the
+    /// \brief Conversion operator to implicitly convert the
     ///        pointer to its raw pointer type (T*)
     ///
     /// \return Pointer to the actual object
@@ -117,7 +117,7 @@ public:
 /// sf::ThreadLocalPtr is a type-safe wrapper for storing
 /// pointers to thread-local variables. A thread-local
 /// variable holds a different value for each different
-/// thread, unlike normal variable that are shared.
+/// thread, unlike normal variables that are shared.
 ///
 /// Its usage is completely transparent, so that it is similar
 /// to manipulating the raw pointer directly (like any smart pointer).

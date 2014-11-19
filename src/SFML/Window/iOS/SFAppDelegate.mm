@@ -73,7 +73,7 @@ namespace
     // Save the delegate instance
     delegateInstance = self;
 
-    // Instanciate the motion manager
+    // Instantiate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
 
     // Register orientation changes notifications

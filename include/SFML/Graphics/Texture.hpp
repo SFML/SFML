@@ -244,7 +244,7 @@ public:
     ///
     /// No additional check is performed on the size of the pixel
     /// array, passing invalid arguments will lead to an undefined
-    /// behaviour.
+    /// behavior.
     ///
     /// This function does nothing if \a pixels is null or if the
     /// texture was not previously created.
@@ -262,7 +262,7 @@ public:
     ///
     /// No additional check is performed on the size of the pixel
     /// array or the bounds of the area to update, passing invalid
-    /// arguments will lead to an undefined behaviour.
+    /// arguments will lead to an undefined behavior.
     ///
     /// This function does nothing if \a pixels is null or if the
     /// texture was not previously created.
@@ -286,7 +286,7 @@ public:
     ///
     /// No additional check is performed on the size of the image,
     /// passing an image bigger than the texture will lead to an
-    /// undefined behaviour.
+    /// undefined behavior.
     ///
     /// This function does nothing if the texture was not
     /// previously created.
@@ -301,7 +301,7 @@ public:
     ///
     /// No additional check is performed on the size of the image,
     /// passing an invalid combination of image size and offset
-    /// will lead to an undefined behaviour.
+    /// will lead to an undefined behavior.
     ///
     /// This function does nothing if the texture was not
     /// previously created.
@@ -323,7 +323,7 @@ public:
     ///
     /// No additional check is performed on the size of the window,
     /// passing a window bigger than the texture will lead to an
-    /// undefined behaviour.
+    /// undefined behavior.
     ///
     /// This function does nothing if either the texture or the window
     /// was not previously created.
@@ -338,7 +338,7 @@ public:
     ///
     /// No additional check is performed on the size of the window,
     /// passing an invalid combination of window size and offset
-    /// will lead to an undefined behaviour.
+    /// will lead to an undefined behavior.
     ///
     /// This function does nothing if either the texture or the window
     /// was not previously created.

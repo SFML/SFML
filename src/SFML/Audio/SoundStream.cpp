@@ -315,7 +315,7 @@ void SoundStream::streamData()
             }
         }
 
-        // Get the number of buffers that have been processed (ie. ready for reuse)
+        // Get the number of buffers that have been processed (i.e. ready for reuse)
         ALint nbProcessed = 0;
         alCheck(alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &nbProcessed));
 
@@ -381,7 +381,7 @@ void SoundStream::streamData()
     // Stop the playback
     alCheck(alSourceStop(m_source));
 
-    // Unqueue any buffer left in the queue
+    // Dequeue any buffer left in the queue
     clearQueue();
 
     // Delete the buffers
@@ -460,7 +460,7 @@ void SoundStream::clearQueue()
     ALint nbQueued;
     alCheck(alGetSourcei(m_source, AL_BUFFERS_QUEUED, &nbQueued));
 
-    // Unqueue them all
+    // Dequeue them all
     ALuint buffer;
     for (ALint i = 0; i < nbQueued; ++i)
         alCheck(alSourceUnqueueBuffers(m_source, 1, &buffer));
