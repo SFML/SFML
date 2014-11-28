@@ -49,8 +49,8 @@ namespace
 
         for (unsigned int i = 0; i < sf::Joystick::Count; ++i)
         {
-            std::ostringstream name("js");
-            name << i;
+            std::ostringstream name;
+            name << "js" << i;
             std::string nameString = name.str();
 
             int file = ::open(("/dev/input/" + nameString).c_str(), O_RDONLY);
@@ -260,8 +260,8 @@ bool JoystickImpl::open(unsigned int index)
 {
     if (plugged[index])
     {
-        std::ostringstream name("/dev/input/js");
-        name << index;
+        std::ostringstream name;
+        name << "/dev/input/js" << index;
 
         // Open the joystick's file descriptor (read-only and non-blocking)
         m_file = ::open(name.str().c_str(), O_RDONLY | O_NONBLOCK);
