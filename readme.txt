@@ -1,16 +1,20 @@
 SFML - Simple and Fast Multimedia Library
 =========================================
 
-SFML is a simple, fast, cross-platform and object-oriented multimedia API. It provides access to windowing, graphics,
-audio and network.
+SFML is a simple, fast, cross-platform and object-oriented multimedia API. It provides access to windowing, graphics, audio and network.
 It is written in C++, and has bindings for various languages such as C, .Net, Ruby, Python.
 
 Authors
 -------
 
-Laurent Gomila - main developer (laurent.gom@gmail.com)
-Marco Antognini - OS X developer (antognini.marco@gmail.com)
+Laurent Gomila - main developer (laurent@sfml-dev.org)
+Marco Antognini - OS X developer (hiura@sfml-dev.org)
 Jonathan De Wachter - Android developer (dewachter.jonathan@gmail.com)
+Jan Haller (bromeon@sfml-dev.org)
+Stefan Schindler (tank@sfml-dev.org)
+Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
+binary1248 (binary1248@hotmail.com)
+Artur Moreira (artturmoreira@gmail.com)
 
 Download
 --------
@@ -36,6 +40,4 @@ Contribute
 ----------
 
 SFML is an open-source project, and it needs your help to go on growing and improving.
-Don't hesitate to post suggestions or bug reports on the forum (http://en.sfml-dev.org/forums/),
-submit patches by e-mail, or post new bugs/features requests on the task tracker (https://github.com/LaurentGomila/SFML/issues/).
-You can even fork the project on github, maintain your own version and send us pull requests periodically to merge your work.
+If you want to get involved and suggest some additional features, file a bug report or submit a patch, please have a look at the contribution guidelines (http://www.sfml-dev.org/contribute.php).
