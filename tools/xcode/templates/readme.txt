@@ -1,8 +1,8 @@
 
-XCODE 4 & 5 TEMPLATES FOR SFML 2
-================================
+XCODE TEMPLATES FOR SFML 2
+==========================
 
-These templates help you to easily create a new SFML 2 project for Xcode 4 or Xcode 5.
+These templates help you to easily create a new SFML 2 project for Xcode 4 or greater.
 
 
 
@@ -36,9 +36,9 @@ Prerequisites
 
 Before installing the template, make sure you have installed:
 
- - Xcode 4 or Xcode 5, up to date
- - Installed Xcode's Command Line Tools
- - SFML 2, either framework or dylib binaries
+ - Xcode 4 or greater, up to date
+ - the Command Line Tools
+ - SFML 2, either as frameworks or dylibs
 
 There is one constraint on the installation of SFML: the frameworks needs to be installed in /Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are in the correct folder.
 
