@@ -215,6 +215,7 @@ private:
     SFView*           m_view;           ///< OpenGL view of the window
     SFViewController* m_viewController; ///< Controller attached to the view
     bool              m_hasFocus;       ///< Current focus state of the window
+    float             m_backingScale;   ///< Converts from points to pixels and vice versa
 };
 
 } // namespace priv

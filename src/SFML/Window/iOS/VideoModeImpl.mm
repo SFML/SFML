@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <UIKit/UIKit.h>
-
 
 namespace sf
 {
@@ -50,7 +50,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 VideoMode VideoModeImpl::getDesktopMode()
 {
     CGRect bounds = [[UIScreen mainScreen] bounds];
-    return VideoMode(bounds.size.width, bounds.size.height);
+    float backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    return VideoMode(bounds.size.width * backingScale, bounds.size.height * backingScale);
 }
 
 } // namespace priv
