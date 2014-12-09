@@ -101,10 +101,33 @@
 - (void)notifyCharacter:(sf::Uint32)character;
 
 ////////////////////////////////////////////////////////////
+/// \brief Tells if the dimensions of the current window must be flipped when switching to a given orientation
+///
+/// \param orientation the device has changed to
+///
+////////////////////////////////////////////////////////////
+- (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation;
+
+////////////////////////////////////////////////////////////
+/// \brief Tells if app and view support a requested device orientation or not
+///
+/// \param orientation the device has changed to
+///
+////////////////////////////////////////////////////////////
+- (bool)supportsOrientation:(UIDeviceOrientation)orientation;
+
+////////////////////////////////////////////////////////////
+/// \brief Initializes the factor which is required to convert from points to pixels and back
+///
+////////////////////////////////////////////////////////////
+- (void)initBackingScale;
+
+////////////////////////////////////////////////////////////
 // Member data
 ////////////////////////////////////////////////////////////
 @property (nonatomic) sf::priv::WindowImplUIKit* sfWindow; ///< Main window of the application
 @property (readonly, nonatomic) CMMotionManager* motionManager; ///< Instance of the motion manager
+@property (nonatomic) CGFloat backingScaleFactor;
 
 @end
 
