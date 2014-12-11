@@ -289,6 +289,14 @@ void Window::setMouseCursorVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
+void Window::setMouseCursorGrabbed(bool grabbed)
+{
+    if (m_impl)
+        m_impl->setMouseCursorGrabbed(grabbed);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::setKeyRepeatEnabled(bool enabled)
 {
     if (m_impl)
@@ -337,22 +345,6 @@ bool Window::setActive(bool active) const
 
 
 ////////////////////////////////////////////////////////////
-void Window::requestFocus()
-{
-    if (m_impl)
-        m_impl->requestFocus();
-}
-
-
-////////////////////////////////////////////////////////////
-bool Window::hasFocus() const
-{
-    return m_impl && m_impl->hasFocus();
-}
-
-
-////////////////////////////////////////////////////////////
-
 void Window::display()
 {
     // Display the backbuffer on screen
@@ -410,7 +402,7 @@ bool Window::filterEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 void Window::initialize()
 {
-    // Setup default behaviors (to get a consistent behavior across different implementations)
+    // Setup default behaviours (to get a consistent behaviour across different implementations)
     setVisible(true);
     setMouseCursorVisible(true);
     setVerticalSyncEnabled(false);

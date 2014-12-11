@@ -56,7 +56,7 @@ class Event;
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Window : GlResource, NonCopyable
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -72,7 +72,7 @@ public:
     ///
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
-    /// customize the look and behavior of the window (borders,
+    /// customize the look and behaviour of the window (borders,
     /// title bar, resizable, closable, ...). If \a style contains
     /// Style::Fullscreen, then \a mode must be a valid video mode.
     ///
@@ -217,7 +217,7 @@ public:
     ///
     /// This function is blocking: if there's no pending event then
     /// it will wait until an event is received.
-    /// After this function returns (and no error occurred),
+    /// After this function returns (and no error occured),
     /// the \a event object is always valid and filled properly.
     /// This function is typically used when you have a thread that
     /// is dedicated to events handling: you want to make this thread
@@ -232,7 +232,7 @@ public:
     ///
     /// \param event Event to be returned
     ///
-    /// \return False if any error occurred
+    /// \return False if any error occured
     ///
     /// \see pollEvent
     ///
@@ -351,6 +351,21 @@ public:
     void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// If set, grabs the mouse cursor inside this window's client
+    /// area so it may no longer be moved outside its bounds.
+    /// Note that grabbing is only active while the window has
+    /// focus and calling this function for fullscreen windows
+    /// won't have any effect (fullscreen windows always grab the
+    /// cursor).
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursorGrabbed(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// If key repeat is enabled, you will receive repeated
@@ -403,7 +418,6 @@ public:
     /// on the previous thread first if it was active.
     /// Only one window can be active on a thread at a time, thus
     /// the window previously active (if any) automatically gets deactivated.
-    /// This is not to be confused with requestFocus().
     ///
     /// \param active True to activate, false to deactivate
     ///
@@ -411,35 +425,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool setActive(bool active = true) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Request the current window to be made the active
-    ///        foreground window
-    ///
-    /// At any given time, only one window may have the input focus
-    /// to receive input events such as keystrokes or mouse events.
-    /// If a window requests focus, it only hints to the operating
-    /// system, that it would like to be focused. The operating system
-    /// is free to deny the request.
-    /// This is not to be confused with setActive().
-    ///
-    /// \see hasFocus
-    ///
-    ////////////////////////////////////////////////////////////
-    void requestFocus();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check whether the window has the input focus
-    ///
-    /// At any given time, only one window may have the input focus
-    /// to receive input events such as keystrokes or most mouse
-    /// events.
-    ///
-    /// \return True if window has focus, false otherwise
-    /// \see requestFocus
-    ///
-    ////////////////////////////////////////////////////////////
-    bool hasFocus() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
@@ -467,7 +452,7 @@ public:
     ////////////////////////////////////////////////////////////
     WindowHandle getSystemHandle() const;
 
-protected:
+protected :
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called after the window has been created

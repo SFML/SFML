@@ -100,7 +100,9 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_fullscreen  (false),
+m_cursorGrabbed(false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -131,7 +133,9 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_fullscreen  (style & Style::Fullscreen),
+m_cursorGrabbed(m_fullscreen)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -140,8 +144,7 @@ m_useSizeHints(false)
 
     // Compute position and size
     int left, top;
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    if (!fullscreen)
+    if (!m_fullscreen)
     {
         left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
         top  = (DisplayHeight(m_display, m_screen) - mode.height) / 2;
@@ -155,7 +158,7 @@ m_useSizeHints(false)
     int height = mode.height;
 
     // Switch to fullscreen if necessary
-    if (fullscreen)
+    if (m_fullscreen)
         switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
@@ -163,8 +166,8 @@ m_useSizeHints(false)
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.override_redirect = fullscreen;
-    attributes.event_mask = eventMask;
+    attributes.event_mask        = eventMask;
+    attributes.override_redirect = m_fullscreen;
     attributes.colormap = XCreateColormap(m_display, root, visualInfo.visual, AllocNone);
 
     // Create the window
@@ -187,7 +190,7 @@ m_useSizeHints(false)
     setTitle(title);
 
     // Set the window's style (tell the windows manager to change our window's decorations and functions according to the requested style)
-    if (!fullscreen)
+    if (!m_fullscreen)
     {
         Atom WMHintsAtom = XInternAtom(m_display, "_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
@@ -270,7 +273,7 @@ m_useSizeHints(false)
     initialize();
 
     // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    if (m_fullscreen)
     {
         XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
         XGrabKeyboard(m_display, m_window, true, GrabModeAsync, GrabModeAsync, CurrentTime);
@@ -383,7 +386,9 @@ void WindowImplX11::setSize(const Vector2u& size)
 void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
-    // There is however an option to tell the window manager your Unicode title via hints.
+
+    // There is however an option to tell the window manager your unicode title via hints.
+
 
     // Convert to UTF-8 encoding.
     std::basic_string<Uint8> utf8Title;
@@ -478,6 +483,26 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
 {
     XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
     XFlush(m_display);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
+{
+    // This has no effect in fullscreen mode
+    if (m_fullscreen || (m_cursorGrabbed == grabbed))
+        return;
+
+    if (grabbed)
+    {
+        XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+        m_cursorGrabbed = true;
+    }
+    else
+    {
+        XUngrabPointer(m_display, CurrentTime);
+        m_cursorGrabbed = false;
+    }
 }
 
 
@@ -746,6 +771,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             if (m_inputContext)
                 XSetICFocus(m_inputContext);
 
+            // Grab cursor
+            if (m_cursorGrabbed)
+                XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -768,6 +797,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
+
+            // Release cursor
+            if (m_cursorGrabbed)
+                XUngrabPointer(m_display, CurrentTime);
 
             Event event;
             event.type = Event::LostFocus;
@@ -898,11 +931,19 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
+<<<<<<< HEAD
+                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
+                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
+                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;
+=======
                     case Button1: event.mouseButton.button = Mouse::Left;     break;
                     case Button2: event.mouseButton.button = Mouse::Middle;   break;
                     case Button3: event.mouseButton.button = Mouse::Right;    break;
                     case 8:       event.mouseButton.button = Mouse::XButton1; break;
                     case 9:       event.mouseButton.button = Mouse::XButton2; break;
+>>>>>>> master
                 }
                 pushEvent(event);
             }
@@ -921,11 +962,19 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
+<<<<<<< HEAD
+                    case Button1 : event.mouseButton.button = Mouse::Left;     break;
+                    case Button2 : event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3 : event.mouseButton.button = Mouse::Right;    break;
+                    case 8 :       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9 :       event.mouseButton.button = Mouse::XButton2; break;
+=======
                     case Button1: event.mouseButton.button = Mouse::Left;     break;
                     case Button2: event.mouseButton.button = Mouse::Middle;   break;
                     case Button3: event.mouseButton.button = Mouse::Right;    break;
                     case 8:       event.mouseButton.button = Mouse::XButton1; break;
                     case 9:       event.mouseButton.button = Mouse::XButton2; break;
+>>>>>>> master
                 }
                 pushEvent(event);
             }

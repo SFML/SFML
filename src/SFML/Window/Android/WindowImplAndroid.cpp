@@ -177,6 +177,13 @@ void WindowImplAndroid::setMouseCursorVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplAndroid::setMouseCursorGrabbed(bool grabbed)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::setKeyRepeatEnabled(bool enabled)
 {
     // Not applicable
