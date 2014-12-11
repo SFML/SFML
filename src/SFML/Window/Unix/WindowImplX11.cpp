@@ -931,19 +931,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
-<<<<<<< HEAD
+
                     case Button1 : event.mouseButton.button = Mouse::Left;     break;
                     case Button2 : event.mouseButton.button = Mouse::Middle;   break;
                     case Button3 : event.mouseButton.button = Mouse::Right;    break;
                     case 8 :       event.mouseButton.button = Mouse::XButton1; break;
                     case 9 :       event.mouseButton.button = Mouse::XButton2; break;
-=======
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
->>>>>>> master
+
                 }
                 pushEvent(event);
             }
@@ -962,19 +956,13 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch (button)
                 {
-<<<<<<< HEAD
+
                     case Button1 : event.mouseButton.button = Mouse::Left;     break;
                     case Button2 : event.mouseButton.button = Mouse::Middle;   break;
                     case Button3 : event.mouseButton.button = Mouse::Right;    break;
                     case 8 :       event.mouseButton.button = Mouse::XButton1; break;
                     case 9 :       event.mouseButton.button = Mouse::XButton2; break;
-=======
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
->>>>>>> master
+
                 }
                 pushEvent(event);
             }
