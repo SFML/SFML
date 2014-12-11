@@ -8,7 +8,7 @@
 /// at <a href="http://www.sfml-dev.org/">www.sfml-dev.org</a>.
 ///
 /// \section example Short example
-/// Here is a short example, to show you how simple it is to use SFML :
+/// Here is a short example, to show you how simple it is to use SFML:
 ///
 /// \code
 ///
@@ -47,7 +47,7 @@
 ///         sf::Event event;
 ///         while (window.pollEvent(event))
 ///         {
-///             // Close window : exit
+///             // Close window: exit
 ///             if (event.type == sf::Event::Closed)
 ///                 window.close();
 ///         }

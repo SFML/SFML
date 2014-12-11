@@ -59,7 +59,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     EaglContext(EaglContext* shared);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
@@ -71,7 +71,7 @@ public:
     ////////////////////////////////////////////////////////////
     EaglContext(EaglContext* shared, const ContextSettings& settings,
                 const WindowImpl* owner, unsigned int bitsPerPixel);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
     ///
@@ -81,9 +81,9 @@ public:
     /// \param height   Back buffer height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EaglContext(EaglContext* shared, const ContextSettings& settings, 
+    EaglContext(EaglContext* shared, const ContextSettings& settings,
                 unsigned int width, unsigned int height);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -96,7 +96,7 @@ public:
     /// This function must be called whenever the containing view
     /// changes (typically after an orientation change)
     ///
-    /// \param glView : Container of the context
+    /// \param glView: Container of the context
     ///
     ////////////////////////////////////////////////////////////
     void recreateRenderBuffers(SFView* glView);
@@ -106,7 +106,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void display();
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
     ///
@@ -115,13 +115,13 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
-    
+
 protected:
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
     ///        for rendering
@@ -130,9 +130,9 @@ protected:
     ///
     ////////////////////////////////////////////////////////////
     virtual bool makeCurrent();
-    
+
 private:
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
@@ -144,9 +144,9 @@ private:
     ////////////////////////////////////////////////////////////
     void createContext(EaglContext* shared,
                        const WindowImplUIKit* window,
-                       unsigned int bitsPerPixel, 
+                       unsigned int bitsPerPixel,
                        const ContextSettings& settings);
-    
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -157,9 +157,9 @@ private:
     bool m_vsyncEnabled;    ///< Vertical sync activation flag
     Clock m_clock;          ///< Measures the elapsed time for the fake v-sync implementation
 };
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 #endif // SFML_EAGLCONTEXT_HPP

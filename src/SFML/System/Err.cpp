@@ -33,10 +33,10 @@
 namespace
 {
 // This class will be used as the default streambuf of sf::Err,
-// it outputs to stderr by default (to keep the default behaviour)
+// it outputs to stderr by default (to keep the default behavior)
 class DefaultErrStreamBuf : public std::streambuf
 {
-public :
+public:
 
     DefaultErrStreamBuf() 
     {
@@ -55,7 +55,7 @@ public :
         delete[] pbase();
     }
 
-private :
+private:
 
     virtual int overflow(int character)
     {

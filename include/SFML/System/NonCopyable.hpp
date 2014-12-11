@@ -40,19 +40,19 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_SYSTEM_API NonCopyable
 {
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// Because this class has a copy constructor, the compiler
     /// will not automatically generate the default constructor.
-    /// That's why we must define it explicitely.
+    /// That's why we must define it explicitly.
     ///
     ////////////////////////////////////////////////////////////
     NonCopyable() {}
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Disabled copy constructor
@@ -89,7 +89,7 @@ private :
 /// \class sf::NonCopyable
 /// \ingroup system
 ///
-/// This class makes its instances non-copyable, by explicitely
+/// This class makes its instances non-copyable, by explicitly
 /// disabling its copy constructor and its assignment operator.
 ///
 /// To create a non-copyable class, simply inherit from

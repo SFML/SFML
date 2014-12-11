@@ -19,7 +19,7 @@ const sf::Uint8 endOfStream = 2;
 ////////////////////////////////////////////////////////////
 class NetworkAudioStream : public sf::SoundStream
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// Default constructor
@@ -64,7 +64,7 @@ public :
         }
     }
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// /see SoundStream::OnGetData
@@ -72,11 +72,11 @@ private :
     ////////////////////////////////////////////////////////////
     virtual bool onGetData(sf::SoundStream::Chunk& data)
     {
-        // We have reached the end of the buffer and all audio data have been played : we can stop playback
+        // We have reached the end of the buffer and all audio data have been played: we can stop playback
         if ((m_offset >= m_samples.size()) && m_hasFinished)
             return false;
 
-        // No new data has arrived since last update : wait until we get some
+        // No new data has arrived since last update: wait until we get some
         while ((m_offset >= m_samples.size()) && !m_hasFinished)
             sf::sleep(sf::milliseconds(10));
 
@@ -138,7 +138,7 @@ private :
             }
             else if (id == endOfStream)
             {
-                // End of stream reached : we stop receiving audio data
+                // End of stream reached: we stop receiving audio data
                 std::cout << "Audio data has been 100% received!" << std::endl;
                 m_hasFinished = true;
             }

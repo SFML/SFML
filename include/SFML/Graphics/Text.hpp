@@ -47,7 +47,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Text : public Drawable, public Transformable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the string drawing styles
@@ -116,7 +116,7 @@ public :
     /// doesn't store its own copy of the font, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the font is destroyed and the text tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     ///
     /// \param font New font
     ///
@@ -193,7 +193,7 @@ public :
     /// \brief Get the text's font
     ///
     /// If the text has no font attached, a NULL pointer is returned.
-    /// The returned reference is const, which means that you
+    /// The returned pointer is const, which means that you
     /// cannot modify the font when you get it from this function.
     ///
     /// \return Pointer to the text's font
@@ -278,7 +278,7 @@ public :
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the text to a render target

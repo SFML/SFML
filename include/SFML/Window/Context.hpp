@@ -47,7 +47,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Context : GlResource, NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -66,7 +66,7 @@ public :
     ~Context();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate or deactivate explicitely the context
+    /// \brief Activate or deactivate explicitly the context
     ///
     /// \param active True to activate, false to deactivate
     ///
@@ -75,7 +75,7 @@ public :
     ////////////////////////////////////////////////////////////
     bool setActive(bool active);
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context
@@ -90,7 +90,7 @@ public :
     ////////////////////////////////////////////////////////////
     Context(const ContextSettings& settings, unsigned int width, unsigned int height);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

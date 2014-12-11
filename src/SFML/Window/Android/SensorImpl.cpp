@@ -139,7 +139,7 @@ ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 
     int type = types[sensor];
 
-    // Retrive the default sensor matching this type
+    // Retrieve the default sensor matching this type
     return ASensorManager_getDefaultSensor(sensorManager, type);
 }
 

@@ -46,7 +46,7 @@ class Texture;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Sprite : public Drawable, public Transformable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -85,7 +85,7 @@ public :
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the sprite tries to
-    /// use it, the behaviour is undefined.
+    /// use it, the behavior is undefined.
     /// If \a resetRect is true, the TextureRect property of
     /// the sprite is automatically adjusted to the size of the new
     /// texture. If it is false, the texture rect is left unchanged.
@@ -189,7 +189,7 @@ public :
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the sprite to a render target

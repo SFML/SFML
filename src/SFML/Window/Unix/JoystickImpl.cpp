@@ -49,8 +49,8 @@ namespace
 
         for (unsigned int i = 0; i < sf::Joystick::Count; ++i)
         {
-            std::ostringstream name("js");
-            name << i;
+            std::ostringstream name;
+            name << "js" << i;
             std::string nameString = name.str();
 
             int file = ::open(("/dev/input/" + nameString).c_str(), O_RDONLY);
@@ -260,8 +260,8 @@ bool JoystickImpl::open(unsigned int index)
 {
     if (plugged[index])
     {
-        std::ostringstream name("/dev/input/js");
-        name << index;
+        std::ostringstream name;
+        name << "/dev/input/js" << index;
 
         // Open the joystick's file descriptor (read-only and non-blocking)
         m_file = ::open(name.str().c_str(), O_RDONLY | O_NONBLOCK);
@@ -312,17 +312,17 @@ JoystickCaps JoystickImpl::getCapabilities() const
     {
         switch (m_mapping[i])
         {
-            case ABS_X :        caps.axes[Joystick::X]    = true; break;
-            case ABS_Y :        caps.axes[Joystick::Y]    = true; break;
-            case ABS_Z :
-            case ABS_THROTTLE : caps.axes[Joystick::Z]    = true; break;
+            case ABS_X:        caps.axes[Joystick::X]    = true; break;
+            case ABS_Y:        caps.axes[Joystick::Y]    = true; break;
+            case ABS_Z:
+            case ABS_THROTTLE: caps.axes[Joystick::Z]    = true; break;
             case ABS_RZ:
-            case ABS_RUDDER:    caps.axes[Joystick::R]    = true; break;
-            case ABS_RX :       caps.axes[Joystick::U]    = true; break;
-            case ABS_RY :       caps.axes[Joystick::V]    = true; break;
-            case ABS_HAT0X :    caps.axes[Joystick::PovX] = true; break;
-            case ABS_HAT0Y :    caps.axes[Joystick::PovY] = true; break;
-            default : break;
+            case ABS_RUDDER:   caps.axes[Joystick::R]    = true; break;
+            case ABS_RX:       caps.axes[Joystick::U]    = true; break;
+            case ABS_RY:       caps.axes[Joystick::V]    = true; break;
+            case ABS_HAT0X:    caps.axes[Joystick::PovX] = true; break;
+            case ABS_HAT0Y:    caps.axes[Joystick::PovY] = true; break;
+            default:           break;
         }
     }
 
@@ -347,28 +347,28 @@ JoystickState JoystickImpl::JoystickImpl::update()
         switch (joyState.type & ~JS_EVENT_INIT)
         {
             // An axis was moved
-            case JS_EVENT_AXIS :
+            case JS_EVENT_AXIS:
             {
                 float value = joyState.value * 100.f / 32767.f;
                 switch (m_mapping[joyState.number])
                 {
-                    case ABS_X :        m_state.axes[Joystick::X]    = value; break;
-                    case ABS_Y :        m_state.axes[Joystick::Y]    = value; break;
-                    case ABS_Z :
-                    case ABS_THROTTLE : m_state.axes[Joystick::Z]    = value; break;
+                    case ABS_X:        m_state.axes[Joystick::X]    = value; break;
+                    case ABS_Y:        m_state.axes[Joystick::Y]    = value; break;
+                    case ABS_Z:
+                    case ABS_THROTTLE: m_state.axes[Joystick::Z]    = value; break;
                     case ABS_RZ:
-                    case ABS_RUDDER:    m_state.axes[Joystick::R]    = value; break;
-                    case ABS_RX :       m_state.axes[Joystick::U]    = value; break;
-                    case ABS_RY :       m_state.axes[Joystick::V]    = value; break;
-                    case ABS_HAT0X :    m_state.axes[Joystick::PovX] = value; break;
-                    case ABS_HAT0Y :    m_state.axes[Joystick::PovY] = value; break;
-                    default : break;
+                    case ABS_RUDDER:   m_state.axes[Joystick::R]    = value; break;
+                    case ABS_RX:       m_state.axes[Joystick::U]    = value; break;
+                    case ABS_RY:       m_state.axes[Joystick::V]    = value; break;
+                    case ABS_HAT0X:    m_state.axes[Joystick::PovX] = value; break;
+                    case ABS_HAT0Y:    m_state.axes[Joystick::PovY] = value; break;
+                    default:           break;
                 }
                 break;
             }
 
             // A button was pressed
-            case JS_EVENT_BUTTON :
+            case JS_EVENT_BUTTON:
             {
                 if (joyState.number < Joystick::ButtonCount)
                     m_state.buttons[joyState.number] = (joyState.value != 0);

@@ -45,7 +45,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API Http : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Define a HTTP request
@@ -53,7 +53,7 @@ public :
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API Request
     {
-    public :
+    public:
 
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate the available HTTP methods for a request
@@ -85,7 +85,7 @@ public :
         /// \brief Set the value of a field
         ///
         /// The field is created if it doesn't exist. The name of
-        /// the field is case insensitive.
+        /// the field is case-insensitive.
         /// By default, a request doesn't contain any field (but the
         /// mandatory fields are added later by the HTTP client when
         /// sending the request).
@@ -143,7 +143,7 @@ public :
         ////////////////////////////////////////////////////////////
         void setBody(const std::string& body);
 
-    private :
+    private:
 
         friend class Http;
 
@@ -192,7 +192,7 @@ public :
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API Response
     {
-    public :
+    public:
 
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate all the valid status codes for a response
@@ -212,12 +212,12 @@ public :
             MultipleChoices  = 300, ///< The requested page can be accessed from several locations
             MovedPermanently = 301, ///< The requested page has permanently moved to a new location
             MovedTemporarily = 302, ///< The requested page has temporarily moved to a new location
-            NotModified      = 304, ///< For conditionnal requests, means the requested page hasn't changed and doesn't need to be refreshed
+            NotModified      = 304, ///< For conditional requests, means the requested page hasn't changed and doesn't need to be refreshed
 
             // 4xx: client error
             BadRequest          = 400, ///< The server couldn't understand the request (syntax error)
-            Unauthorized        = 401, ///< The requested page needs an authentification to be accessed
-            Forbidden           = 403, ///< The requested page cannot be accessed at all, even with authentification
+            Unauthorized        = 401, ///< The requested page needs an authentication to be accessed
+            Forbidden           = 403, ///< The requested page cannot be accessed at all, even with authentication
             NotFound            = 404, ///< The requested page doesn't exist
             RangeNotSatisfiable = 407, ///< The server can't satisfy the partial GET request (with a "Range" header field)
 
@@ -303,7 +303,7 @@ public :
         ////////////////////////////////////////////////////////////
         const std::string& getBody() const;
 
-    private :
+    private:
 
         friend class Http;
 
@@ -393,7 +393,7 @@ public :
     /// Warning: this function waits for the server's response and may
     /// not return instantly; use a thread if you don't want to block your
     /// application, or use a timeout to limit the time to wait. A value
-    /// of Time::Zero means that the client will use the system defaut timeout
+    /// of Time::Zero means that the client will use the system default timeout
     /// (which is usually pretty long).
     ///
     /// \param request Request to send
@@ -404,7 +404,7 @@ public :
     ////////////////////////////////////////////////////////////
     Response sendRequest(const Request& request, Time timeout = Time::Zero);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

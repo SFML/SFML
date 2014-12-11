@@ -411,7 +411,7 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
-    // Before resizing, remove resizeable mask to be able to resize
+    // Before resizing, remove resizable mask to be able to resize
     // beyond the desktop boundaries.
     NSUInteger styleMask = [m_window styleMask];
 
@@ -477,6 +477,23 @@
 
 
 ////////////////////////////////////////////////////////
+-(void)requestFocus
+{
+    [m_window makeKeyAndOrderFront:nil];
+
+    // In case the app is not active, make its dock icon bounce for one sec
+    [NSApp requestUserAttention:NSInformationalRequest];
+}
+
+
+////////////////////////////////////////////////////////////
+-(BOOL)hasFocus
+{
+    return [NSApp keyWindow] == m_window;
+}
+
+
+////////////////////////////////////////////////////////
 -(void)enableKeyRepeat
 {
     [m_oglView enableKeyRepeat];
@@ -497,7 +514,7 @@
 {
     // Create an empty image representation.
     NSBitmapImageRep* bitmap =
-    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0 : only allocate memory
+    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0: only allocate memory
                                             pixelsWide:width
                                             pixelsHigh:height
                                          bitsPerSample:8 // The number of bits used to specify

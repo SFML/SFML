@@ -43,7 +43,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API RenderWindow : public Window, public RenderTarget
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -59,7 +59,7 @@ public :
     ///
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
-    /// customize the look and behaviour of the window (borders,
+    /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...).
     ///
     /// The fourth parameter is an optional structure specifying
@@ -149,7 +149,7 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onResize();
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the target for rendering

@@ -223,7 +223,7 @@ bool SoundFile::openWrite(const std::string& filename, unsigned int channelCount
     int format = getFormatFromFilename(filename);
     if (format == -1)
     {
-        // Error : unrecognized extension
+        // Error: unrecognized extension
         err() << "Failed to create sound file \"" << filename << "\" (unknown format)" << std::endl;
         return false;
     }
@@ -375,10 +375,10 @@ sf_count_t SoundFile::Memory::seek(sf_count_t offset, int whence, void* user)
     sf_count_t position = 0;
     switch (whence)
     {
-        case SEEK_SET : position = offset;                                   break;
-        case SEEK_CUR : position = memory->current - memory->begin + offset; break;
-        case SEEK_END : position = memory->size - offset;                    break;
-        default       : position = 0;                                        break;
+        case SEEK_SET: position = offset;                                   break;
+        case SEEK_CUR: position = memory->current - memory->begin + offset; break;
+        case SEEK_END: position = memory->size - offset;                    break;
+        default:       position = 0;                                        break;
     }
 
     if (position >= memory->size)
@@ -431,10 +431,10 @@ sf_count_t SoundFile::Stream::seek(sf_count_t offset, int whence, void* userData
     Stream* stream = static_cast<Stream*>(userData);
     switch (whence)
     {
-        case SEEK_SET : return stream->source->seek(offset);
-        case SEEK_CUR : return stream->source->seek(stream->source->tell() + offset);
-        case SEEK_END : return stream->source->seek(stream->size - offset);
-        default       : return stream->source->seek(0);
+        case SEEK_SET: return stream->source->seek(offset);
+        case SEEK_CUR: return stream->source->seek(stream->source->tell() + offset);
+        case SEEK_END: return stream->source->seek(stream->size - offset);
+        default: return stream->source->seek(0);
     }
 }
 

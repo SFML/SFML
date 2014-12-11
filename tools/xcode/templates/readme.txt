@@ -1,8 +1,8 @@
 
-XCODE 4 & 5 TEMPLATES FOR SFML 2
-================================
+XCODE TEMPLATES FOR SFML 2
+==========================
 
-These templates help you to easily create a new SFML 2 project for Xcode 4 or Xcode 5.
+These templates help you to easily create a new SFML 2 project for Xcode 4 or greater.
 
 
 
@@ -16,7 +16,7 @@ You can find more resources and information on the official web site: http://www
 Author & License
 ----------------
 
-The templates were written by Marco Antognini <antognini.marco@gmail.com> and are provided under the terms of the zlib/png license : http://opensource.org/licenses/zlib-license.php
+The templates were written by Marco Antognini <antognini.marco@gmail.com> and are provided under the terms of the zlib/png license: http://opensource.org/licenses/zlib-license.php
 
 
 
@@ -36,9 +36,9 @@ Prerequisites
 
 Before installing the template, make sure you have installed:
 
- - Xcode 4 or Xcode 5, up to date
- - Installed Xcode's Command Line Tools
- - SFML 2, either framework or dylib binaries
+ - Xcode 4 or greater, up to date
+ - the Command Line Tools
+ - SFML 2, either as frameworks or dylibs
 
 There is one constraint on the installation of SFML: the frameworks needs to be installed in /Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are in the correct folder.
 
@@ -56,7 +56,7 @@ If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATE
 Usage
 -----
 
-To use these templates follow these steps :
+To use these templates follow these steps:
 
  1. open Xcode,
  2. select "create a new Xcode project" from the "Welcome to Xcode" window or select menus File > New > New Project,
@@ -64,7 +64,7 @@ To use these templates follow these steps :
  4. then select either "SFML App", if you want an application bundle, or "SFML CLT", if you prefer a classic Unix executable,
  5. fill in the requested information and you're ready to go !
 
-Note : some settings are marked as "[ADVANCED]" in the wizard. If you're not sure what they are, simply keep the default settings. If you get errors later you would probably want to explore their meaning.
+Note: some settings are marked as "[ADVANCED]" in the wizard. If you're not sure what they are, simply keep the default settings. If you get errors later you would probably want to explore their meaning.
 
 
 

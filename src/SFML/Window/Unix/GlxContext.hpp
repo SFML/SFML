@@ -43,7 +43,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class GlxContext : public GlContext
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
@@ -120,7 +120,7 @@ public :
     ////////////////////////////////////////////////////////////
     static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context

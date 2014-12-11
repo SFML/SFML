@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
-/// \brief Event processing & Menu bar initialisation
+/// \brief Event processing & Menu bar initialization
 ///
 ////////////////////////////////////////////////////////////
 @interface SFApplication : NSApplication

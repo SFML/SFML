@@ -28,6 +28,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <cmath>
 
 
 namespace sf
@@ -189,9 +190,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         // Handle special characters
         switch (curChar)
         {
-            case ' ' :  position.x += hspace;                 continue;
-            case '\t' : position.x += hspace * 4;             continue;
-            case '\n' : position.y += vspace; position.x = 0; continue;
+            case ' ':  position.x += hspace;                 continue;
+            case '\t': position.x += hspace * 4;             continue;
+            case '\n': position.y += vspace; position.x = 0; continue;
         }
 
         // For regular characters, add the advance offset of the glyph
@@ -262,14 +263,14 @@ void Text::ensureGeometryUpdate() const
     bool  underlined         = (m_style & Underlined) != 0;
     bool  strikeThrough      = (m_style & StrikeThrough) != 0;
     float italic             = (m_style & Italic) ? 0.208f : 0.f; // 12 degrees
-    float underlineOffset    = static_cast<float>(m_font->getUnderlinePosition(m_characterSize));
-    float underlineThickness = static_cast<float>(m_font->getUnderlineThickness(m_characterSize));
+    float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
+    float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
 
     // Compute the location of the strike through dynamically
     // We use the center point of the lowercase 'x' glyph as the reference
     // We reuse the underline thickness as the thickness of the strike through as well
-    IntRect xBounds = m_font->getGlyph(L'x', m_characterSize, bold).bounds;
-    float strikeThroughOffset = static_cast<float>(xBounds.top) + static_cast<float>(xBounds.height) / 2.f;
+    FloatRect xBounds = m_font->getGlyph(L'x', m_characterSize, bold).bounds;
+    float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
     float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
@@ -294,8 +295,8 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (underlined && (curChar == L'\n'))
         {
-            float top = y + underlineOffset;
-            float bottom = top + underlineThickness;
+            float top = std::floor(y + underlineOffset - (underlineThickness / 2) + 0.5f);
+            float bottom = top + std::floor(underlineThickness + 0.5f);
 
             m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
             m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
@@ -308,8 +309,8 @@ void Text::ensureGeometryUpdate() const
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (strikeThrough && (curChar == L'\n'))
         {
-            float top = y + strikeThroughOffset;
-            float bottom = top + underlineThickness;
+            float top = std::floor(y + strikeThroughOffset - (underlineThickness / 2) + 0.5f);
+            float bottom = top + std::floor(underlineThickness + 0.5f);
 
             m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
             m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
@@ -328,9 +329,9 @@ void Text::ensureGeometryUpdate() const
 
             switch (curChar)
             {
-                case ' ' :  x += hspace;        break;
-                case '\t' : x += hspace * 4;    break;
-                case '\n' : y += vspace; x = 0; break;
+                case ' ':  x += hspace;        break;
+                case '\t': x += hspace * 4;    break;
+                case '\n': y += vspace; x = 0; break;
             }
 
             // Update the current bounds (max coordinates)
@@ -344,10 +345,10 @@ void Text::ensureGeometryUpdate() const
         // Extract the current glyph's description
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, bold);
 
-        int left   = glyph.bounds.left;
-        int top    = glyph.bounds.top;
-        int right  = glyph.bounds.left + glyph.bounds.width;
-        int bottom = glyph.bounds.top  + glyph.bounds.height;
+        float left   = glyph.bounds.left;
+        float top    = glyph.bounds.top;
+        float right  = glyph.bounds.left + glyph.bounds.width;
+        float bottom = glyph.bounds.top  + glyph.bounds.height;
 
         float u1 = static_cast<float>(glyph.textureRect.left);
         float v1 = static_cast<float>(glyph.textureRect.top);
@@ -375,8 +376,8 @@ void Text::ensureGeometryUpdate() const
     // If we're using the underlined style, add the last line
     if (underlined)
     {
-        float top = y + underlineOffset;
-        float bottom = top + underlineThickness;
+        float top = std::floor(y + underlineOffset - (underlineThickness / 2) + 0.5f);
+        float bottom = top + std::floor(underlineThickness + 0.5f);
 
         m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
         m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
@@ -389,8 +390,8 @@ void Text::ensureGeometryUpdate() const
     // If we're using the strike through style, add the last line across all characters
     if (strikeThrough)
     {
-        float top = y + strikeThroughOffset;
-        float bottom = top + underlineThickness;
+        float top = std::floor(y + strikeThroughOffset - (underlineThickness / 2) + 0.5f);
+        float bottom = top + std::floor(underlineThickness + 0.5f);
 
         m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
         m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));

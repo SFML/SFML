@@ -123,7 +123,7 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image \"" << filename << "\". Reason : " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image \"" << filename << "\". Reason: " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -162,7 +162,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         else
         {
             // Error, failed to load the image
-            err() << "Failed to load image from memory. Reason : " << stbi_failure_reason() << std::endl;
+            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
 
             return false;
         }
@@ -212,7 +212,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image from stream. Reason : " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -286,7 +286,7 @@ bool ImageLoader::writeJpg(const std::string& filename, const std::vector<Uint8>
     jpeg_set_defaults(&compressInfos);
     jpeg_set_quality(&compressInfos, 90, TRUE);
 
-    // Get rid of the aplha channel
+    // Get rid of the alpha channel
     std::vector<Uint8> buffer(width * height * 3);
     for (std::size_t i = 0; i < width * height; ++i)
     {

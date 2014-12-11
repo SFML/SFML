@@ -44,7 +44,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundStream : public SoundSource
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a chunk of audio data to stream
@@ -178,7 +178,7 @@ public :
     ////////////////////////////////////////////////////////////
     bool getLoop() const;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -207,7 +207,7 @@ protected :
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
     ///
-    /// This function must be overriden by derived classes to provide
+    /// This function must be overridden by derived classes to provide
     /// the audio samples to play. It is called continuously by the
     /// streaming loop, in a separate thread.
     /// The source can choose to stop the streaming loop at any time, by
@@ -226,7 +226,7 @@ protected :
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
     ///
-    /// This function must be overriden by derived classes to
+    /// This function must be overridden by derived classes to
     /// allow random seeking into the stream source.
     ///
     /// \param timeOffset New playing position, relative to the beginning of the stream
@@ -234,7 +234,7 @@ protected :
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset) = 0;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called as the entry point of the thread
@@ -313,7 +313,7 @@ private :
 /// Unlike audio buffers (see sf::SoundBuffer), audio streams
 /// are never completely loaded in memory. Instead, the audio
 /// data is acquired continuously while the stream is playing.
-/// This behaviour allows to play a sound with no loading delay,
+/// This behavior allows to play a sound with no loading delay,
 /// and keeps the memory consumption very low.
 ///
 /// Sound sources that need to be streamed are usually big files
@@ -342,7 +342,7 @@ private :
 /// \code
 /// class CustomStream : public sf::SoundStream
 /// {
-/// public :
+/// public:
 ///
 ///     bool open(const std::string& location)
 ///     {
@@ -355,7 +355,7 @@ private :
 ///         initialize(channelCount, sampleRate);
 ///     }
 ///
-/// private :
+/// private:
 ///
 ///     virtual bool onGetData(Chunk& data)
 ///     {

@@ -970,7 +970,7 @@ BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
     }
 
 
-    // Handle text entred event:
+    // Handle text entered event:
     // Ignore event if we don't want repeated keystrokes
     if (m_useKeyRepeat || ![theEvent isARepeat])
     {
@@ -992,7 +992,7 @@ BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
         // Backspace
         if (keycode == 0x33)
         {
-            // Send the correct unicode value (i.e. 8) instead of 127 (which is 'delete')
+            // Send the correct Unicode value (i.e. 8) instead of 127 (which is 'delete')
             m_requester->textEntered(8);
         }
 
@@ -1075,7 +1075,7 @@ BOOL isTimeSinceLastMouseDownOutsideLessThan(sf::Time duration);
 
 //#ifdef SFML_DEBUG // Don't bother the final customers with annoying messages.
 //    if (key.code == sf::Keyboard::Unknown) { // The key is unknown.
-//        sf::err() << "This is an unknow key. Virtual key code is 0x"
+//        sf::err() << "This is an unknown key. Virtual key code is 0x"
 //                  << std::hex
 //                  << [event keyCode]
 //                  << "."

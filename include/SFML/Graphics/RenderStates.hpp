@@ -44,7 +44,7 @@ class Texture;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API RenderStates
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -147,7 +147,7 @@ public :
 /// on top of each object's transform.
 ///
 /// Most objects, especially high-level drawables, can be drawn
-/// directly without defining render states explicitely -- the
+/// directly without defining render states explicitly -- the
 /// default set of states is ok in most cases.
 /// \code
 /// window.Draw(sprite);

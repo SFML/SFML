@@ -45,7 +45,7 @@ class WindowImpl;
 ////////////////////////////////////////////////////////////
 class GlContext : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization
@@ -118,7 +118,7 @@ public :
     ////////////////////////////////////////////////////////////
     static GlContext* create(const ContextSettings& settings, unsigned int width, unsigned int height);
 
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -173,7 +173,7 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled) = 0;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -201,7 +201,7 @@ protected :
     /// lower the score is, the better the configuration is.
     ///
     /// \param bitsPerPixel Requested pixel depth (bits per pixel)
-    /// \param settings     Requested additionnal settings
+    /// \param settings     Requested additional settings
     /// \param colorBits    Color bits of the configuration to evaluate
     /// \param depthBits    Depth bits of the configuration to evaluate
     /// \param stencilBits  Stencil bits of the configuration to evaluate

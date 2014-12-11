@@ -1,0 +1,172 @@
+SFML 2.2
+========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.2
+
+General
+=======
+
+* Support for iOS and Android platform (#410, #440)
+* Various documentation corrections (#438, #496, #497, #714)
+* Fixed support for compilers on Debian FreeBSD (#380, #578)
+* Added support for Visual Studio 2013 and proper support for the TDM builds (#482)
+* Fixed CMake problems related to FindSFML and cached variables (#637, #684)
+* Switched and enforced LF line endings (#708, #712)
+* Updated OpenAL to version 1.15.1 (d077210)
+* Made compiler and OS variable names much clearer in CMake files (9b0ed30)
+* Re-enabled RPATH feature (e157e7a)
+* Slight adjustments to the examples (#737)
+* [FreeBSD] Various configuration fixes (#577, #578)
+* [Linux] Updated FindSFML.cmake to add UDev to SFML's dependencies (#728, #729, #734, #736)
+* [OS X] Fixed incorrect symlink in freetype.framework (#519)
+* [OS X] CMake module for correct dependencies (#548)
+* [OS X] Fixed SFML target for Xcode (#595, #596)
+* [OS X] Updated implementation, mainly reverting to non-ARC (#601)
+* [OS X] Fixed memory leaks and dead store (#615)
+* [OS X] Improved event handling and performance (#617)
+* [OS X] Reduced memory usage (#672, #698)
+* [OS X] OS X 10.10 support (#691, #699)
+* [OS X] Improve flexibility of dependencies' locations (#713)
+* [Windows] Removed the hack that copied external libraries into SFML static libraries (dbf01a7)
+
+
+System
+======
+
+Features
+--------
+* Added substring and replace functions to sf::String (#21, #355)
+* Added toUtfX to sf::String (#501)
+* Added fromUtfX functions to set the internal data to a string by converting from another string in a fixed encoding (#196)
+* Added modulo operator for sf::Time (#429, #430)
+* Added division operator for sf::Time (#453)
+
+Bugfixes
+--------
+* Ensured a high resolution for sf::sleep (#439, #475)
+* [Windows] Fixed stack unalignment by two internal functions (#412)
+
+
+Window
+======
+
+Features
+--------
+* Added window methods to request and to check focus (#518, #525, #613, #723, #735)
+* Provide name, manufacturer ID and product ID via sf::Joystick (#152, #528)
+* [FreeBDS] Joystick support (#477)
+* [OS X] Improved integration with menus and dock actions (#11)
+* [OS X] Support for OpenGL 3.2 (#84)
+* [OS X] Improved fullscreen support (#343)
+* [OS X] Added support for retina displays (#353, #388)
+* [Windows] Removed support for Windows 9x (#469)
+* [Windows] Fixed typo in Windows keyboard implementation (#516)
+
+Bugfixes
+--------
+* sf::Window::create() now also resets framerate limit (#371)
+* Fixed OpenGL context leak (#635, #705)
+* Fixed various joystick problems (memory leak, accelerometer detected, code refactoring) (#660, #686, #742, #743)
+* Optimized sf::Window::waitEvent a bit, no sleep if events are available at first try (ff555d6)
+* [Linux] Output error message when XOpenDisplay() fails (#508, #616)
+* [Linux] Resize window with setSize when sf::Style::Resize is set (#466)
+* [Linux] Fixed broken key repeat on window recreation (#564, #567)
+* [OS X] Fixed KeyReleased not being fired in fullscreen mode (#465)
+* [OS X] Fixed an issue where disconnecting the keyboard would cause a crash (#467)
+* [OS X] Fixed unexpected resizing behavior (#468)
+* [OS X] Improved resizing windows (#474)
+* [OS X] Fixed memory leak with sf::Window::create() (#484)
+* [OS X] Fixed menu shortcuts in fullscreen on OS X (#527)
+* [OS X] Improved cursor hiding (#703)
+* [OS X] Fixed right click not detected with trackpads (#716, #730)
+* [Windows] Fixed joystick POV values (ef1d29b)
+* [Windows] Fixed Unicode inconsistency (#635)
+* [Windows] Fixed Alt+F4 and mouse clicks issues (#437, #457)
+* [Windows] Send MouseButtonReleased event when the mouse is outside of the window (#455, #457)
+* [Windows] Fixed sf::Joystick wrong registry usage (#701, #702, #706)
+
+
+Graphics
+========
+
+Features
+--------
+* Provide more information about the loaded font in sf::Font (#164)
+* Implemented a more flexible blending system (#298)
+* Added strikethrough text style (#243, #362, #682)
+* Slight optimization for sf::Text::setString (#413)
+* Added subtraction operator for sf::Color (#114, #145)
+* Optimized sf::Image::flipVertically/flipHorizontally (#555)
+* Changed sf::Font measurements from int to float to allow better underline drawing (#693)
+
+Bugfixes
+--------
+* Improved text quality for small and pixelated fonts (#228)
+* Yet another fix for Intel GPUs with sf::RenderTexture (#418)
+* Removed VTab since it causes issues and doesn't have a use nowadays (#442, #445, #460, #588)
+* Fixed broken BDF and PCF font formats (#448)
+* Fixed compilation issue with newer versions of GCC for sf::Rect (#458)
+* Fixed resetGLStates() not explicitly setting the default polygon mode (#480)
+* Fixed division-by-zero in sf::RectangleShape (#499)
+* Fixed potential memory leak in sf::Font (#509)
+* Updated glext and removed glxext (#511, #583)
+* Make sure texture unit 0 is active when resetting sf::RenderTarget states (#523, #591)
+* Fixed texture rect computation in fonts (#669)
+* Improved rendering of underlined text (#593)
+* Avoided repeated output of error messages (#566)
+* Fixed text rendered with vertical offset on ascent and font size mismatch (#576)
+* Fixed rounding problem for viewports (#598)
+* Fixed sf::Shader::isAvailable() possibly breaking context management (#211, #603, #608, #603)
+* Fixed sf::Texture::getMaximumSize() possibly breaking context management (#666)
+* Fixed various sf::Text rendering issues (#692, #699)
+* The texture matrix is now reset in sf::Texture::bind(NULL) (7c4b058)
+* [Windows] Fixed DPI scaling causing strange window behavior (#679, #681, #688)
+
+
+Audio
+=====
+
+Features
+--------
+* Added support for selecting the audio capture device (#220, #470)
+* Make sf::SoundRecorder processing frequency configurable (#333)
+* Added up vector to sf::Listener (#545)
+
+Bugfixes
+--------
+* Prevented sf::SoundStream::setPlayingOffset() from restarting playing even when paused (#203, #592)
+* Fixed sf::SoundBuffer contents not being able to be updated when still attached to sounds (#354, 367, #390, #589)
+* Catch audio format error and prevent division by zero (#529)
+* Fixed sf::SoundBuffer returning wrong duration for sounds containing more than ~4.3 million samples (2ff58ed)
+* Optimized sf::Listener with a cache (d97e524)
+
+Network
+=======
+
+Features
+--------
+* Added support for PUT and DELETE in sf::Http (#257, #312, #607)
+* Added support for chunked HTTP transfers (#296, #337)
+* Added support for 64-bit integers in sf::Packet (#710)
+* Made sf::Ftp::sendCommand() public (2c5cab5)
+
+Bugfixes
+--------
+* Checked socket descriptor limit (#153, #628, #683)
+* Fixed sf::TcpSocket::connect()'s switching from blocking to non-blocking mode on immediate connection success (#221)
+* Fixed FTP download and upload file sizes being limited by available RAM (#565, #590)
+* Fixed C++11 compiler warnings for sf::Uint8 (#731, #732)
+
+
+
+SFML 2.1
+========
+
+Please refer to the release announcement: http://en.sfml-dev.org/forums/index.php?topic=76.msg86454#msg86454
+
+
+
+SFML 2.0
+========
+
+Please refer to the release announcement: http://en.sfml-dev.org/forums/index.php?topic=76.msg78424#msg78424

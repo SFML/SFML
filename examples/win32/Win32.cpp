@@ -18,14 +18,14 @@ LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
     switch (message)
     {
         // Quit when we close the main window
-        case WM_CLOSE :
+        case WM_CLOSE:
         {
             PostQuitMessage(0);
             return 0;
         }
 
         // Quit when we click the "quit" button
-        case WM_COMMAND :
+        case WM_COMMAND:
         {
             if (reinterpret_cast<HWND>(lParam) == button)
             {
@@ -42,7 +42,7 @@ LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
 ////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
-/// \param Instance : Instance of the application
+/// \param Instance: Instance of the application
 ///
 /// \return Error code
 ///

@@ -80,7 +80,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    // Get the intialized EGL display
+    // Get the initialized EGL display
     m_display = getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
@@ -118,7 +118,7 @@ m_config  (NULL)
 
 #endif
 
-    // Get the intialized EGL display
+    // Get the initialized EGL display
     m_display = getInitializedDisplay();
     
     // Get the best EGL config matching the requested video settings
@@ -148,7 +148,7 @@ m_config  (NULL)
 ////////////////////////////////////////////////////////////
 EglContext::~EglContext()
 {
-    // Desactive the current context
+    // Deactivate the current context
     EGLContext currentContext = eglCheck(eglGetCurrentContext());
 
     if (currentContext == m_context)
@@ -258,7 +258,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 ////////////////////////////////////////////////////////////
 XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    // Get the intialized EGL display
+    // Get the initialized EGL display
     EGLDisplay display = getInitializedDisplay();
     
     // Get the best EGL config matching the default video settings

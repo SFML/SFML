@@ -78,6 +78,14 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
 
 ////////////////////////////////////////////////////////////
+Joystick::Identification JoystickImpl::getIdentification() const
+{
+    // Not implemented
+    return Joystick::Identification();
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
     // Not implemented

@@ -1032,4 +1032,3 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 } // namespace priv
 
 } // namespace sf
-

@@ -40,7 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Transformable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -311,7 +311,7 @@ public :
     ////////////////////////////////////////////////////////////
     const Transform& getInverseTransform() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -396,7 +396,7 @@ private :
 /// \code
 /// class MyEntity
 /// {
-/// public :
+/// public:
 ///     void SetPosition(const MyVector& v)
 ///     {
 ///         myTransform.setPosition(v.x(), v.y());
@@ -407,7 +407,7 @@ private :
 ///         target.draw(..., myTransform.getTransform());
 ///     }
 ///
-/// private :
+/// private:
 ///     sf::Transformable myTransform;
 /// };
 /// \endcode

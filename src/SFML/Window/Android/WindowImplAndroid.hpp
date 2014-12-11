@@ -45,7 +45,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WindowImplAndroid : public WindowImpl
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation from an existing control
@@ -162,10 +162,25 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Request the current window to be made the active
+    ///        foreground window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void requestFocus();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether the window has the input focus
+    ///
+    /// \return True if window has focus, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool hasFocus() const;
+
     static void forwardEvent(const Event& event);
     static WindowImplAndroid* singleInstance;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
@@ -197,17 +212,17 @@ private:
     ///
     /// \param symbol Android key to convert
     ///
-    /// \return Corrsponding SFML key code
+    /// \return Corresponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key androidKeyToSF(int32_t key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get unicode decoded from the input event
+    /// \brief Get Unicode decoded from the input event
     ///
     /// \param Event Input event
     ///
-    /// \return The unicode value
+    /// \return The Unicode value
     ///
     ////////////////////////////////////////////////////////////
     static int getUnicode(AInputEvent* event);
@@ -215,6 +230,7 @@ private:
     Vector2u m_size;
     bool m_windowBeingCreated;
     bool m_windowBeingDestroyed;
+    bool m_hasFocus;
 };
 
 } // namespace priv

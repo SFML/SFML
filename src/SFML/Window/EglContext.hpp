@@ -41,7 +41,7 @@ namespace priv
 {
 class EglContext : public GlContext
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
@@ -102,7 +102,7 @@ public :
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled : True to enable v-sync, false to deactivate
+    /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
@@ -123,7 +123,7 @@ public :
     /// This function must be called when the activity (re)start, or
     /// when the orientation change.
     ///
-    /// \param window : The native window type
+    /// \param window: The native window type
     ///
     ////////////////////////////////////////////////////////////
     void createSurface(EGLNativeWindowType window);
@@ -163,7 +163,7 @@ public :
     static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
 #endif
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -48,7 +48,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WindowImplUIKit : public WindowImpl
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation from an existing control
@@ -57,7 +57,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     WindowImplUIKit(WindowHandle handle);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Create the window implementation
     ///
@@ -68,7 +68,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     WindowImplUIKit(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -82,7 +82,7 @@ public :
     ///
     ////////////////////////////////////////////////////////////
     virtual WindowHandle getSystemHandle() const;
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
     ///
@@ -165,9 +165,30 @@ public :
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Request the current window to be made the active
+    ///        foreground window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void requestFocus();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether the window has the input focus
+    ///
+    /// \return True if window has focus, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool hasFocus() const;
+
 public:
 
-    using WindowImpl::pushEvent;
+    ////////////////////////////////////////////////////////////
+    /// \brief Notify an event
+    ///
+    /// \param event Event to forward
+    ///
+    ////////////////////////////////////////////////////////////
+    void forwardEvent(Event event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's view
@@ -185,7 +206,7 @@ public:
     ////////////////////////////////////////////////////////////
     void setVirtualKeyboardVisible(bool visible);
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
@@ -193,7 +214,7 @@ protected :
     ////////////////////////////////////////////////////////////
     virtual void processEvents();
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -201,10 +222,11 @@ private :
     UIWindow*         m_window;         ///< Pointer to the internal UIKit window
     SFView*           m_view;           ///< OpenGL view of the window
     SFViewController* m_viewController; ///< Controller attached to the view
+    bool              m_hasFocus;       ///< Current focus state of the window
 };
-    
+
 } // namespace priv
-    
+
 } // namespace sf
 
 

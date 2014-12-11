@@ -42,8 +42,8 @@ macro(sfml_add_library target)
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     # except for Android which strips soversion suffixes
     if(NOT SFML_OS_ANDROID)
-        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR})
-        set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+        set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
     endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
@@ -59,7 +59,7 @@ macro(sfml_add_library target)
     endif()
 
     # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
-    # (exported ones are explicitely marked)
+    # (exported ones are explicitly marked)
     if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
@@ -84,7 +84,7 @@ macro(sfml_add_library target)
         # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
         set_target_properties(${target} PROPERTIES
                               BUILD_WITH_INSTALL_RPATH 1
-                              INSTALL_NAME_DIR "@executable_path/../Frameworks")
+                              INSTALL_NAME_DIR "@rpath")
     endif()
 
     # enable automatic reference counting on iOS

@@ -122,7 +122,9 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    return HIDInputManager::getInstance().isMouseButtonPressed(button);
+    NSUInteger state = [NSEvent pressedMouseButtons];
+    NSUInteger flag = 1 << button;
+    return (state & flag) != 0;
 }
 
 
@@ -166,7 +168,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
     CGEventRef event = CGEventCreateMouseEvent(NULL,
                                                kCGEventMouseMoved,
                                                pos,
-                                               /*we don't care about this : */0);
+                                               /*we don't care about this: */0);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
     // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.

@@ -41,12 +41,13 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
 {
+    // Not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(VideoMode mode,
-                                 const String& title, 
+                                 const String& title,
                                  unsigned long style,
                                  const ContextSettings& /*settings*/)
 {
@@ -62,10 +63,11 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     // Create the window
     CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
     m_window = [[UIWindow alloc] initWithFrame:frame];
+    m_hasFocus = true;
 
     // Assign it to the application delegate
     [SFAppDelegate getInstance].sfWindow = this;
-    
+
     // Create the view
     m_view = [[SFView alloc] initWithFrame:frame];
     [m_view resignFirstResponder];
@@ -94,14 +96,14 @@ void WindowImplUIKit::processEvents()
         ;
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplUIKit::getSystemHandle() const
 {
     return (__bridge WindowHandle)m_window;
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplUIKit::getPosition() const
 {
@@ -121,7 +123,7 @@ Vector2u WindowImplUIKit::getSize() const
     return Vector2u(m_window.frame.size.width, m_window.frame.size.height);
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setSize(const Vector2u& size)
 {
@@ -134,35 +136,35 @@ void WindowImplUIKit::setSize(const Vector2u& size)
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setTitle(const String& title)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setVisible(bool visible)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setMouseCursorVisible(bool visible)
 {
     // Not applicable
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::setMouseCursorGrabbed(bool grabbed)
 {
@@ -176,7 +178,33 @@ void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
     // Not applicable
 }
 
-    
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::requestFocus()
+{
+    // To implement
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplUIKit::hasFocus() const
+{
+    return m_hasFocus;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::forwardEvent(Event event)
+{
+    if (event.type == Event::GainedFocus)
+        m_hasFocus = true;
+    else if (event.type == Event::LostFocus)
+        m_hasFocus = false;
+
+    pushEvent(event);
+}
+
+
 ////////////////////////////////////////////////////////////
 SFView* WindowImplUIKit::getGlView() const
 {
@@ -192,7 +220,7 @@ void WindowImplUIKit::setVirtualKeyboardVisible(bool visible)
     else
         [m_view resignFirstResponder];
 }
-    
+
 } // namespace priv
-    
+
 } // namespace sf

@@ -30,7 +30,8 @@
 // Define the SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR 2
-#define SFML_VERSION_MINOR 1
+#define SFML_VERSION_MINOR 2
+#define SFML_VERSION_PATCH 0
 
 
 ////////////////////////////////////////////////////////////
@@ -124,7 +125,7 @@
         // For Visual C++ compilers, we also need to turn off this annoying C4251 warning
         #ifdef _MSC_VER
 
-            #pragma warning(disable : 4251)
+            #pragma warning(disable: 4251)
 
         #endif
 

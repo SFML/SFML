@@ -56,7 +56,7 @@ m_clock       ()
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings,
                          const WindowImpl* owner, unsigned int bitsPerPixel) :
@@ -74,7 +74,7 @@ m_clock       ()
 
 
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, 
+EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings,
                          unsigned int width, unsigned int height) :
 m_context     (nil),
 m_framebuffer (0),
@@ -96,7 +96,7 @@ EaglContext::~EaglContext()
         // Activate the context, so that we can destroy the buffers
         EAGLContext* previousContext = [EAGLContext currentContext];
         [EAGLContext setCurrentContext:m_context];
-    
+
         // Destroy the buffers
         if (m_framebuffer)
             glDeleteFramebuffersOES(1, &m_framebuffer);
@@ -161,7 +161,7 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     [EAGLContext setCurrentContext:previousContext];
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 bool EaglContext::makeCurrent()
 {
@@ -193,11 +193,11 @@ void EaglContext::setVerticalSyncEnabled(bool enabled)
     m_vsyncEnabled = enabled;
 }
 
-    
+
 ////////////////////////////////////////////////////////////
 void EaglContext::createContext(EaglContext* shared,
                                 const WindowImplUIKit* window,
-                                unsigned int bitsPerPixel, 
+                                unsigned int bitsPerPixel,
                                 const ContextSettings& settings)
 {
     // Save the settings

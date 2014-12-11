@@ -97,7 +97,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         }
         else
         {
-            // XRandr extension is not supported : we cannot get the video modes
+            // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
         }
 
@@ -155,7 +155,7 @@ VideoMode VideoModeImpl::getDesktopMode()
         }
         else
         {
-            // XRandr extension is not supported : we cannot get the video modes
+            // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
         }
 

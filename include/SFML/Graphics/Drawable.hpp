@@ -43,7 +43,7 @@ class RenderTarget;
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API Drawable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
@@ -51,7 +51,7 @@ public :
     ////////////////////////////////////////////////////////////
     virtual ~Drawable() {}
 
-protected :
+protected:
 
     friend class RenderTarget;
 
@@ -94,11 +94,11 @@ protected :
 /// \code
 /// class MyDrawable : public sf::Drawable
 /// {
-/// public :
+/// public:
 ///
 ///    ...
 ///
-/// private :
+/// private:
 ///
 ///     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 ///     {

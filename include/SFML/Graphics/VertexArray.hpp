@@ -44,7 +44,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API VertexArray : public Drawable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -75,7 +75,7 @@ public :
     /// \brief Get a read-write access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behaviour is undefined
+    /// [0, getVertexCount() - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
@@ -91,7 +91,7 @@ public :
     /// \brief Get a read-only access to a vertex by its index
     ///
     /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behaviour is undefined
+    /// [0, getVertexCount() - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
@@ -171,7 +171,7 @@ public :
     ////////////////////////////////////////////////////////////
     FloatRect getBounds() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw the vertex array to a render target

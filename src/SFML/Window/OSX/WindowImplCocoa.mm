@@ -267,7 +267,7 @@ void WindowImplCocoa::setUpProcess(void)
 
         // Tell the application to stop bouncing in the Dock.
         [[SFApplication sharedApplication] finishLaunching];
-        // NOTE : This last call won't harm anything even if SFML window was
+        // NOTE: This last call won't harm anything even if SFML window was
         // created with an external handle.
     }
 }
@@ -556,6 +556,20 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
         [m_delegate enableKeyRepeat];
     else
         [m_delegate disableKeyRepeat];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::requestFocus()
+{
+    [m_delegate requestFocus];
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplCocoa::hasFocus() const
+{
+    return [m_delegate hasFocus];
 }
 
 

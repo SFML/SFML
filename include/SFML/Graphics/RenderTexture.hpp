@@ -46,7 +46,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API RenderTexture : public RenderTarget
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -73,7 +73,7 @@ public :
     /// doing anything with the render-texture.
     /// The last parameter, \a depthBuffer, is useful if you want
     /// to use the render-texture for 3D OpenGL rendering that requires
-    /// a depth-buffer. Otherwise it is unnecessary, and you should
+    /// a depth buffer. Otherwise it is unnecessary, and you should
     /// leave this parameter to false (which is its default value).
     ///
     /// \param width       Width of the render-texture
@@ -186,7 +186,7 @@ public :
     ////////////////////////////////////////////////////////////
     const Texture& getTexture() const;
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the target for rendering

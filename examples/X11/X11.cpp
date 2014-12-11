@@ -176,8 +176,8 @@ int main()
             // Process it
             switch (event.type)
             {
-                // Any key is pressed : quit
-                case KeyPress :
+                // Any key is pressed: quit
+                case KeyPress:
                     running = false;
                     break;
             }

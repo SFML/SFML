@@ -182,10 +182,10 @@ SoundSource::Status SoundSource::getStatus() const
 
     switch (status)
     {
-        case AL_INITIAL :
-        case AL_STOPPED : return Stopped;
-        case AL_PAUSED :  return Paused;
-        case AL_PLAYING : return Playing;
+        case AL_INITIAL:
+        case AL_STOPPED: return Stopped;
+        case AL_PAUSED:  return Paused;
+        case AL_PLAYING: return Playing;
     }
 
     return Stopped;

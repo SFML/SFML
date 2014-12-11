@@ -47,7 +47,7 @@ class Utf;
 template <>
 class Utf<8>
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-8 character
@@ -254,7 +254,7 @@ public :
 template <>
 class Utf<16>
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-16 character
@@ -461,7 +461,7 @@ public :
 template <>
 class Utf<32>
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-32 character

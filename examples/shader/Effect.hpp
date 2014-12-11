@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////
 class Effect : public sf::Drawable
 {
-public :
+public:
 
     virtual ~Effect()
     {
@@ -56,7 +56,7 @@ public :
         }
     }
 
-protected :
+protected:
 
     Effect(const std::string& name) :
     m_name(name),
@@ -70,14 +70,14 @@ protected :
         return *s_font;
     }
 
-private :
+private:
 
     // Virtual functions to be implemented in derived effects
     virtual bool onLoad() = 0;
     virtual void onUpdate(float time, float x, float y) = 0;
     virtual void onDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
 
-private :
+private:
 
     std::string m_name;
     bool m_isLoaded;

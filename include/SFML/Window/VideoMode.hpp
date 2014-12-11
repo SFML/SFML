@@ -40,7 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API VideoMode
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -203,7 +203,7 @@ SFML_WINDOW_API bool operator >=(const VideoMode& left, const VideoMode& right);
 /// A custom video mode can also be checked directly for
 /// fullscreen compatibility with its isValid() function.
 ///
-/// Additionnally, sf::VideoMode provides a static function
+/// Additionally, sf::VideoMode provides a static function
 /// to get the mode currently used by the desktop: getDesktopMode().
 /// This allows to build windows with the same size or pixel
 /// depth as the current resolution.

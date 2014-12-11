@@ -45,7 +45,7 @@ class Packet;
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API TcpSocket : public Socket
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -244,7 +244,7 @@ private:
 /// class to get more details about how they work.
 ///
 /// The socket is automatically disconnected when it is destroyed,
-/// but if you want to explicitely close the connection while
+/// but if you want to explicitly close the connection while
 /// the socket instance is still alive, you can call disconnect.
 ///
 /// Usage example:

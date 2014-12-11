@@ -48,7 +48,7 @@ foreach(XIB ${XIBS})
                                          --compile ${XIB_OUTPUT_PATH}/${XIB}.nib 
                                          ${XIB_INPUT_PATH}/${XIB}.xib
                        COMMENT "Compiling ${XIB}.xib")
-                       # deactivated options : --warnings --notices
+                       # deactivated options: --warnings --notices
 endforeach()
 
 # add install rule

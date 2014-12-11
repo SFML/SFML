@@ -10,7 +10,7 @@
 #   find_package(SFML COMPONENTS graphics window system) // find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
-# If nothing is specified, the version won't be checked (ie. any version will be accepted).
+# If nothing is specified, the version won't be checked (i.e. any version will be accepted).
 # example:
 #   find_package(SFML COMPONENTS ...)     // no specific version required
 #   find_package(SFML 2 COMPONENTS ...)   // any 2.x version
@@ -82,22 +82,23 @@ find_path(SFML_INCLUDE_DIR SFML/Config.hpp
 set(SFML_VERSION_OK TRUE)
 if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
     # extract the major and minor version numbers from SFML/Config.hpp
-    # we have to handle framework a little bit differently :
+    # we have to handle framework a little bit differently:
     if("${SFML_INCLUDE_DIR}" MATCHES "SFML.framework")
         set(SFML_CONFIG_HPP_INPUT "${SFML_INCLUDE_DIR}/Headers/Config.hpp")
     else()
         set(SFML_CONFIG_HPP_INPUT "${SFML_INCLUDE_DIR}/SFML/Config.hpp")
     endif()
     FILE(READ "${SFML_CONFIG_HPP_INPUT}" SFML_CONFIG_HPP_CONTENTS)
-    STRING(REGEX MATCH ".*#define SFML_VERSION_MAJOR ([0-9]+).*#define SFML_VERSION_MINOR ([0-9]+).*" SFML_CONFIG_HPP_CONTENTS "${SFML_CONFIG_HPP_CONTENTS}")
+    STRING(REGEX MATCH ".*#define SFML_VERSION_MAJOR ([0-9]+).*#define SFML_VERSION_MINOR ([0-9]+).*#define SFML_VERSION_PATCH ([0-9]+).*" SFML_CONFIG_HPP_CONTENTS "${SFML_CONFIG_HPP_CONTENTS}")
     STRING(REGEX REPLACE ".*#define SFML_VERSION_MAJOR ([0-9]+).*" "\\1" SFML_VERSION_MAJOR "${SFML_CONFIG_HPP_CONTENTS}")
     STRING(REGEX REPLACE ".*#define SFML_VERSION_MINOR ([0-9]+).*" "\\1" SFML_VERSION_MINOR "${SFML_CONFIG_HPP_CONTENTS}")
-    math(EXPR SFML_REQUESTED_VERSION "${SFML_FIND_VERSION_MAJOR} * 10 + ${SFML_FIND_VERSION_MINOR}")
+    STRING(REGEX REPLACE ".*#define SFML_VERSION_PATCH ([0-9]+).*" "\\1" SFML_VERSION_PATCH "${SFML_CONFIG_HPP_CONTENTS}")
+    math(EXPR SFML_REQUESTED_VERSION "${SFML_FIND_VERSION_MAJOR} * 10000 + ${SFML_FIND_VERSION_MINOR} * 100 + ${SFML_FIND_VERSION_PATCH}")
 
     # if we could extract them, compare with the requested version number
     if (SFML_VERSION_MAJOR)
         # transform version numbers to an integer
-        math(EXPR SFML_VERSION "${SFML_VERSION_MAJOR} * 10 + ${SFML_VERSION_MINOR}")
+        math(EXPR SFML_VERSION "${SFML_VERSION_MAJOR} * 10000 + ${SFML_VERSION_MINOR} * 100 + ${SFML_VERSION_PATCH}")
 
         # compare them
         if(SFML_VERSION LESS SFML_REQUESTED_VERSION)
@@ -105,10 +106,11 @@ if(SFML_FIND_VERSION AND SFML_INCLUDE_DIR)
         endif()
     else()
         # SFML version is < 2.0
-        if (SFML_REQUESTED_VERSION GREATER 19)
+        if (SFML_REQUESTED_VERSION GREATER 10900)
             set(SFML_VERSION_OK FALSE)
             set(SFML_VERSION_MAJOR 1)
             set(SFML_VERSION_MINOR x)
+            set(SFML_VERSION_PATCH x)
         endif()
     endif()
 endif()
@@ -281,6 +283,7 @@ if(SFML_STATIC_LIBRARIES)
         if(FIND_SFML_OS_LINUX)
             find_sfml_dependency(X11_LIBRARY "X11" X11)
             find_sfml_dependency(XRANDR_LIBRARY "Xrandr" Xrandr)
+            find_sfml_dependency(UDEV_LIBRARIES "UDev" udev)
         endif()
 
         # update the list
@@ -290,6 +293,8 @@ if(SFML_STATIC_LIBRARIES)
             set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${XRANDR_LIBRARY})
             if(FIND_SFML_OS_FREEBSD)
                 set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "usbhid")
+            else()
+                set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} ${UDEV_LIBRARIES})
             endif()
         elseif(FIND_SFML_OS_MACOSX)
             set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "-framework OpenGL -framework Foundation -framework AppKit -framework IOKit -framework Carbon")
@@ -329,7 +334,7 @@ endif()
 # handle errors
 if(NOT SFML_VERSION_OK)
     # SFML version not ok
-    set(FIND_SFML_ERROR "SFML found but version too low (requested: ${SFML_FIND_VERSION}, found: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR})")
+    set(FIND_SFML_ERROR "SFML found but version too low (requested: ${SFML_FIND_VERSION}, found: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH})")
     set(SFML_FOUND FALSE)
 elseif(SFML_STATIC_LIBRARIES AND FIND_SFML_DEPENDENCIES_NOTFOUND)
     set(FIND_SFML_ERROR "SFML found but some of its dependencies are missing (${FIND_SFML_DEPENDENCIES_NOTFOUND})")
@@ -350,5 +355,5 @@ endif()
 
 # handle success
 if(SFML_FOUND)
-    message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR} in ${SFML_INCLUDE_DIR}")
+    message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH} in ${SFML_INCLUDE_DIR}")
 endif()

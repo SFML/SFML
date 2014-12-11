@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.8)
 
 # define a macro that helps defining an option
@@ -21,7 +20,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
 # setup version numbers
 set(VERSION_MAJOR 2)
-set(VERSION_MINOR 1)
+set(VERSION_MINOR 2)
 set(VERSION_PATCH 0)
 
 # add the SFML header path
@@ -124,7 +123,7 @@ endif()
 
 # setup Mac OS X stuff
 if(SFML_OS_MACOSX)
-    # SFML_BUILD_FRAMEWORKS needs two things :
+    # SFML_BUILD_FRAMEWORKS needs two things:
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
     # secondly, it works only with BUILD_SHARED_LIBS enabled
@@ -229,10 +228,10 @@ else()
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* $<TARGET_FILE_DIR:SFML>/Headers)
 
     # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
-    # NOTE : it's not required to link agains SFML.framework
+    # NOTE: it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1
-                          INSTALL_NAME_DIR "@executable_path/../Frameworks")
+                          INSTALL_NAME_DIR "@rpath")
 
     # install rule
     install(TARGETS SFML
