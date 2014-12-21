@@ -49,7 +49,7 @@ Int64 FileInputStream::read(void* data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::seek(Int64 position)
 {
-    if (m_file.eof())
+    if (m_file.eof() || m_file.fail())
         m_file.clear();
     m_file.seekg(position);
     return tell();
