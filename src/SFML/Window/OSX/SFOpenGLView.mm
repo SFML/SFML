@@ -266,7 +266,14 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     NSWindow* window = [self window];
     NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
+    CGFloat oldScaleFactor = m_scaleFactor;
     m_scaleFactor = [screen backingScaleFactor];
+
+    // Send a resize event if the scaling factor changed
+    if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
+        NSSize newSize = [self frame].size;
+        m_requester->windowResized(newSize.width, newSize.height);
+    }
 }
 
 
