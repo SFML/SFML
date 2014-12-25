@@ -113,6 +113,14 @@ public:
     virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the position of the client area of the window
+    ///
+    /// \return Position of the client area of the window, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2i getClientAreaPosition() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
     ///
     /// \param title New title

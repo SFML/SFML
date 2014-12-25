@@ -337,7 +337,7 @@ Vector2i WindowImplX11::getPosition() const
     unsigned int width, height, border, depth;
 
     XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
-    XTranslateCoordinates(m_display, m_window, root, 0, 0, &x, &y, &child);
+    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
 
     return Vector2i(x, y);
 }
@@ -376,6 +376,20 @@ void WindowImplX11::setSize(const Vector2u& size)
 
     XResizeWindow(m_display, m_window, size.x, size.y);
     XFlush(m_display);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplX11::getClientAreaPosition() const
+{
+    ::Window root, child;
+    int localX, localY, x, y;
+    unsigned int width, height, border, depth;
+
+    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
+    XTranslateCoordinates(m_display, m_window, root, 0, 0, &x, &y, &child);
+
+    return Vector2i(x, y);
 }
 
 
