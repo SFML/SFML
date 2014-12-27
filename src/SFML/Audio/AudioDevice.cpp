@@ -32,7 +32,7 @@
 #include <memory>
 
 
-namespace 
+namespace
 {
     ALCdevice*  audioDevice  = NULL;
     ALCcontext* audioContext = NULL;
@@ -104,9 +104,12 @@ AudioDevice::~AudioDevice()
 bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
     // Create a temporary audio device in case none exists yet.
+    // This device will not be used in this function and merely
+    // makes sure there is a valid OpenAL device for extension
+    // queries if none has been created yet.
     std::auto_ptr<AudioDevice> device;
     if (!audioDevice)
-        device = std::auto_ptr<AudioDevice>(new AudioDevice);
+        device.reset(new AudioDevice);
 
     if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
         return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
@@ -119,9 +122,12 @@ bool AudioDevice::isExtensionSupported(const std::string& extension)
 int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 {
     // Create a temporary audio device in case none exists yet.
+    // This device will not be used in this function and merely
+    // makes sure there is a valid OpenAL device for format
+    // queries if none has been created yet.
     std::auto_ptr<AudioDevice> device;
     if (!audioDevice)
-        device = std::auto_ptr<AudioDevice>(new AudioDevice);
+        device.reset(new AudioDevice);
 
     // Find the good format according to the number of channels
     int format = 0;
@@ -147,13 +153,10 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 ////////////////////////////////////////////////////////////
 void AudioDevice::setGlobalVolume(float volume)
 {
-    if (volume != listenerVolume)
-    {
-        if (audioContext)
-            alCheck(alListenerf(AL_GAIN, volume * 0.01f));
+    if (audioContext)
+        alCheck(alListenerf(AL_GAIN, volume * 0.01f));
 
-        listenerVolume = volume;
-    }
+    listenerVolume = volume;
 }
 
 
@@ -167,13 +170,10 @@ float AudioDevice::getGlobalVolume()
 ////////////////////////////////////////////////////////////
 void AudioDevice::setPosition(const Vector3f& position)
 {
-    if (position != listenerPosition)
-    {
-        if (audioContext)
-            alCheck(alListener3f(AL_POSITION, position.x, position.y, position.z));
+    if (audioContext)
+        alCheck(alListener3f(AL_POSITION, position.x, position.y, position.z));
 
-        listenerPosition = position;
-    }
+    listenerPosition = position;
 }
 
 
@@ -187,16 +187,13 @@ Vector3f AudioDevice::getPosition()
 ////////////////////////////////////////////////////////////
 void AudioDevice::setDirection(const Vector3f& direction)
 {
-    if (direction != listenerDirection)
+    if (audioContext)
     {
-        if (audioContext)
-        {
-            float orientation[] = {direction.x, direction.y, direction.z, listenerUpVector.x, listenerUpVector.y, listenerUpVector.z};
-            alCheck(alListenerfv(AL_ORIENTATION, orientation));
-        }
-
-        listenerDirection = direction;
+        float orientation[] = {direction.x, direction.y, direction.z, listenerUpVector.x, listenerUpVector.y, listenerUpVector.z};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
     }
+
+    listenerDirection = direction;
 }
 
 
@@ -210,16 +207,13 @@ Vector3f AudioDevice::getDirection()
 ////////////////////////////////////////////////////////////
 void AudioDevice::setUpVector(const Vector3f& upVector)
 {
-    if (upVector != listenerUpVector)
+    if (audioContext)
     {
-        if (audioContext)
-        {
-            float orientation[] = {listenerDirection.x, listenerDirection.y, listenerDirection.z, upVector.x, upVector.y, upVector.z};
-            alCheck(alListenerfv(AL_ORIENTATION, orientation));
-        }
-
-        listenerUpVector = upVector;
+        float orientation[] = {listenerDirection.x, listenerDirection.y, listenerDirection.z, upVector.x, upVector.y, upVector.z};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
     }
+
+    listenerUpVector = upVector;
 }
 
 
