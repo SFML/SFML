@@ -337,9 +337,9 @@ Vector2i WindowImplX11::getPosition() const
     unsigned int width, height, border, depth;
 
     XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
-    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+    XTranslateCoordinates(m_display, m_window, root, 0, 0, &x, &y, &child);
 
-    return Vector2i(x, y);
+    return Vector2i(x-localX, y-localY);
 }
 
 
