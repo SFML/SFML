@@ -22,51 +22,57 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_ALCHECK_HPP
-#define SFML_ALCHECK_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <iostream>
-#include <string>
-#include <al.h>
-#include <alc.h>
+#include <SFML/Audio/AlResource.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
+
+
+namespace
+{
+    // OpenAL resources counter and its mutex
+    unsigned int count = 0;
+    sf::Mutex mutex;
+
+    // The audio device is instantiated on demand rather than at global startup,
+    // which solves a lot of weird crashes and errors.
+    // It is destroyed when it is no longer needed.
+    sf::priv::AudioDevice* globalDevice;
+}
 
 
 namespace sf
 {
-namespace priv
+////////////////////////////////////////////////////////////
+AlResource::AlResource()
 {
-////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenAL API calls
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
+    // Protect from concurrent access
+    Lock lock(mutex);
 
-    // If in debug mode, perform a test on every call
-    #define alCheck(x) x; sf::priv::alCheckError(__FILE__, __LINE__);
+    // If this is the very first resource, trigger the global device initialization
+    if (count == 0)
+        globalDevice = new priv::AudioDevice;
 
-#else
-
-    // Else, we don't add any overhead
-    #define alCheck(Func) (Func)
-
-#endif
+    // Increment the resources counter
+    count++;
+}
 
 
 ////////////////////////////////////////////////////////////
-/// Check the last OpenAL error
-///
-/// \param file Source file where the call is located
-/// \param line Line number of the source file where the call is located
-///
-////////////////////////////////////////////////////////////
-void alCheckError(const std::string& file, unsigned int line);
+AlResource::~AlResource()
+{
+    // Protect from concurrent access
+    Lock lock(mutex);
 
-} // namespace priv
+    // Decrement the resources counter
+    count--;
+
+    // If there's no more resource alive, we can destroy the device
+    if (count == 0)
+        delete globalDevice;
+}
 
 } // namespace sf
-
-
-#endif // SFML_ALCHECK_HPP

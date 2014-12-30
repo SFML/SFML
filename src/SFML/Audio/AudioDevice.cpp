@@ -29,12 +29,18 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Err.hpp>
+#include <memory>
 
 
-namespace 
+namespace
 {
     ALCdevice*  audioDevice  = NULL;
     ALCcontext* audioContext = NULL;
+
+    float        listenerVolume = 100.f;
+    sf::Vector3f listenerPosition (0.f, 0.f, 0.f);
+    sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
+    sf::Vector3f listenerUpVector (0.f, 1.f, 0.f);
 }
 
 namespace sf
@@ -56,6 +62,17 @@ AudioDevice::AudioDevice()
         {
             // Set the context as the current one (we'll only need one)
             alcMakeContextCurrent(audioContext);
+
+            // Apply the listener properties the user might have set
+            float orientation[] = {listenerDirection.x,
+                                   listenerDirection.y,
+                                   listenerDirection.z,
+                                   listenerUpVector.x,
+                                   listenerUpVector.y,
+                                   listenerUpVector.z};
+            alCheck(alListenerf(AL_GAIN, listenerVolume * 0.01f));
+            alCheck(alListener3f(AL_POSITION, listenerPosition.x, listenerPosition.y, listenerPosition.z));
+            alCheck(alListenerfv(AL_ORIENTATION, orientation));
         }
         else
         {
@@ -86,7 +103,13 @@ AudioDevice::~AudioDevice()
 ////////////////////////////////////////////////////////////
 bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
-    ensureALInit();
+    // Create a temporary audio device in case none exists yet.
+    // This device will not be used in this function and merely
+    // makes sure there is a valid OpenAL device for extension
+    // queries if none has been created yet.
+    std::auto_ptr<AudioDevice> device;
+    if (!audioDevice)
+        device.reset(new AudioDevice);
 
     if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
         return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
@@ -98,7 +121,13 @@ bool AudioDevice::isExtensionSupported(const std::string& extension)
 ////////////////////////////////////////////////////////////
 int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 {
-    ensureALInit();
+    // Create a temporary audio device in case none exists yet.
+    // This device will not be used in this function and merely
+    // makes sure there is a valid OpenAL device for format
+    // queries if none has been created yet.
+    std::auto_ptr<AudioDevice> device;
+    if (!audioDevice)
+        device.reset(new AudioDevice);
 
     // Find the good format according to the number of channels
     int format = 0;
@@ -118,6 +147,80 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
         format = 0;
 
     return format;
+}
+
+
+////////////////////////////////////////////////////////////
+void AudioDevice::setGlobalVolume(float volume)
+{
+    if (audioContext)
+        alCheck(alListenerf(AL_GAIN, volume * 0.01f));
+
+    listenerVolume = volume;
+}
+
+
+////////////////////////////////////////////////////////////
+float AudioDevice::getGlobalVolume()
+{
+    return listenerVolume;
+}
+
+
+////////////////////////////////////////////////////////////
+void AudioDevice::setPosition(const Vector3f& position)
+{
+    if (audioContext)
+        alCheck(alListener3f(AL_POSITION, position.x, position.y, position.z));
+
+    listenerPosition = position;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f AudioDevice::getPosition()
+{
+    return listenerPosition;
+}
+
+
+////////////////////////////////////////////////////////////
+void AudioDevice::setDirection(const Vector3f& direction)
+{
+    if (audioContext)
+    {
+        float orientation[] = {direction.x, direction.y, direction.z, listenerUpVector.x, listenerUpVector.y, listenerUpVector.z};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
+    }
+
+    listenerDirection = direction;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f AudioDevice::getDirection()
+{
+    return listenerDirection;
+}
+
+
+////////////////////////////////////////////////////////////
+void AudioDevice::setUpVector(const Vector3f& upVector)
+{
+    if (audioContext)
+    {
+        float orientation[] = {listenerDirection.x, listenerDirection.y, listenerDirection.z, upVector.x, upVector.y, upVector.z};
+        alCheck(alListenerfv(AL_ORIENTATION, orientation));
+    }
+
+    listenerUpVector = upVector;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f AudioDevice::getUpVector()
+{
+    return listenerUpVector;
 }
 
 } // namespace priv
