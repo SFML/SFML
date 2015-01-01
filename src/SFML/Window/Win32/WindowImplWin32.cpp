@@ -302,6 +302,16 @@ void WindowImplWin32::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
+Vector2i WindowImplWin32::getClientAreaPosition() const
+{
+    POINT origin{0, 0};
+    ClientToScreen(m_handle, &origin);
+
+    return Vector2i(origin.x, origin.y);
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::setTitle(const String& title)
 {
     SetWindowTextW(m_handle, title.toWideString().c_str());

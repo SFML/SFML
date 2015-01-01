@@ -249,6 +249,13 @@ void Window::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
+Vector2i Window::getClientAreaPosition() const
+{
+    return m_impl ? m_impl->getClientAreaPosition() : Vector2i();
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::setTitle(const String& title)
 {
     if (m_impl)
