@@ -118,7 +118,7 @@ void Text::setColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                 m_vertices[i].color = m_color;
         }
     }

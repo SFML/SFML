@@ -175,7 +175,7 @@ m_bounds          ()
 void Shape::update()
 {
     // Get the total number of points of the shape
-    unsigned int count = getPointCount();
+    std::size_t count = getPointCount();
     if (count < 3)
     {
         m_vertices.resize(0);
@@ -186,7 +186,7 @@ void Shape::update()
     m_vertices.resize(count + 2); // + 2 for center and repeated first point
 
     // Position
-    for (unsigned int i = 0; i < count; ++i)
+    for (std::size_t i = 0; i < count; ++i)
         m_vertices[i + 1].position = getPoint(i);
     m_vertices[count + 1].position = m_vertices[1].position;
 
@@ -230,7 +230,7 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Shape::updateFillColors()
 {
-    for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+    for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
         m_vertices[i].color = m_fillColor;
 }
 
@@ -238,7 +238,7 @@ void Shape::updateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::updateTexCoords()
 {
-    for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+    for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
         float xratio = m_insideBounds.width > 0 ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
         float yratio = m_insideBounds.height > 0 ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
@@ -251,12 +251,12 @@ void Shape::updateTexCoords()
 ////////////////////////////////////////////////////////////
 void Shape::updateOutline()
 {
-    unsigned int count = m_vertices.getVertexCount() - 2;
+    std::size_t count = m_vertices.getVertexCount() - 2;
     m_outlineVertices.resize((count + 1) * 2);
 
-    for (unsigned int i = 0; i < count; ++i)
+    for (std::size_t i = 0; i < count; ++i)
     {
-        unsigned int index = i + 1;
+        std::size_t index = i + 1;
 
         // Get the two segments shared by the current point
         Vector2f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
@@ -298,7 +298,7 @@ void Shape::updateOutline()
 ////////////////////////////////////////////////////////////
 void Shape::updateOutlineColors()
 {
-    for (unsigned int i = 0; i < m_outlineVertices.getVertexCount(); ++i)
+    for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
         m_outlineVertices[i].color = m_outlineColor;
 }
 

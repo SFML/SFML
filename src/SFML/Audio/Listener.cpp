@@ -26,16 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Listener.hpp>
-#include <SFML/Audio/ALCheck.hpp>
-
-
-namespace
-{
-    float        listenerVolume = 100.f;
-    sf::Vector3f listenerPosition (0.f, 0.f, 0.f);
-    sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
-    sf::Vector3f listenerUpVector (0.f, 1.f, 0.f);
-}
+#include <SFML/Audio/AudioDevice.hpp>
 
 
 namespace sf
@@ -43,20 +34,14 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Listener::setGlobalVolume(float volume)
 {
-	if (volume != listenerVolume)
-    {
-        priv::ensureALInit();
-
-        alCheck(alListenerf(AL_GAIN, volume * 0.01f));
-        listenerVolume = volume;
-    }
+    priv::AudioDevice::setGlobalVolume(volume);
 }
 
 
 ////////////////////////////////////////////////////////////
 float Listener::getGlobalVolume()
 {
-    return listenerVolume;
+    return priv::AudioDevice::getGlobalVolume();
 }
 
 
@@ -70,20 +55,14 @@ void Listener::setPosition(float x, float y, float z)
 ////////////////////////////////////////////////////////////
 void Listener::setPosition(const Vector3f& position)
 {
-    if (position != listenerPosition)
-    {
-        priv::ensureALInit();
-
-        alCheck(alListener3f(AL_POSITION, position.x, position.y, position.z));
-        listenerPosition = position;
-    }
+    priv::AudioDevice::setPosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getPosition()
 {
-    return listenerPosition;
+    return priv::AudioDevice::getPosition();
 }
 
 
@@ -97,21 +76,14 @@ void Listener::setDirection(float x, float y, float z)
 ////////////////////////////////////////////////////////////
 void Listener::setDirection(const Vector3f& direction)
 {
-    if (direction != listenerDirection)
-    {
-        priv::ensureALInit();
-
-        float orientation[] = {direction.x, direction.y, direction.z, listenerUpVector.x, listenerUpVector.y, listenerUpVector.z};
-        alCheck(alListenerfv(AL_ORIENTATION, orientation));
-        listenerDirection = direction;
-    }
+    priv::AudioDevice::setDirection(direction);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getDirection()
 {
-    return listenerDirection;
+    return priv::AudioDevice::getDirection();
 }
 
 
@@ -125,21 +97,14 @@ void Listener::setUpVector(float x, float y, float z)
 ////////////////////////////////////////////////////////////
 void Listener::setUpVector(const Vector3f& upVector)
 {
-    if (upVector != listenerUpVector)
-    {
-        priv::ensureALInit();
-
-        float orientation[] = {listenerDirection.x, listenerDirection.y, listenerDirection.z, upVector.x, upVector.y, upVector.z};
-        alCheck(alListenerfv(AL_ORIENTATION, orientation));
-        listenerUpVector = upVector;
-    }
+    priv::AudioDevice::setUpVector(upVector);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getUpVector()
 {
-    return listenerUpVector;
+    return priv::AudioDevice::getUpVector();
 }
 
 } // namespace sf

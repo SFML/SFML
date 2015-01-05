@@ -54,14 +54,14 @@ const Vector2f& RectangleShape::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RectangleShape::getPointCount() const
+std::size_t RectangleShape::getPointCount() const
 {
     return 4;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RectangleShape::getPoint(unsigned int index) const
+Vector2f RectangleShape::getPoint(std::size_t index) const
 {
     switch (index)
     {

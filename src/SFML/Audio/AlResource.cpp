@@ -25,45 +25,54 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Audio/AlResource.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
+
+
+namespace
+{
+    // OpenAL resources counter and its mutex
+    unsigned int count = 0;
+    sf::Mutex mutex;
+
+    // The audio device is instantiated on demand rather than at global startup,
+    // which solves a lot of weird crashes and errors.
+    // It is destroyed when it is no longer needed.
+    sf::priv::AudioDevice* globalDevice;
+}
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape(std::size_t pointCount)
+AlResource::AlResource()
 {
-    setPointCount(pointCount);
+    // Protect from concurrent access
+    Lock lock(mutex);
+
+    // If this is the very first resource, trigger the global device initialization
+    if (count == 0)
+        globalDevice = new priv::AudioDevice;
+
+    // Increment the resources counter
+    count++;
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::setPointCount(std::size_t count)
+AlResource::~AlResource()
 {
-    m_points.resize(count);
-    update();
-}
+    // Protect from concurrent access
+    Lock lock(mutex);
 
+    // Decrement the resources counter
+    count--;
 
-////////////////////////////////////////////////////////////
-std::size_t ConvexShape::getPointCount() const
-{
-    return m_points.size();
-}
-
-
-////////////////////////////////////////////////////////////
-void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
-{
-    m_points[index] = point;
-    update();
-}
-
-
-////////////////////////////////////////////////////////////
-Vector2f ConvexShape::getPoint(std::size_t index) const
-{
-    return m_points[index];
+    // If there's no more resource alive, we can destroy the device
+    if (count == 0)
+        delete globalDevice;
 }
 
 } // namespace sf

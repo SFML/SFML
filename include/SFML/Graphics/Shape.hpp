@@ -193,7 +193,7 @@ public:
     /// \see getPoint
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int getPointCount() const = 0;
+    virtual std::size_t getPointCount() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the shape
@@ -210,7 +210,7 @@ public:
     /// \see getPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(unsigned int index) const = 0;
+    virtual Vector2f getPoint(std::size_t index) const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity

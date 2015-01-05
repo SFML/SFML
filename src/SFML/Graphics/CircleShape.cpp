@@ -32,7 +32,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-CircleShape::CircleShape(float radius, unsigned int pointCount) :
+CircleShape::CircleShape(float radius, std::size_t pointCount) :
 m_radius    (radius),
 m_pointCount(pointCount)
 {
@@ -56,21 +56,21 @@ float CircleShape::getRadius() const
 
 
 ////////////////////////////////////////////////////////////
-void CircleShape::setPointCount(unsigned int count)
+void CircleShape::setPointCount(std::size_t count)
 {
     m_pointCount = count;
     update();
 }
 
 ////////////////////////////////////////////////////////////
-unsigned int CircleShape::getPointCount() const
+std::size_t CircleShape::getPointCount() const
 {
     return m_pointCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f CircleShape::getPoint(unsigned int index) const
+Vector2f CircleShape::getPoint(std::size_t index) const
 {
     static const float pi = 3.141592654f;
 

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Vector3.hpp>
 
 
@@ -38,7 +39,7 @@ namespace sf
 /// \brief Base class defining a sound's properties
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundSource
+class SFML_AUDIO_API SoundSource : AlResource
 {
 public:
 

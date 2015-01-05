@@ -51,8 +51,6 @@ m_sampleRate        (0),
 m_processingInterval(milliseconds(100)),
 m_isCapturing       (false)
 {
-    priv::ensureALInit();
-
     // Set the device name to the default device
     m_deviceName = getDefaultDevice();
 }
