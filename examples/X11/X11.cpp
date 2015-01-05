@@ -201,7 +201,7 @@ int main()
 
     while (running)
     {
-        while (event = xcb_poll_for_event(xcbConnection))
+        while ((event = xcb_poll_for_event(xcbConnection)))
         {
             running = false;
         }

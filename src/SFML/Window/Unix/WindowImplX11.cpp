@@ -67,13 +67,6 @@ namespace
                                                              PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
                                                              EnterWindowMask | LeaveWindowMask;
 
-    // Filter the events received by windows (only allow those matching a specific window)
-    Bool checkEvent(::Display*, XEvent* event, XPointer userData)
-    {
-        // Just check if the event matches the window
-        return event->xany.window == reinterpret_cast< ::Window >(userData);
-    }
-
     // Find the name of the current executable
     void findExecutableName(char* buffer, std::size_t bufferSize)
     {
@@ -127,7 +120,7 @@ m_useSizeHints(false)
     if (m_window)
     {
         // Make sure the window is listening to all the required events
-        const uint32_t value_list[] = {eventMask};
+        const uint32_t value_list[] = {static_cast<uint32_t>(eventMask)};
 
         xcb_change_window_attributes(m_connection,
                                      m_window,
@@ -141,7 +134,7 @@ m_useSizeHints(false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
+WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& /*settings*/) :
 m_window      (0),
 m_inputMethod (NULL),
 m_inputContext(NULL),
@@ -184,11 +177,8 @@ m_useSizeHints(false)
     if (fullscreen)
         switchToFullscreen(mode);
 
-    // Choose the visual according to the context settings
-    XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
-
     // Define the window attributes
-    const uint32_t value_list[] = {fullscreen, eventMask};
+    const uint32_t value_list[] = {fullscreen, static_cast<uint32_t>(eventMask)};
 
     // Create the window
     m_window = xcb_generate_id(m_connection);
@@ -378,7 +368,7 @@ void WindowImplX11::processEvents()
     xcb_key_release_event_t* lastKeyReleaseEvent = NULL;
     uint8_t eventType = 0;
 
-    while(event = xcb_poll_for_event(m_connection))
+    while((event = xcb_poll_for_event(m_connection)))
     {
         eventType = event->response_type & ~0x80;
 
@@ -459,7 +449,7 @@ Vector2i WindowImplX11::getPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setPosition(const Vector2i& position)
 {
-    uint32_t values[] = {position.x, position.y};
+    uint32_t values[] = {static_cast<uint32_t>(position.x), static_cast<uint32_t>(position.y)};
     xcb_configure_window(m_connection, m_window,
                          XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y,
                          values);

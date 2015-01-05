@@ -139,7 +139,6 @@ VideoMode VideoModeImpl::getDesktopMode()
             if (! errors)
             {
                 // Get the current video mode
-                xcb_randr_rotation_t Rotation = (xcb_randr_rotation_t)config->rotation;
                 xcb_randr_mode_t currentMode = config->sizeID;
 
                 // Get the available screen sizes
