@@ -618,34 +618,38 @@ void WindowImplX11::requestFocus()
     
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
-    XWindowAttributes attributes;
-    if (XGetWindowAttributes(m_display, m_window, &attributes) == 0)
+    xcb_get_window_attributes_cookie_t attribCookie = xcb_get_window_attributes(m_connection, m_window);
+    xcb_get_window_attributes_reply_t* attributes = xcb_get_window_attributes_reply(m_connection,
+                                                                                    attribCookie,
+                                                                                    NULL);
+    if (!attributes)
     {
         sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
     }
 
-    bool windowViewable = (attributes.map_state == IsViewable);
+    bool windowViewable = (attributes->map_state == XCB_MAP_STATE_VIEWABLE);
+    free(attributes);
     
     if (sfmlWindowFocused && windowViewable)
     {
         // Another SFML window of this application has the focus and the current window is viewable:
         // steal focus (i.e. bring window to the front and give it input focus)
-        XRaiseWindow(m_display, m_window);
-        XSetInputFocus(m_display, m_window, RevertToPointerRoot, CurrentTime);
+        xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
+        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
+        xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
     }
     else
     {
-        // Otherwise: display urgency hint (flashing application logo)
-        // Ensure WM hints exist, allocate if necessary
-        XWMHints* hints = XGetWMHints(m_display, m_window);
-        if (hints == NULL)
-            hints = XAllocWMHints();
-        
-        // Add urgency (notification) flag to hints
-        hints->flags |= XUrgencyHint;
-        XSetWMHints(m_display, m_window, hints);
-        XFree(hints);
+        // Get current WM hints.
+        xcb_get_property_cookie_t hintsCookie = xcb_icccm_get_wm_hints_unchecked(m_connection, m_window);
+        xcb_icccm_wm_hints_t hints;
+        xcb_icccm_get_wm_hints_reply(m_connection, hintsCookie, &hints, NULL);
+
+        // Even if no hints were returned, we can simply set the proper flags we need and go on. This is
+        // different from Xlib where XAllocWMHints() has to be called.
+        hints.flags |= XCB_ICCCM_WM_HINT_X_URGENCY;
+        xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
     }
 }
 
@@ -653,11 +657,13 @@ void WindowImplX11::requestFocus()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::hasFocus() const
 {
-    ::Window focusedWindow = 0;
-    int revertToReturn = 0;
-    XGetInputFocus(m_display, &focusedWindow, &revertToReturn);
+    xcb_get_input_focus_cookie_t cookie = xcb_get_input_focus_unchecked(m_connection);
+    xcb_get_input_focus_reply_t* reply = xcb_get_input_focus_reply(m_connection, cookie, NULL);
 
-    return m_window == focusedWindow;
+    bool focussed = (reply->focus == m_window);
+    free(reply);
+
+    return focussed;
 }
 
 
@@ -838,7 +844,7 @@ void WindowImplX11::cleanup()
         xcb_generic_error_t* errors;
         xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
                     m_connection, xcb_randr_get_screen_info(m_connection, screen->root), &errors);
-        if (! errors)
+        if (!errors)
         {
             // Reset the video mode
             xcb_randr_set_screen_config(m_connection,
@@ -888,14 +894,14 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            XWMHints* hints = XGetWMHints(m_display, m_window);
-            if (hints != NULL)
-            {
-                // Remove urgency (notification) flag from hints
-                hints->flags &= ~XUrgencyHint;
-                XSetWMHints(m_display, m_window, hints);
-                XFree(hints);
-            }
+            xcb_get_property_cookie_t hintsCookie = xcb_icccm_get_wm_hints_unchecked(m_connection, m_window);
+            xcb_icccm_wm_hints_t hints;
+            xcb_icccm_get_wm_hints_reply(m_connection, hintsCookie, &hints, NULL);
+
+            // Remove urgency (notification) flag from hints
+            hints.flags &= ~XUrgencyHint;
+            xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
+
             break;
         }
 
