@@ -231,7 +231,7 @@ private:
     ::Window                m_window;              ///< X11 structure defining our window
     ::Display*              m_display;             ///< Pointer to the display
     xcb_connection_t*       m_connection;          ///< Pointer to the xcb connection
-    int                     m_screen;              ///< Screen identifier
+    xcb_screen_t*           m_screen;              ///< Screen identifier
     XIM                     m_inputMethod;         ///< Input method linked to the X display
     XIC                     m_inputContext;        ///< Input context used to get unicode input in our window
     bool                    m_isExternal;          ///< Tell whether the window has been created externally or by SFML

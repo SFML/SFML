@@ -28,7 +28,6 @@
 #include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Err.hpp>
-#include <X11/Xlib-xcb.h>
 #include <xcb/randr.h>
 #include <algorithm>
 

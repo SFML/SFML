@@ -30,9 +30,6 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <X11/keysym.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
 #include <xcb/xcb_atom.h>
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
@@ -112,7 +109,10 @@ m_useSizeHints(false)
         return;
     }
 
-    m_screen = DefaultScreen(m_display);
+    // Get connection info.
+    const xcb_setup_t* setup = xcb_get_setup(m_connection);
+    xcb_screen_iterator_t screenIter = xcb_setup_roots_iterator(setup);
+    m_screen = screenIter.data;
 
     // Save the window handle
     m_window = handle;
@@ -150,20 +150,24 @@ m_useSizeHints(false)
     m_display = OpenDisplay();
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
     m_connection = XGetXCBConnection(m_display);
-    if (! m_connection)
+    if (!m_connection)
     {
         err() << "Failed cast Display object to an XCB connection object" << std::endl;
         return;
     }
-    m_screen  = DefaultScreen(m_display);
+
+    // Get connection info.
+    const xcb_setup_t* setup = xcb_get_setup(m_connection);
+    xcb_screen_iterator_t screenIter = xcb_setup_roots_iterator(setup);
+    m_screen = screenIter.data;
 
     // Compute position and size
     int left, top;
     bool fullscreen = (style & Style::Fullscreen) != 0;
     if (!fullscreen)
     {
-        left = (DisplayWidth(m_display, m_screen)  - mode.width)  / 2;
-        top  = (DisplayHeight(m_display, m_screen) - mode.height) / 2;
+        left = (m_screen->width_in_pixels  - mode.width)  / 2;
+        top  = (m_screen->height_in_pixels - mode.height) / 2;
     }
     else
     {
@@ -187,7 +191,7 @@ m_useSizeHints(false)
                 m_connection,
                 XCB_COPY_FROM_PARENT,
                 m_window,
-                RootWindow(m_display, m_screen),
+                m_screen->root,
                 left, top,
                 width, height,
                 0,
@@ -277,7 +281,7 @@ m_useSizeHints(false)
 
             const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&hints);
             xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
-                                    hintsAtomReply->atom, XA_WM_HINTS, 32, 5, ptr);
+                                hintsAtomReply->atom, XCB_ATOM_WM_HINTS, 32, 5, ptr);
 
             free(hintsAtomReply);
         }
@@ -297,11 +301,7 @@ m_useSizeHints(false)
     // Set the window's WM class (this can be used by window managers)
     char windowClass[512];
     findExecutableName(windowClass, sizeof(windowClass));
-    XClassHint* classHint = XAllocClassHint();
-    classHint->res_name = windowClass;
-    classHint->res_class = windowClass;
-    XSetClassHint(m_display, m_window, classHint);
-    XFree(classHint);
+    xcb_icccm_set_wm_class_checked(m_connection, m_window, std::strlen(windowClass), windowClass);
 
     // Do some common initializations
     initialize();
@@ -420,14 +420,13 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    ::Window rootWindow = RootWindow(m_display, m_screen);
     ::Window topLevelWindow = m_window;
     ::Window nextWindow = topLevelWindow;
     xcb_query_tree_cookie_t treeCookie;
     xcb_query_tree_reply_t* treeReply = NULL;
 
     // Get "top level" window, i.e. the window with the root window as its parent.
-    while (nextWindow != rootWindow)
+    while (nextWindow != m_screen->root)
     {
         topLevelWindow = nextWindow;
 
@@ -499,7 +498,7 @@ void WindowImplX11::setTitle(const String& title)
     );
 
     xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
-                        XA_WM_NAME, XA_STRING,
+                        XCB_ATOM_WM_NAME, XCB_ATOM_STRING,
                         8, utf8String.length(), utf8String.c_str());
     xcb_flush(m_connection);
 }
@@ -519,17 +518,15 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     }
 
     // Create the icon pixmap
-    uint8_t defDepth  = DefaultDepth(m_display, m_screen);
-
     xcb_pixmap_t iconPixmap = xcb_generate_id(m_connection);
-    xcb_create_pixmap(m_connection, defDepth, iconPixmap, RootWindow(m_display, m_screen),
+    xcb_create_pixmap(m_connection, m_screen->root_depth, iconPixmap, m_screen->root,
                       width, height);
 
     xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
     xcb_create_gc(m_connection, iconGC, iconPixmap, 0, NULL);
     xcb_void_cookie_t cookie = xcb_put_image_checked(
                 m_connection, XCB_IMAGE_FORMAT_Z_PIXMAP, iconPixmap, iconGC,
-                width, height, 0, 0, 0, defDepth, sizeof(iconPixels), iconPixels);
+                width, height, 0, 0, 0, m_screen->root_depth, sizeof(iconPixels), iconPixels);
     xcb_free_gc(m_connection, iconGC);
 
     xcb_generic_error_t* errptr = xcb_request_check(m_connection, cookie);
@@ -675,12 +672,11 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
             xcb_query_extension_reply(m_connection, xcb_query_extension(m_connection, 5, "RANDR"), NULL);
     if (randr_ext->present)
     {
-        xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, m_screen);
         // Get the current configuration
         xcb_generic_error_t* errors;
         xcb_randr_get_screen_info_reply_t* config =
                 xcb_randr_get_screen_info_reply(m_connection,
-                                                xcb_randr_get_screen_info(m_connection, screen->root),
+                                                xcb_randr_get_screen_info(m_connection, m_screen->root),
                                                 &errors);
         if (! errors)
         {
@@ -698,7 +694,7 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
                     {
                         // Switch to fullscreen mode
                         xcb_randr_set_screen_config(m_connection,
-                                                    screen->root,
+                                                    m_screen->root,
                                                     config->timestamp,
                                                     config->config_timestamp,
                                                     i, config->rotation, config->rate);
@@ -837,18 +833,15 @@ void WindowImplX11::cleanup()
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
     {
-        // Retrieve the default screen
-        xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, m_screen);
-
         // Get current screen info
         xcb_generic_error_t* errors;
         xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
-                    m_connection, xcb_randr_get_screen_info(m_connection, screen->root), &errors);
+                    m_connection, xcb_randr_get_screen_info(m_connection, m_screen->root), &errors);
         if (!errors)
         {
             // Reset the video mode
             xcb_randr_set_screen_config(m_connection,
-                                        screen->root,
+                                        m_screen->root,
                                         CurrentTime,
                                         config->config_timestamp,
                                         m_oldVideoMode,
@@ -1148,9 +1141,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Parent window changed
-        case ReparentNotify:
+        case XCB_REPARENT_NOTIFY:
         {
-            XSync(m_display, True); // Discard remaining events
+            xcb_flush(m_connection); // Discard remaining events
             break;
         }
     }
