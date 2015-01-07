@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-#include <X11/Xlib.h>
+#include <X11/Xlib-xcb.h>
 #include <GL/glx.h>
 
 
@@ -135,10 +135,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* m_display;    ///< Connection to the X server
-    ::Window   m_window;     ///< Window to which the context is attached
-    GLXContext m_context;    ///< OpenGL context
-    bool       m_ownsWindow; ///< Do we own the window associated to the context?
+    ::Display*        m_display;    ///< Connection to the X server
+    ::Window          m_window;     ///< Window to which the context is attached
+    xcb_connection_t* m_connection; ///< Pointer to the xcb connection
+    GLXContext        m_context;    ///< OpenGL context
+    bool              m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv
