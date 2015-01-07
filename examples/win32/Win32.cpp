@@ -47,8 +47,10 @@ LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
 /// \return Error code
 ///
 ////////////////////////////////////////////////////////////
-INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, INT)
+int main()
 {
+    HINSTANCE instance = GetModuleHandle(NULL);
+    
     // Define a class for our main window
     WNDCLASS windowClass;
     windowClass.style         = 0;

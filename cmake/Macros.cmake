@@ -130,7 +130,7 @@ macro(sfml_add_example target)
     source_group("" FILES ${THIS_SOURCES})
 
     # create the target
-    if(THIS_GUI_APP AND SFML_OS_WINDOWS)
+    if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${THIS_SOURCES})
         target_link_libraries(${target} sfml-main)
     else()
