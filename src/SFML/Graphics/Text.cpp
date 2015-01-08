@@ -42,7 +42,8 @@ m_style             (Regular),
 m_color             (255, 255, 255),
 m_vertices          (Triangles),
 m_bounds            (),
-m_geometryNeedUpdate(false)
+m_geometryNeedUpdate(false),
+m_lastDirtiness     (0)
 {
 
 }
@@ -57,7 +58,8 @@ m_style             (Regular),
 m_color             (255, 255, 255),
 m_vertices          (Triangles),
 m_bounds            (),
-m_geometryNeedUpdate(true)
+m_geometryNeedUpdate(true),
+m_lastDirtiness     (0)
 {
 
 }
@@ -239,8 +241,8 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Text::ensureGeometryUpdate() const
 {
-    // Do nothing, if geometry has not changed
-    if (!m_geometryNeedUpdate)
+    // Do nothing, if geometry has not changed and font was not reloaded
+    if (!m_geometryNeedUpdate && m_font && m_lastDirtiness == m_font->getDirtiness())
         return;
 
     // Mark geometry as updated
@@ -257,6 +259,9 @@ void Text::ensureGeometryUpdate() const
     // No text: nothing to draw
     if (m_string.isEmpty())
         return;
+
+    // Save current dirtiness value
+    m_lastDirtiness = m_font->getDirtiness();
 
     // Compute values related to the text style
     bool  bold               = (m_style & Bold) != 0;

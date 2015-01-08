@@ -249,6 +249,22 @@ public:
     ////////////////////////////////////////////////////////////
     Font& operator =(const Font& right);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Get dirtiness value of this font
+    ///
+    /// Dirtiness is a value that tracks how many times
+    /// this font has had its' internal data structures
+    /// modified in ways that invalidate glyphs that were
+    /// retrieved from this font.
+    /// If it's different than it was the last time glyph
+    /// data was retrived, then all of that data is now
+    /// invalid and has to be retrieved again.
+    ///
+    /// \return Current dirtiness value of this font
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint64 getDirtiness() const;
+
 private:
 
     ////////////////////////////////////////////////////////////
@@ -341,6 +357,7 @@ private:
     #ifdef SFML_SYSTEM_ANDROID
     void*                      m_stream; ///< Asset file streamer (if loaded from file)
     #endif
+    Uint64                     m_dirtiness;   ///< Dirtiness counter (for notifying clients of font reloads)
 };
 
 } // namespace sf
