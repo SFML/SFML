@@ -35,7 +35,6 @@
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
 #include <xcb/xcb_util.h>
-#include <xcb/randr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -63,9 +62,11 @@ namespace
 {
     sf::priv::WindowImplX11*              fullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
-    unsigned long                         eventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
-                                                             PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                                                             EnterWindowMask | LeaveWindowMask;
+    unsigned long                         eventMask = XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_BUTTON_PRESS |
+                                                      XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION |
+                                                      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS |
+                                                      XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+                                                      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW;
 
     // Find the name of the current executable
     std::string findExecutableName()
@@ -103,7 +104,8 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_fullscreen  (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -150,7 +152,8 @@ m_oldVideoMode(-1),
 m_hiddenCursor(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_useSizeHints(false),
+m_fullscreen  ((style & Style::Fullscreen) != 0)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -166,15 +169,10 @@ m_useSizeHints(false)
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
 
     // Compute position and size
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    int left = fullscreen ? 0 : (m_screen->width_in_pixels  - mode.width) / 2;
-    int top = fullscreen ? 0 : (m_screen->height_in_pixels - mode.height) / 2;
+    int left = m_fullscreen ? 0 : (m_screen->width_in_pixels  - mode.width) / 2;
+    int top = m_fullscreen ? 0 : (m_screen->height_in_pixels - mode.height) / 2;
     int width  = mode.width;
     int height = mode.height;
-
-    // Switch to fullscreen if necessary
-    if (fullscreen)
-        switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
@@ -182,7 +180,7 @@ m_useSizeHints(false)
     // Define the window attributes
     xcb_colormap_t colormap = xcb_generate_id(m_connection);
     xcb_create_colormap(m_connection, XCB_COLORMAP_ALLOC_NONE, colormap, m_screen->root, visualInfo.visualid);
-    const uint32_t value_list[] = {fullscreen, static_cast<uint32_t>(eventMask), colormap};
+    const uint32_t value_list[] = {static_cast<uint32_t>(eventMask), colormap};
 
     // Create the window
     m_window = xcb_generate_id(m_connection);
@@ -199,7 +197,7 @@ m_useSizeHints(false)
             0,
             XCB_WINDOW_CLASS_INPUT_OUTPUT,
             visualInfo.visualid,
-            XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT | XCB_CW_COLORMAP,
+            XCB_CW_EVENT_MASK | XCB_CW_COLORMAP,
             value_list
         )
     ));
@@ -214,7 +212,7 @@ m_useSizeHints(false)
     setTitle(title);
 
     // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
-    if (!fullscreen)
+    if (!m_fullscreen)
     {
         static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
         ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
@@ -309,30 +307,9 @@ m_useSizeHints(false)
     // Do some common initializations
     initialize();
 
-    // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
-    {
-        xcb_grab_pointer(
-            m_connection,
-            True,
-            m_window,
-            0,
-            XCB_GRAB_MODE_ASYNC,
-            XCB_GRAB_MODE_ASYNC,
-            m_window,
-            XCB_NONE,
-            XCB_CURRENT_TIME
-        );
-
-        xcb_grab_keyboard(
-            m_connection,
-            True,
-            m_window,
-            XCB_CURRENT_TIME,
-            XCB_GRAB_MODE_ASYNC,
-            XCB_GRAB_MODE_ASYNC
-        );
-    }
+    // Switch to fullscreen.
+    if (m_fullscreen)
+        switchToFullscreen();
 }
 
 
@@ -373,6 +350,44 @@ WindowImplX11::~WindowImplX11()
 WindowHandle WindowImplX11::getSystemHandle() const
 {
     return m_window;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setPointerGrabbed(bool grabbed)
+{
+    // NOTE: This only works when the window is mapped and visible!
+
+    if (grabbed)
+    {
+        ScopedXcbPtr<xcb_grab_pointer_reply_t> grabReply(xcb_grab_pointer_reply(
+            m_connection,
+            xcb_grab_pointer(
+                m_connection,
+                1,
+                m_screen->root,
+                XCB_NONE,
+                XCB_GRAB_MODE_ASYNC,
+                XCB_GRAB_MODE_ASYNC,
+                m_window,
+                XCB_NONE,
+                XCB_CURRENT_TIME
+            ),
+            NULL
+        ));
+
+        if (grabReply && grabReply->status != 0)
+            sf::err() << "Grabbing the pointer failed." << std::endl
+                      << "  Status: "
+                      << static_cast<int>(grabReply->status) << std::endl;
+        else if (!grabReply)
+            sf::err() << "Grabbing the pointer failed." << std::endl;
+    }
+    else
+    {
+        xcb_ungrab_pointer(m_connection, XCB_CURRENT_TIME);
+        xcb_flush(m_connection);
+    }
 }
 
 
@@ -736,77 +751,85 @@ bool WindowImplX11::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::switchToFullscreen(const VideoMode& mode)
+void WindowImplX11::switchToFullscreen()
 {
-    // Check if the XRandR extension is present
-    static const std::string RANDR = "RANDR";
-    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
+    // Create atom for _NET_WM_STATE.
+    static const std::string netWmState = "_NET_WM_STATE";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> stateReply(xcb_intern_atom_reply(
         m_connection,
-        xcb_query_extension(
+        xcb_intern_atom(
             m_connection,
-            RANDR.size(),
-            RANDR.c_str()
-        ), 
-        NULL
+            0,
+            netWmState.size(),
+            netWmState.c_str()
+        ),
+        0
     ));
 
-    if (randr_ext->present)
-    {
-        // Get the current configuration
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+    // Create atom for _NET_WM_STATE_FULLSCREEN.
+    static const std::string netWmStateFullscreen = "_NET_WM_STATE_FULLSCREEN";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> fullscreenReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
             m_connection,
-            xcb_randr_get_screen_info(
-                m_connection,
-                m_screen->root
-            ),
-            &error
-        ));
+            0,
+            netWmStateFullscreen.size(),
+            netWmStateFullscreen.c_str()
+        ),
+        0
+    ));
 
-        if (!error)
-        {
-            // Save the current video mode before we switch to fullscreen
-            m_oldVideoMode = config->sizeID;
+    // Set fullscreen property.
+    ScopedXcbPtr<xcb_generic_error_t> fullscreenError(xcb_request_check(
+        m_connection,
+        xcb_change_property_checked(
+            m_connection,
+            XCB_PROP_MODE_REPLACE,
+            m_window,
+            stateReply->atom,
+            XCB_ATOM_ATOM,
+            32,
+            1,
+            &fullscreenReply->atom
+        )
+    ));
 
-            // Get the available screen sizes
-            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
-            if (sizes && (config->nSizes > 0))
-            {
-                // Search a matching size
-                for (int i = 0; i < config->nSizes; ++i)
-                {
-                    if ((sizes[i].width  == static_cast<int>(mode.width)) &&
-                        (sizes[i].height == static_cast<int>(mode.height)))
-                    {
-                        // Switch to fullscreen mode
-                        xcb_randr_set_screen_config(
-                            m_connection,
-                            m_screen->root,
-                            config->timestamp,
-                            config->config_timestamp,
-                            i,
-                            config->rotation,
-                            config->rate
-                        );
-
-                        // Set "this" as the current fullscreen window
-                        fullscreenWindow = this;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Failed to get the screen configuration
-            err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
-        }
-    }
-    else
+    if (fullscreenError)
     {
-        // XRandR extension is not supported: we cannot use fullscreen mode
-        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
+        sf::err() << "Setting fullscreen failed." << std::endl;
+        return;
     }
+
+    // Create atom for _NET_WM_BYPASS_COMPOSITOR.
+    static const std::string netWmStateBypassCompositor = "_NET_WM_BYPASS_COMPOSITOR";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> compReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            netWmStateBypassCompositor.size(),
+            netWmStateBypassCompositor.c_str()
+        ),
+        0
+    ));
+
+    // Disable compositor.
+    ScopedXcbPtr<xcb_generic_error_t> compositorError(xcb_request_check(
+        m_connection,
+        xcb_change_property_checked(
+            m_connection,
+            XCB_PROP_MODE_REPLACE,
+            m_window,
+            stateReply->atom,
+            XCB_ATOM_ATOM,
+            32,
+            1,
+            &compReply->atom
+        )
+    ));
+
+    if (compositorError)
+        sf::err() << "xcb_change_property failed, setting fullscreen not possible." << std::endl;
 }
 
 
@@ -926,30 +949,6 @@ void WindowImplX11::cleanup()
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
     {
-        // Get current screen info
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
-            m_connection,
-            xcb_randr_get_screen_info(
-            m_connection,
-            m_screen->root
-            ),
-            &error
-        ));
-
-        if (!error)
-        {
-            // Reset the video mode
-            xcb_randr_set_screen_config(
-                m_connection,
-                m_screen->root,
-                CurrentTime,
-                config->config_timestamp,
-                m_oldVideoMode,
-                config->rotation,
-                config->rate
-            );
-        }
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;
@@ -1001,12 +1000,20 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             hints.flags &= ~XUrgencyHint;
             xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
 
+            // Grab pointer if necessary.
+            if (m_fullscreen)
+                setPointerGrabbed(true);
+
             break;
         }
 
         // Lost focus event
         case XCB_FOCUS_OUT:
         {
+            // Ungrab pointer if necessary.
+            if (m_fullscreen)
+                setPointerGrabbed(false);
+
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
