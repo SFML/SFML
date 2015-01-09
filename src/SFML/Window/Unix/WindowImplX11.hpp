@@ -182,10 +182,16 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Switch to fullscreen mode
     ///
-    /// \param Mode video mode to switch to
+    ////////////////////////////////////////////////////////////
+    void switchToFullscreen();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Grab or ungrab mouse pointer.
+    ///
+    /// \param grabbed True to grab, false to ungrab.
     ///
     ////////////////////////////////////////////////////////////
-    void switchToFullscreen(const VideoMode& mode);
+    void setPointerGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
@@ -241,6 +247,7 @@ private:
     bool                    m_keyRepeat;           ///< Is the KeyRepeat feature enabled?
     Vector2i                m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool                    m_useSizeHints;        ///< Is the size of the window fixed with size hints?
+    bool                    m_fullscreen;          ///< Is window in fullscreen?
 };
 
 } // namespace priv
