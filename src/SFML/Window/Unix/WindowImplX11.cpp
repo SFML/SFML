@@ -1075,7 +1075,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                     || (button == XCB_BUTTON_INDEX_3) || (button == 8) || (button == 9))
             {
                 Event event;
-                event.type          = Event::MouseButtonPressed;
+                event.type          = Event::MouseButtonReleased;
                 event.mouseButton.x = e->event_x;
                 event.mouseButton.y = e->event_y;
                 switch(button)
