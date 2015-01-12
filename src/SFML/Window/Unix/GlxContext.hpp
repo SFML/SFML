@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
+#include <SFML/Window/Unix/GlxExtensions.hpp>
 #include <X11/Xlib-xcb.h>
-#include <GL/glx.h>
 
 
 namespace sf

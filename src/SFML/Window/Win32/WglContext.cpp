@@ -27,16 +27,49 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
 #include <SFML/Window/Win32/WglContext.hpp>
-#include <SFML/Window/glext/wglext.h>
+#include <SFML/Window/Win32/WglExtensions.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
+#include <sstream>
 
 
 namespace sf
 {
 namespace priv
 {
+////////////////////////////////////////////////////////////
+void ensureExtensionsInit(HDC deviceContext)
+{
+    static bool initialized = false;
+    if (!initialized)
+    {
+        int loaded = sfwgl_LoadFunctions(deviceContext);
+        if (loaded == sfwgl_LOAD_FAILED)
+        {
+            err() << "Failed to initialize WglExtensions" << std::endl;
+        }
+        else
+        {
+            initialized = true;
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+String getErrorString(DWORD errorCode)
+{
+    std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
+    TCHAR errBuff[256];
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0, errBuff, sizeof(errBuff), NULL);
+    ss << errBuff;
+    String errMsg(ss.str());
+
+    return errMsg;
+}
+
+
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
 m_window       (NULL),
@@ -138,9 +171,16 @@ void WglContext::display()
 ////////////////////////////////////////////////////////////
 void WglContext::setVerticalSyncEnabled(bool enabled)
 {
-    PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
-    if (wglSwapIntervalEXT)
+    // Make sure that extensions are initialized
+    ensureExtensionsInit(m_deviceContext);
+
+    if (sfwgl_ext_EXT_swap_control == sfwgl_LOAD_SUCCEEDED)
         wglSwapIntervalEXT(enabled ? 1 : 0);
+    else
+    {
+        // wglSwapIntervalEXT not supported
+        err() << "Setting vertical sync not supported" << std::endl;
+    }
 }
 
 
@@ -150,13 +190,16 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
     // Save the creation settings
     m_settings = settings;
 
+    // Make sure that extensions are initialized if this is not the shared context
+    // The shared context is the context used to initialize the extensions
+    if (shared)
+        ensureExtensionsInit(m_deviceContext);
+
     // Let's find a suitable pixel format -- first try with antialiasing
     int bestFormat = 0;
     if (m_settings.antialiasingLevel > 0)
     {
-        // Get the wglChoosePixelFormatARB function (it is an extension)
-        PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-        if (wglChoosePixelFormatARB)
+        if ((sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED) && (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED))
         {
             // Define the basic attributes we want for our window
             int intAttributes[] =
@@ -165,7 +208,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
                 WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
                 WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
                 WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-                WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? GL_TRUE : GL_FALSE),
+                WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? 1 : 0),
                 WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
                 0,                      0
             };
@@ -236,7 +279,8 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
         bestFormat = ChoosePixelFormat(m_deviceContext, &descriptor);
         if (bestFormat == 0)
         {
-            err() << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
+            err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+                  << "Cannot create OpenGL context" << std::endl;
             return;
         }
     }
@@ -252,58 +296,97 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
     // Set the chosen pixel format
     if (!SetPixelFormat(m_deviceContext, bestFormat, &actualFormat))
     {
-        err() << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
+        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+              << "Cannot create OpenGL context" << std::endl;
         return;
     }
 
     // Get the context to share display lists with
     HGLRC sharedContext = shared ? shared->m_context : NULL;
 
-    // Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
-    while (!m_context && (m_settings.majorVersion >= 3))
+    // Create the OpenGL context -- first try using wglCreateContextAttribsARB
+    while (!m_context && m_settings.majorVersion)
     {
-        PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
-        if (wglCreateContextAttribsARB)
+        if (sfwgl_ext_ARB_create_context == sfwgl_LOAD_SUCCEEDED)
         {
-            int attributes[] =
+            // Check if setting the profile is supported
+            if (sfwgl_ext_ARB_create_context_profile == sfwgl_LOAD_SUCCEEDED)
             {
-                WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-                0, 0
-            };
-            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
+                int profile = (m_settings.attributeFlags & ContextSettings::Core) ? WGL_CONTEXT_CORE_PROFILE_BIT_ARB : WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+                int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? WGL_CONTEXT_DEBUG_BIT_ARB : 0;
+
+                int attributes[] =
+                {
+                    WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
+                    WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
+                    WGL_CONTEXT_PROFILE_MASK_ARB,  profile,
+                    WGL_CONTEXT_FLAGS_ARB,         debug,
+                    0,                             0
+                };
+                m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
+            }
+            else
+            {
+                if ((m_settings.attributeFlags & ContextSettings::Core) || (m_settings.attributeFlags & ContextSettings::Debug))
+                    err() << "Selecting a profile during context creation is not supported,"
+                          << "disabling comptibility and debug" << std::endl;
+
+                m_settings.attributeFlags = ContextSettings::Default;
+
+                int attributes[] =
+                {
+                    WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
+                    WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
+                    0,                             0
+                };
+                m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
+            }
+        }
+        else
+        {
+            // If wglCreateContextAttribsARB is not supported, there is no need to keep trying
+            break;
         }
 
-        // If we couldn't create the context, lower the version number and try again -- stop at 3.0
+        // If we couldn't create the context, first try disabling flags,
+        // then lower the version number and try again -- stop at 0.0
         // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
         if (!m_context)
         {
-            if (m_settings.minorVersion > 0)
+            if (m_settings.attributeFlags != ContextSettings::Default)
+            {
+                m_settings.attributeFlags = ContextSettings::Default;
+            }
+            else if (m_settings.minorVersion > 0)
             {
                 // If the minor version is not 0, we decrease it and try again
                 m_settings.minorVersion--;
+
+                m_settings.attributeFlags = settings.attributeFlags;
             }
             else
             {
                 // If the minor version is 0, we decrease the major version
                 m_settings.majorVersion--;
                 m_settings.minorVersion = 9;
+
+                m_settings.attributeFlags = settings.attributeFlags;
             }
         }
     }
 
-    // If the OpenGL >= 3.0 context failed or if we don't want one, create a regular OpenGL 1.x/2.x context
+    // If wglCreateContextAttribsARB failed, use wglCreateContext
     if (!m_context)
     {
-        // set the context version to 2.0 (arbitrary)
+        // set the context version to 2.1 (arbitrary) and disable flags
         m_settings.majorVersion = 2;
-        m_settings.minorVersion = 0;
+        m_settings.minorVersion = 1;
+        m_settings.attributeFlags = ContextSettings::Default;
 
         m_context = wglCreateContext(m_deviceContext);
         if (!m_context)
         {
-            err() << "Failed to create an OpenGL context for this window" << std::endl;
+            err() << "Failed to create an OpenGL context for this window: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
             return;
         }
 
@@ -315,7 +398,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
             Lock lock(mutex);
 
             if (!wglShareLists(sharedContext, m_context))
-                err() << "Failed to share the OpenGL context" << std::endl;
+                err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
         }
     }
 }

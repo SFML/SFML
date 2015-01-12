@@ -80,7 +80,6 @@ m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_cacheId      (getUniqueId())
 {
-
 }
 
 

@@ -32,11 +32,6 @@
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
-#ifdef SFML_SYSTEM_IOS
-    #include <OpenGLES/ES1/gl.h>
-#else
-    #include <SFML/Window/glext/glext.h>
-#endif
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -71,6 +66,30 @@
 
     #endif
 
+#endif
+
+#if !defined(GL_MULTISAMPLE)
+    #define GL_MULTISAMPLE 0x809D
+#endif
+
+#if !defined(GL_CONTEXT_FLAGS)
+    #define GL_CONTEXT_FLAGS 0x821E
+#endif
+
+#if !defined(GL_CONTEXT_FLAG_DEBUG_BIT)
+    #define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
+#endif
+
+#if !defined(GL_CONTEXT_PROFILE_MASK)
+    #define GL_CONTEXT_PROFILE_MASK 0x9126
+#endif
+
+#if !defined(GL_CONTEXT_CORE_PROFILE_BIT)
+    #define GL_CONTEXT_CORE_PROFILE_BIT 0x00000001
+#endif
+
+#if !defined(GL_CONTEXT_COMPATIBILITY_PROFILE_BIT)
+    #define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
 #endif
 
 
@@ -285,9 +304,34 @@ void GlContext::initialize()
     }
     else
     {
-        // Can't get the version number, assume 2.0
+        // Can't get the version number, assume 2.1
         m_settings.majorVersion = 2;
-        m_settings.minorVersion = 0;
+        m_settings.minorVersion = 1;
+    }
+
+    // Verify non-default settings, just to be extra sure
+    if (m_settings.attributeFlags & ContextSettings::Debug)
+    {
+        // Retrieve the context flags
+        int flags = 0;
+        glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+
+        if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT))
+        {
+            m_settings.attributeFlags ^= ContextSettings::Debug;
+        }
+    }
+
+    if (m_settings.attributeFlags & ContextSettings::Core)
+    {
+        // Retrieve the context profile
+        int profile = 0;
+        glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+        if (!(profile & GL_CONTEXT_CORE_PROFILE_BIT))
+        {
+            m_settings.attributeFlags ^= ContextSettings::Core;
+        }
     }
 
     // Enable antialiasing if needed
