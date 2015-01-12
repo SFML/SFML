@@ -14,9 +14,9 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Request a 32-bits depth buffer when creating the window
+    // Request a 24-bits depth buffer when creating the window
     sf::ContextSettings contextSettings;
-    contextSettings.depthBits = 32;
+    contextSettings.depthBits = 24;
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML graphics with OpenGL", sf::Style::Default, contextSettings);
