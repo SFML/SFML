@@ -154,6 +154,32 @@ WglContext::~WglContext()
 
 
 ////////////////////////////////////////////////////////////
+void* WglContext::getFunction(const char* name)
+{
+    void* address = reinterpret_cast<void*>(wglGetProcAddress(reinterpret_cast<LPCSTR>(name)));
+
+    if (address)
+    {
+        // Test whether the returned value is a valid error code
+        ptrdiff_t errorCode = reinterpret_cast<ptrdiff_t>(address);
+
+        if ((errorCode != -1) && (errorCode != 1) && (errorCode != 2) && (errorCode != 3))
+            return address;
+    }
+
+    static HMODULE module = NULL;
+
+    if (!module)
+        module = GetModuleHandleA("OpenGL32.dll");
+
+    if (module)
+        return reinterpret_cast<void*>(GetProcAddress(module, reinterpret_cast<LPCSTR>(name)));
+
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
 bool WglContext::makeCurrent()
 {
     return m_deviceContext && m_context && wglMakeCurrent(m_deviceContext, m_context);

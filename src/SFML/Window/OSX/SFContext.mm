@@ -29,6 +29,7 @@
 #include <SFML/Window/OSX/SFContext.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
+#include <dlfcn.h>
 
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 
@@ -108,6 +109,18 @@ SFContext::~SFContext()
     [m_window release]; // Idem.
 
     releasePool();
+}
+
+
+////////////////////////////////////////////////////////////
+void* SFContext::getFunction(const char* name)
+{
+    static void* image = NULL;
+
+    if (!image)
+        image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
+
+    return (image ? dlsym(image, name) : 0);
 }
 
 

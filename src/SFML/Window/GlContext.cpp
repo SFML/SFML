@@ -123,7 +123,7 @@ namespace
     {
         if (!hasInternalContext())
         {
-            internalContext = sf::priv::GlContext::create(sf::ContextSettings(0, 0, 0, 2, 1, sharedContext->getSettings().attributeFlags & ~sf::ContextSettings::Core), 1, 1);
+            internalContext = sf::priv::GlContext::create();
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
         }
@@ -172,7 +172,7 @@ void GlContext::globalCleanup()
     sharedContext = NULL;
 
     // Destroy the internal contexts
-    sf::Lock lock(internalContextsMutex);
+    Lock internalContextsLock(internalContextsMutex);
     for (std::set<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
         delete *it;
     internalContexts.clear();
@@ -265,6 +265,21 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     context->initialize();
 
     return context;
+}
+
+
+////////////////////////////////////////////////////////////
+void* GlContext::getFunction(const char* name)
+{
+#if !defined(SFML_OPENGL_ES)
+
+    return ContextType::getFunction(name);
+
+#else
+
+    return 0;
+
+#endif
 }
 
 
