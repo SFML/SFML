@@ -95,6 +95,11 @@
 
 namespace
 {
+    // AMD drivers have issues with internal synchronization
+    // We need to make sure that no operating system context
+    // or pixel format operations are performed simultaneously
+    sf::Mutex mutex;
+
     // This per-thread variable holds the current context for each thread
     sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
 
@@ -153,6 +158,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void GlContext::globalInit()
 {
+    Lock lock(mutex);
+
     // Create the shared context
     sharedContext = new ContextType(NULL);
     sharedContext->initialize();
@@ -167,6 +174,8 @@ void GlContext::globalInit()
 ////////////////////////////////////////////////////////////
 void GlContext::globalCleanup()
 {
+    Lock lock(mutex);
+
     // Destroy the shared context
     delete sharedContext;
     sharedContext = NULL;
@@ -191,9 +200,10 @@ void GlContext::ensureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::create()
 {
+    Lock lock(mutex);
+
     GlContext* context = new ContextType(sharedContext, ContextSettings(0, 0, 0, 2, 1, sharedContext->getSettings().attributeFlags & ~sf::ContextSettings::Core), 1, 1);
     context->initialize();
-
     return context;
 }
 
@@ -203,6 +213,8 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
+
+    Lock lock(mutex);
 
     // Check if we need to re-create the shared context with debugging enabled
     if ((settings.attributeFlags & ContextSettings::Debug) && !(sharedContext->getSettings().attributeFlags & ContextSettings::Debug))
@@ -239,6 +251,8 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
 
+    Lock lock(mutex);
+
     // Check if we need to re-create the shared context with debugging enabled
     if ((settings.attributeFlags & ContextSettings::Debug) && !(sharedContext->getSettings().attributeFlags && ContextSettings::Debug))
     {
@@ -273,6 +287,8 @@ void* GlContext::getFunction(const char* name)
 {
 #if !defined(SFML_OPENGL_ES)
 
+    Lock lock(mutex);
+
     return ContextType::getFunction(name);
 
 #else
@@ -306,6 +322,8 @@ bool GlContext::setActive(bool active)
     {
         if (this != currentContext)
         {
+            Lock lock(mutex);
+
             // Activate the context
             if (makeCurrent())
             {
