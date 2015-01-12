@@ -29,6 +29,7 @@
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
@@ -194,6 +195,7 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
     context->initialize();
+    context->checkSettings(settings);
 
     return context;
 }
@@ -208,6 +210,7 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, width, height);
     context->initialize();
+    context->checkSettings(settings);
 
     return context;
 }
@@ -352,6 +355,57 @@ void GlContext::initialize()
     // Enable antialiasing if needed
     if (m_settings.antialiasingLevel > 0)
         glEnable(GL_MULTISAMPLE);
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::checkSettings(const ContextSettings& requestedSettings)
+{
+    // Perform checks to inform the user if they are getting a context they might not have expected
+
+    // 3.0 contexts only deprecate features, but do not remove them yet
+    // 3.1 contexts remove features if ARB_compatibility is not present (we assume it isn't for simplicity)
+    // 3.2+ contexts remove features only if a core profile is requested
+
+    // If the context was created with wglCreateContext, it is guaranteed to be compatibility.
+    // If a 3.2+ context was created with wglCreateContextAttribsARB, the compatibility flag
+    // would have been set correctly already depending on whether ARB_create_context_profile is supported.
+
+    // If the user requests a 3.0 context, it will be a compatibility context regardless of the requested profile.
+    // If the user requests a 3.1 context and its creation was successful, the specification
+    // states that it will not be a compatibility profile context regardless of the requested profile.
+    if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 0))
+        m_settings.attributeFlags &= ~ContextSettings::Core;
+    else if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 1))
+        m_settings.attributeFlags |= ContextSettings::Core;
+
+    int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
+    int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
+
+    if ((m_settings.attributeFlags    != requestedSettings.attributeFlags)    ||
+        (version                      <  requestedVersion)           ||
+        (m_settings.stencilBits       <  requestedSettings.stencilBits)       ||
+        (m_settings.antialiasingLevel <  requestedSettings.antialiasingLevel) ||
+        (m_settings.depthBits         <  requestedSettings.depthBits))
+    {
+        err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << std::endl;
+        err() << "Requested: version = " << requestedSettings.majorVersion << "." << requestedSettings.minorVersion
+              << " ; depth bits = " << requestedSettings.depthBits
+              << " ; stencil bits = " << requestedSettings.stencilBits
+              << " ; AA level = " << requestedSettings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((requestedSettings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((requestedSettings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+        err() << "Created: version = " << m_settings.majorVersion << "." << m_settings.minorVersion
+              << " ; depth bits = " << m_settings.depthBits
+              << " ; stencil bits = " << m_settings.stencilBits
+              << " ; AA level = " << m_settings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((m_settings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((m_settings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+    }
 }
 
 } // namespace priv

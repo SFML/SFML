@@ -234,6 +234,13 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void initialize();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether the context is compatible with the requested settings
+    /// \param requestedSettings Requested settings during context creation
+    ///
+    ////////////////////////////////////////////////////////////
+    void checkSettings(const ContextSettings& requestedSettings);
 };
 
 } // namespace priv
