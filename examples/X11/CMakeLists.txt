@@ -4,7 +4,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/X11)
 # all source files
 set(SRC ${SRCROOT}/X11.cpp)
 
-# find OpenGL, GLU and X11
+# find OpenGL and X11
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 find_package(X11 REQUIRED)
