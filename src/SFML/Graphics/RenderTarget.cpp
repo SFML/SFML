@@ -79,6 +79,9 @@ m_view       (),
 m_cache      ()
 {
     m_cache.glStatesSet = false;
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 }
 
 
@@ -348,9 +351,6 @@ void RenderTarget::resetGLStates()
 
     if (activate(true))
     {
-        // Make sure that extensions are initialized
-        priv::ensureExtensionsInit();
-
         // Make sure that the texture unit which is active is the number 0
         if (GLEXT_multitexture)
         {

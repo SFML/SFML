@@ -32,11 +32,6 @@
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
-#ifdef SFML_SYSTEM_IOS
-    #include <OpenGLES/ES1/gl.h>
-#else
-    #include <SFML/Window/glext/glext.h>
-#endif
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -73,6 +68,30 @@
 
 #endif
 
+#if !defined(GL_MULTISAMPLE)
+    #define GL_MULTISAMPLE 0x809D
+#endif
+
+#if !defined(GL_CONTEXT_FLAGS)
+    #define GL_CONTEXT_FLAGS 0x821E
+#endif
+
+#if !defined(GL_CONTEXT_FLAG_DEBUG_BIT)
+    #define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
+#endif
+
+#if !defined(GL_CONTEXT_PROFILE_MASK)
+    #define GL_CONTEXT_PROFILE_MASK 0x9126
+#endif
+
+#if !defined(GL_CONTEXT_CORE_PROFILE_BIT)
+    #define GL_CONTEXT_CORE_PROFILE_BIT 0x00000001
+#endif
+
+#if !defined(GL_CONTEXT_COMPATIBILITY_PROFILE_BIT)
+    #define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
+#endif
+
 
 namespace
 {
@@ -104,9 +123,22 @@ namespace
     {
         if (!hasInternalContext())
         {
-            internalContext = sf::priv::GlContext::create();
+            internalContext = sf::priv::GlContext::create(sf::ContextSettings(0, 0, 0, 2, 1, sharedContext->getSettings().attributeFlags & ~sf::ContextSettings::Core), 1, 1);
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
+        }
+
+        // Check if we need to re-create the internal context with debugging enabled
+        if ((sharedContext->getSettings().attributeFlags & sf::ContextSettings::Debug) && !(internalContext->getSettings().attributeFlags & sf::ContextSettings::Debug))
+        {
+            sf::priv::GlContext* newInternalContext = sf::priv::GlContext::create(sf::ContextSettings(0, 0, 0, 2, 1, sf::ContextSettings::Debug), 1, 1);
+
+            sf::Lock lock(internalContextsMutex);
+            internalContexts.erase(internalContext);
+            internalContexts.insert(newInternalContext);
+
+            delete internalContext;
+            internalContext = newInternalContext;
         }
 
         return internalContext;
@@ -159,7 +191,7 @@ void GlContext::ensureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::create()
 {
-    GlContext* context = new ContextType(sharedContext);
+    GlContext* context = new ContextType(sharedContext, ContextSettings(0, 0, 0, 2, 1, sharedContext->getSettings().attributeFlags & ~sf::ContextSettings::Core), 1, 1);
     context->initialize();
 
     return context;
@@ -171,6 +203,27 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
+
+    // Check if we need to re-create the shared context with debugging enabled
+    if ((settings.attributeFlags & ContextSettings::Debug) && !(sharedContext->getSettings().attributeFlags & ContextSettings::Debug))
+    {
+        ContextType* newSharedContext = new ContextType(sharedContext, ContextSettings(0, 0, 0, 2, 1, ContextSettings::Debug), 1, 1);
+        newSharedContext->initialize();
+
+        delete sharedContext;
+        sharedContext = newSharedContext;
+    }
+    else if (sharedContext->getSettings().attributeFlags & ContextSettings::Debug)
+    {
+        sf::ContextSettings new_settings = settings;
+        new_settings.attributeFlags |= ContextSettings::Debug;
+
+        // Create the context
+        GlContext* context = new ContextType(sharedContext, new_settings, owner, bitsPerPixel);
+        context->initialize();
+
+        return context;
+    }
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
@@ -185,6 +238,27 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
+
+    // Check if we need to re-create the shared context with debugging enabled
+    if ((settings.attributeFlags & ContextSettings::Debug) && !(sharedContext->getSettings().attributeFlags && ContextSettings::Debug))
+    {
+        ContextType* newSharedContext = new ContextType(sharedContext, ContextSettings(0, 0, 0, 2, 1, ContextSettings::Debug), 1, 1);
+        newSharedContext->initialize();
+
+        delete sharedContext;
+        sharedContext = newSharedContext;
+    }
+    else if (sharedContext->getSettings().attributeFlags & ContextSettings::Debug)
+    {
+        sf::ContextSettings new_settings = settings;
+        new_settings.attributeFlags |= ContextSettings::Debug;
+
+        // Create the context
+        GlContext* context = new ContextType(sharedContext, new_settings, width, height);
+        context->initialize();
+
+        return context;
+    }
 
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, width, height);
@@ -285,9 +359,34 @@ void GlContext::initialize()
     }
     else
     {
-        // Can't get the version number, assume 2.0
+        // Can't get the version number, assume 2.1
         m_settings.majorVersion = 2;
-        m_settings.minorVersion = 0;
+        m_settings.minorVersion = 1;
+    }
+
+    // Verify non-default settings, just to be extra sure
+    if (m_settings.attributeFlags & ContextSettings::Debug)
+    {
+        // Retrieve the context flags
+        int flags = 0;
+        glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+
+        if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT))
+        {
+            m_settings.attributeFlags ^= ContextSettings::Debug;
+        }
+    }
+
+    if (m_settings.attributeFlags & ContextSettings::Core)
+    {
+        // Retrieve the context profile
+        int profile = 0;
+        glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+        if (!(profile & GL_CONTEXT_CORE_PROFILE_BIT))
+        {
+            m_settings.attributeFlags ^= ContextSettings::Core;
+        }
     }
 
     // Enable antialiasing if needed

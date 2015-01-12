@@ -80,7 +80,8 @@ m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_cacheId      (getUniqueId())
 {
-
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 }
 
 
@@ -94,6 +95,9 @@ m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
 m_cacheId      (getUniqueId())
 {
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
+
     if (copy.m_texture)
         loadFromImage(copy.copyToImage());
 }
@@ -483,6 +487,9 @@ bool Texture::isRepeated() const
 void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
     ensureGlContext();
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 
     if (texture && texture->m_texture)
     {
