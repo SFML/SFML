@@ -502,6 +502,52 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         // Free the visual info
         XFree(visuals);
     }
+
+    // Perform checks to inform the user if they are getting a context they might not have expected
+
+    // 3.0 contexts only deprecate features, but do not remove them yet
+    // 3.1 contexts remove features if ARB_compatibility is not present (we assume it isn't for simplicity)
+    // 3.2+ contexts remove features only if a core profile is requested
+
+    // If the context was created with wglCreateContext, it is guaranteed to be compatibility.
+    // If a 3.2+ context was created with wglCreateContextAttribsARB, the compatibility flag
+    // would have been set correctly already depending on whether ARB_create_context_profile is supported.
+
+    // If the user requests a 3.0 context, it will be a compatibility context regardless of the requested profile.
+    // If the user requests a 3.1 context and its creation was successful, the specification
+    // states that it will not be a compatibility profile context regardless of the requested profile.
+    if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 0))
+        m_settings.attributeFlags &= ~ContextSettings::Core;
+    else if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 1))
+        m_settings.attributeFlags |= ContextSettings::Core;
+
+    int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
+    int requestedVersion = settings.majorVersion * 10 + settings.minorVersion;
+
+    if ((m_settings.attributeFlags    != settings.attributeFlags)    ||
+        (version                      <  requestedVersion)           ||
+        (m_settings.stencilBits       <  settings.stencilBits)       ||
+        (m_settings.antialiasingLevel <  settings.antialiasingLevel) ||
+        (m_settings.depthBits         <  settings.depthBits))
+    {
+        err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << std::endl;
+        err() << "Requested: version = " << settings.majorVersion << "." << settings.minorVersion
+              << " ; depth bits = " << settings.depthBits
+              << " ; stencil bits = " << settings.stencilBits
+              << " ; AA level = " << settings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((settings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((settings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+        err() << "Created: version = " << m_settings.majorVersion << "." << m_settings.minorVersion
+              << " ; depth bits = " << m_settings.depthBits
+              << " ; stencil bits = " << m_settings.stencilBits
+              << " ; AA level = " << m_settings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((m_settings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((m_settings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+    }
 }
 
 } // namespace priv
