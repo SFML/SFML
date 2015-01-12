@@ -82,6 +82,16 @@ public:
     ~GlxContext();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target for rendering
     ///
     /// \return True on success, false if any error happened

@@ -1,28 +1,17 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/WglExtensions.hpp>
+#include <SFML/Window/Context.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <cstddef>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4055)
-#pragma warning(disable: 4054)
-#pragma warning(disable: 4996)
-#endif
-
-static PROC WinGetProcAddress(const char *name)
+static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 {
-    static HMODULE glMod = NULL;
-    PROC pFunc = wglGetProcAddress((LPCSTR)name);
-
-    if (pFunc) return pFunc;
-
-    if (NULL == glMod)
-        glMod = GetModuleHandleA("OpenGL32.dll");
-
-    return (PROC)GetProcAddress(glMod, (LPCSTR)name);
+    return sf::Context::getFunction(name);
 }
-
-#define IntGetProcAddress(name) WinGetProcAddress(name)
 
 int sfwgl_ext_EXT_swap_control = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_multisample = sfwgl_LOAD_FAILED;

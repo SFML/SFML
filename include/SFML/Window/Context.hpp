@@ -41,6 +41,8 @@ namespace priv
     class GlContext;
 }
 
+typedef void (*GlFunctionPointer)();
+
 ////////////////////////////////////////////////////////////
 /// \brief Class holding a valid drawing context
 ///
@@ -76,6 +78,15 @@ public:
     bool setActive(bool active);
 
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

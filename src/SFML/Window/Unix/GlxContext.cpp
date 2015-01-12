@@ -178,6 +178,13 @@ GlxContext::~GlxContext()
 
 
 ////////////////////////////////////////////////////////////
+GlFunctionPointer GlxContext::getFunction(const char* name)
+{
+    return reinterpret_cast<GlFunctionPointer>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>(name)));
+}
+
+
+////////////////////////////////////////////////////////////
 bool GlxContext::makeCurrent()
 {
     return m_context && glXMakeCurrent(m_display, m_window, m_context);

@@ -1,11 +1,17 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/GlxExtensions.hpp>
+#include <SFML/Window/Context.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <cstddef>
 
-#include <GL/glx.h>
-
-#define IntGetProcAddress(name) (*glXGetProcAddressARB)((const GLubyte*)name)
+static sf::GlFunctionPointer IntGetProcAddress(const char* name)
+{
+    return sf::Context::getFunction(name);
+}
 
 int sfglx_ext_EXT_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;

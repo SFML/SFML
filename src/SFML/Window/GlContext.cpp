@@ -159,7 +159,7 @@ void GlContext::globalCleanup()
     sharedContext = NULL;
 
     // Destroy the internal contexts
-    sf::Lock lock(internalContextsMutex);
+    Lock internalContextsLock(internalContextsMutex);
     for (std::set<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
         delete *it;
     internalContexts.clear();
@@ -210,6 +210,21 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     context->initialize();
 
     return context;
+}
+
+
+////////////////////////////////////////////////////////////
+GlFunctionPointer GlContext::getFunction(const char* name)
+{
+#if !defined(SFML_OPENGL_ES)
+
+    return ContextType::getFunction(name);
+
+#else
+
+    return 0;
+
+#endif
 }
 
 

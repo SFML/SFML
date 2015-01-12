@@ -1,91 +1,17 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLLoader.hpp>
+#include <SFML/Window/Context.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <cstddef>
 
-#if defined(__APPLE__)
-#include <dlfcn.h>
-
-static void* AppleGLGetProcAddress (const char *name)
+static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 {
-    static void* image = NULL;
-
-    if (NULL == image)
-        image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
-
-    return (image ? dlsym(image, name) : NULL);
+    return sf::Context::getFunction(name);
 }
-#define IntGetProcAddress(name) AppleGLGetProcAddress(name)
-#endif /* __APPLE__ */
-
-#if defined(__sgi) || defined (__sun)
-#include <dlfcn.h>
-#include <stdio.h>
-
-static void* SunGetProcAddress (const GLubyte* name)
-{
-    static void* h = NULL;
-    static void* gpa;
-
-    if (h == NULL)
-    {
-        if ((h = dlopen(NULL, RTLD_LAZY | RTLD_LOCAL)) == NULL) return NULL;
-        gpa = dlsym(h, "glXGetProcAddress");
-    }
-
-    if (gpa != NULL)
-        return ((void*(*)(const GLubyte*))gpa)(name);
-    else
-        return dlsym(h, (const char*)name);
-}
-#endif /* __sgi || __sun */
-
-#if defined(_WIN32)
-
-#ifdef _MSC_VER
-#pragma warning(disable: 4055)
-#pragma warning(disable: 4054)
-#pragma warning(disable: 4996)
-#endif
-
-static int TestPointer(const PROC pTest)
-{
-    ptrdiff_t iTest;
-    if(!pTest) return 0;
-    iTest = (ptrdiff_t)pTest;
-
-    if(iTest == 1 || iTest == 2 || iTest == 3 || iTest == -1) return 0;
-
-    return 1;
-}
-
-static PROC WinGetProcAddress(const char *name)
-{
-    static HMODULE glMod = NULL;
-    PROC pFunc = wglGetProcAddress((LPCSTR)name);
-
-    if (TestPointer(pFunc)) return pFunc;
-
-    if (NULL == glMod)
-        glMod = GetModuleHandleA("OpenGL32.dll");
-
-    return (PROC)GetProcAddress(glMod, (LPCSTR)name);
-}
-
-#define IntGetProcAddress(name) WinGetProcAddress(name)
-#else
-    #if defined(__APPLE__)
-        #define IntGetProcAddress(name) AppleGLGetProcAddress(name)
-    #else
-        #if defined(__sgi) || defined(__sun)
-            #define IntGetProcAddress(name) SunGetProcAddress(name)
-        #else /* GLX */
-                #include <GL/glx.h>
-
-            #define IntGetProcAddress(name) (*glXGetProcAddressARB)((const GLubyte*)name)
-        #endif
-    #endif
-#endif
 
 int sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
