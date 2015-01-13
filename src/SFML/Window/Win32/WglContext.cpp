@@ -175,7 +175,10 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
     ensureExtensionsInit(m_deviceContext);
 
     if (sfwgl_ext_EXT_swap_control == sfwgl_LOAD_SUCCEEDED)
-        wglSwapIntervalEXT(enabled ? 1 : 0);
+    {
+        if (wglSwapIntervalEXT(enabled ? 1 : 0) == FALSE)
+            err() << "Setting vertical sync failed" << std::endl;
+    }
     else
     {
         // wglSwapIntervalEXT not supported

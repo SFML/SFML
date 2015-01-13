@@ -4,6 +4,8 @@
 // lua LoadGen.lua -style=pointer_c -spec=glX -indent=space -prefix=sf -extfile=GlxExtensions.txt GlxExtensions
 
 EXT_swap_control
+// MESA_swap_control
+SGI_swap_control
 GLX_ARB_multisample
 GLX_ARB_create_context
 GLX_ARB_create_context_profile
