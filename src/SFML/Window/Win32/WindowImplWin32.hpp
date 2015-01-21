@@ -146,6 +146,22 @@ public:
     virtual void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(Cursor cursorId);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -245,7 +261,9 @@ private:
     ////////////////////////////////////////////////////////////
     HWND     m_handle;           ///< Win32 handle of the window
     LONG_PTR m_callback;         ///< Stores the original event callback function of the control
+    bool     m_cursorVisible;    ///< Is the cursor visible
     HCURSOR  m_cursor;           ///< The system cursor to display into the window
+    HCURSOR  m_hiddenCursor;     ///< Hidden cursor
     HICON    m_icon;             ///< Custom icon assigned to the window
     bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
     Vector2u m_lastSize;         ///< The last handled size of the window

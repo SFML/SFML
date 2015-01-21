@@ -39,6 +39,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/Cursor.hpp>
 #include <queue>
 #include <set>
 
@@ -185,6 +186,22 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void setMouseCursorVisible(bool visible) = 0;
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(Cursor cursorId) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// \param visible True to show, false to hide
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat

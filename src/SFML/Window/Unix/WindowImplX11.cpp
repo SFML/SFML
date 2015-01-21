@@ -93,7 +93,11 @@ m_inputContext(NULL),
 m_isExternal  (true),
 m_atomClose   (0),
 m_oldVideoMode(-1),
+m_cursorVisible(1),
+m_cursor(0),
 m_hiddenCursor(0),
+m_cctx(0),
+m_pictureFormat(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
 m_useSizeHints(false)
@@ -141,7 +145,11 @@ m_inputContext(NULL),
 m_isExternal  (false),
 m_atomClose   (0),
 m_oldVideoMode(-1),
+m_cursorVisible(1),
+m_cursor(0),
 m_hiddenCursor(0),
+m_cctx(0),
+m_pictureFormat(0),
 m_keyRepeat   (true),
 m_previousSize(-1, -1),
 m_useSizeHints(false)
@@ -321,9 +329,16 @@ WindowImplX11::~WindowImplX11()
     // Cleanup graphical resources
     cleanup();
 
-    // Destroy the cursor
+    // Destroy the cursors
+    if (m_cursor)
+        xcb_free_cursor(m_connection, m_cursor);
+    
     if (m_hiddenCursor)
         xcb_free_cursor(m_connection, m_hiddenCursor);
+    
+    // Destroy the cursor context
+    if(m_cctx)
+        xcb_cursor_context_free(m_cctx);
 
     // Destroy the input context
     if (m_inputContext)
@@ -405,6 +420,7 @@ void WindowImplX11::processEvents()
             processEvent(event);
             free(event);
         }
+
     }
 
     // Process any held back release event.
@@ -580,15 +596,115 @@ void WindowImplX11::setVisible(bool visible)
     xcb_flush(m_connection);
 }
 
-
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
-    const uint32_t values = visible ? XCB_NONE : m_hiddenCursor;
+    m_cursorVisible = visible;
+    const uint32_t values = visible ? m_cursor : m_hiddenCursor;
     xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
     xcb_flush(m_connection);
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursor(Cursor cursorId)
+{
+	
+    switch(cursorId)
+    {
+        case CursorArrow:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "left_ptr");
+            break;
+        
+        case CursorText:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "text");
+            break;
+
+        case CursorHand:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "hand1");
+            break;
+        
+        case CursorSizeALL:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "fleur");
+            break;
+
+        case CursorSizeHorizontal:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "sb_h_double_arrow");
+            break;
+        
+        case CursorSizeVertical:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "sb_v_double_arrow");
+            break;
+        
+        case CursorCross:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "cross");
+            break;
+        
+        case CursorNo:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "pirate");
+            break;
+        
+        case CursorHelp:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "question_arrow");
+            break;
+        
+        case CursorWait:
+            m_cursor = xcb_cursor_load_cursor(m_cctx, "watch");
+            break;
+	}		
+    
+    if (!m_cursorVisible)
+        return;
+    
+    const uint32_t values = m_cursor;
+    xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
+    xcb_free_cursor(m_connection, m_cursor);
+    xcb_flush(m_connection);    
+}
+
+void WindowImplX11::setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels)
+{
+    if (!m_pictureFormat)
+        return;
+        
+    // X11 wants BGRA pixels: swap red and blue channels
+    Uint8 cursorPixels[width * height * 4];
+    for (std::size_t i = 0; i < width * height; ++i)
+    {
+        cursorPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        cursorPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        cursorPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        cursorPixels[i * 4 + 3] = pixels[i * 4 + 3];
+    }
+
+    m_cursor = xcb_generate_id(m_connection);
+    
+    xcb_render_picture_t cursorPic = xcb_generate_id(m_connection);
+    xcb_image_t *cursorImg = xcb_image_create_native(m_connection, width, height, XCB_IMAGE_FORMAT_Z_PIXMAP, 32, NULL, (width * height * sizeof(uint32_t)), (uint8_t*)cursorPixels);
+    
+    xcb_pixmap_t cursorPixmap = xcb_generate_id(m_connection);
+    xcb_create_pixmap(m_connection, 32, cursorPixmap, m_screen->root, width, height);
+    
+    xcb_gcontext_t cursorGC = xcb_generate_id(m_connection);
+    xcb_create_gc(m_connection, cursorGC, cursorPixmap, 0, NULL);
+    
+    xcb_image_put(m_connection, cursorPixmap, cursorGC, cursorImg, 0, 0, 0);
+    
+    xcb_render_create_picture(m_connection, cursorPic, cursorPixmap, m_pictureFormat, 0, NULL);
+    xcb_render_create_cursor(m_connection, m_cursor, cursorPic, 0, 0);
+    
+    xcb_free_gc(m_connection, cursorGC);
+    xcb_render_free_picture(m_connection, cursorPic);
+    xcb_free_pixmap(m_connection, cursorPixmap);
+    xcb_image_destroy(cursorImg);
+    
+    if (!m_cursorVisible)
+        return;
+    
+    const uint32_t values = m_cursor;
+    xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
+    xcb_free_cursor(m_connection, m_cursor);
+    xcb_flush(m_connection);
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setKeyRepeatEnabled(bool enabled)
@@ -793,6 +909,17 @@ void WindowImplX11::initialize()
     if (!m_inputContext)
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
+    // Get the picture format from xcb
+    xcb_render_query_pict_formats_reply_t *reply = xcb_render_query_pict_formats_reply(m_connection, xcb_render_query_pict_formats(m_connection), NULL);
+    m_pictureFormat = xcb_render_util_find_standard_format(reply, XCB_PICT_STANDARD_ARGB_32)->id;
+    free(reply);
+    
+    if (xcb_cursor_context_new(m_connection, m_screen, &m_cctx) < 0)
+        sf::err() << "Could not initialize xcb-cursor" << std::endl;
+    
+    if (!m_pictureFormat)
+        err() << "Failed to get picture format from xcb -- setMouseCursor will not work" << std::endl;
+        
     // Show the window
     xcb_map_window(m_connection, m_window);
     xcb_flush(m_connection);

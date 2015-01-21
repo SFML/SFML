@@ -38,6 +38,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/Window/Cursor.hpp>
 
 
 namespace sf
@@ -349,6 +350,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// The mouse cursor is visible by default.
+    ///
+    /// \param visible True to show the mouse cursor, false to hide it
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursor(Cursor cursorId);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Show or hide the mouse cursor
+    ///
+    /// The mouse cursor is visible by default.
+    ///
+    /// \param visible True to show the mouse cursor, false to hide it
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat

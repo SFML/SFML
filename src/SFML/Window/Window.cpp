@@ -287,6 +287,19 @@ void Window::setMouseCursorVisible(bool visible)
         m_impl->setMouseCursorVisible(visible);
 }
 
+////////////////////////////////////////////////////////////
+void Window::setMouseCursor(Cursor cursorId)
+{
+    if (m_impl)
+        m_impl->setMouseCursor(cursorId);
+}
+
+////////////////////////////////////////////////////////////
+void Window::setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels)
+{
+    if (m_impl)
+        m_impl->setMouseCursor(width, height, pixels);
+}
 
 ////////////////////////////////////////////////////////////
 void Window::setKeyRepeatEnabled(bool enabled)
