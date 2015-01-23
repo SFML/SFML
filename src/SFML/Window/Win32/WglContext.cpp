@@ -338,7 +338,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
             // Check if setting the profile is supported
             if (sfwgl_ext_ARB_create_context_profile == sfwgl_LOAD_SUCCEEDED)
             {
-                int profile = (m_settings.attributeFlags & ContextSettings::Core) ? WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB : WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
+                int profile = (m_settings.attributeFlags & ContextSettings::Core) ? WGL_CONTEXT_CORE_PROFILE_BIT_ARB : WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
                 int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? WGL_CONTEXT_DEBUG_BIT_ARB : 0;
 
                 int attributes[] =
