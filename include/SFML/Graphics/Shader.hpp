@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/GlTexture.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -42,7 +43,6 @@
 namespace sf
 {
 class InputStream;
-class Texture;
 
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex and fragment)
@@ -401,14 +401,16 @@ public:
     ////////////////////////////////////////////////////////////
     void setParameter(const std::string& name, const sf::Transform& transform);
 
+    
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
     ///
     /// \a name is the name of the variable to change in the shader.
-    /// The corresponding parameter in the shader must be a 2D texture
-    /// (sampler2D GLSL type).
+    /// The corresponding parameter in the shader must be a 
+    /// sampler1D, sampler2D or sampler3D GLSL type. 
     ///
     /// Example:
+    /// Using sf::Texture class
     /// \code
     /// uniform sampler2D the_texture; // this is the variable in the shader
     /// \endcode
@@ -417,21 +419,24 @@ public:
     /// ...
     /// shader.setParameter("the_texture", texture);
     /// \endcode
+    /// Using custom texture class
+    /// \code
+    /// uniform sampler1D spectrum; // example: use of audio spectrum texture 
+    /// \endcode
+    /// \code
+    /// SpectrumTexture spectrum; //Custom class that inherit GlTexture
+    /// ...
+    /// shader.setParameter("spectrum", spectrum);
+    /// \endcode
     /// It is important to note that \a texture must remain alive as long
     /// as the shader uses it, no copy is made internally.
     ///
-    /// To use the texture of the object being draw, which cannot be
-    /// known in advance, you can pass the special value
-    /// sf::Shader::CurrentTexture:
-    /// \code
-    /// shader.setParameter("the_texture", sf::Shader::CurrentTexture).
-    /// \endcode
     ///
     /// \param name    Name of the texture in the shader
     /// \param texture Texture to assign
     ///
     ////////////////////////////////////////////////////////////
-    void setParameter(const std::string& name, const Texture& texture);
+    void setParameter(const std::string& name, const GlTexture& texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -532,7 +537,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<int, const Texture*> TextureTable;
+    typedef std::map<int, const GlTexture*> TextureTable;
     typedef std::map<std::string, int> ParamTable;
 
     ////////////////////////////////////////////////////////////

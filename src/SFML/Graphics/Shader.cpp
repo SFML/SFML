@@ -395,9 +395,8 @@ void Shader::setParameter(const std::string& name, const sf::Transform& transfor
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Texture& texture)
+void Shader::setParameter(const std::string& name, const GlTexture& texture)
 {
     if (m_shaderProgram)
     {
@@ -596,7 +595,7 @@ void Shader::bindTextures() const
         GLint index = static_cast<GLsizei>(i + 1);
         glCheck(glUniform1iARB(it->first, index));
         glCheck(glActiveTextureARB(GL_TEXTURE0_ARB + index));
-        Texture::bind(it->second);
+        it->second->bind();
         ++it;
     }
 
