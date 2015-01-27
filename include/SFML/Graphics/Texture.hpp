@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/GlTexture.hpp>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Window/GlResource.hpp>
 
 
 namespace sf
@@ -44,7 +44,7 @@ class InputStream;
 /// \brief Image living on the graphics card that can be used for drawing
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Texture : GlResource
+class SFML_GRAPHICS_API Texture : public GlTexture
 {
 public:
 
@@ -80,7 +80,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~Texture();
+    virtual ~Texture();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the texture
@@ -452,48 +452,33 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static void bind(const Texture* texture, CoordinateType coordinateType = Normalized);
-
+   
     ////////////////////////////////////////////////////////////
-    /// \brief Get the maximum texture size allowed
+    /// \brief Bind a texture for rendering
     ///
-    /// This maximum size is defined by the graphics driver.
-    /// You can expect a value of 512 pixels for low-end graphics
-    /// card, and up to 8192 pixels or more for newer hardware.
+    /// This function is not part of the graphics API, it mustn't be
+    /// used when drawing SFML entities. It must be used only if you
+    /// mix sf::Texture with OpenGL code.
     ///
-    /// Note: The first call to this function, whether by your
-    /// code or SFML will result in a context switch.
+    /// If texture is valid it call glCheck(glBindTexture(GL_TEXTURE_2D, texture_id)); 
+    /// Else glCheck(glBindTexture(GL_TEXTURE_2D, 0)); 
     ///
-    /// \return Maximum size allowed for textures, in pixels
+    /// This member also apply a texture coordinates correction matrix in 
+    /// case the Texture is Y flipped
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int getMaximumSize();
-
+    virtual void bind() const;
+    
 private:
 
     friend class RenderTexture;
     friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a valid image size according to hardware support
-    ///
-    /// This function checks whether the graphics driver supports
-    /// non power of two sizes or not, and adjusts the size
-    /// accordingly.
-    /// The returned size is greater than or equal to the original size.
-    ///
-    /// \param size size to convert
-    ///
-    /// \return Valid nearest size (greater than or equal to specified size)
-    ///
-    ////////////////////////////////////////////////////////////
-    static unsigned int getValidSize(unsigned int size);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     Vector2u     m_size;          ///< Public texture size
     Vector2u     m_actualSize;    ///< Actual texture size (can be greater than public size because of padding)
-    unsigned int m_texture;       ///< Internal texture identifier
     bool         m_isSmooth;      ///< Status of the smooth filter
     bool         m_isRepeated;    ///< Is the texture in repeat mode?
     mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation

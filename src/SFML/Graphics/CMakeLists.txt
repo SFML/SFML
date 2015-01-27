@@ -16,6 +16,8 @@ set(SRC
     ${SRCROOT}/GLCheck.hpp
     ${SRCROOT}/GLExtensions.hpp
     ${SRCROOT}/GLExtensions.cpp
+    ${INCROOT}/GLTexture.hpp
+    ${SRCROOT}/GLTexture.cpp
     ${SRCROOT}/Image.cpp
     ${INCROOT}/Image.hpp
     ${SRCROOT}/ImageLoader.cpp

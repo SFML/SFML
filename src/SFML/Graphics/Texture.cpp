@@ -72,9 +72,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Texture::Texture() :
+GlTexture(),
 m_size         (0, 0),
 m_actualSize   (0, 0),
-m_texture      (0),
 m_isSmooth     (false),
 m_isRepeated   (false),
 m_pixelsFlipped(false),
@@ -86,9 +86,9 @@ m_cacheId      (getUniqueId())
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
+GlTexture(),
 m_size         (0, 0),
 m_actualSize   (0, 0),
-m_texture      (0),
 m_isSmooth     (copy.m_isSmooth),
 m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
@@ -102,14 +102,7 @@ m_cacheId      (getUniqueId())
 ////////////////////////////////////////////////////////////
 Texture::~Texture()
 {
-    // Destroy the OpenGL texture
-    if (m_texture)
-    {
-        ensureGlContext();
-
-        GLuint texture = static_cast<GLuint>(m_texture);
-        glCheck(glDeleteTextures(1, &texture));
-    }
+    // Gl Texture will destroy it for us
 }
 
 
@@ -124,10 +117,10 @@ bool Texture::create(unsigned int width, unsigned int height)
     }
 
     // Compute the internal texture dimensions depending on NPOT textures support
-    Vector2u actualSize(getValidSize(width), getValidSize(height));
+    Vector2u actualSize(GlTexture::getValidSize(width), GlTexture::getValidSize(height));
 
     // Check the maximum texture size
-    unsigned int maxSize = getMaximumSize();
+    unsigned int maxSize = GlTexture::getMaximumSize();
     if ((actualSize.x > maxSize) || (actualSize.y > maxSize))
     {
         err() << "Failed to create texture, its internal size is too high "
@@ -479,6 +472,7 @@ bool Texture::isRepeated() const
 }
 
 
+
 ////////////////////////////////////////////////////////////
 void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
@@ -534,18 +528,51 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-unsigned int Texture::getMaximumSize()
-{
-    // TODO: Remove this lock when it becomes unnecessary in C++11
-    Lock lock(mutex);
+void Texture::bind() const {
+    ensureGlContext();
 
-    static unsigned int size = checkMaximumTextureSize();
+    if (m_texture)
+    {
+        // Bind the texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
 
-    return size;
+        // Check if we need to define a special texture matrix
+        if (m_pixelsFlipped)
+        {
+            GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
+                                  0.f, 1.f, 0.f, 0.f,
+                                  0.f, 0.f, 1.f, 0.f,
+                                  0.f, 0.f, 0.f, 1.f};
+
+            // If pixels are flipped we must invert the Y axis
+            if (m_pixelsFlipped)
+            {
+                matrix[5] = -matrix[5];
+                matrix[13] = static_cast<float>(m_size.y) / m_actualSize.y;
+            }
+
+            // Load the matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadMatrixf(matrix));
+
+            // Go back to model-view mode (sf::RenderTarget relies on it)
+            glCheck(glMatrixMode(GL_MODELVIEW));
+        }
+    }
+    else
+    {
+        // Bind no texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+        // Reset the texture matrix
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glLoadIdentity());
+
+        // Go back to model-view mode (sf::RenderTarget relies on it)
+        glCheck(glMatrixMode(GL_MODELVIEW));
+    }
 }
-
 
 ////////////////////////////////////////////////////////////
 Texture& Texture::operator =(const Texture& right)
@@ -561,31 +588,6 @@ Texture& Texture::operator =(const Texture& right)
     m_cacheId = getUniqueId();
 
     return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int Texture::getValidSize(unsigned int size)
-{
-    ensureGlContext();
-
-    // Make sure that extensions are initialized
-    priv::ensureExtensionsInit();
-
-    if (GLEXT_texture_non_power_of_two)
-    {
-        // If hardware supports NPOT textures, then just return the unmodified size
-        return size;
-    }
-    else
-    {
-        // If hardware doesn't support NPOT textures, we calculate the nearest power of two
-        unsigned int powerOfTwo = 1;
-        while (powerOfTwo < size)
-            powerOfTwo *= 2;
-
-        return powerOfTwo;
-    }
 }
 
 } // namespace sf
