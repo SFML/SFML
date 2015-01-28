@@ -57,7 +57,7 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 
     // decode the character
     int trailingBytes = trailing[static_cast<Uint8>(*begin)];
-    if (begin + trailingBytes < end)
+    if (std::distance(begin, end) < trailingBytes)
     {
         output = 0;
         switch (trailingBytes)
