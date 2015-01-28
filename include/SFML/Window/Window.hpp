@@ -426,6 +426,34 @@ public :
     ////////////////////////////////////////////////////////////
     bool setActive(bool active = true) const;
 
+	////////////////////////////////////////////////////////////
+	/// \brief Request the current window to be made the active
+	/// foreground window
+	///
+	/// At any given time, only one window may have the input focus
+	/// to receive input events such as keystrokes or mouse events.
+	/// If a window requests focus, it only hints to the operating
+	/// system, that it would like to be focused. The operating system
+	/// is free to deny the request.
+	/// This is not to be confused with setActive().
+	///
+	/// \see hasFocus
+	///
+	////////////////////////////////////////////////////////////
+	void requestFocus();
+	////////////////////////////////////////////////////////////
+	/// \brief Check whether the window has the input focus
+	///
+	/// At any given time, only one window may have the input focus
+	/// to receive input events such as keystrokes or most mouse
+	/// events.
+	///
+	/// \return True if window has focus, false otherwise
+	/// \see requestFocus
+	///
+	////////////////////////////////////////////////////////////
+	bool hasFocus() const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
     ///
