@@ -33,6 +33,16 @@
 #include <SFML/System/Export.hpp>
 #include <fstream>
 
+#ifdef ANDROID
+namespace sf
+{
+namespace priv
+{
+class SFML_SYSTEM_API ResourceStream;
+}
+}
+#endif
+
 
 namespace sf
 {
@@ -43,6 +53,17 @@ namespace sf
 class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public :
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    /// 
+    ////////////////////////////////////////////////////////////
+    FileInputStream();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Default destructor
+    /// 
+    ////////////////////////////////////////////////////////////
+    virtual ~FileInputStream();
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path
@@ -99,7 +120,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+#ifndef ANDROID
     std::ifstream m_file; ///< Standard file stream
+#else
+    sf::priv::ResourceStream *m_file;
+#endif
 };
 
 } // namespace sf

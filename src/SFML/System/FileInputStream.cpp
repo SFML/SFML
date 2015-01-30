@@ -26,51 +26,96 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/FileInputStream.hpp>
+#ifdef ANDROID
+#include <SFML/System/Android/ResourceStream.hpp>
+#endif
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+FileInputStream::FileInputStream()
+#ifdef ANDROID
+: m_file(NULL)
+#endif
+{
+    
+}
+
+
+////////////////////////////////////////////////////////////
+FileInputStream::~FileInputStream()
+{
+#ifdef ANDROID
+    if (m_file)
+        delete m_file;
+#endif
+}
+
+
+////////////////////////////////////////////////////////////
 bool FileInputStream::open(const std::string& filename)
 {
+#ifndef ANDROID
     m_file.open(filename.c_str(), std::ios::binary);
     return m_file.good();
+#else
+    if (m_file)
+        delete m_file;
+    m_file = new sf::priv::ResourceStream(filename);
+#endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::read(void* data, Int64 size)
 {
+#ifndef ANDROID
     m_file.read(static_cast<char*>(data), size);
     return m_file.gcount();
+#else
+    return m_file->read(data, size);
+#endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::seek(Int64 position)
 {
+#ifndef ANDROID
     if (m_file.eof() || m_file.fail())
         m_file.clear();
     m_file.seekg(position);
     return tell();
+#else
+    return m_file->seek(position);
+#endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::tell()
 {
+#ifndef ANDROID
     return m_file.tellg();
+#else
+    return m_file->tell();
+#endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::getSize()
 {
+#ifndef ANDROID
     std::ifstream::pos_type pos = m_file.tellg();
     m_file.seekg(0, std::ios::end);
     std::ifstream::pos_type size = m_file.tellg();
     m_file.seekg(pos);
     return size;
+#else
+    return m_file->getSize();
+#endif
 }
 
 } // namespace sf
