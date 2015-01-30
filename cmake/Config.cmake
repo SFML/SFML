@@ -60,7 +60,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         endif()
     endif()
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
-	set(SFML_OS_ANDROID 1)
+    set(SFML_OS_ANDROID 1)
 
     # use the OpenGL ES implementation on Android
     set(OPENGL_ES 1)

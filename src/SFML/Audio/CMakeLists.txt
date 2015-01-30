@@ -56,7 +56,7 @@ include_directories(${OPENAL_INCLUDE_DIR} ${SNDFILE_INCLUDE_DIR})
 
 # build the list of external libraries to link
 if(SFML_OS_ANDROID)
-    list(APPEND AUDIO_EXT_LIBS -landroid -lOpenSLES)
+    list(APPEND AUDIO_EXT_LIBS android OpenSLES)
 endif()
 list(APPEND AUDIO_EXT_LIBS ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
 

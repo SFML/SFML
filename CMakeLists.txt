@@ -8,9 +8,28 @@ macro(sfml_set_option var default type docstring)
     set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
 endmacro()
 
-# set a default build type if none was provided
-# this has to be done before the project() instruction!
+# these options have to be set before CMake detects/configures the toolchain
+
+# determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
+
+# set Android specific options
+
+# define the minimum API level to be used
+sfml_set_option(ANDROID_API_MIN 9 STRING "Choose the Android API level to be used (minimum 9)")
+# mirror the setting for the toolchain file
+set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
+
+# define the path to the Android NDK
+sfml_set_option(ANDROID_NDK "$ENV{ANDROID_NDK}" PATH "Path to the Android NDK")
+
+# define the STL implementation to be used
+sfml_set_option(ANDROID_STL c++_shared STRING "Choose the STL implementation to be used (experimental)")
+
+# default the ABI to ARM v7a for hardware floating point
+if(NOT ANDROID_ABI)
+    set(ANDROID_ABI armeabi-v7a)
+endif()
 
 # project name
 project(SFML)
@@ -64,24 +83,41 @@ endif()
 
 # Android options
 if(SFML_OS_ANDROID)
-    # force usage of the STL port
-    set(ANDROID_USE_STLPORT TRUE)
-
     # make sure there's the android library available
-    if (${ANDROID_NATIVE_API_LEVEL} LESS 9)
-        message(FATAL_ERROR "API level must be equal or greater than 9")
+    if (${ANDROID_API_MIN} LESS 9)
+        message(FATAL_ERROR "Android API level must be equal or greater than 9. Please adjust the CMake variable 'ANDROID_API_MIN'.")
     endif()
 
+    if(NOT ANDROID_NDK)
+        message(FATAL_ERROR "The Android NDK couldn't be found. Please adjust the CMake variable 'ANDROID_NDK' to point to the NDK directory.")
+    endif()
+    
+    # CMake doesn't support defining the STL to be used with Nsight Tegra, so warn the user
+    if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
+        message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
+    endif()
+    
     # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
     set(CMAKE_INSTALL_PREFIX ${ANDROID_NDK}/sources/sfml)
 
     # we install libs in a subdirectory named after the ABI (lib/mips/*.so)
     set(LIB_SUFFIX "/${ANDROID_ABI}")
 
-    # this is a workaround to compile sfml-activity without stlport_shared as dependency
+    # pass shared STL configuration (if any)
+    if (ANDROID_STL MATCHES "_shared")
+        add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
+    endif()
+    
+    # this is a workaround to compile sfml-activity without the stl library as a dependency
     # we save the original compilation command line to restore it later in Macro.cmake
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+else()
+    unset(ANDROID_ABI CACHE)
+    unset(ANDROID_API_MIN CACHE)
+    unset(ANDROID_STL CACHE)
+    unset(ANDROID_NATIVE_API_LEVEL CACHE)
+    unset(ANDROID_NDK CACHE)
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'

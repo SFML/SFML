@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Config.hpp>
-#include <string>
 #include <android/native_activity.h>
 #include <android/log.h>
 #include <dlfcn.h>
@@ -37,13 +36,14 @@ namespace {
     typedef void (*activityOnCreatePointer)(ANativeActivity*, void*, size_t);
 }
 
-std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
+const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 {
     // This function reads the value of meta-data "sfml.app.lib_name"
     // found in the Android Manifest file and returns it. It performs the
     // following Java code using the JNI interface:
     //
     // ai.metaData.getString("sfml.app.lib_name");
+    static char name[256];
 
     // Get metaData instance from the ActivityInfo object
     jclass classActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
@@ -58,7 +58,7 @@ std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
 
-    // No meta-data "sfml.app.lib_name" was found so we abord and inform the user
+    // No meta-data "sfml.app.lib_name" was found so we abort and inform the user
     if (valueString == NULL)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
@@ -68,10 +68,18 @@ std::string getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     // Convert the application name to a C++ string and return it
     const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
     const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, NULL);
-    std::string ret(applicationName, applicationNameLength);
+    
+    if (applicationNameLength >= 256)
+    {
+        LOGE("The value of 'sfml.app.lib_name' must not be longer than 255 characters.");
+        exit(1);
+    }
+    
+    strncpy(name, applicationName, applicationNameLength);
+    name[applicationNameLength] = '\0';
     lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
 
-    return ret;
+    return name;
 }
 
 void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActivityInfo)
@@ -159,7 +167,13 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, GET_META_DATA);
 
     // Load our libraries in reverse order
-    loadLibrary("c++_shared", lJNIEnv, ObjectActivityInfo);
+#if defined(STL_LIBRARY)
+#define _SFML_QS(s) _SFML_S(s)
+#define _SFML_S(s) #s
+    loadLibrary(_SFML_QS(STL_LIBRARY), lJNIEnv, ObjectActivityInfo);
+#undef _SFML_S
+#undef _SFML_QS
+#endif
     loadLibrary("sndfile", lJNIEnv, ObjectActivityInfo);
     loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
 
@@ -177,8 +191,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     loadLibrary("sfml-network-d", lJNIEnv, ObjectActivityInfo);
 #endif
 
-    std::string libName = getLibraryName(lJNIEnv, ObjectActivityInfo);
-    void* handle = loadLibrary(libName.c_str(), lJNIEnv, ObjectActivityInfo);
+    void* handle = loadLibrary(getLibraryName(lJNIEnv, ObjectActivityInfo), lJNIEnv, ObjectActivityInfo);
 
     // Call the original ANativeActivity_onCreate function
     activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle, "ANativeActivity_onCreate");
