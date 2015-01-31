@@ -166,9 +166,15 @@ namespace
 {
     if (!self.sfWindow)
         return false;
+    
+    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
+    if (!rootViewController || ![rootViewController shouldAutorotate])
+        return false;
+    
     NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     if (!supportedOrientations)
         return false;
+    
     int appFlags = 0;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
         appFlags += UIInterfaceOrientationMaskPortrait;
@@ -178,12 +184,8 @@ namespace
         appFlags += UIInterfaceOrientationMaskLandscapeLeft;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
         appFlags += UIInterfaceOrientationMaskLandscapeRight;
-    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
-    if (!rootViewController || ![rootViewController shouldAutorotate])
-        return false;
-    return (1 << orientation)
-        & [rootViewController supportedInterfaceOrientations]
-        & appFlags;
+    
+    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & appFlags;
 }
 
 - (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation

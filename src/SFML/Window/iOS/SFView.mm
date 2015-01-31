@@ -177,7 +177,7 @@
 ////////////////////////////////////////////////////////////
 - (id)initWithFrame:(CGRect)frame andContentScaleFactor:(CGFloat)factor
 {
-	self = [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     
     self.contentScaleFactor = factor;
     
