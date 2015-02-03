@@ -70,9 +70,26 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
         // Subview doesn't match ?
         if (![view isKindOfClass:[SFOpenGLView class]])
         {
-            sf::err() << "The content view is not a valid SFOpenGLView"
-                      << std::endl;
-            view = nil;
+            if([view isKindOfClass:[NSView class]])
+            {
+                NSArray* subviews = [view subviews];
+                for (NSView* subview in subviews)
+                {
+                    if ([subview isKindOfClass:[SFOpenGLView class]])
+                    {
+                        view = (SFOpenGLView*)subview;
+                        break;
+                    }
+                }
+
+            }
+            else
+            {
+                sf::err() << "The content view is not a valid SFOpenGLView"
+                          << std::endl;
+                
+                view = nil;
+            }
         }
 
     }
