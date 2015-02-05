@@ -1,6 +1,6 @@
 * text=auto eol=lf
 
-extlibs/**/* -text -eol
+extlibs/**/* -text -eol linguist-vendored
 src/SFML/Graphics/stb_image/**/* -text -eol
 
 *.png -text -eol
