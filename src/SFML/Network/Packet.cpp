@@ -37,6 +37,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Packet::Packet() :
 m_readPos(0),
+m_sendPos(0),
 m_isValid(true)
 {
 
