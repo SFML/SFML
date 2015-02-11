@@ -194,24 +194,21 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 
     // Get pointer mask
     xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    uint16_t mask = pointer->mask;
+    free(pointer);
 
     // Close the connection with the X server
     CloseDisplay(display);
 
-    bool result = false;
-
     switch (button)
     {
-        case Mouse::Left:     result = pointer->mask & XCB_BUTTON_MASK_1;
-        case Mouse::Right:    result = pointer->mask & XCB_BUTTON_MASK_3;
-        case Mouse::Middle:   result = pointer->mask & XCB_BUTTON_MASK_2;
-        case Mouse::XButton1: // not supported by X
-        case Mouse::XButton2: // not supported by X
-        default:              result = false;
+        case Mouse::Left:     return mask & XCB_BUTTON_MASK_1;
+        case Mouse::Right:    return mask & XCB_BUTTON_MASK_3;
+        case Mouse::Middle:   return mask & XCB_BUTTON_MASK_2;
+        case Mouse::XButton1: return false; // not supported by X
+        case Mouse::XButton2: return false; // not supported by X
+        default:              return false;
     }
-
-    free(pointer);
-    return result;
 }
 
 
