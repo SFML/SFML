@@ -79,6 +79,13 @@ a((color & 0x000000ff) >> 0 )
 
 
 ////////////////////////////////////////////////////////////
+Uint32 Color::toInteger()
+{
+    return (r << 24) | (g << 16) | (b << 8) | a;    
+}
+
+
+////////////////////////////////////////////////////////////
 bool operator ==(const Color& left, const Color& right)
 {
     return (left.r == right.r) &&

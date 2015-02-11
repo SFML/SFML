@@ -62,12 +62,20 @@ public:
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the color from 32 bit unsigned integer
+    /// \brief Construct the color from 32-bit unsigned integer
     ///
     /// \param color Number containing the RGBA components (in that order)
     ///
     ////////////////////////////////////////////////////////////
-    Color(Uint32 color);
+    explicit Color(Uint32 color);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Retrieve the color as a 32-bit unsigned integer
+    ///
+    /// \return Color represented as a 32-bit unsigned integer
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint32 toInteger();
 
     ////////////////////////////////////////////////////////////
     // Static member data
