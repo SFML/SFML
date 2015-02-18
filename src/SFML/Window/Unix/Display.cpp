@@ -64,6 +64,13 @@ Display* OpenDisplay()
 
 
 ////////////////////////////////////////////////////////////
+xcb_connection_t* OpenConnection()
+{
+    return XGetXCBConnection(OpenDisplay());
+}
+
+
+////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
     assert(display == sharedDisplay);
@@ -71,6 +78,27 @@ void CloseDisplay(Display* display)
     referenceCount--;
     if (referenceCount == 0)
         XCloseDisplay(display);
+}
+
+////////////////////////////////////////////////////////////
+void CloseConnection(xcb_connection_t* connection)
+{
+    assert(connection == XGetXCBConnection(sharedDisplay));
+    return CloseDisplay(sharedDisplay);
+}
+
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr)
+{
+    xcb_screen_iterator_t iter = xcb_setup_roots_iterator(xcb_get_setup(connection));
+
+    for (; iter.rem; --screen_nbr, xcb_screen_next (&iter))
+    {
+        if (screen_nbr == 0)
+            return iter.data;
+    }
+
+    return NULL;
 }
 
 } // namespace priv

@@ -28,9 +28,9 @@
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/Graphics/stb_image/stb_image.h>
+#include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <SFML/Graphics/stb_image/stb_image_write.h>
+#include <stb_image_write.h>
 extern "C"
 {
     #include <jpeglib.h>

@@ -33,7 +33,6 @@
 #include <SFML/System/Err.hpp>
 #include <UIKit/UIKit.h>
 
-
 namespace sf
 {
 namespace priv
@@ -51,6 +50,8 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
                                  unsigned long style,
                                  const ContextSettings& /*settings*/)
 {
+    m_backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    
     // Apply the fullscreen flag
     [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (style & Style::Fullscreen);
 
@@ -68,8 +69,15 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     // Assign it to the application delegate
     [SFAppDelegate getInstance].sfWindow = this;
 
+    CGRect viewRect = frame;
+    // if UI-orientation doesn't match window-layout, swap the view size and notify the window about it
+    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
+    if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
+        if ((mode.width > mode.height) != (frame.size.width > frame.size.height))
+            std::swap(viewRect.size.width, viewRect.size.height);
+
     // Create the view
-    m_view = [[SFView alloc] initWithFrame:frame];
+    m_view = [[SFView alloc] initWithFrame:viewRect andContentScaleFactor:m_backingScale];
     [m_view resignFirstResponder];
 
     // Create the view controller
@@ -107,7 +115,8 @@ WindowHandle WindowImplUIKit::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplUIKit::getPosition() const
 {
-    return Vector2i(m_window.frame.origin.x, m_window.frame.origin.y);
+    CGPoint origin = m_window.frame.origin;
+    return Vector2i(origin.x * m_backingScale, origin.y * m_backingScale);
 }
 
 
@@ -120,7 +129,12 @@ void WindowImplUIKit::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplUIKit::getSize() const
 {
-    return Vector2u(m_window.frame.size.width, m_window.frame.size.height);
+    auto physicalFrame = m_window.frame;
+    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
+    if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
+        && UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
+        std::swap(physicalFrame.size.width, physicalFrame.size.height);
+    return Vector2u(physicalFrame.size.width * m_backingScale, physicalFrame.size.height * m_backingScale);
 }
 
 
@@ -129,6 +143,10 @@ void WindowImplUIKit::setSize(const Vector2u& size)
 {
     // @todo ...
 
+    // if these sizes are required one day, don't forget to scale them!
+    // size.x /= m_backingScale;
+    // size.y /= m_backingScale;
+    
     // Set the orientation according to the requested size
     if (size.x > size.y)
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft];

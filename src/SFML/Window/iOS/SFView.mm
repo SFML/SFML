@@ -31,7 +31,6 @@
 #include <QuartzCore/CAEAGLLayer.h>
 #include <cstring>
 
-
 @interface SFView()
 
 @property (nonatomic) NSMutableArray* touches;
@@ -170,16 +169,18 @@
 
 
 ////////////////////////////////////////////////////////////
-+(Class)layerClass
++ (Class)layerClass
 {
 	return [CAEAGLLayer class];
 }
 
-
 ////////////////////////////////////////////////////////////
--(id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame andContentScaleFactor:(CGFloat)factor
 {
-	self = [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
+    
+    self.contentScaleFactor = factor;
+    
 	if (self)
     {
         self.context = NULL;
