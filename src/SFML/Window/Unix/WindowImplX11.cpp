@@ -1154,6 +1154,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             xcb_button_press_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
 
             // XXX: Why button 8 and 9?
+            // Because 4 and 5 are the vertical wheel and 6 and 7 are horizontal wheel ;)
             xcb_button_t button = e->detail;
             if ((button == XCB_BUTTON_INDEX_1) ||
                 (button == XCB_BUTTON_INDEX_2) ||
@@ -1207,10 +1208,26 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             else if ((button == XCB_BUTTON_INDEX_4) || (button == XCB_BUTTON_INDEX_5))
             {
                 Event event;
+
                 event.type             = Event::MouseWheelMoved;
                 event.mouseWheel.delta = button == XCB_BUTTON_INDEX_4 ? 1 : -1;
                 event.mouseWheel.x     = e->event_x;
                 event.mouseWheel.y     = e->event_y;
+                pushEvent(event);
+
+                event.type                     = Event::MouseWheelVerticalMoved;
+                event.mouseWheelVertical.delta = button == XCB_BUTTON_INDEX_4 ? 1 : -1;
+                event.mouseWheelVertical.x     = e->event_x;
+                event.mouseWheelVertical.y     = e->event_y;
+                pushEvent(event);
+            }
+            else if ((button == 6) || (button == 7))
+            {
+                Event event;
+                event.type                       = Event::MouseWheelHorizontalMoved;
+                event.mouseWheelHorizontal.delta = button == 6 ? 1 : -1;
+                event.mouseWheelHorizontal.x     = e->event_x;
+                event.mouseWheelHorizontal.y     = e->event_y;
                 pushEvent(event);
             }
             break;

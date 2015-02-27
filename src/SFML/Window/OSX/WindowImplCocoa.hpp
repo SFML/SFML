@@ -164,12 +164,13 @@ public:
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param delta scrolling delta
+    /// \param deltaX horizontal scrolling delta
+    /// \param deltaY vertical scrolling delta
     /// \param x mouse x position
     /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseWheelScrolledAt(float delta, int x, int y);
+    void mouseWheelScrolledAt(float deltaX, float deltaY, int x, int y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse In Event - called by the cocoa view object
