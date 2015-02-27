@@ -75,7 +75,7 @@ public:
     ////////////////////////////////////////////////////////////
     struct Identification
     {
-        Identification();
+        SFML_WINDOW_API Identification();
 
         sf::String   name;      ///< Name of the joystick
         unsigned int vendorId;  ///< Manufacturer identifier
