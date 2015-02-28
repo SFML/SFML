@@ -73,7 +73,7 @@ public:
     /// \brief Structure holding a joystick's identification
     ///
     ////////////////////////////////////////////////////////////
-    struct Identification
+    struct SFML_WINDOW_API Identification
     {
         Identification();
 
