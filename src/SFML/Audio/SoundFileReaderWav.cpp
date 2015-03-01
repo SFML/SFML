@@ -242,7 +242,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             // "data" chunk
 
             // Compute the total number of samples
-            info.sampleCount = subChunkSize / info.channelCount / m_bytesPerSample;
+            info.sampleCount = subChunkSize / m_bytesPerSample;
 
             // Store the starting position of samples in the file
             m_dataStart = m_stream->tell();
