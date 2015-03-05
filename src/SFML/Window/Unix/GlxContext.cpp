@@ -28,7 +28,50 @@
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+
+#if !defined(GLX_DEBUGGING) && defined(SFML_DEBUG)
+    // Enable this to print messages to err() everytime GLX produces errors
+    //#define GLX_DEBUGGING
+#endif
+
+namespace
+{
+    sf::Mutex glxErrorMutex;
+    bool glxErrorOccurred = false;
+
+    int HandleXError(::Display*, XErrorEvent*)
+    {
+        glxErrorOccurred = true;
+        return 0;
+    }
+
+    class GlxErrorHandler
+    {
+    public:
+
+        GlxErrorHandler(::Display* display) :
+        m_display(display),
+        m_lock   (glxErrorMutex)
+        {
+            glxErrorOccurred = false;
+            m_previousHandler = XSetErrorHandler(HandleXError);
+        }
+
+        ~GlxErrorHandler()
+        {
+            XSync(m_display, False);
+            XSetErrorHandler(m_previousHandler);
+        }
+
+    private:
+        sf::Lock   m_lock;
+        ::Display* m_display;
+        int      (*m_previousHandler)(::Display*, XErrorEvent*);
+    };
+}
 
 
 namespace sf
@@ -160,9 +203,18 @@ GlxContext::~GlxContext()
     // Destroy the context
     if (m_context)
     {
+#if defined(GLX_DEBUGGING)
+        GlxErrorHandler handler(m_display);
+#endif
+
         if (glXGetCurrentContext() == m_context)
             glXMakeCurrent(m_display, None, NULL);
         glXDestroyContext(m_display, m_context);
+
+#if defined(GLX_DEBUGGING)
+        if (glxErrorOccurred)
+            err() << "GLX error in GlxContext::~GlxContext()" << std::endl;
+#endif
     }
 
     // Destroy the window if we own it
@@ -187,15 +239,38 @@ GlFunctionPointer GlxContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 bool GlxContext::makeCurrent()
 {
-    return m_context && glXMakeCurrent(m_display, m_window, m_context);
+    if (!m_context)
+        return false;
+
+#if defined(GLX_DEBUGGING)
+    GlxErrorHandler handler(m_display);
+#endif
+
+    bool result = glXMakeCurrent(m_display, m_window, m_context);
+
+#if defined(GLX_DEBUGGING)
+    if (glxErrorOccurred)
+        err() << "GLX error in GlxContext::makeCurrent()" << std::endl;
+#endif
+
+    return result;
 }
 
 
 ////////////////////////////////////////////////////////////
 void GlxContext::display()
 {
+#if defined(GLX_DEBUGGING)
+    GlxErrorHandler handler(m_display);
+#endif
+
     if (m_window)
         glXSwapBuffers(m_display, m_window);
+
+#if defined(GLX_DEBUGGING)
+    if (glxErrorOccurred)
+        err() << "GLX error in GlxContext::display()" << std::endl;
+#endif
 }
 
 
@@ -307,6 +382,10 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
     if (visuals)
     {
+#if defined(GLX_DEBUGGING)
+        GlxErrorHandler handler(display);
+#endif
+
         // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0xFFFF;
         XVisualInfo bestVisual;
@@ -340,6 +419,11 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 bestVisual = visuals[i];
             }
         }
+
+#if defined(GLX_DEBUGGING)
+        if (glxErrorOccurred)
+            err() << "GLX error in GlxContext::selectBestVisual()" << std::endl;
+#endif
 
         // Free the array of visuals
         XFree(visuals);
@@ -490,6 +574,11 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                         GLX_CONTEXT_FLAGS_ARB,         debug,
                         0,                             0
                     };
+
+                    // RAII GLX error handler (we simply ignore errors here)
+                    // On an error, glXCreateContextAttribsARB will return 0 anyway
+                    GlxErrorHandler handler(m_display);
+
                     m_context = glXCreateContextAttribsARB(m_display, *bestConfig, toShare, true, attributes);
                 }
                 else
@@ -507,11 +596,20 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                         GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
                         0,                             0
                     };
+
+                    // RAII GLX error handler (we simply ignore errors here)
+                    // On an error, glXCreateContextAttribsARB will return 0 anyway
+                    GlxErrorHandler handler(m_display);
+
                     m_context = glXCreateContextAttribsARB(m_display, *bestConfig, toShare, true, attributes);
                 }
 
                 if (m_context)
                 {
+#if defined(GLX_DEBUGGING)
+                    GlxErrorHandler handler(m_display);
+#endif
+
                     // Update the creation settings from the chosen format
                     int depth, stencil, multiSampling, samples;
                     glXGetFBConfigAttrib(m_display, *bestConfig, GLX_DEPTH_SIZE,         &depth);
@@ -521,6 +619,11 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                     m_settings.depthBits         = static_cast<unsigned int>(depth);
                     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
                     m_settings.antialiasingLevel = multiSampling ? samples : 0;
+
+#if defined(GLX_DEBUGGING)
+                    if (glxErrorOccurred)
+                        err() << "GLX error in GlxContext::createContext()" << std::endl;
+#endif
                 }
                 else
                 {
@@ -553,6 +656,10 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                 XFree(configs);
         }
     }
+
+#if defined(GLX_DEBUGGING)
+    GlxErrorHandler handler(m_display);
+#endif
 
     // If glXCreateContextAttribsARB failed, use glXCreateContext
     if (!m_context)
@@ -608,6 +715,11 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
         // Free the visual info
         XFree(visualInfo);
     }
+
+#if defined(GLX_DEBUGGING)
+    if (glxErrorOccurred)
+        err() << "GLX error in GlxContext::createContext()" << std::endl;
+#endif
 }
 
 } // namespace priv

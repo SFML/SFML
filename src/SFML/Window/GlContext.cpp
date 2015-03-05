@@ -73,6 +73,14 @@
     #define GL_MULTISAMPLE 0x809D
 #endif
 
+#if !defined(GL_MAJOR_VERSION)
+    #define GL_MAJOR_VERSION 0x821B
+#endif
+
+#if !defined(GL_MINOR_VERSION)
+    #define GL_MINOR_VERSION 0x821C
+#endif
+
 #if !defined(GL_CONTEXT_FLAGS)
     #define GL_CONTEXT_FLAGS 0x821E
 #endif
@@ -333,42 +341,55 @@ void GlContext::initialize()
     setActive(true);
 
     // Retrieve the context version number
-    const GLubyte* version = glGetString(GL_VERSION);
-    if (version)
+    int majorVersion = 0;
+    int minorVersion = 0;
+
+    // Try the new way first
+    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+    if (glGetError() != GL_INVALID_ENUM)
     {
-        // The beginning of the returned string is "major.minor" (this is standard)
-        m_settings.majorVersion = version[0] - '0';
-        m_settings.minorVersion = version[2] - '0';
+        m_settings.majorVersion = static_cast<unsigned int>(majorVersion);
+        m_settings.minorVersion = static_cast<unsigned int>(minorVersion);
     }
     else
     {
-        // Can't get the version number, assume 2.1
-        m_settings.majorVersion = 2;
-        m_settings.minorVersion = 1;
+        // Try the old way
+        const GLubyte* version = glGetString(GL_VERSION);
+        if (version)
+        {
+            // The beginning of the returned string is "major.minor" (this is standard)
+            m_settings.majorVersion = version[0] - '0';
+            m_settings.minorVersion = version[2] - '0';
+        }
+        else
+        {
+            // Can't get the version number, assume 2.1
+            m_settings.majorVersion = 2;
+            m_settings.minorVersion = 1;
+        }
     }
 
-    // Verify non-default settings, just to be extra sure
-    if (m_settings.attributeFlags & ContextSettings::Debug)
+    m_settings.attributeFlags = ContextSettings::Default;
+
+    if (m_settings.majorVersion >= 3)
     {
         // Retrieve the context flags
         int flags = 0;
         glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 
-        if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT))
-        {
-            m_settings.attributeFlags ^= ContextSettings::Debug;
-        }
-    }
+        if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+            m_settings.attributeFlags |= ContextSettings::Debug;
 
-    if (m_settings.attributeFlags & ContextSettings::Core)
-    {
-        // Retrieve the context profile
-        int profile = 0;
-        glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
-
-        if (!(profile & GL_CONTEXT_CORE_PROFILE_BIT))
+        if ((m_settings.majorVersion > 3) || (m_settings.minorVersion >= 2))
         {
-            m_settings.attributeFlags ^= ContextSettings::Core;
+            // Retrieve the context profile
+            int profile = 0;
+            glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+            if (profile & GL_CONTEXT_CORE_PROFILE_BIT)
+                m_settings.attributeFlags |= ContextSettings::Core;
         }
     }
 

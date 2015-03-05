@@ -26,10 +26,23 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLLoader.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <cstddef>
+
+#if !defined(GL_MAJOR_VERSION)
+    #define GL_MAJOR_VERSION 0x821B
+#endif
+
+#if !defined(GL_MINOR_VERSION)
+    #define GL_MINOR_VERSION 0x821C
+#endif
+
+#if !defined(GL_NUM_EXTENSIONS)
+    #define GL_NUM_EXTENSIONS 0x821D
+#endif
 
 static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 {
@@ -395,6 +408,9 @@ static void LoadExtByName(const char *extensionName)
 
 static void ProcExtsFromExtString(const char *strExtList)
 {
+    if (!strExtList)
+        strExtList = "";
+
     size_t iExtListLen = strlen(strExtList);
     const char *strExtListEnd = strExtList + iExtListLen;
     const char *strCurrPos = strExtList;
@@ -432,7 +448,38 @@ int sfogl_LoadFunctions()
     int numFailed = 0;
     ClearExtensionVars();
 
-    ProcExtsFromExtString((const char *)glGetString(GL_EXTENSIONS));
+    const char* extensionString = NULL;
+
+    if(sfogl_GetMajorVersion() < 3)
+    {
+        // Try to load the < 3.0 way
+        glCheck(extensionString = (const char *)glGetString(GL_EXTENSIONS));
+
+        ProcExtsFromExtString(extensionString);
+    }
+    else
+    {
+        // Try to load the >= 3.0 way
+        const GLubyte* (CODEGEN_FUNCPTR *glGetStringiFunc)(GLenum, GLuint) = NULL;
+        glGetStringiFunc = (const GLubyte* (CODEGEN_FUNCPTR *)(GLenum, GLuint))IntGetProcAddress("glGetStringi");
+
+        if (glGetStringiFunc)
+        {
+            int numExtensions = 0;
+            glCheck(glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions));
+
+            if (numExtensions)
+            {
+                for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
+                {
+                    glCheck(extensionString = (const char *)glGetStringiFunc(GL_EXTENSIONS, i));
+
+                    ProcExtsFromExtString(extensionString);
+                }
+            }
+        }
+    }
+
     numFailed = Load_Version_1_2();
 
     if(numFailed == 0)
@@ -481,7 +528,16 @@ static void ParseVersionFromString(int *pOutMajor, int *pOutMinor, const char *s
 
 static void GetGLVersion()
 {
-    ParseVersionFromString(&g_major_version, &g_minor_version, (const char*)glGetString(GL_VERSION));
+    glGetIntegerv(GL_MAJOR_VERSION, &g_major_version);
+    glGetIntegerv(GL_MINOR_VERSION, &g_minor_version);
+
+    // Check if we have to retrieve the context version using the legacy method
+    if (glGetError() == GL_INVALID_ENUM)
+    {
+        const char* versionString = NULL;
+        glCheck(versionString = (const char*)glGetString(GL_VERSION));
+        ParseVersionFromString(&g_major_version, &g_minor_version, versionString);
+    }
 }
 
 int sfogl_GetMajorVersion()
