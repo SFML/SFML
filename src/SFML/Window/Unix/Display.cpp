@@ -101,6 +101,23 @@ xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr)
     return NULL;
 }
 
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection)
+{
+    assert(connection == XGetXCBConnection(sharedDisplay));
+    return XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
+}
+
+////////////////////////////////////////////////////////////
+xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection)
+{
+    assert(connection == XGetXCBConnection(sharedDisplay));
+    xcb_screen_t* screen = XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
+    if (screen)
+        return screen->root;
+    return 0;
+}
+
 } // namespace priv
 
 } // namespace sf

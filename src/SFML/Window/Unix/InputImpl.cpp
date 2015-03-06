@@ -189,16 +189,15 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
     // Get pointer mask
-    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL);
     uint16_t mask = pointer->mask;
     free(pointer);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 
     switch (button)
     {
@@ -216,13 +215,12 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 Vector2i InputImpl::getMousePosition()
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
-    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 
     // Prepare result.
     Vector2i result(pointer->root_x, pointer->root_y);
@@ -263,14 +261,13 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
-    xcb_warp_pointer(connection, None, XDefaultRootWindow(display), 0, 0, 0, 0, position.x, position.y);
+    xcb_warp_pointer(connection, None, XCBDefaultRootWindow(connection), 0, 0, 0, 0, position.x, position.y);
     xcb_flush(connection);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 }
 
 

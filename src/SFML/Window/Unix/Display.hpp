@@ -60,7 +60,7 @@ xcb_connection_t* OpenConnection();
 ////////////////////////////////////////////////////////////
 /// \brief Release a reference to the shared display
 ///
-/// \param Display to release
+/// \param display Display to release
 ///
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display);
@@ -68,7 +68,7 @@ void CloseDisplay(Display* display);
 ////////////////////////////////////////////////////////////
 /// \brief Release a reference to the shared display
 ///
-/// \param Connection of display to release
+/// \param connection Connection of display to release
 ///
 ////////////////////////////////////////////////////////////
 void CloseConnection(xcb_connection_t* connection);
@@ -76,12 +76,33 @@ void CloseConnection(xcb_connection_t* connection);
 ////////////////////////////////////////////////////////////
 /// \brief Get screen of a display by index (equivalent to XScreenOfDisplay)
 ///
-/// \param The index of the screen
+/// \param connection Connection of display
+/// \param screen_nbr The index of the screen
 ///
 /// \return Pointer to the screen
 ///
 ////////////////////////////////////////////////////////////
 xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr);
+
+////////////////////////////////////////////////////////////
+/// \brief Get default screen of a display (equivalent to XDefaultScreen)
+///
+/// \param connection Connection of display
+///
+/// \return Pointer to the default screen of the display
+///
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection);
+
+////////////////////////////////////////////////////////////
+/// \brief Get default root window of a display (equivalent to XDefaultRootWindow)
+///
+/// \param connection Connection of display
+///
+/// \return Root window of the display
+///
+////////////////////////////////////////////////////////////
+xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection);
 
 } // namespace priv
 
