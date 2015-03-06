@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <xcb/xcb_atom.h>
@@ -181,7 +182,7 @@ m_useSizeHints(false)
     // Create the window
     m_window = xcb_generate_id(m_connection);
 
-    xcb_generic_error_t* errptr = xcb_request_check(
+    ScopedXcbPtr<xcb_generic_error_t> errptr(xcb_request_check(
         m_connection,
         xcb_create_window_checked(
             m_connection,
@@ -196,12 +197,9 @@ m_useSizeHints(false)
             XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT,
             value_list
         )
-    );
+    ));
 
-    bool createWindowFailed = (errptr != NULL);
-    free(errptr);
-
-    if (createWindowFailed)
+    if (errptr)
     {
         err() << "Failed to create window" << std::endl;
         return;
@@ -214,7 +212,7 @@ m_useSizeHints(false)
     if (!fullscreen)
     {
         static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
-        xcb_intern_atom_reply_t* hintsAtomReply = xcb_intern_atom_reply(
+        ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
             m_connection,
             xcb_intern_atom(
                 m_connection,
@@ -223,7 +221,7 @@ m_useSizeHints(false)
                 MOTIF_WM_HINTS.c_str()
             ),
             NULL
-        );
+        ));
 
         if (hintsAtomReply)
         {
@@ -285,8 +283,6 @@ m_useSizeHints(false)
                 sizeof(hints) / sizeof(hints.flags),
                 reinterpret_cast<const unsigned char*>(&hints)
             );
-
-            free(hintsAtomReply);
         }
 
         // This is a hack to force some windows managers to disable resizing
@@ -442,30 +438,26 @@ Vector2i WindowImplX11::getPosition() const
 {
     ::Window topLevelWindow = m_window;
     ::Window nextWindow = topLevelWindow;
-    xcb_query_tree_reply_t* treeReply = NULL;
 
     // Get "top level" window, i.e. the window with the root window as its parent.
     while (nextWindow != m_screen->root)
     {
         topLevelWindow = nextWindow;
 
-        treeReply = xcb_query_tree_reply(m_connection, xcb_query_tree(m_connection, topLevelWindow), NULL);
+        ScopedXcbPtr<xcb_query_tree_reply_t> treeReply(xcb_query_tree_reply(m_connection, xcb_query_tree(m_connection, topLevelWindow), NULL));
         nextWindow = treeReply->parent;
-        free(treeReply);
     }
 
-    xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(
+    ScopedXcbPtr<xcb_get_geometry_reply_t> geometryReply(xcb_get_geometry_reply(
         m_connection,
         xcb_get_geometry(
             m_connection,
             topLevelWindow
         ),
         NULL
-    );
-    sf::Vector2i result(geometryReply->x, geometryReply->y);
-    free(geometryReply);
+    ));
 
-    return result;
+    return sf::Vector2i(geometryReply->x, geometryReply->y);
 }
 
 
@@ -483,11 +475,9 @@ void WindowImplX11::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplX11::getSize() const
 {
-    xcb_get_geometry_reply_t* reply = xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL);
-    Vector2u result(reply->width, reply->height);
-    free(reply);
+    ScopedXcbPtr<xcb_get_geometry_reply_t> reply(xcb_get_geometry_reply(m_connection, xcb_get_geometry(m_connection, m_window), NULL));
 
-    return result;
+    return Vector2u(reply->width, reply->height);
 }
 
 
@@ -565,7 +555,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
     xcb_create_gc(m_connection, iconGC, iconPixmap, 0, NULL);
 
-    xcb_generic_error_t* errptr = xcb_request_check(
+    ScopedXcbPtr<xcb_generic_error_t> errptr(xcb_request_check(
         m_connection,
         xcb_put_image_checked(
             m_connection,
@@ -581,14 +571,13 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
             sizeof(iconPixels),
             iconPixels
         )
-    );
+    ));
 
     xcb_free_gc(m_connection, iconGC);
 
     if (errptr)
     {
         err() << "Failed to set the window's icon: Error code " << static_cast<int>(errptr->error_code) << std::endl;
-        free(errptr);
         return;
     }
 
@@ -679,14 +668,15 @@ void WindowImplX11::requestFocus()
     
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
-    xcb_get_window_attributes_reply_t* attributes = xcb_get_window_attributes_reply(
+    ScopedXcbPtr<xcb_get_window_attributes_reply_t> attributes(xcb_get_window_attributes_reply(
         m_connection,
         xcb_get_window_attributes(
             m_connection,
             m_window
         ),
         NULL
-    );
+    ));
+
     if (!attributes)
     {
         sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
@@ -694,7 +684,6 @@ void WindowImplX11::requestFocus()
     }
 
     bool windowViewable = (attributes->map_state == XCB_MAP_STATE_VIEWABLE);
-    free(attributes);
     
     if (sfmlWindowFocused && windowViewable)
     {
@@ -729,18 +718,15 @@ void WindowImplX11::requestFocus()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::hasFocus() const
 {
-    xcb_get_input_focus_reply_t* reply = xcb_get_input_focus_reply(
+    ScopedXcbPtr<xcb_get_input_focus_reply_t> reply(xcb_get_input_focus_reply(
         m_connection,
         xcb_get_input_focus_unchecked(
             m_connection
         ),
         NULL
-    );
+    ));
 
-    bool focused = (reply->focus == m_window);
-    free(reply);
-
-    return focused;
+    return (reply->focus == m_window);
 }
 
 
@@ -749,7 +735,7 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
 {
     // Check if the XRandR extension is present
     static const std::string RANDR = "RANDR";
-    xcb_query_extension_reply_t* randr_ext = xcb_query_extension_reply(
+    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
         m_connection,
         xcb_query_extension(
             m_connection,
@@ -757,20 +743,20 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
             RANDR.c_str()
         ), 
         NULL
-    );
+    ));
 
     if (randr_ext->present)
     {
         // Get the current configuration
-        xcb_generic_error_t* error;
-        xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
             m_connection,
             xcb_randr_get_screen_info(
                 m_connection,
                 m_screen->root
             ),
             &error
-        );
+        ));
 
         if (!error)
         {
@@ -778,7 +764,7 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
             m_oldVideoMode = config->sizeID;
 
             // Get the available screen sizes
-            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config);
+            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
             if (sizes && (config->nSizes > 0))
             {
                 // Search a matching size
@@ -810,18 +796,12 @@ void WindowImplX11::switchToFullscreen(const VideoMode& mode)
             // Failed to get the screen configuration
             err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
         }
-
-        // Free the configuration instance
-        free(error);
-        free(config);
     }
     else
     {
         // XRandR extension is not supported: we cannot use fullscreen mode
         err() << "Fullscreen is not supported, switching to window mode" << std::endl;
     }
-
-    free(randr_ext);
 }
 
 
@@ -830,7 +810,7 @@ void WindowImplX11::initialize()
 {
     // Get the atoms for registering the close event
     static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
-    xcb_intern_atom_reply_t* deleteWindowAtomReply = xcb_intern_atom_reply(
+    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
         m_connection,
         xcb_intern_atom(
             m_connection,
@@ -839,10 +819,10 @@ void WindowImplX11::initialize()
             WM_DELETE_WINDOW_NAME.c_str()
         ),
         NULL
-    );
+    ));
 
     static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
-    xcb_intern_atom_reply_t* protocolsAtomReply = xcb_intern_atom_reply(
+    ScopedXcbPtr<xcb_intern_atom_reply_t> protocolsAtomReply(xcb_intern_atom_reply(
         m_connection,
         xcb_intern_atom(
             m_connection,
@@ -851,7 +831,7 @@ void WindowImplX11::initialize()
             WM_PROTOCOLS_NAME.c_str()
         ),
         NULL
-    );
+    ));
 
     if (protocolsAtomReply && deleteWindowAtomReply)
     {
@@ -870,9 +850,6 @@ void WindowImplX11::initialize()
         // Should not happen, but better safe than sorry.
         std::cerr << "Failed to request WM_PROTOCOLS/WM_DELETE_WINDOW_NAME atoms." << std::endl;
     }
-
-    free(protocolsAtomReply);
-    free(deleteWindowAtomReply);
 
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
@@ -945,15 +922,15 @@ void WindowImplX11::cleanup()
     if (fullscreenWindow == this)
     {
         // Get current screen info
-        xcb_generic_error_t* error;
-        xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
             m_connection,
             xcb_randr_get_screen_info(
             m_connection,
             m_screen->root
             ),
             &error
-        );
+        ));
 
         if (!error)
         {
@@ -968,10 +945,6 @@ void WindowImplX11::cleanup()
                 config->rate
             );
         }
-
-        // Free the configuration instance
-        free(error);
-        free(config);
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;

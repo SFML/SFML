@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Err.hpp>
 #include <xcb/randr.h>
 #include <algorithm>
@@ -49,7 +50,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     // Check if the XRandR extension is present
     static const std::string RANDR = "RANDR";
-    xcb_query_extension_reply_t* randr_ext = xcb_query_extension_reply(
+    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
         connection,
         xcb_query_extension(
             connection,
@@ -57,25 +58,25 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             RANDR.c_str()
         ), 
         NULL
-    );
+    ));
 
     if (randr_ext->present)
     {
         // Get the current configuration
-        xcb_generic_error_t* error;
-        xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
             connection,
             xcb_randr_get_screen_info(
                 connection,
                 screen->root
             ),
             &error
-        );
+        ));
 
         if (!error)
         {
             // Get the available screen sizes
-            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config);
+            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
             if (sizes && (config->nSizes > 0))
             {
                 // Get the list of supported depths
@@ -100,18 +101,12 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             // Failed to get the screen configuration
             err() << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
         }
-
-        // Free the configuration instance
-        free(error);
-        free(config);
     }
     else
     {
         // XRandr extension is not supported: we cannot get the video modes
         err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
     }
-
-    free(randr_ext);
 
     // Close the connection with the X server
     CloseConnection(connection);
@@ -133,7 +128,7 @@ VideoMode VideoModeImpl::getDesktopMode()
 
     // Check if the XRandR extension is present
     static const std::string RANDR = "RANDR";
-    xcb_query_extension_reply_t* randr_ext = xcb_query_extension_reply(
+    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
         connection,
         xcb_query_extension(
             connection,
@@ -141,20 +136,20 @@ VideoMode VideoModeImpl::getDesktopMode()
             RANDR.c_str()
         ), 
         NULL
-    );
+    ));
 
     if (randr_ext->present)
     {
         // Get the current configuration
-        xcb_generic_error_t* error;
-        xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
             connection,
             xcb_randr_get_screen_info(
                 connection,
                 screen->root
             ),
             &error
-        );
+        ));
 
         if (!error)
         {
@@ -162,8 +157,8 @@ VideoMode VideoModeImpl::getDesktopMode()
             xcb_randr_mode_t currentMode = config->sizeID;
 
             // Get the available screen sizes
-            int nbSizes = xcb_randr_get_screen_info_sizes_length(config);
-            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config);
+            int nbSizes = xcb_randr_get_screen_info_sizes_length(config.get());
+            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
             if (sizes && (nbSizes > 0))
                 desktopMode = VideoMode(sizes[currentMode].width, sizes[currentMode].height, screen->root_depth);
         }
@@ -172,18 +167,12 @@ VideoMode VideoModeImpl::getDesktopMode()
             // Failed to get the screen configuration
             err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
         }
-
-        // Free the configuration instance
-        free(error);
-        free(config);
     }
     else
     {
         // XRandr extension is not supported: we cannot get the video modes
         err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
     }
-
-    free(randr_ext);
 
     // Close the connection with the X server
     CloseConnection(connection);
