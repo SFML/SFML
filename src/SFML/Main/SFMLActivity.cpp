@@ -174,7 +174,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 #undef _SFML_S
 #undef _SFML_QS
 #endif
-    loadLibrary("sndfile", lJNIEnv, ObjectActivityInfo);
     loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
 
 #if !defined(SFML_DEBUG)

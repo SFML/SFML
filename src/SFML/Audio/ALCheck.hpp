@@ -31,8 +31,13 @@
 #include <SFML/Config.hpp>
 #include <iostream>
 #include <string>
-#include <al.h>
-#include <alc.h>
+#ifdef SFML_SYSTEM_IOS
+    #include <OpenAl/al.h>
+    #include <OpenAl/alc.h>
+#else
+    #include <al.h>
+    #include <alc.h>
+#endif
 
 
 namespace sf

@@ -322,11 +322,14 @@ if(SFML_STATIC_LIBRARIES)
 
         # find libraries
         find_sfml_dependency(OPENAL_LIBRARY "OpenAL" openal openal32)
-        find_sfml_dependency(SNDFILE_LIBRARY "libsndfile" sndfile)
+        find_sfml_dependency(OGG_LIBRARY "Ogg" ogg)
+        find_sfml_dependency(VORBIS_LIBRARY "Vorbis" vorbis)
+        find_sfml_dependency(VORBISFILE_LIBRARY "VorbisFile" vorbisfile)
+        find_sfml_dependency(FLAC_LIBRARY "FLAC" flac)
 
         # update the list
-        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
-        set(SFML_DEPENDENCIES ${SFML_AUDIO_DEPENDENCIES} ${SFML_DEPENDENCIES})
+        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${FLAC_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_AUDIO_DEPENDENCIES})
     endif()
 
 endif()
