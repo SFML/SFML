@@ -47,7 +47,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API Music : public SoundStream
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -87,7 +87,7 @@ public :
     /// of supported formats.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a data must remain available as long as the
-    /// music is playing (ie. you can't deallocate it right after calling
+    /// music is playing (i.e. you can't deallocate it right after calling
     /// this function).
     ///
     /// \param data        Pointer to the file data in memory
@@ -109,7 +109,7 @@ public :
     /// of supported formats.
     /// Since the music is not loaded completely but rather streamed
     /// continuously, the \a stream must remain alive as long as the
-    /// music is playing (ie. you can't destroy it right after calling
+    /// music is playing (i.e. you can't destroy it right after calling
     /// this function).
     ///
     /// \param stream Source stream to read from
@@ -129,7 +129,7 @@ public :
     ////////////////////////////////////////////////////////////
     Time getDuration() const;
 
-protected :
+protected:
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
@@ -152,7 +152,7 @@ protected :
     ////////////////////////////////////////////////////////////
     virtual void onSeek(Time timeOffset);
 
-private :
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music

@@ -56,13 +56,13 @@ FileInputStream::~FileInputStream()
 ////////////////////////////////////////////////////////////
 bool FileInputStream::open(const std::string& filename)
 {
-#ifndef ANDROID
-    m_file.open(filename.c_str(), std::ios::binary);
-    return m_file.good();
-#else
+#ifdef ANDROID
     if (m_file)
         delete m_file;
     m_file = new sf::priv::ResourceStream(filename);
+#else
+    m_file.open(filename.c_str(), std::ios::binary);
+    return m_file.good();
 #endif
 }
 
@@ -70,11 +70,11 @@ bool FileInputStream::open(const std::string& filename)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::read(void* data, Int64 size)
 {
-#ifndef ANDROID
+#ifdef ANDROID
+    return m_file->read(data, size);
+#else
     m_file.read(static_cast<char*>(data), size);
     return m_file.gcount();
-#else
-    return m_file->read(data, size);
 #endif
 }
 
@@ -82,13 +82,13 @@ Int64 FileInputStream::read(void* data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::seek(Int64 position)
 {
-#ifndef ANDROID
+#ifdef ANDROID
+    return m_file->seek(position);
+#else
     if (m_file.eof() || m_file.fail())
         m_file.clear();
     m_file.seekg(position);
     return tell();
-#else
-    return m_file->seek(position);
 #endif
 }
 
@@ -96,10 +96,10 @@ Int64 FileInputStream::seek(Int64 position)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::tell()
 {
-#ifndef ANDROID
-    return m_file.tellg();
-#else
+#ifdef ANDROID
     return m_file->tell();
+#else
+    return m_file.tellg();
 #endif
 }
 
@@ -107,14 +107,14 @@ Int64 FileInputStream::tell()
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::getSize()
 {
-#ifndef ANDROID
+#ifdef ANDROID
+    return m_file->getSize();
+#else
     std::ifstream::pos_type pos = m_file.tellg();
     m_file.seekg(0, std::ios::end);
     std::ifstream::pos_type size = m_file.tellg();
     m_file.seekg(pos);
     return size;
-#else
-    return m_file->getSize();
 #endif
 }
 

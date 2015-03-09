@@ -40,12 +40,12 @@ class SoundFileReader;
 class SoundFileWriter;
 
 ////////////////////////////////////////////////////////////
-/// \brief Manages and instanciates sound file readers and writers
+/// \brief Manages and instantiates sound file readers and writers
 ///
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundFileFactory
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Register a new reader
@@ -84,7 +84,9 @@ public :
     static void unregisterWriter();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Instanciate the right reader for the given file on disk
+    /// \brief Instantiate the right reader for the given file on disk
+    ///
+    /// It's up to the caller to release the returned reader
     ///
     /// \param filename Path of the sound file
     ///
@@ -96,7 +98,9 @@ public :
     static SoundFileReader* createReaderFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Instanciate the right codec for the given file in memory
+    /// \brief Instantiate the right codec for the given file in memory
+    ///
+    /// It's up to the caller to release the returned reader
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Total size of the file data, in bytes
@@ -109,7 +113,9 @@ public :
     static SoundFileReader* createReaderFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Instanciate the right codec for the given file in stream
+    /// \brief Instantiate the right codec for the given file in stream
+    ///
+    /// It's up to the caller to release the returned reader
     ///
     /// \param stream Source stream to read from
     ///
@@ -121,7 +127,9 @@ public :
     static SoundFileReader* createReaderFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Instanciate the right writer for the given file on disk
+    /// \brief Instantiate the right writer for the given file on disk
+    ///
+    /// It's up to the caller to release the returned writer
     ///
     /// \param filename Path of the sound file
     ///
@@ -168,7 +176,7 @@ private:
 /// \ingroup audio
 ///
 /// This class is where all the sound file readers and writers are
-/// registered. You should normally only need to use its regitration
+/// registered. You should normally only need to use its registration
 /// and unregistration functions; readers/writers creation and manipulation
 /// are wrapped into the higher-level classes sf::InputSoundFile and
 /// sf::OutputSoundFile.

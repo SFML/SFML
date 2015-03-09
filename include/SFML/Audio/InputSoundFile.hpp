@@ -45,7 +45,7 @@ class SoundFileReader;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API InputSoundFile : NonCopyable
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -161,7 +161,7 @@ public :
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given time offset
     ///
-    /// Using a time offset is handy but unprecise. If you need an accurate
+    /// Using a time offset is handy but imprecise. If you need an accurate
     /// result, consider using the overload which takes a sample offset.
     ///
     /// If the given time exceeds to total duration, this function jumps
@@ -227,10 +227,10 @@ private:
 ///     /* error */;
 ///
 /// // Print the sound attributes
-/// std::cout << "duration: " << file.getDuration().asSeconds() << std::endl; 
-/// std::cout << "channels: " << file.getChannelCount() << std::endl; 
-/// std::cout << "sample rate: " << file.getSampleRate() << std::endl; 
-/// std::cout << "sample count: " << file.getSampleCount() << std::endl; 
+/// std::cout << "duration: " << file.getDuration().asSeconds() << std::endl;
+/// std::cout << "channels: " << file.getChannelCount() << std::endl;
+/// std::cout << "sample rate: " << file.getSampleRate() << std::endl;
+/// std::cout << "sample count: " << file.getSampleCount() << std::endl;
 ///
 /// // Read and process batches of samples until the end of file is reached
 /// sf::Int16 samples[1024];
@@ -239,7 +239,7 @@ private:
 /// {
 ///     count = file.read(samples, 1024);
 ///
-///     // process, analyse, play, convert, or whatever
+///     // process, analyze, play, convert, or whatever
 ///     // you want to do with the samples...
 /// }
 /// while (count > 0);

@@ -38,7 +38,7 @@
 
 namespace
 {
-    // register all the built-in readers and writers if not already done
+    // Register all the built-in readers and writers if not already done
     void ensureDefaultReadersWritersRegistered()
     {
         static bool registered = false;

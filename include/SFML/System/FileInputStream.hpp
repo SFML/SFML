@@ -52,7 +52,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_SYSTEM_API FileInputStream : public InputStream
 {
-public :
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -120,10 +120,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-#ifndef ANDROID
-    std::ifstream m_file; ///< Standard file stream
-#else
+#ifdef ANDROID
     sf::priv::ResourceStream *m_file;
+#else
+    std::ifstream m_file; ///< Standard file stream
 #endif
 };
 

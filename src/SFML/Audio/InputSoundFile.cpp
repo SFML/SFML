@@ -244,9 +244,9 @@ void InputSoundFile::close()
     if (m_streamOwned)
     {
         delete m_stream;
-        m_stream = NULL;
         m_streamOwned = false;
     }
+    m_stream = NULL;
 
     // Reset the sound file attributes
     m_sampleCount = 0;

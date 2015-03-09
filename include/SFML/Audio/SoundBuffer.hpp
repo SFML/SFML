@@ -48,7 +48,7 @@ class InputStream;
 ////////////////////////////////////////////////////////////
 class SFML_AUDIO_API SoundBuffer : AlResource
 {
-public :
+public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -223,7 +223,7 @@ public :
     ////////////////////////////////////////////////////////////
     SoundBuffer& operator =(const SoundBuffer& right);
 
-private :
+private:
 
     friend class Sound;
 
@@ -232,7 +232,7 @@ private :
     ///
     /// \param file Sound file providing access to the new loaded sound
     ///
-    /// \return True on succesful initialization, false on failure
+    /// \return True on successful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
     bool initialize(InputSoundFile& file);
@@ -291,7 +291,7 @@ private :
 /// A sound buffer holds the data of a sound, which is
 /// an array of audio samples. A sample is a 16 bits signed integer
 /// that defines the amplitude of the sound at a given time.
-/// The sound is then restituted by playing these samples at
+/// The sound is then reconstituted by playing these samples at
 /// a high rate (for example, 44100 samples per second is the
 /// standard rate used for playing CDs). In short, audio samples
 /// are like texture pixels, and a sf::SoundBuffer is similar to
@@ -324,20 +324,20 @@ private :
 /// \code
 /// // Declare a new sound buffer
 /// sf::SoundBuffer buffer;
-/// 
+///
 /// // Load it from a file
 /// if (!buffer.loadFromFile("sound.wav"))
 /// {
 ///     // error...
 /// }
-/// 
+///
 /// // Create a sound source and bind it to the buffer
 /// sf::Sound sound1;
 /// sound1.setBuffer(buffer);
-/// 
+///
 /// // Play the sound
 /// sound1.play();
-/// 
+///
 /// // Create another sound source bound to the same buffer
 /// sf::Sound sound2;
 /// sound2.setBuffer(buffer);
