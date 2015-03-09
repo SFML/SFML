@@ -64,14 +64,14 @@
 {
     // From Apple documentation:
     //
-    // > If the window’s delegate or the window itself implements windowShouldClose:,
+    // > If the window's delegate or the window itself implements windowShouldClose:,
     // > that message is sent with the window as the argument. (Only one such message is sent;
     // > if both the delegate and the NSWindow object implement the method, only the delegate
-    // > receives the message.) If the windowShouldClose: method returns NO, the window isn’t
-    // > closed. If it returns YES, or if it isn’t implemented, performClose: invokes the
+    // > receives the message.) If the windowShouldClose: method returns NO, the window isn't
+    // > closed. If it returns YES, or if it isn't implemented, performClose: invokes the
     // > close method to close the window.
     // >
-    // > If the window doesn’t have a close button or can’t be closed (for example, if the
+    // > If the window doesn't have a close button or can't be closed (for example, if the
     // > delegate replies NO to a windowShouldClose: message), the system emits the alert sound.
     //
     // The last paragraph is problematic for SFML fullscreen window since they don't have

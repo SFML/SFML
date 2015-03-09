@@ -263,7 +263,7 @@ else()
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* $<TARGET_FILE_DIR:SFML>/Headers)
 
-    # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+    # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
     # NOTE: it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1

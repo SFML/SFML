@@ -70,7 +70,7 @@
 ///
 /// Override NSWindow implementation, see implementation for details
 ///
-/// \param sender The message’s sender
+/// \param sender The message's sender
 ///
 ////////////////////////////////////////////////////////////
 -(void)performClose:(id)sender;

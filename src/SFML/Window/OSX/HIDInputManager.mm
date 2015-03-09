@@ -777,7 +777,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x33:                      return sf::Keyboard::BackSpace;
         case 0x30:                      return sf::Keyboard::Tab;
 
-            // Duplicates (see next §).
+            // Duplicates (see next section).
         case 0x74:                      return sf::Keyboard::PageUp;
         case 0x79:                      return sf::Keyboard::PageDown;
         case 0x77:                      return sf::Keyboard::End;
@@ -798,7 +798,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x43:                      return sf::Keyboard::Multiply;
         case 0x4b:                      return sf::Keyboard::Divide;
 
-            // Duplicates (see next §).
+            // Duplicates (see next section).
         case 0x7b:                      return sf::Keyboard::Left;
         case 0x7c:                      return sf::Keyboard::Right;
         case 0x7e:                      return sf::Keyboard::Up;
@@ -820,7 +820,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x5b:                      return sf::Keyboard::Numpad8;
         case 0x5c:                      return sf::Keyboard::Numpad9;
 
-            // Duplicates (see next §).
+            // Duplicates (see next section).
         case 0x7a:                      return sf::Keyboard::F1;
         case 0x78:                      return sf::Keyboard::F2;
         case 0x63:                      return sf::Keyboard::F3;
