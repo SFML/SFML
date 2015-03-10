@@ -42,7 +42,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := sfml-audio
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-audio.so
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
-LOCAL_SHARED_LIBRARIES := sfml-window sfml-system openal sndfile
+LOCAL_SHARED_LIBRARIES := sfml-window sfml-system openal
 
 prebuilt_path := $(call local-prebuilt-path,$(LOCAL_SRC_FILES))
 prebuilt := $(strip $(wildcard $(prebuilt_path)))
@@ -132,7 +132,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := sfml-audio-d
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libsfml-audio-d.so
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
-LOCAL_SHARED_LIBRARIES := sfml-window-d sfml-system-d openal sndfile
+LOCAL_SHARED_LIBRARIES := sfml-window-d sfml-system-d openal
 
 prebuilt_path := $(call local-prebuilt-path,$(LOCAL_SRC_FILES))
 prebuilt := $(strip $(wildcard $(prebuilt_path)))

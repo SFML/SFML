@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -92,11 +92,11 @@
     //    Services >
     //        / default empty menu /
     //    --------------------
-    //    Hide AppName      ⌘H
-    //    Hide Others      ⌥⌘H
+    //    Hide AppName      Command+H
+    //    Hide Others       Option+Command+H
     //    Show All
     //    --------------------
-    //    Quit AppName      ⌘Q
+    //    Quit AppName      Command+Q
 
     NSString* appName = [SFApplication applicationName];
 
@@ -112,7 +112,7 @@
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     // PREFERENCES
-    [appleMenu addItemWithTitle:@"Preferences…"
+    [appleMenu addItemWithTitle:@"Preferences..."
                          action:nil
                   keyEquivalent:@""];
 
@@ -164,7 +164,7 @@
     // The File menu is as follow:
     //
     // File >
-    //    Close             ⌘W
+    //    Close             Command+W
 
     // FILE MENU
     NSMenu* fileMenu = [[NSMenu alloc] initWithTitle:@"File"];
@@ -186,7 +186,7 @@
     // The Window menu is as follow:
     //
     // Window >
-    //    Minimize          ⌘M
+    //    Minimize          Command+M
     //    Zoom
     //    --------------------
     //    Bring All to Front

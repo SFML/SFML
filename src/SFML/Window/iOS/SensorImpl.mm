@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -138,7 +138,7 @@ Vector3f SensorImpl::update()
     switch (m_sensor)
     {
         case Sensor::Accelerometer:
-            // Acceleration is given in G, convert to m/s²
+            // Acceleration is given in G, convert to m/s^2
             value.x = manager.accelerometerData.acceleration.x * 9.81f;
             value.y = manager.accelerometerData.acceleration.y * 9.81f;
             value.z = manager.accelerometerData.acceleration.z * 9.81f;
@@ -159,7 +159,7 @@ Vector3f SensorImpl::update()
             break;
 
         case Sensor::UserAcceleration:
-            // User acceleration is given in G, convert to m/s²
+            // User acceleration is given in G, convert to m/s^2
             value.x = manager.deviceMotion.userAcceleration.x * 9.81f;
             value.y = manager.deviceMotion.userAcceleration.y * 9.81f;
             value.z = manager.deviceMotion.userAcceleration.z * 9.81f;

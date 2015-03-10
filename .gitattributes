@@ -1,7 +1,7 @@
 * text=auto eol=lf
 
 extlibs/**/* -text -eol linguist-vendored
-src/SFML/Graphics/stb_image/**/* -text -eol
+cmake/toolchains/android.toolchain.cmake -text -eol
 
 *.png -text -eol
 *.jpg -text -eol

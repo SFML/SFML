@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -219,6 +219,18 @@ void TcpSocket::disconnect()
 ////////////////////////////////////////////////////////////
 Socket::Status TcpSocket::send(const void* data, std::size_t size)
 {
+    if (!isBlocking())
+        err() << "Warning: Partial sends might not be handled properly." << std::endl;
+
+    std::size_t sent;
+
+    return send(data, size, sent);
+}
+
+
+////////////////////////////////////////////////////////////
+Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& sent)
+{
     // Check the parameters
     if (!data || (size == 0))
     {
@@ -227,16 +239,22 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size)
     }
 
     // Loop until every byte has been sent
-    int sent = 0;
-    int sizeToSend = static_cast<int>(size);
-    for (int length = 0; length < sizeToSend; length += sent)
+    int result = 0;
+    for (sent = 0; sent < size; sent += result)
     {
         // Send a chunk of data
-        sent = ::send(getHandle(), static_cast<const char*>(data) + length, sizeToSend - length, flags);
+        result = ::send(getHandle(), static_cast<const char*>(data) + sent, size - sent, flags);
 
         // Check for errors
-        if (sent < 0)
-            return priv::SocketImpl::getErrorStatus();
+        if (result < 0)
+        {
+            Status status = priv::SocketImpl::getErrorStatus();
+
+            if ((status == NotReady) && sent)
+                return Partial;
+
+            return status;
+        }
     }
 
     return Done;
@@ -294,17 +312,30 @@ Socket::Status TcpSocket::send(Packet& packet)
 
     // First convert the packet size to network byte order
     Uint32 packetSize = htonl(static_cast<Uint32>(size));
- 
+
     // Allocate memory for the data block to send
     std::vector<char> blockToSend(sizeof(packetSize) + size);
- 
+
     // Copy the packet size and data into the block to send
     std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
     if (size > 0)
         std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
 
     // Send the data block
-    return send(&blockToSend[0], blockToSend.size());
+    std::size_t sent;
+    Status status = send(&blockToSend[0] + packet.m_sendPos, blockToSend.size() - packet.m_sendPos, sent);
+
+    // In the case of a partial send, record the location to resume from
+    if (status == Partial)
+    {
+        packet.m_sendPos += sent;
+    }
+    else if (status == Done)
+    {
+        packet.m_sendPos = 0;
+    }
+
+    return status;
 }
 
 

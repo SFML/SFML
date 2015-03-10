@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,7 @@
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -55,7 +56,7 @@ namespace
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
         return static_cast<int>(stream->read(data, size));
     }
-    void skip(void* user, unsigned int size)
+    void skip(void* user, int size)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
         stream->seek(stream->tell() + size);

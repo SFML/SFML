@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -75,7 +75,7 @@ namespace
     delegateInstance = self;
 
     [self initBackingScale];
-    
+
     // Instantiate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
 
@@ -166,15 +166,15 @@ namespace
 {
     if (!self.sfWindow)
         return false;
-    
+
     UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
     if (!rootViewController || ![rootViewController shouldAutorotate])
         return false;
-    
+
     NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     if (!supportedOrientations)
         return false;
-    
+
     int appFlags = 0;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
         appFlags += UIInterfaceOrientationMaskPortrait;
@@ -184,7 +184,7 @@ namespace
         appFlags += UIInterfaceOrientationMaskLandscapeLeft;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
         appFlags += UIInterfaceOrientationMaskLandscapeRight;
-    
+
     return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & appFlags;
 }
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -553,12 +553,10 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     xcb_free_gc(m_connection, iconGC);
 
     xcb_generic_error_t* errptr = xcb_request_check(m_connection, cookie);
-    bool setWindowIconFailed = (errptr != NULL);
-    free(errptr);
-
-    if (setWindowIconFailed)
+    if (errptr)
     {
-        err() << "Failed to set the window's icon: Error code " << (int)errptr->error_code << std::endl;
+        err() << "Failed to set the window's icon: Error code " << static_cast<int>(errptr->error_code) << std::endl;
+        free(errptr);
         return;
     }
 
