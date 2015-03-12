@@ -35,6 +35,7 @@
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
 #include <xcb/xcb_util.h>
+#include <xcb/randr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -86,6 +87,104 @@ namespace
         //Default fallback name
         return "sfml";
     }
+
+    // Check if Extended Window Manager Hints are supported
+    bool ewmhSupported()
+    {
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        static const std::string NET_SUPPORTING_WM_CHECK = "_NET_SUPPORTING_WM_CHECK";
+        sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> supportingWmAtomReply(xcb_intern_atom_reply(
+            connection,
+            xcb_intern_atom(
+                connection,
+                0,
+                NET_SUPPORTING_WM_CHECK.size(),
+                NET_SUPPORTING_WM_CHECK.c_str()
+            ),
+            NULL
+        ));
+
+        if (!supportingWmAtomReply)
+        {
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        static const std::string NET_SUPPORTED = "_NET_SUPPORTED";
+        sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> supportedAtomReply(xcb_intern_atom_reply(
+            connection,
+            xcb_intern_atom(
+                connection,
+                0,
+                NET_SUPPORTED.size(),
+                NET_SUPPORTED.c_str()
+            ),
+            NULL
+        ));
+
+        if (!supportedAtomReply)
+        {
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> rootSupportingWindow(xcb_get_property_reply(
+            connection,
+            xcb_get_property(
+                connection,
+                0,
+                sf::priv::XCBDefaultRootWindow(connection),
+                supportingWmAtomReply->atom,
+                XCB_ATOM_WINDOW,
+                0,
+                0x7fffffff
+            ),
+            &error
+        ));
+
+        if (!rootSupportingWindow)
+        {
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        xcb_window_t rootWindow = *reinterpret_cast<xcb_window_t*>(xcb_get_property_value(rootSupportingWindow.get()));
+
+        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> childSupportingWindow(xcb_get_property_reply(
+            connection,
+            xcb_get_property(
+                connection,
+                0,
+                rootWindow,
+                supportingWmAtomReply->atom,
+                XCB_ATOM_WINDOW,
+                0,
+                0x7fffffff
+            ),
+            &error
+        ));
+
+        if (!childSupportingWindow)
+        {
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        xcb_window_t childWindow = *reinterpret_cast<xcb_window_t*>(xcb_get_property_value(childSupportingWindow.get()));
+
+        // Conforming window managers should return the same window for both queries
+        if (rootSupportingWindow != childSupportingWindow)
+        {
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        sf::priv::CloseConnection(connection);
+        return true;
+    }
 }
 
 
@@ -95,17 +194,19 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
-m_window      (0),
-m_inputMethod (NULL),
-m_inputContext(NULL),
-m_isExternal  (true),
-m_atomClose   (0),
-m_oldVideoMode(-1),
-m_hiddenCursor(0),
-m_keyRepeat   (true),
-m_previousSize(-1, -1),
-m_useSizeHints(false),
-m_fullscreen  (false)
+m_window         (0),
+m_inputMethod    (NULL),
+m_inputContext   (NULL),
+m_isExternal     (true),
+m_atomWmProtocols(0),
+m_atomClose      (0),
+m_atomPing       (0),
+m_oldVideoMode   (-1),
+m_hiddenCursor   (0),
+m_keyRepeat      (true),
+m_previousSize   (-1, -1),
+m_useSizeHints   (false),
+m_fullscreen     (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -143,17 +244,19 @@ m_fullscreen  (false)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
-m_window      (0),
-m_inputMethod (NULL),
-m_inputContext(NULL),
-m_isExternal  (false),
-m_atomClose   (0),
-m_oldVideoMode(-1),
-m_hiddenCursor(0),
-m_keyRepeat   (true),
-m_previousSize(-1, -1),
-m_useSizeHints(false),
-m_fullscreen  ((style & Style::Fullscreen) != 0)
+m_window         (0),
+m_inputMethod    (NULL),
+m_inputContext   (NULL),
+m_isExternal     (false),
+m_atomWmProtocols(0),
+m_atomClose      (0),
+m_atomPing       (0),
+m_oldVideoMode   (-1),
+m_hiddenCursor   (0),
+m_keyRepeat      (true),
+m_previousSize   (-1, -1),
+m_useSizeHints   (false),
+m_fullscreen     ((style & Style::Fullscreen) != 0)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -174,13 +277,17 @@ m_fullscreen  ((style & Style::Fullscreen) != 0)
     int width  = mode.width;
     int height = mode.height;
 
+    // Set fullscreen video mode if necessary
+    if (m_fullscreen)
+        setVideoMode(mode);
+
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
     // Define the window attributes
     xcb_colormap_t colormap = xcb_generate_id(m_connection);
     xcb_create_colormap(m_connection, XCB_COLORMAP_ALLOC_NONE, colormap, m_screen->root, visualInfo.visualid);
-    const uint32_t value_list[] = {static_cast<uint32_t>(eventMask), colormap};
+    const uint32_t value_list[] = {m_fullscreen && !ewmhSupported(), static_cast<uint32_t>(eventMask), colormap};
 
     // Create the window
     m_window = xcb_generate_id(m_connection);
@@ -197,7 +304,7 @@ m_fullscreen  ((style & Style::Fullscreen) != 0)
             0,
             XCB_WINDOW_CLASS_INPUT_OUTPUT,
             visualInfo.visualid,
-            XCB_CW_EVENT_MASK | XCB_CW_COLORMAP,
+            XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT | XCB_CW_COLORMAP,
             value_list
         )
     ));
@@ -276,16 +383,22 @@ m_fullscreen  ((style & Style::Fullscreen) != 0)
                 hints.functions   |= MWM_FUNC_CLOSE;
             }
 
-            xcb_change_property(
+            ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
                 m_connection,
-                XCB_PROP_MODE_REPLACE,
-                m_window,
-                hintsAtomReply->atom,
-                XCB_ATOM_WM_HINTS,
-                sizeof(hints.flags) * 8,
-                sizeof(hints) / sizeof(hints.flags),
-                reinterpret_cast<const unsigned char*>(&hints)
-            );
+                xcb_change_property_checked(
+                    m_connection,
+                    XCB_PROP_MODE_REPLACE,
+                    m_window,
+                    hintsAtomReply->atom,
+                    hintsAtomReply->atom,
+                    sizeof(hints.flags) * 8,
+                    sizeof(hints) / sizeof(hints.flags),
+                    reinterpret_cast<const unsigned char*>(&hints)
+                )
+            ));
+
+            if (propertyError)
+                err() << "xcb_change_property failed, could not set window hints" << std::endl;
         }
 
         // This is a hack to force some windows managers to disable resizing
@@ -307,7 +420,7 @@ m_fullscreen  ((style & Style::Fullscreen) != 0)
     // Do some common initializations
     initialize();
 
-    // Switch to fullscreen.
+    // Switch to fullscreen if necessary
     if (m_fullscreen)
         switchToFullscreen();
 }
@@ -377,11 +490,11 @@ void WindowImplX11::setPointerGrabbed(bool grabbed)
         ));
 
         if (grabReply && grabReply->status != 0)
-            sf::err() << "Grabbing the pointer failed." << std::endl
+            err() << "Grabbing the pointer failed." << std::endl
                       << "  Status: "
                       << static_cast<int>(grabReply->status) << std::endl;
         else if (!grabReply)
-            sf::err() << "Grabbing the pointer failed." << std::endl;
+            err() << "Grabbing the pointer failed." << std::endl;
     }
     else
     {
@@ -685,7 +798,7 @@ void WindowImplX11::requestFocus()
             break;
         }
     }
-    
+
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
     ScopedXcbPtr<xcb_get_window_attributes_reply_t> attributes(xcb_get_window_attributes_reply(
@@ -699,12 +812,12 @@ void WindowImplX11::requestFocus()
 
     if (!attributes)
     {
-        sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
+        err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
     }
 
     bool windowViewable = (attributes->map_state == XCB_MAP_STATE_VIEWABLE);
-    
+
     if (sfmlWindowFocused && windowViewable)
     {
         // Another SFML window of this application has the focus and the current window is viewable:
@@ -751,92 +864,282 @@ bool WindowImplX11::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setVideoMode(const VideoMode& mode)
+{
+    // Skip mode switching if the new mode is equal to the desktop mode
+    if (mode == VideoMode::getDesktopMode())
+        return;
+
+    // Check if the XRandR extension is present
+    static const std::string RANDR = "RANDR";
+    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
+        m_connection,
+        xcb_query_extension(
+            m_connection,
+            RANDR.size(),
+            RANDR.c_str()
+        ),
+        NULL
+    ));
+
+    if (randr_ext->present)
+    {
+        // Get the current configuration
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+            m_connection,
+            xcb_randr_get_screen_info(
+                m_connection,
+                m_screen->root
+            ),
+            &error
+        ));
+
+        if (!error)
+        {
+            // Save the current video mode before we switch to fullscreen
+            m_oldVideoMode = config->sizeID;
+
+            // Get the available screen sizes
+            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
+            if (sizes && (config->nSizes > 0))
+            {
+                // Search a matching size
+                for (int i = 0; i < config->nSizes; ++i)
+                {
+                    if ((sizes[i].width  == static_cast<int>(mode.width)) &&
+                        (sizes[i].height == static_cast<int>(mode.height)))
+                    {
+                        // Switch to fullscreen mode
+                        xcb_randr_set_screen_config(
+                            m_connection,
+                            m_screen->root,
+                            config->timestamp,
+                            config->config_timestamp,
+                            i,
+                            config->rotation,
+                            config->rate
+                        );
+
+                        // Set "this" as the current fullscreen window
+                        fullscreenWindow = this;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Failed to get the screen configuration
+            err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
+        }
+    }
+    else
+    {
+        // XRandR extension is not supported: we cannot use fullscreen mode
+        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::resetVideoMode()
+{
+    if (fullscreenWindow == this)
+    {
+        // Get current screen info
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+            m_connection,
+            xcb_randr_get_screen_info(
+            m_connection,
+            m_screen->root
+            ),
+            &error
+        ));
+
+        if (!error)
+        {
+            // Reset the video mode
+            xcb_randr_set_screen_config(
+                m_connection,
+                m_screen->root,
+                CurrentTime,
+                config->config_timestamp,
+                m_oldVideoMode,
+                config->rotation,
+                config->rate
+            );
+        }
+
+        // Reset the fullscreen window
+        fullscreenWindow = NULL;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen()
 {
-    // Create atom for _NET_WM_STATE.
-    static const std::string netWmState = "_NET_WM_STATE";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> stateReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            netWmState.size(),
-            netWmState.c_str()
-        ),
-        0
-    ));
-
-    // Create atom for _NET_WM_STATE_FULLSCREEN.
-    static const std::string netWmStateFullscreen = "_NET_WM_STATE_FULLSCREEN";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> fullscreenReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            netWmStateFullscreen.size(),
-            netWmStateFullscreen.c_str()
-        ),
-        0
-    ));
-
-    // Set fullscreen property.
-    ScopedXcbPtr<xcb_generic_error_t> fullscreenError(xcb_request_check(
-        m_connection,
-        xcb_change_property_checked(
-            m_connection,
-            XCB_PROP_MODE_REPLACE,
-            m_window,
-            stateReply->atom,
-            XCB_ATOM_ATOM,
-            32,
-            1,
-            &fullscreenReply->atom
-        )
-    ));
-
-    if (fullscreenError)
+    // Try EWMH method if supported or fallback to manual
+    if (ewmhSupported())
     {
-        sf::err() << "Setting fullscreen failed." << std::endl;
-        return;
+        // Create atom for _NET_WM_BYPASS_COMPOSITOR.
+        static const std::string netWmStateBypassCompositor = "_NET_WM_BYPASS_COMPOSITOR";
+        ScopedXcbPtr<xcb_intern_atom_reply_t> compReply(xcb_intern_atom_reply(
+            m_connection,
+            xcb_intern_atom(
+                m_connection,
+                0,
+                netWmStateBypassCompositor.size(),
+                netWmStateBypassCompositor.c_str()
+            ),
+            0
+        ));
+
+        static const Uint32 bypassCompositor = 1;
+
+        // Disable compositor.
+        ScopedXcbPtr<xcb_generic_error_t> compositorError(xcb_request_check(
+            m_connection,
+            xcb_change_property_checked(
+                m_connection,
+                XCB_PROP_MODE_REPLACE,
+                m_window,
+                compReply->atom,
+                XCB_ATOM_CARDINAL,
+                32,
+                1,
+                &bypassCompositor
+            )
+        ));
+
+        // Not being able to bypass the compositor is not a fatal error
+        if (compositorError)
+            err() << "xcb_change_property failed, setting fullscreen not possible" << std::endl;
+
+        // Create atom for _NET_ACTIVE_WINDOW.
+        static const std::string netActiveWindow = "_NET_ACTIVE_WINDOW";
+        ScopedXcbPtr<xcb_intern_atom_reply_t> activeWindowReply(xcb_intern_atom_reply(
+            m_connection,
+            xcb_intern_atom(
+                m_connection,
+                0,
+                netActiveWindow.size(),
+                netActiveWindow.c_str()
+            ),
+            0
+        ));
+
+        if (!activeWindowReply)
+        {
+            err() << "Setting fullscreen failed, could not get \"_NET_ACTIVE_WINDOW\" atom" << std::endl;
+            return;
+        }
+
+        xcb_client_message_event_t event;
+
+        event.response_type = XCB_CLIENT_MESSAGE;
+        event.window = m_window;
+        event.format = 32;
+        event.sequence = 0;
+        event.type = activeWindowReply->atom;
+        event.data.data32[0] = 1;
+        event.data.data32[1] = XCB_CURRENT_TIME;
+
+        ScopedXcbPtr<xcb_generic_error_t> activeWindowError(xcb_request_check(
+            m_connection,
+            xcb_send_event_checked(
+                m_connection,
+                0,
+                XCBDefaultRootWindow(m_connection),
+                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                reinterpret_cast<char*>(&event)
+            )
+        ));
+
+        if (activeWindowError)
+        {
+            err() << "Setting fullscreen failed, could not send \"_NET_ACTIVE_WINDOW\" event" << std::endl;
+            return;
+        }
+
+        // Create atom for _NET_WM_STATE.
+        static const std::string netWmState = "_NET_WM_STATE";
+        ScopedXcbPtr<xcb_intern_atom_reply_t> stateReply(xcb_intern_atom_reply(
+            m_connection,
+            xcb_intern_atom(
+                m_connection,
+                0,
+                netWmState.size(),
+                netWmState.c_str()
+            ),
+            0
+        ));
+
+        if (!stateReply)
+        {
+            err() << "Setting fullscreen failed. Could not get \"_NET_WM_STATE\" atom" << std::endl;
+            return;
+        }
+
+        // Create atom for _NET_WM_STATE_FULLSCREEN.
+        static const std::string netWmStateFullscreen = "_NET_WM_STATE_FULLSCREEN";
+        ScopedXcbPtr<xcb_intern_atom_reply_t> fullscreenReply(xcb_intern_atom_reply(
+            m_connection,
+            xcb_intern_atom(
+                m_connection,
+                0,
+                netWmStateFullscreen.size(),
+                netWmStateFullscreen.c_str()
+            ),
+            0
+        ));
+
+        if (!fullscreenReply)
+        {
+            err() << "Setting fullscreen failed. Could not get \"_NET_WM_STATE_FULLSCREEN\" atom" << std::endl;
+            return;
+        }
+
+        event.response_type = XCB_CLIENT_MESSAGE;
+        event.window = m_window;
+        event.format = 32;
+        event.sequence = 0;
+        event.type = stateReply->atom;
+        event.data.data32[0] = 1; // _NET_WM_STATE_ADD
+        event.data.data32[1] = fullscreenReply->atom;
+        event.data.data32[2] = 0;
+        event.data.data32[3] = 1;
+
+        ScopedXcbPtr<xcb_generic_error_t> wmStateError(xcb_request_check(
+            m_connection,
+            xcb_send_event_checked(
+                m_connection,
+                0,
+                XCBDefaultRootWindow(m_connection),
+                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                reinterpret_cast<char*>(&event)
+            )
+        ));
+
+        if (wmStateError)
+            err() << "Setting fullscreen failed. Could not send \"_NET_WM_STATE\" event" << std::endl;
     }
-
-    // Create atom for _NET_WM_BYPASS_COMPOSITOR.
-    static const std::string netWmStateBypassCompositor = "_NET_WM_BYPASS_COMPOSITOR";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> compReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            netWmStateBypassCompositor.size(),
-            netWmStateBypassCompositor.c_str()
-        ),
-        0
-    ));
-
-    // Disable compositor.
-    ScopedXcbPtr<xcb_generic_error_t> compositorError(xcb_request_check(
-        m_connection,
-        xcb_change_property_checked(
-            m_connection,
-            XCB_PROP_MODE_REPLACE,
-            m_window,
-            stateReply->atom,
-            XCB_ATOM_ATOM,
-            32,
-            1,
-            &compReply->atom
-        )
-    ));
-
-    if (compositorError)
-        sf::err() << "xcb_change_property failed, setting fullscreen not possible." << std::endl;
+    else
+    {
+        // If WM fullscreen setting is not available, we need to do it manually
+        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
+        xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
+        xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
-    // Get the atoms for registering the close event
+    // Get the atom for registering the close event
     static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
     ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
         m_connection,
@@ -849,6 +1152,7 @@ void WindowImplX11::initialize()
         NULL
     ));
 
+    // Get the atom for setting the window protocols we support
     static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
     ScopedXcbPtr<xcb_intern_atom_reply_t> protocolsAtomReply(xcb_intern_atom_reply(
         m_connection,
@@ -861,22 +1165,104 @@ void WindowImplX11::initialize()
         NULL
     ));
 
-    if (protocolsAtomReply && deleteWindowAtomReply)
-    {
-        xcb_icccm_set_wm_protocols(
+    // Get the atom for registering the ping event
+    static const std::string NET_WM_PING = "_NET_WM_PING";
+    sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> wmPingReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
             m_connection,
-            m_window,
-            protocolsAtomReply->atom,
-            1,
-            &deleteWindowAtomReply->atom
-        );
+            0,
+            NET_WM_PING.size(),
+            NET_WM_PING.c_str()
+        ),
+        NULL
+    ));
 
-        m_atomClose = deleteWindowAtomReply->atom;
+    // Get the atom for setting the process ID of the window
+    static const std::string NET_WM_PID = "_NET_WM_PID";
+    sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> wmPidReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            NET_WM_PID.size(),
+            NET_WM_PID.c_str()
+        ),
+        NULL
+    ));
+
+    if (protocolsAtomReply)
+    {
+        m_atomWmProtocols = protocolsAtomReply->atom;
+
+        xcb_atom_t atoms[2];
+        Uint32 atomCount = 0;
+
+        if (deleteWindowAtomReply && ewmhSupported() && wmPingReply && wmPidReply)
+        {
+            atoms[0] = deleteWindowAtomReply->atom;
+            atomCount = 1;
+
+            m_atomClose = deleteWindowAtomReply->atom;
+
+            Uint32 pid = getpid();
+
+            // Set PID.
+            ScopedXcbPtr<xcb_generic_error_t> pidError(xcb_request_check(
+                m_connection,
+                xcb_change_property_checked(
+                    m_connection,
+                    XCB_PROP_MODE_REPLACE,
+                    m_window,
+                    wmPidReply->atom,
+                    XCB_ATOM_CARDINAL,
+                    32,
+                    1,
+                    &pid
+                )
+            ));
+
+            if (!pidError)
+            {
+                atoms[1] = wmPingReply->atom;
+                atomCount = 2;
+
+                m_atomPing = wmPingReply->atom;
+            }
+        }
+        else if (deleteWindowAtomReply)
+        {
+            atoms[0] = deleteWindowAtomReply->atom;
+            atomCount = 1;
+
+            m_atomClose = deleteWindowAtomReply->atom;
+        }
+
+        if (atomCount)
+        {
+            ScopedXcbPtr<xcb_generic_error_t> setProtocolsError(xcb_request_check(
+                m_connection,
+                xcb_icccm_set_wm_protocols(
+                    m_connection,
+                    m_window,
+                    protocolsAtomReply->atom,
+                    atomCount,
+                    atoms
+                )
+            ));
+
+            if (setProtocolsError)
+                err() << "Failed to set window protocols" << std::endl;
+        }
+        else
+        {
+            err() << "Didn't set any window protocols" << std::endl;
+        }
     }
     else
     {
         // Should not happen, but better safe than sorry.
-        std::cerr << "Failed to request WM_PROTOCOLS/WM_DELETE_WINDOW_NAME atoms." << std::endl;
+        err() << "Failed to request WM_PROTOCOLS atoms." << std::endl;
     }
 
     // Create the input context
@@ -888,7 +1274,7 @@ void WindowImplX11::initialize()
             m_inputMethod,
             XNClientWindow,
             m_window,
-            XNFocusWindow, 
+            XNFocusWindow,
             m_window,
             XNInputStyle,
             XIMPreeditNothing | XIMStatusNothing,
@@ -947,12 +1333,7 @@ void WindowImplX11::createHiddenCursor()
 void WindowImplX11::cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (fullscreenWindow == this)
-    {
-
-        // Reset the fullscreen window
-        fullscreenWindow = NULL;
-    }
+    resetVideoMode();
 
     // Unhide the mouse cursor (in case it was hidden)
     setMouseCursorVisible(true);
@@ -1040,11 +1421,36 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         case XCB_CLIENT_MESSAGE:
         {
             xcb_client_message_event_t* e = reinterpret_cast<xcb_client_message_event_t*>(windowEvent);
-            if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
+
+            // Handle window manager protocol messages we support
+            if (e->type == m_atomWmProtocols)
             {
-                Event event;
-                event.type = Event::Closed;
-                pushEvent(event);
+                if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
+                {
+                    // Handle the WM_DELETE_WINDOW message
+                    Event event;
+                    event.type = Event::Closed;
+                    pushEvent(event);
+                }
+                else if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomPing))
+                {
+                    // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
+                    e->window = XCBDefaultRootWindow(m_connection);
+
+                    ScopedXcbPtr<xcb_generic_error_t> pongError(xcb_request_check(
+                        m_connection,
+                        xcb_send_event_checked(
+                            m_connection,
+                            0,
+                            XCBDefaultRootWindow(m_connection),
+                            XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                            reinterpret_cast<char*>(e)
+                        )
+                    ));
+
+                    if (pongError)
+                        err() << "Could not send pong event back to WM" << std::endl;
+                }
             }
             break;
         }

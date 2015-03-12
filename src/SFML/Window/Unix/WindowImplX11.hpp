@@ -180,6 +180,20 @@ protected:
 private:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set fullscreen video mode
+    ///
+    /// \param Mode video mode to switch to
+    ///
+    ////////////////////////////////////////////////////////////
+    void setVideoMode(const VideoMode& mode);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset to desktop video mode
+    ///
+    ////////////////////////////////////////////////////////////
+    void resetVideoMode();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Switch to fullscreen mode
     ///
     ////////////////////////////////////////////////////////////
@@ -234,20 +248,22 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window                m_window;              ///< X11 structure defining our window
-    ::Display*              m_display;             ///< Pointer to the display
-    xcb_connection_t*       m_connection;          ///< Pointer to the xcb connection
-    xcb_screen_t*           m_screen;              ///< Screen identifier
-    XIM                     m_inputMethod;         ///< Input method linked to the X display
-    XIC                     m_inputContext;        ///< Input context used to get unicode input in our window
-    bool                    m_isExternal;          ///< Tell whether the window has been created externally or by SFML
-    Atom                    m_atomClose;           ///< Atom used to identify the close event
-    int                     m_oldVideoMode;        ///< Video mode in use before we switch to fullscreen
-    Cursor                  m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool                    m_keyRepeat;           ///< Is the KeyRepeat feature enabled?
-    Vector2i                m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
-    bool                    m_useSizeHints;        ///< Is the size of the window fixed with size hints?
-    bool                    m_fullscreen;          ///< Is window in fullscreen?
+    ::Window          m_window;          ///< X11 structure defining our window
+    ::Display*        m_display;         ///< Pointer to the display
+    xcb_connection_t* m_connection;      ///< Pointer to the xcb connection
+    xcb_screen_t*     m_screen;          ///< Screen identifier
+    XIM               m_inputMethod;     ///< Input method linked to the X display
+    XIC               m_inputContext;    ///< Input context used to get unicode input in our window
+    bool              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
+    Atom              m_atomWmProtocols; ///< Atom used to identify WM protocol messages
+    Atom              m_atomClose;       ///< Atom used to identify the close event
+    Atom              m_atomPing;        ///< Atom used to identify the ping event
+    int               m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
+    Cursor            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    bool              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?
+    Vector2i          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    bool              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
+    bool              m_fullscreen;      ///< Is window in fullscreen?
 };
 
 } // namespace priv
