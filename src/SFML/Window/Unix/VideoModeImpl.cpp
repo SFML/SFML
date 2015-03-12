@@ -61,7 +61,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             xcb_generic_error_t* errors;
             xcb_randr_get_screen_info_reply_t* config = xcb_randr_get_screen_info_reply(
                         connection, xcb_randr_get_screen_info(connection, screen->root), &errors);
-            if (! errors)
+            if (!errors)
             {
                 // Get the available screen sizes
                 xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config);
