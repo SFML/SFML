@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/InputImpl.hpp>
-#include <SFML/Window/Window.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <X11/Xlib-xcb.h>
 #include <X11/keysym.h>
 #include <cstdlib>
@@ -157,16 +158,13 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     if (keycode != 0)
     {
         // Get the whole keyboard state
-        xcb_query_keymap_reply_t* keymap = xcb_query_keymap_reply(connection, xcb_query_keymap(connection), NULL);
+        ScopedXcbPtr<xcb_query_keymap_reply_t> keymap(xcb_query_keymap_reply(connection, xcb_query_keymap(connection), NULL));
 
         // Close the connection with the X server
         CloseDisplay(display);
 
         // Check our keycode
-        bool isPressed = (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
-
-        free(keymap);
-        return isPressed;
+        return (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
     }
     else
     {
@@ -189,22 +187,20 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
     // Get pointer mask
-    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
-    uint16_t mask = pointer->mask;
-    free(pointer);
+    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL));
+    uint16_t buttons = pointer->mask;
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 
     switch (button)
     {
-        case Mouse::Left:     return mask & XCB_BUTTON_MASK_1;
-        case Mouse::Right:    return mask & XCB_BUTTON_MASK_3;
-        case Mouse::Middle:   return mask & XCB_BUTTON_MASK_2;
+        case Mouse::Left:     return buttons & XCB_BUTTON_MASK_1;
+        case Mouse::Right:    return buttons & XCB_BUTTON_MASK_3;
+        case Mouse::Middle:   return buttons & XCB_BUTTON_MASK_2;
         case Mouse::XButton1: return false; // not supported by X
         case Mouse::XButton2: return false; // not supported by X
         default:              return false;
@@ -216,19 +212,14 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 Vector2i InputImpl::getMousePosition()
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
-    xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XDefaultRootWindow(display)), NULL);
+    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL));
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 
-    // Prepare result.
-    Vector2i result(pointer->root_x, pointer->root_y);
-    free(pointer);
-
-    return result;
+    return Vector2i(pointer->root_x, pointer->root_y);
 }
 
 
@@ -241,16 +232,12 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
         // Open a connection with the X server
         xcb_connection_t* connection = OpenConnection();
 
-        xcb_query_pointer_reply_t* pointer = xcb_query_pointer_reply(connection, xcb_query_pointer(connection, handle), NULL);
+        ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, handle), NULL));
 
         // Close the connection with the X server
         CloseConnection(connection);
 
-        // Prepare result.
-        Vector2i result(pointer->win_x, pointer->win_y);
-        free(pointer);
-
-        return result;
+        return Vector2i(pointer->win_x, pointer->win_y);
     }
     else
     {
@@ -263,14 +250,13 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    xcb_connection_t* connection = OpenConnection();
 
-    xcb_warp_pointer(connection, None, XDefaultRootWindow(display), 0, 0, 0, 0, position.x, position.y);
+    xcb_warp_pointer(connection, None, XCBDefaultRootWindow(connection), 0, 0, 0, 0, position.x, position.y);
     xcb_flush(connection);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    CloseConnection(connection);
 }
 
 

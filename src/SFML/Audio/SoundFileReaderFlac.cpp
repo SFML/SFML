@@ -298,7 +298,12 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
     while (m_clientData.remaining > 0)
     {
         // Everything happens in the "write" callback
+        // This will break on any fatal error (does not include EOF)
         if (!FLAC__stream_decoder_process_single(m_decoder))
+            break;
+
+        // Break on EOF
+        if (FLAC__stream_decoder_get_state(m_decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
             break;
     }
 
