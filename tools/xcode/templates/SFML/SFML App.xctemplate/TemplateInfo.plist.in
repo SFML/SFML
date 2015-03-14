@@ -228,14 +228,13 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # copy extra dependencies
         if [ "$1" = "audio" ]
         then
-            # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" frameworks too
-            for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile"
+            # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL" frameworks too
+            for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL"
             do
                 copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/$f.framework" "$dest/$f.framework"
             done
         elif [ "$1" = "graphics" ]
         then
-            # copy freetype framework too
             copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/freetype.framework" "$dest/freetype.framework"
         fi
     fi
