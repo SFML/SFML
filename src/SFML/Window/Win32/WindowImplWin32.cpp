@@ -123,7 +123,9 @@ namespace priv
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
+m_cursorVisible   (1),
 m_cursor          (NULL),
+m_hiddenCursor    (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
@@ -147,7 +149,9 @@ m_mouseInside     (false)
 WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
 m_handle          (NULL),
 m_callback        (0),
+m_cursorVisible   (1),
 m_cursor          (NULL),
+m_hiddenCursor    (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
@@ -351,14 +355,83 @@ void WindowImplWin32::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setMouseCursorVisible(bool visible)
 {
+    m_cursorVisible = visible;
+	
     if (visible)
-        m_cursor = LoadCursorW(NULL, IDC_ARROW);
+        SetCursor(m_cursor);
     else
-        m_cursor = NULL;
-
-    SetCursor(m_cursor);
+        SetCursor(m_hiddenCursor);
 }
 
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursor(Cursor cursorId)
+{
+    switch(cursorId)
+    {
+        case CursorArrow:
+            m_cursor = LoadCursorW(NULL, IDC_ARROW);
+            break;
+        
+        case CursorText:
+            m_cursor = LoadCursorW(NULL, IDC_IBEAM);
+            break;
+
+        case CursorHand:
+            m_cursor = LoadCursorW(NULL, IDC_HAND);
+            break;
+        
+        case CursorSizeALL:
+            m_cursor = LoadCursorW(NULL, IDC_SIZEALL);
+            break;
+
+        case CursorSizeHorizontal:
+            m_cursor = LoadCursorW(NULL, IDC_SIZEWE);
+            break;
+        
+        case CursorSizeVertical:
+            m_cursor = LoadCursorW(NULL, IDC_SIZENS);
+            break;
+        
+        case CursorCross:
+            m_cursor = LoadCursorW(NULL, IDC_CROSS);
+            break;
+        
+        case CursorNo:
+            m_cursor = LoadCursorW(NULL, IDC_NO);
+            break;
+        
+        case CursorHelp:
+            m_cursor = LoadCursorW(NULL, IDC_HELP);
+            break;
+        
+        case CursorWait:
+            m_cursor = LoadCursorW(NULL, IDC_WAIT);
+            break;
+	}		
+    
+    if (m_cursorVisible)
+	    SetCursor(m_cursor);
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursor(unsigned int width, unsigned int height, const Uint8* pixels)
+{
+	// Windows wants BGRA pixels: swap red and blue channels
+    Uint8 cursorPixels[width * height * 4];
+    for (std::size_t i = 0; i < width * height; ++i)
+    {
+        cursorPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        cursorPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        cursorPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        cursorPixels[i * 4 + 3] = pixels[i * 4 + 3];
+    }
+    
+    m_cursor = CreateIcon(GetModuleHandleW(NULL), width, height, 1, 32, NULL, &cursorPixels[0]);;
+    
+    if (m_cursorVisible)
+		SetCursor(m_cursor);
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
@@ -504,7 +577,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // The mouse has moved, if the cursor is in our window we must refresh the cursor
             if (LOWORD(lParam) == HTCLIENT)
-                SetCursor(m_cursor);
+                if (m_cursorVisible)
+                    SetCursor(m_cursor);
+                else
+                    SetCursor(m_hiddenCursor);
 
             break;
         }

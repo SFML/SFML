@@ -49,9 +49,9 @@ IF(NOT WIN32)
     # Find XLIB_XCB if requested
     IF(FIND_XLIB_XCB)
         FIND_PATH(XLIB_XCB_INCLUDE_DIR X11/Xlib-xcb.h)
-        FIND_LIBRARY(XLIB_XCB_LIBRARY NAMES X11-xcb libX11-xcb)
+        FIND_LIBRARY(XLIB_XCB_LIBRARY NAMES X11-xcb libX11-xcb libxcb-cursor)
 
-        SET(XLIB_XCB_LIBRARIES ${XLIB_XCB_LIBRARY})
+        SET(XLIB_XCB_LIBRARIES ${XLIB_XCB_LIBRARY} -lxcb-cursor)
         SET(XLIB_XCB_INCLUDE_DIRS ${XLIB_XCB_INCLUDE_DIR})
 
         find_package_handle_standard_args(XLIB_XCB DEFAULT_MSG
