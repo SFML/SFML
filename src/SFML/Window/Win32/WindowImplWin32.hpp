@@ -154,6 +154,26 @@ public:
     virtual void setMouseCursorGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to a native system cursor
+    ///
+    /// \param cursor Native system cursor type to display
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(Window::Cursor cursor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to the provided image
+    ///
+    /// \param pixels   Array of pixels of the image
+    /// \param width    Width of the image
+    /// \param height   Height of the image
+    /// \param hotspotX X location of the hotspot
+    /// \param hotspotY Y location of the hotspot
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -266,7 +286,8 @@ private:
     ////////////////////////////////////////////////////////////
     HWND     m_handle;           ///< Win32 handle of the window
     LONG_PTR m_callback;         ///< Stores the original event callback function of the control
-    HCURSOR  m_cursor;           ///< The system cursor to display into the window
+    HCURSOR  m_cursor;           ///< The system cursor currently displayed into the window, NULL if hidden
+    HCURSOR  m_loadedCursor;     ///< The system cursor selected to be displayed into the window
     HICON    m_icon;             ///< Custom icon assigned to the window
     bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
     Vector2u m_lastSize;         ///< The last handled size of the window

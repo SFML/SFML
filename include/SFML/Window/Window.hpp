@@ -59,6 +59,29 @@ class SFML_WINDOW_API Window : GlResource, NonCopyable
 public:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enumeration of the native system cursor types
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Cursor
+    {
+        Arrow,                  ///< Arrow cursor (default)
+        ArrowWait,              ///< Busy arrow cursor
+        Wait,                   ///< Busy cursor
+        Text,                   ///< I-beam, cursor when hovering over a field allowing text entry
+        Hand,                   ///< Pointing hand cursor
+        SizeHorizontal,         ///< Horizontal double arrow cursor
+        SizeVertical,           ///< Vertical double arrow cursor
+        SizeTopLeftBottomRight, ///< Double arrow cursor going from top-left to bottom-right
+        SizeBottomLeftTopRight, ///< Double arrow cursor going from bottom-left to top-right
+        SizeAll,                ///< Combination of CursorSizeHorizontal and CursorSizeVertical
+        Cross,                  ///< Crosshair cursor
+        Help,                   ///< Help cursor
+        NotAllowed              ///< Action not allowed cursor
+    };
+
+public:
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// This constructor doesn't actually create the window,
@@ -360,6 +383,43 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorGrabbed(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to a native system cursor
+    ///
+    /// Upon window creation, the arrow cursor is used by default.
+    ///
+    /// \param cursor Native system cursor type to display
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursor(Cursor cursor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to the provided image
+    ///
+    /// \a pixels must be an array of \a width x \a height pixels
+    /// in 32-bit RGBA format. If not, this will cause undefined behavior.
+    ///
+    /// If \a pixels is null or either \a width or \a height are 0,
+    /// the current cursor is left unchanged.
+    ///
+    /// In addition to specifying the pixel data, you can also
+    /// specify the location of the hotspot of the cursor. The
+    /// hotspot is the pixel coordinate within the cursor image
+    /// which will be located exactly where the mouse pointer
+    /// position is. Any mouse actions that are performed will
+    /// return the window/screen location of the hotspot.
+    ///
+    /// Upon window creation, the arrow cursor is used by default.
+    ///
+    /// \param pixels   Array of pixels of the image
+    /// \param width    Width of the image
+    /// \param height   Height of the image
+    /// \param hotspotX X location of the hotspot
+    /// \param hotspotY Y location of the hotspot
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat

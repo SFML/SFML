@@ -40,6 +40,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utf.hpp>
 #include <vector>
+#include <cstring>
 
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
@@ -132,6 +133,7 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
 m_cursor          (NULL),
+m_loadedCursor    (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
@@ -164,6 +166,7 @@ WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 sty
 m_handle          (NULL),
 m_callback        (0),
 m_cursor          (NULL),
+m_loadedCursor    (NULL),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
@@ -238,6 +241,10 @@ m_cursorGrabbed   (m_fullscreen)
 ////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
+    // Destroy the cursor
+    if (m_loadedCursor)
+        DestroyCursor(m_loadedCursor);
+
     // Destroy the custom icon, if any
     if (m_icon)
         DestroyIcon(m_icon);
@@ -389,8 +396,12 @@ void WindowImplWin32::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setMouseCursorVisible(bool visible)
 {
+    // Set the default mouse cursor if none has been loaded yet
+    if (!m_loadedCursor)
+        setMouseCursor(Window::Arrow);
+
     if (visible)
-        m_cursor = LoadCursorW(NULL, IDC_ARROW);
+        m_cursor = m_loadedCursor;
     else
         m_cursor = NULL;
 
@@ -403,6 +414,139 @@ void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
 {
     m_cursorGrabbed = grabbed;
     grabCursor(m_cursorGrabbed);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursor(Window::Cursor cursor)
+{
+    HCURSOR newCursor = NULL;
+
+    switch (cursor)
+    {
+        case Window::Arrow:                  newCursor = LoadCursor(NULL, IDC_ARROW);       break;
+        case Window::ArrowWait:              newCursor = LoadCursor(NULL, IDC_APPSTARTING); break;
+        case Window::Wait:                   newCursor = LoadCursor(NULL, IDC_WAIT);        break;
+        case Window::Text:                   newCursor = LoadCursor(NULL, IDC_IBEAM);       break;
+        case Window::Hand:                   newCursor = LoadCursor(NULL, IDC_HAND);        break;
+        case Window::SizeHorizontal:         newCursor = LoadCursor(NULL, IDC_SIZEWE);      break;
+        case Window::SizeVertical:           newCursor = LoadCursor(NULL, IDC_SIZENS);      break;
+        case Window::SizeTopLeftBottomRight: newCursor = LoadCursor(NULL, IDC_SIZENWSE);    break;
+        case Window::SizeBottomLeftTopRight: newCursor = LoadCursor(NULL, IDC_SIZENESW);    break;
+        case Window::SizeAll:                newCursor = LoadCursor(NULL, IDC_SIZEALL);     break;
+        case Window::Cross:                  newCursor = LoadCursor(NULL, IDC_CROSS);       break;
+        case Window::Help:                   newCursor = LoadCursor(NULL, IDC_HELP);        break;
+        case Window::NotAllowed:             newCursor = LoadCursor(NULL, IDC_NO);          break;
+        default: return;
+    }
+
+    // Create a copy of the shared system cursor that we can destroy later
+    newCursor = CopyCursor(newCursor);
+
+    if (!newCursor)
+    {
+        err() << "Could not create copy of a system cursor" << std::endl;
+        return;
+    }
+
+    HCURSOR oldCursor = m_loadedCursor;
+    m_loadedCursor = newCursor;
+
+    if (m_cursor)
+    {
+        m_cursor = m_loadedCursor;
+        SetCursor(m_cursor);
+    }
+
+    if (oldCursor)
+        DestroyCursor(oldCursor);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
+{
+    // Create the bitmap that will hold our color data
+    BITMAPV5HEADER bitmapHeader;
+    std::memset(&bitmapHeader, 0, sizeof(BITMAPV5HEADER));
+
+    bitmapHeader.bV5Size        = sizeof(BITMAPV5HEADER);
+    bitmapHeader.bV5Width       = width;
+    bitmapHeader.bV5Height      = -height; // Negative indicates origin is in upper-left corner
+    bitmapHeader.bV5Planes      = 1;
+    bitmapHeader.bV5BitCount    = 32;
+    bitmapHeader.bV5Compression = BI_BITFIELDS;
+    bitmapHeader.bV5RedMask     = 0x00ff0000;
+    bitmapHeader.bV5GreenMask   = 0x0000ff00;
+    bitmapHeader.bV5BlueMask    = 0x000000ff;
+    bitmapHeader.bV5AlphaMask   = 0xff000000;
+
+    Uint8* bitmapData = NULL;
+
+    HDC screenDC = GetDC(NULL);
+    HBITMAP color = CreateDIBSection(
+        screenDC,
+        reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
+        DIB_RGB_COLORS,
+        reinterpret_cast<void**>(&bitmapData),
+        NULL,
+        0
+    );
+    ReleaseDC(NULL, screenDC);
+
+    if (!color)
+    {
+        err() << "Failed to create cursor color bitmap" << std::endl;
+        return;
+    }
+
+    // Fill our bitmap with the cursor color data
+    std::memcpy(bitmapData, pixels, width * height * 4);
+
+    // Create a dummy mask bitmap (it won't be used)
+    HBITMAP mask = CreateBitmap(width, height, 1, 1, NULL);
+
+    if (!mask)
+    {
+        DeleteObject(color);
+        err() << "Failed to create cursor mask bitmap" << std::endl;
+        return;
+    }
+
+    // Create the structure that describes our cursor
+    ICONINFO cursorInfo;
+    std::memset(&cursorInfo, 0, sizeof(ICONINFO));
+
+    cursorInfo.fIcon    = FALSE; // This is a cursor and not an icon
+    cursorInfo.xHotspot = hotspotX;
+    cursorInfo.yHotspot = hotspotY;
+    cursorInfo.hbmColor = color;
+    cursorInfo.hbmMask  = mask;
+
+    // Create the cursor
+    HCURSOR newCursor = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
+
+    // The data has been copied into the cursor, so get rid of these
+    DeleteObject(color);
+    DeleteObject(mask);
+
+    if (!newCursor)
+    {
+        err() << "Failed to create cursor from bitmaps" << std::endl;
+        return;
+    }
+
+    HCURSOR oldCursor = m_loadedCursor;
+    m_loadedCursor = newCursor;
+
+    if (m_cursor)
+    {
+        m_cursor = m_loadedCursor;
+        SetCursor(m_cursor);
+    }
+
+    if (oldCursor)
+        DestroyCursor(oldCursor);
 }
 
 

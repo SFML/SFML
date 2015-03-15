@@ -901,6 +901,250 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursor(Window::Cursor cursor)
+{
+    xcb_cursor_t newCursor = 0;
+
+    xcb_cursor_context_t* cursorContext = NULL;
+
+    if (xcb_cursor_context_new(m_connection, m_screen, &cursorContext) < 0)
+    {
+        err() << "Could not create XCB cursor context" << std::endl;
+        return;
+    }
+
+    switch(cursor)
+    {
+        case Window::Arrow:                  newCursor = xcb_cursor_load_cursor(cursorContext, "left_ptr");          break;
+        case Window::ArrowWait:              newCursor = xcb_cursor_load_cursor(cursorContext, "left_ptr");          break;
+        case Window::Wait:                   newCursor = xcb_cursor_load_cursor(cursorContext, "watch");             break;
+        case Window::Text:                   newCursor = xcb_cursor_load_cursor(cursorContext, "xterm");             break;
+        case Window::Hand:                   newCursor = xcb_cursor_load_cursor(cursorContext, "hand2");             break;
+        case Window::SizeHorizontal:         newCursor = xcb_cursor_load_cursor(cursorContext, "sb_h_double_arrow"); break;
+        case Window::SizeVertical:           newCursor = xcb_cursor_load_cursor(cursorContext, "sb_v_double_arrow"); break;
+        case Window::SizeTopLeftBottomRight: newCursor = xcb_cursor_load_cursor(cursorContext, "fleur");             break;
+        case Window::SizeBottomLeftTopRight: newCursor = xcb_cursor_load_cursor(cursorContext, "fleur");             break;
+        case Window::SizeAll:                newCursor = xcb_cursor_load_cursor(cursorContext, "fleur");             break;
+        case Window::Cross:                  newCursor = xcb_cursor_load_cursor(cursorContext, "crosshair");         break;
+        case Window::Help:                   newCursor = xcb_cursor_load_cursor(cursorContext, "question_arrow");    break;
+        case Window::NotAllowed:             newCursor = xcb_cursor_load_cursor(cursorContext, "left_ptr");          break;
+        default: break;
+    }
+
+    xcb_cursor_context_free(cursorContext);
+
+    if (m_loadedCursor)
+        xcb_free_cursor(m_connection, m_loadedCursor);
+
+    if (!newCursor)
+        return;
+
+    m_loadedCursor = newCursor;
+
+    if (!m_cursor)
+        return;
+
+    ScopedXcbPtr<xcb_generic_error_t> changeAttributesError(xcb_request_check(
+        m_connection,
+        xcb_change_window_attributes(
+            m_connection,
+            m_window,
+            XCB_CW_CURSOR,
+            &m_loadedCursor
+        )
+    ));
+
+    if (changeAttributesError)
+    {
+        err() << "Failed to change window attributes" << std::endl;
+        return;
+    }
+
+    m_cursor = m_loadedCursor;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
+{
+    // Get the picture format from XCB
+    ScopedXcbPtr<xcb_render_query_pict_formats_reply_t> pictFormatsreply(xcb_render_query_pict_formats_reply(
+        m_connection,
+        xcb_render_query_pict_formats(
+            m_connection
+        ),
+        NULL
+    ));
+
+    xcb_render_pictformat_t pictureFormat = xcb_render_util_find_standard_format(pictFormatsreply.get(), XCB_PICT_STANDARD_ARGB_32)->id;
+
+    if (!pictureFormat)
+    {
+        err() << "Failed to get picture format from XCB" << std::endl;
+        return;
+    }
+
+    // X11 wants BGRA pixels: swap red and blue channels
+    Uint8 cursorPixels[width * height * 4];
+    for (std::size_t i = 0; i < width * height; ++i)
+    {
+        cursorPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        cursorPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        cursorPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        cursorPixels[i * 4 + 3] = pixels[i * 4 + 3];
+    }
+
+    xcb_pixmap_t cursorPixmap = xcb_generate_id(m_connection);
+    ScopedXcbPtr<xcb_generic_error_t> pixmapError(xcb_request_check(
+        m_connection,
+        xcb_create_pixmap(
+            m_connection,
+            32,
+            cursorPixmap,
+            m_window,
+            width,
+            height
+        )
+    ));
+
+    if (pixmapError)
+    {
+        err() << "Failed to create XCB cursor pixmap" << std::endl;
+        return;
+    }
+
+    xcb_gcontext_t cursorGC = xcb_generate_id(m_connection);
+    ScopedXcbPtr<xcb_generic_error_t> gcError(xcb_request_check(
+        m_connection,
+        xcb_create_gc(
+            m_connection,
+            cursorGC,
+            cursorPixmap,
+            0,
+            NULL
+        )
+    ));
+
+    if (gcError)
+    {
+        err() << "Failed to create XCB graphics context" << std::endl;
+        xcb_free_pixmap(m_connection, cursorPixmap);
+        return;
+    }
+
+    xcb_image_t* cursorImage = xcb_image_create_native(
+        m_connection,
+        width,
+        height,
+        XCB_IMAGE_FORMAT_Z_PIXMAP,
+        32,
+        NULL,
+        width * height * 4,
+        cursorPixels
+    );
+
+    if (!cursorImage)
+    {
+        err() << "Failed to create XCB cursor image" << std::endl;
+        xcb_free_gc(m_connection, cursorGC);
+        xcb_free_pixmap(m_connection, cursorPixmap);
+        return;
+    }
+
+    ScopedXcbPtr<xcb_generic_error_t> imagePutError(xcb_request_check(
+        m_connection,
+        xcb_image_put(
+            m_connection,
+            cursorPixmap,
+            cursorGC,
+            cursorImage,
+            0,
+            0,
+            0
+        )
+    ));
+
+    if (imagePutError)
+    {
+        err() << "Failed to put XCB image on the X server" << std::endl;
+        xcb_image_destroy(cursorImage);
+        xcb_free_gc(m_connection, cursorGC);
+        xcb_free_pixmap(m_connection, cursorPixmap);
+        return;
+    }
+
+    xcb_render_picture_t cursorPicture = xcb_generate_id(m_connection);
+    ScopedXcbPtr<xcb_generic_error_t> createPictureError(xcb_request_check(
+        m_connection,
+        xcb_render_create_picture(
+            m_connection,
+            cursorPicture,
+            cursorPixmap,
+            pictureFormat,
+            0,
+            NULL
+        )
+    ));
+
+    if (createPictureError)
+    {
+        err() << "Failed to create XCB cursor picture" << std::endl;
+        xcb_image_destroy(cursorImage);
+        xcb_free_gc(m_connection, cursorGC);
+        xcb_free_pixmap(m_connection, cursorPixmap);
+        return;
+    }
+
+    xcb_cursor_t newCursor = xcb_generate_id(m_connection);
+    ScopedXcbPtr<xcb_generic_error_t> createCursorError(xcb_request_check(
+        m_connection,
+        xcb_render_create_cursor(
+            m_connection,
+            newCursor,
+            cursorPicture,
+            hotspotX,
+            hotspotY
+        )
+    ));
+
+    xcb_render_free_picture(m_connection, cursorPicture);
+    xcb_image_destroy(cursorImage);
+    xcb_free_gc(m_connection, cursorGC);
+    xcb_free_pixmap(m_connection, cursorPixmap);
+
+    if (createCursorError)
+    {
+        err() << "Failed to create XCB cursor" << std::endl;
+        return;
+    }
+
+    xcb_free_cursor(m_connection, m_loadedCursor);
+    m_loadedCursor = newCursor;
+
+    if (!m_cursor)
+        return;
+
+    ScopedXcbPtr<xcb_generic_error_t> changeAttributesError(xcb_request_check(
+        m_connection,
+        xcb_change_window_attributes(
+            m_connection,
+            m_window,
+            XCB_CW_CURSOR,
+            &m_loadedCursor
+        )
+    ));
+
+    if (changeAttributesError)
+    {
+        err() << "Failed to change window attributes" << std::endl;
+        return;
+    }
+
+    m_cursor = m_loadedCursor;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 {
     // This has no effect in fullscreen mode
@@ -1305,9 +1549,6 @@ void WindowImplX11::initialize()
 
     // Raise the window and grab input focus
     grabFocus();
-
-    // Create the hidden cursor
-    createHiddenCursor();
 
     // Flush the commands queue
     XFlush(m_display);
