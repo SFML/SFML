@@ -95,7 +95,7 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     MemoryInputStream stream;
     stream.open(data, sizeInBytes);
 
-    // Test the filename in all the registered factories
+    // Test the stream for all the registered factories
     for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
     {
         stream.seek(0);
@@ -114,9 +114,10 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     // Register the built-in readers/writers on first call
     ensureDefaultReadersWritersRegistered();
 
-    // Test the filename in all the registered factories
+    // Test the stream for all the registered factories
     for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
     {
+        stream.seek(0);
         if (it->check(stream))
             return it->create();
     }

@@ -232,8 +232,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             // Skip potential extra information (should not exist for PCM)
             if (subChunkSize > 16)
             {
-                char buffer[1024];
-                if (m_stream->read(buffer, subChunkSize - 16) != subChunkSize - 16)
+                if (m_stream->seek(m_stream->tell() + subChunkSize - 16) == -1)
                     return false;
             }
         }
@@ -252,8 +251,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
         else
         {
             // unknown chunk, skip it
-            char buffer[1024];
-            if (m_stream->read(buffer, subChunkSize) != subChunkSize)
+            if (m_stream->seek(m_stream->tell() + subChunkSize) == -1)
                 return false;
         }
     }
