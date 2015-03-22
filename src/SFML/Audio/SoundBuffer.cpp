@@ -65,8 +65,14 @@ m_sounds  () // don't copy the attached sounds
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
-    // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+    // To prevent the iterator from becoming invalid, move the entire buffer to another
+    // container. Otherwise calling resetBuffer would result in detachSound being
+    // called which removes the sound from the internal list.
+    SoundList sounds;
+    sounds.swap(m_sounds);
+    
+    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
         (*it)->resetBuffer();
 
     // Destroy the buffer
