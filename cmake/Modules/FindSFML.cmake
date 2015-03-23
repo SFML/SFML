@@ -240,7 +240,8 @@ if(SFML_STATIC_LIBRARIES)
 
     # macro that searches for a 3rd-party library
     macro(find_sfml_dependency output friendlyname)
-        find_library(${output} NAMES ${ARGN} PATHS ${FIND_SFML_PATHS} PATH_SUFFIXES lib)
+        # No lookup in environment variables (PATH on Windows), as they may contain wrong library versions
+        find_library(${output} NAMES ${ARGN} PATHS ${FIND_SFML_PATHS} PATH_SUFFIXES lib NO_SYSTEM_ENVIRONMENT_PATH)
         if(${${output}} STREQUAL "${output}-NOTFOUND")
             unset(output)
             set(FIND_SFML_DEPENDENCIES_NOTFOUND "${FIND_SFML_DEPENDENCIES_NOTFOUND} ${friendlyname}")
