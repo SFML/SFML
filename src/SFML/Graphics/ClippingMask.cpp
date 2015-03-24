@@ -22,42 +22,53 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICS_HPP
-#define SFML_GRAPHICS_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Window.hpp>
-#include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/ClippingMask.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Glyph.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/ConvexShape.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Transform.hpp>
-#include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics/View.hpp>
 
 
-#endif // SFML_GRAPHICS_HPP
+namespace sf
+{
+////////////////////////////////////////////////////////////
+ClippingMask::ClippingMask() :
+m_drawables()
+{
+}
+
 
 ////////////////////////////////////////////////////////////
-/// \defgroup graphics Graphics module
-///
-/// 2D graphics module: sprites, text, shapes, ...
-///
+std::size_t ClippingMask::getDrawableCount() const
+{
+    return m_drawables.size();
+}
+
+
 ////////////////////////////////////////////////////////////
+const Drawable*& ClippingMask::operator [](std::size_t index)
+{
+    return m_drawables[index];
+}
+
+
+////////////////////////////////////////////////////////////
+const Drawable* const& ClippingMask::operator [](std::size_t index) const
+{
+    return m_drawables[index];
+}
+
+
+////////////////////////////////////////////////////////////
+void ClippingMask::clear()
+{
+    m_drawables.clear();
+}
+
+
+////////////////////////////////////////////////////////////
+void ClippingMask::append(const Drawable& drawable)
+{
+    m_drawables.push_back(&drawable);
+}
+
+} // namespace sf

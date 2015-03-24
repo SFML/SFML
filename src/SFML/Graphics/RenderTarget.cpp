@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/ClippingMask.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -209,6 +210,26 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
 
     if (activate(true))
     {
+        // Apply the clipping mask if needed (uses stencil buffer)
+        if (states.mask != NULL && states.mask->getDrawableCount())
+        {
+            const ClippingMask& mask = *states.mask;
+
+            // enable stencil buffer and clear it
+            glCheck(glEnable(GL_STENCIL_TEST));
+            glCheck(glStencilFunc(GL_NEVER, 1, 0xFF));
+            glCheck(glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP));
+            glCheck(glStencilMask(0xFF));
+            glCheck(glClear(GL_STENCIL_BUFFER_BIT));
+
+            // draw each drawable in the mask onto the stencil buffer
+            for (std::size_t i = 0; i < mask.getDrawableCount(); ++i)
+                draw(*mask[i]);
+
+            glCheck(glStencilMask(0x00));
+            glCheck(glStencilFunc(GL_EQUAL, 1, 0xFF));
+        }
+
         // First set the persistent OpenGL states if it's the very first call
         if (!m_cache.glStatesSet)
             resetGLStates();
@@ -285,6 +306,10 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
 
         // Update the cache
         m_cache.useVertexCache = useVertexCache;
+
+        // Disable the clipping mask if we used it
+        if (states.mask != NULL && states.mask->getDrawableCount())
+            glCheck(glDisable(GL_STENCIL_TEST));
     }
 }
 

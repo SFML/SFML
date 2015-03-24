@@ -35,6 +35,7 @@
 
 namespace sf
 {
+class ClippingMask;
 class Shader;
 class Texture;
 
@@ -93,16 +94,26 @@ public:
     RenderStates(const Shader* theShader);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a default set of render states with a custom mask
+    ///
+    /// \param theMask Clipping Mask to use
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderStates(const ClippingMask* theMask);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct a set of render states with all its attributes
     ///
     /// \param theBlendMode Blend mode to use
     /// \param theTransform Transform to use
     /// \param theTexture   Texture to use
     /// \param theShader    Shader to use
+    /// \param theMask      Clipping Mask to use
     ///
     ////////////////////////////////////////////////////////////
     RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
-                 const Texture* theTexture, const Shader* theShader);
+                 const Texture* theTexture, const Shader* theShader,
+                 const ClippingMask* theMask = NULL);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -112,10 +123,11 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    BlendMode      blendMode; ///< Blending mode
-    Transform      transform; ///< Transform
-    const Texture* texture;   ///< Texture
-    const Shader*  shader;    ///< Shader
+    BlendMode           blendMode; ///< Blending mode
+    Transform           transform; ///< Transform
+    const Texture*      texture;   ///< Texture
+    const Shader*       shader;    ///< Shader
+    const ClippingMask* mask;      ///< Clipping mask
 };
 
 } // namespace sf
@@ -128,12 +140,13 @@ public:
 /// \class sf::RenderStates
 /// \ingroup graphics
 ///
-/// There are four global states that can be applied to
+/// There are five global states that can be applied to
 /// the drawn objects:
 /// \li the blend mode: how pixels of the object are blended with the background
 /// \li the transform: how the object is positioned/rotated/scaled
 /// \li the texture: what image is mapped to the object
 /// \li the shader: what custom effect is applied to the object
+/// \li the mask: what area of the world the will be visible
 ///
 /// High-level objects such as sprites or text force some of
 /// these states when they are drawn. For example, a sprite

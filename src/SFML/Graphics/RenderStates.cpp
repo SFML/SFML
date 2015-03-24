@@ -32,8 +32,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-// We cannot use the default constructor here, because it accesses BlendAlpha, which is also global (and dynamically
-// initialized). Initialization order of global objects in different translation units is not defined.
+/// We cannot use the default constructor here, because it accesses BlendAlpha, which is also global (and dynamically
+/// initialized). Initialization order of global objects in different translation units is not defined.
+////////////////////////////////////////////////////////////
 const RenderStates RenderStates::Default(BlendMode(
     BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, BlendMode::Add,
     BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add));
@@ -44,7 +45,8 @@ RenderStates::RenderStates() :
 blendMode(BlendAlpha),
 transform(),
 texture  (NULL),
-shader   (NULL)
+shader   (NULL),
+mask     (NULL)
 {
 }
 
@@ -54,7 +56,8 @@ RenderStates::RenderStates(const Transform& theTransform) :
 blendMode(BlendAlpha),
 transform(theTransform),
 texture  (NULL),
-shader   (NULL)
+shader   (NULL),
+mask     (NULL)
 {
 }
 
@@ -64,7 +67,8 @@ RenderStates::RenderStates(const BlendMode& theBlendMode) :
 blendMode(theBlendMode),
 transform(),
 texture  (NULL),
-shader   (NULL)
+shader   (NULL),
+mask     (NULL)
 {
 }
 
@@ -74,7 +78,8 @@ RenderStates::RenderStates(const Texture* theTexture) :
 blendMode(BlendAlpha),
 transform(),
 texture  (theTexture),
-shader   (NULL)
+shader   (NULL),
+mask     (NULL)
 {
 }
 
@@ -84,18 +89,32 @@ RenderStates::RenderStates(const Shader* theShader) :
 blendMode(BlendAlpha),
 transform(),
 texture  (NULL),
-shader   (theShader)
+shader   (theShader),
+mask     (NULL)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+RenderStates::RenderStates(const ClippingMask* theMask) :
+blendMode(BlendAlpha),
+transform(),
+texture  (NULL),
+shader   (NULL),
+mask     (theMask)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
-                           const Texture* theTexture, const Shader* theShader) :
+                           const Texture* theTexture, const Shader* theShader,
+                           const ClippingMask* theMask) :
 blendMode(theBlendMode),
 transform(theTransform),
 texture  (theTexture),
-shader   (theShader)
+shader   (theShader),
+mask     (theMask)
 {
 }
 
