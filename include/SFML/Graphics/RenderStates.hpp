@@ -57,6 +57,7 @@ public:
     /// \li the identity transform
     /// \li a null texture
     /// \li a null shader
+    /// \li a null clipping mask
     ///
     ////////////////////////////////////////////////////////////
     RenderStates();

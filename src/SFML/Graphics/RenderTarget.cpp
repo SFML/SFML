@@ -228,9 +228,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             glCheck(glStencilMask(0xFF));
             glCheck(glClear(GL_STENCIL_BUFFER_BIT));
 
+            RenderStates states(mask.transform);
+
             // draw each drawable in the mask onto the stencil buffer
             for (std::size_t i = 0; i < mask.getDrawableCount(); ++i)
-                draw(*mask[i]);
+                draw(*mask[i], states);
 
             // enable stencil buffer clipping
             glCheck(glStencilMask(0x00));

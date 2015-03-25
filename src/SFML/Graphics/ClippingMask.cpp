@@ -32,6 +32,15 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 ClippingMask::ClippingMask() :
+transform(),
+m_drawables()
+{
+}
+
+
+////////////////////////////////////////////////////////////
+ClippingMask::ClippingMask(const Transform& theTransform) :
+transform(theTransform),
 m_drawables()
 {
 }
