@@ -31,22 +31,14 @@
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <xcb/xcb_atom.h>
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
-#include <xcb/xcb_util.h>
 #include <xcb/randr.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <libgen.h>
-#include <cstring>
-#include <sstream>
+#include <algorithm>
 #include <vector>
 #include <string>
-#include <iterator>
-#include <algorithm>
-#include <iostream>
+#include <cstring>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -72,19 +64,34 @@ namespace
     // Find the name of the current executable
     std::string findExecutableName()
     {
-        struct stat linkStat;
-        if (!lstat("/proc/self/exe", &linkStat)) {
-            std::vector<char> buffer(0, linkStat.st_size + 1);
-            std::size_t length = readlink("/proc/self/exe", &buffer[0], buffer.size());
-            if ((length > 0) && (length < buffer.size()))
-            {
-                // Remove the path to keep the executable name only
-                buffer[length] = '\0';
-                return basename(&buffer[0]);
-            }
+        // We use /proc/self/cmdline to get the command line
+        // the user used to invoke this instance of the application
+        int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
+
+        if (file < 0)
+            return "sfml";
+
+        std::vector<char> buffer(256, 0);
+        std::size_t offset = 0;
+        ssize_t result = 0;
+
+        while ((result = read(file, &buffer[offset], 256)) > 0)
+        {
+            buffer.resize(buffer.size() + result, 0);
+            offset += result;
         }
 
-        //Default fallback name
+        ::close(file);
+
+        if (offset)
+        {
+            buffer[offset] = 0;
+
+            // Remove the path to keep the executable name only
+            return basename(&buffer[0]);
+        }
+
+        // Default fallback name
         return "sfml";
     }
 
@@ -100,103 +107,67 @@ namespace
         checked = true;
 
         xcb_connection_t* connection = sf::priv::OpenConnection();
-
-        static const std::string NET_SUPPORTING_WM_CHECK = "_NET_SUPPORTING_WM_CHECK";
-        sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> supportingWmAtomReply(xcb_intern_atom_reply(
-            connection,
-            xcb_intern_atom(
-                connection,
-                1,
-                NET_SUPPORTING_WM_CHECK.size(),
-                NET_SUPPORTING_WM_CHECK.c_str()
-            ),
-            NULL
-        ));
-
-        if (!supportingWmAtomReply)
-        {
-            sf::priv::CloseConnection(connection);
-            return false;
-        }
-
-        static const std::string NET_SUPPORTED = "_NET_SUPPORTED";
-        sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> supportedAtomReply(xcb_intern_atom_reply(
-            connection,
-            xcb_intern_atom(
-                connection,
-                1,
-                NET_SUPPORTED.size(),
-                NET_SUPPORTED.c_str()
-            ),
-            NULL
-        ));
-
-        if (!supportedAtomReply)
-        {
-            sf::priv::CloseConnection(connection);
-            return false;
-        }
+        xcb_ewmh_connection_t ewmhConnection;
 
         sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> rootSupportingWindow(xcb_get_property_reply(
-            connection,
-            xcb_get_property(
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &ewmhConnection,
+            xcb_ewmh_init_atoms(
                 connection,
-                0,
-                sf::priv::XCBDefaultRootWindow(connection),
-                supportingWmAtomReply->atom,
-                XCB_ATOM_WINDOW,
-                0,
-                0x7fffffff
+                &ewmhConnection
             ),
             &error
-        ));
+        );
 
-        if (!rootSupportingWindow ||
-            (rootSupportingWindow->length != 1) ||
-            (rootSupportingWindow->format != 32) ||
-            (rootSupportingWindow->type != XCB_ATOM_WINDOW))
+        if (!result || error)
         {
+            xcb_ewmh_connection_wipe(&ewmhConnection);
             sf::priv::CloseConnection(connection);
             return false;
         }
 
-        xcb_window_t rootWindow = *reinterpret_cast<xcb_window_t*>(xcb_get_property_value(rootSupportingWindow.get()));
+        xcb_window_t rootWindow;
 
-        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> childSupportingWindow(xcb_get_property_reply(
-            connection,
-            xcb_get_property(
-                connection,
-                0,
-                rootWindow,
-                supportingWmAtomReply->atom,
-                XCB_ATOM_WINDOW,
-                0,
-                0x7fffffff
+        result = xcb_ewmh_get_supporting_wm_check_reply(
+            &ewmhConnection,
+            xcb_ewmh_get_supporting_wm_check(
+                &ewmhConnection,
+                sf::priv::XCBDefaultRootWindow(connection)
             ),
+            &rootWindow,
             &error
-        ));
+        );
 
-        if (!childSupportingWindow ||
-            (childSupportingWindow->length != 1) ||
-            (childSupportingWindow->format != 32) ||
-            (childSupportingWindow->type != XCB_ATOM_WINDOW))
+        if (!result || error)
         {
+            xcb_ewmh_connection_wipe(&ewmhConnection);
             sf::priv::CloseConnection(connection);
             return false;
         }
 
-        xcb_window_t childWindow = *reinterpret_cast<xcb_window_t*>(xcb_get_property_value(childSupportingWindow.get()));
+        xcb_window_t childWindow;
+
+        result = xcb_ewmh_get_supporting_wm_check_reply(
+            &ewmhConnection,
+            xcb_ewmh_get_supporting_wm_check(
+                &ewmhConnection,
+                rootWindow
+            ),
+            &childWindow,
+            &error
+        );
+
+        xcb_ewmh_connection_wipe(&ewmhConnection);
+        sf::priv::CloseConnection(connection);
+
+        if (!result || error)
+            return false;
 
         // Conforming window managers should return the same window for both queries
-        if (rootSupportingWindow != childSupportingWindow)
-        {
-            sf::priv::CloseConnection(connection);
+        if (rootWindow != childWindow)
             return false;
-        }
 
-        sf::priv::CloseConnection(connection);
         ewmhSupported = true;
         return true;
     }
@@ -215,7 +186,6 @@ m_inputContext   (NULL),
 m_isExternal     (true),
 m_atomWmProtocols(0),
 m_atomClose      (0),
-m_atomPing       (0),
 m_oldVideoMode   (-1),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
@@ -234,7 +204,22 @@ m_fullscreen     (false)
     }
 
     // Make sure to check for EWMH support before we do anything
-    ewmhSupported();
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &m_ewmhConnection,
+            xcb_ewmh_init_atoms(
+                m_connection,
+                &m_ewmhConnection
+            ),
+            &error
+        );
+
+        if (!result || error)
+            err() << "Failed to initialize EWMH atoms" << std::endl;
+    }
 
     m_screen = XCBDefaultScreen(m_connection);
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
@@ -254,6 +239,9 @@ m_fullscreen     (false)
             value_list
         );
 
+        // Set the WM protocols
+        setProtocols();
+
         // Do some common initializations
         initialize();
     }
@@ -268,7 +256,6 @@ m_inputContext   (NULL),
 m_isExternal     (false),
 m_atomWmProtocols(0),
 m_atomClose      (0),
-m_atomPing       (0),
 m_oldVideoMode   (-1),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
@@ -287,7 +274,22 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     }
 
     // Make sure to check for EWMH support before we do anything
-    ewmhSupported();
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &m_ewmhConnection,
+            xcb_ewmh_init_atoms(
+                m_connection,
+                &m_ewmhConnection
+            ),
+            &error
+        );
+
+        if (!result || error)
+            err() << "Failed to initialize EWMH atoms" << std::endl;
+    }
 
     m_screen = XCBDefaultScreen(m_connection);
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
@@ -332,107 +334,55 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
         return;
     }
 
-    // Set the window's name
-    setTitle(title);
+    // Set the WM protocols
+    setProtocols();
+
+    // Set the WM initial state to the normal state
+    xcb_icccm_wm_hints_t hints;
+    std::memset(&hints, 0, sizeof(hints));
+    xcb_icccm_wm_hints_set_normal(&hints);
+    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
+
+    xcb_size_hints_t sizeHints;
+    std::memset(&sizeHints, 0, sizeof(sizeHints));
 
     // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
     if (!m_fullscreen)
     {
-        static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                0,
-                MOTIF_WM_HINTS.size(),
-                MOTIF_WM_HINTS.c_str()
-            ),
-            NULL
-        ));
-
-        if (hintsAtomReply)
-        {
-            static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
-            static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
-
-            //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
-            static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
-            static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
-            static const unsigned long MWM_DECOR_TITLE       = 1 << 3;
-            static const unsigned long MWM_DECOR_MENU        = 1 << 4;
-            static const unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
-            static const unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
-
-            //static const unsigned long MWM_FUNC_ALL          = 1 << 0;
-            static const unsigned long MWM_FUNC_RESIZE       = 1 << 1;
-            static const unsigned long MWM_FUNC_MOVE         = 1 << 2;
-            static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
-            static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
-            static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-
-            struct WMHints
-            {
-                uint32_t flags;
-                uint32_t functions;
-                uint32_t decorations;
-                int32_t  inputMode;
-                uint32_t state;
-            };
-
-            WMHints hints;
-            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.decorations = 0;
-            hints.functions   = 0;
-
-            if (style & Style::Titlebar)
-            {
-                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
-            }
-            if (style & Style::Resize)
-            {
-                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
-            }
-            if (style & Style::Close)
-            {
-                hints.decorations |= 0;
-                hints.functions   |= MWM_FUNC_CLOSE;
-            }
-
-            ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
-                m_connection,
-                xcb_change_property_checked(
-                    m_connection,
-                    XCB_PROP_MODE_REPLACE,
-                    m_window,
-                    hintsAtomReply->atom,
-                    hintsAtomReply->atom,
-                    sizeof(hints.flags) * 8,
-                    sizeof(hints) / sizeof(hints.flags),
-                    reinterpret_cast<const unsigned char*>(&hints)
-                )
-            ));
-
-            if (propertyError)
-                err() << "xcb_change_property failed, could not set window hints" << std::endl;
-        }
+        // Set the Motif WM hints
+        setMotifHints(style);
 
         // This is a hack to force some windows managers to disable resizing
         if (!(style & Style::Resize))
         {
             m_useSizeHints = true;
-            xcb_size_hints_t sizeHints;
-            sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
-            sizeHints.min_width  = sizeHints.max_width  = width;
-            sizeHints.min_height = sizeHints.max_height = height;
-            xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+            xcb_icccm_size_hints_set_min_size(&sizeHints, width, height);
+            xcb_icccm_size_hints_set_max_size(&sizeHints, width, height);
         }
     }
 
+    // Set the WM hints of the normal state
+    xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+
     // Set the window's WM class (this can be used by window managers)
+    // The WM_CLASS property actually consists of 2 parts,
+    // the instance name and the class name both of which should be
+    // null terminated strings.
+    // The instance name should be something unique to this invokation
+    // of the application but is rarely if ever used these days.
+    // For simplicity, we retrieve it via the base executable name.
+    // The class name identifies a class of windows that
+    // "are of the same type". We simply use the initial window name as
+    // the class name.
     std::string windowClass = findExecutableName();
-    xcb_icccm_set_wm_class_checked(m_connection, m_window, windowClass.size(), windowClass.c_str());
+    windowClass += '\0'; // Important to separate instance from class
+    windowClass += title.toAnsiString();
+
+    // We add 1 to the size of the string to include the null at the end
+    xcb_icccm_set_wm_class_checked(m_connection, m_window, windowClass.size() + 1, windowClass.c_str());
+
+    // Set the window's name
+    setTitle(title);
 
     // Do some common initializations
     initialize();
@@ -472,6 +422,9 @@ WindowImplX11::~WindowImplX11()
     if (m_inputMethod)
         XCloseIM(m_inputMethod);
 
+    // Clean up the EWMH connection
+    xcb_ewmh_connection_wipe(&m_ewmhConnection);
+
     // Close the connection with the X server
     CloseDisplay(m_display);
 
@@ -484,44 +437,6 @@ WindowImplX11::~WindowImplX11()
 WindowHandle WindowImplX11::getSystemHandle() const
 {
     return m_window;
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplX11::setPointerGrabbed(bool grabbed)
-{
-    // NOTE: This only works when the window is mapped and visible!
-
-    if (grabbed)
-    {
-        ScopedXcbPtr<xcb_grab_pointer_reply_t> grabReply(xcb_grab_pointer_reply(
-            m_connection,
-            xcb_grab_pointer(
-                m_connection,
-                1,
-                m_screen->root,
-                XCB_NONE,
-                XCB_GRAB_MODE_ASYNC,
-                XCB_GRAB_MODE_ASYNC,
-                m_window,
-                XCB_NONE,
-                XCB_CURRENT_TIME
-            ),
-            NULL
-        ));
-
-        if (grabReply && grabReply->status != 0)
-            err() << "Grabbing the pointer failed." << std::endl
-                      << "  Status: "
-                      << static_cast<int>(grabReply->status) << std::endl;
-        else if (!grabReply)
-            err() << "Grabbing the pointer failed." << std::endl;
-    }
-    else
-    {
-        xcb_ungrab_pointer(m_connection, XCB_CURRENT_TIME);
-        xcb_flush(m_connection);
-    }
 }
 
 
@@ -593,12 +508,28 @@ Vector2i WindowImplX11::getPosition() const
     ::Window topLevelWindow = m_window;
     ::Window nextWindow = topLevelWindow;
 
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     // Get "top level" window, i.e. the window with the root window as its parent.
     while (nextWindow != m_screen->root)
     {
         topLevelWindow = nextWindow;
 
-        ScopedXcbPtr<xcb_query_tree_reply_t> treeReply(xcb_query_tree_reply(m_connection, xcb_query_tree(m_connection, topLevelWindow), NULL));
+        ScopedXcbPtr<xcb_query_tree_reply_t> treeReply(xcb_query_tree_reply(
+            m_connection,
+            xcb_query_tree(
+                m_connection,
+                topLevelWindow
+            ),
+            &error
+        ));
+
+        if (error)
+        {
+            err() << "Failed to get window position (query_tree)" << std::endl;
+            return Vector2i(0, 0);
+        }
+
         nextWindow = treeReply->parent;
     }
 
@@ -608,10 +539,16 @@ Vector2i WindowImplX11::getPosition() const
             m_connection,
             topLevelWindow
         ),
-        NULL
+        &error
     ));
 
-    return sf::Vector2i(geometryReply->x, geometryReply->y);
+    if (error)
+    {
+        err() << "Failed to get window position (get_geometry)" << std::endl;
+        return Vector2i(0, 0);
+    }
+
+    return Vector2i(geometryReply->x, geometryReply->y);
 }
 
 
@@ -641,19 +578,38 @@ void WindowImplX11::setSize(const Vector2u& size)
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if( m_useSizeHints ) {
         xcb_size_hints_t sizeHints;
-        sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
-        sizeHints.min_width  = sizeHints.max_width  = size.x;
-        sizeHints.min_height = sizeHints.max_height = size.y;
-        xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+        std::memset(&sizeHints, 0, sizeof(sizeHints));
+        xcb_icccm_size_hints_set_min_size(&sizeHints, size.x, size.y);
+        xcb_icccm_size_hints_set_max_size(&sizeHints, size.x, size.y);
+
+        ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
+            m_connection,
+            xcb_icccm_set_wm_normal_hints(
+                m_connection,
+                m_window,
+                &sizeHints
+            )
+        ));
+
+        if (configureWindowError)
+            err() << "Failed to set window size hints" << std::endl;
     }
 
     uint32_t values[] = {size.x, size.y};
-    xcb_configure_window(
+
+    ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
         m_connection,
-        m_window,
-        XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
-        values
-    );
+        xcb_configure_window(
+            m_connection,
+            m_window,
+            XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
+            values
+        )
+    ));
+
+    if (configureWindowError)
+        err() << "Failed to set window size" << std::endl;
+
     xcb_flush(m_connection);
 }
 
@@ -662,22 +618,68 @@ void WindowImplX11::setSize(const Vector2u& size)
 void WindowImplX11::setTitle(const String& title)
 {
     // XCB takes UTF-8-encoded strings.
-    std::basic_string<sf::Uint8> utf8String;
-    sf::Utf<32>::toUtf8(
-        title.begin(), title.end(),
-        std::back_inserter( utf8String )
-    );
+    std::string utf8String;
+    Utf<32>::toUtf8(title.begin(), title.end(), std::back_inserter(utf8String));
 
-    xcb_change_property(
+    ScopedXcbPtr<xcb_generic_error_t> wmNameError(xcb_request_check(
         m_connection,
-        XCB_PROP_MODE_REPLACE,
-        m_window,
-        XCB_ATOM_WM_NAME,
-        XCB_ATOM_STRING,
-        sizeof(std::basic_string<sf::Uint8>::value_type) * 8,
-        utf8String.length(),
-        utf8String.c_str()
-    );
+        xcb_icccm_set_wm_name_checked(
+            m_connection,
+            m_window,
+            XCB_ATOM_STRING,
+            sizeof(std::basic_string<Uint8>::value_type) * 8,
+            utf8String.length(),
+            utf8String.c_str()
+        )
+    ));
+
+    if (wmNameError)
+        err() << "Failed to set window title" << std::endl;
+
+    ScopedXcbPtr<xcb_generic_error_t> wmIconNameError(xcb_request_check(
+        m_connection,
+        xcb_icccm_set_wm_icon_name_checked(
+            m_connection,
+            m_window,
+            XCB_ATOM_STRING,
+            sizeof(std::basic_string<Uint8>::value_type) * 8,
+            utf8String.length(),
+            utf8String.c_str()
+        )
+    ));
+
+    if (wmIconNameError)
+        err() << "Failed to set WM_ICON_NAME property" << std::endl;
+
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> ewmhNameError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_name_checked(
+                &m_ewmhConnection,
+                m_window,
+                utf8String.length(),
+                utf8String.c_str()
+            )
+        ));
+
+        if (ewmhNameError)
+            err() << "Failed to set _NET_WM_NAME property" << std::endl;
+
+        ScopedXcbPtr<xcb_generic_error_t> ewmhIconNameError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_icon_name_checked(
+                &m_ewmhConnection,
+                m_window,
+                utf8String.length(),
+                utf8String.c_str()
+            )
+        ));
+
+        if (ewmhIconNameError)
+            err() << "Failed to set _NET_WM_ICON_NAME property" << std::endl;
+    }
+
     xcb_flush(m_connection);
 }
 
@@ -697,19 +699,47 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Create the icon pixmap
     xcb_pixmap_t iconPixmap = xcb_generate_id(m_connection);
-    xcb_create_pixmap(
+
+    ScopedXcbPtr<xcb_generic_error_t> createPixmapError(xcb_request_check(
         m_connection,
-        m_screen->root_depth,
-        iconPixmap,
-        m_screen->root,
-        width,
-        height
-    );
+        xcb_create_pixmap_checked(
+            m_connection,
+            m_screen->root_depth,
+            iconPixmap,
+            m_screen->root,
+            width,
+            height
+        )
+    ));
+
+    if (createPixmapError)
+    {
+        err() << "Failed to set the window's icon (create_pixmap): ";
+        err() << "Error code " << static_cast<int>(createPixmapError->error_code) << std::endl;
+        return;
+    }
 
     xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
-    xcb_create_gc(m_connection, iconGC, iconPixmap, 0, NULL);
 
-    ScopedXcbPtr<xcb_generic_error_t> errptr(xcb_request_check(
+    ScopedXcbPtr<xcb_generic_error_t> createGcError(xcb_request_check(
+        m_connection,
+        xcb_create_gc(
+            m_connection,
+            iconGC,
+            iconPixmap,
+            0,
+            NULL
+        )
+    ));
+
+    if (createGcError)
+    {
+        err() << "Failed to set the window's icon (create_gc): ";
+        err() << "Error code " << static_cast<int>(createGcError->error_code) << std::endl;
+        return;
+    }
+
+    ScopedXcbPtr<xcb_generic_error_t> putImageError(xcb_request_check(
         m_connection,
         xcb_put_image_checked(
             m_connection,
@@ -727,11 +757,24 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         )
     ));
 
-    xcb_free_gc(m_connection, iconGC);
+    ScopedXcbPtr<xcb_generic_error_t> freeGcError(xcb_request_check(
+        m_connection,
+        xcb_free_gc(
+            m_connection,
+            iconGC
+        )
+    ));
 
-    if (errptr)
+    if (freeGcError)
     {
-        err() << "Failed to set the window's icon: Error code " << static_cast<int>(errptr->error_code) << std::endl;
+        err() << "Failed to free icon GC: ";
+        err() << "Error code " << static_cast<int>(freeGcError->error_code) << std::endl;
+    }
+
+    if (putImageError)
+    {
+        err() << "Failed to set the window's icon (put_image): ";
+        err() << "Error code " << static_cast<int>(putImageError->error_code) << std::endl;
         return;
     }
 
@@ -767,12 +810,40 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Send our new icon to the window through the WMHints
     xcb_icccm_wm_hints_t hints;
-    hints.flags       = XCB_ICCCM_WM_HINT_ICON_PIXMAP | XCB_ICCCM_WM_HINT_ICON_MASK;
-    hints.icon_pixmap = iconPixmap;
-    hints.icon_mask   = maskPixmap;
-    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
+    std::memset(&hints, 0, sizeof(hints));
+    xcb_icccm_wm_hints_set_icon_pixmap(&hints, iconPixmap);
+    xcb_icccm_wm_hints_set_icon_mask(&hints, maskPixmap);
+
+    ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
+        m_connection,
+        xcb_icccm_set_wm_hints(
+            m_connection,
+            m_window,
+            &hints
+        )
+    ));
+
+    if (setWmHintsError)
+    {
+        err() << "Failed to set the window's icon (icccm_set_wm_hints): ";
+        err() << "Error code " << static_cast<int>(setWmHintsError->error_code) << std::endl;
+    }
 
     xcb_flush(m_connection);
+
+    ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+        m_connection,
+        xcb_free_pixmap_checked(
+            m_connection,
+            iconPixmap
+        )
+    ));
+
+    if (freePixmapError)
+    {
+        err() << "Failed to free icon pixmap: ";
+        err() << "Error code " << static_cast<int>(freePixmapError->error_code) << std::endl;
+    }
 }
 
 
@@ -780,9 +851,31 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
-        xcb_map_window(m_connection, m_window);
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_map_window(
+                m_connection,
+                m_window
+            )
+        ));
+
+        if (error)
+            err() << "Failed to change window visibility" << std::endl;
+    }
     else
-        xcb_unmap_window(m_connection, m_window);
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_unmap_window(
+                m_connection,
+                m_window
+            )
+        ));
+
+        if (error)
+            err() << "Failed to change window visibility" << std::endl;
+    }
 
     xcb_flush(m_connection);
 }
@@ -792,7 +885,20 @@ void WindowImplX11::setVisible(bool visible)
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
     const uint32_t values = visible ? XCB_NONE : m_hiddenCursor;
-    xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
+
+    ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+        m_connection,
+        xcb_change_window_attributes(
+            m_connection,
+            m_window,
+            XCB_CW_CURSOR,
+            &values
+        )
+    ));
+
+    if (error)
+        err() << "Failed to change mouse cursor visibility" << std::endl;
+
     xcb_flush(m_connection);
 }
 
@@ -843,14 +949,14 @@ void WindowImplX11::requestFocus()
     {
         // Another SFML window of this application has the focus and the current window is viewable:
         // steal focus (i.e. bring window to the front and give it input focus)
-        xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
-        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
-        xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
+        grabFocus();
     }
     else
     {
         // Get current WM hints.
         xcb_icccm_wm_hints_t hints;
+        std::memset(&hints, 0, sizeof(hints));
+
         xcb_icccm_get_wm_hints_reply(
             m_connection,
             xcb_icccm_get_wm_hints_unchecked(
@@ -863,7 +969,7 @@ void WindowImplX11::requestFocus()
 
         // Even if no hints were returned, we can simply set the proper flags we need and go on. This is
         // different from Xlib where XAllocWMHints() has to be called.
-        hints.flags |= XCB_ICCCM_WM_HINT_X_URGENCY;
+        xcb_icccm_wm_hints_set_urgency(&hints);
         xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
     }
 }
@@ -872,15 +978,79 @@ void WindowImplX11::requestFocus()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::hasFocus() const
 {
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     ScopedXcbPtr<xcb_get_input_focus_reply_t> reply(xcb_get_input_focus_reply(
         m_connection,
         xcb_get_input_focus_unchecked(
             m_connection
         ),
-        NULL
+        &error
     ));
 
+    if (error)
+        err() << "Failed to check if window has focus" << std::endl;
+
     return (reply->focus == m_window);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::grabFocus()
+{
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> activeWindowError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_request_change_active_window(
+                &m_ewmhConnection,
+                XDefaultScreen(m_display),
+                m_window,
+                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL,
+                XCB_CURRENT_TIME,
+                None
+            )
+        ));
+
+        if (activeWindowError)
+        {
+            err() << "Failed to change active window (request_change_active_window)" << std::endl;
+            return;
+        }
+    }
+    else
+    {
+        ScopedXcbPtr<xcb_generic_error_t> setInputFocusError(xcb_request_check(
+            m_connection,
+            xcb_set_input_focus(
+                m_connection,
+                XCB_INPUT_FOCUS_POINTER_ROOT,
+                m_window,
+                XCB_CURRENT_TIME
+            )
+        ));
+
+        if (setInputFocusError)
+        {
+            err() << "Failed to change active window (set_input_focus)" << std::endl;
+            return;
+        }
+
+        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
+
+        ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
+            m_connection,
+            xcb_configure_window(
+                m_connection,
+                m_window,
+                XCB_CONFIG_WINDOW_STACK_MODE,
+                values
+            )
+        ));
+
+        if (configureWindowError)
+            err() << "Failed to change active window (configure_window)" << std::endl;
+    }
 }
 
 
@@ -1042,7 +1212,8 @@ void WindowImplX11::resetVideoMode()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen()
 {
-    // Try EWMH method if supported or fallback to manual
+    grabFocus();
+
     if (ewmhSupported())
     {
         // Create atom for _NET_WM_BYPASS_COMPOSITOR.
@@ -1051,7 +1222,7 @@ void WindowImplX11::switchToFullscreen()
             m_connection,
             xcb_intern_atom(
                 m_connection,
-                0,
+                False,
                 netWmStateBypassCompositor.size(),
                 netWmStateBypassCompositor.c_str()
             ),
@@ -1079,141 +1250,32 @@ void WindowImplX11::switchToFullscreen()
         if (compositorError)
             err() << "xcb_change_property failed, unable to set _NET_WM_BYPASS_COMPOSITOR" << std::endl;
 
-        // Create atom for _NET_ACTIVE_WINDOW.
-        static const std::string netActiveWindow = "_NET_ACTIVE_WINDOW";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> activeWindowReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                0,
-                netActiveWindow.size(),
-                netActiveWindow.c_str()
-            ),
-            0
-        ));
-
-        if (!activeWindowReply)
-        {
-            err() << "Setting fullscreen failed, could not get \"_NET_ACTIVE_WINDOW\" atom" << std::endl;
-            return;
-        }
-
-        xcb_client_message_event_t activeWindowEvent;
-        std::memset(&activeWindowEvent, 0, sizeof(activeWindowEvent));
-
-        activeWindowEvent.response_type = XCB_CLIENT_MESSAGE;
-        activeWindowEvent.window = m_window;
-        activeWindowEvent.format = 32;
-        activeWindowEvent.type = activeWindowReply->atom;
-        activeWindowEvent.data.data32[0] = 1;
-        activeWindowEvent.data.data32[1] = XCB_CURRENT_TIME;
-
-        ScopedXcbPtr<xcb_generic_error_t> activeWindowError(xcb_request_check(
-            m_connection,
-            xcb_send_event_checked(
-                m_connection,
-                0,
-                XCBDefaultRootWindow(m_connection),
-                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
-                reinterpret_cast<char*>(&activeWindowEvent)
-            )
-        ));
-
-        if (activeWindowError)
-        {
-            err() << "Setting fullscreen failed, could not send \"_NET_ACTIVE_WINDOW\" event" << std::endl;
-            return;
-        }
-
-        // Create atom for _NET_WM_STATE.
-        static const std::string netWmState = "_NET_WM_STATE";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> stateReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                0,
-                netWmState.size(),
-                netWmState.c_str()
-            ),
-            0
-        ));
-
-        if (!stateReply)
-        {
-            err() << "Setting fullscreen failed. Could not get \"_NET_WM_STATE\" atom" << std::endl;
-            return;
-        }
-
-        // Create atom for _NET_WM_STATE_FULLSCREEN.
-        static const std::string netWmStateFullscreen = "_NET_WM_STATE_FULLSCREEN";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> fullscreenReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                0,
-                netWmStateFullscreen.size(),
-                netWmStateFullscreen.c_str()
-            ),
-            0
-        ));
-
-        if (!fullscreenReply)
-        {
-            err() << "Setting fullscreen failed. Could not get \"_NET_WM_STATE_FULLSCREEN\" atom" << std::endl;
-            return;
-        }
-
-        xcb_client_message_event_t wmStateEvent;
-        std::memset(&wmStateEvent, 0, sizeof(wmStateEvent));
-
-        wmStateEvent.response_type = XCB_CLIENT_MESSAGE;
-        wmStateEvent.window = m_window;
-        wmStateEvent.format = 32;
-        wmStateEvent.type = stateReply->atom;
-        wmStateEvent.data.data32[0] = 1; // _NET_WM_STATE_ADD
-        wmStateEvent.data.data32[1] = fullscreenReply->atom;
-        wmStateEvent.data.data32[2] = 0;
-        wmStateEvent.data.data32[3] = 1;
-
         ScopedXcbPtr<xcb_generic_error_t> wmStateError(xcb_request_check(
             m_connection,
-            xcb_send_event_checked(
-                m_connection,
+            xcb_ewmh_request_change_wm_state(
+                &m_ewmhConnection,
+                XDefaultScreen(m_display),
+                m_window,
+                XCB_EWMH_WM_STATE_ADD,
+                m_ewmhConnection._NET_WM_STATE_FULLSCREEN,
                 0,
-                XCBDefaultRootWindow(m_connection),
-                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
-                reinterpret_cast<char*>(&wmStateEvent)
+                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL
             )
         ));
 
         if (wmStateError)
-            err() << "Setting fullscreen failed. Could not send \"_NET_WM_STATE\" event" << std::endl;
-    }
-    else
-    {
-        // If WM fullscreen setting is not available, we need to do it manually
-        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
-        xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
-        xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
+        {
+            err() << "Setting fullscreen failed, could not change WM state" << std::endl;
+            return;
+        }
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::initialize()
+void WindowImplX11::setProtocols()
 {
-    // Get the atom for registering the close event
-    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            WM_DELETE_WINDOW_NAME.size(),
-            WM_DELETE_WINDOW_NAME.c_str()
-        ),
-        NULL
-    ));
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
     // Get the atom for setting the window protocols we support
     static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
@@ -1225,109 +1287,174 @@ void WindowImplX11::initialize()
             WM_PROTOCOLS_NAME.size(),
             WM_PROTOCOLS_NAME.c_str()
         ),
-        NULL
+        &error
     ));
 
-    // Get the atom for registering the ping event
-    static const std::string NET_WM_PING = "_NET_WM_PING";
-    sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> wmPingReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            NET_WM_PING.size(),
-            NET_WM_PING.c_str()
-        ),
-        NULL
-    ));
-
-    // Get the atom for setting the process ID of the window
-    static const std::string NET_WM_PID = "_NET_WM_PID";
-    sf::priv::ScopedXcbPtr<xcb_intern_atom_reply_t> wmPidReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            NET_WM_PID.size(),
-            NET_WM_PID.c_str()
-        ),
-        NULL
-    ));
-
-    if (protocolsAtomReply)
+    if (error || !protocolsAtomReply)
     {
-        m_atomWmProtocols = protocolsAtomReply->atom;
+        err() << "Failed to request WM_PROTOCOLS atom." << std::endl;
+        return;
+    }
 
-        xcb_atom_t atoms[2];
-        Uint32 atomCount = 0;
+    m_atomWmProtocols = protocolsAtomReply->atom;
 
-        if (deleteWindowAtomReply && ewmhSupported() && wmPingReply && wmPidReply)
-        {
-            atoms[0] = deleteWindowAtomReply->atom;
-            atomCount = 1;
+    std::vector<xcb_atom_t> atoms;
 
-            m_atomClose = deleteWindowAtomReply->atom;
+    // Get the atom for registering the close event
+    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            WM_DELETE_WINDOW_NAME.size(),
+            WM_DELETE_WINDOW_NAME.c_str()
+        ),
+        &error
+    ));
 
-            Uint32 pid = getpid();
-
-            // Set PID.
-            ScopedXcbPtr<xcb_generic_error_t> pidError(xcb_request_check(
-                m_connection,
-                xcb_change_property_checked(
-                    m_connection,
-                    XCB_PROP_MODE_REPLACE,
-                    m_window,
-                    wmPidReply->atom,
-                    XCB_ATOM_CARDINAL,
-                    32,
-                    1,
-                    &pid
-                )
-            ));
-
-            if (!pidError)
-            {
-                atoms[1] = wmPingReply->atom;
-                atomCount = 2;
-
-                m_atomPing = wmPingReply->atom;
-            }
-        }
-        else if (deleteWindowAtomReply)
-        {
-            atoms[0] = deleteWindowAtomReply->atom;
-            atomCount = 1;
-
-            m_atomClose = deleteWindowAtomReply->atom;
-        }
-
-        if (atomCount)
-        {
-            ScopedXcbPtr<xcb_generic_error_t> setProtocolsError(xcb_request_check(
-                m_connection,
-                xcb_icccm_set_wm_protocols(
-                    m_connection,
-                    m_window,
-                    protocolsAtomReply->atom,
-                    atomCount,
-                    atoms
-                )
-            ));
-
-            if (setProtocolsError)
-                err() << "Failed to set window protocols" << std::endl;
-        }
-        else
-        {
-            err() << "Didn't set any window protocols" << std::endl;
-        }
+    if (!error && deleteWindowAtomReply)
+    {
+        atoms.push_back(deleteWindowAtomReply->atom);
+        m_atomClose = deleteWindowAtomReply->atom;
     }
     else
     {
-        // Should not happen, but better safe than sorry.
-        err() << "Failed to request WM_PROTOCOLS atoms." << std::endl;
+        err() << "Failed to request WM_DELETE_WINDOW atom." << std::endl;
     }
 
+    if (ewmhSupported() && m_ewmhConnection._NET_WM_PING && m_ewmhConnection._NET_WM_PID)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_pid(
+                &m_ewmhConnection,
+                m_window,
+                getpid()
+            )
+        ));
+
+        if (!error)
+            atoms.push_back(m_ewmhConnection._NET_WM_PING);
+    }
+
+    if (!atoms.empty())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_icccm_set_wm_protocols(
+                m_connection,
+                m_window,
+                protocolsAtomReply->atom,
+                atoms.size(),
+                &atoms[0]
+            )
+        ));
+
+        if (error)
+            err() << "Failed to set window protocols" << std::endl;
+    }
+    else
+    {
+        err() << "Didn't set any window protocols" << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMotifHints(unsigned long style)
+{
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            MOTIF_WM_HINTS.size(),
+            MOTIF_WM_HINTS.c_str()
+        ),
+        &error
+    ));
+
+    if (!error && hintsAtomReply)
+    {
+        static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
+        static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
+
+        //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
+        static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
+        static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
+        static const unsigned long MWM_DECOR_TITLE       = 1 << 3;
+        static const unsigned long MWM_DECOR_MENU        = 1 << 4;
+        static const unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
+        static const unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
+
+        //static const unsigned long MWM_FUNC_ALL          = 1 << 0;
+        static const unsigned long MWM_FUNC_RESIZE       = 1 << 1;
+        static const unsigned long MWM_FUNC_MOVE         = 1 << 2;
+        static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
+        static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
+        static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
+
+        struct WMHints
+        {
+            uint32_t flags;
+            uint32_t functions;
+            uint32_t decorations;
+            int32_t  inputMode;
+            uint32_t state;
+        };
+
+        WMHints hints;
+        hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+        hints.decorations = 0;
+        hints.functions   = 0;
+
+        if (style & Style::Titlebar)
+        {
+            hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+            hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+        }
+        if (style & Style::Resize)
+        {
+            hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+            hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+        }
+        if (style & Style::Close)
+        {
+            hints.decorations |= 0;
+            hints.functions   |= MWM_FUNC_CLOSE;
+        }
+
+        ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
+            m_connection,
+            xcb_change_property_checked(
+                m_connection,
+                XCB_PROP_MODE_REPLACE,
+                m_window,
+                hintsAtomReply->atom,
+                hintsAtomReply->atom,
+                sizeof(hints.flags) * 8,
+                sizeof(hints) / sizeof(hints.flags),
+                reinterpret_cast<const unsigned char*>(&hints)
+            )
+        ));
+
+        if (propertyError)
+            err() << "xcb_change_property failed, could not set window hints" << std::endl;
+    }
+    else
+    {
+        err() << "Failed to request _MOTIF_WM_HINTS atom." << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::initialize()
+{
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
 
@@ -1353,14 +1480,10 @@ void WindowImplX11::initialize()
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
     // Show the window
-    xcb_map_window(m_connection, m_window);
+    setVisible(true);
 
     // Raise the window and grab input focus
-    xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
-    const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
-    xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
-
-    xcb_flush(m_connection);
+    grabFocus();
 
     // Create the hidden cursor
     createHiddenCursor();
@@ -1377,24 +1500,57 @@ void WindowImplX11::initialize()
 void WindowImplX11::createHiddenCursor()
 {
     xcb_pixmap_t cursorPixmap = xcb_generate_id(m_connection);
-    m_hiddenCursor = xcb_generate_id(m_connection);
+
     // Create the cursor's pixmap (1x1 pixels)
-    xcb_create_pixmap(m_connection, 1, cursorPixmap, m_window, 1, 1);
+    ScopedXcbPtr<xcb_generic_error_t> createPixmapError(xcb_request_check(
+        m_connection,
+        xcb_create_pixmap(
+            m_connection,
+            1,
+            cursorPixmap,
+            m_window,
+            1,
+            1
+        )
+    ));
+
+    if (createPixmapError)
+    {
+        err() << "Failed to create pixmap for hidden cursor" << std::endl;
+        return;
+    }
+
+    m_hiddenCursor = xcb_generate_id(m_connection);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
-    xcb_create_cursor(
+    ScopedXcbPtr<xcb_generic_error_t> createCursorError(xcb_request_check(
         m_connection,
-        m_hiddenCursor,
-        cursorPixmap,
-        cursorPixmap,
-        0, 0, 0, // Foreground RGB color
-        0, 0, 0, // Background RGB color
-        0,       // X
-        0        // Y
-    );
+        xcb_create_cursor(
+            m_connection,
+            m_hiddenCursor,
+            cursorPixmap,
+            cursorPixmap,
+            0, 0, 0, // Foreground RGB color
+            0, 0, 0, // Background RGB color
+            0,       // X
+            0        // Y
+        )
+    ));
+
+    if (createCursorError)
+        err() << "Failed to create hidden cursor" << std::endl;
 
     // We don't need the pixmap any longer, free it
-    xcb_free_pixmap(m_connection, cursorPixmap);
+    ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+        m_connection,
+        xcb_free_pixmap(
+            m_connection,
+            cursorPixmap
+        )
+    ));
+
+    if (freePixmapError)
+        err() << "Failed to free pixmap for hidden cursor" << std::endl;
 }
 
 
@@ -1436,23 +1592,39 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
             xcb_icccm_wm_hints_t hints;
-            xcb_icccm_get_wm_hints_reply(
+
+            ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+            uint8_t result = xcb_icccm_get_wm_hints_reply(
                 m_connection,
                 xcb_icccm_get_wm_hints_unchecked(
                     m_connection,
                     m_window
                 ),
                 &hints,
-                NULL
+                &error
             );
 
-            // Remove urgency (notification) flag from hints
-            hints.flags &= ~XUrgencyHint;
-            xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
+            if (!result || error)
+            {
+                err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                break;
+            }
 
-            // Grab pointer if necessary.
-            if (m_fullscreen)
-                setPointerGrabbed(true);
+            // Remove urgency (notification) flag from hints
+            hints.flags &= ~XCB_ICCCM_WM_HINT_X_URGENCY;
+
+            ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
+                m_connection,
+                xcb_icccm_set_wm_hints_checked(
+                    m_connection,
+                    m_window,
+                    &hints
+                )
+            ));
+
+            if (setWmHintsError)
+                err() << "Failed to set WM hints in XCB_FOCUS_IN" << std::endl;
 
             break;
         }
@@ -1460,10 +1632,6 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Lost focus event
         case XCB_FOCUS_OUT:
         {
-            // Ungrab pointer if necessary.
-            if (m_fullscreen)
-                setPointerGrabbed(false);
-
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
@@ -1501,7 +1669,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                     event.type = Event::Closed;
                     pushEvent(event);
                 }
-                else if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomPing))
+                else if (ewmhSupported() && (e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_ewmhConnection._NET_WM_PING))
                 {
                     // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
                     e->window = XCBDefaultRootWindow(m_connection);
@@ -1763,6 +1931,12 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Parent window changed
         case XCB_REPARENT_NOTIFY:
         {
+            // Catch reparent events to properly apply fullscreen on
+            // some "strange" window managers (like Awesome) which
+            // seem to make use of temporary parents during mapping
+            if (m_fullscreen)
+                switchToFullscreen();
+
             xcb_flush(m_connection); // Discard remaining events
             break;
         }
