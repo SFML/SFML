@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <algorithm>
 #include <vector>
 
 namespace sf
@@ -119,10 +120,21 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Add a drawable to the array
     ///
+    /// Only a pointer to the drawable will be stored, so the caller
+    /// must ensure that the drawable does not get destructed.
+    ///
     /// \param drawable Drawable to add
     ///
     ////////////////////////////////////////////////////////////
     void append(const Drawable& drawable);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Removes a drawable from the array
+    ///
+    /// \param drawable Drawable to remove
+    ///
+    ////////////////////////////////////////////////////////////
+    void remove(const Drawable& drawable);
 
 private:
 

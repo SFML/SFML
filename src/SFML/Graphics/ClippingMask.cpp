@@ -71,4 +71,11 @@ void ClippingMask::append(const Drawable& drawable)
     m_drawables.push_back(&drawable);
 }
 
+
+////////////////////////////////////////////////////////////
+void ClippingMask::remove(const Drawable& drawable)
+{
+    m_drawables.erase(std::remove(m_drawables.begin(), m_drawables.end(), &drawable), m_drawables.end());
+}
+
 } // namespace sf
