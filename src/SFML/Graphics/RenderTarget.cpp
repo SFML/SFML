@@ -216,6 +216,8 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             const ClippingMask& mask = *states.mask;
 
             // enable the stencil buffer and clear it
+            glCheck(glEnable(GL_ALPHA_TEST));
+            glCheck(glAlphaFunc(GL_EQUAL, 1));
             glCheck(glEnable(GL_STENCIL_TEST));
             glCheck(glStencilFunc(GL_NEVER, 1, 0xFF));
             glCheck(glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP));
@@ -310,7 +312,10 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
 
         // Disable the clipping mask if we used it
         if (states.mask != NULL && states.mask->getDrawableCount())
+        {
+            glCheck(glDisable(GL_ALPHA_TEST));
             glCheck(glDisable(GL_STENCIL_TEST));
+        }
     }
 }
 
