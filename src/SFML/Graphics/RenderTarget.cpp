@@ -228,7 +228,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             glCheck(glStencilMask(0xFF));
             glCheck(glClear(GL_STENCIL_BUFFER_BIT));
 
-            RenderStates states(mask.transform);
+            RenderStates states(mask.getTransform());
 
             // draw each drawable in the mask onto the stencil buffer
             for (std::size_t i = 0; i < mask.getDrawableCount(); ++i)

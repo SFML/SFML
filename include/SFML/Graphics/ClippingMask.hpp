@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <vector>
 
 namespace sf
@@ -44,7 +45,7 @@ namespace sf
 /// objects within boundry's of mask drawables will be displayed.
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API ClippingMask
+class SFML_GRAPHICS_API ClippingMask : public Transformable
 {
 public:
 
@@ -122,11 +123,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void append(const Drawable& drawable);
-
-    ////////////////////////////////////////////////////////////
-    // Public Member data
-    ////////////////////////////////////////////////////////////
-    Transform transform; ///< Transform
 
 private:
 
