@@ -51,12 +51,14 @@ add_custom_target(doc ALL
                   COMMAND ${CMAKE_COMMAND} -E echo "Done."
                   WORKING_DIRECTORY ${DOXYGEN_INPUT_DIR})
 
-# setup install rules
-install(DIRECTORY ${DOXYGEN_OUTPUT_DIR}/html
-        DESTINATION ${INSTALL_MISC_DIR}/doc
-        COMPONENT doc)
-if(DOXYGEN_HHC_PROGRAM)
-    install(FILES ${DOXYGEN_OUTPUT_DIR}/sfml.chm
-            DESTINATION ${INSTALL_MISC_DIR}/doc
+if(SFML_INSTALL_DOC)                  
+    # setup install rules
+    install(DIRECTORY ${DOXYGEN_OUTPUT_DIR}/html
+            DESTINATION ${SFML_INSTALL_DOC_PREFIX}/doc
             COMPONENT doc)
+    if(DOXYGEN_HHC_PROGRAM)
+        install(FILES ${DOXYGEN_OUTPUT_DIR}/sfml.chm
+                DESTINATION ${SFML_INSTALL_DOC_PREFIX}/doc
+                COMPONENT doc)
+    endif()
 endif()

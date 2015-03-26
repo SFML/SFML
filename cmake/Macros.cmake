@@ -156,23 +156,25 @@ macro(sfml_add_example target)
     if(THIS_DEPENDS)
         target_link_libraries(${target} ${THIS_DEPENDS})
     endif()
+    
+    if(SFML_INSTALL_EXAMPLES)
+        # add the install rule
+        install(TARGETS ${target}
+                RUNTIME DESTINATION ${SFML_INSTALL_EXAMPLES_PREFIX}/examples/${target} COMPONENT examples
+                BUNDLE DESTINATION ${SFML_INSTALL_EXAMPLES_PREFIX}/examples/${target} COMPONENT examples)
 
-    # add the install rule
-    install(TARGETS ${target}
-            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
-            BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
-
-    # install the example's source code
-    install(FILES ${THIS_SOURCES}
-            DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-            COMPONENT examples)
-
-    # install the example's resources as well
-    set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
-    if(EXISTS ${EXAMPLE_RESOURCES})
-        install(DIRECTORY ${EXAMPLE_RESOURCES}
-                DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+        # install the example's source code
+        install(FILES ${THIS_SOURCES}
+                DESTINATION ${SFML_INSTALL_EXAMPLES_PREFIX}/examples/${target}
                 COMPONENT examples)
+
+        # install the example's resources as well
+        set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
+        if(EXISTS ${EXAMPLE_RESOURCES})
+            install(DIRECTORY ${EXAMPLE_RESOURCES}
+                    DESTINATION ${SFML_INSTALL_EXAMPLES_PREFIX}/examples/${target}
+                    COMPONENT examples)
+        endif()
     endif()
 
 endmacro()

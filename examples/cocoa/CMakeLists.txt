@@ -51,10 +51,12 @@ foreach(XIB ${XIBS})
                        # deactivated options: --warnings --notices
 endforeach()
 
-# add install rule
-install(TARGETS cocoa
-        BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/cocoa
-        COMPONENT examples)
+if(SFML_INSTALL_EXAMPLES)
+    # add install rule
+    install(TARGETS cocoa
+            BUNDLE DESTINATION ${SFML_INSTALL_EXAMPLES_PREFIX}/examples/cocoa
+            COMPONENT examples)
+endif()
 
 #
 # define the cocoa target
