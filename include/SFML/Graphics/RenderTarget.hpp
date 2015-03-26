@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+#include <SFML/Graphics/ClippingMask.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -70,6 +71,60 @@ public:
     void clear(const Color& color = Color(0, 0, 0, 255));
 
     ////////////////////////////////////////////////////////////
+    /// \brief Clear the active clipping area
+    ///
+    /// This is equivalent to calling setClippingArea(IntRect())
+    ///
+    /// \see setClippingArea, getClippingArea
+    ///
+    ////////////////////////////////////////////////////////////
+    void clearClippingArea();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clear the active clipping mask
+    ///
+    /// This is equivalent to calling setClippingMask(ClippingMask())
+    ///
+    /// \see setClippingMask, getClippingMask
+    ///
+    ////////////////////////////////////////////////////////////
+    void clearClippingMask();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the active clipping area
+    ///
+    /// The clipping area is defined as an IntRect. It is very
+    /// important to remember the clipping is done in window
+    /// coordinates, not scene coordinates.
+    /// This means {0, 0} will be the top left of your window,
+    /// it is not affected by the view.
+    /// The clipping area will stay active until it is cleared
+    /// or another one is set.
+    ///
+    /// \param area New clipping area to use
+    ///
+    /// \see clearClippingArea, getClippingArea
+    ///
+    ////////////////////////////////////////////////////////////
+    void setClippingArea(IntRect area);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the active clipping mask
+    ///
+    /// The clipping mask is a set of drawables which which can
+    /// be used to define custom shapes and pixel based masks.
+    /// The clipping mask will stay active until it is cleared
+    /// or another one is set.
+    ///
+    /// \param mask New clipping mask to use
+    ///
+    /// \see clearClippingMask, getClippingMask
+    ///
+    ////////////////////////////////////////////////////////////
+    void setClippingMask(const ClippingMask& mask);
+
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
     ///
     /// The view is like a 2D camera, it controls which part of
@@ -89,6 +144,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setView(const View& view);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the clipping area that is in use in the render target
+    ///
+    /// \return The clipping area that is currently used
+    ///
+    /// \see clearClippingArea, setClippingArea
+    ///
+    ////////////////////////////////////////////////////////////
+    IntRect getClippingArea() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the clipping mask that is in use in the render target
+    ///
+    /// \return The clipping mask object that is currently used
+    ///
+    /// \see clearClippingMask, setClippingMask
+    ///
+    ////////////////////////////////////////////////////////////
+    const ClippingMask& getClippingMask() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the view currently in use in the render target
@@ -343,6 +418,18 @@ protected:
 private:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Apply the current clipping area
+    ///
+    ////////////////////////////////////////////////////////////
+    void applyCurrentClippingArea();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply the current clipping mask
+    ///
+    ////////////////////////////////////////////////////////////
+    void applyCurrentClippingMask();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Apply the current view
     ///
     ////////////////////////////////////////////////////////////
@@ -402,20 +489,25 @@ private:
     {
         enum {VertexCacheSize = 4};
 
-        bool      glStatesSet;    ///< Are our internal GL states set yet?
-        bool      viewChanged;    ///< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  ///< Cached blending mode
-        Uint64    lastTextureId;  ///< Cached texture
-        bool      useVertexCache; ///< Did we previously use the vertex cache?
+        bool      glStatesSet;                  ///< Are our internal GL states set yet?
+        bool      viewChanged;                  ///< Has the current view changed since last draw?
+        bool      clippingAreaChanged;          ///< Has the current clipping area changed since last draw?
+        bool      clippingMaskChanged;          ///< Has the current clipping mask changed since last draw?
+        bool      scissorTestEnabled;           ///< Is the scissor test enabled?
+        BlendMode lastBlendMode;                ///< Cached blending mode
+        Uint64    lastTextureId;                ///< Cached texture
+        bool      useVertexCache;               ///< Did we previously use the vertex cache?
         Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View        m_defaultView; ///< Default view
-    View        m_view;        ///< Current view
-    StatesCache m_cache;       ///< Render states cache
+    View         m_defaultView;  ///< Default view
+    View         m_view;         ///< Current view
+    IntRect      m_clippingArea; ///< Current clipping area
+    ClippingMask m_clippingMask; ///< Current clipping mask
+    StatesCache  m_cache;        ///< Render states cache
 };
 
 } // namespace sf

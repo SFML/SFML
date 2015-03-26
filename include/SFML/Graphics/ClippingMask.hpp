@@ -40,10 +40,15 @@ namespace sf
 /// \brief Define a part of the world that rendered objects are clipped to
 ///
 /// The clipping mask is implemented using the stencil buffer. If the
-/// stencil buffer was disabled during the context creation this class
+/// stencil buffer was disabled during the context or target creation this class
 /// will not function.
 /// The mask operates inclusively, when the mask is applied only rendered
-/// objects within boundry's of mask drawables will be displayed.
+/// objects within boundaries of mask drawables will be displayed. The mask supports
+/// any type of drawable. Sprites that have textures will alpha channels can even
+/// be used to construct pixel based masks.
+/// It is also important to note that the mask only stores pointers to drawables
+/// and not copies. This means if the passed in drawable is destructed the
+/// behavior is undefined.
 ///
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API ClippingMask : public Transformable

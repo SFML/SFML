@@ -45,8 +45,7 @@ RenderStates::RenderStates() :
 blendMode(BlendAlpha),
 transform(),
 texture  (NULL),
-shader   (NULL),
-mask     (NULL)
+shader   (NULL)
 {
 }
 
@@ -56,8 +55,7 @@ RenderStates::RenderStates(const Transform& theTransform) :
 blendMode(BlendAlpha),
 transform(theTransform),
 texture  (NULL),
-shader   (NULL),
-mask     (NULL)
+shader   (NULL)
 {
 }
 
@@ -67,8 +65,7 @@ RenderStates::RenderStates(const BlendMode& theBlendMode) :
 blendMode(theBlendMode),
 transform(),
 texture  (NULL),
-shader   (NULL),
-mask     (NULL)
+shader   (NULL)
 {
 }
 
@@ -78,8 +75,7 @@ RenderStates::RenderStates(const Texture* theTexture) :
 blendMode(BlendAlpha),
 transform(),
 texture  (theTexture),
-shader   (NULL),
-mask     (NULL)
+shader   (NULL)
 {
 }
 
@@ -89,32 +85,18 @@ RenderStates::RenderStates(const Shader* theShader) :
 blendMode(BlendAlpha),
 transform(),
 texture  (NULL),
-shader   (theShader),
-mask     (NULL)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const ClippingMask* theMask) :
-blendMode(BlendAlpha),
-transform(),
-texture  (NULL),
-shader   (NULL),
-mask     (theMask)
+shader   (theShader)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
-                           const Texture* theTexture, const Shader* theShader,
-                           const ClippingMask* theMask) :
+                           const Texture* theTexture, const Shader* theShader) :
 blendMode(theBlendMode),
 transform(theTransform),
 texture  (theTexture),
-shader   (theShader),
-mask     (theMask)
+shader   (theShader)
 {
 }
 
