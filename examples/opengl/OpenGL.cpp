@@ -14,9 +14,9 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
-    // Request a 32-bits depth buffer when creating the window
+    // Request a 24-bits depth buffer when creating the window
     sf::ContextSettings contextSettings;
-    contextSettings.depthBits = 32;
+    contextSettings.depthBits = 24;
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML graphics with OpenGL", sf::Style::Default, contextSettings);
@@ -53,9 +53,9 @@ int main()
             return EXIT_FAILURE;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image.getSize().x, image.getSize().y, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
 
     // Enable Z-buffer read and write
@@ -80,7 +80,7 @@ int main()
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-    GLfloat cube[] =
+    static const GLfloat cube[] =
     {
         // positions    // texture coordinates
         -20, -20, -20,  0, 0,

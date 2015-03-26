@@ -1,0 +1,10 @@
+// Created with:
+// https://bitbucket.org/Anteru/glloadgen-reloaded
+// Commit 20f19482b7a844d20b9785c3e3fd1f16419f6e0a
+// lua LoadGen.lua -style=pointer_c -spec=wgl -indent=space -prefix=sf -extfile=WglExtensions.txt WglExtensions
+
+EXT_swap_control
+WGL_ARB_multisample
+WGL_ARB_pixel_format
+WGL_ARB_create_context
+WGL_ARB_create_context_profile

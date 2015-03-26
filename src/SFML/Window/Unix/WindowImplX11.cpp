@@ -140,7 +140,7 @@ m_useSizeHints(false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& /*settings*/) :
+WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window      (0),
 m_inputMethod (NULL),
 m_inputContext(NULL),
@@ -176,8 +176,13 @@ m_useSizeHints(false)
     if (fullscreen)
         switchToFullscreen(mode);
 
+    // Choose the visual according to the context settings
+    XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+
     // Define the window attributes
-    const uint32_t value_list[] = {fullscreen, static_cast<uint32_t>(eventMask)};
+    xcb_colormap_t colormap = xcb_generate_id(m_connection);
+    xcb_create_colormap(m_connection, XCB_COLORMAP_ALLOC_NONE, colormap, m_screen->root, visualInfo.visualid);
+    const uint32_t value_list[] = {fullscreen, static_cast<uint32_t>(eventMask), colormap};
 
     // Create the window
     m_window = xcb_generate_id(m_connection);
@@ -186,15 +191,15 @@ m_useSizeHints(false)
         m_connection,
         xcb_create_window_checked(
             m_connection,
-            XCB_COPY_FROM_PARENT,
+            static_cast<uint8_t>(visualInfo.depth),
             m_window,
             m_screen->root,
             left, top,
             width, height,
             0,
             XCB_WINDOW_CLASS_INPUT_OUTPUT,
-            XCB_COPY_FROM_PARENT,
-            XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT,
+            visualInfo.visualid,
+            XCB_CW_EVENT_MASK | XCB_CW_OVERRIDE_REDIRECT | XCB_CW_COLORMAP,
             value_list
         )
     ));

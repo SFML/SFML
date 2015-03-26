@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
+#include <SFML/Window/Unix/GlxExtensions.hpp>
 #include <X11/Xlib-xcb.h>
-#include <GL/glx.h>
 
 
 namespace sf
@@ -80,6 +80,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~GlxContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target for rendering
