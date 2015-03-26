@@ -65,6 +65,17 @@ namespace
         return true;
     }
 
+    bool decode(sf::InputStream& stream, sf::Int32& value)
+    {
+        unsigned char bytes[sizeof(value)];
+        if (stream.read(bytes, sizeof(bytes)) != sizeof(bytes))
+            return false;
+
+        value = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
+
+        return true;
+    }
+
     bool decode(sf::InputStream& stream, sf::Uint32& value)
     {
         unsigned char bytes[sizeof(value)];
@@ -153,6 +164,16 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
                 Int16 sample = 0;
                 if (decode(*m_stream, sample))
                     *samples++ = sample;
+                else
+                    return count;
+                break;
+            }
+
+            case 4:
+            {
+                Int32 sample = 0;
+                if (decode(*m_stream, sample))
+                    *samples++ = sample >> 16;
                 else
                     return count;
                 break;

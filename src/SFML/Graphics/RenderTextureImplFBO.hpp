@@ -79,7 +79,7 @@ private:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer, bool stencilBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -102,9 +102,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     m_context;     ///< Needs a separate OpenGL context for not messing up the other ones
-    unsigned int m_frameBuffer; ///< OpenGL frame buffer object
-    unsigned int m_depthBuffer; ///< Optional depth buffer attached to the frame buffer
+    Context*     m_context;       ///< Needs a separate OpenGL context for not messing up the other ones
+    unsigned int m_frameBuffer;   ///< OpenGL frame buffer object
+    unsigned int m_depthBuffer;   ///< Optional depth buffer attached to the frame buffer
+    unsigned int m_stencilBuffer; ///< Optional stencil buffer attached to the frame buffer
 };
 
 } // namespace priv
