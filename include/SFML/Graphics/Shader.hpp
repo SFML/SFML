@@ -457,6 +457,18 @@ public:
     void setParameter(const std::string& name, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the underlying OpenGL handle of the shader.
+    ///
+    /// You shouldn't need to use this function, unless you have
+    /// very specific stuff to implement that SFML doesn't support,
+    /// or implement a temporary workaround until a bug is fixed.
+    ///
+    /// \return OpenGL handle of the shader or 0 if not yet loaded
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getNativeHandle() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind a shader for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be

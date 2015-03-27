@@ -29,14 +29,10 @@
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
-#ifdef SFML_SYSTEM_IOS
-    #include <OpenGLES/ES1/gl.h>
-#else
-    #include <SFML/Window/glext/glext.h>
-#endif
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -73,9 +69,46 @@
 
 #endif
 
+#if !defined(GL_MULTISAMPLE)
+    #define GL_MULTISAMPLE 0x809D
+#endif
+
+#if !defined(GL_MAJOR_VERSION)
+    #define GL_MAJOR_VERSION 0x821B
+#endif
+
+#if !defined(GL_MINOR_VERSION)
+    #define GL_MINOR_VERSION 0x821C
+#endif
+
+#if !defined(GL_CONTEXT_FLAGS)
+    #define GL_CONTEXT_FLAGS 0x821E
+#endif
+
+#if !defined(GL_CONTEXT_FLAG_DEBUG_BIT)
+    #define GL_CONTEXT_FLAG_DEBUG_BIT 0x00000002
+#endif
+
+#if !defined(GL_CONTEXT_PROFILE_MASK)
+    #define GL_CONTEXT_PROFILE_MASK 0x9126
+#endif
+
+#if !defined(GL_CONTEXT_CORE_PROFILE_BIT)
+    #define GL_CONTEXT_CORE_PROFILE_BIT 0x00000001
+#endif
+
+#if !defined(GL_CONTEXT_COMPATIBILITY_PROFILE_BIT)
+    #define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
+#endif
+
 
 namespace
 {
+    // AMD drivers have issues with internal synchronization
+    // We need to make sure that no operating system context
+    // or pixel format operations are performed simultaneously
+    sf::Mutex mutex;
+
     // This per-thread variable holds the current context for each thread
     sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
 
@@ -121,6 +154,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void GlContext::globalInit()
 {
+    Lock lock(mutex);
+
     // Create the shared context
     sharedContext = new ContextType(NULL);
     sharedContext->initialize();
@@ -135,12 +170,14 @@ void GlContext::globalInit()
 ////////////////////////////////////////////////////////////
 void GlContext::globalCleanup()
 {
+    Lock lock(mutex);
+
     // Destroy the shared context
     delete sharedContext;
     sharedContext = NULL;
 
     // Destroy the internal contexts
-    sf::Lock lock(internalContextsMutex);
+    Lock internalContextsLock(internalContextsMutex);
     for (std::set<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
         delete *it;
     internalContexts.clear();
@@ -159,6 +196,9 @@ void GlContext::ensureContext()
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::create()
 {
+    Lock lock(mutex);
+
+    // Create the context
     GlContext* context = new ContextType(sharedContext);
     context->initialize();
 
@@ -172,9 +212,12 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
 
+    Lock lock(mutex);
+
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
     context->initialize();
+    context->checkSettings(settings);
 
     return context;
 }
@@ -186,11 +229,31 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     ensureContext();
 
+    Lock lock(mutex);
+
     // Create the context
     GlContext* context = new ContextType(sharedContext, settings, width, height);
     context->initialize();
+    context->checkSettings(settings);
 
     return context;
+}
+
+
+////////////////////////////////////////////////////////////
+GlFunctionPointer GlContext::getFunction(const char* name)
+{
+#if !defined(SFML_OPENGL_ES)
+
+    Lock lock(mutex);
+
+    return ContextType::getFunction(name);
+
+#else
+
+    return 0;
+
+#endif
 }
 
 
@@ -217,6 +280,8 @@ bool GlContext::setActive(bool active)
     {
         if (this != currentContext)
         {
+            Lock lock(mutex);
+
             // Activate the context
             if (makeCurrent())
             {
@@ -276,23 +341,112 @@ void GlContext::initialize()
     setActive(true);
 
     // Retrieve the context version number
-    const GLubyte* version = glGetString(GL_VERSION);
-    if (version)
+    int majorVersion = 0;
+    int minorVersion = 0;
+
+    // Try the new way first
+    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+    if (glGetError() != GL_INVALID_ENUM)
     {
-        // The beginning of the returned string is "major.minor" (this is standard)
-        m_settings.majorVersion = version[0] - '0';
-        m_settings.minorVersion = version[2] - '0';
+        m_settings.majorVersion = static_cast<unsigned int>(majorVersion);
+        m_settings.minorVersion = static_cast<unsigned int>(minorVersion);
     }
     else
     {
-        // Can't get the version number, assume 2.0
-        m_settings.majorVersion = 2;
-        m_settings.minorVersion = 0;
+        // Try the old way
+        const GLubyte* version = glGetString(GL_VERSION);
+        if (version)
+        {
+            // The beginning of the returned string is "major.minor" (this is standard)
+            m_settings.majorVersion = version[0] - '0';
+            m_settings.minorVersion = version[2] - '0';
+        }
+        else
+        {
+            // Can't get the version number, assume 2.1
+            m_settings.majorVersion = 2;
+            m_settings.minorVersion = 1;
+        }
+    }
+
+    m_settings.attributeFlags = ContextSettings::Default;
+
+    if (m_settings.majorVersion >= 3)
+    {
+        // Retrieve the context flags
+        int flags = 0;
+        glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+
+        if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+            m_settings.attributeFlags |= ContextSettings::Debug;
+
+        if ((m_settings.majorVersion > 3) || (m_settings.minorVersion >= 2))
+        {
+            // Retrieve the context profile
+            int profile = 0;
+            glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+            if (profile & GL_CONTEXT_CORE_PROFILE_BIT)
+                m_settings.attributeFlags |= ContextSettings::Core;
+        }
     }
 
     // Enable antialiasing if needed
     if (m_settings.antialiasingLevel > 0)
         glEnable(GL_MULTISAMPLE);
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::checkSettings(const ContextSettings& requestedSettings)
+{
+    // Perform checks to inform the user if they are getting a context they might not have expected
+
+    // 3.0 contexts only deprecate features, but do not remove them yet
+    // 3.1 contexts remove features if ARB_compatibility is not present (we assume it isn't for simplicity)
+    // 3.2+ contexts remove features only if a core profile is requested
+
+    // If the context was created with wglCreateContext, it is guaranteed to be compatibility.
+    // If a 3.2+ context was created with wglCreateContextAttribsARB, the compatibility flag
+    // would have been set correctly already depending on whether ARB_create_context_profile is supported.
+
+    // If the user requests a 3.0 context, it will be a compatibility context regardless of the requested profile.
+    // If the user requests a 3.1 context and its creation was successful, the specification
+    // states that it will not be a compatibility profile context regardless of the requested profile.
+    if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 0))
+        m_settings.attributeFlags &= ~ContextSettings::Core;
+    else if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 1))
+        m_settings.attributeFlags |= ContextSettings::Core;
+
+    int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
+    int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
+
+    if ((m_settings.attributeFlags    != requestedSettings.attributeFlags)    ||
+        (version                      <  requestedVersion)           ||
+        (m_settings.stencilBits       <  requestedSettings.stencilBits)       ||
+        (m_settings.antialiasingLevel <  requestedSettings.antialiasingLevel) ||
+        (m_settings.depthBits         <  requestedSettings.depthBits))
+    {
+        err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << std::endl;
+        err() << "Requested: version = " << requestedSettings.majorVersion << "." << requestedSettings.minorVersion
+              << " ; depth bits = " << requestedSettings.depthBits
+              << " ; stencil bits = " << requestedSettings.stencilBits
+              << " ; AA level = " << requestedSettings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((requestedSettings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((requestedSettings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+        err() << "Created: version = " << m_settings.majorVersion << "." << m_settings.minorVersion
+              << " ; depth bits = " << m_settings.depthBits
+              << " ; stencil bits = " << m_settings.stencilBits
+              << " ; AA level = " << m_settings.antialiasingLevel
+              << std::boolalpha
+              << " ; core = " << ((m_settings.attributeFlags & ContextSettings::Core) != 0)
+              << " ; debug = " << ((m_settings.attributeFlags & ContextSettings::Debug) != 0)
+              << std::noboolalpha << std::endl;
+    }
 }
 
 } // namespace priv

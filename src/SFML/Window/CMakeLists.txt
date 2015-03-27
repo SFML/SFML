@@ -53,6 +53,8 @@ if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
+        ${SRCROOT}/Win32/WglExtensions.cpp
+        ${SRCROOT}/Win32/WglExtensions.hpp
         ${SRCROOT}/Win32/InputImpl.cpp
         ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
@@ -84,6 +86,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
             ${PLATFORM_SRC}
             ${SRCROOT}/Unix/GlxContext.cpp
             ${SRCROOT}/Unix/GlxContext.hpp
+            ${SRCROOT}/Unix/GlxExtensions.cpp
+            ${SRCROOT}/Unix/GlxExtensions.hpp
         )
     endif()
     if(SFML_OS_LINUX)
@@ -220,7 +224,7 @@ if(SFML_OS_WINDOWS)
 elseif(SFML_OS_LINUX)
     list(APPEND WINDOW_EXT_LIBS ${LIBXCB_LIBRARIES} ${UDEV_LIBRARIES})
 elseif(SFML_OS_FREEBSD)
-    list(APPEND WINDOW_EXT_LIBS ${LIBXCB_LIBRARIES} usbhid)
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} ${LIBXCB_LIBRARIES} usbhid)
 elseif(SFML_OS_MACOSX)
     list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)

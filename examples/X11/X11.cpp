@@ -4,10 +4,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/OpenGL.hpp>
 #include <X11/Xlib-xcb.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <iostream>
+#include <cmath>
 
 
 ////////////////////////////////////////////////////////////
@@ -33,7 +33,13 @@ void initialize(sf::Window& window)
     // Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90.f, 1.f, 1.f, 500.f);
+    static const double pi = 3.141592654;
+    GLdouble extent = std::tan(90.0 * pi / 360.0);
+    glFrustum(-extent, extent, -extent, extent, 1.0, 500.0);
+
+    // Enable position and texture coordinates vertex components
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 }
 
 ////////////////////////////////////////////////////////////
@@ -60,46 +66,57 @@ void draw(sf::Window& window, float elapsedTime)
     glRotatef(elapsedTime * 6.f, 0.f, 1.f, 0.f);
     glRotatef(elapsedTime * 18.f, 0.f, 0.f, 1.f);
 
-    // Draw a cube
-    glBegin(GL_QUADS);
+    // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
+    static const GLfloat cube[] =
+    {
+        // positions    // colors
+        -50, -50, -50,  1, 1, 0,
+        -50,  50, -50,  1, 1, 0,
+        -50, -50,  50,  1, 1, 0,
+        -50, -50,  50,  1, 1, 0,
+        -50,  50, -50,  1, 1, 0,
+        -50,  50,  50,  1, 1, 0,
 
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f(-50.f,  50.f, -50.f);
-        glVertex3f( 50.f,  50.f, -50.f);
-        glVertex3f( 50.f, -50.f, -50.f);
+         50, -50, -50,  1, 1, 0,
+         50,  50, -50,  1, 1, 0,
+         50, -50,  50,  1, 1, 0,
+         50, -50,  50,  1, 1, 0,
+         50,  50, -50,  1, 1, 0,
+         50,  50,  50,  1, 1, 0,
 
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(-50.f, -50.f, 50.f);
-        glVertex3f(-50.f,  50.f, 50.f);
-        glVertex3f( 50.f,  50.f, 50.f);
-        glVertex3f( 50.f, -50.f, 50.f);
+        -50, -50, -50,  1, 0, 1,
+         50, -50, -50,  1, 0, 1,
+        -50, -50,  50,  1, 0, 1,
+        -50, -50,  50,  1, 0, 1,
+         50, -50, -50,  1, 0, 1,
+         50, -50,  50,  1, 0, 1,
 
-        glColor3f(0.f, 1.f, 1.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f(-50.f,  50.f, -50.f);
-        glVertex3f(-50.f,  50.f,  50.f);
-        glVertex3f(-50.f, -50.f,  50.f);
+        -50,  50, -50,  1, 0, 1,
+         50,  50, -50,  1, 0, 1,
+        -50,  50,  50,  1, 0, 1,
+        -50,  50,  50,  1, 0, 1,
+         50,  50, -50,  1, 0, 1,
+         50,  50,  50,  1, 0, 1,
 
-        glColor3f(0.f, 1.f, 1.f);
-        glVertex3f(50.f, -50.f, -50.f);
-        glVertex3f(50.f,  50.f, -50.f);
-        glVertex3f(50.f,  50.f,  50.f);
-        glVertex3f(50.f, -50.f,  50.f);
+        -50, -50, -50,  0, 1, 1,
+         50, -50, -50,  0, 1, 1,
+        -50,  50, -50,  0, 1, 1,
+        -50,  50, -50,  0, 1, 1,
+         50, -50, -50,  0, 1, 1,
+         50,  50, -50,  0, 1, 1,
 
-        glColor3f(1.f, 0.f, 1.f);
-        glVertex3f(-50.f, -50.f,  50.f);
-        glVertex3f(-50.f, -50.f, -50.f);
-        glVertex3f( 50.f, -50.f, -50.f);
-        glVertex3f( 50.f, -50.f,  50.f);
+        -50, -50,  50,  0, 1, 1,
+         50, -50,  50,  0, 1, 1,
+        -50,  50,  50,  0, 1, 1,
+        -50,  50,  50,  0, 1, 1,
+         50, -50,  50,  0, 1, 1,
+         50,  50,  50,  0, 1, 1
+    };
 
-        glColor3f(1.f, 0.f, 1.f);
-        glVertex3f(-50.f, 50.f,  50.f);
-        glVertex3f(-50.f, 50.f, -50.f);
-        glVertex3f( 50.f, 50.f, -50.f);
-        glVertex3f( 50.f, 50.f,  50.f);
-
-    glEnd();
+    // Draw the cube
+    glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube);
+    glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube + 3);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 

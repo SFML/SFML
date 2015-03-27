@@ -54,6 +54,13 @@ bool Context::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
+GlFunctionPointer Context::getFunction(const char* name)
+{
+    return priv::GlContext::getFunction(name);
+}
+
+
+////////////////////////////////////////////////////////////
 Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     m_context = priv::GlContext::create(settings, width, height);

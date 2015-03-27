@@ -46,6 +46,10 @@ set(SRC
     ${SRCROOT}/Vertex.cpp
     ${INCROOT}/Vertex.hpp
 )
+if(NOT SFML_OPENGL_ES)
+    list(APPEND SRC ${SRCROOT}/GLLoader.cpp)
+    list(APPEND SRC ${SRCROOT}/GLLoader.hpp)
+endif()
 source_group("" FILES ${SRC})
 
 # drawables sources
@@ -85,31 +89,26 @@ include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers/stb_image")
 # let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/windows/freetype")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/osx/freetype2")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 elseif(SFML_OS_IOS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/ios")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/ios/freetype2")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_ANDROID)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/android")
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/libfreetype/android/freetype")
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 endif()
 
 # find external libraries
 if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
     if(SFML_OS_LINUX)
         find_package(X11 REQUIRED)
     endif()
-    include_directories(${FREETYPE_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+    include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 endif()
 if(SFML_OPENGL_ES AND SFML_OS_LINUX)
     find_package(EGL REQUIRED)
@@ -127,7 +126,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
 
 # build the list of external libraries to link
 if(NOT SFML_OPENGL_ES)
-    list(APPEND GRAPHICS_EXT_LIBS ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY})
+    list(APPEND GRAPHICS_EXT_LIBS ${OPENGL_gl_LIBRARY})
     if(SFML_OS_LINUX)
         list(APPEND GRAPHICS_EXT_LIBS ${X11_LIBRARIES})
     endif()
@@ -143,9 +142,6 @@ endif()
 list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
 
 # add preprocessor symbols
-if(NOT SFML_OPENGL_ES)
-    add_definitions(-DGLEW_STATIC)
-endif()
 add_definitions(-DSTBI_FAILURE_USERMSG)
 
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing

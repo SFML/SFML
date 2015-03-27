@@ -80,7 +80,6 @@ m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_cacheId      (getUniqueId())
 {
-
 }
 
 
@@ -561,6 +560,13 @@ Texture& Texture::operator =(const Texture& right)
     m_cacheId = getUniqueId();
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int Texture::getNativeHandle() const
+{
+    return m_texture;
 }
 
 

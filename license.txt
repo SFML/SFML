@@ -32,7 +32,5 @@ External libraries used by SFML
 * libjpeg is public domain
 * stb_image and stb_image_write are public domain
 * freetype is under the FreeType license or the GPL license
-* GLEW is under the modified BSD License, the Mesa 3-D License (MIT License), and the Khronos License (MIT License)
-* libogg is under the BSD license
-* libvorbis is under the BSD license
+* libogg is under the BSD license* libvorbis is under the BSD license
 * libflac is under the BSD license
