@@ -311,7 +311,6 @@ m_inputContext   (NULL),
 m_isExternal     (true),
 m_atomWmProtocols(0),
 m_atomClose      (0),
-m_oldVideoMode   (-1),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
@@ -321,6 +320,8 @@ m_fullscreen     (false)
     // Open a connection with the X server
     m_display = OpenDisplay();
     m_connection = XGetXCBConnection(m_display);
+
+    std::memset(&m_oldVideoMode, 0, sizeof(m_oldVideoMode));
 
     if (!m_connection)
     {
@@ -381,7 +382,6 @@ m_inputContext   (NULL),
 m_isExternal     (false),
 m_atomWmProtocols(0),
 m_atomClose      (0),
-m_oldVideoMode   (-1),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
@@ -391,6 +391,8 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     // Open a connection with the X server
     m_display = OpenDisplay();
     m_connection = XGetXCBConnection(m_display);
+
+    std::memset(&m_oldVideoMode, 0, sizeof(m_oldVideoMode));
 
     if (!m_connection)
     {
@@ -1252,7 +1254,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         &error
     ));
 
-    if (error)
+    if (error || !config)
     {
         // Failed to get the screen configuration
         err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
@@ -1260,7 +1262,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     }
 
     // Save the current video mode before we switch to fullscreen
-    m_oldVideoMode = config->sizeID;
+    m_oldVideoMode = *config.get();
 
     // Get the available screen sizes
     xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
@@ -1286,12 +1288,12 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
                 m_connection,
                 xcb_randr_set_screen_config(
                     m_connection,
-                    m_screen->root,
+                    config->root,
                     XCB_CURRENT_TIME,
                     config->config_timestamp,
                     i,
                     config->rotation,
-                    0//config->rate
+                    config->rate
                 ),
                 &error
             ));
@@ -1316,35 +1318,24 @@ void WindowImplX11::resetVideoMode()
     {
         // Get current screen info
         ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+
+        // Reset the video mode
+        ScopedXcbPtr<xcb_randr_set_screen_config_reply_t> setScreenConfig(xcb_randr_set_screen_config_reply(
             m_connection,
-            xcb_randr_get_screen_info(
-            m_connection,
-            m_screen->root
+            xcb_randr_set_screen_config(
+                m_connection,
+                m_oldVideoMode.root,
+                XCB_CURRENT_TIME,
+                m_oldVideoMode.config_timestamp,
+                m_oldVideoMode.sizeID,
+                m_oldVideoMode.rotation,
+                m_oldVideoMode.rate
             ),
             &error
         ));
 
-        if (!error)
-        {
-            // Reset the video mode
-            ScopedXcbPtr<xcb_randr_set_screen_config_reply_t> setScreenConfig(xcb_randr_set_screen_config_reply(
-                m_connection,
-                xcb_randr_set_screen_config(
-                    m_connection,
-                    m_screen->root,
-                    CurrentTime,
-                    config->config_timestamp,
-                    m_oldVideoMode,
-                    config->rotation,
-                    config->rate
-                ),
-                &error
-            ));
-
-            if (error)
-                err() << "Failed to reset old screen configuration" << std::endl;
-        }
+        if (error)
+            err() << "Failed to reset old screen configuration" << std::endl;
 
         // Reset the fullscreen window
         fullscreenWindow = NULL;
