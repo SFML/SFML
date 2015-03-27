@@ -75,6 +75,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.inl
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp

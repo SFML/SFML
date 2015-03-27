@@ -50,19 +50,9 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-    // Check if the RandR extension is present
-    static const std::string RANDR = "RANDR";
-    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
-        connection,
-        xcb_query_extension(
-            connection,
-            RANDR.size(),
-            RANDR.c_str()
-        ),
-        &error
-    ));
+    const xcb_query_extension_reply_t* randrExt = xcb_get_extension_data(connection, &xcb_randr_id);
 
-    if (error || !randr_ext->present)
+    if (!randrExt || !randrExt->present)
     {
         // Randr extension is not supported: we cannot get the video modes
         err() << "Failed to use the RandR extension while trying to get the supported video modes" << std::endl;
@@ -161,18 +151,9 @@ VideoMode VideoModeImpl::getDesktopMode()
     ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
     // Check if the RandR extension is present
-    static const std::string RANDR = "RANDR";
-    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
-        connection,
-        xcb_query_extension(
-            connection,
-            RANDR.size(),
-            RANDR.c_str()
-        ),
-        &error
-    ));
+    const xcb_query_extension_reply_t* randrExt = xcb_get_extension_data(connection, &xcb_randr_id);
 
-    if (error || !randr_ext->present)
+    if (!randrExt || !randrExt->present)
     {
         // Randr extension is not supported: we cannot get the video modes
         err() << "Failed to use the RandR extension while trying to get the desktop video mode" << std::endl;

@@ -36,11 +36,16 @@
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
 #include <xcb/randr.h>
+#include <X11/Xlibint.h>
 #include <unistd.h>
 #include <algorithm>
 #include <vector>
 #include <string>
 #include <cstring>
+
+// So we don't have to require xcb dri2 to be present
+#define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
+#define XCB_DRI2_INVALIDATE_BUFFERS   1
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -58,11 +63,11 @@ namespace
     sf::priv::WindowImplX11*              fullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
     sf::Mutex                             allWindowsMutex;
-    unsigned long                         eventMask = XCB_EVENT_MASK_FOCUS_CHANGE | XCB_EVENT_MASK_BUTTON_PRESS |
-                                                      XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION |
-                                                      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS |
-                                                      XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-                                                      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW;
+    unsigned long                         eventMask = XCB_EVENT_MASK_FOCUS_CHANGE   | XCB_EVENT_MASK_BUTTON_PRESS     |
+                                                      XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION    |
+                                                      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS        |
+                                                      XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+                                                      XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW;
 
     // Find the name of the current executable
     std::string findExecutableName()
@@ -173,6 +178,123 @@ namespace
 
         ewmhSupported = true;
         return true;
+    }
+
+    xcb_query_extension_reply_t getDriExtension()
+    {
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        // Check if the DRI2 extension is present
+        // We don't use xcb_get_extension_data here to avoid having to link to xcb_dri2
+        static const std::string DRI2 = "DRI2";
+        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> driExt(xcb_query_extension_reply(
+            connection,
+            xcb_query_extension(
+                connection,
+                DRI2.size(),
+                DRI2.c_str()
+            ),
+            &error
+        ));
+
+        // Close the connection with the X server
+        sf::priv::CloseConnection(connection);
+
+        if (error || !driExt || !driExt->present)
+        {
+            xcb_query_extension_reply_t reply;
+            std::memset(&reply, 0, sizeof(reply));
+            return reply;
+        }
+
+        return *driExt.get();
+    }
+
+    void dumpXcbExtensions()
+    {
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        // Check if the RandR extension is present
+        sf::priv::ScopedXcbPtr<xcb_list_extensions_reply_t> extensions(xcb_list_extensions_reply(
+            connection,
+            xcb_list_extensions(
+                connection
+            ),
+            &error
+        ));
+
+        if (error || !extensions)
+        {
+            // Close the connection with the X server
+            sf::priv::CloseConnection(connection);
+
+            sf::err() << "Couldn't get list of X extensions" << std::endl;
+            return;
+        }
+
+        xcb_str_iterator_t iter = xcb_list_extensions_names_iterator(extensions.get());
+
+        sf::err() << "X Extensions:" << std::endl;
+
+        while (iter.rem)
+        {
+            std::string name(xcb_str_name(iter.data), xcb_str_name_length(iter.data));
+
+            sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+            // Check if the RandR extension is present
+            sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
+                connection,
+                xcb_query_extension(
+                    connection,
+                    name.size(),
+                    name.c_str()
+                ),
+                &error
+            ));
+
+            if (error || !extension || !extension->present)
+            {
+                sf::err() << "\t" << name << " - Failed to query" << std::endl;
+                continue;
+            }
+
+            int firstEvent = extension->first_event;
+
+            sf::err() << "\t" << name << " - First event: " << firstEvent << std::endl;
+            iter.data += xcb_str_name_length(iter.data) + 1;
+            --iter.rem;
+        }
+
+        // Close the connection with the X server
+        sf::priv::CloseConnection(connection);
+    }
+
+    void dumpUnhandledEvent(uint8_t type)
+    {
+        static std::vector<uint8_t> types;
+
+        // Check if we already reported this type
+        if (std::find(types.begin(), types.end(), type) != types.end())
+            return;
+
+        // Insert it if new
+        types.push_back(type);
+
+        static bool dumpedExtensions = false;
+
+        if (!dumpedExtensions)
+        {
+            dumpXcbExtensions();
+            dumpedExtensions = true;
+        }
+
+        sf::err() << "Unhandled event type: " << (static_cast<int>(type) & ~0x80) << std::endl
+                  << "Report this to the SFML maintainers if possible" << std::endl;
     }
 }
 
@@ -350,18 +472,14 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     std::memset(&sizeHints, 0, sizeof(sizeHints));
 
     // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
-    if (!m_fullscreen)
-    {
-        // Set the Motif WM hints
-        setMotifHints(style);
+    setMotifHints(style);
 
-        // This is a hack to force some windows managers to disable resizing
-        if (!(style & Style::Resize))
-        {
-            m_useSizeHints = true;
-            xcb_icccm_size_hints_set_min_size(&sizeHints, width, height);
-            xcb_icccm_size_hints_set_max_size(&sizeHints, width, height);
-        }
+    // This is a hack to force some windows managers to disable resizing
+    if (!(style & Style::Resize))
+    {
+        m_useSizeHints = true;
+        xcb_icccm_size_hints_set_min_size(&sizeHints, width, height);
+        xcb_icccm_size_hints_set_max_size(&sizeHints, width, height);
     }
 
     // Set the WM hints of the normal state
@@ -1098,18 +1216,9 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
     // Check if the RandR extension is present
-    static const std::string RANDR = "RANDR";
-    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
-        m_connection,
-        xcb_query_extension(
-            m_connection,
-            RANDR.size(),
-            RANDR.c_str()
-        ),
-        &error
-    ));
+    const xcb_query_extension_reply_t* randrExt = xcb_get_extension_data(m_connection, &xcb_randr_id);
 
-    if (error || !randr_ext->present)
+    if (!randrExt || !randrExt->present)
     {
         // RandR extension is not supported: we cannot use fullscreen mode
         err() << "Fullscreen is not supported, switching to window mode" << std::endl;
@@ -1445,21 +1554,27 @@ void WindowImplX11::setMotifHints(unsigned long style)
         hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
         hints.decorations = 0;
         hints.functions   = 0;
+        hints.inputMode   = 0;
+        hints.state       = 0;
 
-        if (style & Style::Titlebar)
+        // Decorate only if not in fullscreen
+        if (!(style & Style::Fullscreen))
         {
-            hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-            hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
-        }
-        if (style & Style::Resize)
-        {
-            hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-            hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
-        }
-        if (style & Style::Close)
-        {
-            hints.decorations |= 0;
-            hints.functions   |= MWM_FUNC_CLOSE;
+            if (style & Style::Titlebar)
+            {
+                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+            }
+            if (style & Style::Resize)
+            {
+                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+            }
+            if (style & Style::Close)
+            {
+                hints.decorations |= 0;
+                hints.functions   |= MWM_FUNC_CLOSE;
+            }
         }
 
         ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
@@ -2012,6 +2127,79 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 switchToFullscreen();
 
             xcb_flush(m_connection); // Discard remaining events
+            break;
+        }
+
+        // The stuff that might pop up but we don't care about
+        // Whitelist more when necessary
+        // Window visibility changed (hide/unhide)
+        case XCB_MAP_NOTIFY:
+        case XCB_UNMAP_NOTIFY:
+        {
+            break;
+        }
+
+        // Handle the rest
+        default:
+        {
+            uint8_t responseType = windowEvent->response_type & ~0x80;
+
+            // Handle any extension events first
+
+            // DRI2
+            static xcb_query_extension_reply_t driExtension = getDriExtension();
+            if (driExtension.present)
+            {
+                // Because we are using the XCB event queue instead of the Xlib event
+                // queue, Mesa breaks a bit (VSync among other things) because DRI2 still
+                // expects certain Xlib events to come its way. We work around this by
+                // emulating the old Xlib event queue for these specific wire events.
+                // Sources (retrieved 27 Mar 2015):
+                // http://wrl.illest.net/post/45342765813/code-tip-glx-and-xcbownseventqueue
+                // https://bugs.freedesktop.org/show_bug.cgi?id=42131
+                // https://bugs.freedesktop.org/show_bug.cgi?id=35945
+                // Mesa src/glx/dri2.c
+                // QtBase src/plugins/platforms/xcb/gl_integrations/xcb_glx/qxcbglxintegration.cpp
+                // QtBase Commit bb22b4965070409df4658f16fdf549f0362e8a9c
+                // Qt Change-Id I3b4ef3f6e3efbae25f49f161e229e9b15e951778
+                // QtBase Commit 13c5c81cfa934c9b610720fe79e07465b00ebc8d
+                // Qt Change-Id Ia93eb8be1cbbc3d8ae7913a934c195af6b5ec538
+                // QtBase Commit decb88693c8a7f0c073889b91151f01a850e3adf
+                // Qt Change-Id Ic466ff26487937b03f072a57e0ee4df335492a5f
+                if ((responseType == driExtension.first_event + XCB_DRI2_BUFFER_SWAP_COMPLETE) ||
+                    (responseType == driExtension.first_event + XCB_DRI2_INVALIDATE_BUFFERS))
+                {
+                    // DRI2 BufferSwapComplete and InvalidateBuffers
+
+                    // We lock/unlock the display to protect against concurrent access
+                    XLockDisplay(m_display);
+
+                    typedef Bool (*wireEventHandler)(Display*, XEvent*, xEvent*);
+
+                    // Probe for any handlers that are registered for this event type
+                    wireEventHandler handler = XESetWireToEvent(m_display, responseType, 0);
+
+                    if (handler)
+                    {
+                        // Restore the previous handler if one was registered
+                        XESetWireToEvent(m_display, responseType, handler);
+
+                        XEvent event;
+                        windowEvent->sequence = LastKnownRequestProcessed(m_display);
+
+                        // Pretend to be the Xlib event queue
+                        handler(m_display, &event, reinterpret_cast<xEvent*>(windowEvent));
+                    }
+
+                    XUnlockDisplay(m_display);
+
+                    return true;
+                }
+            }
+
+            // Print any surprises to stderr (would be nice if people report when this happens)
+            dumpUnhandledEvent(responseType);
+
             break;
         }
     }
