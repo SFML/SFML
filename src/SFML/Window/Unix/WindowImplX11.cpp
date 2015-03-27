@@ -1309,21 +1309,35 @@ Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
         case XK_Super_R:      return Keyboard::RSystem;
         case XK_Menu:         return Keyboard::Menu;
         case XK_Escape:       return Keyboard::Escape;
+        case XK_colon:
         case XK_semicolon:    return Keyboard::SemiColon;
+        case XK_question:
         case XK_slash:        return Keyboard::Slash;
+        case XK_plus:
         case XK_equal:        return Keyboard::Equal;
+        case XK_underscore:
         case XK_minus:        return Keyboard::Dash;
+        case XK_braceleft:
         case XK_bracketleft:  return Keyboard::LBracket;
+        case XK_braceright:
         case XK_bracketright: return Keyboard::RBracket;
+        case XK_less:
         case XK_comma:        return Keyboard::Comma;
+        case XK_greater:
         case XK_period:       return Keyboard::Period;
+        case XK_apostrophe:
+        case XK_quotedbl:
         case XK_dead_acute:   return Keyboard::Quote;
+        case XK_bar:
         case XK_backslash:    return Keyboard::BackSlash;
+        case XK_asciitilde:
+        case XK_grave:
         case XK_dead_grave:   return Keyboard::Tilde;
         case XK_space:        return Keyboard::Space;
         case XK_Return:       return Keyboard::Return;
         case XK_KP_Enter:     return Keyboard::Return;
         case XK_BackSpace:    return Keyboard::BackSpace;
+        case XK_ISO_Left_Tab:
         case XK_Tab:          return Keyboard::Tab;
         case XK_Prior:        return Keyboard::PageUp;
         case XK_Next:         return Keyboard::PageDown;
@@ -1355,51 +1369,97 @@ Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
         case XK_Right:        return Keyboard::Right;
         case XK_Up:           return Keyboard::Up;
         case XK_Down:         return Keyboard::Down;
+        case XK_KP_Insert:
         case XK_KP_0:         return Keyboard::Numpad0;
+        case XK_KP_End:
         case XK_KP_1:         return Keyboard::Numpad1;
+        case XK_KP_Down:
         case XK_KP_2:         return Keyboard::Numpad2;
+        case XK_KP_Page_Down:
         case XK_KP_3:         return Keyboard::Numpad3;
+        case XK_KP_Left:
         case XK_KP_4:         return Keyboard::Numpad4;
+        case XK_KP_Begin:
         case XK_KP_5:         return Keyboard::Numpad5;
+        case XK_KP_Right:
         case XK_KP_6:         return Keyboard::Numpad6;
+        case XK_KP_Home:
         case XK_KP_7:         return Keyboard::Numpad7;
+        case XK_KP_Up:
         case XK_KP_8:         return Keyboard::Numpad8;
+        case XK_KP_Page_Up:
         case XK_KP_9:         return Keyboard::Numpad9;
+        case XK_a:
         case XK_A:            return Keyboard::A;
+        case XK_z:
         case XK_Z:            return Keyboard::Z;
+        case XK_e:
         case XK_E:            return Keyboard::E;
+        case XK_r:
         case XK_R:            return Keyboard::R;
+        case XK_t:
         case XK_T:            return Keyboard::T;
+        case XK_y:
         case XK_Y:            return Keyboard::Y;
+        case XK_u:
         case XK_U:            return Keyboard::U;
+        case XK_i:
         case XK_I:            return Keyboard::I;
+        case XK_o:
         case XK_O:            return Keyboard::O;
+        case XK_p:
         case XK_P:            return Keyboard::P;
+        case XK_q:
         case XK_Q:            return Keyboard::Q;
+        case XK_s:
         case XK_S:            return Keyboard::S;
+        case XK_d:
         case XK_D:            return Keyboard::D;
+        case XK_f:
         case XK_F:            return Keyboard::F;
+        case XK_g:
         case XK_G:            return Keyboard::G;
+        case XK_h:
         case XK_H:            return Keyboard::H;
+        case XK_j:
         case XK_J:            return Keyboard::J;
+        case XK_k:
         case XK_K:            return Keyboard::K;
+        case XK_l:
         case XK_L:            return Keyboard::L;
+        case XK_m:
         case XK_M:            return Keyboard::M;
+        case XK_w:
         case XK_W:            return Keyboard::W;
+        case XK_x:
         case XK_X:            return Keyboard::X;
+        case XK_c:
         case XK_C:            return Keyboard::C;
+        case XK_v:
         case XK_V:            return Keyboard::V;
+        case XK_b:
         case XK_B:            return Keyboard::B;
+        case XK_n:
         case XK_N:            return Keyboard::N;
+        case XK_parenright:
         case XK_0:            return Keyboard::Num0;
+        case XK_exclam:
         case XK_1:            return Keyboard::Num1;
+        case XK_at:
         case XK_2:            return Keyboard::Num2;
+        case XK_numbersign:
         case XK_3:            return Keyboard::Num3;
+        case XK_dollar:
         case XK_4:            return Keyboard::Num4;
+        case XK_percent:
         case XK_5:            return Keyboard::Num5;
+        case XK_asciicircum:
         case XK_6:            return Keyboard::Num6;
+        case XK_ampersand:
         case XK_7:            return Keyboard::Num7;
+        case XK_asterisk:
         case XK_8:            return Keyboard::Num8;
+        case XK_parenleft:
         case XK_9:            return Keyboard::Num9;
     }
 
