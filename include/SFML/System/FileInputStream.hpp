@@ -31,7 +31,8 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Export.hpp>
-#include <fstream>
+#include <cstdio>
+#include <string>
 
 #ifdef ANDROID
 namespace sf
@@ -123,7 +124,7 @@ private:
 #ifdef ANDROID
     sf::priv::ResourceStream *m_file;
 #else
-    std::ifstream m_file; ///< Standard file stream
+    std::FILE* m_file; ///< stdio file stream
 #endif
 };
 
