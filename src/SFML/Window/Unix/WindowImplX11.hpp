@@ -33,6 +33,7 @@
 #include <SFML/System/String.hpp>
 #include <X11/Xlib-xcb.h>
 #include <xcb/xcb_ewmh.h>
+#include <xcb/xcb_keysyms.h>
 #include <xcb/randr.h>
 #include <deque>
 
@@ -278,6 +279,7 @@ private:
     xcb_screen_t*                     m_screen;          ///< Screen identifier
     XIM                               m_inputMethod;     ///< Input method linked to the X display
     XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
+    xcb_key_symbols_t*                m_keySymbols;      ///< Symbols used to look up keysyms
     std::deque<xcb_generic_event_t*>  m_xcbEvents;       ///< Events that were received in another window's loop
     bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
     Atom                              m_atomWmProtocols; ///< Atom used to identify WM protocol messages

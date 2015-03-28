@@ -308,6 +308,7 @@ WindowImplX11::WindowImplX11(WindowHandle handle) :
 m_window         (0),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
+m_keySymbols     (NULL),
 m_isExternal     (true),
 m_atomWmProtocols(0),
 m_atomClose      (0),
@@ -379,6 +380,7 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long 
 m_window         (0),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
+m_keySymbols     (NULL),
 m_isExternal     (false),
 m_atomWmProtocols(0),
 m_atomClose      (0),
@@ -540,6 +542,10 @@ WindowImplX11::~WindowImplX11()
         xcb_destroy_window(m_connection, m_window);
         xcb_flush(m_connection);
     }
+
+    // Free key symbols
+    if (m_keySymbols)
+        xcb_key_symbols_free(m_keySymbols);
 
     // Close the input method
     if (m_inputMethod)
@@ -1619,6 +1625,12 @@ void WindowImplX11::initialize()
     if (!m_inputContext)
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
+    // Allocate our key symbols
+    m_keySymbols = xcb_key_symbols_alloc(m_connection);
+
+    if (!m_keySymbols)
+        err() << "Failed to allocate key symbols" << std::endl;
+
     // Show the window
     setVisible(true);
 
@@ -1857,20 +1869,8 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
 
             // Get the keysym of the key that has been pressed
-            static XComposeStatus keyboard;
-            char buffer[32];
-            KeySym symbol;
-
-            // There is no xcb equivalent of XLookupString, so the xcb event
-            // has to be converted to an XEvent
-            XEvent fake_event;
-            fake_event.type = KeyPress;
-            fake_event.xany.display = m_display;
-            fake_event.xany.window  = e->event;
-            fake_event.xkey.state   = e->state;
-            fake_event.xkey.keycode = e->detail;
-
-            XLookupString(&fake_event.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
+            // We don't pass e->state as the last parameter because we want the unmodified keysym
+            xcb_keysym_t symbol = xcb_key_press_lookup_keysym(m_keySymbols, e, 0);
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
@@ -1883,8 +1883,15 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             event.key.system  = e->state & XCB_MOD_MASK_4;
             pushEvent(event);
 
+            XEvent fakeEvent;
+            fakeEvent.type = KeyPress;
+            fakeEvent.xany.display = m_display;
+            fakeEvent.xany.window  = e->event;
+            fakeEvent.xkey.state   = e->state;
+            fakeEvent.xkey.keycode = e->detail;
+
             // Generate a TextEntered event
-            if (!XFilterEvent(&fake_event, None))
+            if (!XFilterEvent(&fakeEvent, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
@@ -1894,7 +1901,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
                     int length = Xutf8LookupString(
                         m_inputContext,
-                        &fake_event.xkey,
+                        &fakeEvent.xkey,
                         reinterpret_cast<char*>(keyBuffer),
                         sizeof(keyBuffer),
                         NULL,
@@ -1919,7 +1926,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 {
                     static XComposeStatus status;
                     char keyBuffer[16];
-                    if (XLookupString(&fake_event.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    if (XLookupString(&fakeEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;
@@ -1941,16 +1948,8 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
 
             // Get the keysym of the key that has been pressed
-            char buffer[32];
-            KeySym symbol;
-
-            // There is no xcb equivalent of XLookupString, so the xcb event
-            // has to be converted to an XEvent
-            XKeyEvent fake_event;
-            fake_event.display = m_display;
-            fake_event.state   = e->state;
-            fake_event.keycode = e->detail;
-            XLookupString(&fake_event, buffer, 32, &symbol, NULL);
+            // We don't pass e->state as the last parameter because we want the unmodified keysym
+            xcb_keysym_t symbol = xcb_key_release_lookup_keysym(m_keySymbols, e, 0);
 
             // Fill the event parameters
             Event event;
@@ -2253,9 +2252,9 @@ Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
         case XK_bracketright: return Keyboard::RBracket;
         case XK_comma:        return Keyboard::Comma;
         case XK_period:       return Keyboard::Period;
-        case XK_dead_acute:   return Keyboard::Quote;
+        case XK_apostrophe:   return Keyboard::Quote;
         case XK_backslash:    return Keyboard::BackSlash;
-        case XK_dead_grave:   return Keyboard::Tilde;
+        case XK_grave:        return Keyboard::Tilde;
         case XK_space:        return Keyboard::Space;
         case XK_Return:       return Keyboard::Return;
         case XK_KP_Enter:     return Keyboard::Return;
