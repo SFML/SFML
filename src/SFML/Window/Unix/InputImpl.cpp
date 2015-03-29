@@ -29,9 +29,158 @@
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
+#include <SFML/System/Err.hpp>
+#include <xcb/xcb_keysyms.h>
 #include <X11/Xlib-xcb.h>
 #include <X11/keysym.h>
 #include <cstdlib>
+
+////////////////////////////////////////////////////////////
+// Private data
+////////////////////////////////////////////////////////////
+namespace
+{
+    bool mapBuilt = false;
+
+    // We use a simple array instead of a map => constant time lookup
+    xcb_keycode_t keycodeMap[sf::Keyboard::KeyCount];
+
+    xcb_keycode_t getKeycode(xcb_key_symbols_t* keySymbols, xcb_keysym_t keysym)
+    {
+        // keycodes is actually a vector of keycodes
+        // Since we only care about the unmodified keycode,
+        // we simply return the first one
+        sf::priv::ScopedXcbPtr<xcb_keycode_t> keycodes(xcb_key_symbols_get_keycode(keySymbols, keysym));
+
+        if (keycodes)
+            return *keycodes.get();
+
+        return 0;
+    }
+
+    void buildMap()
+    {
+        // Open a connection with the X server
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        xcb_key_symbols_t* keySymbols = xcb_key_symbols_alloc(connection);
+
+        if (!keySymbols)
+        {
+            sf::err() << "Failed to allocate key symbols" << std::endl;
+            return;
+        }
+
+        keycodeMap[sf::Keyboard::A]         = getKeycode(keySymbols, XK_A);
+        keycodeMap[sf::Keyboard::B]         = getKeycode(keySymbols, XK_B);
+        keycodeMap[sf::Keyboard::C]         = getKeycode(keySymbols, XK_C);
+        keycodeMap[sf::Keyboard::D]         = getKeycode(keySymbols, XK_D);
+        keycodeMap[sf::Keyboard::E]         = getKeycode(keySymbols, XK_E);
+        keycodeMap[sf::Keyboard::F]         = getKeycode(keySymbols, XK_F);
+        keycodeMap[sf::Keyboard::G]         = getKeycode(keySymbols, XK_G);
+        keycodeMap[sf::Keyboard::H]         = getKeycode(keySymbols, XK_H);
+        keycodeMap[sf::Keyboard::I]         = getKeycode(keySymbols, XK_I);
+        keycodeMap[sf::Keyboard::J]         = getKeycode(keySymbols, XK_J);
+        keycodeMap[sf::Keyboard::K]         = getKeycode(keySymbols, XK_K);
+        keycodeMap[sf::Keyboard::L]         = getKeycode(keySymbols, XK_L);
+        keycodeMap[sf::Keyboard::M]         = getKeycode(keySymbols, XK_M);
+        keycodeMap[sf::Keyboard::N]         = getKeycode(keySymbols, XK_N);
+        keycodeMap[sf::Keyboard::O]         = getKeycode(keySymbols, XK_O);
+        keycodeMap[sf::Keyboard::P]         = getKeycode(keySymbols, XK_P);
+        keycodeMap[sf::Keyboard::Q]         = getKeycode(keySymbols, XK_Q);
+        keycodeMap[sf::Keyboard::R]         = getKeycode(keySymbols, XK_R);
+        keycodeMap[sf::Keyboard::S]         = getKeycode(keySymbols, XK_S);
+        keycodeMap[sf::Keyboard::T]         = getKeycode(keySymbols, XK_T);
+        keycodeMap[sf::Keyboard::U]         = getKeycode(keySymbols, XK_U);
+        keycodeMap[sf::Keyboard::V]         = getKeycode(keySymbols, XK_V);
+        keycodeMap[sf::Keyboard::W]         = getKeycode(keySymbols, XK_W);
+        keycodeMap[sf::Keyboard::X]         = getKeycode(keySymbols, XK_X);
+        keycodeMap[sf::Keyboard::Y]         = getKeycode(keySymbols, XK_Y);
+        keycodeMap[sf::Keyboard::Z]         = getKeycode(keySymbols, XK_Z);
+        keycodeMap[sf::Keyboard::Num0]      = getKeycode(keySymbols, XK_0);
+        keycodeMap[sf::Keyboard::Num1]      = getKeycode(keySymbols, XK_1);
+        keycodeMap[sf::Keyboard::Num2]      = getKeycode(keySymbols, XK_2);
+        keycodeMap[sf::Keyboard::Num3]      = getKeycode(keySymbols, XK_3);
+        keycodeMap[sf::Keyboard::Num4]      = getKeycode(keySymbols, XK_4);
+        keycodeMap[sf::Keyboard::Num5]      = getKeycode(keySymbols, XK_5);
+        keycodeMap[sf::Keyboard::Num6]      = getKeycode(keySymbols, XK_6);
+        keycodeMap[sf::Keyboard::Num7]      = getKeycode(keySymbols, XK_7);
+        keycodeMap[sf::Keyboard::Num8]      = getKeycode(keySymbols, XK_8);
+        keycodeMap[sf::Keyboard::Num9]      = getKeycode(keySymbols, XK_9);
+        keycodeMap[sf::Keyboard::Escape]    = getKeycode(keySymbols, XK_Escape);
+        keycodeMap[sf::Keyboard::LControl]  = getKeycode(keySymbols, XK_Control_L);
+        keycodeMap[sf::Keyboard::LShift]    = getKeycode(keySymbols, XK_Shift_L);
+        keycodeMap[sf::Keyboard::LAlt]      = getKeycode(keySymbols, XK_Alt_L);
+        keycodeMap[sf::Keyboard::LSystem]   = getKeycode(keySymbols, XK_Super_L);
+        keycodeMap[sf::Keyboard::RControl]  = getKeycode(keySymbols, XK_Control_R);
+        keycodeMap[sf::Keyboard::RShift]    = getKeycode(keySymbols, XK_Shift_R);
+        keycodeMap[sf::Keyboard::RAlt]      = getKeycode(keySymbols, XK_Alt_R);
+        keycodeMap[sf::Keyboard::RSystem]   = getKeycode(keySymbols, XK_Super_R);
+        keycodeMap[sf::Keyboard::Menu]      = getKeycode(keySymbols, XK_Menu);
+        keycodeMap[sf::Keyboard::LBracket]  = getKeycode(keySymbols, XK_bracketleft);
+        keycodeMap[sf::Keyboard::RBracket]  = getKeycode(keySymbols, XK_bracketright);
+        keycodeMap[sf::Keyboard::SemiColon] = getKeycode(keySymbols, XK_semicolon);
+        keycodeMap[sf::Keyboard::Comma]     = getKeycode(keySymbols, XK_comma);
+        keycodeMap[sf::Keyboard::Period]    = getKeycode(keySymbols, XK_period);
+        keycodeMap[sf::Keyboard::Quote]     = getKeycode(keySymbols, XK_apostrophe);
+        keycodeMap[sf::Keyboard::Slash]     = getKeycode(keySymbols, XK_slash);
+        keycodeMap[sf::Keyboard::BackSlash] = getKeycode(keySymbols, XK_backslash);
+        keycodeMap[sf::Keyboard::Tilde]     = getKeycode(keySymbols, XK_grave);
+        keycodeMap[sf::Keyboard::Equal]     = getKeycode(keySymbols, XK_equal);
+        keycodeMap[sf::Keyboard::Dash]      = getKeycode(keySymbols, XK_minus);
+        keycodeMap[sf::Keyboard::Space]     = getKeycode(keySymbols, XK_space);
+        keycodeMap[sf::Keyboard::Return]    = getKeycode(keySymbols, XK_Return);
+        keycodeMap[sf::Keyboard::BackSpace] = getKeycode(keySymbols, XK_BackSpace);
+        keycodeMap[sf::Keyboard::Tab]       = getKeycode(keySymbols, XK_Tab);
+        keycodeMap[sf::Keyboard::PageUp]    = getKeycode(keySymbols, XK_Prior);
+        keycodeMap[sf::Keyboard::PageDown]  = getKeycode(keySymbols, XK_Next);
+        keycodeMap[sf::Keyboard::End]       = getKeycode(keySymbols, XK_End);
+        keycodeMap[sf::Keyboard::Home]      = getKeycode(keySymbols, XK_Home);
+        keycodeMap[sf::Keyboard::Insert]    = getKeycode(keySymbols, XK_Insert);
+        keycodeMap[sf::Keyboard::Delete]    = getKeycode(keySymbols, XK_Delete);
+        keycodeMap[sf::Keyboard::Add]       = getKeycode(keySymbols, XK_KP_Add);
+        keycodeMap[sf::Keyboard::Subtract]  = getKeycode(keySymbols, XK_KP_Subtract);
+        keycodeMap[sf::Keyboard::Multiply]  = getKeycode(keySymbols, XK_KP_Multiply);
+        keycodeMap[sf::Keyboard::Divide]    = getKeycode(keySymbols, XK_KP_Divide);
+        keycodeMap[sf::Keyboard::Left]      = getKeycode(keySymbols, XK_Left);
+        keycodeMap[sf::Keyboard::Right]     = getKeycode(keySymbols, XK_Right);
+        keycodeMap[sf::Keyboard::Up]        = getKeycode(keySymbols, XK_Up);
+        keycodeMap[sf::Keyboard::Down]      = getKeycode(keySymbols, XK_Down);
+        keycodeMap[sf::Keyboard::Numpad0]   = getKeycode(keySymbols, XK_KP_0);
+        keycodeMap[sf::Keyboard::Numpad1]   = getKeycode(keySymbols, XK_KP_1);
+        keycodeMap[sf::Keyboard::Numpad2]   = getKeycode(keySymbols, XK_KP_2);
+        keycodeMap[sf::Keyboard::Numpad3]   = getKeycode(keySymbols, XK_KP_3);
+        keycodeMap[sf::Keyboard::Numpad4]   = getKeycode(keySymbols, XK_KP_4);
+        keycodeMap[sf::Keyboard::Numpad5]   = getKeycode(keySymbols, XK_KP_5);
+        keycodeMap[sf::Keyboard::Numpad6]   = getKeycode(keySymbols, XK_KP_6);
+        keycodeMap[sf::Keyboard::Numpad7]   = getKeycode(keySymbols, XK_KP_7);
+        keycodeMap[sf::Keyboard::Numpad8]   = getKeycode(keySymbols, XK_KP_8);
+        keycodeMap[sf::Keyboard::Numpad9]   = getKeycode(keySymbols, XK_KP_9);
+        keycodeMap[sf::Keyboard::F1]        = getKeycode(keySymbols, XK_F1);
+        keycodeMap[sf::Keyboard::F2]        = getKeycode(keySymbols, XK_F2);
+        keycodeMap[sf::Keyboard::F3]        = getKeycode(keySymbols, XK_F3);
+        keycodeMap[sf::Keyboard::F4]        = getKeycode(keySymbols, XK_F4);
+        keycodeMap[sf::Keyboard::F5]        = getKeycode(keySymbols, XK_F5);
+        keycodeMap[sf::Keyboard::F6]        = getKeycode(keySymbols, XK_F6);
+        keycodeMap[sf::Keyboard::F7]        = getKeycode(keySymbols, XK_F7);
+        keycodeMap[sf::Keyboard::F8]        = getKeycode(keySymbols, XK_F8);
+        keycodeMap[sf::Keyboard::F9]        = getKeycode(keySymbols, XK_F9);
+        keycodeMap[sf::Keyboard::F10]       = getKeycode(keySymbols, XK_F10);
+        keycodeMap[sf::Keyboard::F11]       = getKeycode(keySymbols, XK_F11);
+        keycodeMap[sf::Keyboard::F12]       = getKeycode(keySymbols, XK_F12);
+        keycodeMap[sf::Keyboard::F13]       = getKeycode(keySymbols, XK_F13);
+        keycodeMap[sf::Keyboard::F14]       = getKeycode(keySymbols, XK_F14);
+        keycodeMap[sf::Keyboard::F15]       = getKeycode(keySymbols, XK_F15);
+        keycodeMap[sf::Keyboard::Pause]     = getKeycode(keySymbols, XK_Pause);
+
+        xcb_key_symbols_free(keySymbols);
+
+        // Close the connection with the X server
+        sf::priv::CloseConnection(connection);
+
+        mapBuilt = true;
+    }
+}
 
 
 namespace sf
@@ -41,138 +190,42 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    // Get the corresponding X11 keysym
-    KeySym keysym = 0;
-    switch (key)
-    {
-        case Keyboard::A:          keysym = XK_A;            break;
-        case Keyboard::B:          keysym = XK_B;            break;
-        case Keyboard::C:          keysym = XK_C;            break;
-        case Keyboard::D:          keysym = XK_D;            break;
-        case Keyboard::E:          keysym = XK_E;            break;
-        case Keyboard::F:          keysym = XK_F;            break;
-        case Keyboard::G:          keysym = XK_G;            break;
-        case Keyboard::H:          keysym = XK_H;            break;
-        case Keyboard::I:          keysym = XK_I;            break;
-        case Keyboard::J:          keysym = XK_J;            break;
-        case Keyboard::K:          keysym = XK_K;            break;
-        case Keyboard::L:          keysym = XK_L;            break;
-        case Keyboard::M:          keysym = XK_M;            break;
-        case Keyboard::N:          keysym = XK_N;            break;
-        case Keyboard::O:          keysym = XK_O;            break;
-        case Keyboard::P:          keysym = XK_P;            break;
-        case Keyboard::Q:          keysym = XK_Q;            break;
-        case Keyboard::R:          keysym = XK_R;            break;
-        case Keyboard::S:          keysym = XK_S;            break;
-        case Keyboard::T:          keysym = XK_T;            break;
-        case Keyboard::U:          keysym = XK_U;            break;
-        case Keyboard::V:          keysym = XK_V;            break;
-        case Keyboard::W:          keysym = XK_W;            break;
-        case Keyboard::X:          keysym = XK_X;            break;
-        case Keyboard::Y:          keysym = XK_Y;            break;
-        case Keyboard::Z:          keysym = XK_Z;            break;
-        case Keyboard::Num0:       keysym = XK_0;            break;
-        case Keyboard::Num1:       keysym = XK_1;            break;
-        case Keyboard::Num2:       keysym = XK_2;            break;
-        case Keyboard::Num3:       keysym = XK_3;            break;
-        case Keyboard::Num4:       keysym = XK_4;            break;
-        case Keyboard::Num5:       keysym = XK_5;            break;
-        case Keyboard::Num6:       keysym = XK_6;            break;
-        case Keyboard::Num7:       keysym = XK_7;            break;
-        case Keyboard::Num8:       keysym = XK_8;            break;
-        case Keyboard::Num9:       keysym = XK_9;            break;
-        case Keyboard::Escape:     keysym = XK_Escape;       break;
-        case Keyboard::LControl:   keysym = XK_Control_L;    break;
-        case Keyboard::LShift:     keysym = XK_Shift_L;      break;
-        case Keyboard::LAlt:       keysym = XK_Alt_L;        break;
-        case Keyboard::LSystem:    keysym = XK_Super_L;      break;
-        case Keyboard::RControl:   keysym = XK_Control_R;    break;
-        case Keyboard::RShift:     keysym = XK_Shift_R;      break;
-        case Keyboard::RAlt:       keysym = XK_Alt_R;        break;
-        case Keyboard::RSystem:    keysym = XK_Super_R;      break;
-        case Keyboard::Menu:       keysym = XK_Menu;         break;
-        case Keyboard::LBracket:   keysym = XK_bracketleft;  break;
-        case Keyboard::RBracket:   keysym = XK_bracketright; break;
-        case Keyboard::SemiColon:  keysym = XK_semicolon;    break;
-        case Keyboard::Comma:      keysym = XK_comma;        break;
-        case Keyboard::Period:     keysym = XK_period;       break;
-        case Keyboard::Quote:      keysym = XK_dead_acute;   break;
-        case Keyboard::Slash:      keysym = XK_slash;        break;
-        case Keyboard::BackSlash:  keysym = XK_backslash;    break;
-        case Keyboard::Tilde:      keysym = XK_dead_grave;   break;
-        case Keyboard::Equal:      keysym = XK_equal;        break;
-        case Keyboard::Dash:       keysym = XK_minus;        break;
-        case Keyboard::Space:      keysym = XK_space;        break;
-        case Keyboard::Return:     keysym = XK_Return;       break;
-        case Keyboard::BackSpace:  keysym = XK_BackSpace;    break;
-        case Keyboard::Tab:        keysym = XK_Tab;          break;
-        case Keyboard::PageUp:     keysym = XK_Prior;        break;
-        case Keyboard::PageDown:   keysym = XK_Next;         break;
-        case Keyboard::End:        keysym = XK_End;          break;
-        case Keyboard::Home:       keysym = XK_Home;         break;
-        case Keyboard::Insert:     keysym = XK_Insert;       break;
-        case Keyboard::Delete:     keysym = XK_Delete;       break;
-        case Keyboard::Add:        keysym = XK_KP_Add;       break;
-        case Keyboard::Subtract:   keysym = XK_KP_Subtract;  break;
-        case Keyboard::Multiply:   keysym = XK_KP_Multiply;  break;
-        case Keyboard::Divide:     keysym = XK_KP_Divide;    break;
-        case Keyboard::Left:       keysym = XK_Left;         break;
-        case Keyboard::Right:      keysym = XK_Right;        break;
-        case Keyboard::Up:         keysym = XK_Up;           break;
-        case Keyboard::Down:       keysym = XK_Down;         break;
-        case Keyboard::Numpad0:    keysym = XK_KP_0;         break;
-        case Keyboard::Numpad1:    keysym = XK_KP_1;         break;
-        case Keyboard::Numpad2:    keysym = XK_KP_2;         break;
-        case Keyboard::Numpad3:    keysym = XK_KP_3;         break;
-        case Keyboard::Numpad4:    keysym = XK_KP_4;         break;
-        case Keyboard::Numpad5:    keysym = XK_KP_5;         break;
-        case Keyboard::Numpad6:    keysym = XK_KP_6;         break;
-        case Keyboard::Numpad7:    keysym = XK_KP_7;         break;
-        case Keyboard::Numpad8:    keysym = XK_KP_8;         break;
-        case Keyboard::Numpad9:    keysym = XK_KP_9;         break;
-        case Keyboard::F1:         keysym = XK_F1;           break;
-        case Keyboard::F2:         keysym = XK_F2;           break;
-        case Keyboard::F3:         keysym = XK_F3;           break;
-        case Keyboard::F4:         keysym = XK_F4;           break;
-        case Keyboard::F5:         keysym = XK_F5;           break;
-        case Keyboard::F6:         keysym = XK_F6;           break;
-        case Keyboard::F7:         keysym = XK_F7;           break;
-        case Keyboard::F8:         keysym = XK_F8;           break;
-        case Keyboard::F9:         keysym = XK_F9;           break;
-        case Keyboard::F10:        keysym = XK_F10;          break;
-        case Keyboard::F11:        keysym = XK_F11;          break;
-        case Keyboard::F12:        keysym = XK_F12;          break;
-        case Keyboard::F13:        keysym = XK_F13;          break;
-        case Keyboard::F14:        keysym = XK_F14;          break;
-        case Keyboard::F15:        keysym = XK_F15;          break;
-        case Keyboard::Pause:      keysym = XK_Pause;        break;
-        default:                   keysym = 0;               break;
-    }
+    if (!mapBuilt)
+        buildMap();
 
-    // Open a connection with the X server
-    Display* display = OpenDisplay();
-    xcb_connection_t* connection = XGetXCBConnection(display);
+    // Sanity checks
+    if (key < 0 || key >= sf::Keyboard::KeyCount)
+        return false;
 
     // Convert to keycode
-    KeyCode keycode = XKeysymToKeycode(display, keysym);
-    if (keycode != 0)
-    {
-        // Get the whole keyboard state
-        ScopedXcbPtr<xcb_query_keymap_reply_t> keymap(xcb_query_keymap_reply(connection, xcb_query_keymap(connection), NULL));
+    xcb_keycode_t keycode = keycodeMap[key];
 
-        // Close the connection with the X server
-        CloseDisplay(display);
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-        // Check our keycode
-        return (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
-    }
-    else
+    // Open a connection with the X server
+    xcb_connection_t* connection = OpenConnection();
+
+    // Get the whole keyboard state
+    ScopedXcbPtr<xcb_query_keymap_reply_t> keymap(
+        xcb_query_keymap_reply(
+            connection,
+            xcb_query_keymap(connection),
+            &error
+        )
+    );
+
+    // Close the connection with the X server
+    CloseConnection(connection);
+
+    if (error)
     {
-        // Close the connection with the X server
-        CloseDisplay(display);
+        err() << "Failed to query keymap" << std::endl;
 
         return false;
     }
+
+    // Check our keycode
+    return (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
 
@@ -189,12 +242,31 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     // Open a connection with the X server
     xcb_connection_t* connection = OpenConnection();
 
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     // Get pointer mask
-    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL));
-    uint16_t buttons = pointer->mask;
+    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
+        xcb_query_pointer_reply(
+            connection,
+            xcb_query_pointer(
+                connection,
+                XCBDefaultRootWindow(connection)
+            ),
+            &error
+        )
+    );
 
     // Close the connection with the X server
     CloseConnection(connection);
+
+    if (error)
+    {
+        err() << "Failed to query pointer" << std::endl;
+
+        return false;
+    }
+
+    uint16_t buttons = pointer->mask;
 
     switch (button)
     {
@@ -214,10 +286,28 @@ Vector2i InputImpl::getMousePosition()
     // Open a connection with the X server
     xcb_connection_t* connection = OpenConnection();
 
-    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, XCBDefaultRootWindow(connection)), NULL));
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
+        xcb_query_pointer_reply(
+            connection,
+            xcb_query_pointer(
+                connection,
+                XCBDefaultRootWindow(connection)
+            ),
+            &error
+        )
+    );
 
     // Close the connection with the X server
     CloseConnection(connection);
+
+    if (error)
+    {
+        err() << "Failed to query pointer" << std::endl;
+
+        return Vector2i(0, 0);
+    }
 
     return Vector2i(pointer->root_x, pointer->root_y);
 }
@@ -232,10 +322,28 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
         // Open a connection with the X server
         xcb_connection_t* connection = OpenConnection();
 
-        ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(xcb_query_pointer_reply(connection, xcb_query_pointer(connection, handle), NULL));
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
+            xcb_query_pointer_reply(
+                connection,
+                xcb_query_pointer(
+                    connection,
+                    XCBDefaultRootWindow(connection)
+                ),
+                &error
+            )
+        );
 
         // Close the connection with the X server
         CloseConnection(connection);
+
+        if (error)
+        {
+            err() << "Failed to query pointer" << std::endl;
+
+            return Vector2i(0, 0);
+        }
 
         return Vector2i(pointer->win_x, pointer->win_y);
     }
@@ -252,7 +360,21 @@ void InputImpl::setMousePosition(const Vector2i& position)
     // Open a connection with the X server
     xcb_connection_t* connection = OpenConnection();
 
-    xcb_warp_pointer(connection, None, XCBDefaultRootWindow(connection), 0, 0, 0, 0, position.x, position.y);
+    ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+        connection,
+        xcb_warp_pointer(
+            connection,
+            None,                             // Source window
+            XCBDefaultRootWindow(connection), // Destination window
+            0, 0,                             // Source position
+            0, 0,                             // Source size
+            position.x, position.y            // Destination position
+        )
+    ));
+
+    if (error)
+        err() << "Failed to set mouse position" << std::endl;
+
     xcb_flush(connection);
 
     // Close the connection with the X server
@@ -269,7 +391,21 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
     WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
-        xcb_warp_pointer(connection, None, handle, 0, 0, 0, 0, position.x, position.y);
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            connection,
+            xcb_warp_pointer(
+                connection,
+                None,                  // Source window
+                handle,                // Destination window
+                0, 0,                  // Source position
+                0, 0,                  // Source size
+                position.x, position.y // Destination position
+            )
+        ));
+
+        if (error)
+            err() << "Failed to set mouse position" << std::endl;
+
         xcb_flush(connection);
     }
 

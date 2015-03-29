@@ -31,22 +31,21 @@
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <xcb/xcb_atom.h>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
-#include <xcb/xcb_util.h>
 #include <xcb/randr.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <X11/Xlibint.h>
 #include <unistd.h>
-#include <libgen.h>
-#include <cstring>
-#include <sstream>
+#include <algorithm>
 #include <vector>
 #include <string>
-#include <iterator>
-#include <algorithm>
-#include <iostream>
+#include <cstring>
+
+// So we don't have to require xcb dri2 to be present
+#define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
+#define XCB_DRI2_INVALIDATE_BUFFERS   1
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -63,27 +62,239 @@ namespace
 {
     sf::priv::WindowImplX11*              fullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
-    unsigned long                         eventMask        = FocusChangeMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
-                                                             PointerMotionMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                                                             EnterWindowMask | LeaveWindowMask;
+    sf::Mutex                             allWindowsMutex;
+    unsigned long                         eventMask = XCB_EVENT_MASK_FOCUS_CHANGE   | XCB_EVENT_MASK_BUTTON_PRESS     |
+                                                      XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION    |
+                                                      XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS        |
+                                                      XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+                                                      XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW;
 
     // Find the name of the current executable
     std::string findExecutableName()
     {
-        struct stat linkStat;
-        if (!lstat("/proc/self/exe", &linkStat)) {
-            std::vector<char> buffer(0, linkStat.st_size + 1);
-            std::size_t length = readlink("/proc/self/exe", &buffer[0], buffer.size());
-            if ((length > 0) && (length < buffer.size()))
-            {
-                // Remove the path to keep the executable name only
-                buffer[length] = '\0';
-                return basename(&buffer[0]);
-            }
+        // We use /proc/self/cmdline to get the command line
+        // the user used to invoke this instance of the application
+        int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
+
+        if (file < 0)
+            return "sfml";
+
+        std::vector<char> buffer(256, 0);
+        std::size_t offset = 0;
+        ssize_t result = 0;
+
+        while ((result = read(file, &buffer[offset], 256)) > 0)
+        {
+            buffer.resize(buffer.size() + result, 0);
+            offset += result;
         }
 
-        //Default fallback name
+        ::close(file);
+
+        if (offset)
+        {
+            buffer[offset] = 0;
+
+            // Remove the path to keep the executable name only
+            return basename(&buffer[0]);
+        }
+
+        // Default fallback name
         return "sfml";
+    }
+
+    // Check if Extended Window Manager Hints are supported
+    bool ewmhSupported()
+    {
+        static bool checked = false;
+        static bool ewmhSupported = false;
+
+        if (checked)
+            return ewmhSupported;
+
+        checked = true;
+
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+        xcb_ewmh_connection_t ewmhConnection;
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &ewmhConnection,
+            xcb_ewmh_init_atoms(
+                connection,
+                &ewmhConnection
+            ),
+            &error
+        );
+
+        if (!result || error)
+        {
+            xcb_ewmh_connection_wipe(&ewmhConnection);
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        xcb_window_t rootWindow;
+
+        result = xcb_ewmh_get_supporting_wm_check_reply(
+            &ewmhConnection,
+            xcb_ewmh_get_supporting_wm_check(
+                &ewmhConnection,
+                sf::priv::XCBDefaultRootWindow(connection)
+            ),
+            &rootWindow,
+            &error
+        );
+
+        if (!result || error)
+        {
+            xcb_ewmh_connection_wipe(&ewmhConnection);
+            sf::priv::CloseConnection(connection);
+            return false;
+        }
+
+        xcb_window_t childWindow;
+
+        result = xcb_ewmh_get_supporting_wm_check_reply(
+            &ewmhConnection,
+            xcb_ewmh_get_supporting_wm_check(
+                &ewmhConnection,
+                rootWindow
+            ),
+            &childWindow,
+            &error
+        );
+
+        xcb_ewmh_connection_wipe(&ewmhConnection);
+        sf::priv::CloseConnection(connection);
+
+        if (!result || error)
+            return false;
+
+        // Conforming window managers should return the same window for both queries
+        if (rootWindow != childWindow)
+            return false;
+
+        ewmhSupported = true;
+        return true;
+    }
+
+    xcb_query_extension_reply_t getDriExtension()
+    {
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        // Check if the DRI2 extension is present
+        // We don't use xcb_get_extension_data here to avoid having to link to xcb_dri2
+        static const std::string DRI2 = "DRI2";
+        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> driExt(xcb_query_extension_reply(
+            connection,
+            xcb_query_extension(
+                connection,
+                DRI2.size(),
+                DRI2.c_str()
+            ),
+            &error
+        ));
+
+        // Close the connection with the X server
+        sf::priv::CloseConnection(connection);
+
+        if (error || !driExt || !driExt->present)
+        {
+            xcb_query_extension_reply_t reply;
+            std::memset(&reply, 0, sizeof(reply));
+            return reply;
+        }
+
+        return *driExt.get();
+    }
+
+    void dumpXcbExtensions()
+    {
+        xcb_connection_t* connection = sf::priv::OpenConnection();
+
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        // Check if the RandR extension is present
+        sf::priv::ScopedXcbPtr<xcb_list_extensions_reply_t> extensions(xcb_list_extensions_reply(
+            connection,
+            xcb_list_extensions(
+                connection
+            ),
+            &error
+        ));
+
+        if (error || !extensions)
+        {
+            // Close the connection with the X server
+            sf::priv::CloseConnection(connection);
+
+            sf::err() << "Couldn't get list of X extensions" << std::endl;
+            return;
+        }
+
+        xcb_str_iterator_t iter = xcb_list_extensions_names_iterator(extensions.get());
+
+        sf::err() << "X Extensions:" << std::endl;
+
+        while (iter.rem)
+        {
+            std::string name(xcb_str_name(iter.data), xcb_str_name_length(iter.data));
+
+            sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+            // Check if the RandR extension is present
+            sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
+                connection,
+                xcb_query_extension(
+                    connection,
+                    name.size(),
+                    name.c_str()
+                ),
+                &error
+            ));
+
+            if (error || !extension || !extension->present)
+            {
+                sf::err() << "\t" << name << " - Failed to query" << std::endl;
+                continue;
+            }
+
+            int firstEvent = extension->first_event;
+
+            sf::err() << "\t" << name << " - First event: " << firstEvent << std::endl;
+            iter.data += xcb_str_name_length(iter.data) + 1;
+            --iter.rem;
+        }
+
+        // Close the connection with the X server
+        sf::priv::CloseConnection(connection);
+    }
+
+    void dumpUnhandledEvent(uint8_t type)
+    {
+        static std::vector<uint8_t> types;
+
+        // Check if we already reported this type
+        if (std::find(types.begin(), types.end(), type) != types.end())
+            return;
+
+        // Insert it if new
+        types.push_back(type);
+
+        static bool dumpedExtensions = false;
+
+        if (!dumpedExtensions)
+        {
+            dumpXcbExtensions();
+            dumpedExtensions = true;
+        }
+
+        sf::err() << "Unhandled event type: " << (static_cast<int>(type) & ~0x80) << std::endl
+                  << "Report this to the SFML maintainers if possible" << std::endl;
     }
 }
 
@@ -94,25 +305,47 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
-m_window      (0),
-m_inputMethod (NULL),
-m_inputContext(NULL),
-m_isExternal  (true),
-m_atomClose   (0),
-m_oldVideoMode(-1),
-m_hiddenCursor(0),
-m_keyRepeat   (true),
-m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_window         (0),
+m_inputMethod    (NULL),
+m_inputContext   (NULL),
+m_keySymbols     (NULL),
+m_isExternal     (true),
+m_atomWmProtocols(0),
+m_atomClose      (0),
+m_hiddenCursor   (0),
+m_keyRepeat      (true),
+m_previousSize   (-1, -1),
+m_useSizeHints   (false),
+m_fullscreen     (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
     m_connection = XGetXCBConnection(m_display);
 
+    std::memset(&m_oldVideoMode, 0, sizeof(m_oldVideoMode));
+
     if (!m_connection)
     {
         err() << "Failed cast Display object to an XCB connection object" << std::endl;
         return;
+    }
+
+    // Make sure to check for EWMH support before we do anything
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &m_ewmhConnection,
+            xcb_ewmh_init_atoms(
+                m_connection,
+                &m_ewmhConnection
+            ),
+            &error
+        );
+
+        if (!result || error)
+            err() << "Failed to initialize EWMH atoms" << std::endl;
     }
 
     m_screen = XCBDefaultScreen(m_connection);
@@ -133,6 +366,9 @@ m_useSizeHints(false)
             value_list
         );
 
+        // Set the WM protocols
+        setProtocols();
+
         // Do some common initializations
         initialize();
     }
@@ -141,20 +377,24 @@ m_useSizeHints(false)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
-m_window      (0),
-m_inputMethod (NULL),
-m_inputContext(NULL),
-m_isExternal  (false),
-m_atomClose   (0),
-m_oldVideoMode(-1),
-m_hiddenCursor(0),
-m_keyRepeat   (true),
-m_previousSize(-1, -1),
-m_useSizeHints(false)
+m_window         (0),
+m_inputMethod    (NULL),
+m_inputContext   (NULL),
+m_keySymbols     (NULL),
+m_isExternal     (false),
+m_atomWmProtocols(0),
+m_atomClose      (0),
+m_hiddenCursor   (0),
+m_keyRepeat      (true),
+m_previousSize   (-1, -1),
+m_useSizeHints   (false),
+m_fullscreen     ((style & Style::Fullscreen) != 0)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
     m_connection = XGetXCBConnection(m_display);
+
+    std::memset(&m_oldVideoMode, 0, sizeof(m_oldVideoMode));
 
     if (!m_connection)
     {
@@ -162,19 +402,32 @@ m_useSizeHints(false)
         return;
     }
 
+    // Make sure to check for EWMH support before we do anything
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        uint8_t result = xcb_ewmh_init_atoms_replies(
+            &m_ewmhConnection,
+            xcb_ewmh_init_atoms(
+                m_connection,
+                &m_ewmhConnection
+            ),
+            &error
+        );
+
+        if (!result || error)
+            err() << "Failed to initialize EWMH atoms" << std::endl;
+    }
+
     m_screen = XCBDefaultScreen(m_connection);
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
 
     // Compute position and size
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    int left = fullscreen ? 0 : (m_screen->width_in_pixels  - mode.width) / 2;
-    int top = fullscreen ? 0 : (m_screen->height_in_pixels - mode.height) / 2;
+    int left = m_fullscreen ? 0 : (m_screen->width_in_pixels  - mode.width) / 2;
+    int top = m_fullscreen ? 0 : (m_screen->height_in_pixels - mode.height) / 2;
     int width  = mode.width;
     int height = mode.height;
-
-    // Switch to fullscreen if necessary
-    if (fullscreen)
-        switchToFullscreen(mode);
 
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
@@ -182,7 +435,7 @@ m_useSizeHints(false)
     // Define the window attributes
     xcb_colormap_t colormap = xcb_generate_id(m_connection);
     xcb_create_colormap(m_connection, XCB_COLORMAP_ALLOC_NONE, colormap, m_screen->root, visualInfo.visualid);
-    const uint32_t value_list[] = {fullscreen, static_cast<uint32_t>(eventMask), colormap};
+    const uint32_t value_list[] = {m_fullscreen && !ewmhSupported(), static_cast<uint32_t>(eventMask), colormap};
 
     // Create the window
     m_window = xcb_generate_id(m_connection);
@@ -210,128 +463,61 @@ m_useSizeHints(false)
         return;
     }
 
-    // Set the window's name
-    setTitle(title);
+    // Set the WM protocols
+    setProtocols();
+
+    // Set the WM initial state to the normal state
+    xcb_icccm_wm_hints_t hints;
+    std::memset(&hints, 0, sizeof(hints));
+    xcb_icccm_wm_hints_set_normal(&hints);
+    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
+
+    xcb_size_hints_t sizeHints;
+    std::memset(&sizeHints, 0, sizeof(sizeHints));
 
     // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
-    if (!fullscreen)
+    setMotifHints(style);
+
+    // This is a hack to force some windows managers to disable resizing
+    if (!(style & Style::Resize))
     {
-        static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                0,
-                MOTIF_WM_HINTS.size(),
-                MOTIF_WM_HINTS.c_str()
-            ),
-            NULL
-        ));
-
-        if (hintsAtomReply)
-        {
-            static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
-            static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
-
-            //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
-            static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
-            static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
-            static const unsigned long MWM_DECOR_TITLE       = 1 << 3;
-            static const unsigned long MWM_DECOR_MENU        = 1 << 4;
-            static const unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
-            static const unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
-
-            //static const unsigned long MWM_FUNC_ALL          = 1 << 0;
-            static const unsigned long MWM_FUNC_RESIZE       = 1 << 1;
-            static const unsigned long MWM_FUNC_MOVE         = 1 << 2;
-            static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
-            static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
-            static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
-
-            struct WMHints
-            {
-                uint32_t flags;
-                uint32_t functions;
-                uint32_t decorations;
-                int32_t  inputMode;
-                uint32_t state;
-            };
-
-            WMHints hints;
-            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.decorations = 0;
-            hints.functions   = 0;
-
-            if (style & Style::Titlebar)
-            {
-                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
-            }
-            if (style & Style::Resize)
-            {
-                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
-            }
-            if (style & Style::Close)
-            {
-                hints.decorations |= 0;
-                hints.functions   |= MWM_FUNC_CLOSE;
-            }
-
-            xcb_change_property(
-                m_connection,
-                XCB_PROP_MODE_REPLACE,
-                m_window,
-                hintsAtomReply->atom,
-                XCB_ATOM_WM_HINTS,
-                sizeof(hints.flags) * 8,
-                sizeof(hints) / sizeof(hints.flags),
-                reinterpret_cast<const unsigned char*>(&hints)
-            );
-        }
-
-        // This is a hack to force some windows managers to disable resizing
-        if (!(style & Style::Resize))
-        {
-            m_useSizeHints = true;
-            xcb_size_hints_t sizeHints;
-            sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
-            sizeHints.min_width  = sizeHints.max_width  = width;
-            sizeHints.min_height = sizeHints.max_height = height;
-            xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
-        }
+        m_useSizeHints = true;
+        xcb_icccm_size_hints_set_min_size(&sizeHints, width, height);
+        xcb_icccm_size_hints_set_max_size(&sizeHints, width, height);
     }
 
+    // Set the WM hints of the normal state
+    xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+
     // Set the window's WM class (this can be used by window managers)
+    // The WM_CLASS property actually consists of 2 parts,
+    // the instance name and the class name both of which should be
+    // null terminated strings.
+    // The instance name should be something unique to this invokation
+    // of the application but is rarely if ever used these days.
+    // For simplicity, we retrieve it via the base executable name.
+    // The class name identifies a class of windows that
+    // "are of the same type". We simply use the initial window name as
+    // the class name.
     std::string windowClass = findExecutableName();
-    xcb_icccm_set_wm_class_checked(m_connection, m_window, windowClass.size(), windowClass.c_str());
+    windowClass += '\0'; // Important to separate instance from class
+    windowClass += title.toAnsiString();
+
+    // We add 1 to the size of the string to include the null at the end
+    xcb_icccm_set_wm_class_checked(m_connection, m_window, windowClass.size() + 1, windowClass.c_str());
+
+    // Set the window's name
+    setTitle(title);
 
     // Do some common initializations
     initialize();
 
-    // In fullscreen mode, we must grab keyboard and mouse inputs
-    if (fullscreen)
+    // Set fullscreen video mode and switch to fullscreen if necessary
+    if (m_fullscreen)
     {
-        xcb_grab_pointer(
-            m_connection,
-            True,
-            m_window,
-            0,
-            XCB_GRAB_MODE_ASYNC,
-            XCB_GRAB_MODE_ASYNC,
-            m_window,
-            XCB_NONE,
-            XCB_CURRENT_TIME
-        );
-
-        xcb_grab_keyboard(
-            m_connection,
-            True,
-            m_window,
-            XCB_CURRENT_TIME,
-            XCB_GRAB_MODE_ASYNC,
-            XCB_GRAB_MODE_ASYNC
-        );
+        setPosition(Vector2i(0, 0));
+        setVideoMode(mode);
+        switchToFullscreen();
     }
 }
 
@@ -357,14 +543,22 @@ WindowImplX11::~WindowImplX11()
         xcb_flush(m_connection);
     }
 
+    // Free key symbols
+    if (m_keySymbols)
+        xcb_key_symbols_free(m_keySymbols);
+
     // Close the input method
     if (m_inputMethod)
         XCloseIM(m_inputMethod);
+
+    // Clean up the EWMH connection
+    xcb_ewmh_connection_wipe(&m_ewmhConnection);
 
     // Close the connection with the X server
     CloseDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
+    Lock lock(allWindowsMutex);
     allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
 }
 
@@ -389,7 +583,17 @@ void WindowImplX11::processEvents()
     xcb_key_release_event_t* lastKeyReleaseEvent = NULL;
     uint8_t eventType = 0;
 
-    while((event = xcb_poll_for_event(m_connection)))
+    if (!m_xcbEvents.empty())
+    {
+        event = m_xcbEvents.front();
+        m_xcbEvents.pop_front();
+    }
+    else
+    {
+        event = xcb_poll_for_event(m_connection);
+    }
+
+    while (event)
     {
         eventType = event->response_type & ~0x80;
 
@@ -410,29 +614,45 @@ void WindowImplX11::processEvents()
         // If there's still a key release event held back, process it now.
         if (lastKeyReleaseEvent)
         {
-            processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
-            free(lastKeyReleaseEvent);
+            if (processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent)))
+                free(lastKeyReleaseEvent);
+
             lastKeyReleaseEvent = NULL;
         }
 
         if (eventType == XCB_KEY_RELEASE)
         {
-            // Remember this key release event.
-            lastKeyReleaseEvent = reinterpret_cast<xcb_key_release_event_t*>(event);
-            event = NULL; // For safety reasons.
+            // Check if we're in charge of the key release
+            if (!passEvent(event, reinterpret_cast<xcb_key_release_event_t*>(event)->event))
+            {
+                // Remember this key release event.
+                lastKeyReleaseEvent = reinterpret_cast<xcb_key_release_event_t*>(event);
+                event = NULL; // For safety reasons.
+            }
         }
         else
         {
-            processEvent(event);
-            free(event);
+            if (processEvent(event))
+                free(event);
+        }
+
+        if (!m_xcbEvents.empty())
+        {
+            event = m_xcbEvents.front();
+            m_xcbEvents.pop_front();
+        }
+        else
+        {
+            event = xcb_poll_for_event(m_connection);
         }
     }
 
     // Process any held back release event.
     if (lastKeyReleaseEvent)
     {
-        processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent));
-        free(lastKeyReleaseEvent);
+        if (processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent)))
+            free(lastKeyReleaseEvent);
+
         lastKeyReleaseEvent = NULL;
     }
 }
@@ -444,12 +664,28 @@ Vector2i WindowImplX11::getPosition() const
     ::Window topLevelWindow = m_window;
     ::Window nextWindow = topLevelWindow;
 
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     // Get "top level" window, i.e. the window with the root window as its parent.
     while (nextWindow != m_screen->root)
     {
         topLevelWindow = nextWindow;
 
-        ScopedXcbPtr<xcb_query_tree_reply_t> treeReply(xcb_query_tree_reply(m_connection, xcb_query_tree(m_connection, topLevelWindow), NULL));
+        ScopedXcbPtr<xcb_query_tree_reply_t> treeReply(xcb_query_tree_reply(
+            m_connection,
+            xcb_query_tree(
+                m_connection,
+                topLevelWindow
+            ),
+            &error
+        ));
+
+        if (error)
+        {
+            err() << "Failed to get window position (query_tree)" << std::endl;
+            return Vector2i(0, 0);
+        }
+
         nextWindow = treeReply->parent;
     }
 
@@ -459,10 +695,16 @@ Vector2i WindowImplX11::getPosition() const
             m_connection,
             topLevelWindow
         ),
-        NULL
+        &error
     ));
 
-    return sf::Vector2i(geometryReply->x, geometryReply->y);
+    if (error)
+    {
+        err() << "Failed to get window position (get_geometry)" << std::endl;
+        return Vector2i(0, 0);
+    }
+
+    return Vector2i(geometryReply->x, geometryReply->y);
 }
 
 
@@ -492,19 +734,38 @@ void WindowImplX11::setSize(const Vector2u& size)
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if( m_useSizeHints ) {
         xcb_size_hints_t sizeHints;
-        sizeHints.flags      = XCB_ICCCM_SIZE_HINT_P_MIN_SIZE | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE;
-        sizeHints.min_width  = sizeHints.max_width  = size.x;
-        sizeHints.min_height = sizeHints.max_height = size.y;
-        xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+        std::memset(&sizeHints, 0, sizeof(sizeHints));
+        xcb_icccm_size_hints_set_min_size(&sizeHints, size.x, size.y);
+        xcb_icccm_size_hints_set_max_size(&sizeHints, size.x, size.y);
+
+        ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
+            m_connection,
+            xcb_icccm_set_wm_normal_hints(
+                m_connection,
+                m_window,
+                &sizeHints
+            )
+        ));
+
+        if (configureWindowError)
+            err() << "Failed to set window size hints" << std::endl;
     }
 
     uint32_t values[] = {size.x, size.y};
-    xcb_configure_window(
+
+    ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
         m_connection,
-        m_window,
-        XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
-        values
-    );
+        xcb_configure_window(
+            m_connection,
+            m_window,
+            XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
+            values
+        )
+    ));
+
+    if (configureWindowError)
+        err() << "Failed to set window size" << std::endl;
+
     xcb_flush(m_connection);
 }
 
@@ -513,22 +774,68 @@ void WindowImplX11::setSize(const Vector2u& size)
 void WindowImplX11::setTitle(const String& title)
 {
     // XCB takes UTF-8-encoded strings.
-    std::basic_string<sf::Uint8> utf8String;
-    sf::Utf<32>::toUtf8(
-        title.begin(), title.end(),
-        std::back_inserter( utf8String )
-    );
+    std::string utf8String;
+    Utf<32>::toUtf8(title.begin(), title.end(), std::back_inserter(utf8String));
 
-    xcb_change_property(
+    ScopedXcbPtr<xcb_generic_error_t> wmNameError(xcb_request_check(
         m_connection,
-        XCB_PROP_MODE_REPLACE,
-        m_window,
-        XCB_ATOM_WM_NAME,
-        XCB_ATOM_STRING,
-        sizeof(std::basic_string<sf::Uint8>::value_type) * 8,
-        utf8String.length(),
-        utf8String.c_str()
-    );
+        xcb_icccm_set_wm_name_checked(
+            m_connection,
+            m_window,
+            XCB_ATOM_STRING,
+            sizeof(std::basic_string<Uint8>::value_type) * 8,
+            utf8String.length(),
+            utf8String.c_str()
+        )
+    ));
+
+    if (wmNameError)
+        err() << "Failed to set window title" << std::endl;
+
+    ScopedXcbPtr<xcb_generic_error_t> wmIconNameError(xcb_request_check(
+        m_connection,
+        xcb_icccm_set_wm_icon_name_checked(
+            m_connection,
+            m_window,
+            XCB_ATOM_STRING,
+            sizeof(std::basic_string<Uint8>::value_type) * 8,
+            utf8String.length(),
+            utf8String.c_str()
+        )
+    ));
+
+    if (wmIconNameError)
+        err() << "Failed to set WM_ICON_NAME property" << std::endl;
+
+    if (ewmhSupported())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> ewmhNameError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_name_checked(
+                &m_ewmhConnection,
+                m_window,
+                utf8String.length(),
+                utf8String.c_str()
+            )
+        ));
+
+        if (ewmhNameError)
+            err() << "Failed to set _NET_WM_NAME property" << std::endl;
+
+        ScopedXcbPtr<xcb_generic_error_t> ewmhIconNameError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_icon_name_checked(
+                &m_ewmhConnection,
+                m_window,
+                utf8String.length(),
+                utf8String.c_str()
+            )
+        ));
+
+        if (ewmhIconNameError)
+            err() << "Failed to set _NET_WM_ICON_NAME property" << std::endl;
+    }
+
     xcb_flush(m_connection);
 }
 
@@ -548,19 +855,47 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Create the icon pixmap
     xcb_pixmap_t iconPixmap = xcb_generate_id(m_connection);
-    xcb_create_pixmap(
+
+    ScopedXcbPtr<xcb_generic_error_t> createPixmapError(xcb_request_check(
         m_connection,
-        m_screen->root_depth,
-        iconPixmap,
-        m_screen->root,
-        width,
-        height
-    );
+        xcb_create_pixmap_checked(
+            m_connection,
+            m_screen->root_depth,
+            iconPixmap,
+            m_screen->root,
+            width,
+            height
+        )
+    ));
+
+    if (createPixmapError)
+    {
+        err() << "Failed to set the window's icon (create_pixmap): ";
+        err() << "Error code " << static_cast<int>(createPixmapError->error_code) << std::endl;
+        return;
+    }
 
     xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
-    xcb_create_gc(m_connection, iconGC, iconPixmap, 0, NULL);
 
-    ScopedXcbPtr<xcb_generic_error_t> errptr(xcb_request_check(
+    ScopedXcbPtr<xcb_generic_error_t> createGcError(xcb_request_check(
+        m_connection,
+        xcb_create_gc(
+            m_connection,
+            iconGC,
+            iconPixmap,
+            0,
+            NULL
+        )
+    ));
+
+    if (createGcError)
+    {
+        err() << "Failed to set the window's icon (create_gc): ";
+        err() << "Error code " << static_cast<int>(createGcError->error_code) << std::endl;
+        return;
+    }
+
+    ScopedXcbPtr<xcb_generic_error_t> putImageError(xcb_request_check(
         m_connection,
         xcb_put_image_checked(
             m_connection,
@@ -578,11 +913,24 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         )
     ));
 
-    xcb_free_gc(m_connection, iconGC);
+    ScopedXcbPtr<xcb_generic_error_t> freeGcError(xcb_request_check(
+        m_connection,
+        xcb_free_gc(
+            m_connection,
+            iconGC
+        )
+    ));
 
-    if (errptr)
+    if (freeGcError)
     {
-        err() << "Failed to set the window's icon: Error code " << static_cast<int>(errptr->error_code) << std::endl;
+        err() << "Failed to free icon GC: ";
+        err() << "Error code " << static_cast<int>(freeGcError->error_code) << std::endl;
+    }
+
+    if (putImageError)
+    {
+        err() << "Failed to set the window's icon (put_image): ";
+        err() << "Error code " << static_cast<int>(putImageError->error_code) << std::endl;
         return;
     }
 
@@ -618,12 +966,40 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Send our new icon to the window through the WMHints
     xcb_icccm_wm_hints_t hints;
-    hints.flags       = XCB_ICCCM_WM_HINT_ICON_PIXMAP | XCB_ICCCM_WM_HINT_ICON_MASK;
-    hints.icon_pixmap = iconPixmap;
-    hints.icon_mask   = maskPixmap;
-    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
+    std::memset(&hints, 0, sizeof(hints));
+    xcb_icccm_wm_hints_set_icon_pixmap(&hints, iconPixmap);
+    xcb_icccm_wm_hints_set_icon_mask(&hints, maskPixmap);
+
+    ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
+        m_connection,
+        xcb_icccm_set_wm_hints(
+            m_connection,
+            m_window,
+            &hints
+        )
+    ));
+
+    if (setWmHintsError)
+    {
+        err() << "Failed to set the window's icon (icccm_set_wm_hints): ";
+        err() << "Error code " << static_cast<int>(setWmHintsError->error_code) << std::endl;
+    }
 
     xcb_flush(m_connection);
+
+    ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+        m_connection,
+        xcb_free_pixmap_checked(
+            m_connection,
+            iconPixmap
+        )
+    ));
+
+    if (freePixmapError)
+    {
+        err() << "Failed to free icon pixmap: ";
+        err() << "Error code " << static_cast<int>(freePixmapError->error_code) << std::endl;
+    }
 }
 
 
@@ -631,9 +1007,31 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
-        xcb_map_window(m_connection, m_window);
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_map_window(
+                m_connection,
+                m_window
+            )
+        ));
+
+        if (error)
+            err() << "Failed to change window visibility" << std::endl;
+    }
     else
-        xcb_unmap_window(m_connection, m_window);
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_unmap_window(
+                m_connection,
+                m_window
+            )
+        ));
+
+        if (error)
+            err() << "Failed to change window visibility" << std::endl;
+    }
 
     xcb_flush(m_connection);
 }
@@ -643,7 +1041,20 @@ void WindowImplX11::setVisible(bool visible)
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
     const uint32_t values = visible ? XCB_NONE : m_hiddenCursor;
-    xcb_change_window_attributes(m_connection, m_window, XCB_CW_CURSOR, &values);
+
+    ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+        m_connection,
+        xcb_change_window_attributes(
+            m_connection,
+            m_window,
+            XCB_CW_CURSOR,
+            &values
+        )
+    ));
+
+    if (error)
+        err() << "Failed to change mouse cursor visibility" << std::endl;
+
     xcb_flush(m_connection);
 }
 
@@ -662,15 +1073,19 @@ void WindowImplX11::requestFocus()
     // Check the global list of windows to find out whether an SFML window has the focus
     // Note: can't handle console and other non-SFML windows belonging to the application.
     bool sfmlWindowFocused = false;
-    for (std::vector<WindowImplX11*>::iterator itr = allWindows.begin(); itr != allWindows.end(); ++itr)
+
     {
-        if ((*itr)->hasFocus())
+        Lock lock(allWindowsMutex);
+        for (std::vector<WindowImplX11*>::iterator itr = allWindows.begin(); itr != allWindows.end(); ++itr)
         {
-            sfmlWindowFocused = true;
-            break;
+            if ((*itr)->hasFocus())
+            {
+                sfmlWindowFocused = true;
+                break;
+            }
         }
     }
-    
+
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
     ScopedXcbPtr<xcb_get_window_attributes_reply_t> attributes(xcb_get_window_attributes_reply(
@@ -684,24 +1099,24 @@ void WindowImplX11::requestFocus()
 
     if (!attributes)
     {
-        sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
+        err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
     }
 
     bool windowViewable = (attributes->map_state == XCB_MAP_STATE_VIEWABLE);
-    
+
     if (sfmlWindowFocused && windowViewable)
     {
         // Another SFML window of this application has the focus and the current window is viewable:
         // steal focus (i.e. bring window to the front and give it input focus)
-        xcb_set_input_focus(m_connection, XCB_INPUT_FOCUS_POINTER_ROOT, m_window, XCB_CURRENT_TIME);
-        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
-        xcb_configure_window(m_connection, m_window, XCB_CONFIG_WINDOW_STACK_MODE, values);
+        grabFocus();
     }
     else
     {
         // Get current WM hints.
         xcb_icccm_wm_hints_t hints;
+        std::memset(&hints, 0, sizeof(hints));
+
         xcb_icccm_get_wm_hints_reply(
             m_connection,
             xcb_icccm_get_wm_hints_unchecked(
@@ -714,7 +1129,7 @@ void WindowImplX11::requestFocus()
 
         // Even if no hints were returned, we can simply set the proper flags we need and go on. This is
         // different from Xlib where XAllocWMHints() has to be called.
-        hints.flags |= XCB_ICCCM_WM_HINT_X_URGENCY;
+        xcb_icccm_wm_hints_set_urgency(&hints);
         xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
     }
 }
@@ -723,109 +1138,286 @@ void WindowImplX11::requestFocus()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::hasFocus() const
 {
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     ScopedXcbPtr<xcb_get_input_focus_reply_t> reply(xcb_get_input_focus_reply(
         m_connection,
         xcb_get_input_focus_unchecked(
             m_connection
         ),
-        NULL
+        &error
     ));
+
+    if (error)
+        err() << "Failed to check if window has focus" << std::endl;
 
     return (reply->focus == m_window);
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::switchToFullscreen(const VideoMode& mode)
+void WindowImplX11::grabFocus()
 {
-    // Check if the XRandR extension is present
-    static const std::string RANDR = "RANDR";
-    ScopedXcbPtr<xcb_query_extension_reply_t> randr_ext(xcb_query_extension_reply(
-        m_connection,
-        xcb_query_extension(
-            m_connection,
-            RANDR.size(),
-            RANDR.c_str()
-        ), 
-        NULL
-    ));
-
-    if (randr_ext->present)
+    if (ewmhSupported())
     {
-        // Get the current configuration
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+        ScopedXcbPtr<xcb_generic_error_t> activeWindowError(xcb_request_check(
             m_connection,
-            xcb_randr_get_screen_info(
-                m_connection,
-                m_screen->root
-            ),
-            &error
+            xcb_ewmh_request_change_active_window(
+                &m_ewmhConnection,
+                XDefaultScreen(m_display),
+                m_window,
+                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL,
+                XCB_CURRENT_TIME,
+                None
+            )
         ));
 
-        if (!error)
+        if (activeWindowError)
         {
-            // Save the current video mode before we switch to fullscreen
-            m_oldVideoMode = config->sizeID;
-
-            // Get the available screen sizes
-            xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
-            if (sizes && (config->nSizes > 0))
-            {
-                // Search a matching size
-                for (int i = 0; i < config->nSizes; ++i)
-                {
-                    if ((sizes[i].width  == static_cast<int>(mode.width)) &&
-                        (sizes[i].height == static_cast<int>(mode.height)))
-                    {
-                        // Switch to fullscreen mode
-                        xcb_randr_set_screen_config(
-                            m_connection,
-                            m_screen->root,
-                            config->timestamp,
-                            config->config_timestamp,
-                            i,
-                            config->rotation,
-                            config->rate
-                        );
-
-                        // Set "this" as the current fullscreen window
-                        fullscreenWindow = this;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Failed to get the screen configuration
-            err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
+            err() << "Failed to change active window (request_change_active_window)" << std::endl;
+            return;
         }
     }
     else
     {
-        // XRandR extension is not supported: we cannot use fullscreen mode
-        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
+        ScopedXcbPtr<xcb_generic_error_t> setInputFocusError(xcb_request_check(
+            m_connection,
+            xcb_set_input_focus(
+                m_connection,
+                XCB_INPUT_FOCUS_POINTER_ROOT,
+                m_window,
+                XCB_CURRENT_TIME
+            )
+        ));
+
+        if (setInputFocusError)
+        {
+            err() << "Failed to change active window (set_input_focus)" << std::endl;
+            return;
+        }
+
+        const uint32_t values[] = {XCB_STACK_MODE_ABOVE};
+
+        ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
+            m_connection,
+            xcb_configure_window(
+                m_connection,
+                m_window,
+                XCB_CONFIG_WINDOW_STACK_MODE,
+                values
+            )
+        ));
+
+        if (configureWindowError)
+            err() << "Failed to change active window (configure_window)" << std::endl;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::initialize()
+void WindowImplX11::setVideoMode(const VideoMode& mode)
 {
-    // Get the atoms for registering the close event
-    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
+    // Skip mode switching if the new mode is equal to the desktop mode
+    if (mode == VideoMode::getDesktopMode())
+        return;
+
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    // Check if the RandR extension is present
+    const xcb_query_extension_reply_t* randrExt = xcb_get_extension_data(m_connection, &xcb_randr_id);
+
+    if (!randrExt || !randrExt->present)
+    {
+        // RandR extension is not supported: we cannot use fullscreen mode
+        err() << "Fullscreen is not supported, switching to window mode" << std::endl;
+        return;
+    }
+
+    // Load RandR and check its version
+    ScopedXcbPtr<xcb_randr_query_version_reply_t> randrVersion(xcb_randr_query_version_reply(
         m_connection,
-        xcb_intern_atom(
+        xcb_randr_query_version(
             m_connection,
-            0,
-            WM_DELETE_WINDOW_NAME.size(),
-            WM_DELETE_WINDOW_NAME.c_str()
+            1,
+            1
         ),
-        NULL
+        &error
     ));
 
+    if (error)
+    {
+        err() << "Failed to load RandR, switching to window mode" << std::endl;
+        return;
+    }
+
+    // Get the current configuration
+    ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
+        m_connection,
+        xcb_randr_get_screen_info(
+            m_connection,
+            m_screen->root
+        ),
+        &error
+    ));
+
+    if (error || !config)
+    {
+        // Failed to get the screen configuration
+        err() << "Failed to get the current screen configuration for fullscreen mode, switching to window mode" << std::endl;
+        return;
+    }
+
+    // Save the current video mode before we switch to fullscreen
+    m_oldVideoMode = *config.get();
+
+    // Get the available screen sizes
+    xcb_randr_screen_size_t* sizes = xcb_randr_get_screen_info_sizes(config.get());
+
+    if (!sizes || !config->nSizes)
+    {
+        err() << "Failed to get the fullscreen sizes, switching to window mode" << std::endl;
+        return;
+    }
+
+    // Search for a matching size
+    for (int i = 0; i < config->nSizes; ++i)
+    {
+        if (config->rotation == XCB_RANDR_ROTATION_ROTATE_90 ||
+            config->rotation == XCB_RANDR_ROTATION_ROTATE_270)
+            std::swap(sizes[i].height, sizes[i].width);
+
+        if ((sizes[i].width  == static_cast<int>(mode.width)) &&
+            (sizes[i].height == static_cast<int>(mode.height)))
+        {
+            // Switch to fullscreen mode
+            ScopedXcbPtr<xcb_randr_set_screen_config_reply_t> setScreenConfig(xcb_randr_set_screen_config_reply(
+                m_connection,
+                xcb_randr_set_screen_config(
+                    m_connection,
+                    config->root,
+                    XCB_CURRENT_TIME,
+                    config->config_timestamp,
+                    i,
+                    config->rotation,
+                    config->rate
+                ),
+                &error
+            ));
+
+            if (error)
+                err() << "Failed to set new screen configuration" << std::endl;
+
+            // Set "this" as the current fullscreen window
+            fullscreenWindow = this;
+            return;
+        }
+    }
+
+    err() << "Failed to find matching fullscreen size, switching to window mode" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::resetVideoMode()
+{
+    if (fullscreenWindow == this)
+    {
+        // Get current screen info
+        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        // Reset the video mode
+        ScopedXcbPtr<xcb_randr_set_screen_config_reply_t> setScreenConfig(xcb_randr_set_screen_config_reply(
+            m_connection,
+            xcb_randr_set_screen_config(
+                m_connection,
+                m_oldVideoMode.root,
+                XCB_CURRENT_TIME,
+                m_oldVideoMode.config_timestamp,
+                m_oldVideoMode.sizeID,
+                m_oldVideoMode.rotation,
+                m_oldVideoMode.rate
+            ),
+            &error
+        ));
+
+        if (error)
+            err() << "Failed to reset old screen configuration" << std::endl;
+
+        // Reset the fullscreen window
+        fullscreenWindow = NULL;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::switchToFullscreen()
+{
+    grabFocus();
+
+    if (ewmhSupported())
+    {
+        // Create atom for _NET_WM_BYPASS_COMPOSITOR.
+        static const std::string netWmStateBypassCompositor = "_NET_WM_BYPASS_COMPOSITOR";
+        ScopedXcbPtr<xcb_intern_atom_reply_t> compReply(xcb_intern_atom_reply(
+            m_connection,
+            xcb_intern_atom(
+                m_connection,
+                False,
+                netWmStateBypassCompositor.size(),
+                netWmStateBypassCompositor.c_str()
+            ),
+            0
+        ));
+
+        static const Uint32 bypassCompositor = 1;
+
+        // Disable compositor.
+        ScopedXcbPtr<xcb_generic_error_t> compositorError(xcb_request_check(
+            m_connection,
+            xcb_change_property_checked(
+                m_connection,
+                XCB_PROP_MODE_REPLACE,
+                m_window,
+                compReply->atom,
+                XCB_ATOM_CARDINAL,
+                32,
+                1,
+                &bypassCompositor
+            )
+        ));
+
+        // Not being able to bypass the compositor is not a fatal error
+        if (compositorError)
+            err() << "xcb_change_property failed, unable to set _NET_WM_BYPASS_COMPOSITOR" << std::endl;
+
+        ScopedXcbPtr<xcb_generic_error_t> wmStateError(xcb_request_check(
+            m_connection,
+            xcb_ewmh_request_change_wm_state(
+                &m_ewmhConnection,
+                XDefaultScreen(m_display),
+                m_window,
+                XCB_EWMH_WM_STATE_ADD,
+                m_ewmhConnection._NET_WM_STATE_FULLSCREEN,
+                0,
+                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL
+            )
+        ));
+
+        if (wmStateError)
+        {
+            err() << "Setting fullscreen failed, could not change WM state" << std::endl;
+            return;
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setProtocols()
+{
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    // Get the atom for setting the window protocols we support
     static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
     ScopedXcbPtr<xcb_intern_atom_reply_t> protocolsAtomReply(xcb_intern_atom_reply(
         m_connection,
@@ -835,27 +1427,180 @@ void WindowImplX11::initialize()
             WM_PROTOCOLS_NAME.size(),
             WM_PROTOCOLS_NAME.c_str()
         ),
-        NULL
+        &error
     ));
 
-    if (protocolsAtomReply && deleteWindowAtomReply)
+    if (error || !protocolsAtomReply)
     {
-        xcb_icccm_set_wm_protocols(
-            m_connection,
-            m_window,
-            protocolsAtomReply->atom,
-            1,
-            &deleteWindowAtomReply->atom
-        );
+        err() << "Failed to request WM_PROTOCOLS atom." << std::endl;
+        return;
+    }
 
+    m_atomWmProtocols = protocolsAtomReply->atom;
+
+    std::vector<xcb_atom_t> atoms;
+
+    // Get the atom for registering the close event
+    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            WM_DELETE_WINDOW_NAME.size(),
+            WM_DELETE_WINDOW_NAME.c_str()
+        ),
+        &error
+    ));
+
+    if (!error && deleteWindowAtomReply)
+    {
+        atoms.push_back(deleteWindowAtomReply->atom);
         m_atomClose = deleteWindowAtomReply->atom;
     }
     else
     {
-        // Should not happen, but better safe than sorry.
-        std::cerr << "Failed to request WM_PROTOCOLS/WM_DELETE_WINDOW_NAME atoms." << std::endl;
+        err() << "Failed to request WM_DELETE_WINDOW atom." << std::endl;
     }
 
+    if (ewmhSupported() && m_ewmhConnection._NET_WM_PING && m_ewmhConnection._NET_WM_PID)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_ewmh_set_wm_pid(
+                &m_ewmhConnection,
+                m_window,
+                getpid()
+            )
+        ));
+
+        if (!error)
+            atoms.push_back(m_ewmhConnection._NET_WM_PING);
+    }
+
+    if (!atoms.empty())
+    {
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_icccm_set_wm_protocols(
+                m_connection,
+                m_window,
+                protocolsAtomReply->atom,
+                atoms.size(),
+                &atoms[0]
+            )
+        ));
+
+        if (error)
+            err() << "Failed to set window protocols" << std::endl;
+    }
+    else
+    {
+        err() << "Didn't set any window protocols" << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMotifHints(unsigned long style)
+{
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    static const std::string MOTIF_WM_HINTS = "_MOTIF_WM_HINTS";
+    ScopedXcbPtr<xcb_intern_atom_reply_t> hintsAtomReply(xcb_intern_atom_reply(
+        m_connection,
+        xcb_intern_atom(
+            m_connection,
+            0,
+            MOTIF_WM_HINTS.size(),
+            MOTIF_WM_HINTS.c_str()
+        ),
+        &error
+    ));
+
+    if (!error && hintsAtomReply)
+    {
+        static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
+        static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
+
+        //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
+        static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
+        static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
+        static const unsigned long MWM_DECOR_TITLE       = 1 << 3;
+        static const unsigned long MWM_DECOR_MENU        = 1 << 4;
+        static const unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
+        static const unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
+
+        //static const unsigned long MWM_FUNC_ALL          = 1 << 0;
+        static const unsigned long MWM_FUNC_RESIZE       = 1 << 1;
+        static const unsigned long MWM_FUNC_MOVE         = 1 << 2;
+        static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
+        static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
+        static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
+
+        struct WMHints
+        {
+            uint32_t flags;
+            uint32_t functions;
+            uint32_t decorations;
+            int32_t  inputMode;
+            uint32_t state;
+        };
+
+        WMHints hints;
+        hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+        hints.decorations = 0;
+        hints.functions   = 0;
+        hints.inputMode   = 0;
+        hints.state       = 0;
+
+        // Decorate only if not in fullscreen
+        if (!(style & Style::Fullscreen))
+        {
+            if (style & Style::Titlebar)
+            {
+                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+            }
+            if (style & Style::Resize)
+            {
+                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+            }
+            if (style & Style::Close)
+            {
+                hints.decorations |= 0;
+                hints.functions   |= MWM_FUNC_CLOSE;
+            }
+        }
+
+        ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
+            m_connection,
+            xcb_change_property_checked(
+                m_connection,
+                XCB_PROP_MODE_REPLACE,
+                m_window,
+                hintsAtomReply->atom,
+                hintsAtomReply->atom,
+                sizeof(hints.flags) * 8,
+                sizeof(hints) / sizeof(hints.flags),
+                reinterpret_cast<const unsigned char*>(&hints)
+            )
+        ));
+
+        if (propertyError)
+            err() << "xcb_change_property failed, could not set window hints" << std::endl;
+    }
+    else
+    {
+        err() << "Failed to request _MOTIF_WM_HINTS atom." << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::initialize()
+{
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
 
@@ -865,7 +1610,7 @@ void WindowImplX11::initialize()
             m_inputMethod,
             XNClientWindow,
             m_window,
-            XNFocusWindow, 
+            XNFocusWindow,
             m_window,
             XNInputStyle,
             XIMPreeditNothing | XIMStatusNothing,
@@ -880,9 +1625,17 @@ void WindowImplX11::initialize()
     if (!m_inputContext)
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
 
+    // Allocate our key symbols
+    m_keySymbols = xcb_key_symbols_alloc(m_connection);
+
+    if (!m_keySymbols)
+        err() << "Failed to allocate key symbols" << std::endl;
+
     // Show the window
-    xcb_map_window(m_connection, m_window);
-    xcb_flush(m_connection);
+    setVisible(true);
+
+    // Raise the window and grab input focus
+    grabFocus();
 
     // Create the hidden cursor
     createHiddenCursor();
@@ -891,6 +1644,7 @@ void WindowImplX11::initialize()
     xcb_flush(m_connection);
 
     // Add this window to the global list of windows (required for focus request)
+    Lock lock(allWindowsMutex);
     allWindows.push_back(this);
 }
 
@@ -899,24 +1653,57 @@ void WindowImplX11::initialize()
 void WindowImplX11::createHiddenCursor()
 {
     xcb_pixmap_t cursorPixmap = xcb_generate_id(m_connection);
-    m_hiddenCursor = xcb_generate_id(m_connection);
+
     // Create the cursor's pixmap (1x1 pixels)
-    xcb_create_pixmap(m_connection, 1, cursorPixmap, m_window, 1, 1);
+    ScopedXcbPtr<xcb_generic_error_t> createPixmapError(xcb_request_check(
+        m_connection,
+        xcb_create_pixmap(
+            m_connection,
+            1,
+            cursorPixmap,
+            m_window,
+            1,
+            1
+        )
+    ));
+
+    if (createPixmapError)
+    {
+        err() << "Failed to create pixmap for hidden cursor" << std::endl;
+        return;
+    }
+
+    m_hiddenCursor = xcb_generate_id(m_connection);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
-    xcb_create_cursor(
+    ScopedXcbPtr<xcb_generic_error_t> createCursorError(xcb_request_check(
         m_connection,
-        m_hiddenCursor,
-        cursorPixmap,
-        cursorPixmap,
-        0, 0, 0, // Foreground RGB color
-        0, 0, 0, // Background RGB color
-        0,       // X
-        0        // Y
-    );
+        xcb_create_cursor(
+            m_connection,
+            m_hiddenCursor,
+            cursorPixmap,
+            cursorPixmap,
+            0, 0, 0, // Foreground RGB color
+            0, 0, 0, // Background RGB color
+            0,       // X
+            0        // Y
+        )
+    ));
+
+    if (createCursorError)
+        err() << "Failed to create hidden cursor" << std::endl;
 
     // We don't need the pixmap any longer, free it
-    xcb_free_pixmap(m_connection, cursorPixmap);
+    ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+        m_connection,
+        xcb_free_pixmap(
+            m_connection,
+            cursorPixmap
+        )
+    ));
+
+    if (freePixmapError)
+        err() << "Failed to free pixmap for hidden cursor" << std::endl;
 }
 
 
@@ -924,36 +1711,7 @@ void WindowImplX11::createHiddenCursor()
 void WindowImplX11::cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (fullscreenWindow == this)
-    {
-        // Get current screen info
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        ScopedXcbPtr<xcb_randr_get_screen_info_reply_t> config(xcb_randr_get_screen_info_reply(
-            m_connection,
-            xcb_randr_get_screen_info(
-            m_connection,
-            m_screen->root
-            ),
-            &error
-        ));
-
-        if (!error)
-        {
-            // Reset the video mode
-            xcb_randr_set_screen_config(
-                m_connection,
-                m_screen->root,
-                CurrentTime,
-                config->config_timestamp,
-                m_oldVideoMode,
-                config->rotation,
-                config->rate
-            );
-        }
-
-        // Reset the fullscreen window
-        fullscreenWindow = NULL;
-    }
+    resetVideoMode();
 
     // Unhide the mouse cursor (in case it was hidden)
     setMouseCursorVisible(true);
@@ -969,6 +1727,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Destroy event
         case XCB_DESTROY_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_destroy_notify_event_t*>(windowEvent)->window))
+                return false;
+
             // The window is about to be destroyed: we must cleanup resources
             cleanup();
             break;
@@ -977,6 +1738,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Gain focus event
         case XCB_FOCUS_IN:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_focus_in_event_t*>(windowEvent)->event))
+                return false;
+
             // Update the input context
             if (m_inputContext)
                 XSetICFocus(m_inputContext);
@@ -987,19 +1751,39 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
             xcb_icccm_wm_hints_t hints;
-            xcb_icccm_get_wm_hints_reply(
+
+            ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+            uint8_t result = xcb_icccm_get_wm_hints_reply(
                 m_connection,
                 xcb_icccm_get_wm_hints_unchecked(
                     m_connection,
                     m_window
                 ),
                 &hints,
-                NULL
+                &error
             );
 
+            if (!result || error)
+            {
+                err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                break;
+            }
+
             // Remove urgency (notification) flag from hints
-            hints.flags &= ~XUrgencyHint;
-            xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
+            hints.flags &= ~XCB_ICCCM_WM_HINT_X_URGENCY;
+
+            ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
+                m_connection,
+                xcb_icccm_set_wm_hints_checked(
+                    m_connection,
+                    m_window,
+                    &hints
+                )
+            ));
+
+            if (setWmHintsError)
+                err() << "Failed to set WM hints in XCB_FOCUS_IN" << std::endl;
 
             break;
         }
@@ -1007,6 +1791,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Lost focus event
         case XCB_FOCUS_OUT:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_focus_out_event_t*>(windowEvent)->event))
+                return false;
+
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
@@ -1020,6 +1807,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Resize event
         case XCB_CONFIGURE_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent)->window))
+                return false;
+
             xcb_configure_notify_event_t* e = reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent);
             Event event;
             event.type        = Event::Resized;
@@ -1032,12 +1822,40 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Close event
         case XCB_CLIENT_MESSAGE:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_client_message_event_t*>(windowEvent)->window))
+                return false;
+
             xcb_client_message_event_t* e = reinterpret_cast<xcb_client_message_event_t*>(windowEvent);
-            if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
+
+            // Handle window manager protocol messages we support
+            if (e->type == m_atomWmProtocols)
             {
-                Event event;
-                event.type = Event::Closed;
-                pushEvent(event);
+                if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
+                {
+                    // Handle the WM_DELETE_WINDOW message
+                    Event event;
+                    event.type = Event::Closed;
+                    pushEvent(event);
+                }
+                else if (ewmhSupported() && (e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_ewmhConnection._NET_WM_PING))
+                {
+                    // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
+                    e->window = XCBDefaultRootWindow(m_connection);
+
+                    ScopedXcbPtr<xcb_generic_error_t> pongError(xcb_request_check(
+                        m_connection,
+                        xcb_send_event_checked(
+                            m_connection,
+                            0,
+                            XCBDefaultRootWindow(m_connection),
+                            XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                            reinterpret_cast<char*>(e)
+                        )
+                    ));
+
+                    if (pongError)
+                        err() << "Could not send pong event back to WM" << std::endl;
+                }
             }
             break;
         }
@@ -1045,23 +1863,14 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Key down event
         case XCB_KEY_PRESS:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_key_press_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
 
             // Get the keysym of the key that has been pressed
-            static XComposeStatus keyboard;
-            char buffer[32];
-            KeySym symbol;
-
-            // There is no xcb equivalent of XLookupString, so the xcb event
-            // has to be converted to an XEvent
-            XEvent fake_event;
-            fake_event.type = KeyPress;
-            fake_event.xany.display = m_display;
-            fake_event.xany.window  = e->event;
-            fake_event.xkey.state   = e->state;
-            fake_event.xkey.keycode = e->detail;
-
-            XLookupString(&fake_event.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
+            // We don't pass e->state as the last parameter because we want the unmodified keysym
+            xcb_keysym_t symbol = xcb_key_press_lookup_keysym(m_keySymbols, e, 0);
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
@@ -1074,8 +1883,15 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             event.key.system  = e->state & XCB_MOD_MASK_4;
             pushEvent(event);
 
+            XEvent fakeEvent;
+            fakeEvent.type = KeyPress;
+            fakeEvent.xany.display = m_display;
+            fakeEvent.xany.window  = e->event;
+            fakeEvent.xkey.state   = e->state;
+            fakeEvent.xkey.keycode = e->detail;
+
             // Generate a TextEntered event
-            if (!XFilterEvent(&fake_event, None))
+            if (!XFilterEvent(&fakeEvent, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
@@ -1085,7 +1901,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
                     int length = Xutf8LookupString(
                         m_inputContext,
-                        &fake_event.xkey,
+                        &fakeEvent.xkey,
                         reinterpret_cast<char*>(keyBuffer),
                         sizeof(keyBuffer),
                         NULL,
@@ -1110,7 +1926,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 {
                     static XComposeStatus status;
                     char keyBuffer[16];
-                    if (XLookupString(&fake_event.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    if (XLookupString(&fakeEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;
@@ -1126,19 +1942,14 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Key up event
         case XCB_KEY_RELEASE:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_key_release_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
 
             // Get the keysym of the key that has been pressed
-            char buffer[32];
-            KeySym symbol;
-
-            // There is no xcb equivalent of XLookupString, so the xcb event
-            // has to be converted to an XEvent
-            XKeyEvent fake_event;
-            fake_event.display = m_display;
-            fake_event.state   = e->state;
-            fake_event.keycode = e->detail;
-            XLookupString(&fake_event, buffer, 32, &symbol, NULL);
+            // We don't pass e->state as the last parameter because we want the unmodified keysym
+            xcb_keysym_t symbol = xcb_key_release_lookup_keysym(m_keySymbols, e, 0);
 
             // Fill the event parameters
             Event event;
@@ -1156,6 +1967,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse button pressed
         case XCB_BUTTON_PRESS:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_button_press_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_button_press_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
 
             // XXX: Why button 8 and 9?
@@ -1187,6 +2001,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse button released
         case XCB_BUTTON_RELEASE:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_button_release_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_button_release_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
 
             xcb_button_t button = e->detail;
@@ -1241,6 +2058,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse moved
         case XCB_MOTION_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_motion_notify_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_motion_notify_event_t* e = reinterpret_cast<xcb_motion_notify_event_t*>(windowEvent);
             Event event;
             event.type        = Event::MouseMoved;
@@ -1253,6 +2073,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse entered
         case XCB_ENTER_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_enter_notify_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_enter_notify_event_t* enterNotifyEvent = reinterpret_cast<xcb_enter_notify_event_t*>(windowEvent);
 
             if (enterNotifyEvent->mode == NotifyNormal)
@@ -1267,6 +2090,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Mouse left
         case XCB_LEAVE_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_leave_notify_event_t*>(windowEvent)->event))
+                return false;
+
             xcb_leave_notify_event_t* leaveNotifyEvent = reinterpret_cast<xcb_leave_notify_event_t*>(windowEvent);
 
             if (leaveNotifyEvent->mode == NotifyNormal)
@@ -1281,12 +2107,121 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         // Parent window changed
         case XCB_REPARENT_NOTIFY:
         {
+            if (passEvent(windowEvent, reinterpret_cast<xcb_reparent_notify_event_t*>(windowEvent)->window))
+                return false;
+
+            // Catch reparent events to properly apply fullscreen on
+            // some "strange" window managers (like Awesome) which
+            // seem to make use of temporary parents during mapping
+            if (m_fullscreen)
+                switchToFullscreen();
+
             xcb_flush(m_connection); // Discard remaining events
+            break;
+        }
+
+        // The stuff that might pop up but we don't care about
+        // Whitelist more when necessary
+        // Window visibility changed (hide/unhide)
+        case XCB_MAP_NOTIFY:
+        case XCB_UNMAP_NOTIFY:
+        {
+            break;
+        }
+
+        // Handle the rest
+        default:
+        {
+            uint8_t responseType = windowEvent->response_type & ~0x80;
+
+            // Handle any extension events first
+
+            // DRI2
+            static xcb_query_extension_reply_t driExtension = getDriExtension();
+            if (driExtension.present)
+            {
+                // Because we are using the XCB event queue instead of the Xlib event
+                // queue, Mesa breaks a bit (VSync among other things) because DRI2 still
+                // expects certain Xlib events to come its way. We work around this by
+                // emulating the old Xlib event queue for these specific wire events.
+                // Sources (retrieved 27 Mar 2015):
+                // http://wrl.illest.net/post/45342765813/code-tip-glx-and-xcbownseventqueue
+                // https://bugs.freedesktop.org/show_bug.cgi?id=42131
+                // https://bugs.freedesktop.org/show_bug.cgi?id=35945
+                // Mesa src/glx/dri2.c
+                // QtBase src/plugins/platforms/xcb/gl_integrations/xcb_glx/qxcbglxintegration.cpp
+                // QtBase Commit bb22b4965070409df4658f16fdf549f0362e8a9c
+                // Qt Change-Id I3b4ef3f6e3efbae25f49f161e229e9b15e951778
+                // QtBase Commit 13c5c81cfa934c9b610720fe79e07465b00ebc8d
+                // Qt Change-Id Ia93eb8be1cbbc3d8ae7913a934c195af6b5ec538
+                // QtBase Commit decb88693c8a7f0c073889b91151f01a850e3adf
+                // Qt Change-Id Ic466ff26487937b03f072a57e0ee4df335492a5f
+                if ((responseType == driExtension.first_event + XCB_DRI2_BUFFER_SWAP_COMPLETE) ||
+                    (responseType == driExtension.first_event + XCB_DRI2_INVALIDATE_BUFFERS))
+                {
+                    // DRI2 BufferSwapComplete and InvalidateBuffers
+
+                    // We lock/unlock the display to protect against concurrent access
+                    XLockDisplay(m_display);
+
+                    typedef Bool (*wireEventHandler)(Display*, XEvent*, xEvent*);
+
+                    // Probe for any handlers that are registered for this event type
+                    wireEventHandler handler = XESetWireToEvent(m_display, responseType, 0);
+
+                    if (handler)
+                    {
+                        // Restore the previous handler if one was registered
+                        XESetWireToEvent(m_display, responseType, handler);
+
+                        XEvent event;
+                        windowEvent->sequence = LastKnownRequestProcessed(m_display);
+
+                        // Pretend to be the Xlib event queue
+                        handler(m_display, &event, reinterpret_cast<xEvent*>(windowEvent));
+                    }
+
+                    XUnlockDisplay(m_display);
+
+                    return true;
+                }
+            }
+
+            // Print any surprises to stderr (would be nice if people report when this happens)
+            dumpUnhandledEvent(responseType);
+
             break;
         }
     }
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplX11::passEvent(xcb_generic_event_t* windowEvent, xcb_window_t window)
+{
+    // Check if this is our event
+    if (window == m_window)
+        return false;
+
+    Lock lock(allWindowsMutex);
+
+    // If we are the only window, there is nobody else to pass to
+    if (allWindows.size() == 1)
+        return false;
+
+    for (std::vector<sf::priv::WindowImplX11*>::iterator i = allWindows.begin(); i != allWindows.end(); ++i)
+    {
+        if ((*i)->m_window == window)
+        {
+            (*i)->m_xcbEvents.push_back(windowEvent);
+            return true;
+        }
+    }
+
+    // It seems nobody wants the event, we'll just handle it ourselves
+    return false;
 }
 
 
@@ -1317,9 +2252,9 @@ Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
         case XK_bracketright: return Keyboard::RBracket;
         case XK_comma:        return Keyboard::Comma;
         case XK_period:       return Keyboard::Period;
-        case XK_dead_acute:   return Keyboard::Quote;
+        case XK_apostrophe:   return Keyboard::Quote;
         case XK_backslash:    return Keyboard::BackSlash;
-        case XK_dead_grave:   return Keyboard::Tilde;
+        case XK_grave:        return Keyboard::Tilde;
         case XK_space:        return Keyboard::Space;
         case XK_Return:       return Keyboard::Return;
         case XK_KP_Enter:     return Keyboard::Return;

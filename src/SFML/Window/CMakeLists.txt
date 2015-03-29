@@ -75,6 +75,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.inl
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
@@ -197,7 +199,7 @@ if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
     if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-        find_package(XCB COMPONENTS xlib_xcb icccm image randr util REQUIRED)
+        find_package(XCB COMPONENTS xlib_xcb icccm image randr util ewmh keysyms REQUIRED)
         if(NOT LIBXCB_FOUND)
             message(FATAL_ERROR "Xcb library not found")
         endif()
