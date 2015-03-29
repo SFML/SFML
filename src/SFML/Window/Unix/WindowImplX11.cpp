@@ -37,7 +37,11 @@
 #include <xcb/xcb_image.h>
 #include <xcb/randr.h>
 #include <X11/Xlibint.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
+#include <libgen.h>
+#include <fcntl.h>
 #include <algorithm>
 #include <vector>
 #include <string>
