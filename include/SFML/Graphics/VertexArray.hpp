@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -61,7 +61,7 @@ public:
     /// \param vertexCount Initial number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    explicit VertexArray(PrimitiveType type, unsigned int vertexCount = 0);
+    explicit VertexArray(PrimitiveType type, std::size_t vertexCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertex count
@@ -69,7 +69,7 @@ public:
     /// \return Number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getVertexCount() const;
+    std::size_t getVertexCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
@@ -85,7 +85,7 @@ public:
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    Vertex& operator [](unsigned int index);
+    Vertex& operator [](std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only access to a vertex by its index
@@ -101,7 +101,7 @@ public:
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    const Vertex& operator [](unsigned int index) const;
+    const Vertex& operator [](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the vertex array
@@ -126,7 +126,7 @@ public:
     /// \param vertexCount New size of the array (number of vertices)
     ///
     ////////////////////////////////////////////////////////////
-    void resize(unsigned int vertexCount);
+    void resize(std::size_t vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Add a vertex to the array

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -190,7 +190,7 @@ void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
+void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
                         PrimitiveType type, const RenderStates& states)
 {
     // Nothing to draw?
@@ -218,7 +218,7 @@ void RenderTarget::draw(const Vertex* vertices, unsigned int vertexCount,
         if (useVertexCache)
         {
             // Pre-transform the vertices and store them into the vertex cache
-            for (unsigned int i = 0; i < vertexCount; ++i)
+            for (std::size_t i = 0; i < vertexCount; ++i)
             {
                 Vertex& vertex = m_cache.vertexCache[i];
                 vertex.position = states.transform * vertices[i].position;

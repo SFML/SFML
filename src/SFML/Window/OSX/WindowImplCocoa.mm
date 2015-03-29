@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -370,15 +370,29 @@ void WindowImplCocoa::mouseMovedAt(int x, int y)
 }
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::mouseWheelScrolledAt(float delta, int x, int y)
+void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, int y)
 {
     Event event;
+
     event.type = Event::MouseWheelMoved;
-    event.mouseWheel.delta = delta;
+    event.mouseWheel.delta = deltaY;
     event.mouseWheel.x = x;
     event.mouseWheel.y = y;
     scaleOutXY(event.mouseWheel, m_delegate);
+    pushEvent(event);
 
+    event.type = Event::MouseWheelVerticalMoved;
+    event.mouseWheelVertical.delta = deltaY;
+    event.mouseWheelVertical.x = x;
+    event.mouseWheelVertical.y = y;
+    scaleOutXY(event.mouseWheelVertical, m_delegate);
+    pushEvent(event);
+
+    event.type = Event::MouseWheelHorizontalMoved;
+    event.mouseWheelHorizontal.delta = deltaX;
+    event.mouseWheelHorizontal.x = x;
+    event.mouseWheelHorizontal.y = y;
+    scaleOutXY(event.mouseWheelHorizontal, m_delegate);
     pushEvent(event);
 }
 

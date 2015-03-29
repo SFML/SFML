@@ -24,7 +24,7 @@ if(SFML_OS_WINDOWS)
     # if HHC is found, we can generate the CHM (compressed HTML) output
     find_program(DOXYGEN_HHC_PROGRAM
                  NAMES hhc.exe
-                 PATHS "c:/Program Files/HTML Help Workshop"
+                 PATHS "C:/Program Files/HTML Help Workshop" "C:/Program Files (x86)/HTML Help Workshop"
                  DOC "HTML Help Compiler program")
     if(DOXYGEN_HHC_PROGRAM)
         set(DOXYGEN_GENERATE_HTMLHELP YES)
@@ -39,6 +39,7 @@ endif()
 # configure the source Doxyfile by copying it and replacing all @variables@
 set(DOXYGEN_CONFIGURED_INPUT ${DOXYGEN_OUTPUT_DIR}/doxyfile)
 configure_file(${DOXYGEN_INPUT_DIR}/doc/doxyfile.in ${DOXYGEN_CONFIGURED_INPUT} @ONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/doc/header.html.in ${DOXYGEN_OUTPUT_DIR}/header.html @ONLY)
 
 # copy the files needed by the documentation
 configure_file(${DOXYGEN_INPUT_DIR}/doc/doxygen.css ${DOXYGEN_OUTPUT_DIR}/html/doxygen.css COPYONLY)

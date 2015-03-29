@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -80,7 +80,6 @@ m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_cacheId      (getUniqueId())
 {
-
 }
 
 
@@ -561,6 +560,13 @@ Texture& Texture::operator =(const Texture& right)
     m_cacheId = getUniqueId();
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int Texture::getNativeHandle() const
+{
+    return m_texture;
 }
 
 

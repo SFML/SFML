@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -419,6 +419,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Texture& operator =(const Texture& right);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the underlying OpenGL handle of the texture.
+    ///
+    /// You shouldn't need to use this function, unless you have
+    /// very specific stuff to implement that SFML doesn't support,
+    /// or implement a temporary workaround until a bug is fixed.
+    ///
+    /// \return OpenGL handle of the texture or 0 if not yet created
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind a texture for rendering

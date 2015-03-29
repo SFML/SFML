@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,7 +49,7 @@ public:
     /// \param pointCount Number of points of the polygon
     ///
     ////////////////////////////////////////////////////////////
-    explicit ConvexShape(unsigned int pointCount = 0);
+    explicit ConvexShape(std::size_t pointCount = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
@@ -61,7 +61,7 @@ public:
     /// \see getPointCount
     ///
     ////////////////////////////////////////////////////////////
-    void setPointCount(unsigned int count);
+    void setPointCount(std::size_t count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points of the polygon
@@ -71,7 +71,7 @@ public:
     /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual unsigned int getPointCount() const;
+    virtual std::size_t getPointCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of a point
@@ -88,7 +88,7 @@ public:
     /// \see getPoint
     ///
     ////////////////////////////////////////////////////////////
-    void setPoint(unsigned int index, const Vector2f& point);
+    void setPoint(std::size_t index, const Vector2f& point);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of a point
@@ -105,7 +105,7 @@ public:
     /// \see setPoint
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(unsigned int index) const;
+    virtual Vector2f getPoint(std::size_t index) const;
 
 private:
 

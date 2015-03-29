@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -53,7 +53,7 @@ namespace
     std::string getDeviceString(IOHIDDeviceRef ref, CFStringRef prop, unsigned int index)
     {
         CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
-        if (ref && (CFGetTypeID(typeRef) == CFStringGetTypeID()))
+        if (typeRef && (CFGetTypeID(typeRef) == CFStringGetTypeID()))
         {
             CFStringRef str = static_cast<CFStringRef>(typeRef);
             return stringFromCFString(str);
@@ -68,7 +68,7 @@ namespace
     unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop, unsigned int index)
     {
         CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
-        if (ref && (CFGetTypeID(typeRef) == CFNumberGetTypeID()))
+        if (typeRef && (CFGetTypeID(typeRef) == CFNumberGetTypeID()))
         {
             SInt32 value;
             CFNumberGetValue((CFNumberRef)typeRef, kCFNumberSInt32Type, &value);

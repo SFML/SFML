@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
 #include <vector>
@@ -41,7 +42,7 @@ namespace sf
 /// \brief Abstract base class for capturing sound data
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundRecorder
+class SFML_AUDIO_API SoundRecorder : AlResource
 {
 public:
 

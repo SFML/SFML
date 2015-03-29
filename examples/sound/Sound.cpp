@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 
 ////////////////////////////////////////////////////////////
@@ -46,15 +47,15 @@ void playSound()
 /// Play a music
 ///
 ////////////////////////////////////////////////////////////
-void playMusic()
+void playMusic(const std::string& filename)
 {
     // Load an ogg music file
     sf::Music music;
-    if (!music.openFromFile("resources/orchestral.ogg"))
+    if (!music.openFromFile("resources/" + filename))
         return;
 
     // Display music informations
-    std::cout << "orchestral.ogg:" << std::endl;
+    std::cout << filename << ":" << std::endl;
     std::cout << " " << music.getDuration().asSeconds() << " seconds"       << std::endl;
     std::cout << " " << music.getSampleRate()           << " samples / sec" << std::endl;
     std::cout << " " << music.getChannelCount()         << " channels"      << std::endl;
@@ -72,7 +73,7 @@ void playMusic()
         std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.getPlayingOffset().asSeconds() << " sec   ";
         std::cout << std::flush;
     }
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 }
 
 
@@ -87,8 +88,11 @@ int main()
     // Play a sound
     playSound();
 
-    // Play a music
-    playMusic();
+    // Play music from an ogg file
+    playMusic("orchestral.ogg");
+    
+    // Play music from a flac file
+    playMusic("ding.flac");
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

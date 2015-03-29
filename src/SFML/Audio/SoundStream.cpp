@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -274,17 +274,21 @@ void SoundStream::streamData()
             m_isStreaming = false;
             return;
         }
+    }
 
-        // Create the buffers
-        alCheck(alGenBuffers(BufferCount, m_buffers));
-        for (int i = 0; i < BufferCount; ++i)
-            m_endBuffers[i] = false;
+    // Create the buffers
+    alCheck(alGenBuffers(BufferCount, m_buffers));
+    for (int i = 0; i < BufferCount; ++i)
+        m_endBuffers[i] = false;
 
-        // Fill the queue
-        requestStop = fillQueue();
+    // Fill the queue
+    requestStop = fillQueue();
 
-        // Play the sound
-        alCheck(alSourcePlay(m_source));
+    // Play the sound
+    alCheck(alSourcePlay(m_source));
+
+    {
+        Lock lock(m_threadMutex);
 
         // Check if the thread was launched Paused
         if (m_threadStartState == Paused)

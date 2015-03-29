@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <X11/Xlib.h>
+#include <X11/Xlib-xcb.h>
 
 
 namespace sf
@@ -47,12 +47,62 @@ namespace priv
 Display* OpenDisplay();
 
 ////////////////////////////////////////////////////////////
-/// \brief Release a reference to the shared
+/// \brief Get the xcb connection of the shared Display
+///
+/// This function increments the reference count of the display,
+/// it must be matched with a call to CloseDisplay.
+///
+/// \return Pointer to the shared connection
+///
+////////////////////////////////////////////////////////////
+xcb_connection_t* OpenConnection();
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared display
 ///
 /// \param display Display to release
 ///
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display);
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared display
+///
+/// \param connection Connection of display to release
+///
+////////////////////////////////////////////////////////////
+void CloseConnection(xcb_connection_t* connection);
+
+////////////////////////////////////////////////////////////
+/// \brief Get screen of a display by index (equivalent to XScreenOfDisplay)
+///
+/// \param connection Connection of display
+/// \param screen_nbr The index of the screen
+///
+/// \return Pointer to the screen
+///
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr);
+
+////////////////////////////////////////////////////////////
+/// \brief Get default screen of a display (equivalent to XDefaultScreen)
+///
+/// \param connection Connection of display
+///
+/// \return Pointer to the default screen of the display
+///
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection);
+
+////////////////////////////////////////////////////////////
+/// \brief Get default root window of a display (equivalent to XDefaultRootWindow)
+///
+/// \param connection Connection of display
+///
+/// \return Root window of the display
+///
+////////////////////////////////////////////////////////////
+xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection);
 
 } // namespace priv
 

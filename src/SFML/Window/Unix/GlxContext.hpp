@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-#include <X11/Xlib.h>
-#include <GL/glx.h>
+#include <SFML/Window/Unix/GlxExtensions.hpp>
+#include <X11/Xlib-xcb.h>
 
 
 namespace sf
@@ -80,6 +80,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~GlxContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target for rendering
@@ -135,10 +145,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* m_display;    ///< Connection to the X server
-    ::Window   m_window;     ///< Window to which the context is attached
-    GLXContext m_context;    ///< OpenGL context
-    bool       m_ownsWindow; ///< Do we own the window associated to the context?
+    ::Display*        m_display;    ///< Connection to the X server
+    ::Window          m_window;     ///< Window to which the context is attached
+    xcb_connection_t* m_connection; ///< Pointer to the xcb connection
+    GLXContext        m_context;    ///< OpenGL context
+    bool              m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv

@@ -35,6 +35,10 @@ set(SRC
     ${INCROOT}/Vector2.inl
     ${INCROOT}/Vector3.hpp
     ${INCROOT}/Vector3.inl
+    ${SRCROOT}/FileInputStream.cpp
+    ${INCROOT}/FileInputStream.hpp
+    ${SRCROOT}/MemoryInputStream.cpp
+    ${INCROOT}/MemoryInputStream.hpp
 )
 source_group("" FILES ${SRC})
 

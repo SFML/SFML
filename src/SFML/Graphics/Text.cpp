@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -118,7 +118,7 @@ void Text::setColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (unsigned int i = 0; i < m_vertices.getVertexCount(); ++i)
+            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                 m_vertices[i].color = m_color;
         }
     }

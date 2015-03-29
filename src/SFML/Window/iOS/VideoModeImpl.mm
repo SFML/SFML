@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <UIKit/UIKit.h>
-
 
 namespace sf
 {
@@ -50,7 +50,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 VideoMode VideoModeImpl::getDesktopMode()
 {
     CGRect bounds = [[UIScreen mainScreen] bounds];
-    return VideoMode(bounds.size.width, bounds.size.height);
+    float backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    return VideoMode(bounds.size.width * backingScale, bounds.size.height * backingScale);
 }
 
 } // namespace priv

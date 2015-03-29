@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,14 +31,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ConvexShape::ConvexShape(unsigned int pointCount)
+ConvexShape::ConvexShape(std::size_t pointCount)
 {
     setPointCount(pointCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::setPointCount(unsigned int count)
+void ConvexShape::setPointCount(std::size_t count)
 {
     m_points.resize(count);
     update();
@@ -46,14 +46,14 @@ void ConvexShape::setPointCount(unsigned int count)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int ConvexShape::getPointCount() const
+std::size_t ConvexShape::getPointCount() const
 {
-    return static_cast<unsigned int>(m_points.size());
+    return m_points.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::setPoint(unsigned int index, const Vector2f& point)
+void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
 {
     m_points[index] = point;
     update();
@@ -61,7 +61,7 @@ void ConvexShape::setPoint(unsigned int index, const Vector2f& point)
 
 
 ////////////////////////////////////////////////////////////
-Vector2f ConvexShape::getPoint(unsigned int index) const
+Vector2f ConvexShape::getPoint(std::size_t index) const
 {
     return m_points[index];
 }

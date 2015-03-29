@@ -256,7 +256,7 @@ if(SFML_STATIC_LIBRARIES)
             set(SFML_SYSTEM_DEPENDENCIES "pthread")
         endif()
         if(FIND_SFML_OS_LINUX)
-            set(SFML_SYSTEM_DEPENDENCIES "rt")
+            set(SFML_SYSTEM_DEPENDENCIES ${SFML_SYSTEM_DEPENDENCIES} "rt")
         endif()
         if(FIND_SFML_OS_WINDOWS)
             set(SFML_SYSTEM_DEPENDENCIES "winmm")
@@ -308,11 +308,10 @@ if(SFML_STATIC_LIBRARIES)
     
         # find libraries
         find_sfml_dependency(FREETYPE_LIBRARY "FreeType" freetype)
-        find_sfml_dependency(GLEW_LIBRARY "GLEW" glew GLEW glew32 glew32s glew64 glew64s)
         find_sfml_dependency(JPEG_LIBRARY "libjpeg" jpeg)
 
         # update the list
-        set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY} ${GLEW_LIBRARY} ${JPEG_LIBRARY})
+        set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
         set(SFML_DEPENDENCIES ${SFML_GRAPHICS_DEPENDENCIES} ${SFML_DEPENDENCIES})
     endif()
 
@@ -322,11 +321,14 @@ if(SFML_STATIC_LIBRARIES)
 
         # find libraries
         find_sfml_dependency(OPENAL_LIBRARY "OpenAL" openal openal32)
-        find_sfml_dependency(SNDFILE_LIBRARY "libsndfile" sndfile)
+        find_sfml_dependency(OGG_LIBRARY "Ogg" ogg)
+        find_sfml_dependency(VORBIS_LIBRARY "Vorbis" vorbis)
+        find_sfml_dependency(VORBISFILE_LIBRARY "VorbisFile" vorbisfile)
+        find_sfml_dependency(FLAC_LIBRARY "FLAC" flac)
 
         # update the list
-        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${SNDFILE_LIBRARY})
-        set(SFML_DEPENDENCIES ${SFML_AUDIO_DEPENDENCIES} ${SFML_DEPENDENCIES})
+        set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${FLAC_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+        set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_AUDIO_DEPENDENCIES})
     endif()
 
 endif()
@@ -354,6 +356,6 @@ if (NOT SFML_FOUND)
 endif()
 
 # handle success
-if(SFML_FOUND)
+if(SFML_FOUND AND NOT SFML_FIND_QUIETLY)
     message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH} in ${SFML_INCLUDE_DIR}")
 endif()

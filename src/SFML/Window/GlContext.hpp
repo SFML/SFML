@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
@@ -119,6 +120,15 @@ public:
     static GlContext* create(const ContextSettings& settings, unsigned int width, unsigned int height);
 
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -224,6 +234,13 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void initialize();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether the context is compatible with the requested settings
+    /// \param requestedSettings Requested settings during context creation
+    ///
+    ////////////////////////////////////////////////////////////
+    void checkSettings(const ContextSettings& requestedSettings);
 };
 
 } // namespace priv

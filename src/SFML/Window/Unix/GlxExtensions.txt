@@ -1,0 +1,11 @@
+// Created with:
+// https://bitbucket.org/Anteru/glloadgen-reloaded
+// Commit 20f19482b7a844d20b9785c3e3fd1f16419f6e0a
+// lua LoadGen.lua -style=pointer_c -spec=glX -indent=space -prefix=sf -extfile=GlxExtensions.txt GlxExtensions
+
+EXT_swap_control
+// MESA_swap_control
+SGI_swap_control
+GLX_ARB_multisample
+GLX_ARB_create_context
+GLX_ARB_create_context_profile
