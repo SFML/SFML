@@ -32,8 +32,6 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
 #include <X11/Xlib-xcb.h>
-#include <xcb/xcb_ewmh.h>
-#include <xcb/xcb_keysyms.h>
 #include <xcb/randr.h>
 #include <deque>
 
@@ -182,6 +180,33 @@ protected:
 
 private:
 
+    struct WMHints
+    {
+        int32_t      flags;
+        uint32_t     input;
+        int32_t      initial_state;
+        xcb_pixmap_t icon_pixmap;
+        xcb_window_t icon_window;
+        int32_t      icon_x;
+        int32_t      icon_y;
+        xcb_pixmap_t icon_mask;
+        xcb_window_t window_group;
+    };
+
+    struct WMSizeHints
+    {
+        uint32_t flags;
+        int32_t  x, y;
+        int32_t  width, height;
+        int32_t  min_width, min_height;
+        int32_t  max_width, max_height;
+        int32_t  width_inc, height_inc;
+        int32_t  min_aspect_num, min_aspect_den;
+        int32_t  max_aspect_num, max_aspect_den;
+        int32_t  base_width, base_height;
+        uint32_t win_gravity;
+    };
+
     ////////////////////////////////////////////////////////////
     /// \brief Request the WM to make the current window active
     ///
@@ -219,6 +244,36 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void setMotifHints(unsigned long style);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set WM hints
+    ///
+    /// \param hints Hints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWMHints(const WMHints& hints);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set WM size hints
+    ///
+    /// \param hints Size hints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWMSizeHints(const WMSizeHints& hints);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a XCB window property
+    ///
+    /// \param property Property to change
+    /// \param type     Type of the property
+    /// \param format   Format of the property
+    /// \param length   Length of the new value
+    /// \param data     The new value of the property
+    ///
+    /// \return True if successful, false if unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool changeWindowProperty(xcb_atom_t property, xcb_atom_t type, uint8_t format, uint32_t length, const void* data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
@@ -260,30 +315,16 @@ private:
     bool passEvent(xcb_generic_event_t* windowEvent, xcb_window_t window);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a X11 keysym to SFML key code
-    ///
-    /// \param symbol Key symbol to convert
-    ///
-    /// \return Corresponding SFML key code
-    ///
-    ////////////////////////////////////////////////////////////
-    static Keyboard::Key keysymToSF(xcb_keysym_t symbol);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     xcb_window_t                      m_window;          ///< xcb identifier defining our window
     ::Display*                        m_display;         ///< Pointer to the display
     xcb_connection_t*                 m_connection;      ///< Pointer to the xcb connection
-    xcb_ewmh_connection_t             m_ewmhConnection;  ///< xcb EWMH connection
     xcb_screen_t*                     m_screen;          ///< Screen identifier
     XIM                               m_inputMethod;     ///< Input method linked to the X display
     XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
-    xcb_key_symbols_t*                m_keySymbols;      ///< Symbols used to look up keysyms
     std::deque<xcb_generic_event_t*>  m_xcbEvents;       ///< Events that were received in another window's loop
     bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
-    Atom                              m_atomWmProtocols; ///< Atom used to identify WM protocol messages
-    Atom                              m_atomClose;       ///< Atom used to identify the close event
     xcb_randr_get_screen_info_reply_t m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
     Cursor                            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one
     bool                              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?

@@ -33,7 +33,6 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
-#include <xcb/xcb_icccm.h>
 #include <xcb/xcb_image.h>
 #include <xcb/randr.h>
 #include <X11/Xlibint.h>
@@ -67,7 +66,14 @@ namespace
     sf::priv::WindowImplX11*              fullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
     sf::Mutex                             allWindowsMutex;
-    unsigned long                         eventMask = XCB_EVENT_MASK_FOCUS_CHANGE   | XCB_EVENT_MASK_BUTTON_PRESS     |
+
+    bool mapBuilt = false;
+
+    // We use a simple array instead of a map => constant time lookup
+    // xcb_keycode_t can only contain 256 distinct values
+    sf::Keyboard::Key sfKeyMap[256];
+
+    static const unsigned long            eventMask = XCB_EVENT_MASK_FOCUS_CHANGE   | XCB_EVENT_MASK_BUTTON_PRESS     |
                                                       XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION    |
                                                       XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS        |
                                                       XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
@@ -119,68 +125,70 @@ namespace
         checked = true;
 
         xcb_connection_t* connection = sf::priv::OpenConnection();
-        xcb_ewmh_connection_t ewmhConnection;
+
+        xcb_atom_t netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
+        xcb_atom_t netSupported = sf::priv::getAtom("_NET_SUPPORTED", true);
+
+        if (!netSupportingWmCheck || !netSupported)
+            return false;
 
         sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-        uint8_t result = xcb_ewmh_init_atoms_replies(
-            &ewmhConnection,
-            xcb_ewmh_init_atoms(
+        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> rootSupportingWindow(xcb_get_property_reply(
+            connection,
+            xcb_get_property(
                 connection,
-                &ewmhConnection
+                0,
+                sf::priv::XCBDefaultRootWindow(connection),
+                netSupportingWmCheck,
+                XCB_ATOM_WINDOW,
+                0,
+                1
             ),
             &error
-        );
+        ));
 
-        if (!result || error)
+        if (!rootSupportingWindow || rootSupportingWindow->length != 1)
         {
-            xcb_ewmh_connection_wipe(&ewmhConnection);
             sf::priv::CloseConnection(connection);
             return false;
         }
 
-        xcb_window_t rootWindow;
+        xcb_window_t* rootWindow = reinterpret_cast<xcb_window_t*>(xcb_get_property_value(rootSupportingWindow.get()));
 
-        result = xcb_ewmh_get_supporting_wm_check_reply(
-            &ewmhConnection,
-            xcb_ewmh_get_supporting_wm_check(
-                &ewmhConnection,
-                sf::priv::XCBDefaultRootWindow(connection)
-            ),
-            &rootWindow,
-            &error
-        );
-
-        if (!result || error)
-        {
-            xcb_ewmh_connection_wipe(&ewmhConnection);
-            sf::priv::CloseConnection(connection);
+        if (!rootWindow)
             return false;
-        }
 
-        xcb_window_t childWindow;
-
-        result = xcb_ewmh_get_supporting_wm_check_reply(
-            &ewmhConnection,
-            xcb_ewmh_get_supporting_wm_check(
-                &ewmhConnection,
-                rootWindow
+        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> childSupportingWindow(xcb_get_property_reply(
+            connection,
+            xcb_get_property(
+                connection,
+                0,
+                *rootWindow,
+                netSupportingWmCheck,
+                XCB_ATOM_WINDOW,
+                0,
+                1
             ),
-            &childWindow,
             &error
-        );
+        ));
 
-        xcb_ewmh_connection_wipe(&ewmhConnection);
         sf::priv::CloseConnection(connection);
 
-        if (!result || error)
+        if (!childSupportingWindow || childSupportingWindow->length != 1)
+            return false;
+
+        xcb_window_t* childWindow = reinterpret_cast<xcb_window_t*>(xcb_get_property_value(childSupportingWindow.get()));
+
+        if (!childWindow)
             return false;
 
         // Conforming window managers should return the same window for both queries
-        if (rootWindow != childWindow)
+        if (*rootWindow != *childWindow)
             return false;
 
         ewmhSupported = true;
+
         return true;
     }
 
@@ -300,6 +308,143 @@ namespace
         sf::err() << "Unhandled event type: " << (static_cast<int>(type) & ~0x80) << std::endl
                   << "Report this to the SFML maintainers if possible" << std::endl;
     }
+
+    xcb_keysym_t getKeysymFromKeycode(xcb_keycode_t keycode)
+    {
+        return sf::priv::getKeysymMap()[keycode];
+    }
+
+    sf::Keyboard::Key keysymToSF(xcb_keysym_t symbol)
+    {
+        switch (symbol)
+        {
+            case XK_Shift_L:      return sf::Keyboard::LShift;
+            case XK_Shift_R:      return sf::Keyboard::RShift;
+            case XK_Control_L:    return sf::Keyboard::LControl;
+            case XK_Control_R:    return sf::Keyboard::RControl;
+            case XK_Alt_L:        return sf::Keyboard::LAlt;
+            case XK_Alt_R:        return sf::Keyboard::RAlt;
+            case XK_Super_L:      return sf::Keyboard::LSystem;
+            case XK_Super_R:      return sf::Keyboard::RSystem;
+            case XK_Menu:         return sf::Keyboard::Menu;
+            case XK_Escape:       return sf::Keyboard::Escape;
+            case XK_semicolon:    return sf::Keyboard::SemiColon;
+            case XK_slash:        return sf::Keyboard::Slash;
+            case XK_equal:        return sf::Keyboard::Equal;
+            case XK_minus:        return sf::Keyboard::Dash;
+            case XK_bracketleft:  return sf::Keyboard::LBracket;
+            case XK_bracketright: return sf::Keyboard::RBracket;
+            case XK_comma:        return sf::Keyboard::Comma;
+            case XK_period:       return sf::Keyboard::Period;
+            case XK_apostrophe:   return sf::Keyboard::Quote;
+            case XK_backslash:    return sf::Keyboard::BackSlash;
+            case XK_grave:        return sf::Keyboard::Tilde;
+            case XK_space:        return sf::Keyboard::Space;
+            case XK_Return:       return sf::Keyboard::Return;
+            case XK_KP_Enter:     return sf::Keyboard::Return;
+            case XK_BackSpace:    return sf::Keyboard::BackSpace;
+            case XK_Tab:          return sf::Keyboard::Tab;
+            case XK_Prior:        return sf::Keyboard::PageUp;
+            case XK_Next:         return sf::Keyboard::PageDown;
+            case XK_End:          return sf::Keyboard::End;
+            case XK_Home:         return sf::Keyboard::Home;
+            case XK_Insert:       return sf::Keyboard::Insert;
+            case XK_Delete:       return sf::Keyboard::Delete;
+            case XK_KP_Add:       return sf::Keyboard::Add;
+            case XK_KP_Subtract:  return sf::Keyboard::Subtract;
+            case XK_KP_Multiply:  return sf::Keyboard::Multiply;
+            case XK_KP_Divide:    return sf::Keyboard::Divide;
+            case XK_Pause:        return sf::Keyboard::Pause;
+            case XK_F1:           return sf::Keyboard::F1;
+            case XK_F2:           return sf::Keyboard::F2;
+            case XK_F3:           return sf::Keyboard::F3;
+            case XK_F4:           return sf::Keyboard::F4;
+            case XK_F5:           return sf::Keyboard::F5;
+            case XK_F6:           return sf::Keyboard::F6;
+            case XK_F7:           return sf::Keyboard::F7;
+            case XK_F8:           return sf::Keyboard::F8;
+            case XK_F9:           return sf::Keyboard::F9;
+            case XK_F10:          return sf::Keyboard::F10;
+            case XK_F11:          return sf::Keyboard::F11;
+            case XK_F12:          return sf::Keyboard::F12;
+            case XK_F13:          return sf::Keyboard::F13;
+            case XK_F14:          return sf::Keyboard::F14;
+            case XK_F15:          return sf::Keyboard::F15;
+            case XK_Left:         return sf::Keyboard::Left;
+            case XK_Right:        return sf::Keyboard::Right;
+            case XK_Up:           return sf::Keyboard::Up;
+            case XK_Down:         return sf::Keyboard::Down;
+            case XK_KP_0:         return sf::Keyboard::Numpad0;
+            case XK_KP_1:         return sf::Keyboard::Numpad1;
+            case XK_KP_2:         return sf::Keyboard::Numpad2;
+            case XK_KP_3:         return sf::Keyboard::Numpad3;
+            case XK_KP_4:         return sf::Keyboard::Numpad4;
+            case XK_KP_5:         return sf::Keyboard::Numpad5;
+            case XK_KP_6:         return sf::Keyboard::Numpad6;
+            case XK_KP_7:         return sf::Keyboard::Numpad7;
+            case XK_KP_8:         return sf::Keyboard::Numpad8;
+            case XK_KP_9:         return sf::Keyboard::Numpad9;
+            case XK_a:            return sf::Keyboard::A;
+            case XK_b:            return sf::Keyboard::B;
+            case XK_c:            return sf::Keyboard::C;
+            case XK_d:            return sf::Keyboard::D;
+            case XK_e:            return sf::Keyboard::E;
+            case XK_f:            return sf::Keyboard::F;
+            case XK_g:            return sf::Keyboard::G;
+            case XK_h:            return sf::Keyboard::H;
+            case XK_i:            return sf::Keyboard::I;
+            case XK_j:            return sf::Keyboard::J;
+            case XK_k:            return sf::Keyboard::K;
+            case XK_l:            return sf::Keyboard::L;
+            case XK_m:            return sf::Keyboard::M;
+            case XK_n:            return sf::Keyboard::N;
+            case XK_o:            return sf::Keyboard::O;
+            case XK_p:            return sf::Keyboard::P;
+            case XK_q:            return sf::Keyboard::Q;
+            case XK_r:            return sf::Keyboard::R;
+            case XK_s:            return sf::Keyboard::S;
+            case XK_t:            return sf::Keyboard::T;
+            case XK_u:            return sf::Keyboard::U;
+            case XK_v:            return sf::Keyboard::V;
+            case XK_w:            return sf::Keyboard::W;
+            case XK_x:            return sf::Keyboard::X;
+            case XK_y:            return sf::Keyboard::Y;
+            case XK_z:            return sf::Keyboard::Z;
+            case XK_0:            return sf::Keyboard::Num0;
+            case XK_1:            return sf::Keyboard::Num1;
+            case XK_2:            return sf::Keyboard::Num2;
+            case XK_3:            return sf::Keyboard::Num3;
+            case XK_4:            return sf::Keyboard::Num4;
+            case XK_5:            return sf::Keyboard::Num5;
+            case XK_6:            return sf::Keyboard::Num6;
+            case XK_7:            return sf::Keyboard::Num7;
+            case XK_8:            return sf::Keyboard::Num8;
+            case XK_9:            return sf::Keyboard::Num9;
+        }
+
+        return sf::Keyboard::Unknown;
+    }
+
+    void buildMap()
+    {
+        for (xcb_keycode_t i = 0; ; ++i)
+        {
+            sfKeyMap[i] = keysymToSF(getKeysymFromKeycode(i));
+
+            if (i == 255)
+                break;
+        }
+
+        mapBuilt = true;
+    }
+
+    sf::Keyboard::Key keycodeToSF(xcb_keycode_t keycode)
+    {
+        if (!mapBuilt)
+            buildMap();
+
+        return sfKeyMap[keycode];
+    }
 }
 
 
@@ -312,10 +457,7 @@ WindowImplX11::WindowImplX11(WindowHandle handle) :
 m_window         (0),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
-m_keySymbols     (NULL),
 m_isExternal     (true),
-m_atomWmProtocols(0),
-m_atomClose      (0),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
@@ -335,22 +477,7 @@ m_fullscreen     (false)
     }
 
     // Make sure to check for EWMH support before we do anything
-    if (ewmhSupported())
-    {
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        uint8_t result = xcb_ewmh_init_atoms_replies(
-            &m_ewmhConnection,
-            xcb_ewmh_init_atoms(
-                m_connection,
-                &m_ewmhConnection
-            ),
-            &error
-        );
-
-        if (!result || error)
-            err() << "Failed to initialize EWMH atoms" << std::endl;
-    }
+    ewmhSupported();
 
     m_screen = XCBDefaultScreen(m_connection);
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
@@ -384,10 +511,7 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long 
 m_window         (0),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
-m_keySymbols     (NULL),
 m_isExternal     (false),
-m_atomWmProtocols(0),
-m_atomClose      (0),
 m_hiddenCursor   (0),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
@@ -407,22 +531,7 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     }
 
     // Make sure to check for EWMH support before we do anything
-    if (ewmhSupported())
-    {
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        uint8_t result = xcb_ewmh_init_atoms_replies(
-            &m_ewmhConnection,
-            xcb_ewmh_init_atoms(
-                m_connection,
-                &m_ewmhConnection
-            ),
-            &error
-        );
-
-        if (!result || error)
-            err() << "Failed to initialize EWMH atoms" << std::endl;
-    }
+    ewmhSupported();
 
     m_screen = XCBDefaultScreen(m_connection);
     XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
@@ -471,27 +580,31 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     setProtocols();
 
     // Set the WM initial state to the normal state
-    xcb_icccm_wm_hints_t hints;
+    WMHints hints;
     std::memset(&hints, 0, sizeof(hints));
-    xcb_icccm_wm_hints_set_normal(&hints);
-    xcb_icccm_set_wm_hints(m_connection, m_window, &hints);
-
-    xcb_size_hints_t sizeHints;
-    std::memset(&sizeHints, 0, sizeof(sizeHints));
+    hints.initial_state = 1;
+    hints.flags |= 1 << 1;
+    setWMHints(hints);
 
     // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
     setMotifHints(style);
+
+    WMSizeHints sizeHints;
+    std::memset(&sizeHints, 0, sizeof(sizeHints));
 
     // This is a hack to force some windows managers to disable resizing
     if (!(style & Style::Resize))
     {
         m_useSizeHints = true;
-        xcb_icccm_size_hints_set_min_size(&sizeHints, width, height);
-        xcb_icccm_size_hints_set_max_size(&sizeHints, width, height);
+        sizeHints.flags     |= ((1 << 4) | (1 << 5));
+        sizeHints.min_width  = width;
+        sizeHints.max_width  = width;
+        sizeHints.min_height = height;
+        sizeHints.max_height = height;
     }
 
     // Set the WM hints of the normal state
-    xcb_icccm_set_wm_normal_hints(m_connection, m_window, &sizeHints);
+    setWMSizeHints(sizeHints);
 
     // Set the window's WM class (this can be used by window managers)
     // The WM_CLASS property actually consists of 2 parts,
@@ -508,7 +621,8 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     windowClass += title.toAnsiString();
 
     // We add 1 to the size of the string to include the null at the end
-    xcb_icccm_set_wm_class_checked(m_connection, m_window, windowClass.size() + 1, windowClass.c_str());
+    if (!changeWindowProperty(XCB_ATOM_WM_CLASS, XCB_ATOM_STRING, 8, windowClass.size() + 1, windowClass.c_str()))
+        sf::err() << "Failed to set WM_CLASS property" << std::endl;
 
     // Set the window's name
     setTitle(title);
@@ -539,7 +653,6 @@ WindowImplX11::~WindowImplX11()
     // Destroy the input context
     if (m_inputContext)
         XDestroyIC(m_inputContext);
-
     // Destroy the window
     if (m_window && !m_isExternal)
     {
@@ -547,16 +660,9 @@ WindowImplX11::~WindowImplX11()
         xcb_flush(m_connection);
     }
 
-    // Free key symbols
-    if (m_keySymbols)
-        xcb_key_symbols_free(m_keySymbols);
-
     // Close the input method
     if (m_inputMethod)
         XCloseIM(m_inputMethod);
-
-    // Clean up the EWMH connection
-    xcb_ewmh_connection_wipe(&m_ewmhConnection);
 
     // Close the connection with the X server
     CloseDisplay(m_display);
@@ -737,22 +843,16 @@ void WindowImplX11::setSize(const Vector2u& size)
 {
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if( m_useSizeHints ) {
-        xcb_size_hints_t sizeHints;
+        WMSizeHints sizeHints;
         std::memset(&sizeHints, 0, sizeof(sizeHints));
-        xcb_icccm_size_hints_set_min_size(&sizeHints, size.x, size.y);
-        xcb_icccm_size_hints_set_max_size(&sizeHints, size.x, size.y);
 
-        ScopedXcbPtr<xcb_generic_error_t> configureWindowError(xcb_request_check(
-            m_connection,
-            xcb_icccm_set_wm_normal_hints(
-                m_connection,
-                m_window,
-                &sizeHints
-            )
-        ));
+        sizeHints.flags     |= (1 << 4 | 1 << 5);
+        sizeHints.min_width  = size.x;
+        sizeHints.max_width  = size.x;
+        sizeHints.min_height = size.y;
+        sizeHints.max_height = size.y;
 
-        if (configureWindowError)
-            err() << "Failed to set window size hints" << std::endl;
+        setWMSizeHints(sizeHints);
     }
 
     uint32_t values[] = {size.x, size.y};
@@ -778,66 +878,36 @@ void WindowImplX11::setSize(const Vector2u& size)
 void WindowImplX11::setTitle(const String& title)
 {
     // XCB takes UTF-8-encoded strings.
+    xcb_atom_t utf8StringType = getAtom("UTF8_STRING");
+
+    if (!utf8StringType)
+        utf8StringType = XCB_ATOM_STRING;
+
     std::string utf8String;
     Utf<32>::toUtf8(title.begin(), title.end(), std::back_inserter(utf8String));
 
-    ScopedXcbPtr<xcb_generic_error_t> wmNameError(xcb_request_check(
-        m_connection,
-        xcb_icccm_set_wm_name_checked(
-            m_connection,
-            m_window,
-            XCB_ATOM_STRING,
-            sizeof(std::basic_string<Uint8>::value_type) * 8,
-            utf8String.length(),
-            utf8String.c_str()
-        )
-    ));
-
-    if (wmNameError)
+    if (!changeWindowProperty(XCB_ATOM_WM_NAME, utf8StringType, 8, utf8String.length(), utf8String.c_str()))
         err() << "Failed to set window title" << std::endl;
 
-    ScopedXcbPtr<xcb_generic_error_t> wmIconNameError(xcb_request_check(
-        m_connection,
-        xcb_icccm_set_wm_icon_name_checked(
-            m_connection,
-            m_window,
-            XCB_ATOM_STRING,
-            sizeof(std::basic_string<Uint8>::value_type) * 8,
-            utf8String.length(),
-            utf8String.c_str()
-        )
-    ));
-
-    if (wmIconNameError)
+    if (!changeWindowProperty(XCB_ATOM_WM_ICON_NAME, utf8StringType, 8, utf8String.length(), utf8String.c_str()))
         err() << "Failed to set WM_ICON_NAME property" << std::endl;
 
     if (ewmhSupported())
     {
-        ScopedXcbPtr<xcb_generic_error_t> ewmhNameError(xcb_request_check(
-            m_connection,
-            xcb_ewmh_set_wm_name_checked(
-                &m_ewmhConnection,
-                m_window,
-                utf8String.length(),
-                utf8String.c_str()
-            )
-        ));
+        xcb_atom_t netWmName = getAtom("_NET_WM_NAME", true);
+        xcb_atom_t netWmIconName = getAtom("_NET_WM_ICON_NAME", true);
 
-        if (ewmhNameError)
-            err() << "Failed to set _NET_WM_NAME property" << std::endl;
+        if (utf8StringType && netWmName)
+        {
+            if (!changeWindowProperty(netWmName, utf8StringType, 8, utf8String.length(), utf8String.c_str()))
+                err() << "Failed to set _NET_WM_NAME property" << std::endl;
+        }
 
-        ScopedXcbPtr<xcb_generic_error_t> ewmhIconNameError(xcb_request_check(
-            m_connection,
-            xcb_ewmh_set_wm_icon_name_checked(
-                &m_ewmhConnection,
-                m_window,
-                utf8String.length(),
-                utf8String.c_str()
-            )
-        ));
-
-        if (ewmhIconNameError)
-            err() << "Failed to set _NET_WM_ICON_NAME property" << std::endl;
+        if (utf8StringType && netWmName)
+        {
+            if (!changeWindowProperty(netWmIconName, utf8StringType, 8, utf8String.length(), utf8String.c_str()))
+                err() << "Failed to set _NET_WM_ICON_NAME property" << std::endl;
+        }
     }
 
     xcb_flush(m_connection);
@@ -969,25 +1039,13 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     );
 
     // Send our new icon to the window through the WMHints
-    xcb_icccm_wm_hints_t hints;
+    WMHints hints;
     std::memset(&hints, 0, sizeof(hints));
-    xcb_icccm_wm_hints_set_icon_pixmap(&hints, iconPixmap);
-    xcb_icccm_wm_hints_set_icon_mask(&hints, maskPixmap);
+    hints.flags      |= ((1 << 2) | (1 << 5));
+    hints.icon_pixmap = iconPixmap;
+    hints.icon_mask   = maskPixmap;
 
-    ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
-        m_connection,
-        xcb_icccm_set_wm_hints(
-            m_connection,
-            m_window,
-            &hints
-        )
-    ));
-
-    if (setWmHintsError)
-    {
-        err() << "Failed to set the window's icon (icccm_set_wm_hints): ";
-        err() << "Error code " << static_cast<int>(setWmHintsError->error_code) << std::endl;
-    }
+    setWMHints(hints);
 
     xcb_flush(m_connection);
 
@@ -1090,6 +1148,8 @@ void WindowImplX11::requestFocus()
         }
     }
 
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
     ScopedXcbPtr<xcb_get_window_attributes_reply_t> attributes(xcb_get_window_attributes_reply(
@@ -1098,10 +1158,10 @@ void WindowImplX11::requestFocus()
             m_connection,
             m_window
         ),
-        NULL
+        &error
     ));
 
-    if (!attributes)
+    if (error || !attributes)
     {
         err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
@@ -1118,23 +1178,30 @@ void WindowImplX11::requestFocus()
     else
     {
         // Get current WM hints.
-        xcb_icccm_wm_hints_t hints;
-        std::memset(&hints, 0, sizeof(hints));
-
-        xcb_icccm_get_wm_hints_reply(
+        ScopedXcbPtr<xcb_get_property_reply_t> hintsReply(xcb_get_property_reply(
             m_connection,
-            xcb_icccm_get_wm_hints_unchecked(
-                m_connection,
-                m_window
-            ),
-            &hints,
-            NULL
-        );
+            xcb_get_property(m_connection, 0, m_window, XCB_ATOM_WM_HINTS, XCB_ATOM_WM_HINTS, 0, 9),
+            &error
+        ));
+
+        if (error || !hintsReply)
+        {
+            err() << "Failed to get WM hints while requesting focus" << std::endl;
+            return;
+        }
+
+        WMHints* hints = reinterpret_cast<WMHints*>(xcb_get_property_value(hintsReply.get()));
+
+        if (!hints)
+        {
+            err() << "Failed to get WM hints while requesting focus" << std::endl;
+            return;
+        }
 
         // Even if no hints were returned, we can simply set the proper flags we need and go on. This is
         // different from Xlib where XAllocWMHints() has to be called.
-        xcb_icccm_wm_hints_set_urgency(&hints);
-        xcb_icccm_set_wm_hints_checked(m_connection, m_window, &hints);
+        hints->flags |= (1 << 8);
+        setWMHints(*hints);
     }
 }
 
@@ -1162,25 +1229,38 @@ bool WindowImplX11::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::grabFocus()
 {
+    xcb_atom_t netActiveWindow = XCB_ATOM_NONE;
+
     if (ewmhSupported())
+        netActiveWindow = getAtom("_NET_ACTIVE_WINDOW");
+
+    if (netActiveWindow)
     {
+        xcb_client_message_event_t event;
+        std::memset(&event, 0, sizeof(event));
+
+        event.response_type = XCB_CLIENT_MESSAGE;
+        event.window = m_window;
+        event.format = 32;
+        event.sequence = 0;
+        event.type = netActiveWindow;
+        event.data.data32[0] = 1; // Normal application
+        event.data.data32[1] = XCB_CURRENT_TIME;
+        event.data.data32[2] = 0; // We don't know the currently active window
+
         ScopedXcbPtr<xcb_generic_error_t> activeWindowError(xcb_request_check(
             m_connection,
-            xcb_ewmh_request_change_active_window(
-                &m_ewmhConnection,
-                XDefaultScreen(m_display),
-                m_window,
-                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL,
-                XCB_CURRENT_TIME,
-                None
+            xcb_send_event_checked(
+                m_connection,
+                0,
+                XCBDefaultRootWindow(m_connection),
+                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                reinterpret_cast<char*>(&event)
             )
         ));
 
         if (activeWindowError)
-        {
-            err() << "Failed to change active window (request_change_active_window)" << std::endl;
-            return;
-        }
+            err() << "Setting fullscreen failed, could not send \"_NET_ACTIVE_WINDOW\" event" << std::endl;
     }
     else
     {
@@ -1360,58 +1440,52 @@ void WindowImplX11::switchToFullscreen()
 
     if (ewmhSupported())
     {
-        // Create atom for _NET_WM_BYPASS_COMPOSITOR.
-        static const std::string netWmStateBypassCompositor = "_NET_WM_BYPASS_COMPOSITOR";
-        ScopedXcbPtr<xcb_intern_atom_reply_t> compReply(xcb_intern_atom_reply(
-            m_connection,
-            xcb_intern_atom(
-                m_connection,
-                False,
-                netWmStateBypassCompositor.size(),
-                netWmStateBypassCompositor.c_str()
-            ),
-            0
-        ));
+        xcb_atom_t netWmBypassCompositor = getAtom("_NET_WM_BYPASS_COMPOSITOR");
 
-        static const Uint32 bypassCompositor = 1;
+        if (netWmBypassCompositor)
+        {
+            static const Uint32 bypassCompositor = 1;
 
-        // Disable compositor.
-        ScopedXcbPtr<xcb_generic_error_t> compositorError(xcb_request_check(
-            m_connection,
-            xcb_change_property_checked(
-                m_connection,
-                XCB_PROP_MODE_REPLACE,
-                m_window,
-                compReply->atom,
-                XCB_ATOM_CARDINAL,
-                32,
-                1,
-                &bypassCompositor
-            )
-        ));
+            // Not being able to bypass the compositor is not a fatal error
+            if (!changeWindowProperty(netWmBypassCompositor, XCB_ATOM_CARDINAL, 32, 1, &bypassCompositor))
+                err() << "xcb_change_property failed, unable to set _NET_WM_BYPASS_COMPOSITOR" << std::endl;
+        }
 
-        // Not being able to bypass the compositor is not a fatal error
-        if (compositorError)
-            err() << "xcb_change_property failed, unable to set _NET_WM_BYPASS_COMPOSITOR" << std::endl;
+        xcb_atom_t netWmState = getAtom("_NET_WM_STATE", true);
+        xcb_atom_t netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN", true);
+
+        if (!netWmState || !netWmStateFullscreen)
+        {
+            err() << "Setting fullscreen failed. Could not get required atoms" << std::endl;
+            return;
+        }
+
+        xcb_client_message_event_t event;
+        std::memset(&event, 0, sizeof(event));
+
+        event.response_type = XCB_CLIENT_MESSAGE;
+        event.window = m_window;
+        event.format = 32;
+        event.sequence = 0;
+        event.type = netWmState;
+        event.data.data32[0] = 1; // _NET_WM_STATE_ADD
+        event.data.data32[1] = netWmStateFullscreen;
+        event.data.data32[2] = 0; // No second property
+        event.data.data32[3] = 1; // Normal window
 
         ScopedXcbPtr<xcb_generic_error_t> wmStateError(xcb_request_check(
             m_connection,
-            xcb_ewmh_request_change_wm_state(
-                &m_ewmhConnection,
-                XDefaultScreen(m_display),
-                m_window,
-                XCB_EWMH_WM_STATE_ADD,
-                m_ewmhConnection._NET_WM_STATE_FULLSCREEN,
+            xcb_send_event_checked(
+                m_connection,
                 0,
-                XCB_EWMH_CLIENT_SOURCE_TYPE_NORMAL
+                XCBDefaultRootWindow(m_connection),
+                XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                reinterpret_cast<char*>(&event)
             )
         ));
 
         if (wmStateError)
-        {
-            err() << "Setting fullscreen failed, could not change WM state" << std::endl;
-            return;
-        }
+            err() << "Setting fullscreen failed. Could not send \"_NET_WM_STATE\" event" << std::endl;
     }
 }
 
@@ -1419,83 +1493,48 @@ void WindowImplX11::switchToFullscreen()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setProtocols()
 {
-    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+    xcb_atom_t wmProtocols = getAtom("WM_PROTOCOLS");
+    xcb_atom_t wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
 
-    // Get the atom for setting the window protocols we support
-    static const std::string WM_PROTOCOLS_NAME = "WM_PROTOCOLS";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> protocolsAtomReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            WM_PROTOCOLS_NAME.size(),
-            WM_PROTOCOLS_NAME.c_str()
-        ),
-        &error
-    ));
-
-    if (error || !protocolsAtomReply)
+    if (!wmProtocols)
     {
         err() << "Failed to request WM_PROTOCOLS atom." << std::endl;
         return;
     }
 
-    m_atomWmProtocols = protocolsAtomReply->atom;
-
     std::vector<xcb_atom_t> atoms;
 
-    // Get the atom for registering the close event
-    static const std::string WM_DELETE_WINDOW_NAME = "WM_DELETE_WINDOW";
-    ScopedXcbPtr<xcb_intern_atom_reply_t> deleteWindowAtomReply(xcb_intern_atom_reply(
-        m_connection,
-        xcb_intern_atom(
-            m_connection,
-            0,
-            WM_DELETE_WINDOW_NAME.size(),
-            WM_DELETE_WINDOW_NAME.c_str()
-        ),
-        &error
-    ));
-
-    if (!error && deleteWindowAtomReply)
+    if (wmDeleteWindow)
     {
-        atoms.push_back(deleteWindowAtomReply->atom);
-        m_atomClose = deleteWindowAtomReply->atom;
+        atoms.push_back(wmDeleteWindow);
     }
     else
     {
         err() << "Failed to request WM_DELETE_WINDOW atom." << std::endl;
     }
 
-    if (ewmhSupported() && m_ewmhConnection._NET_WM_PING && m_ewmhConnection._NET_WM_PID)
-    {
-        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
-            m_connection,
-            xcb_ewmh_set_wm_pid(
-                &m_ewmhConnection,
-                m_window,
-                getpid()
-            )
-        ));
+    xcb_atom_t netWmPing = XCB_ATOM_NONE;
+    xcb_atom_t netWmPid = XCB_ATOM_NONE;
 
-        if (!error)
-            atoms.push_back(m_ewmhConnection._NET_WM_PING);
+    if (ewmhSupported())
+    {
+        netWmPing = getAtom("_NET_WM_PING", true);
+        netWmPid = getAtom("_NET_WM_PID", true);
+    }
+
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    if (netWmPing && netWmPid)
+    {
+        uint32_t pid = getpid();
+
+        if (changeWindowProperty(netWmPid, XCB_ATOM_CARDINAL, 32, 1, &pid))
+            atoms.push_back(netWmPing);
     }
 
     if (!atoms.empty())
     {
-        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
-            m_connection,
-            xcb_icccm_set_wm_protocols(
-                m_connection,
-                m_window,
-                protocolsAtomReply->atom,
-                atoms.size(),
-                &atoms[0]
-            )
-        ));
-
-        if (error)
+        if (!changeWindowProperty(wmProtocols, XCB_ATOM_ATOM, 32, atoms.size(), &atoms[0]))
             err() << "Failed to set window protocols" << std::endl;
     }
     else
@@ -1542,7 +1581,7 @@ void WindowImplX11::setMotifHints(unsigned long style)
         static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
         static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
 
-        struct WMHints
+        struct MotifWMHints
         {
             uint32_t flags;
             uint32_t functions;
@@ -1551,7 +1590,7 @@ void WindowImplX11::setMotifHints(unsigned long style)
             uint32_t state;
         };
 
-        WMHints hints;
+        MotifWMHints hints;
         hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
         hints.decorations = 0;
         hints.functions   = 0;
@@ -1578,27 +1617,50 @@ void WindowImplX11::setMotifHints(unsigned long style)
             }
         }
 
-        ScopedXcbPtr<xcb_generic_error_t> propertyError(xcb_request_check(
-            m_connection,
-            xcb_change_property_checked(
-                m_connection,
-                XCB_PROP_MODE_REPLACE,
-                m_window,
-                hintsAtomReply->atom,
-                hintsAtomReply->atom,
-                sizeof(hints.flags) * 8,
-                sizeof(hints) / sizeof(hints.flags),
-                reinterpret_cast<const unsigned char*>(&hints)
-            )
-        ));
-
-        if (propertyError)
+        if (!changeWindowProperty(hintsAtomReply->atom, hintsAtomReply->atom, 32, 5, &hints))
             err() << "xcb_change_property failed, could not set window hints" << std::endl;
     }
     else
     {
         err() << "Failed to request _MOTIF_WM_HINTS atom." << std::endl;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setWMHints(const WMHints& hints)
+{
+    if (!changeWindowProperty(XCB_ATOM_WM_HINTS, XCB_ATOM_WM_HINTS, 32, sizeof(hints) / 4, &hints))
+        sf::err() << "Failed to set WM_HINTS property" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setWMSizeHints(const WMSizeHints& hints)
+{
+    if (!changeWindowProperty(XCB_ATOM_WM_NORMAL_HINTS, XCB_ATOM_WM_SIZE_HINTS, 32, sizeof(hints) / 4, &hints))
+        sf::err() << "Failed to set XCB_ATOM_WM_NORMAL_HINTS property" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImplX11::changeWindowProperty(xcb_atom_t property, xcb_atom_t type, uint8_t format, uint32_t length, const void* data)
+{
+    ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+        m_connection,
+        xcb_change_property_checked(
+            m_connection,
+            XCB_PROP_MODE_REPLACE,
+            m_window,
+            property,
+            type,
+            format,
+            length,
+            data
+        )
+    ));
+
+    return !error;
 }
 
 
@@ -1628,12 +1690,6 @@ void WindowImplX11::initialize()
 
     if (!m_inputContext)
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode" << std::endl;
-
-    // Allocate our key symbols
-    m_keySymbols = xcb_key_symbols_alloc(m_connection);
-
-    if (!m_keySymbols)
-        err() << "Failed to allocate key symbols" << std::endl;
 
     // Show the window
     setVisible(true);
@@ -1754,40 +1810,32 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            xcb_icccm_wm_hints_t hints;
-
             ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-            uint8_t result = xcb_icccm_get_wm_hints_reply(
+            ScopedXcbPtr<xcb_get_property_reply_t> hintsReply(xcb_get_property_reply(
                 m_connection,
-                xcb_icccm_get_wm_hints_unchecked(
-                    m_connection,
-                    m_window
-                ),
-                &hints,
+                xcb_get_property(m_connection, 0, m_window, XCB_ATOM_WM_HINTS, XCB_ATOM_WM_HINTS, 0, 9),
                 &error
-            );
+            ));
 
-            if (!result || error)
+            if (error || !hintsReply)
+            {
+                err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                break;
+            }
+
+            WMHints* hints = reinterpret_cast<WMHints*>(xcb_get_property_value(hintsReply.get()));
+
+            if (!hints)
             {
                 err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
                 break;
             }
 
             // Remove urgency (notification) flag from hints
-            hints.flags &= ~XCB_ICCCM_WM_HINT_X_URGENCY;
+            hints->flags &= ~(1 << 8);
 
-            ScopedXcbPtr<xcb_generic_error_t> setWmHintsError(xcb_request_check(
-                m_connection,
-                xcb_icccm_set_wm_hints_checked(
-                    m_connection,
-                    m_window,
-                    &hints
-                )
-            ));
-
-            if (setWmHintsError)
-                err() << "Failed to set WM hints in XCB_FOCUS_IN" << std::endl;
+            setWMHints(*hints);
 
             break;
         }
@@ -1831,17 +1879,22 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             xcb_client_message_event_t* e = reinterpret_cast<xcb_client_message_event_t*>(windowEvent);
 
+            static xcb_atom_t wmProtocols = getAtom("WM_PROTOCOLS");
+
             // Handle window manager protocol messages we support
-            if (e->type == m_atomWmProtocols)
+            if (e->type == wmProtocols)
             {
-                if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_atomClose))
+                static xcb_atom_t wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+                static xcb_atom_t netWmPing = ewmhSupported() ? getAtom("_NET_WM_PING", true) : XCB_ATOM_NONE;
+
+                if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(wmDeleteWindow))
                 {
                     // Handle the WM_DELETE_WINDOW message
                     Event event;
                     event.type = Event::Closed;
                     pushEvent(event);
                 }
-                else if (ewmhSupported() && (e->format == 32) && (e->data.data32[0]) == static_cast<long>(m_ewmhConnection._NET_WM_PING))
+                else if (netWmPing && (e->format == 32) && (e->data.data32[0]) == static_cast<long>(netWmPing))
                 {
                     // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
                     e->window = XCBDefaultRootWindow(m_connection);
@@ -1872,15 +1925,11 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
 
-            // Get the keysym of the key that has been pressed
-            // We don't pass e->state as the last parameter because we want the unmodified keysym
-            xcb_keysym_t symbol = xcb_key_press_lookup_keysym(m_keySymbols, e, 0);
-
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type        = Event::KeyPressed;
-            event.key.code    = keysymToSF(symbol);
+            event.key.code    = keycodeToSF(e->detail);
             event.key.alt     = e->state & XCB_MOD_MASK_1;
             event.key.control = e->state & XCB_MOD_MASK_CONTROL;
             event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
@@ -1951,14 +2000,10 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
 
-            // Get the keysym of the key that has been pressed
-            // We don't pass e->state as the last parameter because we want the unmodified keysym
-            xcb_keysym_t symbol = xcb_key_release_lookup_keysym(m_keySymbols, e, 0);
-
             // Fill the event parameters
             Event event;
             event.type        = Event::KeyReleased;
-            event.key.code    = keysymToSF(symbol);
+            event.key.code    = keycodeToSF(e->detail);
             event.key.alt     = e->state & XCB_MOD_MASK_1;
             event.key.control = e->state & XCB_MOD_MASK_CONTROL;
             event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
@@ -2215,7 +2260,7 @@ bool WindowImplX11::passEvent(xcb_generic_event_t* windowEvent, xcb_window_t win
     if (allWindows.size() == 1)
         return false;
 
-    for (std::vector<sf::priv::WindowImplX11*>::iterator i = allWindows.begin(); i != allWindows.end(); ++i)
+    for (std::vector<WindowImplX11*>::iterator i = allWindows.begin(); i != allWindows.end(); ++i)
     {
         if ((*i)->m_window == window)
         {
@@ -2226,123 +2271,6 @@ bool WindowImplX11::passEvent(xcb_generic_event_t* windowEvent, xcb_window_t win
 
     // It seems nobody wants the event, we'll just handle it ourselves
     return false;
-}
-
-
-////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplX11::keysymToSF(xcb_keysym_t symbol)
-{
-    // First convert to uppercase (to avoid dealing with two different keysyms for the same key)
-    KeySym lower, key;
-    XConvertCase(symbol, &lower, &key);
-
-    switch (key)
-    {
-        case XK_Shift_L:      return Keyboard::LShift;
-        case XK_Shift_R:      return Keyboard::RShift;
-        case XK_Control_L:    return Keyboard::LControl;
-        case XK_Control_R:    return Keyboard::RControl;
-        case XK_Alt_L:        return Keyboard::LAlt;
-        case XK_Alt_R:        return Keyboard::RAlt;
-        case XK_Super_L:      return Keyboard::LSystem;
-        case XK_Super_R:      return Keyboard::RSystem;
-        case XK_Menu:         return Keyboard::Menu;
-        case XK_Escape:       return Keyboard::Escape;
-        case XK_semicolon:    return Keyboard::SemiColon;
-        case XK_slash:        return Keyboard::Slash;
-        case XK_equal:        return Keyboard::Equal;
-        case XK_minus:        return Keyboard::Dash;
-        case XK_bracketleft:  return Keyboard::LBracket;
-        case XK_bracketright: return Keyboard::RBracket;
-        case XK_comma:        return Keyboard::Comma;
-        case XK_period:       return Keyboard::Period;
-        case XK_apostrophe:   return Keyboard::Quote;
-        case XK_backslash:    return Keyboard::BackSlash;
-        case XK_grave:        return Keyboard::Tilde;
-        case XK_space:        return Keyboard::Space;
-        case XK_Return:       return Keyboard::Return;
-        case XK_KP_Enter:     return Keyboard::Return;
-        case XK_BackSpace:    return Keyboard::BackSpace;
-        case XK_Tab:          return Keyboard::Tab;
-        case XK_Prior:        return Keyboard::PageUp;
-        case XK_Next:         return Keyboard::PageDown;
-        case XK_End:          return Keyboard::End;
-        case XK_Home:         return Keyboard::Home;
-        case XK_Insert:       return Keyboard::Insert;
-        case XK_Delete:       return Keyboard::Delete;
-        case XK_KP_Add:       return Keyboard::Add;
-        case XK_KP_Subtract:  return Keyboard::Subtract;
-        case XK_KP_Multiply:  return Keyboard::Multiply;
-        case XK_KP_Divide:    return Keyboard::Divide;
-        case XK_Pause:        return Keyboard::Pause;
-        case XK_F1:           return Keyboard::F1;
-        case XK_F2:           return Keyboard::F2;
-        case XK_F3:           return Keyboard::F3;
-        case XK_F4:           return Keyboard::F4;
-        case XK_F5:           return Keyboard::F5;
-        case XK_F6:           return Keyboard::F6;
-        case XK_F7:           return Keyboard::F7;
-        case XK_F8:           return Keyboard::F8;
-        case XK_F9:           return Keyboard::F9;
-        case XK_F10:          return Keyboard::F10;
-        case XK_F11:          return Keyboard::F11;
-        case XK_F12:          return Keyboard::F12;
-        case XK_F13:          return Keyboard::F13;
-        case XK_F14:          return Keyboard::F14;
-        case XK_F15:          return Keyboard::F15;
-        case XK_Left:         return Keyboard::Left;
-        case XK_Right:        return Keyboard::Right;
-        case XK_Up:           return Keyboard::Up;
-        case XK_Down:         return Keyboard::Down;
-        case XK_KP_0:         return Keyboard::Numpad0;
-        case XK_KP_1:         return Keyboard::Numpad1;
-        case XK_KP_2:         return Keyboard::Numpad2;
-        case XK_KP_3:         return Keyboard::Numpad3;
-        case XK_KP_4:         return Keyboard::Numpad4;
-        case XK_KP_5:         return Keyboard::Numpad5;
-        case XK_KP_6:         return Keyboard::Numpad6;
-        case XK_KP_7:         return Keyboard::Numpad7;
-        case XK_KP_8:         return Keyboard::Numpad8;
-        case XK_KP_9:         return Keyboard::Numpad9;
-        case XK_A:            return Keyboard::A;
-        case XK_Z:            return Keyboard::Z;
-        case XK_E:            return Keyboard::E;
-        case XK_R:            return Keyboard::R;
-        case XK_T:            return Keyboard::T;
-        case XK_Y:            return Keyboard::Y;
-        case XK_U:            return Keyboard::U;
-        case XK_I:            return Keyboard::I;
-        case XK_O:            return Keyboard::O;
-        case XK_P:            return Keyboard::P;
-        case XK_Q:            return Keyboard::Q;
-        case XK_S:            return Keyboard::S;
-        case XK_D:            return Keyboard::D;
-        case XK_F:            return Keyboard::F;
-        case XK_G:            return Keyboard::G;
-        case XK_H:            return Keyboard::H;
-        case XK_J:            return Keyboard::J;
-        case XK_K:            return Keyboard::K;
-        case XK_L:            return Keyboard::L;
-        case XK_M:            return Keyboard::M;
-        case XK_W:            return Keyboard::W;
-        case XK_X:            return Keyboard::X;
-        case XK_C:            return Keyboard::C;
-        case XK_V:            return Keyboard::V;
-        case XK_B:            return Keyboard::B;
-        case XK_N:            return Keyboard::N;
-        case XK_0:            return Keyboard::Num0;
-        case XK_1:            return Keyboard::Num1;
-        case XK_2:            return Keyboard::Num2;
-        case XK_3:            return Keyboard::Num3;
-        case XK_4:            return Keyboard::Num4;
-        case XK_5:            return Keyboard::Num5;
-        case XK_6:            return Keyboard::Num6;
-        case XK_7:            return Keyboard::Num7;
-        case XK_8:            return Keyboard::Num8;
-        case XK_9:            return Keyboard::Num9;
-    }
-
-    return Keyboard::Unknown;
 }
 
 } // namespace priv

@@ -30,8 +30,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Err.hpp>
-#include <xcb/xcb_keysyms.h>
-#include <X11/Xlib-xcb.h>
+#include <xcb/xcb.h>
 #include <X11/keysym.h>
 #include <cstdlib>
 
@@ -45,138 +44,125 @@ namespace
     // We use a simple array instead of a map => constant time lookup
     xcb_keycode_t keycodeMap[sf::Keyboard::KeyCount];
 
-    xcb_keycode_t getKeycode(xcb_key_symbols_t* keySymbols, xcb_keysym_t keysym)
+    xcb_keycode_t getKeycode(xcb_keysym_t keysym)
     {
-        // keycodes is actually a vector of keycodes
-        // Since we only care about the unmodified keycode,
-        // we simply return the first one
-        sf::priv::ScopedXcbPtr<xcb_keycode_t> keycodes(xcb_key_symbols_get_keycode(keySymbols, keysym));
+        const xcb_keysym_t* keysymMap = sf::priv::getKeysymMap();
 
-        if (keycodes)
-            return *keycodes.get();
+        for (xcb_keycode_t i = 0; ; ++i)
+        {
+            if (keysymMap[i] == keysym)
+                return i;
 
-        return 0;
+            if (i == 255)
+                break;
+        }
+
+        return 255;
     }
 
     void buildMap()
     {
-        // Open a connection with the X server
-        xcb_connection_t* connection = sf::priv::OpenConnection();
-
-        xcb_key_symbols_t* keySymbols = xcb_key_symbols_alloc(connection);
-
-        if (!keySymbols)
-        {
-            sf::err() << "Failed to allocate key symbols" << std::endl;
-            return;
-        }
-
-        keycodeMap[sf::Keyboard::A]         = getKeycode(keySymbols, XK_A);
-        keycodeMap[sf::Keyboard::B]         = getKeycode(keySymbols, XK_B);
-        keycodeMap[sf::Keyboard::C]         = getKeycode(keySymbols, XK_C);
-        keycodeMap[sf::Keyboard::D]         = getKeycode(keySymbols, XK_D);
-        keycodeMap[sf::Keyboard::E]         = getKeycode(keySymbols, XK_E);
-        keycodeMap[sf::Keyboard::F]         = getKeycode(keySymbols, XK_F);
-        keycodeMap[sf::Keyboard::G]         = getKeycode(keySymbols, XK_G);
-        keycodeMap[sf::Keyboard::H]         = getKeycode(keySymbols, XK_H);
-        keycodeMap[sf::Keyboard::I]         = getKeycode(keySymbols, XK_I);
-        keycodeMap[sf::Keyboard::J]         = getKeycode(keySymbols, XK_J);
-        keycodeMap[sf::Keyboard::K]         = getKeycode(keySymbols, XK_K);
-        keycodeMap[sf::Keyboard::L]         = getKeycode(keySymbols, XK_L);
-        keycodeMap[sf::Keyboard::M]         = getKeycode(keySymbols, XK_M);
-        keycodeMap[sf::Keyboard::N]         = getKeycode(keySymbols, XK_N);
-        keycodeMap[sf::Keyboard::O]         = getKeycode(keySymbols, XK_O);
-        keycodeMap[sf::Keyboard::P]         = getKeycode(keySymbols, XK_P);
-        keycodeMap[sf::Keyboard::Q]         = getKeycode(keySymbols, XK_Q);
-        keycodeMap[sf::Keyboard::R]         = getKeycode(keySymbols, XK_R);
-        keycodeMap[sf::Keyboard::S]         = getKeycode(keySymbols, XK_S);
-        keycodeMap[sf::Keyboard::T]         = getKeycode(keySymbols, XK_T);
-        keycodeMap[sf::Keyboard::U]         = getKeycode(keySymbols, XK_U);
-        keycodeMap[sf::Keyboard::V]         = getKeycode(keySymbols, XK_V);
-        keycodeMap[sf::Keyboard::W]         = getKeycode(keySymbols, XK_W);
-        keycodeMap[sf::Keyboard::X]         = getKeycode(keySymbols, XK_X);
-        keycodeMap[sf::Keyboard::Y]         = getKeycode(keySymbols, XK_Y);
-        keycodeMap[sf::Keyboard::Z]         = getKeycode(keySymbols, XK_Z);
-        keycodeMap[sf::Keyboard::Num0]      = getKeycode(keySymbols, XK_0);
-        keycodeMap[sf::Keyboard::Num1]      = getKeycode(keySymbols, XK_1);
-        keycodeMap[sf::Keyboard::Num2]      = getKeycode(keySymbols, XK_2);
-        keycodeMap[sf::Keyboard::Num3]      = getKeycode(keySymbols, XK_3);
-        keycodeMap[sf::Keyboard::Num4]      = getKeycode(keySymbols, XK_4);
-        keycodeMap[sf::Keyboard::Num5]      = getKeycode(keySymbols, XK_5);
-        keycodeMap[sf::Keyboard::Num6]      = getKeycode(keySymbols, XK_6);
-        keycodeMap[sf::Keyboard::Num7]      = getKeycode(keySymbols, XK_7);
-        keycodeMap[sf::Keyboard::Num8]      = getKeycode(keySymbols, XK_8);
-        keycodeMap[sf::Keyboard::Num9]      = getKeycode(keySymbols, XK_9);
-        keycodeMap[sf::Keyboard::Escape]    = getKeycode(keySymbols, XK_Escape);
-        keycodeMap[sf::Keyboard::LControl]  = getKeycode(keySymbols, XK_Control_L);
-        keycodeMap[sf::Keyboard::LShift]    = getKeycode(keySymbols, XK_Shift_L);
-        keycodeMap[sf::Keyboard::LAlt]      = getKeycode(keySymbols, XK_Alt_L);
-        keycodeMap[sf::Keyboard::LSystem]   = getKeycode(keySymbols, XK_Super_L);
-        keycodeMap[sf::Keyboard::RControl]  = getKeycode(keySymbols, XK_Control_R);
-        keycodeMap[sf::Keyboard::RShift]    = getKeycode(keySymbols, XK_Shift_R);
-        keycodeMap[sf::Keyboard::RAlt]      = getKeycode(keySymbols, XK_Alt_R);
-        keycodeMap[sf::Keyboard::RSystem]   = getKeycode(keySymbols, XK_Super_R);
-        keycodeMap[sf::Keyboard::Menu]      = getKeycode(keySymbols, XK_Menu);
-        keycodeMap[sf::Keyboard::LBracket]  = getKeycode(keySymbols, XK_bracketleft);
-        keycodeMap[sf::Keyboard::RBracket]  = getKeycode(keySymbols, XK_bracketright);
-        keycodeMap[sf::Keyboard::SemiColon] = getKeycode(keySymbols, XK_semicolon);
-        keycodeMap[sf::Keyboard::Comma]     = getKeycode(keySymbols, XK_comma);
-        keycodeMap[sf::Keyboard::Period]    = getKeycode(keySymbols, XK_period);
-        keycodeMap[sf::Keyboard::Quote]     = getKeycode(keySymbols, XK_apostrophe);
-        keycodeMap[sf::Keyboard::Slash]     = getKeycode(keySymbols, XK_slash);
-        keycodeMap[sf::Keyboard::BackSlash] = getKeycode(keySymbols, XK_backslash);
-        keycodeMap[sf::Keyboard::Tilde]     = getKeycode(keySymbols, XK_grave);
-        keycodeMap[sf::Keyboard::Equal]     = getKeycode(keySymbols, XK_equal);
-        keycodeMap[sf::Keyboard::Dash]      = getKeycode(keySymbols, XK_minus);
-        keycodeMap[sf::Keyboard::Space]     = getKeycode(keySymbols, XK_space);
-        keycodeMap[sf::Keyboard::Return]    = getKeycode(keySymbols, XK_Return);
-        keycodeMap[sf::Keyboard::BackSpace] = getKeycode(keySymbols, XK_BackSpace);
-        keycodeMap[sf::Keyboard::Tab]       = getKeycode(keySymbols, XK_Tab);
-        keycodeMap[sf::Keyboard::PageUp]    = getKeycode(keySymbols, XK_Prior);
-        keycodeMap[sf::Keyboard::PageDown]  = getKeycode(keySymbols, XK_Next);
-        keycodeMap[sf::Keyboard::End]       = getKeycode(keySymbols, XK_End);
-        keycodeMap[sf::Keyboard::Home]      = getKeycode(keySymbols, XK_Home);
-        keycodeMap[sf::Keyboard::Insert]    = getKeycode(keySymbols, XK_Insert);
-        keycodeMap[sf::Keyboard::Delete]    = getKeycode(keySymbols, XK_Delete);
-        keycodeMap[sf::Keyboard::Add]       = getKeycode(keySymbols, XK_KP_Add);
-        keycodeMap[sf::Keyboard::Subtract]  = getKeycode(keySymbols, XK_KP_Subtract);
-        keycodeMap[sf::Keyboard::Multiply]  = getKeycode(keySymbols, XK_KP_Multiply);
-        keycodeMap[sf::Keyboard::Divide]    = getKeycode(keySymbols, XK_KP_Divide);
-        keycodeMap[sf::Keyboard::Left]      = getKeycode(keySymbols, XK_Left);
-        keycodeMap[sf::Keyboard::Right]     = getKeycode(keySymbols, XK_Right);
-        keycodeMap[sf::Keyboard::Up]        = getKeycode(keySymbols, XK_Up);
-        keycodeMap[sf::Keyboard::Down]      = getKeycode(keySymbols, XK_Down);
-        keycodeMap[sf::Keyboard::Numpad0]   = getKeycode(keySymbols, XK_KP_0);
-        keycodeMap[sf::Keyboard::Numpad1]   = getKeycode(keySymbols, XK_KP_1);
-        keycodeMap[sf::Keyboard::Numpad2]   = getKeycode(keySymbols, XK_KP_2);
-        keycodeMap[sf::Keyboard::Numpad3]   = getKeycode(keySymbols, XK_KP_3);
-        keycodeMap[sf::Keyboard::Numpad4]   = getKeycode(keySymbols, XK_KP_4);
-        keycodeMap[sf::Keyboard::Numpad5]   = getKeycode(keySymbols, XK_KP_5);
-        keycodeMap[sf::Keyboard::Numpad6]   = getKeycode(keySymbols, XK_KP_6);
-        keycodeMap[sf::Keyboard::Numpad7]   = getKeycode(keySymbols, XK_KP_7);
-        keycodeMap[sf::Keyboard::Numpad8]   = getKeycode(keySymbols, XK_KP_8);
-        keycodeMap[sf::Keyboard::Numpad9]   = getKeycode(keySymbols, XK_KP_9);
-        keycodeMap[sf::Keyboard::F1]        = getKeycode(keySymbols, XK_F1);
-        keycodeMap[sf::Keyboard::F2]        = getKeycode(keySymbols, XK_F2);
-        keycodeMap[sf::Keyboard::F3]        = getKeycode(keySymbols, XK_F3);
-        keycodeMap[sf::Keyboard::F4]        = getKeycode(keySymbols, XK_F4);
-        keycodeMap[sf::Keyboard::F5]        = getKeycode(keySymbols, XK_F5);
-        keycodeMap[sf::Keyboard::F6]        = getKeycode(keySymbols, XK_F6);
-        keycodeMap[sf::Keyboard::F7]        = getKeycode(keySymbols, XK_F7);
-        keycodeMap[sf::Keyboard::F8]        = getKeycode(keySymbols, XK_F8);
-        keycodeMap[sf::Keyboard::F9]        = getKeycode(keySymbols, XK_F9);
-        keycodeMap[sf::Keyboard::F10]       = getKeycode(keySymbols, XK_F10);
-        keycodeMap[sf::Keyboard::F11]       = getKeycode(keySymbols, XK_F11);
-        keycodeMap[sf::Keyboard::F12]       = getKeycode(keySymbols, XK_F12);
-        keycodeMap[sf::Keyboard::F13]       = getKeycode(keySymbols, XK_F13);
-        keycodeMap[sf::Keyboard::F14]       = getKeycode(keySymbols, XK_F14);
-        keycodeMap[sf::Keyboard::F15]       = getKeycode(keySymbols, XK_F15);
-        keycodeMap[sf::Keyboard::Pause]     = getKeycode(keySymbols, XK_Pause);
-
-        xcb_key_symbols_free(keySymbols);
-
-        // Close the connection with the X server
-        sf::priv::CloseConnection(connection);
+        keycodeMap[sf::Keyboard::A]         = getKeycode(XK_a);
+        keycodeMap[sf::Keyboard::B]         = getKeycode(XK_b);
+        keycodeMap[sf::Keyboard::C]         = getKeycode(XK_c);
+        keycodeMap[sf::Keyboard::D]         = getKeycode(XK_d);
+        keycodeMap[sf::Keyboard::E]         = getKeycode(XK_e);
+        keycodeMap[sf::Keyboard::F]         = getKeycode(XK_f);
+        keycodeMap[sf::Keyboard::G]         = getKeycode(XK_g);
+        keycodeMap[sf::Keyboard::H]         = getKeycode(XK_h);
+        keycodeMap[sf::Keyboard::I]         = getKeycode(XK_i);
+        keycodeMap[sf::Keyboard::J]         = getKeycode(XK_j);
+        keycodeMap[sf::Keyboard::K]         = getKeycode(XK_k);
+        keycodeMap[sf::Keyboard::L]         = getKeycode(XK_l);
+        keycodeMap[sf::Keyboard::M]         = getKeycode(XK_m);
+        keycodeMap[sf::Keyboard::N]         = getKeycode(XK_n);
+        keycodeMap[sf::Keyboard::O]         = getKeycode(XK_o);
+        keycodeMap[sf::Keyboard::P]         = getKeycode(XK_p);
+        keycodeMap[sf::Keyboard::Q]         = getKeycode(XK_q);
+        keycodeMap[sf::Keyboard::R]         = getKeycode(XK_r);
+        keycodeMap[sf::Keyboard::S]         = getKeycode(XK_s);
+        keycodeMap[sf::Keyboard::T]         = getKeycode(XK_t);
+        keycodeMap[sf::Keyboard::U]         = getKeycode(XK_u);
+        keycodeMap[sf::Keyboard::V]         = getKeycode(XK_v);
+        keycodeMap[sf::Keyboard::W]         = getKeycode(XK_w);
+        keycodeMap[sf::Keyboard::X]         = getKeycode(XK_x);
+        keycodeMap[sf::Keyboard::Y]         = getKeycode(XK_y);
+        keycodeMap[sf::Keyboard::Z]         = getKeycode(XK_z);
+        keycodeMap[sf::Keyboard::Num0]      = getKeycode(XK_0);
+        keycodeMap[sf::Keyboard::Num1]      = getKeycode(XK_1);
+        keycodeMap[sf::Keyboard::Num2]      = getKeycode(XK_2);
+        keycodeMap[sf::Keyboard::Num3]      = getKeycode(XK_3);
+        keycodeMap[sf::Keyboard::Num4]      = getKeycode(XK_4);
+        keycodeMap[sf::Keyboard::Num5]      = getKeycode(XK_5);
+        keycodeMap[sf::Keyboard::Num6]      = getKeycode(XK_6);
+        keycodeMap[sf::Keyboard::Num7]      = getKeycode(XK_7);
+        keycodeMap[sf::Keyboard::Num8]      = getKeycode(XK_8);
+        keycodeMap[sf::Keyboard::Num9]      = getKeycode(XK_9);
+        keycodeMap[sf::Keyboard::Escape]    = getKeycode(XK_Escape);
+        keycodeMap[sf::Keyboard::LControl]  = getKeycode(XK_Control_L);
+        keycodeMap[sf::Keyboard::LShift]    = getKeycode(XK_Shift_L);
+        keycodeMap[sf::Keyboard::LAlt]      = getKeycode(XK_Alt_L);
+        keycodeMap[sf::Keyboard::LSystem]   = getKeycode(XK_Super_L);
+        keycodeMap[sf::Keyboard::RControl]  = getKeycode(XK_Control_R);
+        keycodeMap[sf::Keyboard::RShift]    = getKeycode(XK_Shift_R);
+        keycodeMap[sf::Keyboard::RAlt]      = getKeycode(XK_Alt_R);
+        keycodeMap[sf::Keyboard::RSystem]   = getKeycode(XK_Super_R);
+        keycodeMap[sf::Keyboard::Menu]      = getKeycode(XK_Menu);
+        keycodeMap[sf::Keyboard::LBracket]  = getKeycode(XK_bracketleft);
+        keycodeMap[sf::Keyboard::RBracket]  = getKeycode(XK_bracketright);
+        keycodeMap[sf::Keyboard::SemiColon] = getKeycode(XK_semicolon);
+        keycodeMap[sf::Keyboard::Comma]     = getKeycode(XK_comma);
+        keycodeMap[sf::Keyboard::Period]    = getKeycode(XK_period);
+        keycodeMap[sf::Keyboard::Quote]     = getKeycode(XK_apostrophe);
+        keycodeMap[sf::Keyboard::Slash]     = getKeycode(XK_slash);
+        keycodeMap[sf::Keyboard::BackSlash] = getKeycode(XK_backslash);
+        keycodeMap[sf::Keyboard::Tilde]     = getKeycode(XK_grave);
+        keycodeMap[sf::Keyboard::Equal]     = getKeycode(XK_equal);
+        keycodeMap[sf::Keyboard::Dash]      = getKeycode(XK_minus);
+        keycodeMap[sf::Keyboard::Space]     = getKeycode(XK_space);
+        keycodeMap[sf::Keyboard::Return]    = getKeycode(XK_Return);
+        keycodeMap[sf::Keyboard::BackSpace] = getKeycode(XK_BackSpace);
+        keycodeMap[sf::Keyboard::Tab]       = getKeycode(XK_Tab);
+        keycodeMap[sf::Keyboard::PageUp]    = getKeycode(XK_Prior);
+        keycodeMap[sf::Keyboard::PageDown]  = getKeycode(XK_Next);
+        keycodeMap[sf::Keyboard::End]       = getKeycode(XK_End);
+        keycodeMap[sf::Keyboard::Home]      = getKeycode(XK_Home);
+        keycodeMap[sf::Keyboard::Insert]    = getKeycode(XK_Insert);
+        keycodeMap[sf::Keyboard::Delete]    = getKeycode(XK_Delete);
+        keycodeMap[sf::Keyboard::Add]       = getKeycode(XK_KP_Add);
+        keycodeMap[sf::Keyboard::Subtract]  = getKeycode(XK_KP_Subtract);
+        keycodeMap[sf::Keyboard::Multiply]  = getKeycode(XK_KP_Multiply);
+        keycodeMap[sf::Keyboard::Divide]    = getKeycode(XK_KP_Divide);
+        keycodeMap[sf::Keyboard::Left]      = getKeycode(XK_Left);
+        keycodeMap[sf::Keyboard::Right]     = getKeycode(XK_Right);
+        keycodeMap[sf::Keyboard::Up]        = getKeycode(XK_Up);
+        keycodeMap[sf::Keyboard::Down]      = getKeycode(XK_Down);
+        keycodeMap[sf::Keyboard::Numpad0]   = getKeycode(XK_KP_0);
+        keycodeMap[sf::Keyboard::Numpad1]   = getKeycode(XK_KP_1);
+        keycodeMap[sf::Keyboard::Numpad2]   = getKeycode(XK_KP_2);
+        keycodeMap[sf::Keyboard::Numpad3]   = getKeycode(XK_KP_3);
+        keycodeMap[sf::Keyboard::Numpad4]   = getKeycode(XK_KP_4);
+        keycodeMap[sf::Keyboard::Numpad5]   = getKeycode(XK_KP_5);
+        keycodeMap[sf::Keyboard::Numpad6]   = getKeycode(XK_KP_6);
+        keycodeMap[sf::Keyboard::Numpad7]   = getKeycode(XK_KP_7);
+        keycodeMap[sf::Keyboard::Numpad8]   = getKeycode(XK_KP_8);
+        keycodeMap[sf::Keyboard::Numpad9]   = getKeycode(XK_KP_9);
+        keycodeMap[sf::Keyboard::F1]        = getKeycode(XK_F1);
+        keycodeMap[sf::Keyboard::F2]        = getKeycode(XK_F2);
+        keycodeMap[sf::Keyboard::F3]        = getKeycode(XK_F3);
+        keycodeMap[sf::Keyboard::F4]        = getKeycode(XK_F4);
+        keycodeMap[sf::Keyboard::F5]        = getKeycode(XK_F5);
+        keycodeMap[sf::Keyboard::F6]        = getKeycode(XK_F6);
+        keycodeMap[sf::Keyboard::F7]        = getKeycode(XK_F7);
+        keycodeMap[sf::Keyboard::F8]        = getKeycode(XK_F8);
+        keycodeMap[sf::Keyboard::F9]        = getKeycode(XK_F9);
+        keycodeMap[sf::Keyboard::F10]       = getKeycode(XK_F10);
+        keycodeMap[sf::Keyboard::F11]       = getKeycode(XK_F11);
+        keycodeMap[sf::Keyboard::F12]       = getKeycode(XK_F12);
+        keycodeMap[sf::Keyboard::F13]       = getKeycode(XK_F13);
+        keycodeMap[sf::Keyboard::F14]       = getKeycode(XK_F14);
+        keycodeMap[sf::Keyboard::F15]       = getKeycode(XK_F15);
+        keycodeMap[sf::Keyboard::Pause]     = getKeycode(XK_Pause);
 
         mapBuilt = true;
     }

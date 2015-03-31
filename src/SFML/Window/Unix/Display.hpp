@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <X11/Xlib-xcb.h>
+#include <string>
 
 
 namespace sf
@@ -103,6 +104,28 @@ xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection);
 ///
 ////////////////////////////////////////////////////////////
 xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the atom with the specified name
+///
+/// \param name         Name of the atom
+/// \param onlyIfExists Don't try to create the atom if it doesn't already exist
+///
+/// \return Atom if it exists or XCB_ATOM_NONE (0) if it doesn't
+///
+////////////////////////////////////////////////////////////
+xcb_atom_t getAtom(const std::string& name, bool onlyIfExists = false);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the keycode to keysym map
+///
+/// Contains 255 values. Use the keycode as the index
+/// into the array to retrieve its keysym.
+///
+/// \return Keycode to keysym map
+///
+////////////////////////////////////////////////////////////
+const xcb_keysym_t* getKeysymMap();
 
 } // namespace priv
 
