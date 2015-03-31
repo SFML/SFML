@@ -386,13 +386,16 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
 
-    // Send an event to warn people about the window move/resize
-    sf::Event event;
-    event.type = sf::Event::Resized;
-    event.size.width = ANativeWindow_getWidth(states->window);
-    event.size.height = ANativeWindow_getHeight(states->window);
+    // Make sure the window still exists before we access the dimensions on it
+    if (states->window != NULL) {
+        // Send an event to warn people about the window move/resize
+        sf::Event event;
+        event.type = sf::Event::Resized;
+        event.size.width = ANativeWindow_getWidth(states->window);
+        event.size.height = ANativeWindow_getHeight(states->window);
 
-    states->forwardEvent(event);
+        states->forwardEvent(event);
+    }
 }
 
 
