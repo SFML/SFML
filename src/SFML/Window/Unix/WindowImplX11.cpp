@@ -2127,24 +2127,26 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 Event event;
 
                 event.type             = Event::MouseWheelMoved;
-                event.mouseWheel.delta = button == XCB_BUTTON_INDEX_4 ? 1 : -1;
+                event.mouseWheel.delta = (button == XCB_BUTTON_INDEX_4) ? 1 : -1;
                 event.mouseWheel.x     = e->event_x;
                 event.mouseWheel.y     = e->event_y;
                 pushEvent(event);
 
-                event.type                     = Event::MouseWheelVerticalMoved;
-                event.mouseWheelVertical.delta = button == XCB_BUTTON_INDEX_4 ? 1 : -1;
-                event.mouseWheelVertical.x     = e->event_x;
-                event.mouseWheelVertical.y     = e->event_y;
+                event.type                   = Event::MouseWheelScrolled;
+                event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+                event.mouseWheelScroll.delta = (button == XCB_BUTTON_INDEX_4) ? 1 : -1;
+                event.mouseWheelScroll.x     = e->event_x;
+                event.mouseWheelScroll.y     = e->event_y;
                 pushEvent(event);
             }
             else if ((button == 6) || (button == 7))
             {
                 Event event;
-                event.type                       = Event::MouseWheelHorizontalMoved;
-                event.mouseWheelHorizontal.delta = button == 6 ? 1 : -1;
-                event.mouseWheelHorizontal.x     = e->event_x;
-                event.mouseWheelHorizontal.y     = e->event_y;
+                event.type                   = Event::MouseWheelScrolled;
+                event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+                event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
+                event.mouseWheelScroll.x     = e->event_x;
+                event.mouseWheelScroll.y     = e->event_y;
                 pushEvent(event);
             }
             break;

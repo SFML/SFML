@@ -665,7 +665,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Mouse wheel event
+        // Vertical mouse wheel event
         case WM_MOUSEWHEEL:
         {
             // Mouse position is in screen coordinates, convert it to window coordinates
@@ -684,16 +684,16 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             event.mouseWheel.y     = position.y;
             pushEvent(event);
 
-            event.type                     = Event::MouseWheelVerticalMoved;
-            event.mouseWheelVertical.delta = static_cast<float>(delta) / 120.f;
-            event.mouseWheelVertical.x     = position.x;
-            event.mouseWheelVertical.y     = position.y;
+            event.type                   = Event::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+            event.mouseWheelScroll.delta = static_cast<float>(delta) / 120.f;
+            event.mouseWheelScroll.x     = position.x;
+            event.mouseWheelScroll.y     = position.y;
             pushEvent(event);
-
             break;
         }
 
-        // Mouse wheel event
+        // Horizontal mouse wheel event
         case WM_MOUSEHWHEEL:
         {
             // Mouse position is in screen coordinates, convert it to window coordinates
@@ -705,10 +705,11 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Int16 delta = static_cast<Int16>(HIWORD(wParam));
 
             Event event;
-            event.type                       = Event::MouseWheelHorizontalMoved;
-            event.mouseWheelHorizontal.delta = -static_cast<float>(delta) / 120.f;
-            event.mouseWheelHorizontal.x     = position.x;
-            event.mouseWheelHorizontal.y     = position.y;
+            event.type                   = Event::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+            event.mouseWheelScroll.delta = -static_cast<float>(delta) / 120.f;
+            event.mouseWheelScroll.x     = position.x;
+            event.mouseWheelScroll.y     = position.y;
             pushEvent(event);
             break;
         }

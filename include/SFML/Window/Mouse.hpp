@@ -60,6 +60,16 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Mouse wheels
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Wheel
+    {
+        VerticalWheel,  ///< The vertical mouse wheel
+        HorizontalWheel ///< The horizontal mouse wheel
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
     ///
     /// \param button Button to check
