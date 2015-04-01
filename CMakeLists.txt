@@ -91,12 +91,12 @@ if(SFML_OS_ANDROID)
     if(NOT ANDROID_NDK)
         message(FATAL_ERROR "The Android NDK couldn't be found. Please adjust the CMake variable 'ANDROID_NDK' to point to the NDK directory.")
     endif()
-    
+
     # CMake doesn't support defining the STL to be used with Nsight Tegra, so warn the user
     if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
         message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
     endif()
-    
+
     # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
     set(CMAKE_INSTALL_PREFIX ${ANDROID_NDK}/sources/sfml)
 
@@ -107,7 +107,7 @@ if(SFML_OS_ANDROID)
     if (ANDROID_STL MATCHES "_shared")
         add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
     endif()
-    
+
     # this is a workaround to compile sfml-activity without the stl library as a dependency
     # we save the original compilation command line to restore it later in Macro.cmake
     set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})

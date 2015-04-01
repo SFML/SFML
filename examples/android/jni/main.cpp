@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         }
 
         window.clear(sf::Color::White);
-       	window.draw(image);
+        window.draw(image);
         window.display();
     }
 }

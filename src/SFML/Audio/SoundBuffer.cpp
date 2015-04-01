@@ -70,7 +70,7 @@ SoundBuffer::~SoundBuffer()
     // called which removes the sound from the internal list.
     SoundList sounds;
     sounds.swap(m_sounds);
-    
+
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
     for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
         (*it)->resetBuffer();

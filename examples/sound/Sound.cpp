@@ -90,7 +90,7 @@ int main()
 
     // Play music from an ogg file
     playMusic("orchestral.ogg");
-    
+
     // Play music from a flac file
     playMusic("ding.flac");
 

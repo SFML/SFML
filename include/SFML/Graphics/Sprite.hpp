@@ -262,7 +262,7 @@ private:
 /// // Declare and load a texture
 /// sf::Texture texture;
 /// texture.loadFromFile("texture.png");
-/// 
+///
 /// // Create a sprite
 /// sf::Sprite sprite;
 /// sprite.setTexture(texture);

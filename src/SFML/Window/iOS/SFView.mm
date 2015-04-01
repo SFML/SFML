@@ -171,7 +171,7 @@
 ////////////////////////////////////////////////////////////
 + (Class)layerClass
 {
-	return [CAEAGLLayer class];
+    return [CAEAGLLayer class];
 }
 
 ////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@
 
     self.contentScaleFactor = factor;
 
-	if (self)
+    if (self)
     {
         self.context = NULL;
         self.touches = [NSMutableArray array];
@@ -199,7 +199,7 @@
         self.multipleTouchEnabled = true;
     }
 
-	return self;
+    return self;
 }
 
 

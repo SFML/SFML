@@ -50,7 +50,7 @@ LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
 int main()
 {
     HINSTANCE instance = GetModuleHandle(NULL);
-    
+
     // Define a class for our main window
     WNDCLASS windowClass;
     windowClass.style         = 0;

@@ -72,7 +72,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable a sensor
     ///
-    /// All sensors are disabled by default, to avoid consuming too 
+    /// All sensors are disabled by default, to avoid consuming too
     /// much battery power. Once a sensor is enabled, it starts
     /// sending events of the corresponding type.
     ///

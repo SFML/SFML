@@ -413,7 +413,7 @@ private:
 /// \endcode
 ///
 /// A note on coordinates and undistorted rendering: \n
-/// By default, SFML (or more exactly, OpenGL) may interpolate drawable objects  
+/// By default, SFML (or more exactly, OpenGL) may interpolate drawable objects
 /// such as sprites or texts when rendering. While this allows transitions
 /// like slow movements or rotations to appear smoothly, it can lead to
 /// unwanted results in some cases, for example blurred or distorted objects.
@@ -423,7 +423,7 @@ private:
 /// * The object's position, origin and scale have no fractional part
 /// * The object's and the view's rotation are a multiple of 90 degrees
 /// * The view's center and size have no fractional part
-/// 
+///
 /// \see sf::Transform
 ///
 ////////////////////////////////////////////////////////////

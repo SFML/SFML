@@ -291,7 +291,7 @@ private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Make sure the text's geometry is updated
-    /// 
+    ///
     /// All the attributes related to rendering are cached, such
     /// that the geometry is only updated when necessary.
     ///
@@ -356,7 +356,7 @@ private:
 /// // Declare and load a font
 /// sf::Font font;
 /// font.loadFromFile("arial.ttf");
-/// 
+///
 /// // Create a text
 /// sf::Text text("hello", font);
 /// text.setCharacterSize(30);

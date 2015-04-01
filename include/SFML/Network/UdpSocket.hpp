@@ -207,7 +207,7 @@ private:
 /// stream of data (TCP). Therefore, one call to send will always
 /// match one call to receive (if the datagram is not lost),
 /// with the same data that was sent.
-/// 
+///
 /// The UDP protocol is lightweight but unreliable. Unreliable
 /// means that datagrams may be duplicated, be lost or
 /// arrive reordered. However, if a datagram arrives, its
