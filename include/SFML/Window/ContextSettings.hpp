@@ -57,7 +57,7 @@ struct ContextSettings
     /// \param attributes   Attribute flags of the context
     ///
     ////////////////////////////////////////////////////////////
-    explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 2, unsigned int minor = 1, unsigned int attributes = Default) :
+    explicit ContextSettings(unsigned int depth = 0, unsigned int stencil = 0, unsigned int antialiasing = 0, unsigned int major = 1, unsigned int minor = 1, unsigned int attributes = Default) :
     depthBits        (depth),
     stencilBits      (stencil),
     antialiasingLevel(antialiasing),

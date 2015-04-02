@@ -84,15 +84,11 @@ void ensureExtensionsInit(::Display* display, int screen)
     static bool initialized = false;
     if (!initialized)
     {
-        int loaded = sfglx_LoadFunctions(display, screen);
-        if (loaded == sfglx_LOAD_FAILED)
-        {
-            err() << "Failed to initialize GlxExtensions" << std::endl;
-        }
-        else
-        {
-            initialized = true;
-        }
+        initialized = true;
+
+        // We don't check the return value since the extension
+        // flags are cleared even if loading fails
+        sfglx_LoadFunctions(display, screen);
     }
 }
 
@@ -287,13 +283,28 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
     // because glx.h declares the entry point as an external function
     // which would require us to link in an additional library
     if (sfglx_ext_EXT_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         glXSwapIntervalEXT(m_display, glXGetCurrentDrawable(), enabled ? 1 : 0);
+    }
     else if (sfglx_ext_MESA_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         result = sf_ptrc_glXSwapIntervalMESA(enabled ? 1 : 0);
+    }
     else if (sfglx_ext_SGI_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         result = glXSwapIntervalSGI(enabled ? 1 : 0);
+    }
     else
-        err() << "Setting vertical sync not supported" << std::endl;
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "Setting vertical sync not supported" << std::endl;
+
+            warned = true;
+        }
+    }
 
     if (result != 0)
         err() << "Setting vertical sync failed" << std::endl;

@@ -108,7 +108,7 @@
 
     #include <SFML/Graphics/GLLoader.hpp>
 
-    // SFML requires at a bare minimum OpenGL 1.2 capability
+    // SFML requires at a bare minimum OpenGL 1.1 capability
     // All functionality beyond that is optional
     // and has to be checked for prior to use
 
@@ -119,16 +119,20 @@
     // Extension macro first, followed by tokens then
     // functions according to the corresponding specification
 
-    // The following extensions are required.
+    // The following extensions are optional.
+
+    // Core since 1.2 - SGIS_texture_edge_clamp
+    #define GLEXT_texture_edge_clamp                  sfogl_ext_SGIS_texture_edge_clamp
+    #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE_SGIS
 
     // Core since 1.2 - EXT_blend_minmax
+    #define GLEXT_blend_minmax                        sfogl_ext_EXT_blend_minmax
     #define GLEXT_glBlendEquation                     glBlendEquationEXT
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_EXT
 
     // Core since 1.2 - EXT_blend_subtract
+    #define GLEXT_blend_subtract                      sfogl_ext_EXT_blend_subtract
     #define GLEXT_GL_FUNC_SUBTRACT                    GL_FUNC_SUBTRACT_EXT
-
-    // The following extensions are optional.
 
     // Core since 1.3 - ARB_multitexture
     #define GLEXT_multitexture                        sfogl_ext_ARB_multitexture
