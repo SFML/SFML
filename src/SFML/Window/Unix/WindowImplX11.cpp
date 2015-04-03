@@ -66,6 +66,7 @@ namespace
     sf::priv::WindowImplX11*              fullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
     sf::Mutex                             allWindowsMutex;
+    sf::String                            windowManagerName;
 
     bool mapBuilt = false;
 
@@ -157,7 +158,10 @@ namespace
         xcb_window_t* rootWindow = reinterpret_cast<xcb_window_t*>(xcb_get_property_value(rootSupportingWindow.get()));
 
         if (!rootWindow)
+        {
+            sf::priv::CloseConnection(connection);
             return false;
+        }
 
         sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> childSupportingWindow(xcb_get_property_reply(
             connection,
@@ -173,21 +177,62 @@ namespace
             &error
         ));
 
-        sf::priv::CloseConnection(connection);
-
         if (!childSupportingWindow || childSupportingWindow->length != 1)
+        {
+            sf::priv::CloseConnection(connection);
             return false;
+        }
 
         xcb_window_t* childWindow = reinterpret_cast<xcb_window_t*>(xcb_get_property_value(childSupportingWindow.get()));
 
         if (!childWindow)
+        {
+            sf::priv::CloseConnection(connection);
             return false;
+        }
 
         // Conforming window managers should return the same window for both queries
         if (*rootWindow != *childWindow)
+        {
+            sf::priv::CloseConnection(connection);
             return false;
+        }
 
         ewmhSupported = true;
+
+        // We try to get the name of the window manager
+        // for window manager specific workarounds
+        xcb_atom_t netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
+        xcb_atom_t utf8StringType = sf::priv::getAtom("UTF8_STRING");
+
+        if (!utf8StringType)
+            utf8StringType = XCB_ATOM_STRING;
+
+        if (!netWmName)
+        {
+            sf::priv::CloseConnection(connection);
+            return true;
+        }
+
+        sf::priv::ScopedXcbPtr<xcb_get_property_reply_t> wmName(xcb_get_property_reply(
+            connection,
+            xcb_get_property(
+                connection,
+                0,
+                *childWindow,
+                netWmName,
+                utf8StringType,
+                0,
+                0x7fffffff
+            ),
+            &error
+        ));
+
+        sf::priv::CloseConnection(connection);
+
+        const char* name = reinterpret_cast<const char*>(xcb_get_property_value(wmName.get()));
+
+        windowManagerName = name;
 
         return true;
     }
@@ -586,14 +631,19 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     hints.flags |= 1 << 1;
     setWMHints(hints);
 
-    // Set the window's style (tell the window manager to change our window's decorations and functions according to the requested style)
-    setMotifHints(style);
+    // If not in fullscreen, set the window's style (tell the window manager to
+    // change our window's decorations and functions according to the requested style)
+    if (!m_fullscreen)
+        setMotifHints(style);
 
     WMSizeHints sizeHints;
     std::memset(&sizeHints, 0, sizeof(sizeHints));
 
     // This is a hack to force some windows managers to disable resizing
-    if (!(style & Style::Resize))
+    // Fullscreen is bugged on Openbox. Unless size hints are set, there
+    // will be a region of the window that is off-screen. We try to workaround
+    // this by setting size hints even in fullscreen just for Openbox.
+    if ((!m_fullscreen || (windowManagerName == "Openbox")) && !(style & Style::Resize))
     {
         m_useSizeHints = true;
         sizeHints.flags     |= ((1 << 4) | (1 << 5));
@@ -1597,24 +1647,20 @@ void WindowImplX11::setMotifHints(unsigned long style)
         hints.inputMode   = 0;
         hints.state       = 0;
 
-        // Decorate only if not in fullscreen
-        if (!(style & Style::Fullscreen))
+        if (style & Style::Titlebar)
         {
-            if (style & Style::Titlebar)
-            {
-                hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
-                hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
-            }
-            if (style & Style::Resize)
-            {
-                hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
-                hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
-            }
-            if (style & Style::Close)
-            {
-                hints.decorations |= 0;
-                hints.functions   |= MWM_FUNC_CLOSE;
-            }
+            hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
+            hints.functions   |= MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+        }
+        if (style & Style::Resize)
+        {
+            hints.decorations |= MWM_DECOR_MAXIMIZE | MWM_DECOR_RESIZEH;
+            hints.functions   |= MWM_FUNC_MAXIMIZE | MWM_FUNC_RESIZE;
+        }
+        if (style & Style::Close)
+        {
+            hints.decorations |= 0;
+            hints.functions   |= MWM_FUNC_CLOSE;
         }
 
         if (!changeWindowProperty(hintsAtomReply->atom, hintsAtomReply->atom, 32, 5, &hints))
