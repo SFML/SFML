@@ -33,6 +33,7 @@
 #include <SFML/OpenGL.hpp>
 #include <set>
 #include <cstdlib>
+#include <cstring>
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -69,6 +70,16 @@
 
 #endif
 
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    typedef const GLubyte* (APIENTRY *glGetStringiFuncType)(GLenum, GLuint);
+
+#else
+
+    typedef const GLubyte* (*glGetStringiFuncType)(GLenum, GLuint);
+
+#endif
+
 #if !defined(GL_MULTISAMPLE)
     #define GL_MULTISAMPLE 0x809D
 #endif
@@ -79,6 +90,10 @@
 
 #if !defined(GL_MINOR_VERSION)
     #define GL_MINOR_VERSION 0x821C
+#endif
+
+#if !defined(GL_NUM_EXTENSIONS)
+    #define GL_NUM_EXTENSIONS 0x821D
 #endif
 
 #if !defined(GL_CONTEXT_FLAGS)
@@ -371,6 +386,22 @@ void GlContext::initialize()
         }
     }
 
+    // 3.0 contexts only deprecate features, but do not remove them yet
+    // 3.1 contexts remove features if ARB_compatibility is not present
+    // 3.2+ contexts remove features only if a core profile is requested
+
+    // If the context was created with wglCreateContext, it is guaranteed to be compatibility.
+    // If a 3.0 context was created with wglCreateContextAttribsARB, it is guaranteed to be compatibility.
+    // If a 3.1 context was created with wglCreateContextAttribsARB, the compatibility flag
+    // is set only if ARB_compatibility is present
+    // If a 3.2+ context was created with wglCreateContextAttribsARB, the compatibility flag
+    // would have been set correctly already depending on whether ARB_create_context_profile is supported.
+
+    // If the user requests a 3.0 context, it will be a compatibility context regardless of the requested profile.
+    // If the user requests a 3.1 context and its creation was successful, the specification
+    // states that it will not be a compatibility profile context regardless of the requested
+    // profile unless ARB_compatibility is present.
+
     m_settings.attributeFlags = ContextSettings::Default;
 
     if (m_settings.majorVersion >= 3)
@@ -382,7 +413,30 @@ void GlContext::initialize()
         if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
             m_settings.attributeFlags |= ContextSettings::Debug;
 
-        if ((m_settings.majorVersion > 3) || (m_settings.minorVersion >= 2))
+        if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 1))
+        {
+            m_settings.attributeFlags |= ContextSettings::Core;
+
+            glGetStringiFuncType glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
+
+            if (glGetStringiFunc)
+            {
+                int numExtensions = 0;
+                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+                for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
+                {
+                    const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
+
+                    if (std::strstr(extensionString, "GL_ARB_compatibility"))
+                    {
+                        m_settings.attributeFlags &= ~static_cast<Uint32>(ContextSettings::Core);
+                        break;
+                    }
+                }
+            }
+        }
+        else if ((m_settings.majorVersion > 3) || (m_settings.minorVersion >= 2))
         {
             // Retrieve the context profile
             int profile = 0;
@@ -403,22 +457,6 @@ void GlContext::initialize()
 void GlContext::checkSettings(const ContextSettings& requestedSettings)
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
-
-    // 3.0 contexts only deprecate features, but do not remove them yet
-    // 3.1 contexts remove features if ARB_compatibility is not present (we assume it isn't for simplicity)
-    // 3.2+ contexts remove features only if a core profile is requested
-
-    // If the context was created with wglCreateContext, it is guaranteed to be compatibility.
-    // If a 3.2+ context was created with wglCreateContextAttribsARB, the compatibility flag
-    // would have been set correctly already depending on whether ARB_create_context_profile is supported.
-
-    // If the user requests a 3.0 context, it will be a compatibility context regardless of the requested profile.
-    // If the user requests a 3.1 context and its creation was successful, the specification
-    // states that it will not be a compatibility profile context regardless of the requested profile.
-    if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 0))
-        m_settings.attributeFlags &= ~ContextSettings::Core;
-    else if ((m_settings.majorVersion == 3) && (m_settings.minorVersion == 1))
-        m_settings.attributeFlags |= ContextSettings::Core;
 
     int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
     int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
