@@ -315,7 +315,7 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
                 connection,
                 xcb_query_pointer(
                     connection,
-                    XCBDefaultRootWindow(connection)
+                    handle
                 ),
                 &error
             )
