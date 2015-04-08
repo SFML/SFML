@@ -340,12 +340,27 @@ GlContext::GlContext()
 
 
 ////////////////////////////////////////////////////////////
-int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing)
+int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing, bool accelerated)
 {
-    return std::abs(static_cast<int>(bitsPerPixel               - colorBits))   +
-           std::abs(static_cast<int>(settings.depthBits         - depthBits))   +
-           std::abs(static_cast<int>(settings.stencilBits       - stencilBits)) +
-           std::abs(static_cast<int>(settings.antialiasingLevel - antialiasing));
+    int colorDiff        = static_cast<int>(bitsPerPixel)               - colorBits;
+    int depthDiff        = static_cast<int>(settings.depthBits)         - depthBits;
+    int stencilDiff      = static_cast<int>(settings.stencilBits)       - stencilBits;
+    int antialiasingDiff = static_cast<int>(settings.antialiasingLevel) - antialiasing;
+
+    // Weight sub-scores so that better settings don't score equally as bad as worse settings
+    colorDiff        *= ((colorDiff        > 0) ? 100000 : 1);
+    depthDiff        *= ((depthDiff        > 0) ? 100000 : 1);
+    stencilDiff      *= ((stencilDiff      > 0) ? 100000 : 1);
+    antialiasingDiff *= ((antialiasingDiff > 0) ? 100000 : 1);
+
+    // Aggregate the scores
+    int score = std::abs(colorDiff) + std::abs(depthDiff) + std::abs(stencilDiff) + std::abs(antialiasingDiff);
+
+    // Make sure we prefer hardware acceleration over features
+    if (!accelerated)
+        score += 100000000;
+
+    return score;
 }
 
 

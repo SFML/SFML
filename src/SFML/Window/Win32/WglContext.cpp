@@ -214,81 +214,83 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    // Save the creation settings
-    m_settings = settings;
-
-    // Make sure that extensions are initialized if this is not the shared context
-    // The shared context is the context used to initialize the extensions
-    if (shared)
-        ensureExtensionsInit(m_deviceContext);
-
-    // Let's find a suitable pixel format -- first try with antialiasing
+    // Let's find a suitable pixel format -- first try with wglChoosePixelFormatARB
     int bestFormat = 0;
-    if (m_settings.antialiasingLevel > 0)
+    if (sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED)
     {
-        if ((sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED) && (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED))
+        // Define the basic attributes we want for our window
+        int intAttributes[] =
         {
-            // Define the basic attributes we want for our window
-            int intAttributes[] =
-            {
-                WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-                WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-                WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-                WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-                WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? 1 : 0),
-                WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
-                0,                      0
-            };
+            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+            WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+            WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+            0,                      0
+        };
 
-            // Let's check how many formats are supporting our requirements
-            int   formats[128];
-            UINT  nbFormats;
-            float floatAttributes[] = {0, 0};
-            bool  isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-            while ((!isValid || (nbFormats == 0)) && m_settings.antialiasingLevel > 0)
-            {
-                // Decrease the antialiasing level until we find a valid one
-                m_settings.antialiasingLevel--;
-                intAttributes[11] = m_settings.antialiasingLevel;
-                isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-            }
+        // Let's check how many formats are supporting our requirements
+        int   formats[256];
+        UINT  nbFormats;
+        bool  isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 256, formats, &nbFormats) != 0;
 
-            // Get the best format among the returned ones
-            if (isValid && (nbFormats > 0))
+        // Get the best format among the returned ones
+        if (isValid && (nbFormats > 0))
+        {
+            int bestScore = 0x7FFFFFFF;
+            for (UINT i = 0; i < nbFormats; ++i)
             {
-                int bestScore = 0xFFFF;
-                for (UINT i = 0; i < nbFormats; ++i)
+                // Extract the components of the current format
+                int values[7];
+                const int attributes[] =
                 {
-                    // Get the current format's attributes
-                    PIXELFORMATDESCRIPTOR attributes;
-                    attributes.nSize    = sizeof(attributes);
-                    attributes.nVersion = 1;
-                    DescribePixelFormat(m_deviceContext, formats[i], sizeof(attributes), &attributes);
+                    WGL_RED_BITS_ARB,
+                    WGL_GREEN_BITS_ARB,
+                    WGL_BLUE_BITS_ARB,
+                    WGL_ALPHA_BITS_ARB,
+                    WGL_DEPTH_BITS_ARB,
+                    WGL_STENCIL_BITS_ARB,
+                    WGL_ACCELERATION_ARB
+                };
 
-                    // Evaluate the current configuration
-                    int color = attributes.cRedBits + attributes.cGreenBits + attributes.cBlueBits + attributes.cAlphaBits;
-                    int score = evaluateFormat(bitsPerPixel, m_settings, color, attributes.cDepthBits, attributes.cStencilBits, m_settings.antialiasingLevel);
+                if (!wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 7, attributes, values))
+                {
+                    err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    break;
+                }
 
-                    // Keep it if it's better than the current best
-                    if (score < bestScore)
+                int sampleValues[2] = {0, 0};
+                if (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED)
+                {
+                    const int sampleAttributes[] =
                     {
-                        bestScore  = score;
-                        bestFormat = formats[i];
+                        WGL_SAMPLE_BUFFERS_ARB,
+                        WGL_SAMPLES_ARB
+                    };
+
+                    if (!wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues))
+                    {
+                        err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                        break;
                     }
+                }
+
+                // Evaluate the current configuration
+                int color = values[0] + values[1] + values[2] + values[3];
+                int score = evaluateFormat(bitsPerPixel, settings, color, values[4], values[5], sampleValues[0] ? sampleValues[1] : 0, values[6] == WGL_FULL_ACCELERATION_ARB);
+
+                // Keep it if it's better than the current best
+                if (score < bestScore)
+                {
+                    bestScore  = score;
+                    bestFormat = formats[i];
                 }
             }
         }
-        else
-        {
-            // wglChoosePixelFormatARB not supported ; disabling antialiasing
-            err() << "Antialiasing is not supported ; it will be disabled" << std::endl;
-            m_settings.antialiasingLevel = 0;
-        }
     }
 
-    // Find a pixel format with no antialiasing, if not needed or not supported
+    // Find a pixel format with ChoosePixelFormat, if wglChoosePixelFormatARB is not supported
     if (bestFormat == 0)
     {
         // Setup a pixel format descriptor from the rendering settings
@@ -300,18 +302,36 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
         descriptor.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
         descriptor.iPixelType   = PFD_TYPE_RGBA;
         descriptor.cColorBits   = static_cast<BYTE>(bitsPerPixel);
-        descriptor.cDepthBits   = static_cast<BYTE>(m_settings.depthBits);
-        descriptor.cStencilBits = static_cast<BYTE>(m_settings.stencilBits);
+        descriptor.cDepthBits   = static_cast<BYTE>(settings.depthBits);
+        descriptor.cStencilBits = static_cast<BYTE>(settings.stencilBits);
         descriptor.cAlphaBits   = bitsPerPixel == 32 ? 8 : 0;
 
         // Get the pixel format that best matches our requirements
-        bestFormat = ChoosePixelFormat(m_deviceContext, &descriptor);
-        if (bestFormat == 0)
-        {
-            err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
-                  << "Cannot create OpenGL context" << std::endl;
-            return;
-        }
+        bestFormat = ChoosePixelFormat(deviceContext, &descriptor);
+    }
+
+    return bestFormat;
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+{
+    // Save the creation settings
+    m_settings = settings;
+
+    // Make sure that extensions are initialized if this is not the shared context
+    // The shared context is the context used to initialize the extensions
+    if (shared)
+        ensureExtensionsInit(m_deviceContext);
+
+    int bestFormat = selectBestPixelFormat(m_deviceContext, bitsPerPixel, settings);
+
+    if (bestFormat == 0)
+    {
+        err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+              << "Cannot create OpenGL context" << std::endl;
+        return;
     }
 
     // Extract the depth and stencil bits from the chosen format
@@ -319,8 +339,50 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
     actualFormat.nSize    = sizeof(actualFormat);
     actualFormat.nVersion = 1;
     DescribePixelFormat(m_deviceContext, bestFormat, sizeof(actualFormat), &actualFormat);
-    m_settings.depthBits   = actualFormat.cDepthBits;
-    m_settings.stencilBits = actualFormat.cStencilBits;
+
+    if (sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED)
+    {
+        const int attributes[] = {WGL_DEPTH_BITS_ARB, WGL_STENCIL_BITS_ARB};
+        int values[2];
+
+        if (wglGetPixelFormatAttribivARB(m_deviceContext, bestFormat, PFD_MAIN_PLANE, 2, attributes, values))
+        {
+            m_settings.depthBits   = values[0];
+            m_settings.stencilBits = values[1];
+        }
+        else
+        {
+            err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+            m_settings.depthBits   = actualFormat.cDepthBits;
+            m_settings.stencilBits = actualFormat.cStencilBits;
+        }
+
+        if (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED)
+        {
+            const int sampleAttributes[] = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
+            int sampleValues[2];
+
+            if (wglGetPixelFormatAttribivARB(m_deviceContext, bestFormat, PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues))
+            {
+                m_settings.antialiasingLevel = sampleValues[0] ? sampleValues[1] : 0;
+            }
+            else
+            {
+                err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                m_settings.antialiasingLevel = 0;
+            }
+        }
+        else
+        {
+            m_settings.antialiasingLevel = 0;
+        }
+    }
+    else
+    {
+        m_settings.depthBits   = actualFormat.cDepthBits;
+        m_settings.stencilBits = actualFormat.cStencilBits;
+        m_settings.antialiasingLevel = 0;
+    }
 
     // Set the chosen pixel format
     if (!SetPixelFormat(m_deviceContext, bestFormat, &actualFormat))
