@@ -42,7 +42,6 @@ namespace
     {
         switch (blendFactor)
         {
-            default:
             case sf::BlendMode::Zero:             return GL_ZERO;
             case sf::BlendMode::One:              return GL_ONE;
             case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
@@ -62,7 +61,6 @@ namespace
     {
         switch (blendEquation)
         {
-            default:
             case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
             case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
         }
