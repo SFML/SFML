@@ -231,9 +231,9 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         };
 
         // Let's check how many formats are supporting our requirements
-        int   formats[256];
+        int   formats[512];
         UINT  nbFormats;
-        bool  isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 256, formats, &nbFormats) != 0;
+        bool  isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 512, formats, &nbFormats) != 0;
 
         // Get the best format among the returned ones
         if (isValid && (nbFormats > 0))

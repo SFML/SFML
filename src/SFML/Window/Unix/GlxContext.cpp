@@ -308,42 +308,25 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
     if (visuals)
     {
-        // There are no GLX versions prior to 1.0
-        int major = 0;
-        int minor = 0;
-
-        if (!glXQueryVersion(display, &major, &minor))
-            err() << "Failed to query GLX version" << std::endl;
-
         // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0x7FFFFFFF;
         XVisualInfo bestVisual;
         for (int i = 0; i < count; ++i)
         {
             // Check mandatory attributes
-            int useGL, doubleBuffer, rgba;
-            glXGetConfig(display, &visuals[i], GLX_USE_GL,       &useGL);
+            int doubleBuffer;
             glXGetConfig(display, &visuals[i], GLX_DOUBLEBUFFER, &doubleBuffer);
-            glXGetConfig(display, &visuals[i], GLX_RGBA,         &rgba);
-            if (!useGL || !doubleBuffer || !rgba)
+            if (!doubleBuffer)
                 continue;
-
-            if (major > 1 || minor >= 3)
-            {
-                int drawableType;
-                glXGetConfig(display, &visuals[i], GLX_DRAWABLE_TYPE, &drawableType);
-                if (!(drawableType & GLX_WINDOW_BIT))
-                    continue;
-            }
 
             // Extract the components of the current visual
             int red, green, blue, alpha, depth, stencil, multiSampling, samples;
-            glXGetConfig(display, &visuals[i], GLX_RED_SIZE,           &red);
-            glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,         &green);
-            glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,          &blue);
-            glXGetConfig(display, &visuals[i], GLX_ALPHA_SIZE,         &alpha);
-            glXGetConfig(display, &visuals[i], GLX_DEPTH_SIZE,         &depth);
-            glXGetConfig(display, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
+            glXGetConfig(display, &visuals[i], GLX_RED_SIZE,     &red);
+            glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,   &green);
+            glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,    &blue);
+            glXGetConfig(display, &visuals[i], GLX_ALPHA_SIZE,   &alpha);
+            glXGetConfig(display, &visuals[i], GLX_DEPTH_SIZE,   &depth);
+            glXGetConfig(display, &visuals[i], GLX_STENCIL_SIZE, &stencil);
 
             if (sfglx_ext_ARB_multisample == sfglx_LOAD_SUCCEEDED)
             {
@@ -356,14 +339,8 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 samples = 0;
             }
 
+            // TODO: Replace this with proper acceleration detection
             bool accelerated = true;
-            if (major > 1 || minor >= 3)
-            {
-                int caveat;
-                glXGetConfig(display, &visuals[i], GLX_CONFIG_CAVEAT, &caveat);
-                if (caveat == GLX_SLOW_CONFIG)
-                    accelerated = false;
-            }
 
             // Evaluate the visual
             int color = red + green + blue + alpha;
