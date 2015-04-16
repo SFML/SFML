@@ -25,6 +25,11 @@
 #ifndef SFML_CONTEXTSETTINGS_HPP
 #define SFML_CONTEXTSETTINGS_HPP
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <string>
+
 
 namespace sf
 {
@@ -76,6 +81,8 @@ struct ContextSettings
     unsigned int majorVersion;      ///< Major number of the context version to create
     unsigned int minorVersion;      ///< Minor number of the context version to create
     Uint32       attributeFlags;    ///< The attribute flags to create the context with
+    std::string  vendorName;        ///< Name of the vendor of the OpenGL implementation
+    std::string  rendererName;      ///< Name of the OpenGL renderer implementation
 };
 
 } // namespace sf

@@ -401,6 +401,13 @@ void GlContext::initialize()
         }
     }
 
+    // Fill in the vendor and renderer strings
+    const char* vendorName = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    m_settings.vendorName = vendorName ? vendorName : "Unknown Vendor";
+
+    const char* rendererName = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    m_settings.rendererName = rendererName ? rendererName : "Unknown Renderer";
+
     // 3.0 contexts only deprecate features, but do not remove them yet
     // 3.1 contexts remove features if ARB_compatibility is not present
     // 3.2+ contexts remove features only if a core profile is requested
@@ -472,6 +479,14 @@ void GlContext::initialize()
 void GlContext::checkSettings(const ContextSettings& requestedSettings)
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
+
+    // Detect Microsoft's non-accelerated default implementation and warn
+    if ((m_settings.vendorName == "Microsoft Corporation") &&
+        (m_settings.rendererName == "GDI Generic"))
+    {
+        err() << "Warning: Detected \"Microsoft Corporation\" \"GDI Generic\"" << std::endl
+              << "The current OpenGL implementation is not hardware-accelerated" << std::endl;
+    }
 
     int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
     int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
