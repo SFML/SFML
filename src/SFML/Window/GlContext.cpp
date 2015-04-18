@@ -473,6 +473,19 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
 
+    // Detect any known non-accelerated implementations and warn
+    const char* vendorName = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    const char* rendererName = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+
+    if (vendorName && rendererName)
+    {
+        if ((std::strcmp(vendorName, "Microsoft Corporation") == 0) && (std::strcmp(rendererName, "GDI Generic") == 0))
+        {
+            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl
+                  << "The current OpenGL implementation is not hardware-accelerated" << std::endl;
+        }
+    }
+
     int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
     int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
 
