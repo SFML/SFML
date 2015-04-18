@@ -41,6 +41,13 @@
 
 #include <windows.h>
 
+// Inform the Nvidia/AMD driver that this SFML application could
+// benefit from using the more powerful discrete GPU
+extern "C"
+{
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 extern int main(int argc, char* argv[]);
 
