@@ -768,6 +768,24 @@ void WindowImplX11::processEvents()
             {
                 free(lastKeyReleaseEvent);
                 lastKeyReleaseEvent = NULL;
+
+                // If key repeat is disabled, discard the matching key press event as well
+                if (!m_keyRepeat)
+                {
+                    free(event);
+
+                    if (!m_xcbEvents.empty())
+                    {
+                        event = m_xcbEvents.front();
+                        m_xcbEvents.pop_front();
+                    }
+                    else
+                    {
+                        event = xcb_poll_for_event(m_connection);
+                    }
+
+                    continue;
+                }
             }
         }
 
