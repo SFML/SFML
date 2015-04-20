@@ -40,6 +40,7 @@ static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 int sfwgl_ext_EXT_swap_control = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_multisample = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_pixel_format = sfwgl_LOAD_FAILED;
+int sfwgl_ext_ARB_pbuffer = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_create_context = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_create_context_profile = sfwgl_LOAD_FAILED;
 
@@ -77,6 +78,33 @@ static int Load_ARB_pixel_format(void)
     return numFailed;
 }
 
+HPBUFFERARB (CODEGEN_FUNCPTR *sf_ptrc_wglCreatePbufferARB)(HDC, int, int, int, const int*) = NULL;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglDestroyPbufferARB)(HPBUFFERARB) = NULL;
+HDC (CODEGEN_FUNCPTR *sf_ptrc_wglGetPbufferDCARB)(HPBUFFERARB) = NULL;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglQueryPbufferARB)(HPBUFFERARB, int, int*) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_wglReleasePbufferDCARB)(HPBUFFERARB, HDC) = NULL;
+
+static int Load_ARB_pbuffer()
+{
+    int numFailed = 0;
+    sf_ptrc_wglCreatePbufferARB = reinterpret_cast<HPBUFFERARB (CODEGEN_FUNCPTR*)(HDC, int, int, int, const int*)>(IntGetProcAddress("wglCreatePbufferARB"));
+    if (!sf_ptrc_wglCreatePbufferARB)
+        numFailed++;
+    sf_ptrc_wglDestroyPbufferARB = reinterpret_cast<BOOL (CODEGEN_FUNCPTR*)(HPBUFFERARB)>(IntGetProcAddress("wglDestroyPbufferARB"));
+    if (!sf_ptrc_wglDestroyPbufferARB)
+        numFailed++;
+    sf_ptrc_wglGetPbufferDCARB = reinterpret_cast<HDC (CODEGEN_FUNCPTR*)(HPBUFFERARB)>(IntGetProcAddress("wglGetPbufferDCARB"));
+    if (!sf_ptrc_wglGetPbufferDCARB)
+        numFailed++;
+    sf_ptrc_wglQueryPbufferARB = reinterpret_cast<BOOL (CODEGEN_FUNCPTR*)(HPBUFFERARB, int, int*)>(IntGetProcAddress("wglQueryPbufferARB"));
+    if (!sf_ptrc_wglQueryPbufferARB)
+        numFailed++;
+    sf_ptrc_wglReleasePbufferDCARB = reinterpret_cast<int (CODEGEN_FUNCPTR*)(HPBUFFERARB, HDC)>(IntGetProcAddress("wglReleasePbufferDCARB"));
+    if (!sf_ptrc_wglReleasePbufferDCARB)
+        numFailed++;
+    return numFailed;
+}
+
 HGLRC (CODEGEN_FUNCPTR *sf_ptrc_wglCreateContextAttribsARB)(HDC, HGLRC, const int*) = NULL;
 
 static int Load_ARB_create_context(void)
@@ -99,15 +127,16 @@ typedef struct sfwgl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfwgl_StrToExtMap;
 
-static sfwgl_StrToExtMap ExtensionMap[5] = {
+static sfwgl_StrToExtMap ExtensionMap[6] = {
     {"WGL_EXT_swap_control", &sfwgl_ext_EXT_swap_control, Load_EXT_swap_control},
     {"WGL_ARB_multisample", &sfwgl_ext_ARB_multisample, NULL},
     {"WGL_ARB_pixel_format", &sfwgl_ext_ARB_pixel_format, Load_ARB_pixel_format},
+    {"WGL_ARB_pbuffer", &sfwgl_ext_ARB_pbuffer, Load_ARB_pbuffer},
     {"WGL_ARB_create_context", &sfwgl_ext_ARB_create_context, Load_ARB_create_context},
     {"WGL_ARB_create_context_profile", &sfwgl_ext_ARB_create_context_profile, NULL},
 };
 
-static int g_extensionMapSize = 5;
+static int g_extensionMapSize = 6;
 
 
 static sfwgl_StrToExtMap* FindExtEntry(const char* extensionName)
@@ -128,6 +157,7 @@ static void ClearExtensionVars(void)
     sfwgl_ext_EXT_swap_control = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_multisample = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_pixel_format = sfwgl_LOAD_FAILED;
+    sfwgl_ext_ARB_pbuffer = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_create_context = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_create_context_profile = sfwgl_LOAD_FAILED;
 }

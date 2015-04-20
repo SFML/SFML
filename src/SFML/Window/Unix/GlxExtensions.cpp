@@ -41,6 +41,7 @@ int sfglx_ext_EXT_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
+int sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context_profile = sfglx_LOAD_FAILED;
 
@@ -77,6 +78,33 @@ static int Load_SGI_swap_control(void)
     return numFailed;
 }
 
+GLXPbufferSGIX (CODEGEN_FUNCPTR *sf_ptrc_glXCreateGLXPbufferSGIX)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXDestroyGLXPbufferSGIX)(Display*, GLXPbufferSGIX) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXGetSelectedEventSGIX)(Display*, GLXDrawable, unsigned long*) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_glXQueryGLXPbufferSGIX)(Display*, GLXPbufferSGIX, int, unsigned int*) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXSelectEventSGIX)(Display*, GLXDrawable, unsigned long) = NULL;
+
+static int Load_SGIX_pbuffer(void)
+{
+    int numFailed = 0;
+    sf_ptrc_glXCreateGLXPbufferSGIX = reinterpret_cast<GLXPbufferSGIX (CODEGEN_FUNCPTR*)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*)>(IntGetProcAddress("glXCreateGLXPbufferSGIX"));
+    if (!sf_ptrc_glXCreateGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXDestroyGLXPbufferSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXPbufferSGIX)>(IntGetProcAddress("glXDestroyGLXPbufferSGIX"));
+    if (!sf_ptrc_glXDestroyGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXGetSelectedEventSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXDrawable, unsigned long*)>(IntGetProcAddress("glXGetSelectedEventSGIX"));
+    if (!sf_ptrc_glXGetSelectedEventSGIX)
+        numFailed++;
+    sf_ptrc_glXQueryGLXPbufferSGIX = reinterpret_cast<int (CODEGEN_FUNCPTR*)(Display*, GLXPbufferSGIX, int, unsigned int*)>(IntGetProcAddress("glXQueryGLXPbufferSGIX"));
+    if (!sf_ptrc_glXQueryGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXSelectEventSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXDrawable, unsigned long)>(IntGetProcAddress("glXSelectEventSGIX"));
+    if (!sf_ptrc_glXSelectEventSGIX)
+        numFailed++;
+    return numFailed;
+}
+
 GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display*, GLXFBConfig, GLXContext, Bool, const int*) = NULL;
 
 static int Load_ARB_create_context(void)
@@ -96,16 +124,17 @@ typedef struct sfglx_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfglx_StrToExtMap;
 
-static sfglx_StrToExtMap ExtensionMap[6] = {
+static sfglx_StrToExtMap ExtensionMap[7] = {
     {"GLX_EXT_swap_control", &sfglx_ext_EXT_swap_control, Load_EXT_swap_control},
     {"GLX_MESA_swap_control", &sfglx_ext_MESA_swap_control, Load_MESA_swap_control},
     {"GLX_SGI_swap_control", &sfglx_ext_SGI_swap_control, Load_SGI_swap_control},
     {"GLX_ARB_multisample", &sfglx_ext_ARB_multisample, NULL},
+    {"GLX_SGIX_pbuffer", &sfglx_ext_SGIX_pbuffer, Load_SGIX_pbuffer},
     {"GLX_ARB_create_context", &sfglx_ext_ARB_create_context, Load_ARB_create_context},
     {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, NULL},
 };
 
-static int g_extensionMapSize = 6;
+static int g_extensionMapSize = 7;
 
 
 static sfglx_StrToExtMap* FindExtEntry(const char* extensionName)
@@ -127,6 +156,7 @@ static void ClearExtensionVars(void)
     sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
+    sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_create_context_profile = sfglx_LOAD_FAILED;
 }

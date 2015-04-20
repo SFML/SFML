@@ -145,6 +145,7 @@ extern int sfglx_ext_EXT_swap_control;
 extern int sfglx_ext_MESA_swap_control;
 extern int sfglx_ext_SGI_swap_control;
 extern int sfglx_ext_ARB_multisample;
+extern int sfglx_ext_SGIX_pbuffer;
 extern int sfglx_ext_ARB_create_context;
 extern int sfglx_ext_ARB_create_context_profile;
 
@@ -153,6 +154,32 @@ extern int sfglx_ext_ARB_create_context_profile;
 
 #define GLX_SAMPLES_ARB 100001
 #define GLX_SAMPLE_BUFFERS_ARB 100000
+
+#define GLX_ACCUM_BUFFER_BIT_SGIX 0x00000080
+#define GLX_AUX_BUFFERS_BIT_SGIX 0x00000010
+#define GLX_BACK_LEFT_BUFFER_BIT_SGIX 0x00000004
+#define GLX_BACK_RIGHT_BUFFER_BIT_SGIX 0x00000008
+#define GLX_BUFFER_CLOBBER_MASK_SGIX 0x08000000
+#define GLX_DAMAGED_SGIX 0x8020
+#define GLX_DEPTH_BUFFER_BIT_SGIX 0x00000020
+#define GLX_EVENT_MASK_SGIX 0x801F
+#define GLX_FRONT_LEFT_BUFFER_BIT_SGIX 0x00000001
+#define GLX_FRONT_RIGHT_BUFFER_BIT_SGIX 0x00000002
+#define GLX_HEIGHT_SGIX 0x801E
+#define GLX_LARGEST_PBUFFER_SGIX 0x801C
+#define GLX_MAX_PBUFFER_HEIGHT_SGIX 0x8017
+#define GLX_MAX_PBUFFER_PIXELS_SGIX 0x8018
+#define GLX_MAX_PBUFFER_WIDTH_SGIX 0x8016
+#define GLX_OPTIMAL_PBUFFER_HEIGHT_SGIX 0x801A
+#define GLX_OPTIMAL_PBUFFER_WIDTH_SGIX 0x8019
+#define GLX_PBUFFER_BIT_SGIX 0x00000004
+#define GLX_PBUFFER_SGIX 0x8023
+#define GLX_PRESERVED_CONTENTS_SGIX 0x801B
+#define GLX_SAMPLE_BUFFERS_BIT_SGIX 0x00000100
+#define GLX_SAVED_SGIX 0x8021
+#define GLX_STENCIL_BUFFER_BIT_SGIX 0x00000040
+#define GLX_WIDTH_SGIX 0x801D
+#define GLX_WINDOW_SGIX 0x8022
 
 #define GLX_CONTEXT_DEBUG_BIT_ARB 0x00000001
 #define GLX_CONTEXT_FLAGS_ARB 0x2094
@@ -179,6 +206,20 @@ extern int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalMESA)(int);
 extern int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalSGI)(int);
 #define glXSwapIntervalSGI sf_ptrc_glXSwapIntervalSGI
 #endif // GLX_SGI_swap_control
+
+#ifndef GLX_SGIX_pbuffer
+#define GLX_SGIX_pbuffer 1
+extern GLXPbufferSGIX (CODEGEN_FUNCPTR *sf_ptrc_glXCreateGLXPbufferSGIX)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*);
+#define glXCreateGLXPbufferSGIX sf_ptrc_glXCreateGLXPbufferSGIX
+extern void (CODEGEN_FUNCPTR *sf_ptrc_glXDestroyGLXPbufferSGIX)(Display*, GLXPbufferSGIX);
+#define glXDestroyGLXPbufferSGIX sf_ptrc_glXDestroyGLXPbufferSGIX
+extern void (CODEGEN_FUNCPTR *sf_ptrc_glXGetSelectedEventSGIX)(Display*, GLXDrawable, unsigned long*);
+#define glXGetSelectedEventSGIX sf_ptrc_glXGetSelectedEventSGIX
+extern int (CODEGEN_FUNCPTR *sf_ptrc_glXQueryGLXPbufferSGIX)(Display*, GLXPbufferSGIX, int, unsigned int*);
+#define glXQueryGLXPbufferSGIX sf_ptrc_glXQueryGLXPbufferSGIX
+extern void (CODEGEN_FUNCPTR *sf_ptrc_glXSelectEventSGIX)(Display*, GLXDrawable, unsigned long);
+#define glXSelectEventSGIX sf_ptrc_glXSelectEventSGIX
+#endif // GLX_SGIX_pbuffer
 
 #ifndef GLX_ARB_create_context
 #define GLX_ARB_create_context 1
