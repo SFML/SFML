@@ -16,6 +16,6 @@ target_link_libraries(sfmltest sfml-graphics sfml-window sfml-audio sfml-network
 add_custom_target(runtests ALL
     DEPENDS sfmltest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test"
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Running test suite..."
+    COMMAND ${CMAKE_COMMAND} -E echo "Running test suite..."
     COMMAND sfmltest
 )
