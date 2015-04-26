@@ -44,9 +44,13 @@
 
     // Core since 1.0
     #define GLEXT_multitexture                        true
+    #define GLEXT_texture_edge_clamp                  true
+    #define GLEXT_blend_minmax                        true
     #define GLEXT_glClientActiveTexture               glClientActiveTexture
     #define GLEXT_glActiveTexture                     glActiveTexture
     #define GLEXT_GL_TEXTURE0                         GL_TEXTURE0
+    #define GLEXT_GL_CLAMP                            GL_CLAMP_TO_EDGE
+    #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE
 
     // The following extensions are listed chronologically
     // Extension macro first, followed by tokens then
@@ -114,6 +118,7 @@
 
     // Core since 1.1
     #define GLEXT_GL_DEPTH_COMPONENT                  GL_DEPTH_COMPONENT
+    #define GLEXT_GL_CLAMP                            GL_CLAMP
 
     // The following extensions are listed chronologically
     // Extension macro first, followed by tokens then
