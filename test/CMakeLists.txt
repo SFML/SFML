@@ -3,6 +3,7 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 SET(SRC
     "${SRCROOT}/Main.cpp"
     "${SRCROOT}/Vector2.cpp"
+    "${SRCROOT}/Rect.cpp"
 )
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
