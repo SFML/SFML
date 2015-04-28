@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <catch.hpp>
+#include "UnitTests.hpp"
 
 TEST_CASE("sf::Rect class")
 {
