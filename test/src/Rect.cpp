@@ -2,7 +2,7 @@
 #include <SFML/System/Vector2.hpp>
 #include "UnitTests.hpp"
 
-TEST_CASE("sf::Rect class")
+TEST_CASE("sf::Rect class template", "[graphics]")
 {
     SECTION("Construction")
     {
