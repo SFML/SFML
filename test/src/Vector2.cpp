@@ -3,7 +3,7 @@
 
 // Use sf::Vector2i for tests. Test coverage is given, as there are no template specializations.
 
-TEST_CASE("sf::Vector2 class")
+TEST_CASE("sf::Vector2 class template", "[system]")
 {
     SECTION("Construction")
     {
