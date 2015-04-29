@@ -92,6 +92,7 @@ set(GRAPHICS_SRC
     Graphics/Image.test.cpp
     Graphics/Rect.test.cpp
     Graphics/RectangleShape.test.cpp
+    Graphics/Render.test.cpp
     Graphics/RenderStates.test.cpp
     Graphics/RenderTarget.test.cpp
     Graphics/RenderTexture.test.cpp
@@ -99,6 +100,7 @@ set(GRAPHICS_SRC
     Graphics/Shader.test.cpp
     Graphics/Shape.test.cpp
     Graphics/Sprite.test.cpp
+    Graphics/StencilMode.test.cpp
     Graphics/Text.test.cpp
     Graphics/Texture.test.cpp
     Graphics/Transform.test.cpp

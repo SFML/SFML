@@ -35,6 +35,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/StencilMode.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/View.hpp>
 
@@ -96,6 +97,29 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void clear(const Color& color = Color::Black);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clear the stencil buffer to a specific value
+    ///
+    /// The specified value is truncated to the bit width of
+    /// the current stencil buffer.
+    ///
+    /// \param value Stencil value to clear to
+    ///
+    ////////////////////////////////////////////////////////////
+    void clearStencil(StencilValue stencilValue);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clear the entire target with a single color and stencil value
+    ///
+    /// The specified stencil value is truncated to the bit
+    /// width of the current stencil buffer.
+    ///
+    /// \param color Fill color to use to clear the render target
+    /// \param value Stencil value to clear to
+    ///
+    ////////////////////////////////////////////////////////////
+    void clear(const Color& color, StencilValue stencilValue);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
@@ -453,6 +477,14 @@ private:
     void applyBlendMode(const BlendMode& mode);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Apply a new stencil mode
+    ///
+    /// \param mode Stencil mode to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void applyStencilMode(const StencilMode& mode);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Apply a new transform
     ///
     /// \param transform Transform to apply
@@ -514,7 +546,9 @@ private:
         bool                  glStatesSet{};         //!< Are our internal GL states set yet?
         bool                  viewChanged;           //!< Has the current view changed since last draw?
         bool                  scissorEnabled;        //!< Is scissor testing enabled?
+        bool                  stencilEnabled;        //!< Is stencil testing enabled?
         BlendMode             lastBlendMode;         //!< Cached blending mode
+        StencilMode           lastStencilMode;       //!< Cached stencil
         std::uint64_t         lastTextureId;         //!< Cached texture
         CoordinateType        lastCoordinateType;    //!< Texture coordinate type
         bool                  texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?

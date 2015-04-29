@@ -153,9 +153,6 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
         if (settings.antialiasingLevel && !(GLEXT_framebuffer_multisample && GLEXT_framebuffer_blit))
             return false;
 
-        if (settings.stencilBits && !GLEXT_packed_depth_stencil)
-            return false;
-
         m_sRgb = settings.sRgbCapable && GL_EXT_texture_sRGB;
 
 #ifndef SFML_OPENGL_ES
@@ -176,14 +173,17 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
 
 #endif
 
-
         if (!settings.antialiasingLevel)
         {
             // Create the depth/stencil buffer if requested
-            if (settings.stencilBits)
+            if (settings.stencilBits && settings.depthBits)
             {
-
-#ifndef SFML_OPENGL_ES
+                if (!GLEXT_packed_depth_stencil)
+                {
+                    err() << "Impossible to create render texture (combined depth/stencil buffer not supported)"
+                          << std::endl;
+                    return false;
+                }
 
                 GLuint depthStencil = 0;
                 glCheck(GLEXT_glGenRenderbuffers(1, &depthStencil));
@@ -200,17 +200,8 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                     static_cast<GLsizei>(size.x),
                                                     static_cast<GLsizei>(size.y)));
 
+                m_depth   = true;
                 m_stencil = true;
-
-#else
-
-                m_stencil = false;
-
-                err() << "Impossible to create render texture (failed to create the attached depth/stencil buffer)"
-                      << std::endl;
-                return false;
-
-#endif // SFML_OPENGL_ES
             }
             else if (settings.depthBits)
             {
@@ -228,6 +219,29 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                     GLEXT_GL_DEPTH_COMPONENT,
                                                     static_cast<GLsizei>(size.x),
                                                     static_cast<GLsizei>(size.y)));
+
+                m_depth   = true;
+                m_stencil = false;
+            }
+            else if (settings.stencilBits)
+            {
+                GLuint depthStencil = 0;
+                glCheck(GLEXT_glGenRenderbuffers(1, &depthStencil));
+                m_depthStencilBuffer = depthStencil;
+                if (!m_depthStencilBuffer)
+                {
+                    err() << "Impossible to create render texture (failed to create the attached stencil buffer)"
+                          << std::endl;
+                    return false;
+                }
+                glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
+                glCheck(GLEXT_glRenderbufferStorage(GLEXT_GL_RENDERBUFFER,
+                                                    GLEXT_GL_STENCIL_INDEX8,
+                                                    static_cast<GLsizei>(size.x),
+                                                    static_cast<GLsizei>(size.y)));
+
+                m_depth   = false;
+                m_stencil = true;
             }
         }
         else
@@ -253,7 +267,7 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                            static_cast<GLsizei>(size.y)));
 
             // Create the multisample depth/stencil buffer if requested
-            if (settings.stencilBits)
+            if (settings.stencilBits && settings.depthBits)
             {
                 GLuint depthStencil = 0;
                 glCheck(GLEXT_glGenRenderbuffers(1, &depthStencil));
@@ -272,6 +286,7 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));
 
+                m_depth   = true;
                 m_stencil = true;
             }
             else if (settings.depthBits)
@@ -292,6 +307,31 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                                GLEXT_GL_DEPTH_COMPONENT,
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));
+
+                m_depth   = true;
+                m_stencil = false;
+            }
+            else if (settings.stencilBits)
+            {
+                GLuint depthStencil = 0;
+                glCheck(GLEXT_glGenRenderbuffers(1, &depthStencil));
+                m_depthStencilBuffer = depthStencil;
+                if (!m_depthStencilBuffer)
+                {
+                    err() << "Impossible to create render texture (failed to create the attached multisample "
+                             "stencil buffer)"
+                          << std::endl;
+                    return false;
+                }
+                glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
+                glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER,
+                                                               static_cast<GLsizei>(settings.antialiasingLevel),
+                                                               GLEXT_GL_STENCIL_INDEX8,
+                                                               static_cast<GLsizei>(size.x),
+                                                               static_cast<GLsizei>(size.y)));
+
+                m_depth   = false;
+                m_stencil = true;
             }
 
             m_multisample = true;
@@ -369,12 +409,13 @@ bool RenderTextureImplFBO::createFrameBuffer()
     // Link the depth/stencil renderbuffer to the frame buffer
     if (!m_multisample && m_depthStencilBuffer)
     {
-        glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER,
-                                                GLEXT_GL_DEPTH_ATTACHMENT,
-                                                GLEXT_GL_RENDERBUFFER,
-                                                m_depthStencilBuffer));
-
-#ifndef SFML_OPENGL_ES
+        if (m_depth)
+        {
+            glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER,
+                                                    GLEXT_GL_DEPTH_ATTACHMENT,
+                                                    GLEXT_GL_RENDERBUFFER,
+                                                    m_depthStencilBuffer));
+        }
 
         if (m_stencil)
         {
@@ -383,8 +424,6 @@ bool RenderTextureImplFBO::createFrameBuffer()
                                                     GLEXT_GL_RENDERBUFFER,
                                                     m_depthStencilBuffer));
         }
-
-#endif
     }
 
     // Link the texture to the frame buffer
@@ -429,10 +468,13 @@ bool RenderTextureImplFBO::createFrameBuffer()
         // Link the depth/stencil renderbuffer to the frame buffer
         if (m_depthStencilBuffer)
         {
-            glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER,
-                                                    GLEXT_GL_DEPTH_ATTACHMENT,
-                                                    GLEXT_GL_RENDERBUFFER,
-                                                    m_depthStencilBuffer));
+            if (m_depth)
+            {
+                glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER,
+                                                        GLEXT_GL_DEPTH_ATTACHMENT,
+                                                        GLEXT_GL_RENDERBUFFER,
+                                                        m_depthStencilBuffer));
+            }
 
             if (m_stencil)
             {
