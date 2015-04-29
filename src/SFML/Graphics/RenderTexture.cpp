@@ -85,7 +85,8 @@ bool RenderTexture::create(const Vector2u& size, const ContextSettings& settings
     }
 
     // Initialize the render texture
-    if (!m_impl->create(size, m_texture.m_texture, settings))
+    // We pass the actual size of our texture since OpenGL ES requires that all attachments have identical sizes
+    if (!m_impl->create(m_texture.m_actualSize, m_texture.m_texture, settings))
         return false;
 
     // We can now initialize the render target part

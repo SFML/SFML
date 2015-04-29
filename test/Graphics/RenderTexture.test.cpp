@@ -32,6 +32,10 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
         CHECK(!renderTexture.isRepeated());
         CHECK(renderTexture.getSize() == sf::Vector2u(480, 360));
         CHECK(!renderTexture.isSrgb());
+        CHECK(renderTexture.create({360, 480}));
+        CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
+        CHECK(renderTexture.create({100, 100}, sf::ContextSettings(8, 0)));
+        CHECK(renderTexture.create({100, 100}, sf::ContextSettings(0, 8)));
     }
 
     SECTION("getMaximumAntialiasingLevel()")
