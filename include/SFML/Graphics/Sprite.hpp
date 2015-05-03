@@ -179,7 +179,7 @@ public:
     /// \brief Get the global bounding rectangle of the entity
     ///
     /// The returned rectangle is in global coordinates, which means
-    /// that it takes in account the transformations (translation,
+    /// that it takes into account the transformations (translation,
     /// rotation, scale, ...) that are applied to the entity.
     /// In other words, this function returns the bounds of the
     /// sprite in the global 2D world's coordinate system.

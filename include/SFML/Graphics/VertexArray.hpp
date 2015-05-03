@@ -163,8 +163,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Compute the bounding rectangle of the vertex array
     ///
-    /// This function returns the axis-aligned rectangle that
-    /// contains all the vertices of the array.
+    /// This function returns the minimal axis-aligned rectangle
+    /// that contains all the vertices of the array.
     ///
     /// \return Bounding rectangle of the vertex array
     ///
