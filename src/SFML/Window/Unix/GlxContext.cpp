@@ -31,6 +31,7 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <vector>
 
 #if !defined(GLX_DEBUGGING) && defined(SFML_DEBUG)
     // Enable this to print messages to err() everytime GLX produces errors
@@ -418,16 +419,8 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
     // Check if glXCreateContextAttribsARB is available (requires GLX 1.3 or greater)
     bool hasCreateContextArb = (sfglx_ext_ARB_create_context == sfglx_LOAD_SUCCEEDED) && ((major > 1) || (minor >= 3));
 
-    // Check if we need to use glXCreateContextAttribsARB
-    bool needCreateContextArb = false;
-
-    if (m_settings.attributeFlags)
-        needCreateContextArb = true;
-    else if (m_settings.majorVersion >= 3)
-        needCreateContextArb = true;
-
-    // Create the OpenGL context -- first try using glXCreateContextAttribsARB if we need to
-    if (hasCreateContextArb && needCreateContextArb)
+    // Create the OpenGL context -- first try using glXCreateContextAttribsARB
+    if (hasCreateContextArb)
     {
         // Get a GLXFBConfig that matches the the window's visual, for glXCreateContextAttribsARB
         GLXFBConfig* config = NULL;
@@ -457,27 +450,27 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
 
         while (config && !m_context && m_settings.majorVersion)
         {
+            std::vector<int> attributes;
+
+            // Check if the user requested a specific context version (anything > 1.1)
+            if ((m_settings.majorVersion > 1) || ((m_settings.majorVersion == 1) && (m_settings.minorVersion > 1)))
+            {
+                attributes.push_back(GLX_CONTEXT_MAJOR_VERSION_ARB);
+                attributes.push_back(m_settings.majorVersion);
+                attributes.push_back(GLX_CONTEXT_MINOR_VERSION_ARB);
+                attributes.push_back(m_settings.minorVersion);
+            }
+
             // Check if setting the profile is supported
             if (sfglx_ext_ARB_create_context_profile == sfglx_LOAD_SUCCEEDED)
             {
                 int profile = (m_settings.attributeFlags & ContextSettings::Core) ? GLX_CONTEXT_CORE_PROFILE_BIT_ARB : GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
                 int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? GLX_CONTEXT_DEBUG_BIT_ARB : 0;
 
-                // Create the context
-                int attributes[] =
-                {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                    GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                    GLX_CONTEXT_PROFILE_MASK_ARB,  profile,
-                    GLX_CONTEXT_FLAGS_ARB,         debug,
-                    0,                             0
-                };
-
-                // RAII GLX error handler (we simply ignore errors here)
-                // On an error, glXCreateContextAttribsARB will return 0 anyway
-                GlxErrorHandler handler(m_display);
-
-                m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, attributes);
+                attributes.push_back(GLX_CONTEXT_PROFILE_MASK_ARB);
+                attributes.push_back(profile);
+                attributes.push_back(GLX_CONTEXT_FLAGS_ARB);
+                attributes.push_back(debug);
             }
             else
             {
@@ -486,21 +479,18 @@ void GlxContext::createContext(GlxContext* shared, unsigned int bitsPerPixel, co
                           << "disabling comptibility and debug" << std::endl;
 
                 m_settings.attributeFlags = ContextSettings::Default;
-
-                // Create the context
-                int attributes[] =
-                {
-                    GLX_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                    GLX_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                    0,                             0
-                };
-
-                // RAII GLX error handler (we simply ignore errors here)
-                // On an error, glXCreateContextAttribsARB will return 0 anyway
-                GlxErrorHandler handler(m_display);
-
-                m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, attributes);
             }
+
+            // Append the terminating 0
+            attributes.push_back(0);
+            attributes.push_back(0);
+
+            // RAII GLX error handler (we simply ignore errors here)
+            // On an error, glXCreateContextAttribsARB will return 0 anyway
+            GlxErrorHandler handler(m_display);
+
+            // Create the context
+            m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, &attributes[0]);
 
             if (!m_context)
             {

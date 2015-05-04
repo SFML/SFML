@@ -32,6 +32,7 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <sstream>
+#include <vector>
 
 
 namespace sf
@@ -403,21 +404,27 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
     {
         if (sfwgl_ext_ARB_create_context == sfwgl_LOAD_SUCCEEDED)
         {
+            std::vector<int> attributes;
+
+            // Check if the user requested a specific context version (anything > 1.1)
+            if ((m_settings.majorVersion > 1) || ((m_settings.majorVersion == 1) && (m_settings.minorVersion > 1)))
+            {
+                attributes.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB);
+                attributes.push_back(m_settings.majorVersion);
+                attributes.push_back(WGL_CONTEXT_MINOR_VERSION_ARB);
+                attributes.push_back(m_settings.minorVersion);
+            }
+
             // Check if setting the profile is supported
             if (sfwgl_ext_ARB_create_context_profile == sfwgl_LOAD_SUCCEEDED)
             {
                 int profile = (m_settings.attributeFlags & ContextSettings::Core) ? WGL_CONTEXT_CORE_PROFILE_BIT_ARB : WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
                 int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? WGL_CONTEXT_DEBUG_BIT_ARB : 0;
 
-                int attributes[] =
-                {
-                    WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                    WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                    WGL_CONTEXT_PROFILE_MASK_ARB,  profile,
-                    WGL_CONTEXT_FLAGS_ARB,         debug,
-                    0,                             0
-                };
-                m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
+                attributes.push_back(WGL_CONTEXT_PROFILE_MASK_ARB);
+                attributes.push_back(profile);
+                attributes.push_back(WGL_CONTEXT_FLAGS_ARB);
+                attributes.push_back(debug);
             }
             else
             {
@@ -426,15 +433,14 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
                           << "disabling comptibility and debug" << std::endl;
 
                 m_settings.attributeFlags = ContextSettings::Default;
-
-                int attributes[] =
-                {
-                    WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                    WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                    0,                             0
-                };
-                m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
             }
+
+            // Append the terminating 0
+            attributes.push_back(0);
+            attributes.push_back(0);
+
+            // Create the context
+            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, &attributes[0]);
         }
         else
         {
