@@ -118,6 +118,18 @@ public:
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Select the best pixel format for a given set of settings
+    ///
+    /// \param deviceContext Device context
+    /// \param bitsPerPixel  Pixel depth, in bits per pixel
+    /// \param settings      Requested context settings
+    ///
+    /// \return The best pixel format
+    ///
+    ////////////////////////////////////////////////////////////
+    static int selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings);
+
 private:
 
     ////////////////////////////////////////////////////////////

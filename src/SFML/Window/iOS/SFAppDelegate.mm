@@ -242,6 +242,9 @@ namespace
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
+    position.x *= backingScaleFactor;
+    position.y *= backingScaleFactor;
+    
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -253,8 +256,8 @@ namespace
         sf::Event event;
         event.type = sf::Event::TouchBegan;
         event.touch.finger = index;
-        event.touch.x = position.x * backingScaleFactor;
-        event.touch.y = position.y * backingScaleFactor;
+        event.touch.x = position.x;
+        event.touch.y = position.y;
         sfWindow->forwardEvent(event);
     }
 }
@@ -263,6 +266,9 @@ namespace
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
+    position.x *= backingScaleFactor;
+    position.y *= backingScaleFactor;
+    
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -274,8 +280,8 @@ namespace
         sf::Event event;
         event.type = sf::Event::TouchMoved;
         event.touch.finger = index;
-        event.touch.x = position.x * backingScaleFactor;
-        event.touch.y = position.y * backingScaleFactor;
+        event.touch.x = position.x;
+        event.touch.y = position.y;
         sfWindow->forwardEvent(event);
     }
 }

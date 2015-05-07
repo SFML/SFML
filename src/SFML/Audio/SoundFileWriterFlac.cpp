@@ -74,9 +74,9 @@ bool SoundFileWriterFlac::open(const std::string& filename, unsigned int sampleR
     }
 
     // Setup the encoder
-	FLAC__stream_encoder_set_channels(m_encoder, channelCount);
-	FLAC__stream_encoder_set_bits_per_sample(m_encoder, 16);
-	FLAC__stream_encoder_set_sample_rate(m_encoder, sampleRate);
+    FLAC__stream_encoder_set_channels(m_encoder, channelCount);
+    FLAC__stream_encoder_set_bits_per_sample(m_encoder, 16);
+    FLAC__stream_encoder_set_sample_rate(m_encoder, sampleRate);
 
     // Initialize the output stream
     if (FLAC__stream_encoder_init_file(m_encoder, filename.c_str(), NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK)

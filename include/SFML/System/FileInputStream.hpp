@@ -29,9 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Export.hpp>
-#include <fstream>
+#include <SFML/System/InputStream.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <cstdio>
+#include <string>
 
 #ifdef ANDROID
 namespace sf
@@ -50,7 +52,7 @@ namespace sf
 /// \brief Implementation of input stream based on a file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API FileInputStream : public InputStream
+class SFML_SYSTEM_API FileInputStream : public InputStream, NonCopyable
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -123,7 +125,7 @@ private:
 #ifdef ANDROID
     sf::priv::ResourceStream *m_file;
 #else
-    std::ifstream m_file; ///< Standard file stream
+    std::FILE* m_file; ///< stdio file stream
 #endif
 };
 

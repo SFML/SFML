@@ -43,5 +43,5 @@ void Keyboard::setVirtualKeyboardVisible(bool visible)
 {
     priv::InputImpl::setVirtualKeyboardVisible(visible);
 }
-    
+
 } // namespace sf

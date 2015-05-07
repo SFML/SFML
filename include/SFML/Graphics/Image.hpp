@@ -193,7 +193,7 @@ public:
     /// \param destX      X coordinate of the destination position
     /// \param destY      Y coordinate of the destination position
     /// \param sourceRect Sub-rectangle of the source image to copy
-    /// \param applyAlpha Should the copy take in account the source transparency?
+    /// \param applyAlpha Should the copy take into account the source transparency?
     ///
     ////////////////////////////////////////////////////////////
     void copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect(0, 0, 0, 0), bool applyAlpha = false);

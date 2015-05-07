@@ -381,18 +381,20 @@ void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, in
     scaleOutXY(event.mouseWheel, m_delegate);
     pushEvent(event);
 
-    event.type = Event::MouseWheelVerticalMoved;
-    event.mouseWheelVertical.delta = deltaY;
-    event.mouseWheelVertical.x = x;
-    event.mouseWheelVertical.y = y;
-    scaleOutXY(event.mouseWheelVertical, m_delegate);
+    event.type = Event::MouseWheelScrolled;
+    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+    event.mouseWheelScroll.delta = deltaY;
+    event.mouseWheelScroll.x = x;
+    event.mouseWheelScroll.y = y;
+    scaleOutXY(event.mouseWheelScroll, m_delegate);
     pushEvent(event);
 
-    event.type = Event::MouseWheelHorizontalMoved;
-    event.mouseWheelHorizontal.delta = deltaX;
-    event.mouseWheelHorizontal.x = x;
-    event.mouseWheelHorizontal.y = y;
-    scaleOutXY(event.mouseWheelHorizontal, m_delegate);
+    event.type = Event::MouseWheelScrolled;
+    event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+    event.mouseWheelScroll.delta = deltaX;
+    event.mouseWheelScroll.x = x;
+    event.mouseWheelScroll.y = y;
+    scaleOutXY(event.mouseWheelScroll, m_delegate);
     pushEvent(event);
 }
 

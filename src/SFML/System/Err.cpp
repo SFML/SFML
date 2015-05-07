@@ -38,7 +38,7 @@ class DefaultErrStreamBuf : public std::streambuf
 {
 public:
 
-    DefaultErrStreamBuf() 
+    DefaultErrStreamBuf()
     {
         // Allocate the write buffer
         static const int size = 64;
@@ -46,7 +46,7 @@ public:
         setp(buffer, buffer + size);
     }
 
-    ~DefaultErrStreamBuf() 
+    ~DefaultErrStreamBuf()
     {
         // Synchronize
         sync();

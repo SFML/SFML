@@ -87,7 +87,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
             {
                 sf::err() << "The content view is not a valid SFOpenGLView"
                           << std::endl;
-                
+
                 view = nil;
             }
         }

@@ -4,17 +4,17 @@ uniform float edge_threshold;
 void main()
 {
     const float offset = 1.0 / 512.0;
-	vec2 offx = vec2(offset, 0.0);
-	vec2 offy = vec2(0.0, offset);
+    vec2 offx = vec2(offset, 0.0);
+    vec2 offy = vec2(0.0, offset);
 
-	vec4 hEdge = texture2D(texture, gl_TexCoord[0].xy - offy)        * -2.0 +
+    vec4 hEdge = texture2D(texture, gl_TexCoord[0].xy - offy)        * -2.0 +
                  texture2D(texture, gl_TexCoord[0].xy + offy)        *  2.0 +
                  texture2D(texture, gl_TexCoord[0].xy - offx - offy) * -1.0 +
                  texture2D(texture, gl_TexCoord[0].xy - offx + offy) *  1.0 +
                  texture2D(texture, gl_TexCoord[0].xy + offx - offy) * -1.0 +
                  texture2D(texture, gl_TexCoord[0].xy + offx + offy) *  1.0;
 
-	vec4 vEdge = texture2D(texture, gl_TexCoord[0].xy - offx)        *  2.0 +
+    vec4 vEdge = texture2D(texture, gl_TexCoord[0].xy - offx)        *  2.0 +
                  texture2D(texture, gl_TexCoord[0].xy + offx)        * -2.0 +
                  texture2D(texture, gl_TexCoord[0].xy - offx - offy) *  1.0 +
                  texture2D(texture, gl_TexCoord[0].xy - offx + offy) * -1.0 +
@@ -28,5 +28,5 @@ void main()
         pixel.rgb = vec3(0.0, 0.0, 0.0);
     else
         pixel.a = edge_threshold;
-	gl_FragColor = pixel;
+    gl_FragColor = pixel;
 }

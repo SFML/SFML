@@ -19,8 +19,8 @@
               android:label="@string/app_name"
               android:icon="@drawable/sfml_logo"
               android:configChanges="keyboardHidden|orientation|screenSize">
-        
-        <meta-data android:name="android.app.lib_name" android:value="sfml-activity" />        
+
+        <meta-data android:name="android.app.lib_name" android:value="sfml-activity" />
         <meta-data android:name="sfml.app.lib_name" android:value="sfml-example" />
 
         <intent-filter>

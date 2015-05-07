@@ -146,7 +146,7 @@ SFML_GRAPHICS_API bool operator !=(const BlendMode& left, const BlendMode& right
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    ///< Blend source and dest according to dest alpha 
+SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    ///< Blend source and dest according to dest alpha
 SFML_GRAPHICS_API extern const BlendMode BlendAdd;      ///< Add source to dest
 SFML_GRAPHICS_API extern const BlendMode BlendMultiply; ///< Multiply source and dest
 SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with source
@@ -164,7 +164,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with
 /// sf::BlendMode is a class that represents a blend mode. A blend
 /// mode determines how the colors of an object you draw are
 /// mixed with the colors that are already in the buffer.
-/// 
+///
 /// The class is composed of 6 components, each of which has its
 /// own public member variable:
 /// \li %Color Source Factor (@ref colorSrcFactor)
@@ -173,7 +173,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with
 /// \li Alpha Source Factor (@ref alphaSrcFactor)
 /// \li Alpha Destination Factor (@ref alphaDstFactor)
 /// \li Alpha Blend Equation (@ref alphaEquation)
-/// 
+///
 /// The source factor specifies how the pixel you are drawing contributes
 /// to the final color. The destination factor specifies how the pixel
 /// already drawn in the buffer contributes to the final color.

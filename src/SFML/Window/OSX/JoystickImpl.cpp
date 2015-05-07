@@ -255,6 +255,7 @@ bool JoystickImpl::open(unsigned int index)
                     case kHIDUsage_GD_Rx: m_axis[Joystick::U] = element; break;
                     case kHIDUsage_GD_Ry: m_axis[Joystick::V] = element; break;
                     case kHIDUsage_GD_Rz: m_axis[Joystick::R] = element; break;
+                    default: break;
                     // kHIDUsage_GD_Vx, kHIDUsage_GD_Vy, kHIDUsage_GD_Vz are ignored.
                 }
                 break;

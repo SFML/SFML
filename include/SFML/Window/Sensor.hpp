@@ -72,7 +72,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable a sensor
     ///
-    /// All sensors are disabled by default, to avoid consuming too 
+    /// All sensors are disabled by default, to avoid consuming too
     /// much battery power. Once a sensor is enabled, it starts
     /// sending events of the corresponding type.
     ///
@@ -122,7 +122,7 @@ public:
 ///
 /// You may wonder why some sensor types look so similar, for example
 /// Accelerometer and Gravity / UserAcceleration. The first one
-/// is the raw measurement of the acceleration, and takes in account
+/// is the raw measurement of the acceleration, and takes into account
 /// both the earth gravity and the user movement. The others are
 /// more precise: they provide these components separately, which is
 /// usually more useful. In fact they are not direct sensors, they

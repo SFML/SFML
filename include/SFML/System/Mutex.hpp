@@ -119,7 +119,7 @@ private:
 ///     database.write(...);
 ///     mutex.unlock(); // if thread2 was waiting, it will now be unblocked
 /// }
-/// 
+///
 /// void thread2()
 /// {
 ///     mutex.lock(); // this call will block the thread if the mutex is already locked by thread1
