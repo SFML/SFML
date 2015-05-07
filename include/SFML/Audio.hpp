@@ -30,17 +30,18 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/System.hpp>
+#include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <SFML/Audio/InputSoundFile.hpp>
-#include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileReader.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 #include <SFML/Audio/SoundRecorder.hpp>
+#include <SFML/Audio/SoundSource.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 
 
@@ -51,5 +52,5 @@
 ///
 /// Sounds, streaming (musics or custom sources), recording,
 /// spatialization.
-/// 
+///
 ////////////////////////////////////////////////////////////

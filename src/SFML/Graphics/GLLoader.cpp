@@ -49,6 +49,7 @@ static sf::GlFunctionPointer IntGetProcAddress(const char* name)
     return sf::Context::getFunction(name);
 }
 
+int sfogl_ext_SGIS_texture_edge_clamp = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
 int sfogl_ext_ARB_multitexture = sfogl_LOAD_FAILED;
@@ -302,28 +303,9 @@ static int Load_EXT_framebuffer_object()
     return numFailed;
 }
 
-void (CODEGEN_FUNCPTR *sf_ptrc_glBlendColor)(GLfloat, GLfloat, GLfloat, GLfloat) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glBlendEquation)(GLenum) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glCopyTexSubImage3D)(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glDrawRangeElements)(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid *) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glTexImage3D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid *) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glTexSubImage3D)(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *) = NULL;
-
-static int Load_Version_1_2()
+static int Load_Version_1_1()
 {
     int numFailed = 0;
-    sf_ptrc_glBlendColor = (void (CODEGEN_FUNCPTR *)(GLfloat, GLfloat, GLfloat, GLfloat))IntGetProcAddress("glBlendColor");
-    if(!sf_ptrc_glBlendColor) numFailed++;
-    sf_ptrc_glBlendEquation = (void (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glBlendEquation");
-    if(!sf_ptrc_glBlendEquation) numFailed++;
-    sf_ptrc_glCopyTexSubImage3D = (void (CODEGEN_FUNCPTR *)(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei))IntGetProcAddress("glCopyTexSubImage3D");
-    if(!sf_ptrc_glCopyTexSubImage3D) numFailed++;
-    sf_ptrc_glDrawRangeElements = (void (CODEGEN_FUNCPTR *)(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid *))IntGetProcAddress("glDrawRangeElements");
-    if(!sf_ptrc_glDrawRangeElements) numFailed++;
-    sf_ptrc_glTexImage3D = (void (CODEGEN_FUNCPTR *)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid *))IntGetProcAddress("glTexImage3D");
-    if(!sf_ptrc_glTexImage3D) numFailed++;
-    sf_ptrc_glTexSubImage3D = (void (CODEGEN_FUNCPTR *)(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *))IntGetProcAddress("glTexSubImage3D");
-    if(!sf_ptrc_glTexSubImage3D) numFailed++;
     return numFailed;
 }
 
@@ -335,7 +317,8 @@ typedef struct sfogl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfogl_StrToExtMap;
 
-static sfogl_StrToExtMap ExtensionMap[11] = {
+static sfogl_StrToExtMap ExtensionMap[12] = {
+    {"GL_SGIS_texture_edge_clamp", &sfogl_ext_SGIS_texture_edge_clamp, NULL},
     {"GL_EXT_blend_minmax", &sfogl_ext_EXT_blend_minmax, Load_EXT_blend_minmax},
     {"GL_EXT_blend_subtract", &sfogl_ext_EXT_blend_subtract, NULL},
     {"GL_ARB_multitexture", &sfogl_ext_ARB_multitexture, Load_ARB_multitexture},
@@ -349,7 +332,7 @@ static sfogl_StrToExtMap ExtensionMap[11] = {
     {"GL_EXT_framebuffer_object", &sfogl_ext_EXT_framebuffer_object, Load_EXT_framebuffer_object}
 };
 
-static int g_extensionMapSize = 11;
+static int g_extensionMapSize = 12;
 
 static sfogl_StrToExtMap *FindExtEntry(const char *extensionName)
 {
@@ -366,6 +349,7 @@ static sfogl_StrToExtMap *FindExtEntry(const char *extensionName)
 
 static void ClearExtensionVars()
 {
+    sfogl_ext_SGIS_texture_edge_clamp = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
     sfogl_ext_ARB_multitexture = sfogl_LOAD_FAILED;
@@ -480,7 +464,7 @@ int sfogl_LoadFunctions()
         }
     }
 
-    numFailed = Load_Version_1_2();
+    numFailed = Load_Version_1_1();
 
     if(numFailed == 0)
         return sfogl_LOAD_SUCCEEDED;

@@ -28,9 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <linux/joystick.h>
-#include <fcntl.h>
-#include <string>
+#include <SFML/Window/JoystickImpl.hpp>
+#include <linux/input.h>
 
 
 namespace sf

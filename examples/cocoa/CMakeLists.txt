@@ -26,7 +26,7 @@ set_source_files_properties(${RESOURCES} PROPERTIES
                             MACOSX_PACKAGE_LOCATION Resources)
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE_INFO_PLIST ${SRCROOT}/resources/Cocoa-Info.plist)
-target_link_libraries(cocoa "-framework Cocoa -framework Foundation" 
+target_link_libraries(cocoa "-framework Cocoa -framework Foundation"
                             sfml-system sfml-window sfml-graphics)
 
 # set the target's folder (for IDEs that support it, e.g. Visual Studio)
@@ -42,10 +42,10 @@ set(XIB_OUTPUT_PATH "${RESOURCE_PATH}/")
 set(XIB_INPUT_PATH "${SRCROOT}/")
 foreach(XIB ${XIBS})
     add_custom_command(TARGET cocoa
-                       POST_BUILD 
+                       POST_BUILD
                        COMMAND ${IBTOOL} --errors
-                                         --output-format human-readable-text 
-                                         --compile ${XIB_OUTPUT_PATH}/${XIB}.nib 
+                                         --output-format human-readable-text
+                                         --compile ${XIB_OUTPUT_PATH}/${XIB}.nib
                                          ${XIB_INPUT_PATH}/${XIB}.xib
                        COMMENT "Compiling ${XIB}.xib")
                        # deactivated options: --warnings --notices

@@ -42,7 +42,6 @@ namespace
     {
         switch (blendFactor)
         {
-            default:
             case sf::BlendMode::Zero:             return GL_ZERO;
             case sf::BlendMode::One:              return GL_ONE;
             case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
@@ -62,7 +61,6 @@ namespace
     {
         switch (blendEquation)
         {
-            default:
             case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
             case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
         }
@@ -434,15 +432,31 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
             factorToGlConstant(mode.colorDstFactor)));
     }
 
-    if (GLEXT_blend_equation_separate)
+    if (GLEXT_blend_minmax && GLEXT_blend_subtract)
     {
-        glCheck(GLEXT_glBlendEquationSeparate(
-            equationToGlConstant(mode.colorEquation),
-            equationToGlConstant(mode.alphaEquation)));
+        if (GLEXT_blend_equation_separate)
+        {
+            glCheck(GLEXT_glBlendEquationSeparate(
+                equationToGlConstant(mode.colorEquation),
+                equationToGlConstant(mode.alphaEquation)));
+        }
+        else
+        {
+            glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
+        }
     }
-    else
+    else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
     {
-        glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "OpenGL extension EXT_blend_minmax and/or EXT_blend_subtract unavailable" << std::endl;
+            err() << "Selecting a blend equation not possible" << std::endl;
+            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+            warned = true;
+        }
     }
 
     m_cache.lastBlendMode = mode;

@@ -84,15 +84,11 @@ void ensureExtensionsInit(::Display* display, int screen)
     static bool initialized = false;
     if (!initialized)
     {
-        int loaded = sfglx_LoadFunctions(display, screen);
-        if (loaded == sfglx_LOAD_FAILED)
-        {
-            err() << "Failed to initialize GlxExtensions" << std::endl;
-        }
-        else
-        {
-            initialized = true;
-        }
+        initialized = true;
+
+        // We don't check the return value since the extension
+        // flags are cleared even if loading fails
+        sfglx_LoadFunctions(display, screen);
     }
 }
 
@@ -287,13 +283,28 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
     // because glx.h declares the entry point as an external function
     // which would require us to link in an additional library
     if (sfglx_ext_EXT_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         glXSwapIntervalEXT(m_display, glXGetCurrentDrawable(), enabled ? 1 : 0);
+    }
     else if (sfglx_ext_MESA_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         result = sf_ptrc_glXSwapIntervalMESA(enabled ? 1 : 0);
+    }
     else if (sfglx_ext_SGI_swap_control == sfglx_LOAD_SUCCEEDED)
+    {
         result = glXSwapIntervalSGI(enabled ? 1 : 0);
+    }
     else
-        err() << "Setting vertical sync not supported" << std::endl;
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "Setting vertical sync not supported" << std::endl;
+
+            warned = true;
+        }
+    }
 
     if (result != 0)
         err() << "Setting vertical sync failed" << std::endl;
@@ -309,7 +320,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     if (visuals)
     {
         // Evaluate all the returned visuals, and pick the best one
-        int bestScore = 0xFFFF;
+        int bestScore = 0x7FFFFFFF;
         XVisualInfo bestVisual;
         for (int i = 0; i < count; ++i)
         {
@@ -321,18 +332,30 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 
             // Extract the components of the current visual
             int red, green, blue, alpha, depth, stencil, multiSampling, samples;
-            glXGetConfig(display, &visuals[i], GLX_RED_SIZE,           &red);
-            glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,         &green);
-            glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,          &blue);
-            glXGetConfig(display, &visuals[i], GLX_ALPHA_SIZE,         &alpha);
-            glXGetConfig(display, &visuals[i], GLX_DEPTH_SIZE,         &depth);
-            glXGetConfig(display, &visuals[i], GLX_STENCIL_SIZE,       &stencil);
-            glXGetConfig(display, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);
-            glXGetConfig(display, &visuals[i], GLX_SAMPLES_ARB,        &samples);
+            glXGetConfig(display, &visuals[i], GLX_RED_SIZE,     &red);
+            glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,   &green);
+            glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,    &blue);
+            glXGetConfig(display, &visuals[i], GLX_ALPHA_SIZE,   &alpha);
+            glXGetConfig(display, &visuals[i], GLX_DEPTH_SIZE,   &depth);
+            glXGetConfig(display, &visuals[i], GLX_STENCIL_SIZE, &stencil);
+
+            if (sfglx_ext_ARB_multisample == sfglx_LOAD_SUCCEEDED)
+            {
+                glXGetConfig(display, &visuals[i], GLX_SAMPLE_BUFFERS_ARB, &multiSampling);
+                glXGetConfig(display, &visuals[i], GLX_SAMPLES_ARB,        &samples);
+            }
+            else
+            {
+                multiSampling = 0;
+                samples = 0;
+            }
+
+            // TODO: Replace this with proper acceleration detection
+            bool accelerated = true;
 
             // Evaluate the visual
             int color = red + green + blue + alpha;
-            int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0);
+            int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, accelerated);
 
             // If it's better than the current best, make it the new best
             if (score < bestScore)

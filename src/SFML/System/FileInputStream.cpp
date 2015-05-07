@@ -35,9 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 FileInputStream::FileInputStream()
-#ifdef ANDROID
 : m_file(NULL)
-#endif
 {
 
 }
@@ -49,6 +47,9 @@ FileInputStream::~FileInputStream()
 #ifdef ANDROID
     if (m_file)
         delete m_file;
+#else
+    if (m_file)
+        std::fclose(m_file);
 #endif
 }
 
@@ -61,8 +62,12 @@ bool FileInputStream::open(const std::string& filename)
         delete m_file;
     m_file = new sf::priv::ResourceStream(filename);
 #else
-    m_file.open(filename.c_str(), std::ios::binary);
-    return m_file.good();
+    if (m_file)
+        std::fclose(m_file);
+
+    m_file = std::fopen(filename.c_str(), "rb");
+
+    return m_file != NULL;
 #endif
 }
 
@@ -73,8 +78,10 @@ Int64 FileInputStream::read(void* data, Int64 size)
 #ifdef ANDROID
     return m_file->read(data, size);
 #else
-    m_file.read(static_cast<char*>(data), size);
-    return m_file.gcount();
+    if (m_file)
+        return std::fread(data, 1, static_cast<std::size_t>(size), m_file);
+    else
+        return -1;
 #endif
 }
 
@@ -85,10 +92,15 @@ Int64 FileInputStream::seek(Int64 position)
 #ifdef ANDROID
     return m_file->seek(position);
 #else
-    if (m_file.eof() || m_file.fail())
-        m_file.clear();
-    m_file.seekg(position);
-    return tell();
+    if (m_file)
+    {
+        std::fseek(m_file, static_cast<std::size_t>(position), SEEK_SET);
+        return tell();
+    }
+    else
+    {
+        return -1;
+    }
 #endif
 }
 
@@ -99,7 +111,10 @@ Int64 FileInputStream::tell()
 #ifdef ANDROID
     return m_file->tell();
 #else
-    return m_file.tellg();
+    if (m_file)
+        return std::ftell(m_file);
+    else
+        return -1;
 #endif
 }
 
@@ -110,11 +125,18 @@ Int64 FileInputStream::getSize()
 #ifdef ANDROID
     return m_file->getSize();
 #else
-    std::ifstream::pos_type pos = m_file.tellg();
-    m_file.seekg(0, std::ios::end);
-    std::ifstream::pos_type size = m_file.tellg();
-    m_file.seekg(pos);
-    return size;
+    if (m_file)
+    {
+        sf::Int64 position = tell();
+        std::fseek(m_file, 0, SEEK_END);
+        sf::Int64 size = tell();
+        seek(position);
+        return size;
+    }
+    else
+    {
+        return -1;
+    }
 #endif
 }
 

@@ -13,7 +13,7 @@ void main()
         vertex.xy = storm_position + normalize(offset) * push_distance;
     }
 
-	gl_Position = gl_ProjectionMatrix * vertex;
-	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-	gl_FrontColor = gl_Color;
+    gl_Position = gl_ProjectionMatrix * vertex;
+    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+    gl_FrontColor = gl_Color;
 }

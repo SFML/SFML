@@ -2,14 +2,14 @@
 # find doxygen
 if(SFML_OS_MACOSX)
     # Add some path to search doxygen in more directories.
-    set(ADDITIONAL_PATHS 
-        /Developer/Applications/Doxygen.app/Contents/Resources 
-        /Developer/Applications/Doxygen.app/Contents/MacOS 
-        $ENV{HOME}/Applications/Doxygen.app/Contents/Resources 
-        $ENV{HOME}/Applications/Doxygen.app/Contents/MacOS 
-        $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/Resources 
+    set(ADDITIONAL_PATHS
+        /Developer/Applications/Doxygen.app/Contents/Resources
+        /Developer/Applications/Doxygen.app/Contents/MacOS
+        $ENV{HOME}/Applications/Doxygen.app/Contents/Resources
+        $ENV{HOME}/Applications/Doxygen.app/Contents/MacOS
+        $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/Resources
         $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/MacOS)
- 
+
     set(CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH} ${ADDITIONAL_PATHS})
 endif()
 

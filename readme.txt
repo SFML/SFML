@@ -15,25 +15,26 @@ Stefan Schindler (tank@sfml-dev.org)
 Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
 binary1248 (binary1248@hotmail.com)
 Artur Moreira (artturmoreira@gmail.com)
+Mario Liebisch (mario@sfml-dev.org)
 
 Download
 --------
 
 You can get the latest official release on SFML website (http://www.sfml-dev.org/download.php).
-You can also get the current development version from the git repository (https://github.com/LaurentGomila/SFML).
+You can also get the current development version from the git repository (https://github.com/SFML/SFML).
 
 Install
 -------
 
-Follow the instructions of the tutorials (http://www.sfml-dev.org/tutorials/2.2/), there is one for each platform/compiler that SFML supports.
+Follow the instructions of the tutorials (http://www.sfml-dev.org/tutorials/), there is one for each platform/compiler that SFML supports.
 
 Learn
 -----
 
 There are several places to learn SFML:
-* The official tutorials (http://www.sfml-dev.org/tutorials/2.2/)
-* The online API documentation (http://www.sfml-dev.org/documentation/2.2/)
-* The community wiki (https://github.com/LaurentGomila/SFML/wiki/)
+* The official tutorials (http://www.sfml-dev.org/tutorials/)
+* The online API documentation (http://www.sfml-dev.org/documentation/)
+* The community wiki (https://github.com/SFML/SFML/wiki/)
 * The community forum (http://en.sfml-dev.org/forums/) (or http://fr.sfml-dev.org/forums/ for French people)
 
 Contribute

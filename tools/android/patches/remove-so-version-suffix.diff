@@ -1,5 +1,5 @@
---- CMakeLists.txt.orig	2013-09-21 15:23:49.305453804 +0200
-+++ CMakeLists.txt	2013-09-21 15:24:08.621454210 +0200
+--- CMakeLists.txt.orig 2013-09-21 15:23:49.305453804 +0200
++++ CMakeLists.txt      2013-09-21 15:24:08.621454210 +0200
 @@ -717,9 +717,7 @@
  # Build a library
  ADD_LIBRARY(${LIBNAME} ${LIBTYPE} ${OPENAL_OBJS} ${ALC_OBJS})

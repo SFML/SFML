@@ -6,10 +6,10 @@ This is a small example of the integration of SFML in a Cocoa application.
 Features
 --------
 
- * This example shows how basic UI elements can interact with SFML 
-   render areas such as sf::RenderWindow (you can use sf::Window and 
+ * This example shows how basic UI elements can interact with SFML
+   render areas such as sf::RenderWindow (you can use sf::Window and
    OpenGL code too, of course).
- * It also provides tools for converting NSString to and from 
+ * It also provides tools for converting NSString to and from
    std::[w]string in an Objective-C Category of NSString.
  * Moreover, it shows how you can prevent annoying the system alerts
    produced when the SFML view has focus and the user press a key

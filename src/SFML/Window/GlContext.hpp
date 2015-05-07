@@ -216,11 +216,12 @@ protected:
     /// \param depthBits    Depth bits of the configuration to evaluate
     /// \param stencilBits  Stencil bits of the configuration to evaluate
     /// \param antialiasing Antialiasing level of the configuration to evaluate
+    /// \param accelerated  Whether the pixel format is hardware accelerated
     ///
     /// \return Score of the configuration
     ///
     ////////////////////////////////////////////////////////////
-    static int evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing);
+    static int evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& settings, int colorBits, int depthBits, int stencilBits, int antialiasing, bool accelerated);
 
     ////////////////////////////////////////////////////////////
     // Member data

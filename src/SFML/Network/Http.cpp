@@ -107,7 +107,6 @@ std::string Http::Request::prepare() const
     std::string method;
     switch (m_method)
     {
-        default:
         case Get:    method = "GET";    break;
         case Post:   method = "POST";   break;
         case Head:   method = "HEAD";   break;
