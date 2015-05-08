@@ -1926,12 +1926,21 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             if (passEvent(windowEvent, reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent)->window))
                 return false;
 
+            // X notifies about "window configuration events", which also includes moving a window only. Check
+            // for a different size and only spawn a Resized event when it differs.
             xcb_configure_notify_event_t* e = reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent);
-            Event event;
-            event.type        = Event::Resized;
-            event.size.width  = e->width;
-            event.size.height = e->height;
-            pushEvent(event);
+
+            if (e->width != m_previousSize.x || e->height != m_previousSize.y)
+            {
+                m_previousSize.x = e->width;
+                m_previousSize.y = e->height;
+
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = e->width;
+                event.size.height = e->height;
+                pushEvent(event);
+            }
             break;
         }
 
