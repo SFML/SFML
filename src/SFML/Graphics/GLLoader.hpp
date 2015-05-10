@@ -174,6 +174,7 @@ extern "C" {
 #endif /*__cplusplus*/
 
 extern int sfogl_ext_SGIS_texture_edge_clamp;
+extern int sfogl_ext_EXT_texture_edge_clamp;
 extern int sfogl_ext_EXT_blend_minmax;
 extern int sfogl_ext_EXT_blend_subtract;
 extern int sfogl_ext_ARB_multitexture;
@@ -187,6 +188,8 @@ extern int sfogl_ext_EXT_blend_equation_separate;
 extern int sfogl_ext_EXT_framebuffer_object;
 
 #define GL_CLAMP_TO_EDGE_SGIS 0x812F
+
+#define GL_CLAMP_TO_EDGE_EXT 0x812F
 
 #define GL_BLEND_EQUATION_EXT 0x8009
 #define GL_FUNC_ADD_EXT 0x8006

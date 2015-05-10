@@ -45,6 +45,7 @@
     // Core since 1.0
     #define GLEXT_multitexture                        true
     #define GLEXT_texture_edge_clamp                  true
+    #define GLEXT_EXT_texture_edge_clamp              true
     #define GLEXT_blend_minmax                        true
     #define GLEXT_glClientActiveTexture               glClientActiveTexture
     #define GLEXT_glActiveTexture                     glActiveTexture
@@ -129,6 +130,9 @@
     // Core since 1.2 - SGIS_texture_edge_clamp
     #define GLEXT_texture_edge_clamp                  sfogl_ext_SGIS_texture_edge_clamp
     #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE_SGIS
+
+    // Core since 1.2 - EXT_texture_edge_clamp
+    #define GLEXT_EXT_texture_edge_clamp              sfogl_ext_EXT_texture_edge_clamp
 
     // Core since 1.2 - EXT_blend_minmax
     #define GLEXT_blend_minmax                        sfogl_ext_EXT_blend_minmax
