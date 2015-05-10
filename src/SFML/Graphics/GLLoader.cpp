@@ -50,6 +50,7 @@ static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 }
 
 int sfogl_ext_SGIS_texture_edge_clamp = sfogl_LOAD_FAILED;
+int sfogl_ext_EXT_texture_edge_clamp = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
 int sfogl_ext_ARB_multitexture = sfogl_LOAD_FAILED;
@@ -317,8 +318,9 @@ typedef struct sfogl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfogl_StrToExtMap;
 
-static sfogl_StrToExtMap ExtensionMap[12] = {
+static sfogl_StrToExtMap ExtensionMap[13] = {
     {"GL_SGIS_texture_edge_clamp", &sfogl_ext_SGIS_texture_edge_clamp, NULL},
+    {"GL_EXT_texture_edge_clamp", &sfogl_ext_EXT_texture_edge_clamp, NULL},
     {"GL_EXT_blend_minmax", &sfogl_ext_EXT_blend_minmax, Load_EXT_blend_minmax},
     {"GL_EXT_blend_subtract", &sfogl_ext_EXT_blend_subtract, NULL},
     {"GL_ARB_multitexture", &sfogl_ext_ARB_multitexture, Load_ARB_multitexture},
@@ -332,7 +334,7 @@ static sfogl_StrToExtMap ExtensionMap[12] = {
     {"GL_EXT_framebuffer_object", &sfogl_ext_EXT_framebuffer_object, Load_EXT_framebuffer_object}
 };
 
-static int g_extensionMapSize = 12;
+static int g_extensionMapSize = 13;
 
 static sfogl_StrToExtMap *FindExtEntry(const char *extensionName)
 {
@@ -350,6 +352,7 @@ static sfogl_StrToExtMap *FindExtEntry(const char *extensionName)
 static void ClearExtensionVars()
 {
     sfogl_ext_SGIS_texture_edge_clamp = sfogl_LOAD_FAILED;
+    sfogl_ext_EXT_texture_edge_clamp = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
     sfogl_ext_ARB_multitexture = sfogl_LOAD_FAILED;
