@@ -237,21 +237,17 @@ namespace
         return true;
     }
 
-    xcb_query_extension_reply_t getDriExtension()
+    xcb_query_extension_reply_t getXExtension(const std::string& name)
     {
         xcb_connection_t* connection = sf::priv::OpenConnection();
 
         sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        // Check if the DRI2 extension is present
-        // We don't use xcb_get_extension_data here to avoid having to link to xcb_dri2
-        static const std::string DRI2 = "DRI2";
-        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> driExt(xcb_query_extension_reply(
+        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
             connection,
             xcb_query_extension(
                 connection,
-                DRI2.size(),
-                DRI2.c_str()
+                name.size(),
+                name.c_str()
             ),
             &error
         ));
@@ -259,14 +255,14 @@ namespace
         // Close the connection with the X server
         sf::priv::CloseConnection(connection);
 
-        if (error || !driExt || !driExt->present)
+        if (error || !extension || !extension->present)
         {
             xcb_query_extension_reply_t reply;
             std::memset(&reply, 0, sizeof(reply));
             return reply;
         }
 
-        return *driExt.get();
+        return *extension.get();
     }
 
     void dumpXcbExtensions()
@@ -2260,8 +2256,18 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             // Handle any extension events first
 
+            // SHAPE
+            // Ubuntu's Unity desktop environment makes use of the
+            // Compiz compositing window manager
+            // Compiz seems to send SHAPE events to windows even if they
+            // did not specifically select those events
+            // We ignore those events here in order to not generate warnings
+            static xcb_query_extension_reply_t shapeExtension = getXExtension("SHAPE");
+            if (shapeExtension.present && (responseType == shapeExtension.first_event))
+                break;
+
             // DRI2
-            static xcb_query_extension_reply_t driExtension = getDriExtension();
+            static xcb_query_extension_reply_t driExtension = getXExtension("DRI2");
             if (driExtension.present)
             {
                 // Because we are using the XCB event queue instead of the Xlib event
