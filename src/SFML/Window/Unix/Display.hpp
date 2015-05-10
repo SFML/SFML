@@ -51,7 +51,7 @@ Display* OpenDisplay();
 /// \brief Get the xcb connection of the shared Display
 ///
 /// This function increments the reference count of the display,
-/// it must be matched with a call to CloseDisplay.
+/// it must be matched with a call to CloseConnection.
 ///
 /// \return Pointer to the shared connection
 ///
