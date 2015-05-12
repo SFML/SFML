@@ -34,6 +34,7 @@
 #include <SFML/Audio/SoundFileWriterWav.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace
@@ -69,8 +70,10 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
 
     // Wrap the input file into a file stream
     FileInputStream stream;
-    if (!stream.open(filename))
+    if (!stream.open(filename)) {
+        err() << "Failed to open sound file \"" << filename << "\" (couldn't open stream)" << std::endl;
         return NULL;
+    }
 
     // Test the filename in all the registered factories
     for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
@@ -81,6 +84,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     }
 
     // No suitable reader found
+    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
     return NULL;
 }
 
@@ -104,6 +108,7 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     }
 
     // No suitable reader found
+    err() << "Failed to open sound file from memory (format not supported)" << std::endl;
     return NULL;
 }
 
@@ -123,6 +128,7 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     }
 
     // No suitable reader found
+    err() << "Failed to open sound file from stream (format not supported)" << std::endl;
     return NULL;
 }
 
@@ -141,6 +147,7 @@ SoundFileWriter* SoundFileFactory::createWriterFromFilename(const std::string& f
     }
 
     // No suitable writer found
+    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
     return NULL;
 }
 
