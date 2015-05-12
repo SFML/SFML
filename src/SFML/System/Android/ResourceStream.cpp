@@ -63,7 +63,7 @@ Int64 ResourceStream::read(void *data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::seek(Int64 position)
 {
-    AAsset_seek(m_file, position, SEEK_SET);
+    return AAsset_seek(m_file, position, SEEK_SET);
 }
 
 
