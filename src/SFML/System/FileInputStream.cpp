@@ -61,6 +61,7 @@ bool FileInputStream::open(const std::string& filename)
     if (m_file)
         delete m_file;
     m_file = new sf::priv::ResourceStream(filename);
+    return m_file->tell() != -1;
 #else
     if (m_file)
         std::fclose(m_file);
