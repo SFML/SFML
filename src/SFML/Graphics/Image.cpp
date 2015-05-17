@@ -289,7 +289,7 @@ Color Image::getPixel(unsigned int x, unsigned int y) const
         assert(x >= 0 && y >= 0 && x < m_size.x && y <m_size.y);
     #endif
     const Uint8* pixel = &m_pixels[(x + y * m_size.x) * 4];
-    return Color(pixel[0], pixel[1], pixel[2], pixel[3
+    return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 
