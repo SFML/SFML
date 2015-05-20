@@ -179,7 +179,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
-                if (getRemoteAddress() != sf::IpAddress::None)
+                if (getRemoteAddress() != IpAddress::None)
                 {
                     // Connection accepted
                     status = Done;

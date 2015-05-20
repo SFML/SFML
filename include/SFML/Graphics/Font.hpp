@@ -278,7 +278,7 @@ private:
         Page();
 
         GlyphTable       glyphs;  ///< Table mapping code points to their corresponding glyph
-        sf::Texture      texture; ///< Texture containing the pixels of the glyphs
+        Texture          texture; ///< Texture containing the pixels of the glyphs
         unsigned int     nextRow; ///< Y position of the next new row in the texture
         std::vector<Row> rows;    ///< List containing the position of all the existing rows
     };

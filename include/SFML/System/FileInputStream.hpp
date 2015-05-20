@@ -123,7 +123,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
 #ifdef ANDROID
-    sf::priv::ResourceStream *m_file;
+    priv::ResourceStream* m_file;
 #else
     std::FILE* m_file; ///< stdio file stream
 #endif
