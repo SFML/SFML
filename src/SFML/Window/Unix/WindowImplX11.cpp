@@ -230,9 +230,12 @@ namespace
 
         sf::priv::CloseConnection(connection);
 
-        const char* name = reinterpret_cast<const char*>(xcb_get_property_value(wmName.get()));
-
-        windowManagerName = name;
+        // It seems the wm name string reply is not necessarily
+        // null-terminated. The work around is to get its actual
+        // length to build a proper string
+        const char* begin = reinterpret_cast<const char*>(xcb_get_property_value(wmName.get()));
+        const char* end = begin + xcb_get_property_value_length(wmName.get());
+        windowManagerName = sf::String::fromUtf8(begin, end);
 
         return true;
     }
