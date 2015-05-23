@@ -69,6 +69,10 @@ public:
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
     ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the file must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed.
+    ///
     /// \param filename Path of the music file to open
     ///
     /// \return True if loading succeeded, false if it failed
@@ -85,10 +89,11 @@ public:
     /// to do so).
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
-    /// Since the music is not loaded completely but rather streamed
-    /// continuously, the \a data must remain available as long as the
-    /// music is playing (i.e. you can't deallocate it right after calling
-    /// this function).
+    ///
+    /// \warning Since the music is not loaded at once but rather streamed
+    /// continuously, the \a data buffer must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// you can't deallocate the buffer right after calling this function.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -107,10 +112,10 @@ public:
     /// to do so).
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
-    /// Since the music is not loaded completely but rather streamed
-    /// continuously, the \a stream must remain alive as long as the
-    /// music is playing (i.e. you can't destroy it right after calling
-    /// this function).
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the \a stream must remain accessible
+    /// until the sf::Music object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
@@ -184,6 +189,9 @@ private:
 /// musics that usually take hundreds of MB when they are
 /// uncompressed: by streaming it instead of loading it entirely,
 /// you avoid saturating the memory and have almost no loading delay.
+/// This implies that the underlying resource (file, stream or
+/// memory buffer) must remain valid for the lifetime of the
+/// sf::Music object.
 ///
 /// Apart from that, a sf::Music has almost the same features as
 /// the sf::SoundBuffer / sf::Sound pair: you can play/pause/stop
