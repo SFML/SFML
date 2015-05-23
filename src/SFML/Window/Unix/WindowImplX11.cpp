@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
@@ -49,6 +50,12 @@
 // So we don't have to require xcb dri2 to be present
 #define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
 #define XCB_DRI2_INVALIDATE_BUFFERS   1
+
+// So we don't have to require xcb xkb to be present
+#define XCB_XKB_NEW_KEYBOARD_NOTIFY 0
+#define XCB_XKB_MAP_NOTIFY 1
+#define XCB_XKB_INDICATOR_MAP_NOTIFY 5
+#define XCB_XKB_COMPAT_MAP_NOTIFY 7
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -2265,6 +2272,32 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             static xcb_query_extension_reply_t shapeExtension = getXExtension("SHAPE");
             if (shapeExtension.present && (responseType == shapeExtension.first_event))
                 break;
+
+            // XKEYBOARD
+            // When the X server sends us XKEYBOARD events, it means that
+            // the user probably changed the layout of their keyboard
+            // We update our keymaps in that case
+            static xcb_query_extension_reply_t xkeyboardExtension = getXExtension("XKEYBOARD");
+            if (xkeyboardExtension.present && (responseType == xkeyboardExtension.first_event))
+            {
+                // We do this so we don't have to include the xkb header for the struct declaration
+                uint8_t xkbType = reinterpret_cast<const uint8_t*>(windowEvent)[1];
+
+                // We only bother rebuilding our maps if any xkb mappings actually change
+                if ((xkbType == XCB_XKB_NEW_KEYBOARD_NOTIFY) ||
+                    (xkbType == XCB_XKB_MAP_NOTIFY) ||
+                    (xkbType == XCB_XKB_INDICATOR_MAP_NOTIFY) ||
+                    (xkbType == XCB_XKB_COMPAT_MAP_NOTIFY))
+                {
+                    // keycode to SFML
+                    buildMap();
+
+                    // SFML to keycode
+                    InputImpl::buildMap();
+                }
+
+                break;
+            }
 
             // DRI2
             static xcb_query_extension_reply_t driExtension = getXExtension("DRI2");
