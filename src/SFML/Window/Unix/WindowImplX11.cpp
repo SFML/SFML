@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
@@ -49,6 +50,10 @@
 // So we don't have to require xcb dri2 to be present
 #define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
 #define XCB_DRI2_INVALIDATE_BUFFERS   1
+
+// So we don't have to require xcb xkb to be present
+#define XCB_XKB_NEW_KEYBOARD_NOTIFY 0
+#define XCB_XKB_MAP_NOTIFY 1
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -2315,6 +2320,57 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
                     return true;
                 }
+            }
+
+            // XKEYBOARD
+            // When the X server sends us XKEYBOARD events, it means that
+            // the user probably changed the layout of their keyboard
+            // We update our keymaps in that case
+            static xcb_query_extension_reply_t xkeyboardExtension = getXExtension("XKEYBOARD");
+            if (xkeyboardExtension.present && (responseType == xkeyboardExtension.first_event))
+            {
+                // We do this so we don't have to include the xkb header for the struct declaration
+                uint8_t xkbType = reinterpret_cast<const uint8_t*>(windowEvent)[1];
+
+                // We only bother rebuilding our maps if the xkb mapping actually changes
+                if ((xkbType == XCB_XKB_NEW_KEYBOARD_NOTIFY) || (xkbType == XCB_XKB_MAP_NOTIFY))
+                {
+                    // keysym map
+                    buildKeysymMap();
+
+                    // keycode to SFML
+                    buildMap();
+
+                    // SFML to keycode
+                    InputImpl::buildMap();
+
+                    // XInputMethod expects keyboard mapping changes to be propagated to it
+                    // Same idea here as with the DRI2 events above
+
+                    // We lock/unlock the display to protect against concurrent access
+                    XLockDisplay(m_display);
+
+                    typedef Bool (*wireEventHandler)(Display*, XEvent*, xEvent*);
+
+                    // Probe for any handlers that are registered for this event type
+                    wireEventHandler handler = XESetWireToEvent(m_display, responseType, 0);
+
+                    if (handler)
+                    {
+                        // Restore the previous handler if one was registered
+                        XESetWireToEvent(m_display, responseType, handler);
+
+                        XEvent event;
+                        windowEvent->sequence = LastKnownRequestProcessed(m_display);
+
+                        // Pretend to be the Xlib event queue
+                        handler(m_display, &event, reinterpret_cast<xEvent*>(windowEvent));
+                    }
+
+                    XUnlockDisplay(m_display);
+                }
+
+                break;
             }
 
             // Print any surprises to stderr (would be nice if people report when this happens)
