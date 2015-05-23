@@ -28,6 +28,7 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
@@ -49,6 +50,12 @@
 // So we don't have to require xcb dri2 to be present
 #define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
 #define XCB_DRI2_INVALIDATE_BUFFERS   1
+
+// So we don't have to require xcb xkb to be present
+#define XCB_XKB_NEW_KEYBOARD_NOTIFY 0
+#define XCB_XKB_MAP_NOTIFY 1
+#define XCB_XKB_INDICATOR_MAP_NOTIFY 5
+#define XCB_XKB_COMPAT_MAP_NOTIFY 7
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -237,21 +244,17 @@ namespace
         return true;
     }
 
-    xcb_query_extension_reply_t getDriExtension()
+    xcb_query_extension_reply_t getXExtension(const std::string& name)
     {
         xcb_connection_t* connection = sf::priv::OpenConnection();
 
         sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        // Check if the DRI2 extension is present
-        // We don't use xcb_get_extension_data here to avoid having to link to xcb_dri2
-        static const std::string DRI2 = "DRI2";
-        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> driExt(xcb_query_extension_reply(
+        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
             connection,
             xcb_query_extension(
                 connection,
-                DRI2.size(),
-                DRI2.c_str()
+                name.size(),
+                name.c_str()
             ),
             &error
         ));
@@ -259,14 +262,14 @@ namespace
         // Close the connection with the X server
         sf::priv::CloseConnection(connection);
 
-        if (error || !driExt || !driExt->present)
+        if (error || !extension || !extension->present)
         {
             xcb_query_extension_reply_t reply;
             std::memset(&reply, 0, sizeof(reply));
             return reply;
         }
 
-        return *driExt.get();
+        return *extension.get();
     }
 
     void dumpXcbExtensions()
@@ -1926,12 +1929,21 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
             if (passEvent(windowEvent, reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent)->window))
                 return false;
 
+            // X notifies about "window configuration events", which also includes moving a window only. Check
+            // for a different size and only spawn a Resized event when it differs.
             xcb_configure_notify_event_t* e = reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent);
-            Event event;
-            event.type        = Event::Resized;
-            event.size.width  = e->width;
-            event.size.height = e->height;
-            pushEvent(event);
+
+            if (e->width != m_previousSize.x || e->height != m_previousSize.y)
+            {
+                m_previousSize.x = e->width;
+                m_previousSize.y = e->height;
+
+                Event event;
+                event.type        = Event::Resized;
+                event.size.width  = e->width;
+                event.size.height = e->height;
+                pushEvent(event);
+            }
             break;
         }
 
@@ -2251,8 +2263,44 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
             // Handle any extension events first
 
+            // SHAPE
+            // Ubuntu's Unity desktop environment makes use of the
+            // Compiz compositing window manager
+            // Compiz seems to send SHAPE events to windows even if they
+            // did not specifically select those events
+            // We ignore those events here in order to not generate warnings
+            static xcb_query_extension_reply_t shapeExtension = getXExtension("SHAPE");
+            if (shapeExtension.present && (responseType == shapeExtension.first_event))
+                break;
+
+            // XKEYBOARD
+            // When the X server sends us XKEYBOARD events, it means that
+            // the user probably changed the layout of their keyboard
+            // We update our keymaps in that case
+            static xcb_query_extension_reply_t xkeyboardExtension = getXExtension("XKEYBOARD");
+            if (xkeyboardExtension.present && (responseType == xkeyboardExtension.first_event))
+            {
+                // We do this so we don't have to include the xkb header for the struct declaration
+                uint8_t xkbType = reinterpret_cast<const uint8_t*>(windowEvent)[1];
+
+                // We only bother rebuilding our maps if any xkb mappings actually change
+                if ((xkbType == XCB_XKB_NEW_KEYBOARD_NOTIFY) ||
+                    (xkbType == XCB_XKB_MAP_NOTIFY) ||
+                    (xkbType == XCB_XKB_INDICATOR_MAP_NOTIFY) ||
+                    (xkbType == XCB_XKB_COMPAT_MAP_NOTIFY))
+                {
+                    // keycode to SFML
+                    buildMap();
+
+                    // SFML to keycode
+                    InputImpl::buildMap();
+                }
+
+                break;
+            }
+
             // DRI2
-            static xcb_query_extension_reply_t driExtension = getDriExtension();
+            static xcb_query_extension_reply_t driExtension = getXExtension("DRI2");
             if (driExtension.present)
             {
                 // Because we are using the XCB event queue instead of the Xlib event

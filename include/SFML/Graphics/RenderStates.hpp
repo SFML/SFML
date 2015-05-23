@@ -150,7 +150,7 @@ public:
 /// directly without defining render states explicitly -- the
 /// default set of states is ok in most cases.
 /// \code
-/// window.Draw(sprite);
+/// window.draw(sprite);
 /// \endcode
 ///
 /// If you want to use a single specific render state,

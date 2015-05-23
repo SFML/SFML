@@ -28,7 +28,6 @@
 #include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 #include <SFML/Audio/SoundFileFactory.hpp>
-#include <SFML/System/Err.hpp>
 
 
 namespace sf
@@ -57,10 +56,7 @@ bool OutputSoundFile::openFromFile(const std::string& filename, unsigned int sam
     // Find a suitable writer for the file type
     m_writer = SoundFileFactory::createWriterFromFilename(filename);
     if (!m_writer)
-    {
-        err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
         return false;
-    }
 
     // Pass the stream to the reader
     if (!m_writer->open(filename, sampleRate, channelCount))

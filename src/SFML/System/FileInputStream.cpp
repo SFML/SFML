@@ -60,7 +60,8 @@ bool FileInputStream::open(const std::string& filename)
 #ifdef ANDROID
     if (m_file)
         delete m_file;
-    m_file = new sf::priv::ResourceStream(filename);
+    m_file = new priv::ResourceStream(filename);
+    return m_file->tell() != -1;
 #else
     if (m_file)
         std::fclose(m_file);
@@ -127,9 +128,9 @@ Int64 FileInputStream::getSize()
 #else
     if (m_file)
     {
-        sf::Int64 position = tell();
+        Int64 position = tell();
         std::fseek(m_file, 0, SEEK_END);
-        sf::Int64 size = tell();
+        Int64 size = tell();
         seek(position);
         return size;
     }

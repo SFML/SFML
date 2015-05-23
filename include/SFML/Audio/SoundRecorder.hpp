@@ -183,7 +183,7 @@ protected:
     /// \param interval Processing interval
     ///
     ////////////////////////////////////////////////////////////
-    void setProcessingInterval(sf::Time interval);
+    void setProcessingInterval(Time interval);
 
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
@@ -260,7 +260,7 @@ private:
     Thread             m_thread;             ///< Thread running the background recording task
     std::vector<Int16> m_samples;            ///< Buffer to store captured samples
     unsigned int       m_sampleRate;         ///< Sample rate
-    sf::Time           m_processingInterval; ///< Time period between calls to onProcessSamples
+    Time               m_processingInterval; ///< Time period between calls to onProcessSamples
     bool               m_isCapturing;        ///< Capturing state
     std::string        m_deviceName;         ///< Name of the audio capture device
 };
