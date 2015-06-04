@@ -59,13 +59,89 @@
 namespace
 {
     unsigned int               windowCount      = 0;
+    unsigned int               externCount      = 0;
     const wchar_t*             className        = L"SFML_Window";
     sf::priv::WindowImplWin32* fullscreenWindow = NULL;
+    HINSTANCE                  user32Dll        = NULL;
+    DWORD                      touchIDs[10];
+    POINT                      touches[10];
+
+#if WINVER < 0x0601
+    // Define touch API that's available for more recent versions of Windows
+    #define WM_TOUCH 0x0240
+
+    DECLARE_HANDLE(HTOUCHINPUT);
+
+    typedef struct tagTOUCHINPUT {
+        LONG x;
+        LONG y;
+        HANDLE hSource;
+        DWORD dwID;
+        DWORD dwFlags;
+        DWORD dwMask;
+        DWORD dwTime;
+        ULONG_PTR dwExtraInfo;
+        DWORD cxContact;
+        DWORD cyContact;
+    } TOUCHINPUT, *PTOUCHINPUT;
+    typedef TOUCHINPUT const * PCTOUCHINPUT;
+
+    #define TOUCH_COORD_TO_PIXEL(l) ((l) / 100)
+
+    #define TOUCHEVENTF_MOVE            0x0001
+    #define TOUCHEVENTF_DOWN            0x0002
+    #define TOUCHEVENTF_UP              0x0004
+    #define TOUCHEVENTF_INRANGE         0x0008
+    #define TOUCHEVENTF_PRIMARY         0x0010
+    #define TOUCHEVENTF_NOCOALESCE      0x0020
+    #define TOUCHEVENTF_PEN             0x0040
+    #define TOUCHEVENTF_PALM            0x0080
+
+    typedef BOOL(WINAPI* RegisterTouchWindowFuncType)(HWND, ULONG);
+    typedef BOOL(WINAPI* CloseTouchInputHandleFuncType)(HTOUCHINPUT);
+    typedef BOOL(WINAPI* GetTouchInputInfoFuncType)(HTOUCHINPUT, UINT, PTOUCHINPUT, int);
+
+    RegisterTouchWindowFuncType   RegisterTouchWindow   = NULL;
+    CloseTouchInputHandleFuncType CloseTouchInputHandle = NULL;
+    GetTouchInputInfoFuncType     GetTouchInputInfo     = NULL;
+    bool                          touchEnabled          = false;
+#else
+#define touchEnabled true;
+#endif
+
+    // Convert a hardware dependent ID to a 0 based index we can use
+    sf::Int8 getTouchID(DWORD id)
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            if (touchIDs[i] == id)
+                return i;
+            if (touchIDs[i] == -1)
+            {
+                touchIDs[i] = id;
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Get a system error string from an error code
+    std::string getErrorString(DWORD error)
+    {
+        PTCHAR buffer;
+
+        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, reinterpret_cast<PTCHAR>(&buffer), 0, NULL) == 0)
+            return "Unknown error.";
+
+        sf::String message = buffer;
+        LocalFree(buffer);
+        return message.toAnsiString();
+    }
 
     void setProcessDpiAware()
     {
         // Try SetProcessDpiAwareness first
-        HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
+        HINSTANCE shCoreDll = LoadLibraryA("Shcore.dll");
 
         if (shCoreDll)
         {
@@ -100,8 +176,6 @@ namespace
 
         // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
         // is not available on this system
-        HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
-
         if (user32Dll)
         {
             typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
@@ -112,8 +186,6 @@ namespace
                 if (!SetProcessDPIAwareFunc())
                     sf::err() << "Failed to set process DPI awareness" << std::endl;
             }
-
-            FreeLibrary(user32Dll);
         }
     }
 }
@@ -134,6 +206,12 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Load User32, if necessary (very first window/control only)
+    if (windowCount + externCount == 0) {
+        if (!user32Dll)
+            user32Dll = LoadLibraryA("User32.dll");
+    }
+
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
 
@@ -142,7 +220,13 @@ m_mouseInside     (false)
         // We change the event procedure of the control (it is important to save the old one)
         SetWindowLongPtrW(m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
         m_callback = SetWindowLongPtrW(m_handle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::globalOnEvent));
+
+        // Try to prepare touch events, if necessary
+        prepareTouch();
     }
+
+    // Increase external window count
+    ++externCount;
 }
 
 
@@ -158,6 +242,12 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false)
 {
+    // Load User32, if necessary (very first window/control only)
+    if (windowCount + externCount == 0) {
+        if (!user32Dll)
+            user32Dll = LoadLibraryA("User32.dll");
+    }
+
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
 
@@ -207,6 +297,9 @@ m_mouseInside     (false)
     if (fullscreen)
         switchToFullscreen(mode);
 
+    // Try to prepare touch events, if necessary
+    prepareTouch();
+
     // Increment window count
     windowCount++;
 }
@@ -230,12 +323,25 @@ WindowImplWin32::~WindowImplWin32()
 
         // Unregister window class if we were the last window
         if (windowCount == 0)
+        {
             UnregisterClassW(className, GetModuleHandleW(NULL));
+            if (user32Dll)
+            {
+                FreeLibrary(user32Dll);
+                user32Dll = NULL;
+            }
+        }
     }
     else
     {
         // The window is external: remove the hook on its message callback
         SetWindowLongPtrW(m_handle, GWLP_WNDPROC, m_callback);
+
+        if (--externCount == 0 && user32Dll)
+        {
+            FreeLibrary(user32Dll);
+            user32Dll = NULL;
+        }
     }
 }
 
@@ -892,6 +998,78 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             pushEvent(event);
             break;
         }
+
+        // Touch event(s)
+        case WM_TOUCH:
+        {
+            // Get the number of events
+            Uint16 num = LOWORD(wParam);
+
+            // Reserve memory
+            PTOUCHINPUT events = new TOUCHINPUT[num];
+
+            if (events)
+            {
+                if (GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam), num, events, sizeof(TOUCHINPUT)))
+                {
+                    POINT point;
+                    for (int i = 0; i < num; ++i)
+                    {
+                        Event event;
+                        Int8 index = getTouchID(events[i].dwID);
+
+                        // Out of Ids? Should never happen
+                        if (index == -1)
+                            continue;
+
+                        event.touch.finger = index;
+                        point.x = TOUCH_COORD_TO_PIXEL(events[i].x);
+                        point.y = TOUCH_COORD_TO_PIXEL(events[i].y);
+                        ScreenToClient(m_handle, &point);
+                        event.touch.x = point.x;
+                        event.touch.y = point.y;
+
+                        if (events[i].dwFlags & TOUCHEVENTF_DOWN) {
+                            event.type = Event::TouchBegan;
+                            pushEvent(event);
+
+                            // Prevent initial move event
+                            touches[index] = point;
+                            err() << "down: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
+                        }
+                        if (events[i].dwFlags & TOUCHEVENTF_UP) {
+                            event.type = Event::TouchEnded;
+                            pushEvent(event);
+
+                            // Remove the stored ID
+                            touchIDs[index] = -1;
+                            err() << "up: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
+                        }
+                        if (events[i].dwFlags & TOUCHEVENTF_MOVE) {
+                            // Only handle real movement
+                            if (touches[index].x != point.x || touches[index].y != point.y)
+                            {
+                                touches[index] = point;
+                                event.type = Event::TouchMoved;
+                                pushEvent(event);
+                                err() << "moved: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
+                            }
+                        }
+
+                        //err() << "f: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
+                    }
+
+                    CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(lParam));
+                }
+                else
+                {
+                    err() << "Failed to get touch input info: " << getErrorString(GetLastError()) << std::endl;
+                }
+                delete[] events;
+            }
+
+            break;
+        }
     }
 }
 
@@ -1051,6 +1229,36 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
         return 0;
 
     return DefWindowProcW(handle, message, wParam, lParam);
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::prepareTouch()
+{
+    static bool prepared = false;
+    if (!prepared)
+    {
+        prepared = true;
+
+#if WINVER < 0x0601
+        RegisterTouchWindow = reinterpret_cast<RegisterTouchWindowFuncType>(GetProcAddress(user32Dll, "RegisterTouchWindow"));
+
+        touchEnabled = RegisterTouchWindow != NULL;
+
+        // If we've got touch support, load the other procs
+        if (touchEnabled)
+        {
+            CloseTouchInputHandle = reinterpret_cast<CloseTouchInputHandleFuncType>(GetProcAddress(user32Dll, "CloseTouchInputHandle"));
+            GetTouchInputInfo = reinterpret_cast<GetTouchInputInfoFuncType>(GetProcAddress(user32Dll, "GetTouchInputInfo"));
+
+            // Reset touch IDs
+            for (int i = 0; i < 10; ++i)
+                touchIDs[i] = -1;
+        }
+#endif
+    }
+
+    if (touchEnabled)
+        RegisterTouchWindow(m_handle, 0);
 }
 
 } // namespace priv
