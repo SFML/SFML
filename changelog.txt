@@ -1,3 +1,39 @@
+SFML 2.3.1
+==========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.1
+
+Window
+======
+
+Bugfixes
+--------
+* [Android] Make sure a window still exists before trying to access its dimensions (#854)
+* [Android] Added Android API level checks (#856)
+* [Android] Updated the JNI/event handling code (#906)
+* [Linux] Resized events are only spawned when the window size actually changes (#878, #893)
+* [Linux] Whitelisted X SHAPE events (#879, #883)
+* [Linux] Remap Unix keyboard when user changes layout (#895, #897)
+* [Linux] Fix undefined behavior in ewmhSupported() (#892, #901)
+
+
+Graphics
+========
+
+Bugfixes
+--------
+* Added support for GL_EXT_texture_edge_clamp for systems that don't expose GL_SGIS_texture_edge_clamp (#880, #882)
+
+
+Audio
+=====
+
+Bugfixes
+--------
+* [Android] Fixed audio files not loading (and possibly crashing) (#855, #887)
+
+
+
 SFML 2.3
 ========
 
