@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/GLExtensions.hpp>
-#include <string>
 
 
 namespace sf
@@ -38,7 +37,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL API calls
+/// Let's define a macro to quickly check every OpenGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
@@ -49,7 +48,7 @@ namespace priv
 #else
 
     // Else, we don't add any overhead
-    #define glCheck(call) (call)
+    #define glCheck(expr) (expr)
 
 #endif
 
@@ -58,9 +57,10 @@ namespace priv
 ///
 /// \param file Source file where the call is located
 /// \param line Line number of the source file where the call is located
+/// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void glCheckError(const char* file, unsigned int line);
+void glCheckError(const char* file, unsigned int line, const char* expression);
 
 } // namespace priv
 

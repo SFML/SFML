@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ALCheck.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/System/Err.hpp>
+#include <string>
 
 
 namespace sf
@@ -35,14 +35,16 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void alCheckError(const std::string& file, unsigned int line)
+void alCheckError(const char* file, unsigned int line, const char* expression)
 {
     // Get the last error
     ALenum errorCode = alGetError();
 
     if (errorCode != AL_NO_ERROR)
     {
-        std::string error, description;
+        std::string fileString = file;
+        std::string error = "Unknown error";
+        std::string description = "No description";
 
         // Decode the error code
         switch (errorCode)
@@ -50,43 +52,44 @@ void alCheckError(const std::string& file, unsigned int line)
             case AL_INVALID_NAME:
             {
                 error = "AL_INVALID_NAME";
-                description = "an unacceptable name has been specified";
+                description = "A bad name (ID) has been specified.";
                 break;
             }
 
             case AL_INVALID_ENUM:
             {
                 error = "AL_INVALID_ENUM";
-                description = "an unacceptable value has been specified for an enumerated argument";
+                description = "An unacceptable value has been specified for an enumerated argument.";
                 break;
             }
 
             case AL_INVALID_VALUE:
             {
                 error = "AL_INVALID_VALUE";
-                description = "a numeric argument is out of range";
+                description = "A numeric argument is out of range.";
                 break;
             }
 
             case AL_INVALID_OPERATION:
             {
                 error = "AL_INVALID_OPERATION";
-                description = "the specified operation is not allowed in the current state";
+                description = "The specified operation is not allowed in the current state.";
                 break;
             }
 
             case AL_OUT_OF_MEMORY:
             {
                 error = "AL_OUT_OF_MEMORY";
-                description = "there is not enough memory left to execute the command";
+                description = "There is not enough memory left to execute the command.";
                 break;
             }
         }
 
         // Log the error
         err() << "An internal OpenAL call failed in "
-              << file.substr(file.find_last_of("\\/") + 1) << " (" << line << ") : "
-              << error << ", " << description
+              << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line << ")."
+              << "\nExpression:\n   " << expression
+              << "\nError description:\n   " << error << "\n   " << description << "\n"
               << std::endl;
     }
 }
