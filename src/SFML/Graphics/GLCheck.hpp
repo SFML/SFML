@@ -43,7 +43,8 @@ namespace priv
 #ifdef SFML_DEBUG
 
     // In debug mode, perform a test on every OpenGL call
-    #define glCheck(x) x; sf::priv::glCheckError(__FILE__, __LINE__);
+    // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
+    #define glCheck(expr) do { expr; sf::priv::glCheckError(__FILE__, __LINE__, #expr); } while (false)
 
 #else
 
