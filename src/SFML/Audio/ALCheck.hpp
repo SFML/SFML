@@ -29,8 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <iostream>
-#include <string>
 #ifdef SFML_SYSTEM_IOS
     #include <OpenAl/al.h>
     #include <OpenAl/alc.h>
@@ -45,7 +43,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenAL API calls
+/// Let's define a macro to quickly check every OpenAL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
@@ -56,7 +54,7 @@ namespace priv
 #else
 
     // Else, we don't add any overhead
-    #define alCheck(Func) (Func)
+    #define alCheck(expr) (expr)
 
 #endif
 
@@ -66,9 +64,10 @@ namespace priv
 ///
 /// \param file Source file where the call is located
 /// \param line Line number of the source file where the call is located
+/// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void alCheckError(const std::string& file, unsigned int line);
+void alCheckError(const char* file, unsigned int line, const char* expression);
 
 } // namespace priv
 
