@@ -145,77 +145,6 @@ namespace
 
         return keysym;
     }
-
-    void buildMap()
-    {
-        // Open a connection with the X server
-        xcb_connection_t* connection = sf::priv::OpenConnection();
-
-        firstKeycode = xcb_get_setup(connection)->min_keycode;
-        lastKeycode = xcb_get_setup(connection)->max_keycode;
-
-        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        sf::priv::ScopedXcbPtr<xcb_get_keyboard_mapping_reply_t> keyboardMapping(xcb_get_keyboard_mapping_reply(
-            connection,
-            xcb_get_keyboard_mapping(
-                connection,
-                firstKeycode,
-                lastKeycode - firstKeycode + 1
-            ),
-            &error
-        ));
-
-        sf::priv::CloseConnection(connection);
-
-        if (error || !keyboardMapping)
-        {
-            sf::err() << "Failed to get keyboard mapping" << std::endl;
-            return;
-        }
-
-        uint8_t keysymsPerKeycode = keyboardMapping->keysyms_per_keycode;
-
-        if (!keysymsPerKeycode)
-        {
-            sf::err() << "Error: No keysyms per keycode" << std::endl;
-            return;
-        }
-
-        const xcb_keysym_t* keysyms = xcb_get_keyboard_mapping_keysyms(keyboardMapping.get());
-
-        if (!keysyms)
-        {
-            sf::err() << "Failed to get keyboard mapping keysyms" << std::endl;
-            return;
-        }
-
-        xcb_keycode_t range = lastKeycode - firstKeycode + 1;
-
-        std::fill(keysymMap, keysymMap + 256, XK_VoidSymbol);
-
-        for (xcb_keycode_t i = firstKeycode; ; ++i)
-        {
-            const xcb_keysym_t* keysym = &keysyms[(i - firstKeycode) * keysymsPerKeycode];
-
-            if ((keysymsPerKeycode == 1) || (keysym[1] == XCB_NO_SYMBOL))
-            {
-                keysymMap[i] = keysymToLower(keysym[0]);
-
-                if (i == lastKeycode)
-                    break;
-
-                continue;
-            }
-
-            keysymMap[i] = keysym[0];
-
-            if (i == lastKeycode)
-                break;
-        }
-
-        mapBuilt = true;
-    }
 }
 
 namespace sf
@@ -344,9 +273,82 @@ xcb_atom_t getAtom(const std::string& name, bool onlyIfExists)
 const xcb_keysym_t* getKeysymMap()
 {
     if (!mapBuilt)
-        buildMap();
+        buildKeysymMap();
 
     return keysymMap;
+}
+
+
+////////////////////////////////////////////////////////////
+void buildKeysymMap()
+{
+    // Open a connection with the X server
+    xcb_connection_t* connection = sf::priv::OpenConnection();
+
+    firstKeycode = xcb_get_setup(connection)->min_keycode;
+    lastKeycode = xcb_get_setup(connection)->max_keycode;
+
+    sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    sf::priv::ScopedXcbPtr<xcb_get_keyboard_mapping_reply_t> keyboardMapping(xcb_get_keyboard_mapping_reply(
+        connection,
+        xcb_get_keyboard_mapping(
+            connection,
+            firstKeycode,
+            lastKeycode - firstKeycode + 1
+        ),
+        &error
+    ));
+
+    sf::priv::CloseConnection(connection);
+
+    if (error || !keyboardMapping)
+    {
+        sf::err() << "Failed to get keyboard mapping" << std::endl;
+        return;
+    }
+
+    uint8_t keysymsPerKeycode = keyboardMapping->keysyms_per_keycode;
+
+    if (!keysymsPerKeycode)
+    {
+        sf::err() << "Error: No keysyms per keycode" << std::endl;
+        return;
+    }
+
+    const xcb_keysym_t* keysyms = xcb_get_keyboard_mapping_keysyms(keyboardMapping.get());
+
+    if (!keysyms)
+    {
+        sf::err() << "Failed to get keyboard mapping keysyms" << std::endl;
+        return;
+    }
+
+    xcb_keycode_t range = lastKeycode - firstKeycode + 1;
+
+    std::fill(keysymMap, keysymMap + 256, XK_VoidSymbol);
+
+    for (xcb_keycode_t i = firstKeycode; ; ++i)
+    {
+        const xcb_keysym_t* keysym = &keysyms[(i - firstKeycode) * keysymsPerKeycode];
+
+        if ((keysymsPerKeycode == 1) || (keysym[1] == XCB_NO_SYMBOL))
+        {
+            keysymMap[i] = keysymToLower(keysym[0]);
+
+            if (i == lastKeycode)
+                break;
+
+            continue;
+        }
+
+        keysymMap[i] = keysym[0];
+
+        if (i == lastKeycode)
+            break;
+    }
+
+    mapBuilt = true;
 }
 
 } // namespace priv

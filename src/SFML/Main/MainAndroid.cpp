@@ -53,6 +53,27 @@ namespace sf
 {
 namespace priv
 {
+
+////////////////////////////////////////////////////////////
+int getAndroidApiLevel(ANativeActivity* activity)
+{
+    JNIEnv* lJNIEnv = activity->env;
+
+    jclass versionClass = lJNIEnv->FindClass("android/os/Build$VERSION");
+    if (versionClass == NULL)
+        return 0;
+
+    jfieldID sdkIntFieldID = lJNIEnv->GetStaticFieldID(versionClass, "SDK_INT", "I");
+    if (sdkIntFieldID == NULL)
+        return 0;
+    
+    jint sdkInt = 0;
+    sdkInt = lJNIEnv->GetStaticIntField(versionClass, sdkIntFieldID);
+    
+    return sdkInt;
+}
+
+
 ////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
@@ -117,6 +138,9 @@ void* main(ActivityStates* states)
 ////////////////////////////////////////////////////////////
 void goToFullscreenMode(ANativeActivity* activity)
 {
+    // Get the current Android API level.
+    int apiLevel = sf::priv::getAndroidApiLevel(activity);
+
     // Hide the status bar
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
         AWINDOW_FLAG_FULLSCREEN);
@@ -137,17 +161,35 @@ void goToFullscreenMode(ANativeActivity* activity)
 
     jclass classView = lJNIEnv->FindClass("android/view/View");
 
-    jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
-    jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
+    // Default flags
+    jint flags = 0;
+    
+    // API Level 14
+    if (apiLevel >= 14)
+    {
+        jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
+        jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
+        flags |= SYSTEM_UI_FLAG_LOW_PROFILE;
+    }
 
-    jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
-    jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
+    // API Level 16
+    if (apiLevel >= 16)
+    {
+        jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+        jint SYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
+        flags |= SYSTEM_UI_FLAG_FULLSCREEN;
+    }
 
-    //jfieldID FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY  = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_IMMERSIVE_STICKY", "I");
-    //jint SYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    // API Level 19
+    if (apiLevel >= 19)
+    {
+        jfieldID FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY  = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_IMMERSIVE_STICKY", "I");
+        jint SYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        flags |= SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    }
 
     jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
-    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, SYSTEM_UI_FLAG_LOW_PROFILE | SYSTEM_UI_FLAG_FULLSCREEN | 0x00001000);
+    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, flags);
 }
 
 ////////////////////////////////////////////////////////////
@@ -386,13 +428,16 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
 
-    // Send an event to warn people about the window move/resize
-    sf::Event event;
-    event.type = sf::Event::Resized;
-    event.size.width = ANativeWindow_getWidth(states->window);
-    event.size.height = ANativeWindow_getHeight(states->window);
+    // Make sure the window still exists before we access the dimensions on it
+    if (states->window != NULL) {
+        // Send an event to warn people about the window move/resize
+        sf::Event event;
+        event.type = sf::Event::Resized;
+        event.size.width = ANativeWindow_getWidth(states->window);
+        event.size.height = ANativeWindow_getHeight(states->window);
 
-    states->forwardEvent(event);
+        states->forwardEvent(event);
+    }
 }
 
 

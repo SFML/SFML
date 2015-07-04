@@ -51,7 +51,7 @@ Display* OpenDisplay();
 /// \brief Get the xcb connection of the shared Display
 ///
 /// This function increments the reference count of the display,
-/// it must be matched with a call to CloseDisplay.
+/// it must be matched with a call to CloseConnection.
 ///
 /// \return Pointer to the shared connection
 ///
@@ -126,6 +126,12 @@ xcb_atom_t getAtom(const std::string& name, bool onlyIfExists = false);
 ///
 ////////////////////////////////////////////////////////////
 const xcb_keysym_t* getKeysymMap();
+
+////////////////////////////////////////////////////////////
+/// \brief Build the keysym map
+///
+////////////////////////////////////////////////////////////
+void buildKeysymMap();
 
 } // namespace priv
 

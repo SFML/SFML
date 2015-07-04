@@ -187,7 +187,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(sf::InputStream& stream, const IntRect& area = IntRect());
+    bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image

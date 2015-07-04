@@ -399,7 +399,7 @@ public:
     /// \param transform Transform to assign
     ///
     ////////////////////////////////////////////////////////////
-    void setParameter(const std::string& name, const sf::Transform& transform);
+    void setParameter(const std::string& name, const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
