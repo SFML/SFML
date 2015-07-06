@@ -77,7 +77,7 @@ public:
     {
         Identification();
 
-        sf::String   name;      ///< Name of the joystick
+        String       name;      ///< Name of the joystick
         unsigned int vendorId;  ///< Manufacturer identifier
         unsigned int productId; ///< Product identifier
     };

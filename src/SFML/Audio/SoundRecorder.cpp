@@ -135,7 +135,7 @@ std::vector<std::string> SoundRecorder::getAvailableDevices()
 {
     std::vector<std::string> deviceNameList;
 
-    const ALchar *deviceList = alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
+    const ALchar* deviceList = alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
     if (deviceList)
     {
         while (*deviceList)
@@ -210,7 +210,7 @@ bool SoundRecorder::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::setProcessingInterval(sf::Time interval)
+void SoundRecorder::setProcessingInterval(Time interval)
 {
     m_processingInterval = interval;
 }

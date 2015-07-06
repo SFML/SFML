@@ -65,10 +65,7 @@ bool InputSoundFile::openFromFile(const std::string& filename)
     // Find a suitable reader for the file type
     m_reader = SoundFileFactory::createReaderFromFilename(filename);
     if (!m_reader)
-    {
-        err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
         return false;
-    }
 
     // Wrap the file into a stream
     FileInputStream* file = new FileInputStream;
@@ -108,10 +105,7 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     // Find a suitable reader for the file type
     m_reader = SoundFileFactory::createReaderFromMemory(data, sizeInBytes);
     if (!m_reader)
-    {
-        err() << "Failed to open sound file from memory (format not supported)" << std::endl;
         return false;
-    }
 
     // Wrap the memory file into a stream
     MemoryInputStream* memory = new MemoryInputStream;
@@ -147,10 +141,7 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     // Find a suitable reader for the file type
     m_reader = SoundFileFactory::createReaderFromStream(stream);
     if (!m_reader)
-    {
-        err() << "Failed to open sound file from stream (format not supported)" << std::endl;
         return false;
-    }
 
     // store the stream
     m_stream = &stream;
