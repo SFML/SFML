@@ -67,6 +67,9 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     {
         // Use frame-buffer object (FBO)
         m_impl = new priv::RenderTextureImplFBO;
+
+        // Mark the texture as being a framebuffer object attachment
+        m_texture.m_fboAttachment = true;
     }
     else
     {

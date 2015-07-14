@@ -78,6 +78,7 @@ m_texture      (0),
 m_isSmooth     (false),
 m_isRepeated   (false),
 m_pixelsFlipped(false),
+m_fboAttachment(false),
 m_cacheId      (getUniqueId())
 {
 }
@@ -91,6 +92,7 @@ m_texture      (0),
 m_isSmooth     (copy.m_isSmooth),
 m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
+m_fboAttachment(false),
 m_cacheId      (getUniqueId())
 {
     if (copy.m_texture)
@@ -141,6 +143,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     m_size.y        = height;
     m_actualSize    = actualSize;
     m_pixelsFlipped = false;
+    m_fboAttachment = false;
 
     ensureGlContext();
 
@@ -592,6 +595,7 @@ Texture& Texture::operator =(const Texture& right)
     std::swap(m_isSmooth,      temp.m_isSmooth);
     std::swap(m_isRepeated,    temp.m_isRepeated);
     std::swap(m_pixelsFlipped, temp.m_pixelsFlipped);
+    std::swap(m_fboAttachment, temp.m_fboAttachment);
     m_cacheId = getUniqueId();
 
     return *this;
