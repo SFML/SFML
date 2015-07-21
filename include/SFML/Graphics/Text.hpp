@@ -145,6 +145,21 @@ public:
     void setCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the additional letter spacing offset
+    ///
+    /// The spacing between letters is defined by the font.
+    /// This method enables you to set an additional spacing
+    /// between letters. By default the additional letter
+    /// spacing offset is 0.
+    ///
+    /// \param spacing New additional letter spacing offset, in pixel
+    ///
+    /// \see getLetterSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLetterSpacing(float spacing);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the text's style
     ///
     /// You can pass a combination of one or more styles, for
@@ -259,6 +274,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     unsigned int getCharacterSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the additional letter spacing offset
+    ///
+    /// \return Size of the additional letter spacing offset, in pixel
+    ///
+    /// \see setLetterSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    float getLetterSpacing() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's style
@@ -385,6 +410,7 @@ private:
     String              m_string;             ///< String to display
     const Font*         m_font;               ///< Font used to display the string
     unsigned int        m_characterSize;      ///< Base size of characters, in pixels
+    float               m_letterSpacing;      ///< Additional spacing offset between letters, in pixel
     Uint32              m_style;              ///< Text style (see Style enum)
     Color               m_fillColor;          ///< Text fill color
     Color               m_outlineColor;       ///< Text outline color

@@ -77,6 +77,7 @@ Text::Text() :
 m_string            (),
 m_font              (NULL),
 m_characterSize     (30),
+m_letterSpacing     (0.f),
 m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
@@ -96,6 +97,7 @@ Text::Text(const String& string, const Font& font, unsigned int characterSize) :
 m_string            (string),
 m_font              (&font),
 m_characterSize     (characterSize),
+m_letterSpacing     (0.f),
 m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
@@ -138,6 +140,17 @@ void Text::setCharacterSize(unsigned int size)
     if (m_characterSize != size)
     {
         m_characterSize = size;
+        m_geometryNeedUpdate = true;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setLetterSpacing(float spacing)
+{
+    if (m_letterSpacing != spacing)
+    {
+        m_letterSpacing = spacing;
         m_geometryNeedUpdate = true;
     }
 }
@@ -230,6 +243,13 @@ unsigned int Text::getCharacterSize() const
 
 
 ////////////////////////////////////////////////////////////
+float Text::getLetterSpacing() const
+{
+    return m_letterSpacing;
+}
+
+
+////////////////////////////////////////////////////////////
 Uint32 Text::getStyle() const
 {
     return m_style;
@@ -277,7 +297,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
     // Precompute the variables needed by the algorithm
     bool  bold   = (m_style & Bold) != 0;
-    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
     float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
 
     // Compute the position
@@ -300,7 +320,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += static_cast<float>(m_font->getGlyph(curChar, m_characterSize, bold).advance);
+        position.x += static_cast<float>(m_font->getGlyph(curChar, m_characterSize, bold).advance) + m_letterSpacing;
     }
 
     // Transform the position to global coordinates
@@ -385,7 +405,7 @@ void Text::ensureGeometryUpdate() const
     float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance);
+    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
     float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
     float x      = 0.f;
     float y      = static_cast<float>(m_characterSize);
@@ -486,7 +506,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // Advance to the next character
-        x += glyph.advance;
+        x += glyph.advance + m_letterSpacing;
     }
 
     // If we're using the underlined style, add the last line
