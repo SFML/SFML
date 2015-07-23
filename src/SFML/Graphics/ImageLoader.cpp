@@ -226,12 +226,21 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
-        // Deduce the image type from its extension
-        if (filename.size() > 3)
+        std::string extension = "";
+        
+        //Extract the extension after the dot
+        for (int i = filename.size() - 1; i >= 0; i--)
         {
-            // Extract the extension
-            std::string extension = toLower(filename.substr(filename.size() - 3));
+            if (filename[i] == '.')
+            {
+                extension = toLower(filename.substr(i + 1));
+                break;
+            }
+        }
 
+        // Deduce the image type from its extension
+        if (extension.size() >= 3)
+        {
             if (extension == "bmp")
             {
                 // BMP format
@@ -250,7 +259,7 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
                 if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
                     return true;
             }
-            else if (extension == "jpg")
+            else if (extension == "jpg" || extension == "jpeg")
             {
                 // JPG format
                 if (writeJpg(filename, pixels, size.x, size.y))
