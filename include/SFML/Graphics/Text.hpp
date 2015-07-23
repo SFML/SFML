@@ -145,6 +145,21 @@ public:
     void setCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the additional line spacing offset
+    ///
+    /// The spacing between lines is defined by the font.
+    /// This method enables you to set an additional spacing
+    /// between lines. By default the additional line
+    /// spacing offset is 0.
+    ///
+    /// \param spacing New additional line spacing offset, in pixel
+    ///
+    /// \see getLineSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLineSpacing(float spacing);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the additional letter spacing offset
     ///
     /// The spacing between letters is defined by the font.
@@ -286,6 +301,16 @@ public:
     float getLetterSpacing() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the additional line spacing offset
+    ///
+    /// \return Size of the additional line spacing offset, in pixel
+    ///
+    /// \see setLineSpacing
+    ///
+    ////////////////////////////////////////////////////////////
+    float getLineSpacing() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the text's style
     ///
     /// \return Text's style
@@ -411,6 +436,7 @@ private:
     const Font*         m_font;               ///< Font used to display the string
     unsigned int        m_characterSize;      ///< Base size of characters, in pixels
     float               m_letterSpacing;      ///< Additional spacing offset between letters, in pixel
+    float               m_lineSpacing;        ///< Additional spacing offset between lines, in pixel
     Uint32              m_style;              ///< Text style (see Style enum)
     Color               m_fillColor;          ///< Text fill color
     Color               m_outlineColor;       ///< Text outline color

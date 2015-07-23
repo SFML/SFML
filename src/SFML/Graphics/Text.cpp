@@ -78,6 +78,7 @@ m_string            (),
 m_font              (NULL),
 m_characterSize     (30),
 m_letterSpacing     (0.f),
+m_lineSpacing       (0.f),
 m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
@@ -98,6 +99,7 @@ m_string            (string),
 m_font              (&font),
 m_characterSize     (characterSize),
 m_letterSpacing     (0.f),
+m_lineSpacing       (0.f),
 m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
@@ -151,6 +153,17 @@ void Text::setLetterSpacing(float spacing)
     if (m_letterSpacing != spacing)
     {
         m_letterSpacing = spacing;
+        m_geometryNeedUpdate = true;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setLineSpacing(float spacing)
+{
+    if (m_lineSpacing != spacing)
+    {
+        m_lineSpacing = spacing;
         m_geometryNeedUpdate = true;
     }
 }
@@ -250,6 +263,13 @@ float Text::getLetterSpacing() const
 
 
 ////////////////////////////////////////////////////////////
+float Text::getLineSpacing() const
+{
+    return m_lineSpacing;
+}
+
+
+////////////////////////////////////////////////////////////
 Uint32 Text::getStyle() const
 {
     return m_style;
@@ -296,9 +316,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         index = m_string.getSize();
 
     // Precompute the variables needed by the algorithm
-    bool  bold   = (m_style & Bold) != 0;
-    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
-    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
+    bool  bold              = (m_style & Bold) != 0;
+    float hspace            = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
+    const float lineSpacing = static_cast<float>(m_font->getLineSpacing(m_characterSize))+ m_lineSpacing;
 
     // Compute the position
     Vector2f position;
@@ -314,9 +334,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         // Handle special characters
         switch (curChar)
         {
-            case ' ':  position.x += hspace;                 continue;
-            case '\t': position.x += hspace * 4;             continue;
-            case '\n': position.y += vspace; position.x = 0; continue;
+            case ' ':  position.x += hspace;                      continue;
+            case '\t': position.x += hspace * 4;                  continue;
+            case '\n': position.y += lineSpacing; position.x = 0; continue;
         }
 
         // For regular characters, add the advance offset of the glyph
@@ -405,10 +425,10 @@ void Text::ensureGeometryUpdate() const
     float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float hspace = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
-    float vspace = static_cast<float>(m_font->getLineSpacing(m_characterSize));
-    float x      = 0.f;
-    float y      = static_cast<float>(m_characterSize);
+    float hspace            = static_cast<float>(m_font->getGlyph(L' ', m_characterSize, bold).advance) + m_letterSpacing;
+    const float lineSpacing = static_cast<float>(m_font->getLineSpacing(m_characterSize)) + m_lineSpacing;
+    float x                 = 0.f;
+    float y                 = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
     float minX = static_cast<float>(m_characterSize);
@@ -451,9 +471,9 @@ void Text::ensureGeometryUpdate() const
 
             switch (curChar)
             {
-                case ' ':  x += hspace;        break;
-                case '\t': x += hspace * 4;    break;
-                case '\n': y += vspace; x = 0; break;
+                case ' ':  x += hspace;             break;
+                case '\t': x += hspace * 4;         break;
+                case '\n': y += lineSpacing; x = 0; break;
             }
 
             // Update the current bounds (max coordinates)
