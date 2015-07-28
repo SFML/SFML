@@ -45,6 +45,17 @@ set(VERSION_PATCH 1)
 # add the SFML header path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# add options to not build certain modules
+sfml_set_option(SFML_BUILD_WINDOW TRUE BOOL "TRUE to build the SFML Window Module")
+sfml_set_option(SFML_BUILD_NETWORK TRUE BOOL "TRUE to build the SFML Network Module")
+sfml_set_option(SFML_BUILD_GRAPHICS TRUE BOOL "TRUE to build the SFML Graphics Module")
+sfml_set_option(SFML_BUILD_AUDIO TRUE BOOL "TRUE to build the SFML Audio Module")
+
+# graphics module depends on window module
+if(NOT SFML_BUILD_WINDOW)
+    set(SFML_BUILD_GRAPHICS FALSE)
+endif()
+
 # add an option for choosing the build type (shared or static)
 if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
     sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
@@ -258,10 +269,46 @@ else()
                           MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
                           PUBLIC_HEADER "${SFML_HEADERS}")
 
-    # add the remaining headers
-    add_custom_command(TARGET SFML
-                       POST_BUILD
-                       COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* $<TARGET_FILE_DIR:SFML>/Headers)
+    # add the non-optional SFML headers
+    add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
+                       ${PROJECT_SOURCE_DIR}/include/SFML/Config.hpp
+                       ${PROJECT_SOURCE_DIR}/include/SFML/OpenGL.hpp
+                       ${PROJECT_SOURCE_DIR}/include/SFML/System.hpp
+                       ${PROJECT_SOURCE_DIR}/include/SFML/Main.hpp
+                       ${PROJECT_SOURCE_DIR}/include/SFML/System
+                       $<TARGET_FILE_DIR:SFML>/Headers)
+
+    # add window module headers if enabled
+    if(SFML_BUILD_WINDOW)
+        add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Window.hpp
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Window
+                           $<TARGET_FILE_DIR:SFML>/Headers)
+    endif()
+
+    # add network module headers if enabled
+    if(SFML_BUILD_GRAPHICS)
+        add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Network.hpp
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Network
+                           $<TARGET_FILE_DIR:SFML>/Headers)
+    endif()
+
+    # add graphics module headers if enabled
+    if(SFML_BUILD_GRAPHICS)
+        add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Graphics.hpp
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Graphics
+                           $<TARGET_FILE_DIR:SFML>/Headers)
+    endif()
+
+    # add audio module headers if enabled
+    if(SFML_BUILD_AUDIO)
+        add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Audio.hpp
+                           ${PROJECT_SOURCE_DIR}/include/SFML/Audio
+                           $<TARGET_FILE_DIR:SFML>/Headers)
+    endif()
 
     # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
     # NOTE: it's not required to link agains SFML.framework
