@@ -30,8 +30,6 @@
 #include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <X11/keysym.h>
 #include <cassert>
-#include <cstdlib>
-#include <algorithm>
 #include <map>
 
 
@@ -43,108 +41,6 @@ namespace
 
     typedef std::map<std::string, xcb_atom_t> AtomMap;
     AtomMap atoms;
-
-    bool mapBuilt = false;
-    xcb_keycode_t firstKeycode = 255;
-    xcb_keycode_t lastKeycode  = 0;
-
-    // We use a simple array instead of a map => constant time lookup
-    // xcb_keycode_t can only contain 256 distinct values
-    xcb_keysym_t keysymMap[256];
-
-    xcb_keysym_t keysymToLower(xcb_keysym_t keysym)
-    {
-        switch(keysym >> 8)
-        {
-            // Latin 1
-            case 0:
-            {
-                if ((keysym >= XK_A) && (keysym <= XK_Z))
-                    return keysym + (XK_a - XK_A);
-                else if ((keysym >= XK_Agrave) && (keysym <= XK_Odiaeresis))
-                    return keysym + (XK_agrave - XK_Agrave);
-                else if ((keysym >= XK_Ooblique) && (keysym <= XK_Thorn))
-                    return keysym + (XK_oslash - XK_Ooblique);
-                break;
-            }
-
-            // Latin 2
-            case 1:
-            {
-                if (keysym == XK_Aogonek)
-                    return XK_aogonek;
-                else if (keysym >= XK_Lstroke && keysym <= XK_Sacute)
-                    return keysym + (XK_lstroke - XK_Lstroke);
-                else if (keysym >= XK_Scaron && keysym <= XK_Zacute)
-                    return keysym + (XK_scaron - XK_Scaron);
-                else if (keysym >= XK_Zcaron && keysym <= XK_Zabovedot)
-                    return keysym + (XK_zcaron - XK_Zcaron);
-                else if (keysym >= XK_Racute && keysym <= XK_Tcedilla)
-                    return keysym + (XK_racute - XK_Racute);
-                break;
-            }
-
-            // Latin 3
-            case 2:
-            {
-                if (keysym >= XK_Hstroke && keysym <= XK_Hcircumflex)
-                    return keysym + (XK_hstroke - XK_Hstroke);
-                else if (keysym >= XK_Gbreve && keysym <= XK_Jcircumflex)
-                    return keysym + (XK_gbreve - XK_Gbreve);
-                else if (keysym >= XK_Cabovedot && keysym <= XK_Scircumflex)
-                    return keysym + (XK_cabovedot - XK_Cabovedot);
-                break;
-            }
-
-            // Latin 4
-            case 3:
-            {
-                if (keysym >= XK_Rcedilla && keysym <= XK_Tslash)
-                    return keysym + (XK_rcedilla - XK_Rcedilla);
-                else if (keysym == XK_ENG)
-                    return XK_eng;
-                else if (keysym >= XK_Amacron && keysym <= XK_Umacron)
-                    return keysym + (XK_amacron - XK_Amacron);
-                break;
-            }
-
-            // Cyrillic
-            case 6:
-            {
-                if (keysym >= XK_Serbian_DJE && keysym <= XK_Serbian_DZE)
-                    return keysym - (XK_Serbian_DJE - XK_Serbian_dje);
-                else if (keysym >= XK_Cyrillic_YU && keysym <= XK_Cyrillic_HARDSIGN)
-                    return keysym - (XK_Cyrillic_YU - XK_Cyrillic_yu);
-                break;
-            }
-
-            // Greek
-            case 7:
-            {
-                if (keysym >= XK_Greek_ALPHAaccent && keysym <= XK_Greek_OMEGAaccent)
-                    return keysym + (XK_Greek_alphaaccent - XK_Greek_ALPHAaccent);
-                else if (keysym >= XK_Greek_ALPHA && keysym <= XK_Greek_OMEGA)
-                    return keysym + (XK_Greek_alpha - XK_Greek_ALPHA);
-                break;
-            }
-
-            // Armenian
-            case 0x14:
-            {
-                if (keysym >= XK_Armenian_AYB && keysym <= XK_Armenian_fe) {
-                    return (keysym | 1);
-                }
-                break;
-            }
-
-            default:
-            {
-                break;
-            }
-        }
-
-        return keysym;
-    }
 }
 
 namespace sf
@@ -266,89 +162,6 @@ xcb_atom_t getAtom(const std::string& name, bool onlyIfExists)
     atoms[name] = reply->atom;
 
     return reply->atom;
-}
-
-
-////////////////////////////////////////////////////////////
-const xcb_keysym_t* getKeysymMap()
-{
-    if (!mapBuilt)
-        buildKeysymMap();
-
-    return keysymMap;
-}
-
-
-////////////////////////////////////////////////////////////
-void buildKeysymMap()
-{
-    // Open a connection with the X server
-    xcb_connection_t* connection = sf::priv::OpenConnection();
-
-    firstKeycode = xcb_get_setup(connection)->min_keycode;
-    lastKeycode = xcb_get_setup(connection)->max_keycode;
-
-    sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-    sf::priv::ScopedXcbPtr<xcb_get_keyboard_mapping_reply_t> keyboardMapping(xcb_get_keyboard_mapping_reply(
-        connection,
-        xcb_get_keyboard_mapping(
-            connection,
-            firstKeycode,
-            lastKeycode - firstKeycode + 1
-        ),
-        &error
-    ));
-
-    sf::priv::CloseConnection(connection);
-
-    if (error || !keyboardMapping)
-    {
-        sf::err() << "Failed to get keyboard mapping" << std::endl;
-        return;
-    }
-
-    uint8_t keysymsPerKeycode = keyboardMapping->keysyms_per_keycode;
-
-    if (!keysymsPerKeycode)
-    {
-        sf::err() << "Error: No keysyms per keycode" << std::endl;
-        return;
-    }
-
-    const xcb_keysym_t* keysyms = xcb_get_keyboard_mapping_keysyms(keyboardMapping.get());
-
-    if (!keysyms)
-    {
-        sf::err() << "Failed to get keyboard mapping keysyms" << std::endl;
-        return;
-    }
-
-    xcb_keycode_t range = lastKeycode - firstKeycode + 1;
-
-    std::fill(keysymMap, keysymMap + 256, XK_VoidSymbol);
-
-    for (xcb_keycode_t i = firstKeycode; ; ++i)
-    {
-        const xcb_keysym_t* keysym = &keysyms[(i - firstKeycode) * keysymsPerKeycode];
-
-        if ((keysymsPerKeycode == 1) || (keysym[1] == XCB_NO_SYMBOL))
-        {
-            keysymMap[i] = keysymToLower(keysym[0]);
-
-            if (i == lastKeycode)
-                break;
-
-            continue;
-        }
-
-        keysymMap[i] = keysym[0];
-
-        if (i == lastKeycode)
-            break;
-    }
-
-    mapBuilt = true;
 }
 
 } // namespace priv
