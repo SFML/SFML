@@ -49,13 +49,16 @@ m_file (NULL)
 ////////////////////////////////////////////////////////////
 ResourceStream::~ResourceStream()
 {
-    AAsset_close(m_file);
+    if (m_file != nullptr)
+        AAsset_close(m_file);
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::read(void *data, Int64 size)
 {
+    if (m_file == nullptr)
+        return -1;
     return AAsset_read(m_file, data, size);
 }
 
@@ -63,6 +66,8 @@ Int64 ResourceStream::read(void *data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::seek(Int64 position)
 {
+    if (m_file == nullptr)
+        return -1;
     return AAsset_seek(m_file, position, SEEK_SET);
 }
 
@@ -70,6 +75,8 @@ Int64 ResourceStream::seek(Int64 position)
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::tell()
 {
+    if (m_file == nullptr)
+        return -1;
     return getSize() - AAsset_getRemainingLength(m_file);
 }
 
@@ -77,6 +84,8 @@ Int64 ResourceStream::tell()
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::getSize()
 {
+    if (m_file == nullptr)
+        return 0;
     return AAsset_getLength(m_file);
 }
 
