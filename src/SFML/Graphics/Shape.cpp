@@ -163,8 +163,8 @@ m_textureRect     (),
 m_fillColor       (255, 255, 255),
 m_outlineColor    (255, 255, 255),
 m_outlineThickness(0),
-m_vertices        (TrianglesFan),
-m_outlineVertices (TrianglesStrip),
+m_vertices        (TriangleFan),
+m_outlineVertices (TriangleStrip),
 m_insideBounds    (),
 m_bounds          ()
 {
