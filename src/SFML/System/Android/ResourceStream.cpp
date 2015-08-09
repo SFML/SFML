@@ -85,7 +85,7 @@ Int64 ResourceStream::tell()
 Int64 ResourceStream::getSize()
 {
     if (!m_file)
-        return 0;
+        return -1;
     return AAsset_getLength(m_file);
 }
 
