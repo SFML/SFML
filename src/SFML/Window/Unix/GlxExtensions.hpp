@@ -36,7 +36,7 @@
 #include <GL/glx.h>
 #ifdef CODEGEN_FUNCPTR
 #undef CODEGEN_FUNCPTR
-#endif /*CODEGEN_FUNCPTR*/
+#endif // CODEGEN_FUNCPTR
 #define CODEGEN_FUNCPTR
 
 #ifndef GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
@@ -58,21 +58,21 @@ typedef double GLdouble;
 typedef double GLclampd;
 #define GLvoid void
 
-#endif /*GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS*/
+#endif // GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
 #ifndef GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 #define GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
-#endif /*GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS*/
+#endif // GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
 #ifndef GLEXT_64_TYPES_DEFINED
-/* This code block is duplicated in glext.h, so must be protected */
+// This code block is duplicated in glext.h, so must be protected
 #define GLEXT_64_TYPES_DEFINED
-/* Define int32_t, int64_t, and uint64_t types for UST/MSC */
-/* (as used in the GLX_OML_sync_control extension). */
+// Define int32_t, int64_t, and uint64_t types for UST/MSC
+// (as used in the GLX_OML_sync_control extension).
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #include <inttypes.h>
 #elif defined(__sun__) || defined(__digital__)
@@ -84,8 +84,8 @@ typedef unsigned long int uint64_t;
 #else
 typedef long long int int64_t;
 typedef unsigned long long int uint64_t;
-#endif /* __arch64__ */
-#endif /* __STDC__ */
+#endif // __arch64__
+#endif // __STDC__
 #elif defined( __VMS ) || defined(__sgi)
 #include <inttypes.h>
 #elif defined(__SCO__) || defined(__USLC__)
@@ -101,7 +101,7 @@ typedef __int32 int32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #else
-/* Fallback if nothing above works */
+// Fallback if nothing above works
 #include <inttypes.h>
 #endif
 #endif
@@ -118,28 +118,28 @@ typedef unsigned __int64 uint64_t;
     typedef struct __GLXFBConfigRec *GLXFBConfigSGIX;
     typedef XID GLXPbufferSGIX;
     typedef struct {
-        char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+        char    pipeName[80]; // Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX]
         int     networkId;
 } GLXHyperpipeNetworkSGIX;
     typedef struct {
-        char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+        char    pipeName[80]; // Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX]
         int     channel;
         unsigned int participationType;
         int     timeSlice;
 } GLXHyperpipeConfigSGIX;
     typedef struct {
-        char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+        char pipeName[80]; // Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX]
         int srcXOrigin, srcYOrigin, srcWidth, srcHeight;
         int destXOrigin, destYOrigin, destWidth, destHeight;
 } GLXPipeRect;
     typedef struct {
-        char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+        char pipeName[80]; // Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX]
         int XOrigin, YOrigin, maxHeight, maxWidth;
 } GLXPipeRectLimits;
 
 #ifdef __cplusplus
 extern "C" {
-#endif /*__cplusplus*/
+#endif // __cplusplus
 
 extern int sfglx_ext_EXT_swap_control;
 extern int sfglx_ext_MESA_swap_control;
@@ -168,7 +168,7 @@ extern int sfglx_ext_ARB_create_context_profile;
 #define GLX_EXT_swap_control 1
 extern void (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalEXT)(Display *, GLXDrawable, int);
 #define glXSwapIntervalEXT sf_ptrc_glXSwapIntervalEXT
-#endif /*GLX_EXT_swap_control*/
+#endif // GLX_EXT_swap_control
 
 // Declare entry point even if GLX header already provides glXSwapIntervalMESA
 // We won't make use of an alias here
@@ -178,13 +178,13 @@ extern int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalMESA)(int);
 #define GLX_SGI_swap_control 1
 extern int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalSGI)(int);
 #define glXSwapIntervalSGI sf_ptrc_glXSwapIntervalSGI
-#endif /*GLX_SGI_swap_control*/
+#endif // GLX_SGI_swap_control
 
 #ifndef GLX_ARB_create_context
 #define GLX_ARB_create_context 1
-extern GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display *, GLXFBConfig, GLXContext, Bool, const int *);
+extern GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
 #define glXCreateContextAttribsARB sf_ptrc_glXCreateContextAttribsARB
-#endif /*GLX_ARB_create_context*/
+#endif // GLX_ARB_create_context
 
 
 enum sfglx_LoadStatus
@@ -198,6 +198,6 @@ int sfglx_LoadFunctions(Display *display, int screen);
 
 #ifdef __cplusplus
 }
-#endif /*__cplusplus*/
+#endif // __cplusplus
 
-#endif /* SF_POINTER_C_GENERATED_HEADER_GLXWIN_HPP */
+#endif // SF_POINTER_C_GENERATED_HEADER_GLXWIN_HPP

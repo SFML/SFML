@@ -119,7 +119,21 @@ namespace
         // Create a temporary context in case the user checks
         // before a GlResource is created, thus initializing
         // the shared context
-        sf::Context context;
+        if (!sf::Context::getActiveContext())
+        {
+            sf::Context context;
+
+            // Make sure that extensions are initialized
+            sf::priv::ensureExtensionsInit();
+
+            bool available = GLEXT_multitexture         &&
+                             GLEXT_shading_language_100 &&
+                             GLEXT_shader_objects       &&
+                             GLEXT_vertex_shader        &&
+                             GLEXT_fragment_shader;
+
+            return available;
+        }
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();

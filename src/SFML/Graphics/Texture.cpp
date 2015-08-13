@@ -58,7 +58,15 @@ namespace
         // Create a temporary context in case the user queries
         // the size before a GlResource is created, thus
         // initializing the shared context
-        sf::Context context;
+        if (!sf::Context::getActiveContext())
+        {
+            sf::Context context;
+
+            GLint size;
+            glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
+
+            return static_cast<unsigned int>(size);
+        }
 
         GLint size;
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
