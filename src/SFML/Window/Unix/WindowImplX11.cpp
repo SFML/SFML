@@ -1745,28 +1745,10 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
                 }
                 else if (netWmPing && (windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
                 {
-                    xcb_client_message_event_t event;
-
                     // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
-                    event.response_type = XCB_CLIENT_MESSAGE;
-                    event.format = windowEvent.xclient.format;
-                    event.window = XCBDefaultRootWindow(m_connection);
-                    event.type = windowEvent.xclient.message_type;
-                    std::memcpy(event.data.data8, windowEvent.xclient.data.b, 20);
+                    windowEvent.xclient.window = XCBDefaultRootWindow(m_connection);
 
-                    ScopedXcbPtr<xcb_generic_error_t> pongError(xcb_request_check(
-                        m_connection,
-                        xcb_send_event_checked(
-                            m_connection,
-                            0,
-                            XCBDefaultRootWindow(m_connection),
-                            XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
-                            reinterpret_cast<char*>(&event)
-                        )
-                    ));
-
-                    if (pongError)
-                        err() << "Could not send pong event back to WM" << std::endl;
+                    XSendEvent(m_display, windowEvent.xclient.window, False, SubstructureNotifyMask | SubstructureRedirectMask, &windowEvent);
                 }
             }
             break;
