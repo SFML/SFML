@@ -54,7 +54,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 class WindowImpl : NonCopyable
 {
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on the current OS
@@ -79,7 +79,7 @@ public:
     ////////////////////////////////////////////////////////////
     static WindowImpl* create(WindowHandle handle);
 
-public:
+public :
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -88,10 +88,10 @@ public:
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change the joystick threshold, i.e. the value below which
+    /// \brief Change the joystick threshold, ie. the value below which
     ///        no move event will be generated
     ///
-    /// \param threshold New threshold, in range [0, 100]
+    /// \param threshold : New threshold, in range [0, 100]
     ///
     ////////////////////////////////////////////////////////////
     void setJoystickThreshold(float threshold);
@@ -101,7 +101,7 @@ public:
     ///
     /// If there's no event available, this function calls the
     /// window's internal event processing function.
-    /// The \a block parameter controls the behavior of the function
+    /// The \a block parameter controls the behaviour of the function
     /// if no event is available: if it is true then the function
     /// doesn't return until a new event is triggered; otherwise it
     /// returns false to indicate that no event is available.
@@ -187,6 +187,14 @@ public:
     virtual void setMouseCursorVisible(bool visible) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor and keeps it from leaving
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursorGrabbed(bool grabbed) = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -194,22 +202,21 @@ public:
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled) = 0;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Request the current window to be made the active
-    ///        foreground window
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void requestFocus() = 0;
+	////////////////////////////////////////////////////////////
+	/// \brief Request the current window to be made the active
+	/// foreground window
+	///
+	////////////////////////////////////////////////////////////
+	virtual void requestFocus() = 0;
+	////////////////////////////////////////////////////////////
+	/// \brief Check whether the window has the input focus
+	///
+	/// \return True if window has focus, false otherwise
+	///
+	////////////////////////////////////////////////////////////
+	virtual bool hasFocus() const = 0;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Check whether the window has the input focus
-    ///
-    /// \return True if window has focus, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const = 0;
-
-protected:
+protected :
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -235,7 +242,7 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void processEvents() = 0;
 
-private:
+private :
 
     ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events

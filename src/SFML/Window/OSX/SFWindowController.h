@@ -49,12 +49,18 @@ namespace sf {
 /// Used when SFML handle everything and when a NSWindow* is given
 /// as handle to WindowImpl.
 ///
+/// When grabbing the cursor, if the window is resizeable, m_restoreResize is
+/// set to YES and the window is marked as not resizeable. This is to prevent
+/// accidental resize by the user. When the cursor is released, the window
+/// style is restored.
+///
 ////////////////////////////////////////////////////////////
 @interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
 {
     NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
     SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
     sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
+    BOOL                        m_restoreResize;    ///< See note above
 }
 
 ////////////////////////////////////////////////////////////
