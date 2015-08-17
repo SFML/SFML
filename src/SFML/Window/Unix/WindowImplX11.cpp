@@ -47,14 +47,6 @@
 #include <string>
 #include <cstring>
 
-// So we don't have to require xcb dri2 to be present
-#define XCB_DRI2_BUFFER_SWAP_COMPLETE 0
-#define XCB_DRI2_INVALIDATE_BUFFERS   1
-
-// So we don't have to require xcb xkb to be present
-#define XCB_XKB_NEW_KEYBOARD_NOTIFY 0
-#define XCB_XKB_MAP_NOTIFY 1
-
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
     typedef sf::priv::EglContext ContextType;
@@ -73,17 +65,18 @@ namespace
     sf::Mutex                             allWindowsMutex;
     sf::String                            windowManagerName;
 
-    bool mapBuilt = false;
-
-    // We use a simple array instead of a map => constant time lookup
-    // xcb_keycode_t can only contain 256 distinct values
-    sf::Keyboard::Key sfKeyMap[256];
-
     static const unsigned long            eventMask = XCB_EVENT_MASK_FOCUS_CHANGE   | XCB_EVENT_MASK_BUTTON_PRESS     |
                                                       XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION    |
                                                       XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS        |
                                                       XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
                                                       XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW;
+
+    // Filter the events received by windows (only allow those matching a specific window)
+    Bool checkEvent(::Display*, XEvent* event, XPointer userData)
+    {
+        // Just check if the event matches the window
+        return event->xany.window == reinterpret_cast< ::Window >(userData);
+    }
 
     // Find the name of the current executable
     std::string findExecutableName()
@@ -245,124 +238,6 @@ namespace
         return true;
     }
 
-    xcb_query_extension_reply_t getXExtension(const std::string& name)
-    {
-        xcb_connection_t* connection = sf::priv::OpenConnection();
-
-        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-        sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
-            connection,
-            xcb_query_extension(
-                connection,
-                name.size(),
-                name.c_str()
-            ),
-            &error
-        ));
-
-        // Close the connection with the X server
-        sf::priv::CloseConnection(connection);
-
-        if (error || !extension || !extension->present)
-        {
-            xcb_query_extension_reply_t reply;
-            std::memset(&reply, 0, sizeof(reply));
-            return reply;
-        }
-
-        return *extension.get();
-    }
-
-    void dumpXcbExtensions()
-    {
-        xcb_connection_t* connection = sf::priv::OpenConnection();
-
-        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-        // Check if the RandR extension is present
-        sf::priv::ScopedXcbPtr<xcb_list_extensions_reply_t> extensions(xcb_list_extensions_reply(
-            connection,
-            xcb_list_extensions(
-                connection
-            ),
-            &error
-        ));
-
-        if (error || !extensions)
-        {
-            // Close the connection with the X server
-            sf::priv::CloseConnection(connection);
-
-            sf::err() << "Couldn't get list of X extensions" << std::endl;
-            return;
-        }
-
-        xcb_str_iterator_t iter = xcb_list_extensions_names_iterator(extensions.get());
-
-        sf::err() << "X Extensions:" << std::endl;
-
-        while (iter.rem)
-        {
-            std::string name(xcb_str_name(iter.data), xcb_str_name_length(iter.data));
-
-            sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-            // Check if the RandR extension is present
-            sf::priv::ScopedXcbPtr<xcb_query_extension_reply_t> extension(xcb_query_extension_reply(
-                connection,
-                xcb_query_extension(
-                    connection,
-                    name.size(),
-                    name.c_str()
-                ),
-                &error
-            ));
-
-            if (error || !extension || !extension->present)
-            {
-                sf::err() << "\t" << name << " - Failed to query" << std::endl;
-                continue;
-            }
-
-            int firstEvent = extension->first_event;
-
-            sf::err() << "\t" << name << " - First event: " << firstEvent << std::endl;
-            iter.data += xcb_str_name_length(iter.data) + 1;
-            --iter.rem;
-        }
-
-        // Close the connection with the X server
-        sf::priv::CloseConnection(connection);
-    }
-
-    void dumpUnhandledEvent(uint8_t type)
-    {
-        static std::vector<uint8_t> types;
-
-        // Check if we already reported this type
-        if (std::find(types.begin(), types.end(), type) != types.end())
-            return;
-
-        // Insert it if new
-        types.push_back(type);
-
-        static bool dumpedExtensions = false;
-
-        if (!dumpedExtensions)
-        {
-            dumpXcbExtensions();
-            dumpedExtensions = true;
-        }
-
-        sf::err() << "Unhandled event type: " << (static_cast<int>(type) & ~0x80) << std::endl
-                  << "Report this to the SFML maintainers if possible" << std::endl;
-    }
-
-    xcb_keysym_t getKeysymFromKeycode(xcb_keycode_t keycode)
-    {
-        return sf::priv::getKeysymMap()[keycode];
-    }
-
     sf::Keyboard::Key keysymToSF(xcb_keysym_t symbol)
     {
         switch (symbol)
@@ -473,27 +348,6 @@ namespace
 
         return sf::Keyboard::Unknown;
     }
-
-    void buildMap()
-    {
-        for (xcb_keycode_t i = 0; ; ++i)
-        {
-            sfKeyMap[i] = keysymToSF(getKeysymFromKeycode(i));
-
-            if (i == 255)
-                break;
-        }
-
-        mapBuilt = true;
-    }
-
-    sf::Keyboard::Key keycodeToSF(xcb_keycode_t keycode)
-    {
-        if (!mapBuilt)
-            buildMap();
-
-        return sfKeyMap[keycode];
-    }
 }
 
 
@@ -529,7 +383,6 @@ m_fullscreen     (false)
     ewmhSupported();
 
     m_screen = XCBDefaultScreen(m_connection);
-    XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
 
     // Save the window handle
     m_window = handle;
@@ -583,7 +436,6 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
     ewmhSupported();
 
     m_screen = XCBDefaultScreen(m_connection);
-    XSetEventQueueOwner(m_display, XCBOwnsEventQueue);
 
     // Compute position and size
     int left = m_fullscreen ? 0 : (m_screen->width_in_pixels  - mode.width) / 2;
@@ -737,105 +589,10 @@ WindowHandle WindowImplX11::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::processEvents()
 {
-    // Key repeat workaround: If key repeat is enabled, XCB will spawn two
-    // events for each repeat interval: key release and key press. Both have
-    // the same timestamp and key code. We are holding back the release event
-    // to check for the matching key press event and if so, discard the release
-    // event.
-
-    xcb_generic_event_t* event = NULL;
-    xcb_key_release_event_t* lastKeyReleaseEvent = NULL;
-    uint8_t eventType = 0;
-
-    if (!m_xcbEvents.empty())
+    XEvent event;
+    while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
     {
-        event = m_xcbEvents.front();
-        m_xcbEvents.pop_front();
-    }
-    else
-    {
-        event = xcb_poll_for_event(m_connection);
-    }
-
-    while (event)
-    {
-        eventType = event->response_type & ~0x80;
-
-        // Key was pressed and one has been released prior to that.
-        if (eventType == XCB_KEY_PRESS && lastKeyReleaseEvent)
-        {
-            // If the key press event matches the held back key release event,
-            // then we have a key repeat and discard the held back release
-            // event.
-            if (lastKeyReleaseEvent->time == reinterpret_cast<xcb_key_press_event_t*>(event)->time &&
-                lastKeyReleaseEvent->detail == reinterpret_cast<xcb_key_press_event_t*>(event)->detail)
-            {
-                free(lastKeyReleaseEvent);
-                lastKeyReleaseEvent = NULL;
-
-                // If key repeat is disabled, discard the matching key press event as well
-                if (!m_keyRepeat)
-                {
-                    free(event);
-
-                    if (!m_xcbEvents.empty())
-                    {
-                        event = m_xcbEvents.front();
-                        m_xcbEvents.pop_front();
-                    }
-                    else
-                    {
-                        event = xcb_poll_for_event(m_connection);
-                    }
-
-                    continue;
-                }
-            }
-        }
-
-        // If there's still a key release event held back, process it now.
-        if (lastKeyReleaseEvent)
-        {
-            if (processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent)))
-                free(lastKeyReleaseEvent);
-
-            lastKeyReleaseEvent = NULL;
-        }
-
-        if (eventType == XCB_KEY_RELEASE)
-        {
-            // Check if we're in charge of the key release
-            if (!passEvent(event, reinterpret_cast<xcb_key_release_event_t*>(event)->event))
-            {
-                // Remember this key release event.
-                lastKeyReleaseEvent = reinterpret_cast<xcb_key_release_event_t*>(event);
-                event = NULL; // For safety reasons.
-            }
-        }
-        else
-        {
-            if (processEvent(event))
-                free(event);
-        }
-
-        if (!m_xcbEvents.empty())
-        {
-            event = m_xcbEvents.front();
-            m_xcbEvents.pop_front();
-        }
-        else
-        {
-            event = xcb_poll_for_event(m_connection);
-        }
-    }
-
-    // Process any held back release event.
-    if (lastKeyReleaseEvent)
-    {
-        if (processEvent(reinterpret_cast<xcb_generic_event_t*>(lastKeyReleaseEvent)))
-            free(lastKeyReleaseEvent);
-
-        lastKeyReleaseEvent = NULL;
+        processEvent(event);
     }
 }
 
@@ -1867,28 +1624,57 @@ void WindowImplX11::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
+bool WindowImplX11::processEvent(XEvent windowEvent)
 {
+    // This function implements a workaround to properly discard
+    // repeated key events when necessary. The problem is that the
+    // system's key events policy doesn't match SFML's one: X server will generate
+    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
+    // SFML only wants repeated KeyPress events. Thus, we have to:
+    // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
+    // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
+
+    // Detect repeated key events
+    // (code shamelessly taken from SDL)
+    if (windowEvent.type == KeyRelease)
+    {
+        // Check if there's a matching KeyPress event in the queue
+        XEvent nextEvent;
+        if (XPending(m_display))
+        {
+            // Grab it but don't remove it from the queue, it still needs to be processed :)
+            XPeekEvent(m_display, &nextEvent);
+            if (nextEvent.type == KeyPress)
+            {
+                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
+                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                {
+                    // If we don't want repeated events, remove the next KeyPress from the queue
+                    if (!m_keyRepeat)
+                        XNextEvent(m_display, &nextEvent);
+
+                    // This KeyRelease is a repeated event and we don't want it
+                    return false;
+                }
+            }
+        }
+    }
+
     // Convert the X11 event to a sf::Event
-    switch (windowEvent->response_type & ~0x80)
+    switch (windowEvent.type)
     {
         // Destroy event
-        case XCB_DESTROY_NOTIFY:
+        case DestroyNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_destroy_notify_event_t*>(windowEvent)->window))
-                return false;
-
             // The window is about to be destroyed: we must cleanup resources
             cleanup();
             break;
         }
 
         // Gain focus event
-        case XCB_FOCUS_IN:
+        case FocusIn:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_focus_in_event_t*>(windowEvent)->event))
-                return false;
-
             // Update the input context
             if (m_inputContext)
                 XSetICFocus(m_inputContext);
@@ -1933,11 +1719,8 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Lost focus event
-        case XCB_FOCUS_OUT:
+        case FocusOut:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_focus_out_event_t*>(windowEvent)->event))
-                return false;
-
             // Update the input context
             if (m_inputContext)
                 XUnsetICFocus(m_inputContext);
@@ -1953,56 +1736,51 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Resize event
-        case XCB_CONFIGURE_NOTIFY:
+        case ConfigureNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent)->window))
-                return false;
-
-            // X notifies about "window configuration events", which also includes moving a window only. Check
-            // for a different size and only spawn a Resized event when it differs.
-            xcb_configure_notify_event_t* e = reinterpret_cast<xcb_configure_notify_event_t*>(windowEvent);
-
-            if (e->width != m_previousSize.x || e->height != m_previousSize.y)
+            // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
+            if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
-                m_previousSize.x = e->width;
-                m_previousSize.y = e->height;
-
                 Event event;
                 event.type        = Event::Resized;
-                event.size.width  = e->width;
-                event.size.height = e->height;
+                event.size.width  = windowEvent.xconfigure.width;
+                event.size.height = windowEvent.xconfigure.height;
                 pushEvent(event);
+
+                m_previousSize.x = windowEvent.xconfigure.width;
+                m_previousSize.y = windowEvent.xconfigure.height;
             }
             break;
         }
 
         // Close event
-        case XCB_CLIENT_MESSAGE:
+        case ClientMessage:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_client_message_event_t*>(windowEvent)->window))
-                return false;
-
-            xcb_client_message_event_t* e = reinterpret_cast<xcb_client_message_event_t*>(windowEvent);
-
             static xcb_atom_t wmProtocols = getAtom("WM_PROTOCOLS");
 
             // Handle window manager protocol messages we support
-            if (e->type == wmProtocols)
+            if (windowEvent.xclient.message_type == wmProtocols)
             {
                 static xcb_atom_t wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
                 static xcb_atom_t netWmPing = ewmhSupported() ? getAtom("_NET_WM_PING", true) : XCB_ATOM_NONE;
 
-                if ((e->format == 32) && (e->data.data32[0]) == static_cast<long>(wmDeleteWindow))
+                if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
                 {
                     // Handle the WM_DELETE_WINDOW message
                     Event event;
                     event.type = Event::Closed;
                     pushEvent(event);
                 }
-                else if (netWmPing && (e->format == 32) && (e->data.data32[0]) == static_cast<long>(netWmPing))
+                else if (netWmPing && (windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
                 {
+                    xcb_client_message_event_t event;
+
                     // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
-                    e->window = XCBDefaultRootWindow(m_connection);
+                    event.response_type = XCB_CLIENT_MESSAGE;
+                    event.format = windowEvent.xclient.format;
+                    event.window = XCBDefaultRootWindow(m_connection);
+                    event.type = windowEvent.xclient.message_type;
+                    std::memcpy(event.data.data8, windowEvent.xclient.data.b, 20);
 
                     ScopedXcbPtr<xcb_generic_error_t> pongError(xcb_request_check(
                         m_connection,
@@ -2011,7 +1789,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                             0,
                             XCBDefaultRootWindow(m_connection),
                             XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
-                            reinterpret_cast<char*>(e)
+                            reinterpret_cast<char*>(&event)
                         )
                     ));
 
@@ -2023,33 +1801,27 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Key down event
-        case XCB_KEY_PRESS:
+        case KeyPress:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_key_press_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_key_press_event_t* e = reinterpret_cast<xcb_key_press_event_t*>(windowEvent);
+            // Get the keysym of the key that has been pressed
+            static XComposeStatus keyboard;
+            char buffer[32];
+            KeySym symbol;
+            XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type        = Event::KeyPressed;
-            event.key.code    = keycodeToSF(e->detail);
-            event.key.alt     = e->state & XCB_MOD_MASK_1;
-            event.key.control = e->state & XCB_MOD_MASK_CONTROL;
-            event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
-            event.key.system  = e->state & XCB_MOD_MASK_4;
+            event.key.code    = keysymToSF(symbol);
+            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+            event.key.control = windowEvent.xkey.state & ControlMask;
+            event.key.shift   = windowEvent.xkey.state & ShiftMask;
+            event.key.system  = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
-            XEvent fakeEvent;
-            fakeEvent.type = KeyPress;
-            fakeEvent.xany.display = m_display;
-            fakeEvent.xany.window  = e->event;
-            fakeEvent.xkey.state   = e->state;
-            fakeEvent.xkey.keycode = e->detail;
-
             // Generate a TextEntered event
-            if (!XFilterEvent(&fakeEvent, None))
+            if (!XFilterEvent(&windowEvent, None))
             {
                 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
@@ -2059,7 +1831,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
 
                     int length = Xutf8LookupString(
                         m_inputContext,
-                        &fakeEvent.xkey,
+                        &windowEvent.xkey,
                         reinterpret_cast<char*>(keyBuffer),
                         sizeof(keyBuffer),
                         NULL,
@@ -2084,7 +1856,7 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 {
                     static XComposeStatus status;
                     char keyBuffer[16];
-                    if (XLookupString(&fakeEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;
@@ -2098,54 +1870,49 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Key up event
-        case XCB_KEY_RELEASE:
+        case KeyRelease:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_key_release_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_key_release_event_t* e = reinterpret_cast<xcb_key_release_event_t*>(windowEvent);
+            // Get the keysym of the key that has been pressed
+            char buffer[32];
+            KeySym symbol;
+            XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
 
             // Fill the event parameters
             Event event;
             event.type        = Event::KeyReleased;
-            event.key.code    = keycodeToSF(e->detail);
-            event.key.alt     = e->state & XCB_MOD_MASK_1;
-            event.key.control = e->state & XCB_MOD_MASK_CONTROL;
-            event.key.shift   = e->state & XCB_MOD_MASK_SHIFT;
-            event.key.system  = e->state & XCB_MOD_MASK_4;
+            event.key.code    = keysymToSF(symbol);
+            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+            event.key.control = windowEvent.xkey.state & ControlMask;
+            event.key.shift   = windowEvent.xkey.state & ShiftMask;
+            event.key.system  = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             break;
         }
 
         // Mouse button pressed
-        case XCB_BUTTON_PRESS:
+        case ButtonPress:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_button_press_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_button_press_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
-
             // XXX: Why button 8 and 9?
             // Because 4 and 5 are the vertical wheel and 6 and 7 are horizontal wheel ;)
-            xcb_button_t button = e->detail;
-            if ((button == XCB_BUTTON_INDEX_1) ||
-                (button == XCB_BUTTON_INDEX_2) ||
-                (button == XCB_BUTTON_INDEX_3) ||
+            unsigned int button = windowEvent.xbutton.button;
+            if ((button == Button1) ||
+                (button == Button2) ||
+                (button == Button3) ||
                 (button == 8) ||
                 (button == 9))
             {
                 Event event;
                 event.type          = Event::MouseButtonPressed;
-                event.mouseButton.x = e->event_x;
-                event.mouseButton.y = e->event_y;
+                event.mouseButton.x = windowEvent.xbutton.x;
+                event.mouseButton.y = windowEvent.xbutton.y;
                 switch(button)
                 {
-                case XCB_BUTTON_INDEX_1: event.mouseButton.button = Mouse::Left;     break;
-                case XCB_BUTTON_INDEX_2: event.mouseButton.button = Mouse::Middle;   break;
-                case XCB_BUTTON_INDEX_3: event.mouseButton.button = Mouse::Right;    break;
-                case 8:                  event.mouseButton.button = Mouse::XButton1; break;
-                case 9:                  event.mouseButton.button = Mouse::XButton2; break;
+                    case Button1: event.mouseButton.button = Mouse::Left;     break;
+                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3: event.mouseButton.button = Mouse::Right;    break;
+                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -2153,49 +1920,44 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Mouse button released
-        case XCB_BUTTON_RELEASE:
+        case ButtonRelease:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_button_release_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_button_release_event_t* e = reinterpret_cast<xcb_button_press_event_t*>(windowEvent);
-
-            xcb_button_t button = e->detail;
-            if ((button == XCB_BUTTON_INDEX_1) ||
-                (button == XCB_BUTTON_INDEX_2) ||
-                (button == XCB_BUTTON_INDEX_3) ||
+            unsigned int button = windowEvent.xbutton.button;
+            if ((button == Button1) ||
+                (button == Button2) ||
+                (button == Button3) ||
                 (button == 8) ||
                 (button == 9))
             {
                 Event event;
                 event.type          = Event::MouseButtonReleased;
-                event.mouseButton.x = e->event_x;
-                event.mouseButton.y = e->event_y;
+                event.mouseButton.x = windowEvent.xbutton.x;
+                event.mouseButton.y = windowEvent.xbutton.y;
                 switch(button)
                 {
-                case XCB_BUTTON_INDEX_1: event.mouseButton.button = Mouse::Left;     break;
-                case XCB_BUTTON_INDEX_2: event.mouseButton.button = Mouse::Middle;   break;
-                case XCB_BUTTON_INDEX_3: event.mouseButton.button = Mouse::Right;    break;
-                case 8:                  event.mouseButton.button = Mouse::XButton1; break;
-                case 9:                  event.mouseButton.button = Mouse::XButton2; break;
+                    case Button1: event.mouseButton.button = Mouse::Left;     break;
+                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
+                    case Button3: event.mouseButton.button = Mouse::Right;    break;
+                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
+                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
                 }
                 pushEvent(event);
             }
-            else if ((button == XCB_BUTTON_INDEX_4) || (button == XCB_BUTTON_INDEX_5))
+            else if ((button == Button4) || (button == Button5))
             {
                 Event event;
 
                 event.type             = Event::MouseWheelMoved;
-                event.mouseWheel.delta = (button == XCB_BUTTON_INDEX_4) ? 1 : -1;
-                event.mouseWheel.x     = e->event_x;
-                event.mouseWheel.y     = e->event_y;
+                event.mouseWheel.delta = (button == Button4) ? 1 : -1;
+                event.mouseWheel.x     = windowEvent.xbutton.x;
+                event.mouseWheel.y     = windowEvent.xbutton.y;
                 pushEvent(event);
 
                 event.type                   = Event::MouseWheelScrolled;
                 event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
-                event.mouseWheelScroll.delta = (button == XCB_BUTTON_INDEX_4) ? 1 : -1;
-                event.mouseWheelScroll.x     = e->event_x;
-                event.mouseWheelScroll.y     = e->event_y;
+                event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
+                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
+                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
                 pushEvent(event);
             }
             else if ((button == 6) || (button == 7))
@@ -2204,37 +1966,28 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
                 event.type                   = Event::MouseWheelScrolled;
                 event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
                 event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
-                event.mouseWheelScroll.x     = e->event_x;
-                event.mouseWheelScroll.y     = e->event_y;
+                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
+                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
                 pushEvent(event);
             }
             break;
         }
 
         // Mouse moved
-        case XCB_MOTION_NOTIFY:
+        case MotionNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_motion_notify_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_motion_notify_event_t* e = reinterpret_cast<xcb_motion_notify_event_t*>(windowEvent);
             Event event;
             event.type        = Event::MouseMoved;
-            event.mouseMove.x = e->event_x;
-            event.mouseMove.y = e->event_y;
+            event.mouseMove.x = windowEvent.xmotion.x;
+            event.mouseMove.y = windowEvent.xmotion.y;
             pushEvent(event);
             break;
         }
 
         // Mouse entered
-        case XCB_ENTER_NOTIFY:
+        case EnterNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_enter_notify_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_enter_notify_event_t* enterNotifyEvent = reinterpret_cast<xcb_enter_notify_event_t*>(windowEvent);
-
-            if (enterNotifyEvent->mode == NotifyNormal)
+            if (windowEvent.xcrossing.mode == NotifyNormal)
             {
                 Event event;
                 event.type = Event::MouseEntered;
@@ -2244,14 +1997,9 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Mouse left
-        case XCB_LEAVE_NOTIFY:
+        case LeaveNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_leave_notify_event_t*>(windowEvent)->event))
-                return false;
-
-            xcb_leave_notify_event_t* leaveNotifyEvent = reinterpret_cast<xcb_leave_notify_event_t*>(windowEvent);
-
-            if (leaveNotifyEvent->mode == NotifyNormal)
+            if (windowEvent.xcrossing.mode == NotifyNormal)
             {
                 Event event;
                 event.type = Event::MouseLeft;
@@ -2261,184 +2009,20 @@ bool WindowImplX11::processEvent(xcb_generic_event_t* windowEvent)
         }
 
         // Parent window changed
-        case XCB_REPARENT_NOTIFY:
+        case ReparentNotify:
         {
-            if (passEvent(windowEvent, reinterpret_cast<xcb_reparent_notify_event_t*>(windowEvent)->window))
-                return false;
-
             // Catch reparent events to properly apply fullscreen on
             // some "strange" window managers (like Awesome) which
             // seem to make use of temporary parents during mapping
             if (m_fullscreen)
                 switchToFullscreen();
 
-            xcb_flush(m_connection); // Discard remaining events
-            break;
-        }
-
-        // The stuff that might pop up but we don't care about
-        // Whitelist more when necessary
-        // Window visibility changed (hide/unhide)
-        case XCB_MAP_NOTIFY:
-        case XCB_UNMAP_NOTIFY:
-        {
-            break;
-        }
-
-        // Handle the rest
-        default:
-        {
-            uint8_t responseType = windowEvent->response_type & ~0x80;
-
-            // Handle any extension events first
-
-            // SHAPE
-            // Ubuntu's Unity desktop environment makes use of the
-            // Compiz compositing window manager
-            // Compiz seems to send SHAPE events to windows even if they
-            // did not specifically select those events
-            // We ignore those events here in order to not generate warnings
-            static xcb_query_extension_reply_t shapeExtension = getXExtension("SHAPE");
-            if (shapeExtension.present && (responseType == shapeExtension.first_event))
-                break;
-
-            // DRI2
-            static xcb_query_extension_reply_t driExtension = getXExtension("DRI2");
-            if (driExtension.present)
-            {
-                // Because we are using the XCB event queue instead of the Xlib event
-                // queue, Mesa breaks a bit (VSync among other things) because DRI2 still
-                // expects certain Xlib events to come its way. We work around this by
-                // emulating the old Xlib event queue for these specific wire events.
-                // Sources (retrieved 27 Mar 2015):
-                // http://wrl.illest.net/post/45342765813/code-tip-glx-and-xcbownseventqueue
-                // https://bugs.freedesktop.org/show_bug.cgi?id=42131
-                // https://bugs.freedesktop.org/show_bug.cgi?id=35945
-                // Mesa src/glx/dri2.c
-                // QtBase src/plugins/platforms/xcb/gl_integrations/xcb_glx/qxcbglxintegration.cpp
-                // QtBase Commit bb22b4965070409df4658f16fdf549f0362e8a9c
-                // Qt Change-Id I3b4ef3f6e3efbae25f49f161e229e9b15e951778
-                // QtBase Commit 13c5c81cfa934c9b610720fe79e07465b00ebc8d
-                // Qt Change-Id Ia93eb8be1cbbc3d8ae7913a934c195af6b5ec538
-                // QtBase Commit decb88693c8a7f0c073889b91151f01a850e3adf
-                // Qt Change-Id Ic466ff26487937b03f072a57e0ee4df335492a5f
-                if ((responseType == driExtension.first_event + XCB_DRI2_BUFFER_SWAP_COMPLETE) ||
-                    (responseType == driExtension.first_event + XCB_DRI2_INVALIDATE_BUFFERS))
-                {
-                    // DRI2 BufferSwapComplete and InvalidateBuffers
-
-                    // We lock/unlock the display to protect against concurrent access
-                    XLockDisplay(m_display);
-
-                    typedef Bool (*wireEventHandler)(Display*, XEvent*, xEvent*);
-
-                    // Probe for any handlers that are registered for this event type
-                    wireEventHandler handler = XESetWireToEvent(m_display, responseType, 0);
-
-                    if (handler)
-                    {
-                        // Restore the previous handler if one was registered
-                        XESetWireToEvent(m_display, responseType, handler);
-
-                        XEvent event;
-                        windowEvent->sequence = LastKnownRequestProcessed(m_display);
-
-                        // Pretend to be the Xlib event queue
-                        handler(m_display, &event, reinterpret_cast<xEvent*>(windowEvent));
-                    }
-
-                    XUnlockDisplay(m_display);
-
-                    return true;
-                }
-            }
-
-            // XKEYBOARD
-            // When the X server sends us XKEYBOARD events, it means that
-            // the user probably changed the layout of their keyboard
-            // We update our keymaps in that case
-            static xcb_query_extension_reply_t xkeyboardExtension = getXExtension("XKEYBOARD");
-            if (xkeyboardExtension.present && (responseType == xkeyboardExtension.first_event))
-            {
-                // We do this so we don't have to include the xkb header for the struct declaration
-                uint8_t xkbType = reinterpret_cast<const uint8_t*>(windowEvent)[1];
-
-                // We only bother rebuilding our maps if the xkb mapping actually changes
-                if ((xkbType == XCB_XKB_NEW_KEYBOARD_NOTIFY) || (xkbType == XCB_XKB_MAP_NOTIFY))
-                {
-                    // keysym map
-                    buildKeysymMap();
-
-                    // keycode to SFML
-                    buildMap();
-
-                    // SFML to keycode
-                    InputImpl::buildMap();
-
-                    // XInputMethod expects keyboard mapping changes to be propagated to it
-                    // Same idea here as with the DRI2 events above
-
-                    // We lock/unlock the display to protect against concurrent access
-                    XLockDisplay(m_display);
-
-                    typedef Bool (*wireEventHandler)(Display*, XEvent*, xEvent*);
-
-                    // Probe for any handlers that are registered for this event type
-                    wireEventHandler handler = XESetWireToEvent(m_display, responseType, 0);
-
-                    if (handler)
-                    {
-                        // Restore the previous handler if one was registered
-                        XESetWireToEvent(m_display, responseType, handler);
-
-                        XEvent event;
-                        windowEvent->sequence = LastKnownRequestProcessed(m_display);
-
-                        // Pretend to be the Xlib event queue
-                        handler(m_display, &event, reinterpret_cast<xEvent*>(windowEvent));
-                    }
-
-                    XUnlockDisplay(m_display);
-                }
-
-                break;
-            }
-
-            // Print any surprises to stderr (would be nice if people report when this happens)
-            dumpUnhandledEvent(responseType);
-
+            XSync(m_display, True); // Discard remaining events
             break;
         }
     }
 
     return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool WindowImplX11::passEvent(xcb_generic_event_t* windowEvent, xcb_window_t window)
-{
-    // Check if this is our event
-    if (window == m_window)
-        return false;
-
-    Lock lock(allWindowsMutex);
-
-    // If we are the only window, there is nobody else to pass to
-    if (allWindows.size() == 1)
-        return false;
-
-    for (std::vector<WindowImplX11*>::iterator i = allWindows.begin(); i != allWindows.end(); ++i)
-    {
-        if ((*i)->m_window == window)
-        {
-            (*i)->m_xcbEvents.push_back(windowEvent);
-            return true;
-        }
-    }
-
-    // It seems nobody wants the event, we'll just handle it ourselves
-    return false;
 }
 
 } // namespace priv
