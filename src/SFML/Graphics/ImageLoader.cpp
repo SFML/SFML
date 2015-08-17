@@ -227,35 +227,34 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
         // Deduce the image type from its extension
-        if (filename.size() > 3)
-        {
-            // Extract the extension
-            std::string extension = toLower(filename.substr(filename.size() - 3));
 
-            if (extension == "bmp")
-            {
-                // BMP format
-                if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
-                    return true;
-            }
-            else if (extension == "tga")
-            {
-                // TGA format
-                if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
-                    return true;
-            }
-            else if (extension == "png")
-            {
-                // PNG format
-                if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
-                    return true;
-            }
-            else if (extension == "jpg")
-            {
-                // JPG format
-                if (writeJpg(filename, pixels, size.x, size.y))
-                    return true;
-            }
+        // Extract the extension
+        const std::size_t dot = filename.find_last_of('.');
+        const std::string extension = dot != std::string::npos ? toLower(filename.substr(dot + 1)) : "";
+
+        if (extension == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (extension == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (extension == "png")
+        {
+            // PNG format
+            if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
+                return true;
+        }
+        else if (extension == "jpg" || extension == "jpeg")
+        {
+            // JPG format
+            if (writeJpg(filename, pixels, size.x, size.y))
+                return true;
         }
     }
 
