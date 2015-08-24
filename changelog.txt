@@ -1,3 +1,38 @@
+SFML 2.3.2
+==========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.2
+
+General
+=======
+
+* Fixed an issue where FindSFML.cmake couldn't find older versions of SFML (#903)
+* Robust alCheck and glCheck macros (#917)
+* Fixed FindSFML.cmake to use the uppercase FLAC name (#923)
+* Added a CONTRIBUTING file so GitHub shows a message when creating a new issue (#932)
+
+
+Window
+======
+
+Bugfixes
+--------
+* [Linux] Fixed an issue where the keypad's key weren't being detected (#910)
+* [Linux] Revert to Xlib event handling (#934)
+* [Linux] Fixed XK_* inconsistency in InpuImpl.cpp (#947)
+* [Linux] Fix _NET_WM_PING messages not being replied to properly (#947)
+
+
+Graphics
+========
+
+Bugfixes
+--------
+* Fixed clear bug on RenderTextures (#915)
+* Fixed image file extension detection (#929, #930, #931)
+* Secure function against random data return (#935, #942)
+
+
 SFML 2.3.1
 ==========
 
