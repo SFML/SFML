@@ -49,7 +49,7 @@ RenderTexture::~RenderTexture()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
+bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer, bool stencilBuffer)
 {
     // Create the texture
     if (!m_texture.create(width, height))
@@ -78,7 +78,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     }
 
     // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer))
+    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer, stencilBuffer))
         return false;
 
     // We can now initialize the render target part

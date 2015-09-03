@@ -25,79 +25,81 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderStates.hpp>
-#include <cstddef>
+#include <SFML/Graphics/ClippingMask.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-// We cannot use the default constructor here, because it accesses BlendAlpha, which is also global (and dynamically
-// initialized). Initialization order of global objects in different translation units is not defined.
-////////////////////////////////////////////////////////////
-const RenderStates RenderStates::Default(BlendMode(
-    BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, BlendMode::Add,
-    BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add));
-
-
-////////////////////////////////////////////////////////////
-RenderStates::RenderStates() :
-blendMode(BlendAlpha),
-transform(),
-texture  (NULL),
-shader   (NULL)
+ClippingMask::ClippingMask() :
+m_drawables(),
+m_mode     (Mode::Inclusive)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Transform& theTransform) :
-blendMode(BlendAlpha),
-transform(theTransform),
-texture  (NULL),
-shader   (NULL)
+ClippingMask::ClippingMask(Mode theMode) :
+m_drawables(),
+m_mode     (theMode)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const BlendMode& theBlendMode) :
-blendMode(theBlendMode),
-transform(),
-texture  (NULL),
-shader   (NULL)
+std::size_t ClippingMask::getDrawableCount() const
 {
+    return m_drawables.size();
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Texture* theTexture) :
-blendMode(BlendAlpha),
-transform(),
-texture  (theTexture),
-shader   (NULL)
+const Drawable*& ClippingMask::operator [](std::size_t index)
 {
+    return m_drawables[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const Shader* theShader) :
-blendMode(BlendAlpha),
-transform(),
-texture  (NULL),
-shader   (theShader)
+const Drawable* const& ClippingMask::operator [](std::size_t index) const
 {
+    return m_drawables[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
-                           const Texture* theTexture, const Shader* theShader) :
-blendMode(theBlendMode),
-transform(theTransform),
-texture  (theTexture),
-shader   (theShader)
+void ClippingMask::clear()
 {
+    m_drawables.clear();
 }
+
+
+////////////////////////////////////////////////////////////
+void ClippingMask::append(const Drawable& drawable)
+{
+    m_drawables.push_back(&drawable);
+}
+
+
+////////////////////////////////////////////////////////////
+void ClippingMask::remove(const Drawable& drawable)
+{
+    m_drawables.erase(std::remove(m_drawables.begin(), m_drawables.end(), &drawable), m_drawables.end());
+}
+
+
+////////////////////////////////////////////////////////////
+ClippingMask::Mode ClippingMask::getMode() const
+{
+    return m_mode;
+}
+
+
+////////////////////////////////////////////////////////////
+void ClippingMask::setMode(Mode theMode)
+{
+    m_mode = theMode;
+}
+
 
 } // namespace sf
