@@ -155,7 +155,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
     // Ask for a pool.
-    retainPool();
+    ensureThreadHasPool();
 
     // Treat the handle as it real type
     id nsHandle = (id)handle;
@@ -200,7 +200,7 @@ m_showCursor(true)
     setUpProcess();
 
     // Ask for a pool.
-    retainPool();
+    ensureThreadHasPool();
 
     // Use backing size
     scaleInWidthHeight(mode, nil);
@@ -226,11 +226,9 @@ WindowImplCocoa::~WindowImplCocoa()
     if ([windows count] > 0)
         [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
 
-    drainCurrentPool(); // Make sure everything was freed
+    drainThreadPool(); // Make sure everything was freed
     // This solve some issue when sf::Window::Create is called for the
     // second time (nothing was render until the function was called again)
-
-    releasePool();
 }
 
 
@@ -467,7 +465,7 @@ void WindowImplCocoa::textEntered(unichar charcode)
 void WindowImplCocoa::processEvents()
 {
     [m_delegate processEvent];
-    drainCurrentPool(); // Reduce memory footprint
+    drainThreadPool(); // Reduce memory footprint
 }
 
 #pragma mark
