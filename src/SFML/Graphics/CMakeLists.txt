@@ -6,6 +6,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 set(SRC
     ${SRCROOT}/BlendMode.cpp
     ${INCROOT}/BlendMode.hpp
+    ${SRCROOT}/ClippingMask.cpp
+    ${INCROOT}/ClippingMask.hpp
     ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
     ${INCROOT}/Export.hpp

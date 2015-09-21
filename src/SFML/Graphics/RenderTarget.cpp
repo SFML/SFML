@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/ClippingMask.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -65,8 +66,8 @@ namespace
     {
         switch (blendEquation)
         {
-            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
+            case sf::BlendMode::Add:      return GLEXT_GL_FUNC_ADD;
+            case sf::BlendMode::Subtract: return GLEXT_GL_FUNC_SUBTRACT;
         }
 
         sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
@@ -80,11 +81,16 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTarget::RenderTarget() :
-m_defaultView(),
-m_view       (),
-m_cache      ()
+m_defaultView (),
+m_view        (),
+m_clippingArea(),
+m_clippingMask(),
+m_cache       ()
 {
-    m_cache.glStatesSet = false;
+    m_cache.clippingAreaChanged = false;
+    m_cache.clippingMaskChanged = false;
+    m_cache.glStatesSet         = false;
+    m_cache.scissorTestEnabled  = false;
 }
 
 
@@ -102,9 +108,50 @@ void RenderTarget::clear(const Color& color)
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(NULL);
 
+        // Disable scissor test if enabled
+        if (m_cache.scissorTestEnabled)
+            glCheck(glDisable(GL_SCISSOR_TEST));
+
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
+
+        // Enable the scissor test again if we just disabled it
+        if (m_cache.scissorTestEnabled)
+            glCheck(glEnable(GL_SCISSOR_TEST));
+
+        // Ensure the clipping mask will be redrawn
+        m_cache.clippingMaskChanged = true;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::clearClippingArea()
+{
+    setClippingArea(IntRect());
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::clearClippingMask()
+{
+    setClippingMask(ClippingMask());
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::setClippingArea(IntRect area)
+{
+    m_clippingArea = area;
+    m_cache.clippingAreaChanged = true;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::setClippingMask(const ClippingMask& mask)
+{
+    m_clippingMask = mask;
+    m_cache.clippingMaskChanged = true;
 }
 
 
@@ -113,6 +160,21 @@ void RenderTarget::setView(const View& view)
 {
     m_view = view;
     m_cache.viewChanged = true;
+    m_cache.clippingAreaChanged = true;
+}
+
+
+////////////////////////////////////////////////////////////
+IntRect RenderTarget::getClippingArea() const
+{
+    return m_clippingArea;
+}
+
+
+////////////////////////////////////////////////////////////
+const ClippingMask& RenderTarget::getClippingMask() const
+{
+    return m_clippingMask;
 }
 
 
@@ -219,6 +281,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         if (!m_cache.glStatesSet)
             resetGLStates();
 
+        // Apply the clipping
+        // This may require other draw calls so it comes first
+        if (m_cache.clippingMaskChanged)
+            applyCurrentClippingMask();
+
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
         if (useVertexCache)
@@ -257,6 +324,10 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         // Apply the shader
         if (states.shader)
             applyShader(states.shader);
+
+        // Apply the clipping area
+        if (m_cache.clippingAreaChanged)
+            applyCurrentClippingArea();
 
         // If we pre-transform the vertices, we must use our internal vertex cache
         if (useVertexCache)
@@ -393,6 +464,10 @@ void RenderTarget::resetGLStates()
 
         // Set the default view
         setView(getView());
+
+        // Set the clipping area and mask
+        applyCurrentClippingArea();
+        applyCurrentClippingMask();
     }
 }
 
@@ -406,6 +481,98 @@ void RenderTarget::initialize()
 
     // Set GL states only on first draw, so that we don't pollute user's states
     m_cache.glStatesSet = false;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::applyCurrentClippingArea()
+{
+    // Don't apply clipping area while a clipping mask is being applied
+    if (m_cache.clippingMaskChanged)
+        return;
+
+    if (m_clippingArea != IntRect())
+    {
+        // Enable the scissor test and set the boundries
+        glCheck(glEnable(GL_SCISSOR_TEST));
+        glCheck(glScissor(m_clippingArea.left,
+                         -m_clippingArea.top + getSize().y - m_clippingArea.height,
+                          m_clippingArea.width,
+                          m_clippingArea.height));
+
+        m_cache.scissorTestEnabled = true;
+    }
+    else
+    {
+        // Disable the scissor test
+        glCheck(glDisable(GL_SCISSOR_TEST));
+        m_cache.scissorTestEnabled = false;
+    }
+
+    m_cache.clippingAreaChanged = false;
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::applyCurrentClippingMask()
+{
+    static bool inProgress = false;
+
+    // Ensure that we only try to create the clipping mask once
+    if (inProgress)
+        return;
+    else
+        inProgress = true;
+
+    if (m_clippingMask.getDrawableCount())
+    {
+        // Clear the stencil buffer
+        glCheck(glStencilMask(0xFF));
+        glCheck(glClear(GL_STENCIL_BUFFER_BIT));
+
+        // Enable the alpha test
+        #ifndef SFML_OPENGL_ES
+            glCheck(glEnable(GL_ALPHA_TEST));
+            glCheck(glAlphaFunc(GL_EQUAL, 1));
+        #else
+            err() << "Alpha testing for clipping masks is not supported on OpenGL ES platforms" << std::endl;
+        #endif
+
+        // Enable the stencil test and set the required parameters for writing to the stencil buffer
+        glCheck(glEnable(GL_STENCIL_TEST));
+        glCheck(glStencilFunc(GL_NEVER, 1, 0xFF));
+        glCheck(glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP));
+
+        // Save scissor test state
+        if (m_cache.scissorTestEnabled)
+            glCheck(glDisable(GL_SCISSOR_TEST));
+
+        // Create transformed render states to draw the mask
+        RenderStates states(m_clippingMask.getTransform());
+
+        // Draw each drawable in the mask onto the stencil buffer
+        for (std::size_t i = 0; i < m_clippingMask.getDrawableCount(); ++i)
+            draw(*m_clippingMask[i], states);
+
+        // Set stencil test parameters to clip rendering
+        glCheck(glStencilMask(0x00));
+        glCheck(glStencilFunc(GL_EQUAL, m_clippingMask.getMode() == sf::ClippingMask::Inclusive ? 1 : 0, 0xFF));
+
+        // Restore scissor test state
+        if (m_cache.scissorTestEnabled)
+            glCheck(glEnable(GL_SCISSOR_TEST));
+    }
+    else
+    {
+        // Disable the stencil and alpha test
+        #ifndef SFML_OPENGL_ES
+            glCheck(glDisable(GL_ALPHA_TEST));
+        #endif
+        glCheck(glDisable(GL_STENCIL_TEST));
+    }
+
+    inProgress = false;
+    m_cache.clippingMaskChanged = false;
 }
 
 

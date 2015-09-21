@@ -55,14 +55,14 @@ RenderTextureImplDefault::~RenderTextureImplDefault()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer, bool stencilBuffer)
 {
     // Store the dimensions
     m_width = width;
     m_height = height;
 
     // Create the in-memory OpenGL context
-    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
+    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0, stencilBuffer ? 8 : 0), width, height);
 
     return true;
 }

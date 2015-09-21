@@ -946,6 +946,7 @@ extern void (CODEGEN_FUNCPTR *sf_ptrc_glRenderbufferStorageEXT)(GLenum, GLenum, 
 #define glRenderbufferStorageEXT sf_ptrc_glRenderbufferStorageEXT
 #endif /*GL_EXT_framebuffer_object*/
 
+GLAPI void APIENTRY glAlphaFunc(GLenum, GLclampf);
 GLAPI void APIENTRY glBlendFunc(GLenum, GLenum);
 GLAPI void APIENTRY glClear(GLbitfield);
 GLAPI void APIENTRY glClearColor(GLfloat, GLfloat, GLfloat, GLfloat);

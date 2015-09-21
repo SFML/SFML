@@ -60,7 +60,7 @@ public:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer, bool stencilBuffer) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
