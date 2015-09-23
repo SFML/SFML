@@ -88,6 +88,7 @@ m_sRgb         (false),
 m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
+m_hasMipmap    (false),
 m_cacheId      (getUniqueId())
 {
 }
@@ -103,6 +104,7 @@ m_sRgb         (copy.m_sRgb),
 m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
+m_hasMipmap    (false),
 m_cacheId      (getUniqueId())
 {
     if (copy.m_texture)
@@ -217,6 +219,8 @@ bool Texture::create(unsigned int width, unsigned int height)
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     m_cacheId = getUniqueId();
 
+    m_hasMipmap = false;
+
     return true;
 }
 
@@ -297,6 +301,9 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
                 glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
                 pixels += 4 * width;
             }
+
+            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+            m_hasMipmap = false;
 
             // Force an OpenGL flush, so that the texture will appear updated
             // in all contexts immediately (solves problems in multi-threaded apps)
@@ -425,6 +432,8 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
         // Copy pixels from the given array to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+        m_hasMipmap = false;
         m_pixelsFlipped = false;
         m_cacheId = getUniqueId();
     }
@@ -467,6 +476,8 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
         // Copy pixels from the back-buffer to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, window.getSize().x, window.getSize().y));
+        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+        m_hasMipmap = false;
         m_pixelsFlipped = true;
         m_cacheId = getUniqueId();
     }
@@ -489,7 +500,15 @@ void Texture::setSmooth(bool smooth)
 
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+
+            if (m_hasMipmap)
+            {
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR));
+            }
+            else
+            {
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+            }
         }
     }
 }
@@ -558,6 +577,51 @@ void Texture::setRepeated(bool repeated)
 bool Texture::isRepeated() const
 {
     return m_isRepeated;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::generateMipmap()
+{
+    if (!m_texture)
+        return false;
+
+    ensureGlContext();
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
+
+    if (!GLEXT_framebuffer_object)
+        return false;
+
+    // Make sure that the current texture binding will be preserved
+    priv::TextureSaver save;
+
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(GLEXT_glGenerateMipmap(GL_TEXTURE_2D));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR));
+
+    m_hasMipmap = true;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::invalidateMipmap()
+{
+    if (!m_hasMipmap)
+        return;
+
+    ensureGlContext();
+
+    // Make sure that the current texture binding will be preserved
+    priv::TextureSaver save;
+
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+
+    m_hasMipmap = false;
 }
 
 
@@ -641,6 +705,7 @@ Texture& Texture::operator =(const Texture& right)
     std::swap(m_isRepeated,    temp.m_isRepeated);
     std::swap(m_pixelsFlipped, temp.m_pixelsFlipped);
     std::swap(m_fboAttachment, temp.m_fboAttachment);
+    std::swap(m_hasMipmap,     temp.m_hasMipmap);
     m_cacheId = getUniqueId();
 
     return *this;

@@ -117,6 +117,13 @@ bool RenderTexture::isRepeated() const
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTexture::generateMipmap()
+{
+    return m_texture.generateMipmap();
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderTexture::setActive(bool active)
 {
     return m_impl && m_impl->activate(active);
@@ -131,6 +138,7 @@ void RenderTexture::display()
     {
         m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;
+        m_texture.invalidateMipmap();
     }
 }
 

@@ -21,7 +21,7 @@ int main()
     bool exit = false;
     bool sRgb = false;
 
-    while(!exit)
+    while (!exit)
     {
         // Request a 24-bits depth buffer when creating the window
         sf::ContextSettings contextSettings;
@@ -44,26 +44,24 @@ int main()
         if (!font.loadFromFile("resources/sansation.ttf"))
             return EXIT_FAILURE;
         sf::Text text("SFML / OpenGL demo", font);
-        sf::Text instructions("Press space to toggle sRGB conversion", font);
+        sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
+        sf::Text mipmapInstructions("Press return to toggle mipmapping", font);
         text.setFillColor(sf::Color(255, 255, 255, 170));
-        instructions.setFillColor(sf::Color(255, 255, 255, 170));
+        sRgbInstructions.setFillColor(sf::Color(255, 255, 255, 170));
+        mipmapInstructions.setFillColor(sf::Color(255, 255, 255, 170));
         text.setPosition(250.f, 450.f);
-        instructions.setPosition(150.f, 500.f);
+        sRgbInstructions.setPosition(150.f, 500.f);
+        mipmapInstructions.setPosition(180.f, 550.f);
 
-        // Load an OpenGL texture.
-        // We could directly use a sf::Texture as an OpenGL texture (with its Bind() member function),
-        // but here we want more control on it (generate mipmaps, ...) so we create a new one from an image
-        GLuint texture = 0;
-        {
-            sf::Image image;
-            if (!image.loadFromFile("resources/texture.jpg"))
-                return EXIT_FAILURE;
-            glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, sRgb ? GL_SRGB8_ALPHA8 : GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        }
+        // Load a texture to apply to our 3D cube
+        sf::Texture texture;
+        if (!texture.loadFromFile("resources/texture.jpg"))
+            return EXIT_FAILURE;
+
+        // Attempt to generate a mipmap for our cube texture
+        // We don't check the return value here since
+        // mipmapping is purely optional in this example
+        texture.generateMipmap();
 
         // Enable Z-buffer read and write
         glEnable(GL_DEPTH_TEST);
@@ -84,7 +82,7 @@ int main()
 
         // Bind the texture
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        sf::Texture::bind(&texture);
 
         // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
         static const GLfloat cube[] =
@@ -146,6 +144,9 @@ int main()
         // Create a clock for measuring the time elapsed
         sf::Clock clock;
 
+        // Flag to track whether mipmapping is currently enabled
+        bool mipmapEnabled = true;
+
         // Start game loop
         while (window.isOpen())
         {
@@ -165,6 +166,25 @@ int main()
                 {
                     exit = true;
                     window.close();
+                }
+
+                // Return key: toggle mipmapping
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return))
+                {
+                    if (mipmapEnabled)
+                    {
+                        // We simply reload the texture to disable mipmapping
+                        if (!texture.loadFromFile("resources/texture.jpg"))
+                            return EXIT_FAILURE;
+
+                        mipmapEnabled = false;
+                    }
+                    else
+                    {
+                        texture.generateMipmap();
+
+                        mipmapEnabled = true;
+                    }
                 }
 
                 // Space key: toggle sRGB conversion
@@ -205,15 +225,13 @@ int main()
             // Draw some text on top of our OpenGL object
             window.pushGLStates();
             window.draw(text);
-            window.draw(instructions);
+            window.draw(sRgbInstructions);
+            window.draw(mipmapInstructions);
             window.popGLStates();
 
             // Finally, display the rendered frame on screen
             window.display();
         }
-
-        // Don't forget to destroy our texture
-        glDeleteTextures(1, &texture);
     }
 
     return EXIT_SUCCESS;
