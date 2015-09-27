@@ -35,6 +35,7 @@
 #include <SFML/System/Time.hpp>
 #include <map>
 #include <string>
+#include <vector>
 
 
 namespace sf
@@ -95,6 +96,21 @@ public:
         ///
         ////////////////////////////////////////////////////////////
         void setField(const std::string& field, const std::string& value);
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Set the values of a field
+        ///
+        /// The field entries are created if they doesn't exist.
+        /// The name of the field is case-insensitive.
+        /// By default, a request doesn't contain any fields (but the
+        /// mandatory fields are added later by the HTTP client when
+        /// sending the request).
+        ///
+        /// \param field Name of the field whose values to set
+        /// \param values Values of the field
+        ///
+        ////////////////////////////////////////////////////////////
+        void setFieldValues(const std::string& field, const std::vector<std::string>& values);
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the request method
@@ -173,7 +189,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::map<std::string, std::vector<std::string> > FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data
@@ -257,6 +273,20 @@ public:
         const std::string& getField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
+        /// \brief Get the values of a field
+        ///
+        /// If the field \a field is not found in the response header,
+        /// an empty container is returned. This function uses
+        /// case-insensitive comparisons.
+        ///
+        /// \param field Name of the field whose values to get
+        ///
+        /// \return Values of the field, or empty container if not found
+        ///
+        ////////////////////////////////////////////////////////////
+        const std::vector<std::string>& getFieldValues(const std::string& field) const;
+
+        ////////////////////////////////////////////////////////////
         /// \brief Get the response status code
         ///
         /// The status code should be the first thing to be checked
@@ -333,7 +363,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::map<std::string, std::vector<std::string> > FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data

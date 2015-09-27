@@ -61,7 +61,16 @@ Http::Request::Request(const std::string& uri, Method method, const std::string&
 ////////////////////////////////////////////////////////////
 void Http::Request::setField(const std::string& field, const std::string& value)
 {
-    m_fields[toLower(field)] = value;
+    std::vector<std::string> values;
+    values.push_back(value);
+    setFieldValues(field, values);
+}
+
+
+////////////////////////////////////////////////////////////
+void Http::Request::setFieldValues(const std::string& field, const std::vector<std::string>& values)
+{
+    m_fields[toLower(field)] = values;
 }
 
 
@@ -121,7 +130,10 @@ std::string Http::Request::prepare() const
     // Write fields
     for (FieldTable::const_iterator i = m_fields.begin(); i != m_fields.end(); ++i)
     {
-        out << i->first << ": " << i->second << "\r\n";
+        for (std::vector<std::string>::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+        {
+            out << i->first << ": " << *j << "\r\n";
+        }
     }
 
     // Use an extra \r\n to separate the header from the body
@@ -155,15 +167,24 @@ m_minorVersion(0)
 const std::string& Http::Response::getField(const std::string& field) const
 {
     FieldTable::const_iterator it = m_fields.find(toLower(field));
-    if (it != m_fields.end())
+    if ((it != m_fields.end()) && !it->second.empty())
     {
-        return it->second;
+        return it->second.front();
     }
     else
     {
         static const std::string empty = "";
         return empty;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+const std::vector<std::string>& Http::Response::getFieldValues(const std::string& field) const
+{
+    static const std::vector<std::string> empty;
+    FieldTable::const_iterator it = m_fields.find(toLower(field));
+    return (it != m_fields.end()) ? it->second : empty;
 }
 
 
@@ -290,7 +311,7 @@ void Http::Response::parseFields(std::istream &in)
                 value.erase(value.size() - 1);
 
             // Add the field
-            m_fields[toLower(field)] = value;
+            m_fields[toLower(field)].push_back(value);
         }
     }
 }
