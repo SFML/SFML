@@ -132,7 +132,7 @@ public:
     bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate of deactivate the render-texture for rendering
+    /// \brief Activate or deactivate the render-texture for rendering
     ///
     /// This function makes the render-texture's context current for
     /// future OpenGL rendering operations (so you shouldn't care
