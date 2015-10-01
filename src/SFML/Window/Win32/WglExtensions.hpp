@@ -93,11 +93,17 @@ extern "C" {
 #endif // __cplusplus
 
 extern int sfwgl_ext_EXT_swap_control;
+extern int sfwgl_ext_EXT_framebuffer_sRGB;
+extern int sfwgl_ext_ARB_framebuffer_sRGB;
 extern int sfwgl_ext_ARB_multisample;
 extern int sfwgl_ext_ARB_pixel_format;
 extern int sfwgl_ext_ARB_pbuffer;
 extern int sfwgl_ext_ARB_create_context;
 extern int sfwgl_ext_ARB_create_context_profile;
+
+#define WGL_FRAMEBUFFER_SRGB_CAPABLE_EXT 0x20A9
+
+#define WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB 0x20A9
 
 #define WGL_SAMPLES_ARB 0x2042
 #define WGL_SAMPLE_BUFFERS_ARB 0x2041

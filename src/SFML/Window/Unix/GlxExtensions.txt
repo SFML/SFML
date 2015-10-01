@@ -6,6 +6,8 @@
 EXT_swap_control
 // MESA_swap_control
 SGI_swap_control
+EXT_framebuffer_sRGB
+ARB_framebuffer_sRGB
 GLX_ARB_multisample
 GLX_SGIX_pbuffer
 GLX_ARB_create_context

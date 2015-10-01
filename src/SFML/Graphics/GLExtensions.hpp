@@ -110,6 +110,10 @@
     #define GLEXT_GL_FRAMEBUFFER_BINDING              GL_FRAMEBUFFER_BINDING_OES
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION    GL_INVALID_FRAMEBUFFER_OPERATION_OES
 
+    // Core since 3.0 - EXT_sRGB
+    #define GLEXT_texture_sRGB                        GL_EXT_sRGB
+    #define GLEXT_GL_SRGB8_ALPHA8                     GL_SRGB8_ALPHA8_EXT
+
 #else
 
     #include <SFML/Graphics/GLLoader.hpp>
@@ -207,6 +211,10 @@
     // Core since 2.0 - EXT_blend_equation_separate
     #define GLEXT_blend_equation_separate             sfogl_ext_EXT_blend_equation_separate
     #define GLEXT_glBlendEquationSeparate             glBlendEquationSeparateEXT
+
+    // Core since 2.1 - EXT_texture_sRGB
+    #define GLEXT_texture_sRGB                        sfogl_ext_EXT_texture_sRGB
+    #define GLEXT_GL_SRGB8_ALPHA8                     GL_SRGB8_ALPHA8_EXT
 
     // Core since 3.0 - EXT_framebuffer_object
     #define GLEXT_framebuffer_object                  sfogl_ext_EXT_framebuffer_object

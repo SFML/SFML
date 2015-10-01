@@ -40,6 +40,8 @@ static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 int sfglx_ext_EXT_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
+int sfglx_ext_EXT_framebuffer_sRGB = sfglx_LOAD_FAILED;
+int sfglx_ext_ARB_framebuffer_sRGB = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
 int sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
@@ -124,17 +126,19 @@ typedef struct sfglx_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfglx_StrToExtMap;
 
-static sfglx_StrToExtMap ExtensionMap[7] = {
+static sfglx_StrToExtMap ExtensionMap[9] = {
     {"GLX_EXT_swap_control", &sfglx_ext_EXT_swap_control, Load_EXT_swap_control},
     {"GLX_MESA_swap_control", &sfglx_ext_MESA_swap_control, Load_MESA_swap_control},
     {"GLX_SGI_swap_control", &sfglx_ext_SGI_swap_control, Load_SGI_swap_control},
+    {"GLX_EXT_framebuffer_sRGB", &sfglx_ext_EXT_framebuffer_sRGB, NULL},
+    {"GLX_ARB_framebuffer_sRGB", &sfglx_ext_ARB_framebuffer_sRGB, NULL},
     {"GLX_ARB_multisample", &sfglx_ext_ARB_multisample, NULL},
     {"GLX_SGIX_pbuffer", &sfglx_ext_SGIX_pbuffer, Load_SGIX_pbuffer},
     {"GLX_ARB_create_context", &sfglx_ext_ARB_create_context, Load_ARB_create_context},
-    {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, NULL},
+    {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, NULL}
 };
 
-static int g_extensionMapSize = 7;
+static int g_extensionMapSize = 9;
 
 
 static sfglx_StrToExtMap* FindExtEntry(const char* extensionName)
@@ -155,6 +159,8 @@ static void ClearExtensionVars(void)
     sfglx_ext_EXT_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
+    sfglx_ext_EXT_framebuffer_sRGB = sfglx_LOAD_FAILED;
+    sfglx_ext_ARB_framebuffer_sRGB = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
     sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;

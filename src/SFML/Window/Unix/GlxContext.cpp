@@ -320,7 +320,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 continue;
 
             // Extract the components of the current visual
-            int red, green, blue, alpha, depth, stencil, multiSampling, samples;
+            int red, green, blue, alpha, depth, stencil, multiSampling, samples, sRgb;
             glXGetConfig(display, &visuals[i], GLX_RED_SIZE,     &red);
             glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE,   &green);
             glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE,    &blue);
@@ -339,12 +339,21 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 samples = 0;
             }
 
+            if ((sfglx_ext_EXT_framebuffer_sRGB == sfglx_LOAD_SUCCEEDED) || (sfglx_ext_ARB_framebuffer_sRGB == sfglx_LOAD_SUCCEEDED))
+            {
+                glXGetConfig(display, &visuals[i], GLX_FRAMEBUFFER_SRGB_CAPABLE_ARB, &sRgb);
+            }
+            else
+            {
+                sRgb = 0;
+            }
+
             // TODO: Replace this with proper acceleration detection
             bool accelerated = true;
 
             // Evaluate the visual
             int color = red + green + blue + alpha;
-            int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, accelerated);
+            int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, accelerated, sRgb == True);
 
             // If it's better than the current best, make it the new best
             if (score < bestScore)
@@ -373,7 +382,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 {
     // Update the creation settings from the chosen format
-    int depth, stencil, multiSampling, samples;
+    int depth, stencil, multiSampling, samples, sRgb;
     glXGetConfig(m_display, visualInfo, GLX_DEPTH_SIZE,   &depth);
     glXGetConfig(m_display, visualInfo, GLX_STENCIL_SIZE, &stencil);
 
@@ -388,9 +397,19 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
         samples = 0;
     }
 
+    if ((sfglx_ext_EXT_framebuffer_sRGB == sfglx_LOAD_SUCCEEDED) || (sfglx_ext_ARB_framebuffer_sRGB == sfglx_LOAD_SUCCEEDED))
+    {
+        glXGetConfig(m_display, visualInfo, GLX_FRAMEBUFFER_SRGB_CAPABLE_ARB, &sRgb);
+    }
+    else
+    {
+        sRgb = 0;
+    }
+
     m_settings.depthBits         = static_cast<unsigned int>(depth);
     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
     m_settings.antialiasingLevel = multiSampling ? samples : 0;
+    m_settings.sRgbCapable       = (sRgb == True);
 }
 
 

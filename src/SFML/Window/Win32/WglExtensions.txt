@@ -4,6 +4,8 @@
 // lua LoadGen.lua -style=pointer_c -spec=wgl -indent=space -prefix=sf -extfile=WglExtensions.txt WglExtensions
 
 EXT_swap_control
+EXT_framebuffer_sRGB
+ARB_framebuffer_sRGB
 WGL_ARB_multisample
 WGL_ARB_pixel_format
 WGL_ARB_pbuffer
