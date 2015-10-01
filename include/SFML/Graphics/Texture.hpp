@@ -377,6 +377,41 @@ public:
     bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable conversion from sRGB
+    ///
+    /// When providing texture data from an image file or memory, it can
+    /// either be stored in a linear color space or an sRGB color space.
+    /// Most digital images account for gamma correction already, so they
+    /// would need to be "uncorrected" back to linear color space before
+    /// being processed by the hardware. The hardware can automatically
+    /// convert it from the sRGB color space to a linear color space when
+    /// it gets sampled. When the rendered image gets output to the final
+    /// framebuffer, it gets converted back to sRGB.
+    ///
+    /// After enabling or disabling sRGB conversion, make sure to reload
+    /// the texture data in order for the setting to take effect.
+    ///
+    /// This option is only useful in conjunction with an sRGB capable
+    /// framebuffer. This can be requested during window creation.
+    ///
+    /// \param sRgb True to enable sRGB conversion, false to disable it
+    ///
+    /// \see isSrgb
+    ///
+    ////////////////////////////////////////////////////////////
+    void setSrgb(bool sRgb);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the texture source is converted from sRGB or not
+    ///
+    /// \return True if the texture source is converted from sRGB, false if not
+    ///
+    /// \see setSrgb
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSrgb() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable repeating
     ///
     /// Repeating is involved when using texture coordinates
@@ -504,6 +539,7 @@ private:
     Vector2u     m_actualSize;    ///< Actual texture size (can be greater than public size because of padding)
     unsigned int m_texture;       ///< Internal texture identifier
     bool         m_isSmooth;      ///< Status of the smooth filter
+    bool         m_sRgb;          ///< Should the texture source be converted from sRGB?
     bool         m_isRepeated;    ///< Is the texture in repeat mode?
     mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation
     bool         m_fboAttachment; ///< Is this texture owned by a framebuffer object?

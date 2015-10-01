@@ -38,6 +38,8 @@ static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 }
 
 int sfwgl_ext_EXT_swap_control = sfwgl_LOAD_FAILED;
+int sfwgl_ext_EXT_framebuffer_sRGB = sfwgl_LOAD_FAILED;
+int sfwgl_ext_ARB_framebuffer_sRGB = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_multisample = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_pixel_format = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_pbuffer = sfwgl_LOAD_FAILED;
@@ -127,16 +129,18 @@ typedef struct sfwgl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfwgl_StrToExtMap;
 
-static sfwgl_StrToExtMap ExtensionMap[6] = {
+static sfwgl_StrToExtMap ExtensionMap[8] = {
     {"WGL_EXT_swap_control", &sfwgl_ext_EXT_swap_control, Load_EXT_swap_control},
+    {"WGL_EXT_framebuffer_sRGB", &sfwgl_ext_EXT_framebuffer_sRGB, NULL},
+    {"WGL_ARB_framebuffer_sRGB", &sfwgl_ext_ARB_framebuffer_sRGB, NULL},
     {"WGL_ARB_multisample", &sfwgl_ext_ARB_multisample, NULL},
     {"WGL_ARB_pixel_format", &sfwgl_ext_ARB_pixel_format, Load_ARB_pixel_format},
     {"WGL_ARB_pbuffer", &sfwgl_ext_ARB_pbuffer, Load_ARB_pbuffer},
     {"WGL_ARB_create_context", &sfwgl_ext_ARB_create_context, Load_ARB_create_context},
-    {"WGL_ARB_create_context_profile", &sfwgl_ext_ARB_create_context_profile, NULL},
+    {"WGL_ARB_create_context_profile", &sfwgl_ext_ARB_create_context_profile, NULL}
 };
 
-static int g_extensionMapSize = 6;
+static int g_extensionMapSize = 8;
 
 
 static sfwgl_StrToExtMap* FindExtEntry(const char* extensionName)
@@ -155,6 +159,8 @@ static sfwgl_StrToExtMap* FindExtEntry(const char* extensionName)
 static void ClearExtensionVars(void)
 {
     sfwgl_ext_EXT_swap_control = sfwgl_LOAD_FAILED;
+    sfwgl_ext_EXT_framebuffer_sRGB = sfwgl_LOAD_FAILED;
+    sfwgl_ext_ARB_framebuffer_sRGB = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_multisample = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_pixel_format = sfwgl_LOAD_FAILED;
     sfwgl_ext_ARB_pbuffer = sfwgl_LOAD_FAILED;

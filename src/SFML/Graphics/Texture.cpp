@@ -84,6 +84,7 @@ m_size         (0, 0),
 m_actualSize   (0, 0),
 m_texture      (0),
 m_isSmooth     (false),
+m_sRgb         (false),
 m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
@@ -98,6 +99,7 @@ m_size         (0, 0),
 m_actualSize   (0, 0),
 m_texture      (0),
 m_isSmooth     (copy.m_isSmooth),
+m_sRgb         (copy.m_sRgb),
 m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
@@ -185,9 +187,30 @@ bool Texture::create(unsigned int width, unsigned int height)
         }
     }
 
+    static bool textureSrgb = GLEXT_texture_sRGB;
+
+    if (m_sRgb && !textureSrgb)
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+#ifndef SFML_OPENGL_ES
+            err() << "OpenGL extension EXT_texture_sRGB unavailable" << std::endl;
+#else
+            err() << "OpenGL ES extension EXT_sRGB unavailable" << std::endl;
+#endif
+            err() << "Automatic sRGB to linear conversion disabled" << std::endl;
+
+            warned = true;
+        }
+
+        m_sRgb = false;
+    }
+
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA), m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -476,6 +499,20 @@ void Texture::setSmooth(bool smooth)
 bool Texture::isSmooth() const
 {
     return m_isSmooth;
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::setSrgb(bool sRgb)
+{
+    m_sRgb = sRgb;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::isSrgb() const
+{
+    return m_sRgb;
 }
 
 

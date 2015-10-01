@@ -13,5 +13,6 @@ ARB_vertex_shader
 ARB_fragment_shader
 ARB_texture_non_power_of_two
 EXT_blend_equation_separate
+EXT_texture_sRGB
 EXT_framebuffer_object
 ARB_geometry_shader4
