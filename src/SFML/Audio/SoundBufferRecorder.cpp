@@ -55,7 +55,7 @@ bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sam
 void SoundBufferRecorder::onStop()
 {
     if (!m_samples.empty())
-        m_buffer.loadFromSamples(&m_samples[0], m_samples.size(), 1, getSampleRate());
+        m_buffer.loadFromSamples(&m_samples[0], m_samples.size(), getChannelCount(), getSampleRate());
 }
 
 

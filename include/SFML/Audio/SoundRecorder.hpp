@@ -145,6 +145,34 @@ public:
     const std::string& getDevice() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the channel count of the audio capture device
+    ///
+    /// This method allows you to specify the number of channels
+    /// used for recording. Currently only 16-bit mono and
+    /// 16-bit stereo are supported.
+    ///
+    /// \param channelCount Number of channels. Currently only
+    ///                     mono (1) and stereo (2) are supported.
+    ///
+    /// \see getChannelCount
+    ///
+    ////////////////////////////////////////////////////////////
+    void setChannelCount(unsigned int channelCount);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the number of channels used by this recorder
+    ///
+    /// Currently only mono and stereo are supported, so the
+    /// value is either 1 (for mono) or 2 (for stereo).
+    ///
+    /// \return Number of channels
+    ///
+    /// \see setChannelCount
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getChannelCount() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture
     ///
     /// This function should always be called before using
@@ -263,6 +291,7 @@ private:
     Time               m_processingInterval; ///< Time period between calls to onProcessSamples
     bool               m_isCapturing;        ///< Capturing state
     std::string        m_deviceName;         ///< Name of the audio capture device
+    unsigned int       m_channelCount;       ///< Number of recording channels
 };
 
 } // namespace sf
@@ -308,6 +337,12 @@ private:
 /// getAvailableDevices() function. You can then select a device
 /// by calling setDevice() with the appropriate device. Otherwise
 /// the default capturing device will be used.
+///
+/// By default the recording is in 16-bit mono. Using the
+/// setChannelCount method you can change the number of channels
+/// used by the audio capture device to record. Note that you
+/// have to decide whether you want to record in mono or stereo
+/// before starting the recording.
 ///
 /// It is important to note that the audio capture happens in a
 /// separate thread, so that it doesn't block the rest of the
