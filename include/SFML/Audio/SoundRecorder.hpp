@@ -316,11 +316,20 @@ private:
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
 /// issues if you share data between threads.
+/// Another thing to bear in mind is that you must call stop()
+/// in the destructor of your derived class, so that the recording
+/// thread finishes before your object is destroyed.
 ///
 /// Usage example:
 /// \code
 /// class CustomRecorder : public sf::SoundRecorder
 /// {
+///     ~CustomRecorder()
+///     {
+///         // Make sure to stop the recording thread
+///         stop();
+///     }
+///
 ///     virtual bool onStart() // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts
