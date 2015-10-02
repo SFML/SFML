@@ -32,10 +32,22 @@ public:
     {
     }
 
+    ////////////////////////////////////////////////////////////
+    /// Destructor
+    ///
+    /// \see SoundRecorder::~SoundRecorder()
+    ///
+    ////////////////////////////////////////////////////////////
+    ~NetworkRecorder()
+    {
+        // Make sure to stop the recording thread
+        stop();
+    }
+
 private:
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundRecorder::OnStart
+    /// \see SoundRecorder::onStart
     ///
     ////////////////////////////////////////////////////////////
     virtual bool onStart()
@@ -52,7 +64,7 @@ private:
     }
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundRecorder::ProcessSamples
+    /// \see SoundRecorder::onProcessSamples
     ///
     ////////////////////////////////////////////////////////////
     virtual bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount)
@@ -67,7 +79,7 @@ private:
     }
 
     ////////////////////////////////////////////////////////////
-    /// /see SoundRecorder::OnStop
+    /// \see SoundRecorder::onStop
     ///
     ////////////////////////////////////////////////////////////
     virtual void onStop()
@@ -98,7 +110,7 @@ private:
 void doClient(unsigned short port)
 {
     // Check that the device can capture audio
-    if (sf::SoundRecorder::isAvailable() == false)
+    if (!sf::SoundRecorder::isAvailable())
     {
         std::cout << "Sorry, audio capture is not supported by your system" << std::endl;
         return;
