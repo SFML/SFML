@@ -31,6 +31,7 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
+#include <cassert>
 
 #ifdef _MSC_VER
     #pragma warning(disable: 4355) // 'this' used in base member initializer list
@@ -59,7 +60,12 @@ m_deviceName        (getDefaultDevice())
 ////////////////////////////////////////////////////////////
 SoundRecorder::~SoundRecorder()
 {
-    // Nothing to do
+    // This assertion is triggered if the recording is still running while
+    // the object is destroyed. It ensures that stop() is called in the
+    // destructor of the derived class, which makes sure that the recording
+    // thread finishes before the derived object is destroyed. Otherwise a
+    // "pure virtual method called" exception is triggered.
+    assert(!m_isCapturing && "You must call stop() in the destructor of your derived class, so that the recording thread finishes before your object is destroyed.");
 }
 
 
@@ -114,12 +120,15 @@ bool SoundRecorder::start(unsigned int sampleRate)
 ////////////////////////////////////////////////////////////
 void SoundRecorder::stop()
 {
-    // Stop the capturing thread
-    m_isCapturing = false;
-    m_thread.wait();
+    // Stop the capturing thread if there is one
+    if (m_isCapturing)
+    {
+        m_isCapturing = false;
+        m_thread.wait();
 
-    // Notify derived class
-    onStop();
+        // Notify derived class
+        onStop();
+    }
 }
 
 

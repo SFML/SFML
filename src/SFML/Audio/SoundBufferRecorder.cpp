@@ -33,6 +33,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+SoundBufferRecorder::~SoundBufferRecorder()
+{
+    // Make sure to stop the recording thread
+    stop();
+}
+
+
+////////////////////////////////////////////////////////////
 bool SoundBufferRecorder::onStart()
 {
     m_samples.clear();
