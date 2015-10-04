@@ -107,6 +107,9 @@ EaglContext::~EaglContext()
 
         // Restore the previous context
         [EAGLContext setCurrentContext:previousContext];
+
+        if (m_context == [EAGLContext currentContext])
+            [EAGLContext setCurrentContext:nil];
     }
 }
 
@@ -167,9 +170,12 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
 
 
 ////////////////////////////////////////////////////////////
-bool EaglContext::makeCurrent()
+bool EaglContext::makeCurrent(bool current)
 {
-    return [EAGLContext setCurrentContext:m_context];
+    if (current)
+        return [EAGLContext setCurrentContext:m_context];
+
+    return [EAGLContext setCurrentContext:nil];
 }
 
 
@@ -215,12 +221,18 @@ void EaglContext::createContext(EaglContext* shared,
 
     // Create the context
     if (shared)
+    {
+        [EAGLContext setCurrentContext:nil];
+
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1 sharegroup:[shared->m_context sharegroup]];
+    }
     else
+    {
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+    }
 
     // Activate it
-    makeCurrent();
+    makeCurrent(true);
 
     // Create the framebuffer (this is the only allowed drawable on iOS)
     glGenFramebuffersOES(1, &m_framebuffer);
@@ -230,6 +242,9 @@ void EaglContext::createContext(EaglContext* shared,
 
     // Attach the context to the GL view for future updates
     window->getGlView().context = this;
+
+    // Deactivate it
+    makeCurrent(false);
 }
 
 } // namespace priv
