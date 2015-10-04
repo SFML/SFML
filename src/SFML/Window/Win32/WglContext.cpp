@@ -200,9 +200,9 @@ GlFunctionPointer WglContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-bool WglContext::makeCurrent()
+bool WglContext::makeCurrent(bool current)
 {
-    return m_deviceContext && m_context && wglMakeCurrent(m_deviceContext, m_context);
+    return m_deviceContext && m_context && wglMakeCurrent(current ? m_deviceContext : NULL, current ? m_context : NULL);
 }
 
 
@@ -599,6 +599,18 @@ void WglContext::createContext(WglContext* shared)
             attributes.push_back(0);
             attributes.push_back(0);
 
+            if (sharedContext)
+            {
+                static Mutex mutex;
+                Lock lock(mutex);
+
+                if (!wglMakeCurrent(NULL, NULL))
+                {
+                    err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    return;
+                }
+            }
+
             // Create the context
             m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, &attributes[0]);
         }
@@ -656,6 +668,12 @@ void WglContext::createContext(WglContext* shared)
             // wglShareLists doesn't seem to be thread-safe
             static Mutex mutex;
             Lock lock(mutex);
+
+            if (!wglMakeCurrent(NULL, NULL))
+            {
+                err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                return;
+            }
 
             if (!wglShareLists(sharedContext, m_context))
                 err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
