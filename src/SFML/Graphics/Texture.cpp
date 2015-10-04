@@ -40,38 +40,18 @@
 
 namespace
 {
-    sf::Mutex mutex;
+    sf::Mutex idMutex;
+    sf::Mutex maximumSizeMutex;
 
     // Thread-safe unique identifier generator,
     // is used for states cache (see RenderTarget)
     sf::Uint64 getUniqueId()
     {
-        sf::Lock lock(mutex);
+        sf::Lock lock(idMutex);
 
         static sf::Uint64 id = 1; // start at 1, zero is "no texture"
 
         return id++;
-    }
-
-    unsigned int checkMaximumTextureSize()
-    {
-        // Create a temporary context in case the user queries
-        // the size before a GlResource is created, thus
-        // initializing the shared context
-        if (!sf::Context::getActiveContext())
-        {
-            sf::Context context;
-
-            GLint size;
-            glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
-
-            return static_cast<unsigned int>(size);
-        }
-
-        GLint size;
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
-
-        return static_cast<unsigned int>(size);
     }
 }
 
@@ -118,7 +98,7 @@ Texture::~Texture()
     // Destroy the OpenGL texture
     if (m_texture)
     {
-        ensureGlContext();
+        TransientContextLock lock;
 
         GLuint texture = static_cast<GLuint>(m_texture);
         glCheck(glDeleteTextures(1, &texture));
@@ -157,7 +137,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     m_pixelsFlipped = false;
     m_fboAttachment = false;
 
-    ensureGlContext();
+    TransientContextLock lock;
 
     // Create the OpenGL texture if it doesn't exist yet
     if (!m_texture)
@@ -265,10 +245,6 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         {
             update(image);
 
-            // Force an OpenGL flush, so that the texture will appear updated
-            // in all contexts immediately (solves problems in multi-threaded apps)
-            glCheck(glFlush());
-
             return true;
         }
         else
@@ -290,6 +266,8 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         // Create the texture and upload the pixels
         if (create(rectangle.width, rectangle.height))
         {
+            TransientContextLock lock;
+
             // Make sure that the current texture binding will be preserved
             priv::TextureSaver save;
 
@@ -333,7 +311,7 @@ Image Texture::copyToImage() const
     if (!m_texture)
         return Image();
 
-    ensureGlContext();
+    TransientContextLock lock;
 
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
@@ -424,7 +402,7 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
 
     if (pixels && m_texture)
     {
-        ensureGlContext();
+        TransientContextLock lock;
 
         // Make sure that the current texture binding will be preserved
         priv::TextureSaver save;
@@ -436,6 +414,10 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
         m_hasMipmap = false;
         m_pixelsFlipped = false;
         m_cacheId = getUniqueId();
+
+        // Force an OpenGL flush, so that the texture data will appear updated
+        // in all contexts immediately (solves problems in multi-threaded apps)
+        glCheck(glFlush());
     }
 }
 
@@ -470,6 +452,8 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
 
     if (m_texture && window.setActive(true))
     {
+        TransientContextLock lock;
+
         // Make sure that the current texture binding will be preserved
         priv::TextureSaver save;
 
@@ -480,6 +464,10 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
         m_hasMipmap = false;
         m_pixelsFlipped = true;
         m_cacheId = getUniqueId();
+
+        // Force an OpenGL flush, so that the texture will appear updated
+        // in all contexts immediately (solves problems in multi-threaded apps)
+        glCheck(glFlush());
     }
 }
 
@@ -493,7 +481,7 @@ void Texture::setSmooth(bool smooth)
 
         if (m_texture)
         {
-            ensureGlContext();
+            TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
             priv::TextureSaver save;
@@ -544,7 +532,7 @@ void Texture::setRepeated(bool repeated)
 
         if (m_texture)
         {
-            ensureGlContext();
+            TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
             priv::TextureSaver save;
@@ -586,7 +574,7 @@ bool Texture::generateMipmap()
     if (!m_texture)
         return false;
 
-    ensureGlContext();
+    TransientContextLock lock;
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
@@ -613,7 +601,7 @@ void Texture::invalidateMipmap()
     if (!m_hasMipmap)
         return;
 
-    ensureGlContext();
+    TransientContextLock lock;
 
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
@@ -628,7 +616,7 @@ void Texture::invalidateMipmap()
 ////////////////////////////////////////////////////////////
 void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
-    ensureGlContext();
+    TransientContextLock lock;
 
     if (texture && texture->m_texture)
     {
@@ -684,12 +672,21 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    // TODO: Remove this lock when it becomes unnecessary in C++11
-    Lock lock(mutex);
+    Lock lock(maximumSizeMutex);
 
-    static unsigned int size = checkMaximumTextureSize();
+    static bool checked = false;
+    static GLint size = 0;
 
-    return size;
+    if (!checked)
+    {
+        checked = true;
+
+        TransientContextLock lock;
+
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
+    }
+
+    return static_cast<unsigned int>(size);
 }
 
 
@@ -722,7 +719,7 @@ unsigned int Texture::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getValidSize(unsigned int size)
 {
-    ensureGlContext();
+    TransientContextLock lock;
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();

@@ -104,6 +104,10 @@ m_window(0)
 SFContext::~SFContext()
 {
     [m_context clearDrawable];
+
+    if (m_context == [NSOpenGLContext currentContext])
+        [NSOpenGLContext clearCurrentContext];
+
     [m_context release];
 
     [m_view release]; // Might be nil but we don't care.
@@ -124,10 +128,18 @@ GlFunctionPointer SFContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-bool SFContext::makeCurrent()
+bool SFContext::makeCurrent(bool current)
 {
-    [m_context makeCurrentContext];
-    return m_context == [NSOpenGLContext currentContext]; // Should be true.
+    if (current)
+    {
+        [m_context makeCurrentContext];
+        return m_context == [NSOpenGLContext currentContext]; // Should be true.
+    }
+    else
+    {
+        [NSOpenGLContext clearCurrentContext];
+        return m_context != [NSOpenGLContext currentContext]; // Should be true.
+    }
 }
 
 
@@ -256,6 +268,17 @@ void SFContext::createContext(SFContext* shared,
 
     // Use the shared context if one is given.
     NSOpenGLContext* sharedContext = shared != NULL ? shared->m_context : nil;
+
+    if (sharedContext != nil)
+    {
+        [NSOpenGLContext clearCurrentContext];
+
+        if (sharedContext == [NSOpenGLContext currentContext])
+        {
+            sf::err() << "Failed to deactivate shared context before sharing" << std::endl;
+            return;
+        }
+    }
 
     // Create the context.
     m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
