@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/keysym.h>
 #include <cassert>
@@ -38,6 +40,7 @@ namespace
     // The shared display and its reference counter
     Display* sharedDisplay = NULL;
     unsigned int referenceCount = 0;
+    sf::Mutex mutex;
 
     typedef std::map<std::string, Atom> AtomMap;
     AtomMap atoms;
@@ -50,6 +53,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Display* OpenDisplay()
 {
+    Lock lock(mutex);
+
     if (referenceCount == 0)
     {
         sharedDisplay = XOpenDisplay(NULL);
@@ -71,6 +76,8 @@ Display* OpenDisplay()
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
+    Lock lock(mutex);
+
     assert(display == sharedDisplay);
 
     referenceCount--;

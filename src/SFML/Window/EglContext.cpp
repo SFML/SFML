@@ -173,9 +173,12 @@ EglContext::~EglContext()
 
 
 ////////////////////////////////////////////////////////////
-bool EglContext::makeCurrent()
+bool EglContext::makeCurrent(bool current)
 {
-    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
+    if (current)
+        return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
+
+    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 }
 
 
@@ -208,6 +211,9 @@ void EglContext::createContext(EglContext* shared)
         toShared = shared->m_context;
     else
         toShared = EGL_NO_CONTEXT;
+
+    if (toShared != EGL_NO_CONTEXT)
+        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
     // Create EGL context
     m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
