@@ -29,10 +29,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
 {
+
+class Context;
+
 ////////////////////////////////////////////////////////////
 /// \brief Base class for classes that require an OpenGL context
 ///
@@ -54,10 +58,27 @@ protected:
     ~GlResource();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Make sure that a valid OpenGL context exists in the current thread
+    /// \brief RAII helper class to temporarily lock an available context for use
     ///
     ////////////////////////////////////////////////////////////
-    static void ensureGlContext();
+    class SFML_WINDOW_API TransientContextLock : NonCopyable
+    {
+    public:
+        ////////////////////////////////////////////////////////////
+        /// \brief Default constructor
+        ///
+        ////////////////////////////////////////////////////////////
+        TransientContextLock();
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Destructor
+        ///
+        ////////////////////////////////////////////////////////////
+        ~TransientContextLock();
+
+    private:
+        Context* m_context; ///< Temporary context, in case we needed to create one
+    };
 };
 
 } // namespace sf
