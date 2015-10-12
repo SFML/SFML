@@ -125,9 +125,9 @@ if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
 
-# remove SL security warnings with Visual C++
+# Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
 # define SFML_OPENGL_ES if needed
