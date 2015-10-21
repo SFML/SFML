@@ -14,6 +14,7 @@ set(SRC
     ${INCROOT}/Lock.hpp
     ${SRCROOT}/Mutex.cpp
     ${INCROOT}/Mutex.hpp
+    ${INCROOT}/NativeActivity.hpp
     ${INCROOT}/NonCopyable.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
@@ -75,6 +76,7 @@ else()
         set(PLATFORM_SRC ${PLATFORM_SRC}
             ${SRCROOT}/Android/Activity.hpp
             ${SRCROOT}/Android/Activity.cpp
+            ${SRCROOT}/Android/NativeActivity.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
         )

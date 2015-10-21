@@ -2377,3 +2377,21 @@ GENERATE_LEGEND        = YES
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 DOT_CLEANUP            = YES
+
+#---------------------------------------------------------------------------
+# SFML specific aliases
+#---------------------------------------------------------------------------
+
+# sfplatform{platform(s)}
+# sfplatform{platform(s), header}
+#
+# Warns the user that some specific class or function is only available on
+# specific platforms.
+#
+# This shouldn't be used for incomplete implementations. It's meant for things
+# that will never appear on another platform, e.g. Android's native activity.
+#
+# If a header is given, the user is informed, that this header must be included
+# for the mentioned element to be defined.
+ALIASES               += sfplatform{1}="<dl class=\"attention\"><dt>Platform Limitation</dt><dd><b>This is only available on \1.</b></dd></dl>"
+ALIASES               += sfplatform{2}="<dl class=\"attention\"><dt>Platform Limitation</dt><dd><b>This is only available on \1</b> and to use it, you'll have to specifically include \2 in your code.</dd></dl>"
