@@ -219,7 +219,6 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     }
 }
 
-
 ////////////////////////////////////////////////////////////
 bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size)
 {
@@ -262,6 +261,108 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
     return false;
 }
 
+////////////////////////////////////////////////////////////
+void ImageLoader::writeCallback(void *context, void *data, int size){
+	std::vector<unsigned char>* vec = static_cast<std::vector<unsigned char>*>(context);
+	unsigned char* charData = static_cast<unsigned char*>(data);
+	vec->insert(vec->end(), charData, charData + size);
+}
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::saveImageToVectorPng(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size){
+	data->clear();
+	data->reserve(size.x * size.y * 4);
+	if (stbi_write_png_to_func(ImageLoader::writeCallback, data, size.x, size.y, 4, &pixels[0], 0))
+	{
+		return true;
+	}
+	err() << "Failed to save image to vector" << std::endl;
+	return false;
+}
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::saveImageToVectorBmp(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size) {
+	data->clear();
+	data->reserve(size.x * size.y * 4 + 54);
+	if (stbi_write_bmp_to_func(writeCallback, data, size.x, size.y, 4, &pixels[0]))
+	{
+		return true;
+	}
+	err() << "Failed to save image to vector" << std::endl;
+	return false;
+}
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::saveImageToVectorTga(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size)
+{
+	data->clear();
+	data->reserve(size.x * size.y * 4 + 520);
+	if (stbi_write_tga_to_func(writeCallback, data, size.x, size.y, 4, &pixels[0]))
+	{
+		return true;
+	}
+	err() << "Failed to save image to vector" << std::endl;
+	return false;
+}
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::saveImageToVectorJpg(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)
+{
+	// Initialize the error handler
+	jpeg_compress_struct compressInfos;
+	jpeg_error_mgr errorManager;
+	compressInfos.err = jpeg_std_error(&errorManager);
+
+	// Initialize all the writing and compression infos
+	jpeg_create_compress(&compressInfos);
+	compressInfos.image_width = width;
+	compressInfos.image_height = height;
+	compressInfos.input_components = 3;
+	compressInfos.in_color_space = JCS_RGB;
+
+	unsigned char* buf = static_cast<unsigned char*>(malloc(width * height * 3));
+	if (buf == NULL) {
+		err() << "Failed to save image to vector" << std::endl;
+		return false;
+	}
+	unsigned long bufSize = width * height * 3;
+	jpeg_mem_dest(&compressInfos, &buf, &bufSize);
+
+	jpeg_set_defaults(&compressInfos);
+	jpeg_set_quality(&compressInfos, 90, TRUE);
+
+	// Get rid of the alpha channel
+	std::vector<Uint8> buffer(width * height * 3);
+	for (std::size_t i = 0; i < width * height; ++i)
+	{
+		buffer[i * 3 + 0] = pixels[i * 4 + 0];
+		buffer[i * 3 + 1] = pixels[i * 4 + 1];
+		buffer[i * 3 + 2] = pixels[i * 4 + 2];
+	}
+	Uint8* ptr = &buffer[0];
+
+	// Start compression
+	jpeg_start_compress(&compressInfos, TRUE);
+
+	// Write each row of the image
+	while (compressInfos.next_scanline < compressInfos.image_height)
+	{
+		JSAMPROW rawPointer = ptr + (compressInfos.next_scanline * width * 3);
+		jpeg_write_scanlines(&compressInfos, &rawPointer, 1);
+	}
+
+	// Finish compression
+	jpeg_finish_compress(&compressInfos);
+	jpeg_destroy_compress(&compressInfos);
+	
+	data->clear();
+	data->reserve(bufSize);
+	data->insert(data->end(), buf, buf + bufSize);
+	
+	free(buf);
+
+	return true;
+}
 
 ////////////////////////////////////////////////////////////
 bool ImageLoader::writeJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height)

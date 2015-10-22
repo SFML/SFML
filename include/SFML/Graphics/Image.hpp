@@ -155,6 +155,66 @@ public:
     ////////////////////////////////////////////////////////////
     bool saveToFile(const std::string& filename) const;
 
+	////////////////////////////////////////////////////////////
+	/// \brief Save the image to vector in PNG format
+	///
+	/// Data in vector is erased before saving image.
+	/// To access raw memory you can use &vec.front()
+	///
+	/// \param vec Existing vector of unsigned char
+	///
+	/// \return True if saving was successful
+	///
+	/// \see saveToFile, saveToVectorBmp, saveToVectorJpg, saveToVectorTga
+	///
+	////////////////////////////////////////////////////////////
+	bool saveToVectorPng(std::vector<unsigned char> & vec);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save the image to vector in BMP format
+	///
+	/// Data in vector is erased before saving image.
+	/// To access raw memory you can use &vec.front()
+	///
+	/// \param vec Existing vector of unsigned char
+	///
+	/// \return True if saving was successful
+	///
+	/// \see saveToFile, saveToVectorPng, saveToVectorJpg, saveToVectorTga
+	///
+	////////////////////////////////////////////////////////////
+	bool saveToVectorBmp(std::vector<unsigned char> & vec);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save the image to vector in TGA format
+	///
+	/// Data in vector is erased before saving image.
+	/// To access raw memory you can use &vec.front()
+	///
+	/// \param vec Existing vector of unsigned char
+	///
+	/// \return True if saving was successful
+	///
+	/// \see saveToFile, saveToVectorBmp, saveToVectorJpg, saveToVectorPng
+	///
+	////////////////////////////////////////////////////////////
+	bool saveToVectorTga(std::vector<unsigned char> & vec);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save the image to vector in Jpg format
+	///
+	/// Data in vector is erased before saving image.
+	/// To access raw memory you can use &vec.front()
+	///
+	/// \param vec Existing vector of unsigned char
+	///
+	/// \return True if saving was successful
+	///
+	/// \see saveToFile, saveToVectorBmp, saveToVectorPng, saveToVectorTga
+	///
+	////////////////////////////////////////////////////////////
+	bool saveToVectorJpg(std::vector<unsigned char> & vec);
+
     ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image
     ///

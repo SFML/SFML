@@ -105,6 +105,53 @@ public:
     ////////////////////////////////////////////////////////////
     bool saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size);
 
+	////////////////////////////////////////////////////////////
+	/// \brief Save an array of pixels as a std::vector in PNG format
+	///
+	/// \param data     Vector to fill
+	/// \param pixels   Array of pixels to save to image
+	/// \param size     Size of image to save, in pixels
+	///
+	/// \return True if saving was successful
+	///
+	////////////////////////////////////////////////////////////
+	bool saveImageToVectorPng(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save an array of pixels as a std::vector in BMP format
+	///
+	/// \param data     Vector to fill
+	/// \param pixels   Array of pixels to save to image
+	/// \param size     Size of image to save, in pixels
+	///
+	/// \return True if saving was successful
+	///
+	////////////////////////////////////////////////////////////
+	bool saveImageToVectorBmp(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save an array of pixels as a std::vector in JPG format
+	///
+	/// \param data     Vector to fill
+	/// \param pixels   Array of pixels to save to image
+	/// \param size     Size of image to save, in pixels
+	///
+	/// \return True if saving was successful
+	///
+	////////////////////////////////////////////////////////////
+	bool saveImageToVectorJpg(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Save an array of pixels as a std::vector in TGA format
+	///
+	/// \param data     Vector to fill
+	/// \param pixels   Array of pixels to save to image
+	/// \param size     Size of image to save, in pixels
+	///
+	/// \return True if saving was successful
+	///
+	////////////////////////////////////////////////////////////
+	bool saveImageToVectorTga(std::vector<unsigned char>* data, const std::vector<Uint8>& pixels, const Vector2u& size);
 private:
 
     ////////////////////////////////////////////////////////////
@@ -131,6 +178,16 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     bool writeJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Callback for stbi_write_to_func 
+	///
+	/// \param context  Destination memory
+	/// \param data     Source memory
+	/// \param size     Size of source memory
+	///
+	////////////////////////////////////////////////////////////
+	static void writeCallback(void *context, void *data, int size);
 };
 
 } // namespace priv

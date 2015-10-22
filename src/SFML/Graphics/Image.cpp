@@ -157,8 +157,28 @@ bool Image::saveToFile(const std::string& filename) const
     return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_size);
 }
 
-
 ////////////////////////////////////////////////////////////
+bool Image::saveToVectorPng(std::vector<unsigned char> & vec)
+{
+	return priv::ImageLoader::getInstance().saveImageToVectorPng(&vec, m_pixels, m_size);
+}
+////////////////////////////////////////////////////////////
+bool Image::saveToVectorBmp(std::vector<unsigned char> & vec)
+{
+	return priv::ImageLoader::getInstance().saveImageToVectorBmp(&vec, m_pixels, m_size);
+}
+////////////////////////////////////////////////////////////
+bool Image::saveToVectorTga(std::vector<unsigned char> & vec)
+{
+	return priv::ImageLoader::getInstance().saveImageToVectorTga(&vec, m_pixels, m_size);
+}
+////////////////////////////////////////////////////////////
+bool Image::saveToVectorJpg(std::vector<unsigned char> & vec)
+{
+	return priv::ImageLoader::getInstance().saveImageToVectorJpg(&vec, m_pixels, m_size.x, m_size.y);
+}
+
+	////////////////////////////////////////////////////////////
 Vector2u Image::getSize() const
 {
     return m_size;
