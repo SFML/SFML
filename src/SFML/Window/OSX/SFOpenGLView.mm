@@ -171,6 +171,17 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
+-(void)update
+{
+    // In order to prevent an infinite recursion when the window/view is
+    // resized to zero-height/width, we ignore update event when resizing.
+    if (![self inLiveResize]) {
+        [super update];
+    }
+}
+
+
+////////////////////////////////////////////////////////
 -(void)finishInit
 {
     // Register for window focus events
