@@ -322,7 +322,7 @@ In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 template <typename Out>
 Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
 {
-    if (input < 0xFFFF)
+    if (input <= 0xFFFF)
     {
         // The character can be copied directly, we just need to check if it's in the valid range
         if ((input >= 0xD800) && (input <= 0xDFFF))
