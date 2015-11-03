@@ -297,6 +297,9 @@ private:
 
 #include <SFML/System/Log.inl>
 
+#ifdef SFML_DISABLE_LOGGING
+#define sfLog(channel, level, message)
+#else
 ////////////////////////////////////////////////////////////
 /// \brief Adds a log entry of the given category to the
 ///        specified channel
@@ -309,8 +312,8 @@ private:
 ///
 /// You may use this and all derived macros like so:
 /// \code
-/// sfLog(sf::Log::Channel::System, sf::Log::Level::Error)
-///     << "Something failed; additional formatted data: " << data;
+/// sfLog(sf::Log::Channel::System, sf::Log::Level::Error,
+///     "Something failed; additional formatted data: " << data);
 /// \endcode
 /// The default log entry processor would output the following to std::cerr:
 /// \code
@@ -321,48 +324,49 @@ private:
 /// instead of this one.
 ///
 ////////////////////////////////////////////////////////////
-#define sfLog(channel, level) if (::sf::priv::isBelowThreshold(::sf::Log::Channel(channel), ::sf::Log::Level(level))) { } \
-                             else ::sf::priv::Log<(channel), (level)>().get()
+#define sfLog(channel, level, message) do { if (::sf::priv::isBelowThreshold(::sf::Log::Channel(channel), ::sf::Log::Level(level))) { } \
+                                       else ::sf::priv::Log<(channel), (level)>().get() << message; } while (0) 
+#endif
 
-#define sfLogErr(channel)   sfLog(channel, ::sf::Log::Level::Error)
-#define sfLogWarn(channel)  sfLog(channel, ::sf::Log::Level::Warning)
-#define sfLogInfo(channel)  sfLog(channel, ::sf::Log::Level::Info)
-#define sfLogDebug(channel) sfLog(channel, ::sf::Log::Level::Debug)
-
-/// \see sfLog()
-#define sfLogSys(level) sfLog(::sf::Log::Channel::System, level)
-#define sfLogSysErr()   sfLogSys(::sf::Log::Level::Error)
-#define sfLogSysWarn()  sfLogSys(::sf::Log::Level::Warning)
-#define sfLogSysInfo()  sfLogSys(::sf::Log::Level::Info)
-#define sfLogSysDebug() sfLogSys(::sf::Log::Level::Debug)
+#define sfLogErr(channel, message)   sfLog(channel, ::sf::Log::Level::Error, message)
+#define sfLogWarn(channel, message)  sfLog(channel, ::sf::Log::Level::Warning, message)
+#define sfLogInfo(channel, message)  sfLog(channel, ::sf::Log::Level::Info, message)
+#define sfLogDebug(channel, message) sfLog(channel, ::sf::Log::Level::Debug, message)
 
 /// \see sfLog()
-#define sfLogWnd(level) sfLog(::sf::Log::Channel::Window, level)
-#define sfLogWndErr()   sfLogWnd(::sf::Log::Level::Error)
-#define sfLogWndWarn()  sfLogWnd(::sf::Log::Level::Warning)
-#define sfLogWndInfo()  sfLogWnd(::sf::Log::Level::Info)
-#define sfLogWndDebug() sfLogWnd(::sf::Log::Level::Debug)
+#define sfLogSys(level, message) sfLog(::sf::Log::Channel::System, level, message)
+#define sfLogSysErr(message)     sfLogSys(::sf::Log::Level::Error, message)
+#define sfLogSysWarn(message)    sfLogSys(::sf::Log::Level::Warning, message)
+#define sfLogSysInfo(message)    sfLogSys(::sf::Log::Level::Info, message)
+#define sfLogSysDebug(message)   sfLogSys(::sf::Log::Level::Debug, message)
 
 /// \see sfLog()
-#define sfLogGra(level) sfLog(::sf::Log::Channel::Graphics, level)
-#define sfLogGraErr()   sfLogGra(::sf::Log::Level::Error)
-#define sfLogGraWarn()  sfLogGra(::sf::Log::Level::Warning)
-#define sfLogGraInfo()  sfLogGra(::sf::Log::Level::Info)
-#define sfLogGraDebug() sfLogGra(::sf::Log::Level::Debug)
+#define sfLogWnd(level, message) sfLog(::sf::Log::Channel::Window, level, message)
+#define sfLogWndErr(message)     sfLogWnd(::sf::Log::Level::Error, message)
+#define sfLogWndWarn(message)    sfLogWnd(::sf::Log::Level::Warning, message)
+#define sfLogWndInfo(message)    sfLogWnd(::sf::Log::Level::Info, message)
+#define sfLogWndDebug(message)   sfLogWnd(::sf::Log::Level::Debug, message)
 
 /// \see sfLog()
-#define sfLogNet(level) sfLog(::sf::Log::Channel::Network, level)
-#define sfLogNetErr()   sfLogNet(::sf::Log::Level::Error)
-#define sfLogNetWarn()  sfLogNet(::sf::Log::Level::Warning)
-#define sfLogNetInfo()  sfLogNet(::sf::Log::Level::Info)
-#define sfLogNetDebug() sfLogNet(::sf::Log::Level::Debug)
+#define sfLogGra(level, message) sfLog(::sf::Log::Channel::Graphics, level, message)
+#define sfLogGraErr(message)     sfLogGra(::sf::Log::Level::Error, message)
+#define sfLogGraWarn(message)    sfLogGra(::sf::Log::Level::Warning, message)
+#define sfLogGraInfo(message)    sfLogGra(::sf::Log::Level::Info, message)
+#define sfLogGraDebug(message)   sfLogGra(::sf::Log::Level::Debug, message)
 
 /// \see sfLog()
-#define sfLogAud(level) sfLog(::sf::Log::Channel::Audio, level)
-#define sfLogAudErr()   sfLogAud(::sf::Log::Level::Error)
-#define sfLogAudWarn()  sfLogAud(::sf::Log::Level::Warning)
-#define sfLogAudInfo()  sfLogAud(::sf::Log::Level::Info)
-#define sfLogAudDebug() sfLogAud(::sf::Log::Level::Debug)
+#define sfLogNet(level, message) sfLog(::sf::Log::Channel::Network, level, message)
+#define sfLogNetErr(message)     sfLogNet(::sf::Log::Level::Error, message)
+#define sfLogNetWarn(message)    sfLogNet(::sf::Log::Level::Warning, message)
+#define sfLogNetInfo(message)    sfLogNet(::sf::Log::Level::Info, message)
+#define sfLogNetDebug(message)   sfLogNet(::sf::Log::Level::Debug, message)
+
+/// \see sfLog()
+#define sfLogAud(level, message) sfLog(::sf::Log::Channel::Audio, level, message)
+#define sfLogAudErr(message)     sfLogAud(::sf::Log::Level::Error, message)
+#define sfLogAudWarn(message)    sfLogAud(::sf::Log::Level::Warning, message)
+#define sfLogAudInfo(message)    sfLogAud(::sf::Log::Level::Info, message)
+#define sfLogAudDebug(message)   sfLogAud(::sf::Log::Level::Debug, message)
 
 #endif
 

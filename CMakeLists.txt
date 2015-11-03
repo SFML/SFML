@@ -69,6 +69,8 @@ sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentatio
 # add an option for choosing the OpenGL implementation
 sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 
+sfml_set_option(SFML_DISABLE_LOGGING TRUE BOOL "TRUE discard log entries at compile time, FALSE filter log entries at runtime")
+
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
@@ -123,6 +125,10 @@ endif()
 # define SFML_STATIC if the build type is not set to 'shared'
 if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
+endif()
+
+if (SFML_DISABLE_LOGGING)
+	add_definitions(-DSFML_DISABLE_LOGGING)
 endif()
 
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
