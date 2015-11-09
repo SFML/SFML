@@ -706,6 +706,7 @@ private:
     TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
     UniformTable m_uniforms;       ///< Parameters location cache
     AttribTable  m_attribs;        ///< Attributes location cache
+    AttribTable  m_attribBindings; ///< Attributes binding cache
 };
 
 } // namespace sf

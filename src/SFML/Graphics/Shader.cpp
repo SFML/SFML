@@ -688,7 +688,7 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
 ////////////////////////////////////////////////////////////
 void Shader::setAttribLocation(const std::string& name, int location)
 {
-    m_attribs[name] = location;
+    m_attribBindings[name] = location;
 }
 
 
@@ -854,11 +854,13 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     }
 
     // Bind attribute locations
-    AttribTable::const_iterator it = m_attribs.begin();
-    for (; it != m_attribs.end(); ++it)
+    AttribTable::const_iterator it = m_attribBindings.begin();
+    for (; it != m_attribBindings.end(); ++it)
     {
         GLEXT_glBindAttribLocation(shaderProgram, it->second, it->first.c_str());
     }
+    // Clear attribute location cache
+    m_attribs.clear();
 
     // Link the program
     glCheck(GLEXT_glLinkProgram(shaderProgram));
