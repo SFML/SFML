@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 
 namespace sf
@@ -78,24 +78,13 @@ Vector2u RenderWindow::getSize() const
 ////////////////////////////////////////////////////////////
 Image RenderWindow::capture() const
 {
-    Image image;
-    if (setActive())
-    {
-        int width = static_cast<int>(getSize().x);
-        int height = static_cast<int>(getSize().y);
+    Vector2u windowSize = getSize();
 
-        // copy rows one by one and flip them (OpenGL's origin is bottom while SFML's origin is top)
-        std::vector<Uint8> pixels(width * height * 4);
-        for (int i = 0; i < height; ++i)
-        {
-            Uint8* ptr = &pixels[i * width * 4];
-            glCheck(glReadPixels(0, height - i - 1, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
-        }
+    Texture texture;
+    texture.create(windowSize.x, windowSize.y);
+    texture.update(*this);
 
-        image.create(width, height, &pixels[0]);
-    }
-
-    return image;
+    return texture.copyToImage();
 }
 
 
