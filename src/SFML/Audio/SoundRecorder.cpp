@@ -49,10 +49,10 @@ SoundRecorder::SoundRecorder() :
 m_thread            (&SoundRecorder::record, this),
 m_sampleRate        (0),
 m_processingInterval(milliseconds(100)),
-m_isCapturing       (false)
+m_isCapturing       (false),
+m_deviceName        (getDefaultDevice())
 {
-    // Set the device name to the default device
-    m_deviceName = getDefaultDevice();
+
 }
 
 

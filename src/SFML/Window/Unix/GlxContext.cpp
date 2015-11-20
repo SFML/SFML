@@ -54,8 +54,8 @@ namespace
     public:
 
         GlxErrorHandler(::Display* display) :
-        m_display(display),
-        m_lock   (glxErrorMutex)
+        m_lock   (glxErrorMutex),
+        m_display(display)
         {
             glxErrorOccurred = false;
             m_previousHandler = XSetErrorHandler(HandleXError);
