@@ -57,7 +57,7 @@ struct SFMLmainWindow
         if (!font.loadFromFile(resPath + "/sansation.ttf"))
             NSLog(@"Couldn't load the font");
 
-        text.setColor(sf::Color::White);
+        text.setFillColor(sf::Color::White);
         text.setFont(font);
     }
 

@@ -45,7 +45,7 @@ int main(int, char const**)
         return EXIT_FAILURE;
     }
     sf::Text text("Hello SFML", font, 50);
-    text.setColor(sf::Color::Black);
+    text.setFillColor(sf::Color::Black);
 
     // Load a music to play
     sf::Music music;
