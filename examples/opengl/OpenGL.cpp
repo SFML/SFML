@@ -45,8 +45,8 @@ int main()
             return EXIT_FAILURE;
         sf::Text text("SFML / OpenGL demo", font);
         sf::Text instructions("Press space to toggle sRGB conversion", font);
-        text.setColor(sf::Color(255, 255, 255, 170));
-        instructions.setColor(sf::Color(255, 255, 255, 170));
+        text.setFillColor(sf::Color(255, 255, 255, 170));
+        instructions.setFillColor(sf::Color(255, 255, 255, 170));
         text.setPosition(250.f, 450.f);
         instructions.setPosition(150.f, 500.f);
 

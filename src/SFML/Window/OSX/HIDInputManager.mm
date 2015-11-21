@@ -763,7 +763,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case 0x2c:                      return sf::Keyboard::Slash;
         case 0x2a:                      return sf::Keyboard::BackSlash;
 
-#warning sf::Keyboard::Tilde might be in conflict with some other key.
+            // sf::Keyboard::Tilde might be in conflict with some other key.
             // 0x0a is for "Non-US Backslash" according to HID Calibrator,
             // a sample provided by Apple.
         case 0x0a:                      return sf::Keyboard::Tilde;
@@ -855,7 +855,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 
         case NSPauseFunctionKey:        return sf::Keyboard::Pause;
 
-#warning keycode 0x1b is not bound to any key.
+            // keycode 0x1b is not bound to any key.
             // This key is ' on CH-FR, ) on FR and - on US layouts.
 
             // An unknown key.

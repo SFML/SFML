@@ -106,7 +106,10 @@ struct Vector4
     ////////////////////////////////////////////////////////////
     /// \brief Construct from 4 vector components
     ///
-    /// \param X,Y,Z,W Components of the 4D vector
+    /// \param X Component of the 4D vector
+    /// \param Y Component of the 4D vector
+    /// \param Z Component of the 4D vector
+    /// \param W Component of the 4D vector
     ///
     ////////////////////////////////////////////////////////////
     Vector4(T X, T Y, T Z, T W) :
