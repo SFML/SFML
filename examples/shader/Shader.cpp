@@ -31,14 +31,14 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float, float x, float y)
     {
-        m_shader.setParameter("pixel_threshold", (x + y) / 30);
+        m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -101,9 +101,9 @@ public:
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setParameter("wave_phase", time);
-        m_shader.setParameter("wave_amplitude", x * 40, y * 40);
-        m_shader.setParameter("blur_radius", (x + y) * 0.008f);
+        m_shader.setUniform("wave_phase", time);
+        m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
+        m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -155,10 +155,10 @@ public:
     void onUpdate(float time, float x, float y)
     {
         float radius = 200 + std::cos(time) * 150;
-        m_shader.setParameter("storm_position", x * 800, y * 600);
-        m_shader.setParameter("storm_inner_radius", radius / 3);
-        m_shader.setParameter("storm_total_radius", radius);
-        m_shader.setParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
+        m_shader.setUniform("storm_inner_radius", radius / 3);
+        m_shader.setUniform("storm_total_radius", radius);
+        m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -215,14 +215,14 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setParameter("edge_threshold", 1 - (x + y) / 2);
+        m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
 
         // Update the position of the moving entities
         for (std::size_t i = 0; i < m_entities.size(); ++i)

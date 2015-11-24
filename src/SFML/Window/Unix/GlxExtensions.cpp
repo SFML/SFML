@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstddef>
+#include <string>
 
 static sf::GlFunctionPointer IntGetProcAddress(const char* name)
 {
@@ -40,16 +41,18 @@ int sfglx_ext_EXT_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
+int sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context_profile = sfglx_LOAD_FAILED;
 
-void (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalEXT)(Display *, GLXDrawable, int) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalEXT)(Display*, GLXDrawable, int) = NULL;
 
 static int Load_EXT_swap_control(void)
 {
     int numFailed = 0;
-    sf_ptrc_glXSwapIntervalEXT = (void (CODEGEN_FUNCPTR *)(Display *, GLXDrawable, int))IntGetProcAddress("glXSwapIntervalEXT");
-    if(!sf_ptrc_glXSwapIntervalEXT) numFailed++;
+    sf_ptrc_glXSwapIntervalEXT = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXDrawable, int)>(IntGetProcAddress("glXSwapIntervalEXT"));
+    if (!sf_ptrc_glXSwapIntervalEXT)
+        numFailed++;
     return numFailed;
 }
 
@@ -58,8 +61,9 @@ int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalMESA)(int) = NULL;
 static int Load_MESA_swap_control(void)
 {
     int numFailed = 0;
-    sf_ptrc_glXSwapIntervalMESA = (int (CODEGEN_FUNCPTR *)(int))IntGetProcAddress("glXSwapIntervalMESA");
-    if(!sf_ptrc_glXSwapIntervalMESA) numFailed++;
+    sf_ptrc_glXSwapIntervalMESA = reinterpret_cast<int (CODEGEN_FUNCPTR*)(int)>(IntGetProcAddress("glXSwapIntervalMESA"));
+    if (!sf_ptrc_glXSwapIntervalMESA)
+        numFailed++;
     return numFailed;
 }
 
@@ -68,52 +72,83 @@ int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalSGI)(int) = NULL;
 static int Load_SGI_swap_control(void)
 {
     int numFailed = 0;
-    sf_ptrc_glXSwapIntervalSGI = (int (CODEGEN_FUNCPTR *)(int))IntGetProcAddress("glXSwapIntervalSGI");
-    if(!sf_ptrc_glXSwapIntervalSGI) numFailed++;
+    sf_ptrc_glXSwapIntervalSGI = reinterpret_cast<int (CODEGEN_FUNCPTR *)(int)>(IntGetProcAddress("glXSwapIntervalSGI"));
+    if (!sf_ptrc_glXSwapIntervalSGI)
+        numFailed++;
     return numFailed;
 }
 
-GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display *, GLXFBConfig, GLXContext, Bool, const int *) = NULL;
+GLXPbufferSGIX (CODEGEN_FUNCPTR *sf_ptrc_glXCreateGLXPbufferSGIX)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXDestroyGLXPbufferSGIX)(Display*, GLXPbufferSGIX) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXGetSelectedEventSGIX)(Display*, GLXDrawable, unsigned long*) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_glXQueryGLXPbufferSGIX)(Display*, GLXPbufferSGIX, int, unsigned int*) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXSelectEventSGIX)(Display*, GLXDrawable, unsigned long) = NULL;
+
+static int Load_SGIX_pbuffer(void)
+{
+    int numFailed = 0;
+    sf_ptrc_glXCreateGLXPbufferSGIX = reinterpret_cast<GLXPbufferSGIX (CODEGEN_FUNCPTR*)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*)>(IntGetProcAddress("glXCreateGLXPbufferSGIX"));
+    if (!sf_ptrc_glXCreateGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXDestroyGLXPbufferSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXPbufferSGIX)>(IntGetProcAddress("glXDestroyGLXPbufferSGIX"));
+    if (!sf_ptrc_glXDestroyGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXGetSelectedEventSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXDrawable, unsigned long*)>(IntGetProcAddress("glXGetSelectedEventSGIX"));
+    if (!sf_ptrc_glXGetSelectedEventSGIX)
+        numFailed++;
+    sf_ptrc_glXQueryGLXPbufferSGIX = reinterpret_cast<int (CODEGEN_FUNCPTR*)(Display*, GLXPbufferSGIX, int, unsigned int*)>(IntGetProcAddress("glXQueryGLXPbufferSGIX"));
+    if (!sf_ptrc_glXQueryGLXPbufferSGIX)
+        numFailed++;
+    sf_ptrc_glXSelectEventSGIX = reinterpret_cast<void (CODEGEN_FUNCPTR*)(Display*, GLXDrawable, unsigned long)>(IntGetProcAddress("glXSelectEventSGIX"));
+    if (!sf_ptrc_glXSelectEventSGIX)
+        numFailed++;
+    return numFailed;
+}
+
+GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display*, GLXFBConfig, GLXContext, Bool, const int*) = NULL;
 
 static int Load_ARB_create_context(void)
 {
     int numFailed = 0;
-    sf_ptrc_glXCreateContextAttribsARB = (GLXContext (CODEGEN_FUNCPTR *)(Display *, GLXFBConfig, GLXContext, Bool, const int *))IntGetProcAddress("glXCreateContextAttribsARB");
-    if(!sf_ptrc_glXCreateContextAttribsARB) numFailed++;
+    sf_ptrc_glXCreateContextAttribsARB = reinterpret_cast<GLXContext (CODEGEN_FUNCPTR*)(Display*, GLXFBConfig, GLXContext, Bool, const int*)>(IntGetProcAddress("glXCreateContextAttribsARB"));
+    if (!sf_ptrc_glXCreateContextAttribsARB)
+        numFailed++;
     return numFailed;
 }
 
 typedef int (*PFN_LOADFUNCPOINTERS)(void);
 typedef struct sfglx_StrToExtMap_s
 {
-    const char *extensionName;
-    int *extensionVariable;
+    const char* extensionName;
+    int* extensionVariable;
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfglx_StrToExtMap;
 
-static sfglx_StrToExtMap ExtensionMap[6] = {
+static sfglx_StrToExtMap ExtensionMap[7] = {
     {"GLX_EXT_swap_control", &sfglx_ext_EXT_swap_control, Load_EXT_swap_control},
     {"GLX_MESA_swap_control", &sfglx_ext_MESA_swap_control, Load_MESA_swap_control},
     {"GLX_SGI_swap_control", &sfglx_ext_SGI_swap_control, Load_SGI_swap_control},
     {"GLX_ARB_multisample", &sfglx_ext_ARB_multisample, NULL},
+    {"GLX_SGIX_pbuffer", &sfglx_ext_SGIX_pbuffer, Load_SGIX_pbuffer},
     {"GLX_ARB_create_context", &sfglx_ext_ARB_create_context, Load_ARB_create_context},
     {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, NULL},
 };
 
-static int g_extensionMapSize = 6;
+static int g_extensionMapSize = 7;
 
-static sfglx_StrToExtMap *FindExtEntry(const char *extensionName)
+
+static sfglx_StrToExtMap* FindExtEntry(const char* extensionName)
 {
-    int loop;
-    sfglx_StrToExtMap *currLoc = ExtensionMap;
-    for(loop = 0; loop < g_extensionMapSize; ++loop, ++currLoc)
+    sfglx_StrToExtMap* currLoc = ExtensionMap;
+    for (int loop = 0; loop < g_extensionMapSize; ++loop, ++currLoc)
     {
-        if(strcmp(extensionName, currLoc->extensionName) == 0)
+        if (std::strcmp(extensionName, currLoc->extensionName) == 0)
             return currLoc;
     }
 
     return NULL;
 }
+
 
 static void ClearExtensionVars(void)
 {
@@ -121,21 +156,22 @@ static void ClearExtensionVars(void)
     sfglx_ext_MESA_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_SGI_swap_control = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_multisample = sfglx_LOAD_FAILED;
+    sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
     sfglx_ext_ARB_create_context_profile = sfglx_LOAD_FAILED;
 }
 
 
-static void LoadExtByName(const char *extensionName)
+static void LoadExtByName(const char* extensionName)
 {
-    sfglx_StrToExtMap *entry = NULL;
+    sfglx_StrToExtMap* entry = NULL;
     entry = FindExtEntry(extensionName);
-    if(entry)
+    if (entry)
     {
-        if(entry->LoadExtension)
+        if (entry->LoadExtension)
         {
             int numFailed = entry->LoadExtension();
-            if(numFailed == 0)
+            if (numFailed == 0)
             {
                 *(entry->extensionVariable) = sfglx_LOAD_SUCCEEDED;
             }
@@ -152,46 +188,25 @@ static void LoadExtByName(const char *extensionName)
 }
 
 
-static void ProcExtsFromExtString(const char *strExtList)
+static void ProcExtsFromExtString(const char* strExtList)
 {
-    size_t iExtListLen = strlen(strExtList);
-    const char *strExtListEnd = strExtList + iExtListLen;
-    const char *strCurrPos = strExtList;
-    char strWorkBuff[256];
-
-    while(*strCurrPos)
+    do
     {
-        /*Get the extension at our position.*/
-        int iStrLen = 0;
-        const char *strEndStr = strchr(strCurrPos, ' ');
-        int iStop = 0;
-        if(strEndStr == NULL)
-        {
-            strEndStr = strExtListEnd;
-            iStop = 1;
-        }
+        const char* begin = strExtList;
 
-        iStrLen = (int)((ptrdiff_t)strEndStr - (ptrdiff_t)strCurrPos);
+        while ((*strExtList != ' ') && *strExtList)
+            strExtList++;
 
-        if(iStrLen > 255)
-            return;
-
-        strncpy(strWorkBuff, strCurrPos, iStrLen);
-        strWorkBuff[iStrLen] = '\0';
-
-        LoadExtByName(strWorkBuff);
-
-        strCurrPos = strEndStr + 1;
-        if(iStop) break;
-    }
+        LoadExtByName(std::string(begin, strExtList).c_str());
+    } while (*strExtList++);
 }
 
-int sfglx_LoadFunctions(Display *display, int screen)
+
+int sfglx_LoadFunctions(Display* display, int screen)
 {
     ClearExtensionVars();
 
 
-    ProcExtsFromExtString((const char *)glXQueryExtensionsString(display, screen));
+    ProcExtsFromExtString(reinterpret_cast<const char*>(glXQueryExtensionsString(display, screen)));
     return sfglx_LOAD_SUCCEEDED;
 }
-

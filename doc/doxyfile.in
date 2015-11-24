@@ -301,7 +301,7 @@ EXTENSION_MAPPING      =
 # case of backward compatibilities issues.
 # The default value is: YES.
 
-MARKDOWN_SUPPORT       = NO
+MARKDOWN_SUPPORT       = YES
 
 # When enabled doxygen tries to link words that correspond to documented
 # classes, or namespaces to their corresponding documentation. Such a link can
@@ -2000,7 +2000,9 @@ PREDEFINED             = SFML_SYSTEM_API \
                          SFML_NETWORK_API \
                          SFML_WINDOW_API \
                          SFML_AUDIO_API \
-                         SFML_GRAPHICS_API
+                         SFML_GRAPHICS_API \
+                         SFML_DEPRECATED \
+                         SFML_DOXYGEN
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

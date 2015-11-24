@@ -133,14 +133,45 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the context
+    /// \brief Update the context visual settings from XVisualInfo
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param bitsPerPixel Pixel depth, in bits per pixel
-    /// \param settings     Creation parameters
+    /// \param visualInfo XVisualInfo to update settings from
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(GlxContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings);
+    void updateSettingsFromVisualInfo(XVisualInfo* visualInfo);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the context visual settings from the window
+    ///
+    ////////////////////////////////////////////////////////////
+    void updateSettingsFromWindow();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the context's drawing surface
+    ///
+    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param width        Back buffer width, in pixels
+    /// \param height       Back buffer height, in pixels
+    /// \param bitsPerPixel Pixel depth, in bits per pixel
+    ///
+    ////////////////////////////////////////////////////////////
+    void createSurface(GlxContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the context's drawing surface from an existing window
+    ///
+    /// \param window Window ID of the owning window
+    ///
+    ////////////////////////////////////////////////////////////
+    void createSurface(::Window window);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the context
+    ///
+    /// \param shared Context to share the new one with (can be NULL)
+    ///
+    ////////////////////////////////////////////////////////////
+    void createContext(GlxContext* shared);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -149,6 +180,7 @@ private:
     ::Window          m_window;     ///< Window to which the context is attached
     xcb_connection_t* m_connection; ///< Pointer to the xcb connection
     GLXContext        m_context;    ///< OpenGL context
+    GLXPbuffer        m_pbuffer;    ///< GLX pbuffer ID if one was created
     bool              m_ownsWindow; ///< Do we own the window associated to the context?
 };
 

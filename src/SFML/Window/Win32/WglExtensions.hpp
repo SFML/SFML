@@ -41,7 +41,7 @@
 
 #ifdef CODEGEN_FUNCPTR
 #undef CODEGEN_FUNCPTR
-#endif /*CODEGEN_FUNCPTR*/
+#endif // CODEGEN_FUNCPTR
 #define CODEGEN_FUNCPTR WINAPI
 
 #ifndef GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
@@ -63,14 +63,14 @@ typedef double GLdouble;
 typedef double GLclampd;
 #define GLvoid void
 
-#endif /*GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS*/
+#endif // GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
 #ifndef GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 #define GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
-#endif /*GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS*/
+#endif // GL_LOAD_GEN_BASIC_OPENGL_TYPEDEFS
 
 
 struct _GPU_DEVICE {
@@ -90,11 +90,12 @@ typedef struct _GPU_DEVICE *PGPU_DEVICE;
 
 #ifdef __cplusplus
 extern "C" {
-#endif /*__cplusplus*/
+#endif // __cplusplus
 
 extern int sfwgl_ext_EXT_swap_control;
 extern int sfwgl_ext_ARB_multisample;
 extern int sfwgl_ext_ARB_pixel_format;
+extern int sfwgl_ext_ARB_pbuffer;
 extern int sfwgl_ext_ARB_create_context;
 extern int sfwgl_ext_ARB_create_context_profile;
 
@@ -151,6 +152,15 @@ extern int sfwgl_ext_ARB_create_context_profile;
 #define WGL_TYPE_COLORINDEX_ARB 0x202C
 #define WGL_TYPE_RGBA_ARB 0x202B
 
+#define WGL_DRAW_TO_PBUFFER_ARB 0x202D
+#define WGL_MAX_PBUFFER_HEIGHT_ARB 0x2030
+#define WGL_MAX_PBUFFER_PIXELS_ARB 0x202E
+#define WGL_MAX_PBUFFER_WIDTH_ARB 0x202F
+#define WGL_PBUFFER_HEIGHT_ARB 0x2035
+#define WGL_PBUFFER_LARGEST_ARB 0x2033
+#define WGL_PBUFFER_LOST_ARB 0x2036
+#define WGL_PBUFFER_WIDTH_ARB 0x2034
+
 #define WGL_CONTEXT_DEBUG_BIT_ARB 0x00000001
 #define WGL_CONTEXT_FLAGS_ARB 0x2094
 #define WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB 0x00000002
@@ -170,24 +180,38 @@ extern int (CODEGEN_FUNCPTR *sf_ptrc_wglGetSwapIntervalEXT)(void);
 #define wglGetSwapIntervalEXT sf_ptrc_wglGetSwapIntervalEXT
 extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglSwapIntervalEXT)(int);
 #define wglSwapIntervalEXT sf_ptrc_wglSwapIntervalEXT
-#endif /*WGL_EXT_swap_control*/
+#endif // WGL_EXT_swap_control
 
 
 #ifndef WGL_ARB_pixel_format
 #define WGL_ARB_pixel_format 1
-extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglChoosePixelFormatARB)(HDC, const int *, const FLOAT *, UINT, int *, UINT *);
+extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglChoosePixelFormatARB)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
 #define wglChoosePixelFormatARB sf_ptrc_wglChoosePixelFormatARB
-extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribfvARB)(HDC, int, int, UINT, const int *, FLOAT *);
+extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribfvARB)(HDC, int, int, UINT, const int*, FLOAT*);
 #define wglGetPixelFormatAttribfvARB sf_ptrc_wglGetPixelFormatAttribfvARB
-extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribivARB)(HDC, int, int, UINT, const int *, int *);
+extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribivARB)(HDC, int, int, UINT, const int*, int*);
 #define wglGetPixelFormatAttribivARB sf_ptrc_wglGetPixelFormatAttribivARB
-#endif /*WGL_ARB_pixel_format*/
+#endif // WGL_ARB_pixel_format
+
+#ifndef WGL_ARB_pbuffer
+#define WGL_ARB_pbuffer 1
+extern HPBUFFERARB (CODEGEN_FUNCPTR *sf_ptrc_wglCreatePbufferARB)(HDC, int, int, int, const int*);
+#define wglCreatePbufferARB sf_ptrc_wglCreatePbufferARB
+extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglDestroyPbufferARB)(HPBUFFERARB);
+#define wglDestroyPbufferARB sf_ptrc_wglDestroyPbufferARB
+extern HDC (CODEGEN_FUNCPTR *sf_ptrc_wglGetPbufferDCARB)(HPBUFFERARB);
+#define wglGetPbufferDCARB sf_ptrc_wglGetPbufferDCARB
+extern BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglQueryPbufferARB)(HPBUFFERARB, int, int*);
+#define wglQueryPbufferARB sf_ptrc_wglQueryPbufferARB
+extern int (CODEGEN_FUNCPTR *sf_ptrc_wglReleasePbufferDCARB)(HPBUFFERARB, HDC);
+#define wglReleasePbufferDCARB sf_ptrc_wglReleasePbufferDCARB
+#endif // WGL_ARB_pbuffer
 
 #ifndef WGL_ARB_create_context
 #define WGL_ARB_create_context 1
-extern HGLRC (CODEGEN_FUNCPTR *sf_ptrc_wglCreateContextAttribsARB)(HDC, HGLRC, const int *);
+extern HGLRC (CODEGEN_FUNCPTR *sf_ptrc_wglCreateContextAttribsARB)(HDC, HGLRC, const int*);
 #define wglCreateContextAttribsARB sf_ptrc_wglCreateContextAttribsARB
-#endif /*WGL_ARB_create_context*/
+#endif // WGL_ARB_create_context
 
 
 enum sfwgl_LoadStatus
@@ -201,6 +225,6 @@ int sfwgl_LoadFunctions(HDC hdc);
 
 #ifdef __cplusplus
 }
-#endif /*__cplusplus*/
+#endif // __cplusplus
 
-#endif /* SF_POINTER_C_GENERATED_HEADER_WINDOWSGL_HPP */
+#endif // SF_POINTER_C_GENERATED_HEADER_WINDOWSGL_HPP

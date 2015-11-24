@@ -131,8 +131,8 @@ namespace
     ContextType* sharedContext = NULL;
 
     // Internal contexts
-    sf::ThreadLocalPtr<sf::priv::GlContext> internalContext(NULL);
-    std::set<sf::priv::GlContext*> internalContexts;
+    sf::ThreadLocalPtr<sf::Context> internalContext(NULL);
+    std::set<sf::Context*> internalContexts;
     sf::Mutex internalContextsMutex;
 
     // Check if the internal context of the current thread is valid
@@ -148,11 +148,11 @@ namespace
     }
 
     // Retrieve the internal context for the current thread
-    sf::priv::GlContext* getInternalContext()
+    sf::Context* getInternalContext()
     {
         if (!hasInternalContext())
         {
-            internalContext = sf::priv::GlContext::create();
+            internalContext = new sf::Context;
             sf::Lock lock(internalContextsMutex);
             internalContexts.insert(internalContext);
         }
@@ -171,6 +171,9 @@ void GlContext::globalInit()
 {
     Lock lock(mutex);
 
+    if (sharedContext)
+        return;
+
     // Create the shared context
     sharedContext = new ContextType(NULL);
     sharedContext->initialize();
@@ -187,13 +190,16 @@ void GlContext::globalCleanup()
 {
     Lock lock(mutex);
 
+    if (!sharedContext)
+        return;
+
     // Destroy the shared context
     delete sharedContext;
     sharedContext = NULL;
 
     // Destroy the internal contexts
     Lock internalContextsLock(internalContextsMutex);
-    for (std::set<GlContext*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
+    for (std::set<Context*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
         delete *it;
     internalContexts.clear();
 }

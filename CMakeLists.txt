@@ -40,7 +40,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 # setup version numbers
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 3)
-set(VERSION_PATCH 1)
+set(VERSION_PATCH 2)
 
 # add the SFML header path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -125,9 +125,9 @@ if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
 
-# remove SL security warnings with Visual C++
+# Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
 # define SFML_OPENGL_ES if needed
@@ -287,15 +287,19 @@ if(SFML_OS_WINDOWS)
     # install the binaries of SFML dependencies
     if(ARCH_32BITS)
         install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC)
+        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
             install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION lib)
+        elseif(SFML_COMPILER_MSVC)
+            install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION lib)
         else()
             install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION lib)
         endif()
     elseif(ARCH_64BITS)
         install(DIRECTORY extlibs/bin/x64/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC)
+        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
             install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION lib)
+        elseif(SFML_COMPILER_MSVC)
+            install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION lib)
         else()
             install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
         endif()

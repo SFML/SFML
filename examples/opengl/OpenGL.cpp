@@ -36,13 +36,6 @@ int main()
     text.setColor(sf::Color(255, 255, 255, 170));
     text.setPosition(250.f, 450.f);
 
-    // Make the window the active target for OpenGL calls
-    // Note: If using sf::Texture or sf::Shader with OpenGL,
-    // be sure to call sf::Texture::getMaximumSize() and/or
-    // sf::Shader::isAvailable() at least once before calling
-    // setActive(), as those functions will cause a context switch
-    window.setActive();
-
     // Load an OpenGL texture.
     // We could directly use a sf::Texture as an OpenGL texture (with its Bind() member function),
     // but here we want more control on it (generate mipmaps, ...) so we create a new one from an image

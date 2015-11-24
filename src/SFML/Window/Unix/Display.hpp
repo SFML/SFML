@@ -116,23 +116,6 @@ xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection);
 ////////////////////////////////////////////////////////////
 xcb_atom_t getAtom(const std::string& name, bool onlyIfExists = false);
 
-////////////////////////////////////////////////////////////
-/// \brief Get the keycode to keysym map
-///
-/// Contains 255 values. Use the keycode as the index
-/// into the array to retrieve its keysym.
-///
-/// \return Keycode to keysym map
-///
-////////////////////////////////////////////////////////////
-const xcb_keysym_t* getKeysymMap();
-
-////////////////////////////////////////////////////////////
-/// \brief Build the keysym map
-///
-////////////////////////////////////////////////////////////
-void buildKeysymMap();
-
 } // namespace priv
 
 } // namespace sf

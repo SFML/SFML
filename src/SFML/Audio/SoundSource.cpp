@@ -75,6 +75,7 @@ void SoundSource::setVolume(float volume)
     alCheck(alSourcef(m_source, AL_GAIN, volume * 0.01f));
 }
 
+
 ////////////////////////////////////////////////////////////
 void SoundSource::setPosition(float x, float y, float z)
 {
@@ -167,6 +168,24 @@ float SoundSource::getAttenuation() const
     alCheck(alGetSourcef(m_source, AL_ROLLOFF_FACTOR, &attenuation));
 
     return attenuation;
+}
+
+
+////////////////////////////////////////////////////////////
+SoundSource& SoundSource::operator =(const SoundSource& right)
+{
+    // Leave m_source untouched -- it's not necessary to destroy and
+    // recreate the OpenAL sound source, hence no copy-and-swap idiom
+
+    // Assign the sound attributes
+    setPitch(right.getPitch());
+    setVolume(right.getVolume());
+    setPosition(right.getPosition());
+    setRelativeToListener(right.isRelativeToListener());
+    setMinDistance(right.getMinDistance());
+    setAttenuation(right.getAttenuation());
+
+    return *this;
 }
 
 

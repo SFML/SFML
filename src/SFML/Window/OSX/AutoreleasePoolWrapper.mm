@@ -26,11 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/ThreadLocalPtr.hpp>
-
 #include <cassert>
+#include <pthread.h>
 
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <Foundation/Foundation.h>
@@ -41,165 +38,68 @@
 /// pool and making other pools invalid which can lead to a crash on 10.5 and an
 /// annoying message on 10.6 (*** attempt to pop an unknown autorelease pool).
 ///
-/// Because NSAutoreleasePool cannot be retain we have to do it ourself.
-/// We use an sf::ThreadLocalPtr to have one PoolWrapper in each thread.
-///
-/// SPECIAL CONSIDERATION:
-/// ======================
-/// This implies that if retainPool is called X times in a thread Y then
-/// releasePool must be called X times too in the same thread Y.
-///
 ////////////////////////////////////////////////////////////
 
-namespace sf
-{
-namespace priv
-{
-////////////////////////////////////////////////////////////
-/// \brief C++ Wrapper of Obj-C Autorelease Pool
-///
-////////////////////////////////////////////////////////////
-class PoolWrapper : NonCopyable
-{
-public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    PoolWrapper();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default destructor
-    ///
-    /// Make sure the pool is drained (if appropriate)
-    ///
-    ////////////////////////////////////////////////////////////
-    ~PoolWrapper();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Increment retain count and allocate memory if needed
-    ///
-    ////////////////////////////////////////////////////////////
-    void retain();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Decrement retain count and releasing memory if needed
-    ///
-    /// \return true if the pool wrapper can be released
-    ///
-    ////////////////////////////////////////////////////////////
-    bool release();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Drain the pool
-    ///
-    ////////////////////////////////////////////////////////////
-    void drain();
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    int m_count;                  ///< How many times was the pool retained?
-    NSAutoreleasePool* m_pool;    ///< Our dedicated pool
-};
-
-
-////////////////////////////////////////////////////////////
-PoolWrapper::PoolWrapper() :
-m_count(0),
-m_pool(nil)
-{
-    /* Nothing else */
-}
-
-
-////////////////////////////////////////////////////////////
-PoolWrapper::~PoolWrapper()
-{
-    // Make sure everything is drained
-    m_count = 0;
-    drain();
-}
-
-
-////////////////////////////////////////////////////////////
-void PoolWrapper::retain()
-{
-    // Increase counter
-    ++m_count;
-
-    // Allocate pool if required
-    if (m_pool == nil)
-        m_pool = [[NSAutoreleasePool alloc] init];
-}
-
-
-////////////////////////////////////////////////////////////
-bool PoolWrapper::release()
-{
-    // Decrease counter
-    --m_count;
-
-    return m_count == 0;
-}
-
-void PoolWrapper::drain()
-{
-    [m_pool drain];
-    m_pool = nil;
-
-    if (m_count != 0)
-        m_pool = [[NSAutoreleasePool alloc] init];
-}
-
-
-} // namespace priv
-
-} // namespace sf
 
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
-namespace
+static pthread_key_t  poolKey;
+static pthread_once_t initOnceToken = PTHREAD_ONCE_INIT;
+
+
+////////////////////////////////////////////////////////////
+/// \brief (local function) Drain one more time the pool
+///        but this time don't create a new one.
+///
+////////////////////////////////////////////////////////////
+static void destroyPool(void* data)
 {
-    // This per-thread variable holds the current autorelease pool for each thread
-    sf::ThreadLocalPtr<sf::priv::PoolWrapper> localPool;
+    NSAutoreleasePool* pool = (NSAutoreleasePool*)data;
+    [pool drain];
 }
 
 
 ////////////////////////////////////////////////////////////
-void retainPool(void)
+/// \brief (local function) Init the pthread key for the pool
+///
+////////////////////////////////////////////////////////////
+static void createPoolKey(void)
 {
-    // First, Check that we have a valid PoolWrapper object in our local pool.
-    if (localPool == NULL)
-        localPool = new sf::priv::PoolWrapper();
-
-    // Then retains!
-    localPool->retain();
+    pthread_key_create(&poolKey, destroyPool);
 }
 
 
 ////////////////////////////////////////////////////////////
-void drainCurrentPool(void)
+/// \brief (local function) Store a new pool for this thread
+///
+////////////////////////////////////////////////////////////
+static void createNewPool(void)
 {
-    assert(localPool != NULL);
-    localPool->drain();
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    pthread_setspecific(poolKey, pool);
 }
 
 
 ////////////////////////////////////////////////////////////
-void releasePool(void)
+void ensureThreadHasPool(void)
 {
-    assert(localPool != NULL);
-
-    // If we're done with the pool, let's release the memory
-    if (localPool->release())
+    pthread_once(&initOnceToken, createPoolKey);
+    if (pthread_getspecific(poolKey) == NULL)
     {
-        delete localPool;
-        localPool = NULL;
+        createNewPool();
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void drainThreadPool(void)
+{
+    void* data = pthread_getspecific(poolKey);
+    assert(data != NULL);
+
+    // Drain the pool but keep it alive by creating a new one
+    destroyPool(data);
+    createNewPool();
 }
 

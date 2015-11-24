@@ -77,7 +77,28 @@ public:
     ////////////////////////////////////////////////////////////
     bool setActive(bool active);
 
-public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the settings of the context
+    ///
+    /// Note that these settings may be different than the ones
+    /// passed to the constructor; they are indeed adjusted if the
+    /// original settings are not directly supported by the system.
+    ///
+    /// \return Structure containing the settings
+    ///
+    ////////////////////////////////////////////////////////////
+    const ContextSettings& getSettings() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether a given OpenGL extension is available
+    ///
+    /// \param name Name of the extension to check for
+    ///
+    /// \return True if available, false if unavailable
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isExtensionAvailable(const char* name);
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
     ///
@@ -87,6 +108,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static GlFunctionPointer getFunction(const char* name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context
+    ///
+    /// \return The currently active context or NULL if none is active
+    ///
+    ////////////////////////////////////////////////////////////
+    static const Context* getActiveContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

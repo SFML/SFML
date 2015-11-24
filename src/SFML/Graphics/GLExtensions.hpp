@@ -172,6 +172,15 @@
     #define GLEXT_glUniform3f                         glUniform3fARB
     #define GLEXT_glUniform4f                         glUniform4fARB
     #define GLEXT_glUniform1i                         glUniform1iARB
+    #define GLEXT_glUniform2i                         glUniform2iARB
+    #define GLEXT_glUniform3i                         glUniform3iARB
+    #define GLEXT_glUniform4i                         glUniform4iARB
+    #define GLEXT_glUniform1fv                        glUniform1fvARB
+    #define GLEXT_glUniform2fv                        glUniform2fvARB
+    #define GLEXT_glUniform2iv                        glUniform2ivARB
+    #define GLEXT_glUniform3fv                        glUniform3fvARB
+    #define GLEXT_glUniform4fv                        glUniform4fvARB
+    #define GLEXT_glUniformMatrix3fv                  glUniformMatrix3fvARB
     #define GLEXT_glUniformMatrix4fv                  glUniformMatrix4fvARB
     #define GLEXT_glGetObjectParameteriv              glGetObjectParameterivARB
     #define GLEXT_glGetInfoLog                        glGetInfoLogARB

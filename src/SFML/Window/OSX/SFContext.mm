@@ -46,7 +46,7 @@ m_view(0),
 m_window(0)
 {
     // Ask for a pool.
-    retainPool();
+    ensureThreadHasPool();
 
     // Create the context
     createContext(shared,
@@ -62,7 +62,7 @@ m_view(0),
 m_window(0)
 {
     // Ask for a pool.
-    retainPool();
+    ensureThreadHasPool();
 
     // Create the context.
     createContext(shared, bitsPerPixel, settings);
@@ -83,7 +83,7 @@ m_window(0)
     WindowImplCocoa::setUpProcess();
 
     // Ask for a pool.
-    retainPool();
+    ensureThreadHasPool();
 
     // Create the context.
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
@@ -108,8 +108,6 @@ SFContext::~SFContext()
 
     [m_view release]; // Might be nil but we don't care.
     [m_window release]; // Idem.
-
-    releasePool();
 }
 
 

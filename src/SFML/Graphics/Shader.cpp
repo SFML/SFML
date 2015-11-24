@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/InputStream.hpp>
@@ -119,7 +121,21 @@ namespace
         // Create a temporary context in case the user checks
         // before a GlResource is created, thus initializing
         // the shared context
-        sf::Context context;
+        if (!sf::Context::getActiveContext())
+        {
+            sf::Context context;
+
+            // Make sure that extensions are initialized
+            sf::priv::ensureExtensionsInit();
+
+            bool available = GLEXT_multitexture         &&
+                             GLEXT_shading_language_100 &&
+                             GLEXT_shader_objects       &&
+                             GLEXT_vertex_shader        &&
+                             GLEXT_fragment_shader;
+
+            return available;
+        }
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
@@ -132,6 +148,57 @@ namespace
 
         return available;
     }
+
+    // Transforms an array of 2D vectors into a contiguous array of scalars
+    template <typename T>
+    std::vector<T> flatten(const sf::Vector2<T>* vectorArray, std::size_t length)
+    {
+        const std::size_t vectorSize = 2;
+
+        std::vector<T> contiguous(vectorSize * length);
+        for (std::size_t i = 0; i < length; ++i)
+        {
+            contiguous[vectorSize * i]     = vectorArray[i].x;
+            contiguous[vectorSize * i + 1] = vectorArray[i].y;
+        }
+
+        return contiguous;
+    }
+
+    // Transforms an array of 3D vectors into a contiguous array of scalars
+    template <typename T>
+    std::vector<T> flatten(const sf::Vector3<T>* vectorArray, std::size_t length)
+    {
+        const std::size_t vectorSize = 3;
+
+        std::vector<T> contiguous(vectorSize * length);
+        for (std::size_t i = 0; i < length; ++i)
+        {
+            contiguous[vectorSize * i]     = vectorArray[i].x;
+            contiguous[vectorSize * i + 1] = vectorArray[i].y;
+            contiguous[vectorSize * i + 2] = vectorArray[i].z;
+        }
+
+        return contiguous;
+    }
+
+    // Transforms an array of 4D vectors into a contiguous array of scalars
+    template <typename T>
+    std::vector<T> flatten(const sf::priv::Vector4<T>* vectorArray, std::size_t length)
+    {
+        const std::size_t vectorSize = 4;
+
+        std::vector<T> contiguous(vectorSize * length);
+        for (std::size_t i = 0; i < length; ++i)
+        {
+            contiguous[vectorSize * i]     = vectorArray[i].x;
+            contiguous[vectorSize * i + 1] = vectorArray[i].y;
+            contiguous[vectorSize * i + 2] = vectorArray[i].z;
+            contiguous[vectorSize * i + 3] = vectorArray[i].w;
+        }
+
+        return contiguous;
+    }
 }
 
 
@@ -142,11 +209,54 @@ Shader::CurrentTextureType Shader::CurrentTexture;
 
 
 ////////////////////////////////////////////////////////////
+struct Shader::UniformBinder : private NonCopyable
+{
+    ////////////////////////////////////////////////////////////
+    /// \brief Constructor: set up state before uniform is set
+    ///
+    ////////////////////////////////////////////////////////////
+    UniformBinder(Shader& shader, const std::string& name) :
+    savedProgram(0),
+    currentProgram(castToGlHandle(shader.m_shaderProgram)),
+    location(-1)
+    {
+        if (currentProgram)
+        {
+            ensureGlContext();
+
+            // Enable program object
+            glCheck(savedProgram = GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
+            if (currentProgram != savedProgram)
+                glCheck(GLEXT_glUseProgramObject(currentProgram));
+
+            // Store uniform location for further use outside constructor
+            location = shader.getUniformLocation(name);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Destructor: restore state after uniform is set
+    ///
+    ////////////////////////////////////////////////////////////
+    ~UniformBinder()
+    {
+        // Disable program object
+        if (currentProgram && (currentProgram != savedProgram))
+            glCheck(GLEXT_glUseProgramObject(savedProgram));
+    }
+
+    GLEXT_GLhandle savedProgram;   ///< Handle to the previously active program object
+    GLEXT_GLhandle currentProgram; ///< Handle to the program object of the modified sf::Shader instance
+    GLint          location;       ///< Uniform location, used by the surrounding sf::Shader code
+};
+
+
+////////////////////////////////////////////////////////////
 Shader::Shader() :
 m_shaderProgram (0),
 m_currentTexture(-1),
 m_textures      (),
-m_params        ()
+m_uniforms      ()
 {
 }
 
@@ -268,155 +378,132 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragme
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x)
+void Shader::setUniform(const std::string& name, float x)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
-
-        // Enable program
-        GLEXT_GLhandle program = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(m_shaderProgram)));
-
-        // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
-        if (location != -1)
-        {
-            glCheck(GLEXT_glUniform1f(location, x));
-        }
-
-        // Disable program
-        glCheck(GLEXT_glUseProgramObject(program));
-    }
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform1f(binder.location, x));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y)
+void Shader::setUniform(const std::string& name, const Glsl::Vec2& v)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
-
-        // Enable program
-        GLEXT_GLhandle program = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(m_shaderProgram)));
-
-        // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
-        if (location != -1)
-        {
-            glCheck(GLEXT_glUniform2f(location, x, y));
-        }
-
-        // Disable program
-        glCheck(GLEXT_glUseProgramObject(program));
-    }
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform2f(binder.location, v.x, v.y));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y, float z)
+void Shader::setUniform(const std::string& name, const Glsl::Vec3& v)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
-
-        // Enable program
-        GLEXT_GLhandle program = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(m_shaderProgram)));
-
-        // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
-        if (location != -1)
-        {
-            glCheck(GLEXT_glUniform3f(location, x, y, z));
-        }
-
-        // Disable program
-        glCheck(GLEXT_glUseProgramObject(program));
-    }
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform3f(binder.location, v.x, v.y, v.z));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
+void Shader::setUniform(const std::string& name, const Glsl::Vec4& v)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
-
-        // Enable program
-        GLEXT_GLhandle program = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(m_shaderProgram)));
-
-        // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
-        if (location != -1)
-        {
-            glCheck(GLEXT_glUniform4f(location, x, y, z, w));
-        }
-
-        // Disable program
-        glCheck(GLEXT_glUseProgramObject(program));
-    }
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform4f(binder.location, v.x, v.y, v.z, v.w));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Vector2f& v)
+void Shader::setUniform(const std::string& name, int x)
 {
-    setParameter(name, v.x, v.y);
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform1i(binder.location, x));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Vector3f& v)
+void Shader::setUniform(const std::string& name, const Glsl::Ivec2& v)
 {
-    setParameter(name, v.x, v.y, v.z);
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform2i(binder.location, v.x, v.y));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Color& color)
+void Shader::setUniform(const std::string& name, const Glsl::Ivec3& v)
 {
-    setParameter(name, color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform3i(binder.location, v.x, v.y, v.z));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Transform& transform)
+void Shader::setUniform(const std::string& name, const Glsl::Ivec4& v)
 {
-    if (m_shaderProgram)
-    {
-        ensureGlContext();
-
-        // Enable program
-        GLEXT_GLhandle program = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(m_shaderProgram)));
-
-        // Get parameter location and assign it new values
-        GLint location = getParamLocation(name);
-        if (location != -1)
-        {
-            glCheck(GLEXT_glUniformMatrix4fv(location, 1, GL_FALSE, transform.getMatrix()));
-        }
-
-        // Disable program
-        glCheck(GLEXT_glUseProgramObject(program));
-    }
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform4i(binder.location, v.x, v.y, v.z, v.w));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Texture& texture)
+void Shader::setUniform(const std::string& name, bool x)
+{
+    setUniform(name, static_cast<int>(x));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec2& v)
+{
+    setUniform(name, Glsl::Ivec2(v));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec3& v)
+{
+    setUniform(name, Glsl::Ivec3(v));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec4& v)
+{
+    setUniform(name, Glsl::Ivec4(v));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
+{
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
+{
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Texture& texture)
 {
     if (m_shaderProgram)
     {
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        int location = getParamLocation(name);
+        int location = getUniformLocation(name);
         if (location != -1)
         {
             // Store the location -> texture mapping
@@ -444,15 +531,157 @@ void Shader::setParameter(const std::string& name, const Texture& texture)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, CurrentTextureType)
+void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
     if (m_shaderProgram)
     {
         ensureGlContext();
 
         // Find the location of the variable in the shader
-        m_currentTexture = getParamLocation(name);
+        m_currentTexture = getUniformLocation(name);
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const float* scalarArray, std::size_t length)
+{
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform1fv(binder.location, length, scalarArray));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec2* vectorArray, std::size_t length)
+{
+    std::vector<float> contiguous = flatten(vectorArray, length);
+
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform2fv(binder.location, length, &contiguous[0]));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec3* vectorArray, std::size_t length)
+{
+    std::vector<float> contiguous = flatten(vectorArray, length);
+
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform3fv(binder.location, length, &contiguous[0]));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorArray, std::size_t length)
+{
+    std::vector<float> contiguous = flatten(vectorArray, length);
+
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniform4fv(binder.location, length, &contiguous[0]));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixArray, std::size_t length)
+{
+    const std::size_t matrixSize = 3 * 3;
+
+    std::vector<float> contiguous(matrixSize * length);
+    for (std::size_t i = 0; i < length; ++i)
+        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, length, GL_FALSE, &contiguous[0]));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length)
+{
+    const std::size_t matrixSize = 4 * 4;
+
+    std::vector<float> contiguous(matrixSize * length);
+    for (std::size_t i = 0; i < length; ++i)
+        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+
+    UniformBinder binder(*this, name);
+    if (binder.location != -1)
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, length, GL_FALSE, &contiguous[0]));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x)
+{
+    setUniform(name, x);
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y)
+{
+    setUniform(name, Glsl::Vec2(x, y));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y, float z)
+{
+    setUniform(name, Glsl::Vec3(x, y, z));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
+{
+    setUniform(name, Glsl::Vec4(x, y, z, w));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Vector2f& v)
+{
+    setUniform(name, v);
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Vector3f& v)
+{
+    setUniform(name, v);
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Color& color)
+{
+    setUniform(name, Glsl::Vec4(color));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Transform& transform)
+{
+    setUniform(name, Glsl::Mat4(transform));
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, const Texture& texture)
+{
+    setUniform(name, texture);
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setParameter(const std::string& name, CurrentTextureType)
+{
+    setUniform(name, CurrentTexture);
 }
 
 
@@ -531,16 +760,18 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     // Reset the internal state
     m_currentTexture = -1;
     m_textures.clear();
-    m_params.clear();
+    m_uniforms.clear();
 
     // Create the program
-    GLEXT_GLhandle shaderProgram = glCheck(GLEXT_glCreateProgramObject());
+    GLEXT_GLhandle shaderProgram;
+    glCheck(shaderProgram = GLEXT_glCreateProgramObject());
 
     // Create the vertex shader if needed
     if (vertexShaderCode)
     {
         // Create and compile the shader
-        GLEXT_GLhandle vertexShader = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
+        GLEXT_GLhandle vertexShader;
+        glCheck(vertexShader = GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
         glCheck(GLEXT_glShaderSource(vertexShader, 1, &vertexShaderCode, NULL));
         glCheck(GLEXT_glCompileShader(vertexShader));
 
@@ -567,7 +798,8 @@ bool Shader::compile(const char* vertexShaderCode, const char* fragmentShaderCod
     if (fragmentShaderCode)
     {
         // Create and compile the shader
-        GLEXT_GLhandle fragmentShader = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
+        GLEXT_GLhandle fragmentShader;
+        glCheck(fragmentShader = GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
         glCheck(GLEXT_glShaderSource(fragmentShader, 1, &fragmentShaderCode, NULL));
         glCheck(GLEXT_glCompileShader(fragmentShader));
 
@@ -635,11 +867,11 @@ void Shader::bindTextures() const
 
 
 ////////////////////////////////////////////////////////////
-int Shader::getParamLocation(const std::string& name)
+int Shader::getUniformLocation(const std::string& name)
 {
     // Check the cache
-    ParamTable::const_iterator it = m_params.find(name);
-    if (it != m_params.end())
+    UniformTable::const_iterator it = m_uniforms.find(name);
+    if (it != m_uniforms.end())
     {
         // Already in cache, return it
         return it->second;
@@ -648,7 +880,7 @@ int Shader::getParamLocation(const std::string& name)
     {
         // Not in cache, request the location from OpenGL
         int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
-        m_params.insert(std::make_pair(name, location));
+        m_uniforms.insert(std::make_pair(name, location));
 
         if (location == -1)
             err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
@@ -722,6 +954,138 @@ bool Shader::loadFromStream(InputStream& stream, Type type)
 bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
 {
     return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, float x)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Vec2& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Vec3& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Vec4& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, int x)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Ivec2& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Ivec3& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Ivec4& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, bool x)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec2& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec3& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Bvec4& v)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, const Texture& texture)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniform(const std::string& name, CurrentTextureType)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const float* scalarArray, std::size_t length)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec2* vectorArray, std::size_t length)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec3* vectorArray, std::size_t length)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorArray, std::size_t length)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixArray, std::size_t length)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length)
+{
 }
 
 
