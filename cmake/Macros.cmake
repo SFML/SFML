@@ -37,6 +37,7 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -s-d)
         set_target_properties(${target} PROPERTIES RELEASE_POSTFIX -s)
         set_target_properties(${target} PROPERTIES MINSIZEREL_POSTFIX -s)
+        set_target_properties(${target} PROPERTIES RELWITHDEBINFO_POSTFIX -s)
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
