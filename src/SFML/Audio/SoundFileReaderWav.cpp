@@ -110,7 +110,8 @@ bool SoundFileReaderWav::check(InputStream& stream)
 SoundFileReaderWav::SoundFileReaderWav() :
 m_stream        (NULL),
 m_bytesPerSample(0),
-m_dataStart     (0)
+m_dataStart     (0),
+m_dataEnd       (0)
 {
 }
 
@@ -145,7 +146,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
     assert(m_stream);
 
     Uint64 count = 0;
-    while (count < maxCount)
+    while ((count < maxCount) && (m_stream->tell() < m_dataEnd))
     {
         switch (m_bytesPerSample)
         {
@@ -285,8 +286,9 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             // Compute the total number of samples
             info.sampleCount = subChunkSize / m_bytesPerSample;
 
-            // Store the starting position of samples in the file
+            // Store the start and end position of samples in the file
             m_dataStart = m_stream->tell();
+            m_dataEnd = m_dataStart + info.sampleCount * m_bytesPerSample;
 
             dataChunkFound = true;
         }
