@@ -1757,17 +1757,23 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Key down event
         case KeyPress:
         {
-            // Get the keysym of the key that has been pressed
-            static XComposeStatus keyboard;
-            char buffer[32];
-            KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
+            Keyboard::Key key = Keyboard::Unknown;
+
+            // Try each KeySym index (modifier group) until we get a match
+            for (int i = 0; i < 4; ++i)
+            {
+                // Get the SFML keyboard code from the keysym of the key that has been pressed
+                key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
+
+                if (key != Keyboard::Unknown)
+                    break;
+            }
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type        = Event::KeyPressed;
-            event.key.code    = keysymToSF(symbol);
+            event.key.code    = key;
             event.key.alt     = windowEvent.xkey.state & Mod1Mask;
             event.key.control = windowEvent.xkey.state & ControlMask;
             event.key.shift   = windowEvent.xkey.state & ShiftMask;
@@ -1826,15 +1832,22 @@ bool WindowImplX11::processEvent(XEvent windowEvent)
         // Key up event
         case KeyRelease:
         {
-            // Get the keysym of the key that has been pressed
-            char buffer[32];
-            KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
+            Keyboard::Key key = Keyboard::Unknown;
+
+            // Try each KeySym index (modifier group) until we get a match
+            for (int i = 0; i < 4; ++i)
+            {
+                // Get the SFML keyboard code from the keysym of the key that has been released
+                key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
+
+                if (key != Keyboard::Unknown)
+                    break;
+            }
 
             // Fill the event parameters
             Event event;
             event.type        = Event::KeyReleased;
-            event.key.code    = keysymToSF(symbol);
+            event.key.code    = key;
             event.key.alt     = windowEvent.xkey.state & Mod1Mask;
             event.key.control = windowEvent.xkey.state & ControlMask;
             event.key.shift   = windowEvent.xkey.state & ShiftMask;
