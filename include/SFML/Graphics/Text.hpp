@@ -299,6 +299,11 @@ private:
     void ensureGeometryUpdate() const;
 
     ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::map<Texture*, VertexArray> VertexArrayMap; ///< Map from texture to vertex array containing the text's geometry
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     String              m_string;             ///< String to display
@@ -306,7 +311,7 @@ private:
     unsigned int        m_characterSize;      ///< Base size of characters, in pixels
     Uint32              m_style;              ///< Text style (see Style enum)
     Color               m_color;              ///< Text color
-    mutable VertexArray m_vertices;           ///< Vertex array containing the text's geometry
+    mutable VertexArrayMap m_verticesMap;     ///< Vertex arrays containing the text's geometry per texture
     mutable FloatRect   m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
     mutable bool        m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
 };

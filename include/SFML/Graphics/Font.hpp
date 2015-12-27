@@ -37,6 +37,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <list>
 
 
 namespace sf
@@ -238,13 +239,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the texture containing the loaded glyphs of a certain size
     ///
-    /// The contents of the returned texture changes as more glyphs
-    /// are requested, thus it is not very relevant. It is mainly
-    /// used internally by sf::Text.
-    ///
-    /// \param characterSize Reference character size
-    ///
-    /// \return Texture containing the glyphs of the requested size
+    /// \deprecated Use getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold).texture instead.
     ///
     ////////////////////////////////////////////////////////////
     const Texture& getTexture(unsigned int characterSize) const;
@@ -294,6 +289,11 @@ private:
     };
 
     ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    typedef std::list<Page> PageList; ///< List of pages, where each page corresponds to a texture
+
+    ////////////////////////////////////////////////////////////
     /// \brief Free all the internal resources
     ///
     ////////////////////////////////////////////////////////////
@@ -336,7 +336,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<unsigned int, Page> PageTable; ///< Table mapping a character size to its page (texture)
+    typedef std::map<unsigned int, PageList> PageListTable; ///< Table mapping a character size to its list of pages (textures)
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -346,7 +346,7 @@ private:
     void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    ///< Reference counter used by implicit sharing
     Info                       m_info;        ///< Information about the font
-    mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
+    mutable PageListTable      m_pageLists;   ///< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
     #ifdef SFML_SYSTEM_ANDROID
     void*                      m_stream; ///< Asset file streamer (if loaded from file)
