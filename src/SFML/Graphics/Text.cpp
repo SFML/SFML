@@ -79,6 +79,7 @@ void Text::setFont(const Font& font)
     {
         m_font = &font;
         m_geometryNeedUpdate = true;
+        m_verticesMap.clear();
     }
 }
 
@@ -235,8 +236,11 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
         for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
         {
-            states.texture = it->first;
-            target.draw(it->second, states);
+            if (it->second.getVertexCount() > 0)
+            {
+                states.texture = it->first;
+                target.draw(it->second, states);
+            }
         }
     }
 }
@@ -253,7 +257,8 @@ void Text::ensureGeometryUpdate() const
     m_geometryNeedUpdate = false;
 
     // Clear the previous geometry
-    m_verticesMap.clear();
+    for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
+        it->second.clear();
     m_bounds = FloatRect();
 
     // No font: nothing to draw
