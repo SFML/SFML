@@ -300,12 +300,12 @@ int main()
     // Create the description text
     sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
     description.setPosition(10, 530);
-    description.setColor(sf::Color(80, 80, 80));
+    description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
     sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
     instructions.setPosition(280, 555);
-    instructions.setColor(sf::Color(80, 80, 80));
+    instructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop
     sf::Clock clock;

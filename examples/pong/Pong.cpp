@@ -71,7 +71,7 @@ int main()
     pauseMessage.setFont(font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition(170.f, 150.f);
-    pauseMessage.setColor(sf::Color::White);
+    pauseMessage.setFillColor(sf::Color::White);
     pauseMessage.setString("Welcome to SFML pong!\nPress space to start the game");
 
     // Define the paddles properties
