@@ -159,16 +159,63 @@ public:
     void setStyle(Uint32 style);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the global color of the text
+    /// \brief Set the fill color of the text
     ///
-    /// By default, the text's color is opaque white.
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
     ///
-    /// \param color New color of the text
+    /// \param color New fill color of the text
     ///
-    /// \see getColor
+    /// \see getFillColor
+    ///
+    /// \deprecated There is now fill and outline colors instead
+    /// of a single global color.
+    /// Use setFillColor() or setOutlineColor() instead.
     ///
     ////////////////////////////////////////////////////////////
-    void setColor(const Color& color);
+    SFML_DEPRECATED void setColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the fill color of the text
+    ///
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
+    ///
+    /// \param color New fill color of the text
+    ///
+    /// \see getFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setFillColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline color of the text
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// \param color New outline color of the text
+    ///
+    /// \see getOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOutlineColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the thickness of the text's outline
+    ///
+    /// By default, the outline thickness is 0.
+    ///
+    /// Be aware that using a negative value for the outline
+    /// thickness will cause distorted rendering.
+    ///
+    /// \param thickness New outline thickness, in pixels
+    ///
+    /// \see getOutlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOutlineThickness(float thickness);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -224,14 +271,48 @@ public:
     Uint32 getStyle() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the global color of the text
+    /// \brief Get the fill color of the text
     ///
-    /// \return Global color of the text
+    /// \return Fill color of the text
     ///
-    /// \see setColor
+    /// \see setFillColor
+    ///
+    /// \deprecated There is now fill and outline colors instead
+    /// of a single global color.
+    /// Use getFillColor() or getOutlineColor() instead.
     ///
     ////////////////////////////////////////////////////////////
-    const Color& getColor() const;
+    SFML_DEPRECATED const Color& getColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the fill color of the text
+    ///
+    /// \return Fill color of the text
+    ///
+    /// \see setFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getFillColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline color of the text
+    ///
+    /// \return Outline color of the text
+    ///
+    /// \see setOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getOutlineColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline thickness of the text
+    ///
+    /// \return Outline thickness of the text, in pixels
+    ///
+    /// \see setOutlineThickness
+    ///
+    ////////////////////////////////////////////////////////////
+    float getOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
@@ -305,8 +386,11 @@ private:
     const Font*         m_font;               ///< Font used to display the string
     unsigned int        m_characterSize;      ///< Base size of characters, in pixels
     Uint32              m_style;              ///< Text style (see Style enum)
-    Color               m_color;              ///< Text color
-    mutable VertexArray m_vertices;           ///< Vertex array containing the text's geometry
+    Color               m_fillColor;          ///< Text fill color
+    Color               m_outlineColor;       ///< Text outline color
+    float               m_outlineThickness;   ///< Thickness of the text's outline
+    mutable VertexArray m_vertices;           ///< Vertex array containing the fill geometry
+    mutable VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
     mutable FloatRect   m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
     mutable bool        m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
 };
