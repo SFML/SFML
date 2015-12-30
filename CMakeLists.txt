@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.1)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -231,6 +231,11 @@ if(NOT SFML_BUILD_FRAMEWORKS)
             DESTINATION .
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
+
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
+            DESTINATION .
+            COMPONENT devel
+            FILES_MATCHING PATTERN "*.pdb")
 else()
     # find only "root" headers
     file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")

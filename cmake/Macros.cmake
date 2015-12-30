@@ -59,6 +59,28 @@ macro(sfml_add_library target)
         endif()
     endif()
 
+    # For Visual Studio on Windows, export debug symbols (PDB files) to lib directory
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_MSVC)
+        # PDB files are only generated in Debug and RelWithDebInfo configurations, find out which one
+        if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+            set(SFML_PDB_POSTFIX "-d")
+        else()
+            set(SFML_PDB_POSTFIX "")
+        endif()
+
+        if(BUILD_SHARED_LIBS)
+            # DLLs export debug symbols in the linker PDB (the compiler PDB is an intermediate file)
+            set_target_properties(${target} PROPERTIES
+                                  PDB_NAME "${target}${SFML_PDB_POSTFIX}"
+                                  PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+        else()
+            # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
+            set_target_properties(${target} PROPERTIES
+                                  COMPILE_PDB_NAME "${target}-s${SFML_PDB_POSTFIX}"
+                                  COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+        endif()
+    endif()
+
     # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitly marked)
     if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
