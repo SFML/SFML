@@ -40,7 +40,6 @@ m_font              (NULL),
 m_characterSize     (30),
 m_style             (Regular),
 m_color             (255, 255, 255),
-m_vertices          (Triangles),
 m_bounds            (),
 m_geometryNeedUpdate(false)
 {
@@ -55,7 +54,6 @@ m_font              (&font),
 m_characterSize     (characterSize),
 m_style             (Regular),
 m_color             (255, 255, 255),
-m_vertices          (Triangles),
 m_bounds            (),
 m_geometryNeedUpdate(true)
 {
@@ -81,6 +79,9 @@ void Text::setFont(const Font& font)
     {
         m_font = &font;
         m_geometryNeedUpdate = true;
+
+        // Glyph textures will change, so delete all VertexArray instances
+        m_verticesMap.clear();
     }
 }
 
@@ -92,6 +93,9 @@ void Text::setCharacterSize(unsigned int size)
     {
         m_characterSize = size;
         m_geometryNeedUpdate = true;
+
+        // Glyph textures will change, so delete all VertexArray instances
+        m_verticesMap.clear();
     }
 }
 
@@ -118,8 +122,12 @@ void Text::setColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-                m_vertices[i].color = m_color;
+            for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
+            {
+                VertexArray& vertices = it->second;
+                for (std::size_t i = 0; i < vertices.getVertexCount(); ++i)
+                    vertices[i].color = m_color;
+            }
         }
     }
 }
@@ -230,8 +238,15 @@ void Text::draw(RenderTarget& target, RenderStates states) const
         ensureGeometryUpdate();
 
         states.transform *= getTransform();
-        states.texture = &m_font->getTexture(m_characterSize);
-        target.draw(m_vertices, states);
+
+        for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
+        {
+            if (it->second.getVertexCount() > 0)
+            {
+                states.texture = it->first;
+                target.draw(it->second, states);
+            }
+        }
     }
 }
 
@@ -246,8 +261,9 @@ void Text::ensureGeometryUpdate() const
     // Mark geometry as updated
     m_geometryNeedUpdate = false;
 
-    // Clear the previous geometry
-    m_vertices.clear();
+    // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
+    for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
+        it->second.clear();
     m_bounds = FloatRect();
 
     // No font: nothing to draw
@@ -298,12 +314,13 @@ void Text::ensureGeometryUpdate() const
             float top = std::floor(y + underlineOffset - (underlineThickness / 2) + 0.5f);
             float bottom = top + std::floor(underlineThickness + 0.5f);
 
-            m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+            VertexArray& vertices = m_verticesMap[NULL];
+            vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
@@ -312,12 +329,13 @@ void Text::ensureGeometryUpdate() const
             float top = std::floor(y + strikeThroughOffset - (underlineThickness / 2) + 0.5f);
             float bottom = top + std::floor(underlineThickness + 0.5f);
 
-            m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-            m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+            VertexArray& vertices = m_verticesMap[NULL];
+            vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+            vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
         }
 
         // Handle special characters
@@ -356,12 +374,13 @@ void Text::ensureGeometryUpdate() const
         float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height);
 
         // Add a quad for the current character
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
-        m_vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
-        m_vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
+        VertexArray& vertices = m_verticesMap[glyph.texture];
+        vertices.append(Vertex(Vector2f(x + left  - italic * top,    y + top),    m_color, Vector2f(u1, v1)));
+        vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
+        vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
+        vertices.append(Vertex(Vector2f(x + left  - italic * bottom, y + bottom), m_color, Vector2f(u1, v2)));
+        vertices.append(Vertex(Vector2f(x + right - italic * top,    y + top),    m_color, Vector2f(u2, v1)));
+        vertices.append(Vertex(Vector2f(x + right - italic * bottom, y + bottom), m_color, Vector2f(u2, v2)));
 
         // Update the current bounds
         minX = std::min(minX, x + left - italic * bottom);
@@ -379,12 +398,13 @@ void Text::ensureGeometryUpdate() const
         float top = std::floor(y + underlineOffset - (underlineThickness / 2) + 0.5f);
         float bottom = top + std::floor(underlineThickness + 0.5f);
 
-        m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+        VertexArray& vertices = m_verticesMap[NULL];
+        vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
     }
 
     // If we're using the strike through style, add the last line across all characters
@@ -393,12 +413,13 @@ void Text::ensureGeometryUpdate() const
         float top = std::floor(y + strikeThroughOffset - (underlineThickness / 2) + 0.5f);
         float bottom = top + std::floor(underlineThickness + 0.5f);
 
-        m_vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
-        m_vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
+        VertexArray& vertices = m_verticesMap[NULL];
+        vertices.append(Vertex(Vector2f(0, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(0, bottom), m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, top),    m_color, Vector2f(1, 1)));
+        vertices.append(Vertex(Vector2f(x, bottom), m_color, Vector2f(1, 1)));
     }
 
     // Update the bounding rectangle
@@ -406,6 +427,10 @@ void Text::ensureGeometryUpdate() const
     m_bounds.top = minY;
     m_bounds.width = maxX - minX;
     m_bounds.height = maxY - minY;
+
+    // Finally, set type of primitives to triangles
+    for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
+        it->second.setPrimitiveType(Triangles);
 }
 
 } // namespace sf
