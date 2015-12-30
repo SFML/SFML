@@ -79,6 +79,8 @@ void Text::setFont(const Font& font)
     {
         m_font = &font;
         m_geometryNeedUpdate = true;
+
+        // Glyph textures will change, so delete all VertexArray instances
         m_verticesMap.clear();
     }
 }
@@ -91,6 +93,9 @@ void Text::setCharacterSize(unsigned int size)
     {
         m_characterSize = size;
         m_geometryNeedUpdate = true;
+
+        // Glyph textures will change, so delete all VertexArray instances
+        m_verticesMap.clear();
     }
 }
 
@@ -256,7 +261,7 @@ void Text::ensureGeometryUpdate() const
     // Mark geometry as updated
     m_geometryNeedUpdate = false;
 
-    // Clear the previous geometry
+    // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
     for (VertexArrayMap::iterator it = m_verticesMap.begin(); it != m_verticesMap.end(); ++it)
         it->second.clear();
     m_bounds = FloatRect();
