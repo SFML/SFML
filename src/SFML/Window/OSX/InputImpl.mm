@@ -185,7 +185,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
     CGEventRef event = CGEventCreateMouseEvent(NULL,
                                                kCGEventMouseMoved,
                                                pos,
-                                               /*we don't care about this: */0);
+                                               /* we don't care about this: */ kCGMouseButtonLeft);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
     // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
