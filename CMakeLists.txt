@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8.3)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -127,6 +127,16 @@ endif()
 
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
+    # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
+    if(CMAKE_VERSION VERSION_LESS 3.1)
+        sfml_set_option(SFML_GENERATE_PDB FALSE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
+        if(SFML_GENERATE_PDB)
+            message(FATAL_ERROR "Generation of PDB files (SFML_GENERATE_PDB) requires at least CMake 3.1.0")
+        endif()
+    else()
+        sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
+    endif()
+
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
@@ -232,10 +242,12 @@ if(NOT SFML_BUILD_FRAMEWORKS)
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
-            DESTINATION .
-            COMPONENT devel
-            FILES_MATCHING PATTERN "*.pdb")
+    if(SFML_GENERATE_PDB)
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
+                DESTINATION .
+                COMPONENT devel
+                FILES_MATCHING PATTERN "*.pdb")
+    endif()
 else()
     # find only "root" headers
     file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
