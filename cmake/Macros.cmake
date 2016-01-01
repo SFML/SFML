@@ -60,7 +60,7 @@ macro(sfml_add_library target)
     endif()
 
     # For Visual Studio on Windows, export debug symbols (PDB files) to lib directory
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_MSVC)
+    if(SFML_GENERATE_PDB)
         # PDB files are only generated in Debug and RelWithDebInfo configurations, find out which one
         if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
             set(SFML_PDB_POSTFIX "-d")
