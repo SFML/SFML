@@ -85,6 +85,7 @@ m_config  (NULL)
 
     // Get the best EGL config matching the default video settings
     m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+    updateSettings();
 
     // Note: The EGL specs say that attrib_list can be NULL when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
@@ -123,6 +124,7 @@ m_config  (NULL)
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, bitsPerPixel, settings);
+    updateSettings();
 
     // Create EGL context
     createContext(shared);
@@ -250,7 +252,30 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
     // Ask EGL for the best config matching our video settings
     eglCheck(eglChooseConfig(display, attributes, configs, 1, &configCount));
 
+    // TODO: This should check EGL_CONFORMANT and pick the first conformant configuration.
+
     return configs[0];
+}
+
+
+////////////////////////////////////////////////////////////
+void EglContext::updateSettings()
+{
+    EGLint tmp;
+    
+    // Update the internal context settings with the current config
+    eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp));
+    m_settings.depthBits = tmp;
+    
+    eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
+    m_settings.stencilBits = tmp;
+    
+    eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
+    m_settings.antialiasingLevel = tmp;
+    
+    m_settings.majorVersion = 1;
+    m_settings.minorVersion = 1;
+    m_settings.attributeFlags = ContextSettings::Default;
 }
 
 
