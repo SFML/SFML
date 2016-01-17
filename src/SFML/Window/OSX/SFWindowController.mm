@@ -33,6 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <ApplicationServices/ApplicationServices.h>
 
+#import <SFML/Window/OSX/Scaling.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFWindow.h>
@@ -161,6 +162,7 @@
 {
     // Create a screen-sized window on the main display
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    sf::priv::scaleInWidthHeight(desktop, nil);
     NSRect windowRect = NSMakeRect(0, 0, desktop.width, desktop.height);
     m_window = [[SFWindow alloc] initWithContentRect:windowRect
                                            styleMask:NSBorderlessWindowMask

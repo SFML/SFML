@@ -50,6 +50,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         return modes;
     }
 
+    VideoMode desktop = getDesktopMode();
+
     // Loop on each mode and convert it into a sf::VideoMode object.
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
     for (CFIndex i = 0; i < modesCount; i++)
@@ -57,6 +59,10 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
 
         VideoMode mode = convertCGModeToSFMode(cgmode);
+
+        // Skip if bigger than desktop as we currently don't perform hard resolution switch
+        if ((mode.width > desktop.width) || (mode.height > desktop.height))
+            continue;
 
         // If not yet listed we add it to our modes array.
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())
@@ -73,12 +79,21 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
+    VideoMode mode; // RVO
+
+    // Rely exclusively on mode and convertCGModeToSFMode
+    // instead of display id and CGDisplayPixelsHigh/Wide.
+
     CGDirectDisplayID display = CGMainDisplayID();
-    return VideoMode(CGDisplayPixelsWide(display),
-                     CGDisplayPixelsHigh(display),
-                     displayBitsPerPixel(display));
+    CGDisplayModeRef cgmode = CGDisplayCopyDisplayMode(display);
+
+    mode = convertCGModeToSFMode(cgmode);
+
+    CGDisplayModeRelease(cgmode);
+
+    return mode;
 }
 
 } // namespace priv
-
 } // namespace sf
+

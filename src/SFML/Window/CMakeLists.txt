@@ -111,7 +111,7 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
-        ${SRCROOT}/OSX/cg_sf_conversion.cpp
+        ${SRCROOT}/OSX/cg_sf_conversion.mm
         ${SRCROOT}/OSX/InputImpl.mm
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/HIDInputManager.hpp
@@ -120,6 +120,7 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/HIDJoystickManager.cpp
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
+        ${SRCROOT}/OSX/Scaling.h
         ${SRCROOT}/OSX/SensorImpl.cpp
         ${SRCROOT}/OSX/SensorImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
