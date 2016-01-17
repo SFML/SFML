@@ -28,10 +28,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/System/String.hpp>
 
 #import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+#import <SFML/Window/OSX/Scaling.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
 #import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
@@ -42,76 +42,6 @@ namespace sf
 {
 namespace priv
 {
-
-////////////////////////////////////////////////////////////
-/// \brief Get the scale factor of the main screen
-///
-////////////////////////////////////////////////////////////
-CGFloat getDefaultScaleFactor()
-{
-    return [[NSScreen mainScreen] backingScaleFactor];
-}
-
-////////////////////////////////////////////////////////////
-/// \brief Scale SFML coordinates to backing coordinates
-///
-/// Use -[NSScreen backingScaleFactor] to find out if the user
-/// has a retina display or not.
-///
-/// \param in SFML coordinates to be converted
-/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
-///
-////////////////////////////////////////////////////////////
-template <class T>
-void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
-}
-
-template <class T>
-void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleIn(in.width, delegate);
-    scaleIn(in.height, delegate);
-}
-
-template <class T>
-void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleIn(in.x, delegate);
-    scaleIn(in.y, delegate);
-}
-
-////////////////////////////////////////////////////////////
-/// \brief Scale backing coordinates to SFML coordinates
-///
-/// Use -[NSScreen backingScaleFactor] to find out if the user
-/// has a retina display or not.
-///
-/// \param out backing coordinates to be converted
-/// \param delegate a object implementing WindowImplDelegateProtocol, or nil for default scale
-///
-////////////////////////////////////////////////////////////
-template <class T>
-void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
-{
-    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
-}
-
-template <class T>
-void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleOut(out.width, delegate);
-    scaleOut(out.height, delegate);
-}
-
-template <class T>
-void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleOut(out.x, delegate);
-    scaleOut(out.y, delegate);
-}
-
 
 ////////////////////////////////////////////////////////////
 /// According to Apple's documentation, each invocation of
@@ -583,3 +513,4 @@ bool WindowImplCocoa::hasFocus() const
 } // namespace priv
 
 } // namespace sf
+

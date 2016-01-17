@@ -29,6 +29,8 @@
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
 
+#import <SFML/Window/OSX/Scaling.h>
+
 namespace sf
 {
 namespace priv
@@ -74,51 +76,22 @@ size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 ////////////////////////////////////////////////////////////
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
 {
-    return VideoMode(CGDisplayModeGetWidth(cgmode),
-                     CGDisplayModeGetHeight(cgmode),
-                     modeBitsPerPixel(cgmode));
-}
-
-
-////////////////////////////////////////////////////////////
-CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode)
-{
-    // Starting with 10.6 we should query the display all the modes and
-    // search for the best one.
-
-    // Will return NULL if sfmode is not in VideoMode::GetFullscreenModes.
-    CGDisplayModeRef cgbestMode = NULL;
-
-    // Retrieve all modes available for main screen only.
-    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
-
-    if (cgmodes == NULL) // Should not happen but anyway...
-    {
-        sf::err() << "Couldn't get VideoMode for main display.";
-        return NULL;
-    }
-
-    // Loop on each mode and convert it into a sf::VideoMode object.
-    const CFIndex modesCount = CFArrayGetCount(cgmodes);
-    for (CFIndex i = 0; i < modesCount; i++)
-    {
-        CGDisplayModeRef cgmode = (CGDisplayModeRef)CFArrayGetValueAtIndex(cgmodes, i);
-
-        VideoMode mode = convertCGModeToSFMode(cgmode);
-
-        if (mode == sfmode)
-            cgbestMode = cgmode;
-    }
-
-    // Clean up memory.
-    CFRelease(cgmodes);
-
-    if (cgbestMode == NULL)
-        sf::err() << "Couldn't convert the given sf:VideoMode into a CGDisplayMode."
-                  << std::endl;
-
-    return cgbestMode;
+    // The main documentation says the sizes returned by
+    // CGDisplayModeGetWidth and CGDisplayModeGetHeight
+    // are expressed in pixels. However, some additional
+    // documentation [1] states they actually return
+    // values in points starting with 10.8.
+    //
+    // We therefore needs to use the scaling factor to
+    // convert the dimensions properly.
+    //
+    // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
+    // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
+    VideoMode mode(CGDisplayModeGetWidth(cgmode), CGDisplayModeGetHeight(cgmode), modeBitsPerPixel(cgmode));
+    scaleOutWidthHeight(mode, nil);
+    return mode;
 }
 
 } // namespace priv
 } // namespace sf
+
