@@ -153,6 +153,9 @@ public:
     /// precision. If you need to jump to a given time, use the
     /// other overload.
     ///
+    /// The sample offset takes the channels into account.
+    /// Offsets can be calculated like this:
+    /// `sampleNumber * sampleRate * channelCount`
     /// If the given offset exceeds to total number of samples,
     /// this function jumps to the end of the sound file.
     ///
