@@ -343,35 +343,34 @@
 ////////////////////////////////////////////////////////////
 -(NSPoint)position
 {
-    // First, get the top left corner of the view in its own base system
-    const NSPoint origin = [m_oglView frame].origin;
-    const NSSize  size = [m_oglView frame].size;
-    const NSPoint topLeftCornerOfView = NSMakePoint(origin.x, origin.y + size.height);
-    const NSPoint positionInView = [m_oglView convertPointToBacking:topLeftCornerOfView];
+    // Note: since 10.7 the conversion API works with NSRect
+    // instead of NSPoint. Therefore we use a NSRect but ignore
+    // its width and height.
 
-    // Then, convert it to window base system
-    const NSPoint positionInWindow = [m_oglView convertPoint:positionInView toView:nil];
-    // here nil denotes the window containing the view
+    // Position of the bottom-left corner in the different coordinate systems:
+    NSRect corner = [m_oglView frame]; // bottom left; size is ignored
+    NSRect view   = [m_oglView convertRectToBacking:corner];
+    NSRect window = [m_oglView convertRect:view toView:nil];
+    NSRect screen = [[m_oglView window] convertRectToScreen:window];
 
-    // Next, convert it to the screen base system
-    const NSPoint positionInScreen = [[m_oglView window] convertBaseToScreen:positionInWindow];
+    // Get the top-left corner in screen coordinates
+    CGFloat x = screen.origin.x;
+    CGFloat y = screen.origin.y + [m_oglView frame].size.height;
 
-    // Finally, flip for SFML window coordinate system
-    // Don't forget to discard the title bar !
-    const NSPoint positionInSFML = NSMakePoint(positionInScreen.x,
-                                               ([self screenHeight] - [self titlebarHeight]) - positionInScreen.y);
+    // Flip y-axis (titlebar was already taken into account above)
+    y = [self screenHeight] - y;
 
-    return positionInSFML;
+    return NSMakePoint(x, y);
 }
 
 
-////////////////////////////////////////////////////////.
+////////////////////////////////////////////////////////
 -(void)setWindowPositionToX:(int)x Y:(int)y
 {
     NSPoint point = NSMakePoint(x, y);
 
-    // Flip for SFML window coordinate system.
-    point.y = [self screenHeight] - point.y;
+    // Flip for SFML window coordinate system and take titlebar into account
+    point.y = [self screenHeight] - point.y + [self titlebarHeight];
 
     // Place the window.
     [m_window setFrameTopLeftPoint:point];
@@ -593,3 +592,4 @@
 }
 
 @end
+
