@@ -82,6 +82,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
     ///
+    /// The sample offset takes the channels into account.
+    /// Offsets can be calculated like this:
+    /// `sampleNumber * sampleRate * channelCount`
     /// If the given offset exceeds to total number of samples,
     /// this function must jump to the end of the file.
     ///
@@ -128,8 +131,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamDecoder* m_decoder;    ///< FLAC decoder
-    ClientData           m_clientData; ///< Structure passed to the decoder callbacks
+    FLAC__StreamDecoder* m_decoder;      ///< FLAC decoder
+    ClientData           m_clientData;   ///< Structure passed to the decoder callbacks
+    unsigned int         m_channelCount; ///< number of channels of the sound file
 };
 
 } // namespace priv
