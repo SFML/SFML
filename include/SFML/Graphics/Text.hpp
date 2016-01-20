@@ -464,8 +464,9 @@ private:
 /// It inherits all the functions from sf::Transformable:
 /// position, rotation, scale, origin. It also adds text-specific
 /// properties such as the font to use, the character size,
-/// the font style (bold, italic, underlined, strike through), the
-/// global color and the text to display of course.
+/// the font style (bold, italic, underlined and strike through), the
+/// text color, the outline thickness, the outline color, the character
+/// spacing, the line spacing and the text to display of course.
 /// It also provides convenience functions to calculate the
 /// graphical size of the text, or to get the global position
 /// of a given character.
