@@ -267,7 +267,7 @@ namespace
             case XK_grave:            return sf::Keyboard::Tilde;
             case XK_space:            return sf::Keyboard::Space;
             case XK_Return:           return sf::Keyboard::Return;
-            case XK_KP_Enter:         return sf::Keyboard::Return;
+            case XK_KP_Enter:         return sf::Keyboard::NumpadReturn;
             case XK_BackSpace:        return sf::Keyboard::BackSpace;
             case XK_Tab:              return sf::Keyboard::Tab;
             case XK_Prior:            return sf::Keyboard::PageUp;
@@ -346,6 +346,11 @@ namespace
             case XK_7:                return sf::Keyboard::Num7;
             case XK_8:                return sf::Keyboard::Num8;
             case XK_9:                return sf::Keyboard::Num9;
+            case XK_KP_Separator:     return sf::Keyboard::NumpadComma;
+            case XK_Num_Lock:         return sf::Keyboard::NumLock;
+            case XK_Caps_Lock:        return sf::Keyboard::CapsLock;
+            case XK_Scroll_Lock:      return sf::Keyboard::ScrollLock;
+            case XK_Print:            return sf::Keyboard::PrintScreen;
         }
 
         return sf::Keyboard::Unknown;

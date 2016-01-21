@@ -133,6 +133,12 @@ public:
         Numpad7,      ///< The numpad 7 key
         Numpad8,      ///< The numpad 8 key
         Numpad9,      ///< The numpad 9 key
+        NumpadReturn, ///< The numpad Return key.
+        NumpadComma,  ///< The numpad Comma key.
+        NumLock,      ///< The Numlock key.
+        CapsLock,     ///< The Caps Lock key.
+        ScrollLock,   ///< The Scroll Lock key.
+        PrintScreen,  ///< The Print Screen key.
         F1,           ///< The F1 key
         F2,           ///< The F2 key
         F3,           ///< The F3 key
