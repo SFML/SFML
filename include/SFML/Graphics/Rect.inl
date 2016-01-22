@@ -141,6 +141,18 @@ bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
     }
 }
 
+template <typename T>
+sf::Vector2<T> Rect<T>::getPosition() const
+{
+    return sf::Vector2<T>(left, top);
+}
+
+template <typename T>
+sf::Vector2<T> Rect<T>::getSize() const
+{
+    return sf::Vector2<T>(width, height);
+}
+
 
 ////////////////////////////////////////////////////////////
 template <typename T>
