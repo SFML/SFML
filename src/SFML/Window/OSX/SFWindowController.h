@@ -55,6 +55,7 @@ namespace sf {
     NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
     SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
     sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
+    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
 }
 
 ////////////////////////////////////////////////////////////
