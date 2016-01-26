@@ -214,8 +214,8 @@ namespace
             // Send a Resized event to the current window
             sf::Event event;
             event.type = sf::Event::Resized;
-            event.size.width = size.x * backingScaleFactor;
-            event.size.height = size.y * backingScaleFactor;
+            event.size.width = size.x;
+            event.size.height = size.y;
             sfWindow->forwardEvent(event);
         }
     }
