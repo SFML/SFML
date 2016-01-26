@@ -34,6 +34,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <algorithm>
 
+#import <SFML/Window/OSX/NSImage+raw.h>
 #import <SFML/Window/OSX/Scaling.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
@@ -512,40 +513,13 @@
               by:(unsigned int)height
             with:(const sf::Uint8*)pixels
 {
-    // Create an empty image representation.
-    NSBitmapImageRep* bitmap =
-    [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0: only allocate memory
-                                            pixelsWide:width
-                                            pixelsHigh:height
-                                         bitsPerSample:8 // The number of bits used to specify
-                                                         // one pixel in a single component of the data.
-                                       samplesPerPixel:4 // 3 if no alpha, 4 with it
-                                              hasAlpha:YES
-                                              isPlanar:NO   // I don't know what it is but it works
-                                        colorSpaceName:NSCalibratedRGBColorSpace
-                                           bytesPerRow:0    // 0 == determine automatically
-                                          bitsPerPixel:0];  // 0 == determine automatically
+    // Load image and set app icon.
+    NSImage* icon = [NSImage imageWithRawData:pixels
+                                      andSize:NSMakeSize(width, height)];
 
-    // Load data pixels.
-    for (unsigned int y = 0; y < height; ++y)
-    {
-        for (unsigned int x = 0; x < width; ++x, pixels+=4)
-        {
-            NSUInteger pixel[4] = { pixels[0], pixels[1], pixels[2], pixels[3] };
-            [bitmap setPixel:pixel atX:x y:y];
-        }
-    }
-
-    // Create an image from the representation.
-    NSImage* icon = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
-    [icon addRepresentation:bitmap];
-
-    // Set app icon.
     [[SFApplication sharedApplication] setApplicationIconImage:icon];
 
-    // Free up.
     [icon release];
-    [bitmap release];
 }
 
 
