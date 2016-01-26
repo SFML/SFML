@@ -47,6 +47,11 @@ namespace sf {
 /// Modifiers keys (cmd, ctrl, alt, shift) are handled by this class
 /// but the actual logic is done in SFKeyboardModifiersHelper.(h|mm).
 ///
+/// The interface is subdivided into several categories in order
+/// to have multiple implementation files to divide this monolithic
+/// implementation. However, all attributes are defined in the main
+/// interface declaration right below.
+///
 ////////////////////////////////////////////////////////////
 @interface SFOpenGLView : NSOpenGLView
 {
@@ -106,6 +111,18 @@ namespace sf {
 -(NSPoint)computeGlobalPositionOfRelativePoint:(NSPoint)point;
 
 ////////////////////////////////////////////////////////////
+/// \brief Get the display scale factor
+///
+/// \return e.g. 1.0 for classic display, 2.0 for retina display
+///
+////////////////////////////////////////////////////////////
+-(CGFloat)displayScaleFactor;
+
+@end
+
+@interface SFOpenGLView (keyboard)
+
+////////////////////////////////////////////////////////////
 /// \brief Enable key repeat
 ///
 ////////////////////////////////////////////////////////////
@@ -117,13 +134,9 @@ namespace sf {
 ////////////////////////////////////////////////////////////
 -(void)disableKeyRepeat;
 
-////////////////////////////////////////////////////////////
-/// \brief Get the display scale factor
-///
-/// \return e.g. 1.0 for classic display, 2.0 for retina display
-///
-////////////////////////////////////////////////////////////
--(CGFloat)displayScaleFactor;
+@end
+
+@interface SFOpenGLView (mouse)
 
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position of the cursor
