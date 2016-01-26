@@ -133,6 +133,10 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/SFKeyboardModifiersHelper.mm
         ${SRCROOT}/OSX/SFOpenGLView.h
         ${SRCROOT}/OSX/SFOpenGLView.mm
+        ${SRCROOT}/OSX/SFOpenGLView+keyboard.mm
+        ${SRCROOT}/OSX/SFOpenGLView+keyboard_priv.h
+        ${SRCROOT}/OSX/SFOpenGLView+mouse.mm
+        ${SRCROOT}/OSX/SFOpenGLView+mouse_priv.h
         ${SRCROOT}/OSX/SFSilentResponder.h
         ${SRCROOT}/OSX/SFSilentResponder.m
         ${SRCROOT}/OSX/SFWindow.h
