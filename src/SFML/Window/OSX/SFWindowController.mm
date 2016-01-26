@@ -32,6 +32,7 @@
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 #include <ApplicationServices/ApplicationServices.h>
+#include <algorithm>
 
 #import <SFML/Window/OSX/Scaling.h>
 #import <SFML/Window/OSX/SFApplication.h>
@@ -145,8 +146,9 @@
         m_window = nil;
         m_oglView = nil;
         m_requester = 0;
+        m_fullscreen = (style & sf::Style::Fullscreen);
 
-        if (style & sf::Style::Fullscreen)
+        if (m_fullscreen)
             [self setupFullscreenViewWithMode:mode];
         else
             [self setupWindowWithMode:mode andStyle:style];
@@ -203,9 +205,11 @@
     }
 
     // Create our OpenGL view size and the view
-    CGFloat x = (desktop.width - mode.width) / 2.0;
-    CGFloat y = (desktop.height - mode.height) / 2.0;
-    NSRect oglRect = NSMakeRect(x, y, mode.width, mode.height);
+    CGFloat width = std::min(mode.width, desktop.width);
+    CGFloat height = std::min(mode.height, desktop.height);
+    CGFloat x = (desktop.width - width) / 2.0;
+    CGFloat y = (desktop.height - height) / 2.0;
+    NSRect oglRect = NSMakeRect(x, y, width, height);
 
     m_oglView = [[SFOpenGLView alloc] initWithFrame:oglRect
                                          fullscreen:YES];
@@ -387,37 +391,57 @@
 ////////////////////////////////////////////////////////
 -(void)resizeTo:(unsigned int)width by:(unsigned int)height
 {
-    // Before resizing, remove resizable mask to be able to resize
-    // beyond the desktop boundaries.
-    NSUInteger styleMask = [m_window styleMask];
-
-    [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
-
-    // Add titlebar height.
-    height += [self titlebarHeight];
-
-    // Corner case: don't set the window height bigger than the screen height
-    // or the view will be resized _later_ without generating a resize event.
-    NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
-    CGFloat maxVisibleHeight = screenFrame.size.height;
-    if (height > maxVisibleHeight)
+    if (m_fullscreen)
     {
-        height = maxVisibleHeight;
+        // Special case when fullscreen: only resize the opengl view
+        // and make sure the requested size is not bigger than the window.
+        sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+        sf::priv::scaleInWidthHeight(desktop, nil);
 
-        // The size is not the requested one, we fire an event
-        if (m_requester != 0)
-            m_requester->windowResized(width, height - [self titlebarHeight]);
+        width = std::min(width, desktop.width);
+        height = std::min(height, desktop.height);
+
+        CGFloat x = (desktop.width - width) / 2.0;
+        CGFloat y = (desktop.height - height) / 2.0;
+        NSRect oglRect = NSMakeRect(x, y, width, height);
+
+        [m_oglView setFrame:oglRect];
+        [m_oglView setNeedsDisplay:YES];
     }
+    else
+    {
+        // Before resizing, remove resizable mask to be able to resize
+        // beyond the desktop boundaries.
+        NSUInteger styleMask = [m_window styleMask];
 
-    NSRect frame = NSMakeRect([m_window frame].origin.x,
-                              [m_window frame].origin.y,
-                              width,
-                              height);
+        [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
 
-    [m_window setFrame:frame display:YES];
+        // Add titlebar height.
+        height += [self titlebarHeight];
 
-    // And restore the mask
-    [m_window setStyleMask:styleMask];
+        // Corner case: don't set the window height bigger than the screen height
+        // or the view will be resized _later_ without generating a resize event.
+        NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
+        CGFloat maxVisibleHeight = screenFrame.size.height;
+        if (height > maxVisibleHeight)
+        {
+            height = maxVisibleHeight;
+
+            // The size is not the requested one, we fire an event
+            if (m_requester != 0)
+                m_requester->windowResized(width, height - [self titlebarHeight]);
+        }
+
+        NSRect frame = NSMakeRect([m_window frame].origin.x,
+                                  [m_window frame].origin.y,
+                                  width,
+                                  height);
+
+        [m_window setFrame:frame display:YES];
+
+        // And restore the mask
+        [m_window setStyleMask:styleMask];
+    }
 }
 
 
