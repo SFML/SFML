@@ -120,6 +120,8 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/HIDJoystickManager.cpp
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
+        ${SRCROOT}/OSX/NSImage+raw.h
+        ${SRCROOT}/OSX/NSImage+raw.mm
         ${SRCROOT}/OSX/Scaling.h
         ${SRCROOT}/OSX/SensorImpl.cpp
         ${SRCROOT}/OSX/SensorImpl.hpp
