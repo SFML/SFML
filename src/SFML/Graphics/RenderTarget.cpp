@@ -180,12 +180,21 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view)
     Vector2f normalized = view.getTransform().transformPoint(point);
 
     // Then convert to viewport coordinates
-    Vector2i pixel;
+    Vector2i viewport_pixel;
     IntRect viewport = getViewport(view);
-    pixel.x = static_cast<int>(( normalized.x + 1.f) / 2.f * viewport.width  + viewport.left);
-    pixel.y = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
 
-    return pixel;
+	 sf::Vector2f pixel(
+		 ( normalized.x + 1.f) / 2.f * viewport.width  + viewport.left,
+		 (-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+
+	 // Round the pixel to prevent shaky behavior when zoomed in
+	 pixel.x += pixel.x < 0.f ? -0.5f : 0.5f;
+	 pixel.y += pixel.y < 0.f ? -0.5f : 0.5f;
+
+    viewport_pixel.x = static_cast<int>(pixel.x);
+    viewport_pixel.y = static_cast<int>(pixel.y);
+
+    return viewport_pixel;
 }
 
 
