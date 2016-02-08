@@ -49,35 +49,66 @@ m_file (NULL)
 ////////////////////////////////////////////////////////////
 ResourceStream::~ResourceStream()
 {
-    AAsset_close(m_file);
+    if (m_file)
+    {
+        AAsset_close(m_file);
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::read(void *data, Int64 size)
 {
-    return AAsset_read(m_file, data, size);
+    if (m_file)
+    {
+        return AAsset_read(m_file, data, size);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::seek(Int64 position)
 {
-    return AAsset_seek(m_file, position, SEEK_SET);
+    if (m_file)
+    {
+        return AAsset_seek(m_file, position, SEEK_SET);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::tell()
 {
-    return getSize() - AAsset_getRemainingLength(m_file);
+    if (m_file)
+    {
+        return getSize() - AAsset_getRemainingLength(m_file);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 ResourceStream::getSize()
 {
-    return AAsset_getLength(m_file);
+    if (m_file)
+    {
+        return AAsset_getLength(m_file);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 
