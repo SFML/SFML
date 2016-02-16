@@ -125,7 +125,6 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
             MethodHideSoftInput, lBinder, lFlags);
         lJNIEnv->DeleteLocalRef(lBinder);
     }
-    lJNIEnv->DeleteLocalRef(lNativeActivity);
     lJNIEnv->DeleteLocalRef(ClassNativeActivity);
     lJNIEnv->DeleteLocalRef(ClassInputMethodManager);
     lJNIEnv->DeleteLocalRef(lDecorView);
