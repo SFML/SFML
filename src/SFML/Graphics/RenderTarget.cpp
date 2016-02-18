@@ -188,8 +188,8 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view)
 		 (-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
 
 	 // Round the pixel to prevent shaky behavior when zoomed in
-	 pixel.x += pixel.x < 0.f ? -0.5f : 0.5f;
-	 pixel.y += pixel.y < 0.f ? -0.5f : 0.5f;
+	 pixel.x += pixel.x < 0.f ? -0.25f : 0.25f;
+	 pixel.y += pixel.y < 0.f ? -0.25f : 0.25f;
 
     viewport_pixel.x = static_cast<int>(pixel.x);
     viewport_pixel.y = static_cast<int>(pixel.y);
