@@ -71,6 +71,7 @@ Font::Font() :
 m_library  (NULL),
 m_face     (NULL),
 m_streamRec(NULL),
+m_stroker  (NULL),
 m_refCount (NULL),
 m_info     ()
 {
@@ -85,6 +86,7 @@ Font::Font(const Font& copy) :
 m_library    (copy.m_library),
 m_face       (copy.m_face),
 m_streamRec  (copy.m_streamRec),
+m_stroker    (copy.m_stroker),
 m_refCount   (copy.m_refCount),
 m_info       (copy.m_info),
 m_pages      (copy.m_pages),
@@ -448,6 +450,7 @@ Font& Font::operator =(const Font& right)
     std::swap(m_library,     temp.m_library);
     std::swap(m_face,        temp.m_face);
     std::swap(m_streamRec,   temp.m_streamRec);
+    std::swap(m_stroker,     temp.m_stroker);
     std::swap(m_refCount,    temp.m_refCount);
     std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
