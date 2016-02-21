@@ -31,7 +31,7 @@
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileReaderOpus.hpp>
-//#include <SFML/Audio/SoundFileWriterOpus.hpp>
+#include <SFML/Audio/SoundFileWriterOpus.hpp>
 #include <SFML/Audio/SoundFileReaderWav.hpp>
 #include <SFML/Audio/SoundFileWriterWav.hpp>
 #include <SFML/System/FileInputStream.hpp>
@@ -52,7 +52,7 @@ namespace
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOpus>();
-            //sf::SoundFileFactory::registerReader<sf::priv::SoundFileWriterOpus>();
+            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOpus>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterWav>();
             registered = true;
