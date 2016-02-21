@@ -33,7 +33,7 @@
 #include <SFML/Audio/SoundFileReaderWav.hpp>
 #include <SFML/Audio/SoundFileWriterFlac.hpp>
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
-//#include <SFML/Audio/SoundFileWriterOpus.hpp>
+#include <SFML/Audio/SoundFileWriterOpus.hpp>
 #include <SFML/Audio/SoundFileWriterWav.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -159,6 +159,7 @@ SoundFileFactory::WriterFactoryMap& SoundFileFactory::getWriterFactoryMap()
     // The map is pre-populated with default writers on construction
     static WriterFactoryMap result{{&priv::createWriter<priv::SoundFileWriterFlac>, &priv::SoundFileWriterFlac::check},
                                    {&priv::createWriter<priv::SoundFileWriterOgg>, &priv::SoundFileWriterOgg::check},
+                                   {&priv::createWriter<priv::SoundFileWriterOpus>, &priv::SoundFileWriterOpus::check},
                                    {&priv::createWriter<priv::SoundFileWriterWav>, &priv::SoundFileWriterWav::check}};
 
     return result;
