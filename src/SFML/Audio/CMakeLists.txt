@@ -48,6 +48,8 @@ set(CODECS_SRC
     ${SRCROOT}/SoundFileReaderMp3.cpp
     ${SRCROOT}/SoundFileReaderOgg.hpp
     ${SRCROOT}/SoundFileReaderOgg.cpp
+    ${SRCROOT}/SoundFileReaderOpus.hpp
+    ${SRCROOT}/SoundFileReaderOpus.cpp
     ${SRCROOT}/SoundFileReaderWav.hpp
     ${SRCROOT}/SoundFileReaderWav.cpp
     ${INCROOT}/SoundFileWriter.hpp
@@ -77,6 +79,7 @@ endif()
 # find external libraries
 find_package(Vorbis REQUIRED)
 find_package(FLAC REQUIRED)
+find_package(Opus REQUIRED)
 
 # define the sfml-audio target
 sfml_add_library(Audio
