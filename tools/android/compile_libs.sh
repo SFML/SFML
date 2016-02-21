@@ -48,6 +48,11 @@ rm $DESTDIR/$1/usr/lib/libFLAC*.so*
 cd  $LOCALDIR/build/libvorbis-* && sed -i 's/-version-info/-avoid-version/g' lib/Makefile.in lib/Makefile.am && ./configure $HOST $PREFIX --enable-shared=no && make && make install
 rm $DESTDIR/$1/usr/lib/libvorbis*.so*
 
+# Compile OPUS and OPUSFILE
+cd $LOCALDIR/build/opus-* && sed -i '-version-info/-avoid-version/g' Makefile.in Makefile.am && ./configure $HOST $PREFIX --enabled-shared=no && make && make install
+cd $LOCALDIR/build/opusfile-* && sed -i '-version-info/-avoid-version/g' Makefile.in Makefile.am && ./configure $HOST $PREFIX --enabled-shared=no && make && make install
+rm $DESTDIR/$1/usr/lib/libopus*.so*
+
 # Compile libsndfile (important: --disable-sqlite)
 cd  $LOCALDIR/build/libsndfile-* && sed -i 's/-version-info/-avoid-version/g' src/Makefile.in src/Makefile.am && ./configure $HOST $PREFIX --disable-sqlite && make && make install
 
