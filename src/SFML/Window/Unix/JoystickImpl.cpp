@@ -440,6 +440,14 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+JoystickImpl::JoystickImpl() :
+m_file(-1)
+{
+    std::fill(m_mapping, m_mapping + ABS_MAX + 1, 0);
+}
+
+
+////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
     udevContext = udev_new();
@@ -650,19 +658,23 @@ JoystickState JoystickImpl::JoystickImpl::update()
             case JS_EVENT_AXIS:
             {
                 float value = joyState.value * 100.f / 32767.f;
-                switch (m_mapping[joyState.number])
+
+                if (joyState.number < ABS_MAX + 1)
                 {
-                    case ABS_X:        m_state.axes[Joystick::X]    = value; break;
-                    case ABS_Y:        m_state.axes[Joystick::Y]    = value; break;
-                    case ABS_Z:
-                    case ABS_THROTTLE: m_state.axes[Joystick::Z]    = value; break;
-                    case ABS_RZ:
-                    case ABS_RUDDER:   m_state.axes[Joystick::R]    = value; break;
-                    case ABS_RX:       m_state.axes[Joystick::U]    = value; break;
-                    case ABS_RY:       m_state.axes[Joystick::V]    = value; break;
-                    case ABS_HAT0X:    m_state.axes[Joystick::PovX] = value; break;
-                    case ABS_HAT0Y:    m_state.axes[Joystick::PovY] = value; break;
-                    default:           break;
+                    switch (m_mapping[joyState.number])
+                    {
+                        case ABS_X:        m_state.axes[Joystick::X]    = value; break;
+                        case ABS_Y:        m_state.axes[Joystick::Y]    = value; break;
+                        case ABS_Z:
+                        case ABS_THROTTLE: m_state.axes[Joystick::Z]    = value; break;
+                        case ABS_RZ:
+                        case ABS_RUDDER:   m_state.axes[Joystick::R]    = value; break;
+                        case ABS_RX:       m_state.axes[Joystick::U]    = value; break;
+                        case ABS_RY:       m_state.axes[Joystick::V]    = value; break;
+                        case ABS_HAT0X:    m_state.axes[Joystick::PovX] = value; break;
+                        case ABS_HAT0Y:    m_state.axes[Joystick::PovY] = value; break;
+                        default:           break;
+                    }
                 }
                 break;
             }

@@ -3,7 +3,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
-#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -36,7 +35,7 @@ void playSound()
         sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << sound.getPlayingOffset().asSeconds() << " sec   ";
+        std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
         std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;
@@ -70,7 +69,7 @@ void playMusic(const std::string& filename)
         sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << std::fixed << std::setprecision(2) << music.getPlayingOffset().asSeconds() << " sec   ";
+        std::cout << "\rPlaying... " << music.getPlayingOffset().asSeconds() << " sec        ";
         std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;

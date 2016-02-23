@@ -358,6 +358,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) :
 m_window         (0),
+m_screen         (NULL),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
 m_isExternal     (true),
@@ -411,6 +412,7 @@ m_fullscreen     (false)
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window         (0),
+m_screen         (NULL),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
 m_isExternal     (false),
@@ -732,7 +734,7 @@ void WindowImplX11::setTitle(const String& title)
                 err() << "Failed to set _NET_WM_NAME property" << std::endl;
         }
 
-        if (utf8StringType && netWmName)
+        if (utf8StringType && netWmIconName)
         {
             if (!changeWindowProperty(netWmIconName, utf8StringType, 8, utf8String.length(), utf8String.c_str()))
                 err() << "Failed to set _NET_WM_ICON_NAME property" << std::endl;
@@ -1604,7 +1606,7 @@ void WindowImplX11::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::processEvent(XEvent windowEvent)
+bool WindowImplX11::processEvent(XEvent& windowEvent)
 {
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the
