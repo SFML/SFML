@@ -82,6 +82,13 @@ void Socket::create()
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
         SocketHandle handle = socket(PF_INET, m_type == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+
+        if (handle == priv::SocketImpl::invalidSocket())
+        {
+            err() << "Failed to create socket" << std::endl;
+            return;
+        }
+
         create(handle);
     }
 }

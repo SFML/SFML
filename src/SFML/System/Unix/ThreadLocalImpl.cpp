@@ -33,7 +33,8 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ThreadLocalImpl::ThreadLocalImpl()
+ThreadLocalImpl::ThreadLocalImpl() :
+m_key(0)
 {
     pthread_key_create(&m_key, NULL);
 }

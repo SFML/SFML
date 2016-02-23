@@ -103,18 +103,23 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
     pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    int width, height, channels;
+    int width = 0;
+    int height = 0;
+    int channels = 0;
     unsigned char* ptr = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
-    if (ptr && width && height)
+    if (ptr)
     {
         // Assign the image properties
         size.x = width;
         size.y = height;
 
-        // Copy the loaded pixels to the pixel buffer
-        pixels.resize(width * height * 4);
-        memcpy(&pixels[0], ptr, pixels.size());
+        if (width && height)
+        {
+            // Copy the loaded pixels to the pixel buffer
+            pixels.resize(width * height * 4);
+            memcpy(&pixels[0], ptr, pixels.size());
+        }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
         stbi_image_free(ptr);
@@ -141,19 +146,24 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         pixels.clear();
 
         // Load the image and get a pointer to the pixels in memory
-        int width, height, channels;
+        int width = 0;
+        int height = 0;
+        int channels = 0;
         const unsigned char* buffer = static_cast<const unsigned char*>(data);
         unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(dataSize), &width, &height, &channels, STBI_rgb_alpha);
 
-        if (ptr && width && height)
+        if (ptr)
         {
             // Assign the image properties
             size.x = width;
             size.y = height;
 
-            // Copy the loaded pixels to the pixel buffer
-            pixels.resize(width * height * 4);
-            memcpy(&pixels[0], ptr, pixels.size());
+            if (width && height)
+            {
+                // Copy the loaded pixels to the pixel buffer
+                pixels.resize(width * height * 4);
+                memcpy(&pixels[0], ptr, pixels.size());
+            }
 
             // Free the loaded pixels (they are now in our own pixel buffer)
             stbi_image_free(ptr);
@@ -192,18 +202,23 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     callbacks.eof  = &eof;
 
     // Load the image and get a pointer to the pixels in memory
-    int width, height, channels;
+    int width = 0;
+    int height = 0;
+    int channels = 0;
     unsigned char* ptr = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
 
-    if (ptr && width && height)
+    if (ptr)
     {
         // Assign the image properties
         size.x = width;
         size.y = height;
 
-        // Copy the loaded pixels to the pixel buffer
-        pixels.resize(width * height * 4);
-        memcpy(&pixels[0], ptr, pixels.size());
+        if (width && height)
+        {
+            // Copy the loaded pixels to the pixel buffer
+            pixels.resize(width * height * 4);
+            memcpy(&pixels[0], ptr, pixels.size());
+        }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
         stbi_image_free(ptr);

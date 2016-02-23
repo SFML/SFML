@@ -310,7 +310,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     {
         // Evaluate all the returned visuals, and pick the best one
         int bestScore = 0x7FFFFFFF;
-        XVisualInfo bestVisual;
+        XVisualInfo bestVisual = XVisualInfo();
         for (int i = 0; i < count; ++i)
         {
             // Check mandatory attributes

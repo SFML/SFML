@@ -301,7 +301,7 @@ private:
     /// \return True if the event was processed, false if it was discarded
     ///
     ////////////////////////////////////////////////////////////
-    bool processEvent(XEvent windowEvent);
+    bool processEvent(XEvent& windowEvent);
 
     ////////////////////////////////////////////////////////////
     // Member data
