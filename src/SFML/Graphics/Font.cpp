@@ -456,6 +456,10 @@ Font& Font::operator =(const Font& right)
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
 
+    #ifdef SFML_SYSTEM_ANDROID
+        std::swap(m_stream, temp.m_stream);
+    #endif
+
     return *this;
 }
 
