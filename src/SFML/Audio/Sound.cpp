@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -157,7 +157,11 @@ Sound::Status Sound::getStatus() const
 Sound& Sound::operator =(const Sound& right)
 {
     // Here we don't use the copy-and-swap idiom, because it would mess up
-    // the list of sound instances contained in the buffers
+    // the list of sound instances contained in the buffers and unnecessarily
+    // destroy/create OpenAL sound sources
+
+    // Delegate to base class, which copies all the sound attributes
+    SoundSource::operator=(right);
 
     // Detach the sound instance from the previous buffer (if any)
     if (m_buffer)
@@ -167,16 +171,10 @@ Sound& Sound::operator =(const Sound& right)
         m_buffer = NULL;
     }
 
-    // Copy the sound attributes
+    // Copy the remaining sound attributes
     if (right.m_buffer)
         setBuffer(*right.m_buffer);
     setLoop(right.getLoop());
-    setPitch(right.getPitch());
-    setVolume(right.getVolume());
-    setPosition(right.getPosition());
-    setRelativeToListener(right.isRelativeToListener());
-    setMinDistance(right.getMinDistance());
-    setAttenuation(right.getAttenuation());
 
     return *this;
 }

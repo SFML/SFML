@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -60,6 +60,22 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the color from 32-bit unsigned integer
+    ///
+    /// \param color Number containing the RGBA components (in that order)
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Color(Uint32 color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Retrieve the color as a 32-bit unsigned integer
+    ///
+    /// \return Color represented as a 32-bit unsigned integer
+    ///
+    ////////////////////////////////////////////////////////////
+    Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -171,6 +171,17 @@ BOOL isValidTextUnicode(NSEvent* event);
 
 
 ////////////////////////////////////////////////////////
+-(void)update
+{
+    // In order to prevent an infinite recursion when the window/view is
+    // resized to zero-height/width, we ignore update event when resizing.
+    if (![self inLiveResize]) {
+        [super update];
+    }
+}
+
+
+////////////////////////////////////////////////////////
 -(void)finishInit
 {
     // Register for window focus events
@@ -266,7 +277,14 @@ BOOL isValidTextUnicode(NSEvent* event);
 {
     NSWindow* window = [self window];
     NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
+    CGFloat oldScaleFactor = m_scaleFactor;
     m_scaleFactor = [screen backingScaleFactor];
+
+    // Send a resize event if the scaling factor changed
+    if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
+        NSSize newSize = [self frame].size;
+        m_requester->windowResized(newSize.width, newSize.height);
+    }
 }
 
 
@@ -467,7 +485,7 @@ BOOL isValidTextUnicode(NSEvent* event);
     if (m_requester != 0)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        m_requester->mouseWheelScrolledAt([theEvent deltaY], loc.x, loc.y);
+        m_requester->mouseWheelScrolledAt([theEvent deltaX], [theEvent deltaY], loc.x, loc.y);
     }
 
     // Transmit to non-SFML responder

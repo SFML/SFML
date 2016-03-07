@@ -31,14 +31,14 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float, float x, float y)
     {
-        m_shader.setParameter("pixel_threshold", (x + y) / 30);
+        m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -101,9 +101,9 @@ public:
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setParameter("wave_phase", time);
-        m_shader.setParameter("wave_amplitude", x * 40, y * 40);
-        m_shader.setParameter("blur_radius", (x + y) * 0.008f);
+        m_shader.setUniform("wave_phase", time);
+        m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
+        m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -155,10 +155,10 @@ public:
     void onUpdate(float time, float x, float y)
     {
         float radius = 200 + std::cos(time) * 150;
-        m_shader.setParameter("storm_position", x * 800, y * 600);
-        m_shader.setParameter("storm_inner_radius", radius / 3);
-        m_shader.setParameter("storm_total_radius", radius);
-        m_shader.setParameter("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
+        m_shader.setUniform("storm_inner_radius", radius / 3);
+        m_shader.setUniform("storm_total_radius", radius);
+        m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -215,14 +215,14 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setParameter("texture", sf::Shader::CurrentTexture);
+        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setParameter("edge_threshold", 1 - (x + y) / 2);
+        m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
 
         // Update the position of the moving entities
         for (std::size_t i = 0; i < m_entities.size(); ++i)
@@ -259,6 +259,85 @@ private:
 
 
 ////////////////////////////////////////////////////////////
+// "Geometry" geometry shader example
+////////////////////////////////////////////////////////////
+class Geometry : public Effect
+{
+public:
+
+    Geometry() :
+        Effect("geometry shader billboards"),
+        m_pointCloud(sf::Points, 10000)
+    {
+    }
+
+    bool onLoad()
+    {
+        // Check if geometry shaders are supported
+        if (!sf::Shader::isGeometryAvailable())
+            return false;
+
+        // Move the points in the point cloud to random positions
+        for (std::size_t i = 0; i < 10000; i++)
+        {
+            // Spread the coordinates from -480 to +480
+            // So they'll always fill the viewport at 800x600
+            m_pointCloud[i].position.x = rand() % 960 - 480.f;
+            m_pointCloud[i].position.y = rand() % 960 - 480.f;
+        }
+
+        // Load the texture
+        if (!m_logoTexture.loadFromFile("resources/logo.png"))
+            return false;
+
+        // Load the shader
+        if (!m_shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))
+            return false;
+        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+        // Set the render resolution (used for proper scaling)
+        m_shader.setUniform("resolution", sf::Vector2f(800, 600));
+
+        return true;
+    }
+
+    void onUpdate(float time, float x, float y)
+    {
+        // Reset our transformation matrix
+        m_transform = sf::Transform::Identity;
+        // Move to the center of the window
+        m_transform.translate(400, 300);
+        // Rotate everything based on cursor position
+        m_transform.rotate(x * 360.f);
+
+        // Adjust billboard size to scale between 25 and 75
+        float size = 25 + std::abs(y) * 50;
+
+        // Update the shader parameter
+        m_shader.setUniform("size", sf::Vector2f(size, size));
+    }
+
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        // Prepare the render state
+        states.shader = &m_shader;
+        states.texture = &m_logoTexture;
+        states.transform = m_transform;
+
+        // Draw the point cloud
+        target.draw(m_pointCloud, states);
+    }
+
+private:
+
+    sf::Texture m_logoTexture;
+    sf::Transform m_transform;
+    sf::Shader m_shader;
+    sf::VertexArray m_pointCloud;
+};
+
+
+////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
 /// \return Application exit code
@@ -283,6 +362,7 @@ int main()
     effects.push_back(new WaveBlur);
     effects.push_back(new StormBlink);
     effects.push_back(new Edge);
+    effects.push_back(new Geometry);
     std::size_t current = 0;
 
     // Initialize them
@@ -300,12 +380,12 @@ int main()
     // Create the description text
     sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
     description.setPosition(10, 530);
-    description.setColor(sf::Color(80, 80, 80));
+    description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
     sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
     instructions.setPosition(280, 555);
-    instructions.setColor(sf::Color(80, 80, 80));
+    instructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop
     sf::Clock clock;

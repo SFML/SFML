@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,6 +37,7 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO() :
+m_context    (NULL),
 m_frameBuffer(0),
 m_depthBuffer(0)
 {
@@ -117,7 +118,8 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
     glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0));
 
     // A final check, just to be sure...
-    GLenum status = glCheck(GLEXT_glCheckFramebufferStatus(GLEXT_GL_FRAMEBUFFER));
+    GLenum status;
+    glCheck(status = GLEXT_glCheckFramebufferStatus(GLEXT_GL_FRAMEBUFFER));
     if (status != GLEXT_GL_FRAMEBUFFER_COMPLETE)
     {
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, 0));

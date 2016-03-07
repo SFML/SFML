@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,8 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
+#include <X11/keysym.h>
 #include <cassert>
-#include <cstdlib>
+#include <map>
 
 
 namespace
@@ -36,6 +38,9 @@ namespace
     // The shared display and its reference counter
     Display* sharedDisplay = NULL;
     unsigned int referenceCount = 0;
+
+    typedef std::map<std::string, xcb_atom_t> AtomMap;
+    AtomMap atoms;
 }
 
 namespace sf
@@ -80,12 +85,14 @@ void CloseDisplay(Display* display)
         XCloseDisplay(display);
 }
 
+
 ////////////////////////////////////////////////////////////
 void CloseConnection(xcb_connection_t* connection)
 {
     assert(connection == XGetXCBConnection(sharedDisplay));
     return CloseDisplay(sharedDisplay);
 }
+
 
 ////////////////////////////////////////////////////////////
 xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr)
@@ -99,6 +106,62 @@ xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr)
     }
 
     return NULL;
+}
+
+
+////////////////////////////////////////////////////////////
+xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection)
+{
+    assert(connection == XGetXCBConnection(sharedDisplay));
+    return XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
+}
+
+
+////////////////////////////////////////////////////////////
+xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection)
+{
+    assert(connection == XGetXCBConnection(sharedDisplay));
+    xcb_screen_t* screen = XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
+    if (screen)
+        return screen->root;
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+xcb_atom_t getAtom(const std::string& name, bool onlyIfExists)
+{
+    AtomMap::const_iterator iter = atoms.find(name);
+
+    if (iter != atoms.end())
+        return iter->second;
+
+    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+    xcb_connection_t* connection = OpenConnection();
+
+    ScopedXcbPtr<xcb_intern_atom_reply_t> reply(xcb_intern_atom_reply(
+        connection,
+        xcb_intern_atom(
+            connection,
+            onlyIfExists,
+            name.size(),
+            name.c_str()
+        ),
+        &error
+    ));
+
+    CloseConnection(connection);
+
+    if (error || !reply)
+    {
+        err() << "Failed to get " << name << " atom." << std::endl;
+        return XCB_ATOM_NONE;
+    }
+
+    atoms[name] = reply->atom;
+
+    return reply->atom;
 }
 
 } // namespace priv

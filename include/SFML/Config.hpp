@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,8 +30,8 @@
 // Define the SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR 2
-#define SFML_VERSION_MINOR 2
-#define SFML_VERSION_PATCH 0
+#define SFML_VERSION_MINOR 3
+#define SFML_VERSION_PATCH 2
 
 
 ////////////////////////////////////////////////////////////
@@ -153,6 +153,44 @@
     // Static build doesn't need import/export macros
     #define SFML_API_EXPORT
     #define SFML_API_IMPORT
+
+#endif
+
+
+////////////////////////////////////////////////////////////
+// Cross-platform warning for deprecated functions and classes
+//
+// Usage:
+// class SFML_DEPRECATED MyClass
+// {
+//     SFML_DEPRECATED void memberFunc();
+// };
+//
+// SFML_DEPRECATED void globalFunc();
+////////////////////////////////////////////////////////////
+#if defined(SFML_NO_DEPRECATED_WARNINGS)
+
+    // User explicitly requests to disable deprecation warnings
+    #define SFML_DEPRECATED
+
+#elif defined(_MSC_VER)
+
+    // Microsoft C++ compiler
+    // Note: On newer MSVC versions, using deprecated functions causes a compiler error. In order to
+    // trigger a warning instead of an error, the compiler flag /sdl- (instead of /sdl) must be specified.
+    #define SFML_DEPRECATED __declspec(deprecated)
+
+#elif defined(__GNUC__)
+
+    // g++ and Clang
+    #define SFML_DEPRECATED __attribute__ ((deprecated))
+
+#else
+
+    // Other compilers are not supported, leave class or function as-is.
+    // With a bit of luck, the #pragma directive works, otherwise users get a warning (no error!) for unrecognized #pragma.
+    #pragma message("SFML_DEPRECATED is not supported for your compiler, please contact the SFML team")
+    #define SFML_DEPRECATED
 
 #endif
 

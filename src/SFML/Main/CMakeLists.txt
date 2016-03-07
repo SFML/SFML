@@ -33,5 +33,5 @@ install(TARGETS sfml-main ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel)
 # from depending on shared libraries), we need a boostrap activity which
 # will load our shared libraries manually
 if(SFML_OS_ANDROID)
-	sfml_add_library(sfml-activity SOURCES ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFMLActivity.cpp)
+    sfml_add_library(sfml-activity SOURCES ${PROJECT_SOURCE_DIR}/src/SFML/Main/SFMLActivity.cpp)
 endif()

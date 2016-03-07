@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -187,7 +187,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(sf::InputStream& stream, const IntRect& area = IntRect());
+    bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -421,6 +421,18 @@ public:
     Texture& operator =(const Texture& right);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the underlying OpenGL handle of the texture.
+    ///
+    /// You shouldn't need to use this function, unless you have
+    /// very specific stuff to implement that SFML doesn't support,
+    /// or implement a temporary workaround until a bug is fixed.
+    ///
+    /// \return OpenGL handle of the texture or 0 if not yet created
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getNativeHandle() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind a texture for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be
@@ -460,9 +472,6 @@ public:
     /// You can expect a value of 512 pixels for low-end graphics
     /// card, and up to 8192 pixels or more for newer hardware.
     ///
-    /// Note: The first call to this function, whether by your
-    /// code or SFML will result in a context switch.
-    ///
     /// \return Maximum size allowed for textures, in pixels
     ///
     ////////////////////////////////////////////////////////////
@@ -497,6 +506,7 @@ private:
     bool         m_isSmooth;      ///< Status of the smooth filter
     bool         m_isRepeated;    ///< Is the texture in repeat mode?
     mutable bool m_pixelsFlipped; ///< To work around the inconsistency in Y orientation
+    bool         m_fboAttachment; ///< Is this texture owned by a framebuffer object?
     Uint64       m_cacheId;       ///< Unique number that identifies the texture to the render target's cache
 };
 

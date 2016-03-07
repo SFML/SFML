@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -47,6 +47,9 @@
 #endif
 #ifndef XBUTTON2
     #define XBUTTON2 0x0002
+#endif
+#ifndef WM_MOUSEHWHEEL
+    #define WM_MOUSEHWHEEL 0x020E
 #endif
 #ifndef MAPVK_VK_TO_VSC
     #define MAPVK_VK_TO_VSC (0)
@@ -373,7 +376,7 @@ void WindowImplWin32::requestFocus()
     // Allow focus stealing only within the same process; compare PIDs of current and foreground window
     DWORD thisPid       = GetWindowThreadProcessId(m_handle, NULL);
     DWORD foregroundPid = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-     
+
     if (thisPid == foregroundPid)
     {
         // The window requesting focus belongs to the same process as the current window: steal focus
@@ -662,7 +665,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Mouse wheel event
+        // Vertical mouse wheel event
         case WM_MOUSEWHEEL:
         {
             // Mouse position is in screen coordinates, convert it to window coordinates
@@ -671,11 +674,42 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             position.y = static_cast<Int16>(HIWORD(lParam));
             ScreenToClient(m_handle, &position);
 
+            Int16 delta = static_cast<Int16>(HIWORD(wParam));
+
             Event event;
-            event.type = Event::MouseWheelMoved;
-            event.mouseWheel.delta = static_cast<Int16>(HIWORD(wParam)) / 120;
-            event.mouseWheel.x    = position.x;
-            event.mouseWheel.y    = position.y;
+
+            event.type             = Event::MouseWheelMoved;
+            event.mouseWheel.delta = delta / 120;
+            event.mouseWheel.x     = position.x;
+            event.mouseWheel.y     = position.y;
+            pushEvent(event);
+
+            event.type                   = Event::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+            event.mouseWheelScroll.delta = static_cast<float>(delta) / 120.f;
+            event.mouseWheelScroll.x     = position.x;
+            event.mouseWheelScroll.y     = position.y;
+            pushEvent(event);
+            break;
+        }
+
+        // Horizontal mouse wheel event
+        case WM_MOUSEHWHEEL:
+        {
+            // Mouse position is in screen coordinates, convert it to window coordinates
+            POINT position;
+            position.x = static_cast<Int16>(LOWORD(lParam));
+            position.y = static_cast<Int16>(HIWORD(lParam));
+            ScreenToClient(m_handle, &position);
+
+            Int16 delta = static_cast<Int16>(HIWORD(wParam));
+
+            Event event;
+            event.type                   = Event::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+            event.mouseWheelScroll.delta = -static_cast<float>(delta) / 120.f;
+            event.mouseWheelScroll.x     = position.x;
+            event.mouseWheelScroll.y     = position.y;
             pushEvent(event);
             break;
         }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -50,17 +50,18 @@ namespace
 @implementation SFAppDelegate
 
 @synthesize sfWindow;
+@synthesize backingScaleFactor;
 
 
 ////////////////////////////////////////////////////////////
-+(SFAppDelegate*)getInstance
++ (SFAppDelegate*)getInstance
 {
     return delegateInstance;
 }
 
 
 ////////////////////////////////////////////////////////////
--(void)runUserMain
+- (void)runUserMain
 {
     // Arguments intentionally dropped, see comments in main in sfml-main
     sfmlMain(0, NULL);
@@ -72,6 +73,8 @@ namespace
 {
     // Save the delegate instance
     delegateInstance = self;
+
+    [self initBackingScale];
 
     // Instantiate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
@@ -90,6 +93,14 @@ namespace
     return true;
 }
 
+- (void)initBackingScale
+{
+    id data = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHighResolutionCapable"];
+    if(data && [data boolValue])
+        backingScaleFactor = [[UIScreen mainScreen] scale];
+    else
+        backingScaleFactor = 1;
+}
 
 ////////////////////////////////////////////////////////////
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -151,6 +162,38 @@ namespace
     }
 }
 
+- (bool)supportsOrientation:(UIDeviceOrientation)orientation
+{
+    if (!self.sfWindow)
+        return false;
+
+    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
+    if (!rootViewController || ![rootViewController shouldAutorotate])
+        return false;
+
+    NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
+    if (!supportedOrientations)
+        return false;
+
+    int appFlags = 0;
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
+        appFlags += UIInterfaceOrientationMaskPortrait;
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortraitUpsideDown"])
+        appFlags += UIInterfaceOrientationMaskPortraitUpsideDown;
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeLeft"])
+        appFlags += UIInterfaceOrientationMaskLandscapeLeft;
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
+        appFlags += UIInterfaceOrientationMaskLandscapeRight;
+
+    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & appFlags;
+}
+
+- (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation
+{
+    sf::Vector2u size = self.sfWindow->getSize();
+    return ((!UIDeviceOrientationIsLandscape(orientation) && size.x > size.y)
+            || (UIDeviceOrientationIsLandscape(orientation) && size.y > size.x));
+}
 
 ////////////////////////////////////////////////////////////
 - (void)deviceOrientationDidChange:(NSNotification *)notification
@@ -159,23 +202,20 @@ namespace
     {
         // Get the new orientation
         UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-
         // Filter interesting orientations
-        if ((orientation == UIDeviceOrientationLandscapeLeft) ||
-            (orientation == UIDeviceOrientationLandscapeRight) ||
-            (orientation == UIDeviceOrientationPortrait) ||
-            (orientation == UIDeviceOrientationPortraitUpsideDown))
+        if (UIDeviceOrientationIsValidInterfaceOrientation(orientation))
         {
             // Get the new size
             sf::Vector2u size = self.sfWindow->getSize();
-            if (UIDeviceOrientationIsLandscape(orientation))
+            // Check if the app can switch to this orientation and if so if the window's size must be adjusted
+            if ([self supportsOrientation:orientation] && [self needsToFlipFrameForOrientation:orientation])
                 std::swap(size.x, size.y);
 
             // Send a Resized event to the current window
             sf::Event event;
             event.type = sf::Event::Resized;
-            event.size.width = size.x;
-            event.size.height = size.y;
+            event.size.width = size.x * backingScaleFactor;
+            event.size.height = size.y * backingScaleFactor;
             sfWindow->forwardEvent(event);
         }
     }
@@ -202,6 +242,9 @@ namespace
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
+    position.x *= backingScaleFactor;
+    position.y *= backingScaleFactor;
+    
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -223,6 +266,9 @@ namespace
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
 {
+    position.x *= backingScaleFactor;
+    position.y *= backingScaleFactor;
+    
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -254,8 +300,8 @@ namespace
         sf::Event event;
         event.type = sf::Event::TouchEnded;
         event.touch.finger = index;
-        event.touch.x = position.x;
-        event.touch.y = position.y;
+        event.touch.x = position.x * backingScaleFactor;
+        event.touch.y = position.y * backingScaleFactor;
         sfWindow->forwardEvent(event);
     }
 }

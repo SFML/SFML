@@ -71,7 +71,7 @@ int main()
     pauseMessage.setFont(font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition(170.f, 150.f);
-    pauseMessage.setColor(sf::Color::White);
+    pauseMessage.setFillColor(sf::Color::White);
     pauseMessage.setString("Welcome to SFML pong!\nPress space to start the game");
 
     // Define the paddles properties
@@ -91,7 +91,7 @@ int main()
         while (window.pollEvent(event))
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) || 
+            if ((event.type == sf::Event::Closed) ||
                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
             {
                 window.close();
@@ -188,7 +188,7 @@ int main()
 
             // Check the collisions between the ball and the paddles
             // Left Paddle
-            if (ball.getPosition().x - ballRadius < leftPaddle.getPosition().x + paddleSize.x / 2 && 
+            if (ball.getPosition().x - ballRadius < leftPaddle.getPosition().x + paddleSize.x / 2 &&
                 ball.getPosition().x - ballRadius > leftPaddle.getPosition().x &&
                 ball.getPosition().y + ballRadius >= leftPaddle.getPosition().y - paddleSize.y / 2 &&
                 ball.getPosition().y - ballRadius <= leftPaddle.getPosition().y + paddleSize.y / 2)

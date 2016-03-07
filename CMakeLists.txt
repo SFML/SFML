@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -8,9 +8,28 @@ macro(sfml_set_option var default type docstring)
     set(${var} ${${var}} CACHE ${type} ${docstring} FORCE)
 endmacro()
 
-# set a default build type if none was provided
-# this has to be done before the project() instruction!
+# these options have to be set before CMake detects/configures the toolchain
+
+# determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
+
+# set Android specific options
+
+# define the minimum API level to be used
+sfml_set_option(ANDROID_API_MIN 9 STRING "Choose the Android API level to be used (minimum 9)")
+# mirror the setting for the toolchain file
+set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
+
+# define the path to the Android NDK
+sfml_set_option(ANDROID_NDK "$ENV{ANDROID_NDK}" PATH "Path to the Android NDK")
+
+# define the STL implementation to be used
+sfml_set_option(ANDROID_STL c++_shared STRING "Choose the STL implementation to be used (experimental)")
+
+# default the ABI to ARM v7a for hardware floating point
+if(NOT ANDROID_ABI)
+    set(ANDROID_ABI armeabi-v7a)
+endif()
 
 # project name
 project(SFML)
@@ -20,8 +39,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
 # setup version numbers
 set(VERSION_MAJOR 2)
-set(VERSION_MINOR 2)
-set(VERSION_PATCH 0)
+set(VERSION_MINOR 3)
+set(VERSION_PATCH 2)
 
 # add the SFML header path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -55,7 +74,7 @@ if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
-    # add an option to let the user specify a custom directory for frameworks installation (SFML, sndfile, ...)
+    # add an option to let the user specify a custom directory for frameworks installation (SFML, FLAC, ...)
     sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
 
     # add an option to automatically install Xcode templates
@@ -64,12 +83,18 @@ endif()
 
 # Android options
 if(SFML_OS_ANDROID)
-    # force usage of the STL port
-    set(ANDROID_USE_STLPORT TRUE)
-
     # make sure there's the android library available
-    if (${ANDROID_NATIVE_API_LEVEL} LESS 9)
-        message(FATAL_ERROR "API level must be equal or greater than 9")
+    if (${ANDROID_API_MIN} LESS 9)
+        message(FATAL_ERROR "Android API level must be equal or greater than 9. Please adjust the CMake variable 'ANDROID_API_MIN'.")
+    endif()
+
+    if(NOT ANDROID_NDK)
+        message(FATAL_ERROR "The Android NDK couldn't be found. Please adjust the CMake variable 'ANDROID_NDK' to point to the NDK directory.")
+    endif()
+
+    # CMake doesn't support defining the STL to be used with Nsight Tegra, so warn the user
+    if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
+        message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
     endif()
 
     # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
@@ -78,10 +103,21 @@ if(SFML_OS_ANDROID)
     # we install libs in a subdirectory named after the ABI (lib/mips/*.so)
     set(LIB_SUFFIX "/${ANDROID_ABI}")
 
-    # this is a workaround to compile sfml-activity without stlport_shared as dependency
+    # pass shared STL configuration (if any)
+    if (ANDROID_STL MATCHES "_shared")
+        add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
+    endif()
+
+    # this is a workaround to compile sfml-activity without the stl library as a dependency
     # we save the original compilation command line to restore it later in Macro.cmake
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
+    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+else()
+    unset(ANDROID_ABI CACHE)
+    unset(ANDROID_API_MIN CACHE)
+    unset(ANDROID_STL CACHE)
+    unset(ANDROID_NATIVE_API_LEVEL CACHE)
+    unset(ANDROID_NDK CACHE)
 endif()
 
 # define SFML_STATIC if the build type is not set to 'shared'
@@ -89,9 +125,19 @@ if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
 
-# remove SL security warnings with Visual C++
+# Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
+    if(CMAKE_VERSION VERSION_LESS 3.1)
+        sfml_set_option(SFML_GENERATE_PDB FALSE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
+        if(SFML_GENERATE_PDB)
+            message(FATAL_ERROR "Generation of PDB files (SFML_GENERATE_PDB) requires at least CMake 3.1.0")
+        endif()
+    else()
+        sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
+    endif()
+
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
 # define SFML_OPENGL_ES if needed
@@ -195,6 +241,13 @@ if(NOT SFML_BUILD_FRAMEWORKS)
             DESTINATION .
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
+
+    if(SFML_GENERATE_PDB)
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
+                DESTINATION .
+                COMPONENT devel
+                FILES_MATCHING PATTERN "*.pdb")
+    endif()
 else()
     # find only "root" headers
     file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
@@ -227,7 +280,7 @@ else()
                        POST_BUILD
                        COMMAND cp -r ${PROJECT_SOURCE_DIR}/include/SFML/* $<TARGET_FILE_DIR:SFML>/Headers)
 
-    # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+    # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
     # NOTE: it's not required to link agains SFML.framework
     set_target_properties(SFML PROPERTIES
                           BUILD_WITH_INSTALL_RPATH 1
@@ -251,15 +304,19 @@ if(SFML_OS_WINDOWS)
     # install the binaries of SFML dependencies
     if(ARCH_32BITS)
         install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC)
+        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
             install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION lib)
+        elseif(SFML_COMPILER_MSVC)
+            install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION lib)
         else()
             install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION lib)
         endif()
     elseif(ARCH_64BITS)
         install(DIRECTORY extlibs/bin/x64/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC)
+        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
             install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION lib)
+        elseif(SFML_COMPILER_MSVC)
+            install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION lib)
         else()
             install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
         endif()
@@ -267,19 +324,48 @@ if(SFML_OS_WINDOWS)
 
 elseif(SFML_OS_MACOSX)
 
-    # install the non-standard frameworks SFML depends on
-    install(DIRECTORY extlibs/libs-osx/Frameworks/sndfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-    install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    # install extlibs dependencies only when used
+    if("${FLAC_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${FREETYPE_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${OGG_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBIS_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBISENC_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${VORBISFILE_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
+        install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
+
+    if("${OPENAL_LIBRARY}" STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/OpenAL.framework")
+        install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif()
 
     # install the Xcode templates if requested
     if(SFML_INSTALL_XCODE_TEMPLATES)
-        configure_file(
-                    "tools/xcode/templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist.in"
-                    "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/SFML Compiler.xctemplate/TemplateInfo.plist"
-                    @ONLY)
+        # configure the templates plist files
+        foreach(TEMPLATE "SFML Compiler" "SFML App")
+            configure_file(
+                        "tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist.in"
+                        "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist"
+                        @ONLY)
+        endforeach()
         install(DIRECTORY "tools/xcode/templates/SFML" "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML"
                 DESTINATION /Library/Developer/Xcode/Templates
-                PATTERN "*.in" EXCLUDE)
+                PATTERN "*.in" EXCLUDE
+                PATTERN ".DS_Store" EXCLUDE)
     endif()
 
 elseif(SFML_OS_IOS)

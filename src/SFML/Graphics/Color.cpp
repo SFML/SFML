@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -64,6 +64,24 @@ b(blue),
 a(alpha)
 {
 
+}
+
+
+////////////////////////////////////////////////////////////
+Color::Color(Uint32 color) :
+r((color & 0xff000000) >> 24),
+g((color & 0x00ff0000) >> 16),
+b((color & 0x0000ff00) >> 8 ),
+a((color & 0x000000ff) >> 0 )
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+Uint32 Color::toInteger() const
+{
+    return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 

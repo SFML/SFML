@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -107,7 +107,6 @@ std::string Http::Request::prepare() const
     std::string method;
     switch (m_method)
     {
-        default:
         case Get:    method = "GET";    break;
         case Post:   method = "POST";   break;
         case Head:   method = "HEAD";   break;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,11 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
+#include <SFML/OpenGL.hpp> // included second to avoid an error in WglExtensions.hpp
 #include <SFML/Window/Win32/WglContext.hpp>
-#include <SFML/Window/glext/wglext.h>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
+#include <sstream>
+#include <vector>
 
 
 namespace sf
@@ -38,64 +40,105 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
+void ensureExtensionsInit(HDC deviceContext)
+{
+    static bool initialized = false;
+    if (!initialized)
+    {
+        initialized = true;
+
+        // We don't check the return value since the extension
+        // flags are cleared even if loading fails
+        sfwgl_LoadFunctions(deviceContext);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+String getErrorString(DWORD errorCode)
+{
+    std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
+    TCHAR errBuff[256];
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0, errBuff, sizeof(errBuff), NULL);
+    ss << errBuff;
+    String errMsg(ss.str());
+
+    return errMsg;
+}
+
+
+////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
 m_window       (NULL),
+m_pbuffer      (NULL),
 m_deviceContext(NULL),
 m_context      (NULL),
-m_ownsWindow   (true)
+m_ownsWindow   (false)
 {
-    // Creating a dummy window is mandatory: we could create a memory DC but then
-    // its pixel format wouldn't match the regular contexts' format, and thus
-    // wglShareLists would always fail. Too bad...
+    // Save the creation settings
+    m_settings = ContextSettings();
 
-    // Create a dummy window (disabled and hidden)
-    m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);
-    ShowWindow(m_window, SW_HIDE);
-    m_deviceContext = GetDC(m_window);
+    // Make sure that extensions are initialized if this is not the shared context
+    // The shared context is the context used to initialize the extensions
+    if (shared && shared->m_deviceContext)
+        ensureExtensionsInit(shared->m_deviceContext);
+
+    // Create the rendering surface (window or pbuffer if supported)
+    createSurface(shared, 1, 1, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
     if (m_deviceContext)
-        createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+        createContext(shared);
 }
 
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
 m_window       (NULL),
+m_pbuffer      (NULL),
 m_deviceContext(NULL),
 m_context      (NULL),
 m_ownsWindow   (false)
 {
-    // Get the owner window and its device context
-    m_window = owner->getSystemHandle();
-    m_deviceContext = GetDC(m_window);
+    // Save the creation settings
+    m_settings = settings;
+
+    // Make sure that extensions are initialized if this is not the shared context
+    // The shared context is the context used to initialize the extensions
+    if (shared && shared->m_deviceContext)
+        ensureExtensionsInit(shared->m_deviceContext);
+
+    // Create the rendering surface from the owner window
+    createSurface(owner->getSystemHandle(), bitsPerPixel);
 
     // Create the context
     if (m_deviceContext)
-        createContext(shared, bitsPerPixel, settings);
+        createContext(shared);
 }
 
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
 m_window       (NULL),
+m_pbuffer      (NULL),
 m_deviceContext(NULL),
 m_context      (NULL),
-m_ownsWindow   (true)
+m_ownsWindow   (false)
 {
-    // The target of the context is a hidden window.
-    // We can't create a memory DC (the resulting context wouldn't be compatible
-    // with other contexts), and we don't add the extra complexity of P-Buffers;
-    // we can still support them in the future if this solution is not good enough.
+    // Save the creation settings
+    m_settings = settings;
 
-    // Create the hidden window
-    m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, NULL, NULL, GetModuleHandle(NULL), NULL);
-    ShowWindow(m_window, SW_HIDE);
-    m_deviceContext = GetDC(m_window);
+    // Make sure that extensions are initialized if this is not the shared context
+    // The shared context is the context used to initialize the extensions
+    if (shared && shared->m_deviceContext)
+        ensureExtensionsInit(shared->m_deviceContext);
+
+    // Create the rendering surface (window or pbuffer if supported)
+    createSurface(shared, width, height, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
     if (m_deviceContext)
-        createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
+        createContext(shared);
 }
 
 
@@ -112,11 +155,47 @@ WglContext::~WglContext()
 
     // Destroy the device context
     if (m_deviceContext)
-        ReleaseDC(m_window, m_deviceContext);
+    {
+        if (m_pbuffer)
+        {
+            wglReleasePbufferDCARB(m_pbuffer, m_deviceContext);
+            wglDestroyPbufferARB(m_pbuffer);
+        }
+        else
+        {
+            ReleaseDC(m_window, m_deviceContext);
+        }
+    }
 
     // Destroy the window if we own it
     if (m_window && m_ownsWindow)
         DestroyWindow(m_window);
+}
+
+
+////////////////////////////////////////////////////////////
+GlFunctionPointer WglContext::getFunction(const char* name)
+{
+    GlFunctionPointer address = reinterpret_cast<GlFunctionPointer>(wglGetProcAddress(reinterpret_cast<LPCSTR>(name)));
+
+    if (address)
+    {
+        // Test whether the returned value is a valid error code
+        ptrdiff_t errorCode = reinterpret_cast<ptrdiff_t>(address);
+
+        if ((errorCode != -1) && (errorCode != 1) && (errorCode != 2) && (errorCode != 3))
+            return address;
+    }
+
+    static HMODULE module = NULL;
+
+    if (!module)
+        module = GetModuleHandleA("OpenGL32.dll");
+
+    if (module)
+        return reinterpret_cast<GlFunctionPointer>(GetProcAddress(module, reinterpret_cast<LPCSTR>(name)));
+
+    return 0;
 }
 
 
@@ -138,85 +217,130 @@ void WglContext::display()
 ////////////////////////////////////////////////////////////
 void WglContext::setVerticalSyncEnabled(bool enabled)
 {
-    PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
-    if (wglSwapIntervalEXT)
-        wglSwapIntervalEXT(enabled ? 1 : 0);
+    // Make sure that extensions are initialized
+    ensureExtensionsInit(m_deviceContext);
+
+    if (sfwgl_ext_EXT_swap_control == sfwgl_LOAD_SUCCEEDED)
+    {
+        if (wglSwapIntervalEXT(enabled ? 1 : 0) == FALSE)
+            err() << "Setting vertical sync failed" << std::endl;
+    }
+    else
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+            // wglSwapIntervalEXT not supported
+            err() << "Setting vertical sync not supported" << std::endl;
+
+            warned = true;
+        }
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
-void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
+int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings, bool pbuffer)
 {
-    // Save the creation settings
-    m_settings = settings;
-
-    // Let's find a suitable pixel format -- first try with antialiasing
+    // Let's find a suitable pixel format -- first try with wglChoosePixelFormatARB
     int bestFormat = 0;
-    if (m_settings.antialiasingLevel > 0)
+    if (sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED)
     {
-        // Get the wglChoosePixelFormatARB function (it is an extension)
-        PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
-        if (wglChoosePixelFormatARB)
+        // Define the basic attributes we want for our window
+        int intAttributes[] =
         {
-            // Define the basic attributes we want for our window
-            int intAttributes[] =
-            {
-                WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-                WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-                WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
-                WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
-                WGL_SAMPLE_BUFFERS_ARB, (m_settings.antialiasingLevel ? GL_TRUE : GL_FALSE),
-                WGL_SAMPLES_ARB,        static_cast<int>(m_settings.antialiasingLevel),
-                0,                      0
-            };
+            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+            WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+            WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+            0,                      0
+        };
 
-            // Let's check how many formats are supporting our requirements
-            int   formats[128];
-            UINT  nbFormats;
-            float floatAttributes[] = {0, 0};
-            bool  isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-            while ((!isValid || (nbFormats == 0)) && m_settings.antialiasingLevel > 0)
-            {
-                // Decrease the antialiasing level until we find a valid one
-                m_settings.antialiasingLevel--;
-                intAttributes[11] = m_settings.antialiasingLevel;
-                isValid = wglChoosePixelFormatARB(m_deviceContext, intAttributes, floatAttributes, sizeof(formats) / sizeof(*formats), formats, &nbFormats) != 0;
-            }
+        // Let's check how many formats are supporting our requirements
+        int   formats[512];
+        UINT  nbFormats;
+        bool  isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 512, formats, &nbFormats) != 0;
 
-            // Get the best format among the returned ones
-            if (isValid && (nbFormats > 0))
+        // Get the best format among the returned ones
+        if (isValid && (nbFormats > 0))
+        {
+            int bestScore = 0x7FFFFFFF;
+            for (UINT i = 0; i < nbFormats; ++i)
             {
-                int bestScore = 0xFFFF;
-                for (UINT i = 0; i < nbFormats; ++i)
+                // Extract the components of the current format
+                int values[7];
+                const int attributes[] =
                 {
-                    // Get the current format's attributes
-                    PIXELFORMATDESCRIPTOR attributes;
-                    attributes.nSize    = sizeof(attributes);
-                    attributes.nVersion = 1;
-                    DescribePixelFormat(m_deviceContext, formats[i], sizeof(attributes), &attributes);
+                    WGL_RED_BITS_ARB,
+                    WGL_GREEN_BITS_ARB,
+                    WGL_BLUE_BITS_ARB,
+                    WGL_ALPHA_BITS_ARB,
+                    WGL_DEPTH_BITS_ARB,
+                    WGL_STENCIL_BITS_ARB,
+                    WGL_ACCELERATION_ARB
+                };
 
-                    // Evaluate the current configuration
-                    int color = attributes.cRedBits + attributes.cGreenBits + attributes.cBlueBits + attributes.cAlphaBits;
-                    int score = evaluateFormat(bitsPerPixel, m_settings, color, attributes.cDepthBits, attributes.cStencilBits, m_settings.antialiasingLevel);
+                if (!wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 7, attributes, values))
+                {
+                    err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    break;
+                }
 
-                    // Keep it if it's better than the current best
-                    if (score < bestScore)
+                int sampleValues[2] = {0, 0};
+                if (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED)
+                {
+                    const int sampleAttributes[] =
                     {
-                        bestScore  = score;
-                        bestFormat = formats[i];
+                        WGL_SAMPLE_BUFFERS_ARB,
+                        WGL_SAMPLES_ARB
+                    };
+
+                    if (!wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues))
+                    {
+                        err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                        break;
                     }
+                }
+
+                if (pbuffer)
+                {
+                    const int pbufferAttributes[] =
+                    {
+                        WGL_DRAW_TO_PBUFFER_ARB
+                    };
+
+                    int pbufferValue = 0;
+
+                    if (!wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 1, pbufferAttributes, &pbufferValue))
+                    {
+                        err() << "Failed to retrieve pixel format pbuffer information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                        break;
+                    }
+
+                    if (pbufferValue != GL_TRUE)
+                        continue;
+                }
+
+                // Evaluate the current configuration
+                int color = values[0] + values[1] + values[2] + values[3];
+                int score = evaluateFormat(bitsPerPixel, settings, color, values[4], values[5], sampleValues[0] ? sampleValues[1] : 0, values[6] == WGL_FULL_ACCELERATION_ARB);
+
+                // Keep it if it's better than the current best
+                if (score < bestScore)
+                {
+                    bestScore  = score;
+                    bestFormat = formats[i];
                 }
             }
         }
-        else
-        {
-            // wglChoosePixelFormatARB not supported ; disabling antialiasing
-            err() << "Antialiasing is not supported ; it will be disabled" << std::endl;
-            m_settings.antialiasingLevel = 0;
-        }
     }
 
-    // Find a pixel format with no antialiasing, if not needed or not supported
+    // ChoosePixelFormat doesn't support pbuffers
+    if (pbuffer)
+        return bestFormat;
+
+    // Find a pixel format with ChoosePixelFormat, if wglChoosePixelFormatARB is not supported
     if (bestFormat == 0)
     {
         // Setup a pixel format descriptor from the rendering settings
@@ -228,17 +352,28 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
         descriptor.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
         descriptor.iPixelType   = PFD_TYPE_RGBA;
         descriptor.cColorBits   = static_cast<BYTE>(bitsPerPixel);
-        descriptor.cDepthBits   = static_cast<BYTE>(m_settings.depthBits);
-        descriptor.cStencilBits = static_cast<BYTE>(m_settings.stencilBits);
+        descriptor.cDepthBits   = static_cast<BYTE>(settings.depthBits);
+        descriptor.cStencilBits = static_cast<BYTE>(settings.stencilBits);
         descriptor.cAlphaBits   = bitsPerPixel == 32 ? 8 : 0;
 
         // Get the pixel format that best matches our requirements
-        bestFormat = ChoosePixelFormat(m_deviceContext, &descriptor);
-        if (bestFormat == 0)
-        {
-            err() << "Failed to find a suitable pixel format for device context -- cannot create OpenGL context" << std::endl;
-            return;
-        }
+        bestFormat = ChoosePixelFormat(deviceContext, &descriptor);
+    }
+
+    return bestFormat;
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
+{
+    int bestFormat = selectBestPixelFormat(m_deviceContext, bitsPerPixel, m_settings);
+
+    if (bestFormat == 0)
+    {
+        err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+              << "Cannot create OpenGL context" << std::endl;
+        return;
     }
 
     // Extract the depth and stencil bits from the chosen format
@@ -246,64 +381,240 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
     actualFormat.nSize    = sizeof(actualFormat);
     actualFormat.nVersion = 1;
     DescribePixelFormat(m_deviceContext, bestFormat, sizeof(actualFormat), &actualFormat);
-    m_settings.depthBits   = actualFormat.cDepthBits;
-    m_settings.stencilBits = actualFormat.cStencilBits;
 
     // Set the chosen pixel format
     if (!SetPixelFormat(m_deviceContext, bestFormat, &actualFormat))
     {
-        err() << "Failed to set pixel format for device context -- cannot create OpenGL context" << std::endl;
+        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+              << "Cannot create OpenGL context" << std::endl;
         return;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::updateSettingsFromPixelFormat()
+{
+    int format = GetPixelFormat(m_deviceContext);
+
+    PIXELFORMATDESCRIPTOR actualFormat;
+    actualFormat.nSize    = sizeof(actualFormat);
+    actualFormat.nVersion = 1;
+    DescribePixelFormat(m_deviceContext, format, sizeof(actualFormat), &actualFormat);
+
+    if (format == 0)
+    {
+        err() << "Failed to get selected pixel format" << std::endl;
+        return;
+    }
+
+    if (sfwgl_ext_ARB_pixel_format == sfwgl_LOAD_SUCCEEDED)
+    {
+        const int attributes[] = {WGL_DEPTH_BITS_ARB, WGL_STENCIL_BITS_ARB};
+        int values[2];
+
+        if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, attributes, values))
+        {
+            m_settings.depthBits   = values[0];
+            m_settings.stencilBits = values[1];
+        }
+        else
+        {
+            err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+            m_settings.depthBits   = actualFormat.cDepthBits;
+            m_settings.stencilBits = actualFormat.cStencilBits;
+        }
+
+        if (sfwgl_ext_ARB_multisample == sfwgl_LOAD_SUCCEEDED)
+        {
+            const int sampleAttributes[] = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
+            int sampleValues[2];
+
+            if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues))
+            {
+                m_settings.antialiasingLevel = sampleValues[0] ? sampleValues[1] : 0;
+            }
+            else
+            {
+                err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                m_settings.antialiasingLevel = 0;
+            }
+        }
+        else
+        {
+            m_settings.antialiasingLevel = 0;
+        }
+    }
+    else
+    {
+        m_settings.depthBits   = actualFormat.cDepthBits;
+        m_settings.stencilBits = actualFormat.cStencilBits;
+        m_settings.antialiasingLevel = 0;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel)
+{
+    // Check if the shared context already exists and pbuffers are supported
+    if (shared && shared->m_deviceContext && (sfwgl_ext_ARB_pbuffer == sfwgl_LOAD_SUCCEEDED))
+    {
+        int bestFormat = selectBestPixelFormat(shared->m_deviceContext, bitsPerPixel, m_settings, true);
+
+        if (bestFormat > 0)
+        {
+            int attributes[] = {0, 0};
+
+            m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext, bestFormat, width, height, attributes);
+
+            if (m_pbuffer)
+            {
+                m_window = shared->m_window;
+                m_deviceContext = wglGetPbufferDCARB(m_pbuffer);
+
+                if (!m_deviceContext)
+                {
+                    wglDestroyPbufferARB(m_pbuffer);
+                    m_pbuffer = NULL;
+                }
+            }
+        }
+    }
+
+    // If pbuffers are not available we use a hidden window as the off-screen surface to draw to
+    if (!m_deviceContext)
+    {
+        // We can't create a memory DC, the resulting context wouldn't be compatible
+        // with other contexts and thus wglShareLists would always fail
+
+        // Create the hidden window
+        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, NULL, NULL, GetModuleHandle(NULL), NULL);
+        ShowWindow(m_window, SW_HIDE);
+        m_deviceContext = GetDC(m_window);
+
+        m_ownsWindow = true;
+
+        // Set the pixel format of the device context
+        setDevicePixelFormat(bitsPerPixel);
+    }
+
+    // Update context settings from the selected pixel format
+    updateSettingsFromPixelFormat();
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::createSurface(HWND window, unsigned int bitsPerPixel)
+{
+    m_window = window;
+    m_deviceContext = GetDC(window);
+
+    // Set the pixel format of the device context
+    setDevicePixelFormat(bitsPerPixel);
+
+    // Update context settings from the selected pixel format
+    updateSettingsFromPixelFormat();
+}
+
+
+////////////////////////////////////////////////////////////
+void WglContext::createContext(WglContext* shared)
+{
+    // Get a working copy of the context settings
+    ContextSettings settings = m_settings;
 
     // Get the context to share display lists with
     HGLRC sharedContext = shared ? shared->m_context : NULL;
 
-    // Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
-    while (!m_context && (m_settings.majorVersion >= 3))
+    // Create the OpenGL context -- first try using wglCreateContextAttribsARB
+    while (!m_context && m_settings.majorVersion)
     {
-        PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
-        if (wglCreateContextAttribsARB)
+        if (sfwgl_ext_ARB_create_context == sfwgl_LOAD_SUCCEEDED)
         {
-            int attributes[] =
+            std::vector<int> attributes;
+
+            // Check if the user requested a specific context version (anything > 1.1)
+            if ((m_settings.majorVersion > 1) || ((m_settings.majorVersion == 1) && (m_settings.minorVersion > 1)))
             {
-                WGL_CONTEXT_MAJOR_VERSION_ARB, static_cast<int>(m_settings.majorVersion),
-                WGL_CONTEXT_MINOR_VERSION_ARB, static_cast<int>(m_settings.minorVersion),
-                WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-                0, 0
-            };
-            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes);
+                attributes.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB);
+                attributes.push_back(m_settings.majorVersion);
+                attributes.push_back(WGL_CONTEXT_MINOR_VERSION_ARB);
+                attributes.push_back(m_settings.minorVersion);
+            }
+
+            // Check if setting the profile is supported
+            if (sfwgl_ext_ARB_create_context_profile == sfwgl_LOAD_SUCCEEDED)
+            {
+                int profile = (m_settings.attributeFlags & ContextSettings::Core) ? WGL_CONTEXT_CORE_PROFILE_BIT_ARB : WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+                int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? WGL_CONTEXT_DEBUG_BIT_ARB : 0;
+
+                attributes.push_back(WGL_CONTEXT_PROFILE_MASK_ARB);
+                attributes.push_back(profile);
+                attributes.push_back(WGL_CONTEXT_FLAGS_ARB);
+                attributes.push_back(debug);
+            }
+            else
+            {
+                if ((m_settings.attributeFlags & ContextSettings::Core) || (m_settings.attributeFlags & ContextSettings::Debug))
+                    err() << "Selecting a profile during context creation is not supported,"
+                          << "disabling comptibility and debug" << std::endl;
+
+                m_settings.attributeFlags = ContextSettings::Default;
+            }
+
+            // Append the terminating 0
+            attributes.push_back(0);
+            attributes.push_back(0);
+
+            // Create the context
+            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, &attributes[0]);
+        }
+        else
+        {
+            // If wglCreateContextAttribsARB is not supported, there is no need to keep trying
+            break;
         }
 
-        // If we couldn't create the context, lower the version number and try again -- stop at 3.0
+        // If we couldn't create the context, first try disabling flags,
+        // then lower the version number and try again -- stop at 0.0
         // Invalid version numbers will be generated by this algorithm (like 3.9), but we really don't care
         if (!m_context)
         {
-            if (m_settings.minorVersion > 0)
+            if (m_settings.attributeFlags != ContextSettings::Default)
+            {
+                m_settings.attributeFlags = ContextSettings::Default;
+            }
+            else if (m_settings.minorVersion > 0)
             {
                 // If the minor version is not 0, we decrease it and try again
                 m_settings.minorVersion--;
+
+                m_settings.attributeFlags = settings.attributeFlags;
             }
             else
             {
                 // If the minor version is 0, we decrease the major version
                 m_settings.majorVersion--;
                 m_settings.minorVersion = 9;
+
+                m_settings.attributeFlags = settings.attributeFlags;
             }
         }
     }
 
-    // If the OpenGL >= 3.0 context failed or if we don't want one, create a regular OpenGL 1.x/2.x context
+    // If wglCreateContextAttribsARB failed, use wglCreateContext
     if (!m_context)
     {
-        // set the context version to 2.0 (arbitrary)
-        m_settings.majorVersion = 2;
-        m_settings.minorVersion = 0;
+        // set the context version to 1.1 (arbitrary) and disable flags
+        m_settings.majorVersion = 1;
+        m_settings.minorVersion = 1;
+        m_settings.attributeFlags = ContextSettings::Default;
 
         m_context = wglCreateContext(m_deviceContext);
         if (!m_context)
         {
-            err() << "Failed to create an OpenGL context for this window" << std::endl;
+            err() << "Failed to create an OpenGL context for this window: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
             return;
         }
 
@@ -315,7 +626,7 @@ void WglContext::createContext(WglContext* shared, unsigned int bitsPerPixel, co
             Lock lock(mutex);
 
             if (!wglShareLists(sharedContext, m_context))
-                err() << "Failed to share the OpenGL context" << std::endl;
+                err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
         }
     }
 }

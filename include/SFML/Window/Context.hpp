@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -41,6 +41,8 @@ namespace priv
     class GlContext;
 }
 
+typedef void (*GlFunctionPointer)();
+
 ////////////////////////////////////////////////////////////
 /// \brief Class holding a valid drawing context
 ///
@@ -75,7 +77,45 @@ public:
     ////////////////////////////////////////////////////////////
     bool setActive(bool active);
 
-public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the settings of the context
+    ///
+    /// Note that these settings may be different than the ones
+    /// passed to the constructor; they are indeed adjusted if the
+    /// original settings are not directly supported by the system.
+    ///
+    /// \return Structure containing the settings
+    ///
+    ////////////////////////////////////////////////////////////
+    const ContextSettings& getSettings() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether a given OpenGL extension is available
+    ///
+    /// \param name Name of the extension to check for
+    ///
+    /// \return True if available, false if unavailable
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isExtensionAvailable(const char* name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context
+    ///
+    /// \return The currently active context or NULL if none is active
+    ///
+    ////////////////////////////////////////////////////////////
+    static const Context* getActiveContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

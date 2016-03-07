@@ -33,9 +33,11 @@
 #include <SFML/System/Err.hpp>
 #include <android/looper.h>
 
-// Define missing constants
-#define AMOTION_EVENT_ACTION_HOVER_MOVE 0x00000007
-#define AMOTION_EVENT_ACTION_SCROLL 0x00000008
+// Define missing constants for older API levels
+#if __ANDROID_API__ < 13
+    #define AMOTION_EVENT_ACTION_HOVER_MOVE 0x00000007
+    #define AMOTION_EVENT_ACTION_SCROLL     0x00000008
+#endif
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -232,7 +234,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
         if (AInputQueue_preDispatchEvent(states->inputQueue, _event))
             return 1;
 
-        int32_t handled = 0;
+        int handled = 0;
 
         int32_t type = AInputEvent_getType(_event);
 
@@ -244,8 +246,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
             if ((action == AKEY_EVENT_ACTION_DOWN || action == AKEY_EVENT_ACTION_UP || action == AKEY_EVENT_ACTION_MULTIPLE) &&
                 key != AKEYCODE_VOLUME_UP && key != AKEYCODE_VOLUME_DOWN)
             {
-                processKeyEvent(_event, states);
-                handled = 1;
+                handled = processKeyEvent(_event, states);
             }
         }
         else if (type == AINPUT_EVENT_TYPE_MOTION)
@@ -256,16 +257,15 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
             {
                 case AMOTION_EVENT_ACTION_SCROLL:
                 {
-                    processScrollEvent(_event, states);
-                    handled = 1;
+                    handled = processScrollEvent(_event, states);
                     break;
                 }
 
-                case AMOTION_EVENT_ACTION_HOVER_MOVE:
+                // todo: should hover_move indeed trigger the event?
+                // case AMOTION_EVENT_ACTION_HOVER_MOVE:
                 case AMOTION_EVENT_ACTION_MOVE:
                 {
-                    processMotionEvent(_event, states);
-                    handled = 1;
+                    handled = processMotionEvent(_event, states);
                     break;
                 }
 
@@ -273,8 +273,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_POINTER_DOWN:
                 case AMOTION_EVENT_ACTION_DOWN:
                 {
-                    processPointerEvent(true, _event, states);
-                    handled = 1;
+                    handled = processPointerEvent(true, _event, states);
                     break;
                 }
 
@@ -282,8 +281,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
                 case AMOTION_EVENT_ACTION_UP:
                 case AMOTION_EVENT_ACTION_CANCEL:
                 {
-                    processPointerEvent(false, _event, states);
-                    handled = 1;
+                    handled = processPointerEvent(false, _event, states);
                     break;
                 }
             }
@@ -298,7 +296,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* states)
 {
     // Prepare the Java virtual machine
     jint lResult;
@@ -314,8 +312,10 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
 
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
-    if (lResult == JNI_ERR)
+    if (lResult == JNI_ERR) {
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
+        return 0;
+    }
 
     // Retrieve everything we need to create this MotionEvent in Java
     jlong downTime = AMotionEvent_getDownTime(_event);
@@ -340,6 +340,9 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
     jmethodID MethodGetAxisValue = lJNIEnv->GetMethodID(ClassMotionEvent, "getAxisValue", "(I)F");
     jfloat delta = lJNIEnv->CallFloatMethod(ObjectMotionEvent, MethodGetAxisValue, 0x00000001);
 
+    lJNIEnv->DeleteLocalRef(ClassMotionEvent);
+    lJNIEnv->DeleteLocalRef(ObjectMotionEvent);
+
     // Create and send our mouse wheel event
     Event event;
     event.type = Event::MouseWheelMoved;
@@ -351,11 +354,13 @@ void WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* 
 
     // Detach this thread from the JVM
     lJavaVM->DetachCurrentThread();
+
+    return 1;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AKeyEvent_getAction(_event);
@@ -374,7 +379,7 @@ void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* sta
     case AKEY_EVENT_ACTION_DOWN:
         event.type = Event::KeyPressed;
         forwardEvent(event);
-        break;
+        return 1;
     case AKEY_EVENT_ACTION_UP:
         event.type = Event::KeyReleased;
         forwardEvent(event);
@@ -385,7 +390,7 @@ void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* sta
             event.text.unicode = unicode;
             forwardEvent(event);
         }
-        break;
+        return 1;
     case AKEY_EVENT_ACTION_MULTIPLE:
         // Since complex inputs don't get separate key down/up events
         // both have to be faked at once
@@ -400,27 +405,26 @@ void WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* sta
         {
             // This is a unique sequence, which is not yet exposed in the NDK
             // http://code.google.com/p/android/issues/detail?id=33998
+            return 0;
         }
-        else
+        else if (int unicode = getUnicode(_event)) // This is a repeated sequence
         {
-            // This is a repeated sequence
-            if (int unicode = getUnicode(_event))
-            {
-                event.type = Event::TextEntered;
-                event.text.unicode = unicode;
+            event.type = Event::TextEntered;
+            event.text.unicode = unicode;
 
-                int32_t repeats = AKeyEvent_getRepeatCount(_event);
-                for (int32_t i = 0; i < repeats; ++i)
-                    forwardEvent(event);
-            }
+            int32_t repeats = AKeyEvent_getRepeatCount(_event);
+            for (int32_t i = 0; i < repeats; ++i)
+                forwardEvent(event);
+            return 1;
         }
         break;
     }
+    return 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AMotionEvent_getAction(_event);
@@ -429,7 +433,7 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
 
     if (device == AINPUT_SOURCE_MOUSE)
         event.type = Event::MouseMoved;
-    else if (device == AINPUT_SOURCE_TOUCHSCREEN)
+    else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         event.type = Event::TouchMoved;
 
     int pointerCount = AMotionEvent_getPointerCount(_event);
@@ -448,7 +452,7 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
 
             states->mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
         }
-        else if (device == AINPUT_SOURCE_TOUCHSCREEN)
+        else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
             if (states->touchEvents[id].x == x && states->touchEvents[id].y == y)
                 continue;
@@ -462,11 +466,12 @@ void WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* 
 
         forwardEvent(event);
      }
+    return 1;
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, ActivityStates* states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AMotionEvent_getAction(_event);
@@ -491,7 +496,7 @@ void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Ac
             if (id >= 0 && id < Mouse::ButtonCount)
                 states->isButtonPressed[id] = true;
         }
-        else if (device == AINPUT_SOURCE_TOUCHSCREEN)
+        else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
             event.type = Event::TouchBegan;
             event.touch.finger = id;
@@ -513,7 +518,7 @@ void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Ac
             if (id >= 0 && id < Mouse::ButtonCount)
                 states->isButtonPressed[id] = false;
         }
-        else if (device == AINPUT_SOURCE_TOUCHSCREEN)
+        else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
             event.type = Event::TouchEnded;
             event.touch.finger = id;
@@ -525,6 +530,7 @@ void WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Ac
     }
 
     forwardEvent(event);
+    return 1;
 }
 
 
@@ -692,6 +698,9 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     // Call its getUnicodeChar() method to get the Unicode value
     jmethodID MethodGetUnicode = lJNIEnv->GetMethodID(ClassKeyEvent, "getUnicodeChar", "(I)I");
     int unicode = lJNIEnv->CallIntMethod(ObjectKeyEvent, MethodGetUnicode, metaState);
+
+    lJNIEnv->DeleteLocalRef(ClassKeyEvent);
+    lJNIEnv->DeleteLocalRef(ObjectKeyEvent);
 
     // Detach this thread from the JVM
     lJavaVM->DetachCurrentThread();

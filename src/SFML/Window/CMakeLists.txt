@@ -53,6 +53,8 @@ if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
+        ${SRCROOT}/Win32/WglExtensions.cpp
+        ${SRCROOT}/Win32/WglExtensions.hpp
         ${SRCROOT}/Win32/InputImpl.cpp
         ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
@@ -73,6 +75,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.hpp
+        ${SRCROOT}/Unix/ScopedXcbPtr.inl
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
@@ -84,6 +88,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
             ${PLATFORM_SRC}
             ${SRCROOT}/Unix/GlxContext.cpp
             ${SRCROOT}/Unix/GlxContext.hpp
+            ${SRCROOT}/Unix/GlxExtensions.cpp
+            ${SRCROOT}/Unix/GlxExtensions.hpp
         )
     endif()
     if(SFML_OS_LINUX)
@@ -184,8 +190,8 @@ endif()
 # find external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     find_package(X11 REQUIRED)
-    if(NOT X11_Xrandr_FOUND)
-        message(FATAL_ERROR "Xrandr library not found")
+    if(NOT X11_FOUND)
+        message(FATAL_ERROR "X11 library not found")
     endif()
     include_directories(${X11_INCLUDE_DIR})
 endif()
@@ -193,7 +199,7 @@ if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
     if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-        find_package(XCB COMPONENTS xlib_xcb icccm image randr util REQUIRED)
+        find_package(XCB COMPONENTS xlib_xcb image randr REQUIRED)
         if(NOT LIBXCB_FOUND)
             message(FATAL_ERROR "Xcb library not found")
         endif()
@@ -217,17 +223,16 @@ endif()
 # build the list of external libraries to link
 if(SFML_OS_WINDOWS)
     list(APPEND WINDOW_EXT_LIBS winmm gdi32)
-elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    list(APPEND WINDOW_EXT_LIBS ${LIBXCB_LIBRARIES} ${UDEV_LIBRARIES})
-    if(SFML_OS_FREEBSD)
-        list(APPEND WINDOW_EXT_LIBS usbhid)
-    endif()
+elseif(SFML_OS_LINUX)
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${LIBXCB_LIBRARIES} ${UDEV_LIBRARIES})
+elseif(SFML_OS_FREEBSD)
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${LIBXCB_LIBRARIES} usbhid)
 elseif(SFML_OS_MACOSX)
     list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)
     list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
 elseif(SFML_OS_ANDROID)
-    list(APPEND WINDOW_EXT_LIBS "-landroid")
+    list(APPEND WINDOW_EXT_LIBS android)
 endif()
 if(SFML_OPENGL_ES)
     if(SFML_OS_LINUX)
@@ -235,7 +240,7 @@ if(SFML_OPENGL_ES)
     elseif(SFML_OS_IOS)
         list(APPEND WINDOW_EXT_LIBS "-framework OpenGLES")
     elseif(SFML_OS_ANDROID)
-        list(APPEND WINDOW_EXT_LIBS "-lEGL -lGLESv1_CM")
+        list(APPEND WINDOW_EXT_LIBS EGL GLESv1_CM)
     endif()
 else()
     list(APPEND WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -215,6 +215,7 @@ private:
     SFView*           m_view;           ///< OpenGL view of the window
     SFViewController* m_viewController; ///< Controller attached to the view
     bool              m_hasFocus;       ///< Current focus state of the window
+    float             m_backingScale;   ///< Converts from points to pixels and vice versa
 };
 
 } // namespace priv

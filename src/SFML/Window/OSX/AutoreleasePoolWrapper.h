@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -24,26 +24,14 @@
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-/// \brief Ensure at least one autorelease pool is available on this thread
-///
-/// Increment a retain count for *this* thread.
+/// \brief Ensure one autorelease pool is available on this thread
 ///
 ////////////////////////////////////////////////////////////
-void retainPool(void);
+void ensureThreadHasPool(void);
+
 
 ////////////////////////////////////////////////////////////
-/// \brief Drain the pool
-///
-/// The pool retain count should be absolutely positive before calling this function on this thread.
+/// \brief Drain the thread's pool but keep it alive
 ///
 ////////////////////////////////////////////////////////////
-void drainCurrentPool(void);
-
-////////////////////////////////////////////////////////////
-/// \brief Release the pool.
-///
-/// Decrease the retain count for *this* thread.
-///
-////////////////////////////////////////////////////////////
-void releasePool(void);
-
+void drainThreadPool(void);

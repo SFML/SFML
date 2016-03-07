@@ -14,23 +14,23 @@ export LDFLAGS=$7
 
 if [ "$1" = "arm" ]
 then
-	ARCH=arm-linux
-	ANDROID_ABI=armeabi
+    ARCH=arm-linux
+    ANDROID_ABI=armeabi
 
 elif [ "$1" = "arm-v7a" ]
 then
-	ARCH=arm-linux
-	ANDROID_ABI=armeabi-v7a
+    ARCH=arm-linux
+    ANDROID_ABI=armeabi-v7a
 
 elif [ "$1" = "x86" ]
 then
-	ARCH=i686-linux
-	ANDROID_ABI=x86
+    ARCH=i686-linux
+    ANDROID_ABI=x86
 
 elif [ "$1" = "mips" ]
 then
-	ARCH=mips-linux
-	ANDROID_ABI=mips
+    ARCH=mips-linux
+    ANDROID_ABI=mips
 fi
 
 HOST="--host=$ARCH"

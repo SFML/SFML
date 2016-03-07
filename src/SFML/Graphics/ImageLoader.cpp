@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,9 +28,10 @@
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/Graphics/stb_image/stb_image.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <SFML/Graphics/stb_image/stb_image_write.h>
+#include <stb_image_write.h>
 extern "C"
 {
     #include <jpeglib.h>
@@ -55,7 +56,7 @@ namespace
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
         return static_cast<int>(stream->read(data, size));
     }
-    void skip(void* user, unsigned int size)
+    void skip(void* user, int size)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
         stream->seek(stream->tell() + size);
@@ -226,35 +227,34 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
         // Deduce the image type from its extension
-        if (filename.size() > 3)
-        {
-            // Extract the extension
-            std::string extension = toLower(filename.substr(filename.size() - 3));
 
-            if (extension == "bmp")
-            {
-                // BMP format
-                if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
-                    return true;
-            }
-            else if (extension == "tga")
-            {
-                // TGA format
-                if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
-                    return true;
-            }
-            else if (extension == "png")
-            {
-                // PNG format
-                if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
-                    return true;
-            }
-            else if (extension == "jpg")
-            {
-                // JPG format
-                if (writeJpg(filename, pixels, size.x, size.y))
-                    return true;
-            }
+        // Extract the extension
+        const std::size_t dot = filename.find_last_of('.');
+        const std::string extension = dot != std::string::npos ? toLower(filename.substr(dot + 1)) : "";
+
+        if (extension == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (extension == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (extension == "png")
+        {
+            // PNG format
+            if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
+                return true;
+        }
+        else if (extension == "jpg" || extension == "jpeg")
+        {
+            // JPG format
+            if (writeJpg(filename, pixels, size.x, size.y))
+                return true;
         }
     }
 

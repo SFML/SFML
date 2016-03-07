@@ -37,12 +37,13 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -s-d)
         set_target_properties(${target} PROPERTIES RELEASE_POSTFIX -s)
         set_target_properties(${target} PROPERTIES MINSIZEREL_POSTFIX -s)
+        set_target_properties(${target} PROPERTIES RELWITHDEBINFO_POSTFIX -s)
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     # except for Android which strips soversion suffixes
     if(NOT SFML_OS_ANDROID)
-        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
         set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
     endif()
 
@@ -55,6 +56,28 @@ macro(sfml_add_library target)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
         elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-shared-libgcc -shared-libstdc++")
+        endif()
+    endif()
+
+    # For Visual Studio on Windows, export debug symbols (PDB files) to lib directory
+    if(SFML_GENERATE_PDB)
+        # PDB files are only generated in Debug and RelWithDebInfo configurations, find out which one
+        if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+            set(SFML_PDB_POSTFIX "-d")
+        else()
+            set(SFML_PDB_POSTFIX "")
+        endif()
+
+        if(BUILD_SHARED_LIBS)
+            # DLLs export debug symbols in the linker PDB (the compiler PDB is an intermediate file)
+            set_target_properties(${target} PROPERTIES
+                                  PDB_NAME "${target}${SFML_PDB_POSTFIX}"
+                                  PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+        else()
+            # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
+            set_target_properties(${target} PROPERTIES
+                                  COMPILE_PDB_NAME "${target}-s${SFML_PDB_POSTFIX}"
+                                  COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
         endif()
     endif()
 
@@ -81,7 +104,7 @@ macro(sfml_add_library target)
                                   MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
         endif()
 
-        # adapt install directory to allow distributing dylibs/frameworks in user’s frameworks/application bundle
+        # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
         set_target_properties(${target} PROPERTIES
                               BUILD_WITH_INSTALL_RPATH 1
                               INSTALL_NAME_DIR "@rpath")
@@ -98,9 +121,9 @@ macro(sfml_add_library target)
         if (${target} MATCHES "sfml-activity")
             set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fpermissive)
             set_target_properties(${target} PROPERTIES LINK_FLAGS "-landroid -llog")
-            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STLPORT})
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL})
         else()
-            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STLPORT})
+            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL})
         endif()
     endif()
 
@@ -130,7 +153,7 @@ macro(sfml_add_example target)
     source_group("" FILES ${THIS_SOURCES})
 
     # create the target
-    if(THIS_GUI_APP AND SFML_OS_WINDOWS)
+    if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${THIS_SOURCES})
         target_link_libraries(${target} sfml-main)
     else()
@@ -176,3 +199,28 @@ macro(sfml_add_example target)
     endif()
 
 endmacro()
+
+# macro to find packages on the host OS
+# this is the same as in the toolchain file, which is here for Nsight Tegra VS
+# since it won't use the Android toolchain file
+if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
+    macro(find_host_package)
+        set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+        set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+        set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+        if(CMAKE_HOST_WIN32)
+            set(WIN32 1)
+            set(UNIX)
+        elseif(CMAKE_HOST_APPLE)
+            set(APPLE 1)
+            set(UNIX)
+        endif()
+        find_package(${ARGN})
+        set(WIN32)
+        set(APPLE)
+        set(UNIX 1)
+        set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
+        set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+        set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+    endmacro()
+endif()

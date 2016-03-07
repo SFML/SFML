@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -210,7 +210,7 @@ public:
 /// audio environment, it defines where and how sounds and musics
 /// are heard. If sf::View is the eyes of the user, then sf::Listener
 /// is his ears (by the way, they are often linked together --
-/// same position, orientation, etc.). 
+/// same position, orientation, etc.).
 ///
 /// sf::Listener is a simple interface, which allows to setup the
 /// listener in the 3D audio environment (position, direction and

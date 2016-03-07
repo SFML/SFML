@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -95,6 +95,10 @@ public:
     /// fonts installed on the user's system, thus you can't
     /// load them directly.
     ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the file has to remain accessible until
+    /// the sf::Font object loads a new font or is destroyed.
+    ///
     /// \param filename Path of the font file to load
     ///
     /// \return True if loading succeeded, false if it failed
@@ -109,9 +113,11 @@ public:
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Warning: SFML cannot preload all the font data in this
+    ///
+    /// \warning SFML cannot preload all the font data in this
     /// function, so the buffer pointed by \a data has to remain
-    /// valid as long as the font is used.
+    /// valid until the sf::Font object loads a new font or
+    /// is destroyed.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
@@ -131,6 +137,10 @@ public:
     /// Warning: SFML cannot preload all the font data in this
     /// function, so the contents of \a stream have to remain
     /// valid as long as the font is used.
+    ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the stream has to remain accessible until
+    /// the sf::Font object loads a new font or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
@@ -156,14 +166,18 @@ public:
     /// might be available. If the glyph is not available at the
     /// requested size, an empty glyph is returned.
     ///
-    /// \param codePoint     Unicode code point of the character to get
-    /// \param characterSize Reference character size
-    /// \param bold          Retrieve the bold version or the regular one?
+    /// Be aware that using a negative value for the outline
+    /// thickness will cause distorted rendering.
+    ///
+    /// \param codePoint        Unicode code point of the character to get
+    /// \param characterSize    Reference character size
+    /// \param bold             Retrieve the bold version or the regular one?
+    /// \param outlineThickness Thickness of outline (when != 0 the glyph will not be filled)
     ///
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -267,7 +281,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<Uint32, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
+    typedef std::map<Uint64, Glyph> GlyphTable; ///< Table mapping a codepoint to its glyph
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a page of glyphs
@@ -278,7 +292,7 @@ private:
         Page();
 
         GlyphTable       glyphs;  ///< Table mapping code points to their corresponding glyph
-        sf::Texture      texture; ///< Texture containing the pixels of the glyphs
+        Texture          texture; ///< Texture containing the pixels of the glyphs
         unsigned int     nextRow; ///< Y position of the next new row in the texture
         std::vector<Row> rows;    ///< List containing the position of all the existing rows
     };
@@ -292,14 +306,15 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Load a new glyph and store it in the cache
     ///
-    /// \param codePoint     Unicode code point of the character to load
-    /// \param characterSize Reference character size
-    /// \param bold          Retrieve the bold version or the regular one?
+    /// \param codePoint        Unicode code point of the character to load
+    /// \param characterSize    Reference character size
+    /// \param bold             Retrieve the bold version or the regular one?
+    /// \param outlineThickness Thickness of outline (when != 0 the glyph will not be filled)
     ///
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold) const;
+    Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph
@@ -334,6 +349,7 @@ private:
     void*                      m_library;     ///< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
     void*                      m_face;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
     void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
+    void*                      m_stroker;     ///< Pointer to the stroker (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    ///< Reference counter used by implicit sharing
     Info                       m_info;        ///< Information about the font
     mutable PageTable          m_pages;       ///< Table containing the glyphs pages by character size
@@ -404,7 +420,7 @@ private:
 /// sf::Text text2;
 /// text2.setFont(font);
 /// text2.setCharacterSize(50);
-/// text1.setStyle(sf::Text::Italic);
+/// text2.setStyle(sf::Text::Italic);
 /// \endcode
 ///
 /// Apart from loading font files, and passing them to instances

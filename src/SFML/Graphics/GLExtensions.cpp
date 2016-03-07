@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLExtensions.hpp>
+#include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
 
 
@@ -40,15 +41,22 @@ void ensureExtensionsInit()
     static bool initialized = false;
     if (!initialized)
     {
-        GLenum status = glewInit();
-        if (status == GLEW_OK)
+        const Context* context = Context::getActiveContext();
+
+        if (!context)
+            return;
+
+        sfogl_LoadFunctions();
+
+        ContextSettings settings = context->getSettings();
+
+        if ((settings.majorVersion < 1) || ((settings.majorVersion == 1) && (settings.minorVersion < 1)))
         {
-            initialized = true;
+            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << std::endl;
+            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
-        else
-        {
-            err() << "Failed to initialize GLEW, " << glewGetErrorString(status) << std::endl;
-        }
+
+        initialized = true;
     }
 #endif
 }

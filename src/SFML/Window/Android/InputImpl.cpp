@@ -78,6 +78,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
         "INPUT_METHOD_SERVICE", "Ljava/lang/String;");
     jobject INPUT_METHOD_SERVICE = lJNIEnv->GetStaticObjectField(ClassContext,
         FieldINPUT_METHOD_SERVICE);
+    lJNIEnv->DeleteLocalRef(ClassContext);
 
     // Runs getSystemService(Context.INPUT_METHOD_SERVICE)
     jclass ClassInputMethodManager =
@@ -86,6 +87,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
         "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
     jobject lInputMethodManager = lJNIEnv->CallObjectMethod(lNativeActivity,
         MethodGetSystemService, INPUT_METHOD_SERVICE);
+    lJNIEnv->DeleteLocalRef(INPUT_METHOD_SERVICE);
 
     // Runs getWindow().getDecorView()
     jmethodID MethodGetWindow = lJNIEnv->GetMethodID(ClassNativeActivity,
@@ -95,6 +97,8 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
     jmethodID MethodGetDecorView = lJNIEnv->GetMethodID(ClassWindow,
         "getDecorView", "()Landroid/view/View;");
     jobject lDecorView = lJNIEnv->CallObjectMethod(lWindow, MethodGetDecorView);
+    lJNIEnv->DeleteLocalRef(lWindow);
+    lJNIEnv->DeleteLocalRef(ClassWindow);
 
     if (visible)
     {
@@ -112,13 +116,18 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
             "getWindowToken", "()Landroid/os/IBinder;");
         jobject lBinder = lJNIEnv->CallObjectMethod(lDecorView,
             MethodGetWindowToken);
+        lJNIEnv->DeleteLocalRef(ClassView);
 
         // lInputMethodManager.hideSoftInput(...)
         jmethodID MethodHideSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager,
             "hideSoftInputFromWindow", "(Landroid/os/IBinder;I)Z");
         jboolean lRes = lJNIEnv->CallBooleanMethod(lInputMethodManager,
             MethodHideSoftInput, lBinder, lFlags);
+        lJNIEnv->DeleteLocalRef(lBinder);
     }
+    lJNIEnv->DeleteLocalRef(ClassNativeActivity);
+    lJNIEnv->DeleteLocalRef(ClassInputMethodManager);
+    lJNIEnv->DeleteLocalRef(lDecorView);
 
     // Finished with the JVM
     lJavaVM->DetachCurrentThread();

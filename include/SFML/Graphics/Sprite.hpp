@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -179,7 +179,7 @@ public:
     /// \brief Get the global bounding rectangle of the entity
     ///
     /// The returned rectangle is in global coordinates, which means
-    /// that it takes in account the transformations (translation,
+    /// that it takes into account the transformations (translation,
     /// rotation, scale, ...) that are applied to the entity.
     /// In other words, this function returns the bounds of the
     /// sprite in the global 2D world's coordinate system.
@@ -262,7 +262,7 @@ private:
 /// // Declare and load a texture
 /// sf::Texture texture;
 /// texture.loadFromFile("texture.png");
-/// 
+///
 /// // Create a sprite
 /// sf::Sprite sprite;
 /// sprite.setTexture(texture);

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,7 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/SoundFile.hpp>
+#include <SFML/Audio/InputSoundFile.hpp>
+#include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
@@ -64,8 +65,14 @@ m_sounds  () // don't copy the attached sounds
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
-    // First detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = m_sounds.begin(); it != m_sounds.end(); ++it)
+    // To prevent the iterator from becoming invalid, move the entire buffer to another
+    // container. Otherwise calling resetBuffer would result in detachSound being
+    // called which removes the sound from the internal list.
+    SoundList sounds;
+    sounds.swap(m_sounds);
+
+    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
         (*it)->resetBuffer();
 
     // Destroy the buffer
@@ -77,8 +84,8 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromFile(const std::string& filename)
 {
-    priv::SoundFile file;
-    if (file.openRead(filename))
+    InputSoundFile file;
+    if (file.openFromFile(filename))
         return initialize(file);
     else
         return false;
@@ -88,8 +95,8 @@ bool SoundBuffer::loadFromFile(const std::string& filename)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    priv::SoundFile file;
-    if (file.openRead(data, sizeInBytes))
+    InputSoundFile file;
+    if (file.openFromMemory(data, sizeInBytes))
         return initialize(file);
     else
         return false;
@@ -99,8 +106,8 @@ bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 ////////////////////////////////////////////////////////////
 bool SoundBuffer::loadFromStream(InputStream& stream)
 {
-    priv::SoundFile file;
-    if (file.openRead(stream))
+    InputSoundFile file;
+    if (file.openFromStream(stream))
         return initialize(file);
     else
         return false;
@@ -108,7 +115,7 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const Int16* samples, std::size_t sampleCount, unsigned int channelCount, unsigned int sampleRate)
+bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate)
 {
     if (samples && sampleCount && channelCount && sampleRate)
     {
@@ -137,8 +144,8 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, std::size_t sampleCount,
 bool SoundBuffer::saveToFile(const std::string& filename) const
 {
     // Create the sound file in write mode
-    priv::SoundFile file;
-    if (file.openWrite(filename, getChannelCount(), getSampleRate()))
+    OutputSoundFile file;
+    if (file.openFromFile(filename, getSampleRate(), getChannelCount()))
     {
         // Write the samples to the opened file
         file.write(&m_samples[0], m_samples.size());
@@ -160,7 +167,7 @@ const Int16* SoundBuffer::getSamples() const
 
 
 ////////////////////////////////////////////////////////////
-std::size_t SoundBuffer::getSampleCount() const
+Uint64 SoundBuffer::getSampleCount() const
 {
     return m_samples.size();
 }
@@ -208,15 +215,15 @@ SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::initialize(priv::SoundFile& file)
+bool SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
-    std::size_t  sampleCount  = file.getSampleCount();
+    Uint64       sampleCount  = file.getSampleCount();
     unsigned int channelCount = file.getChannelCount();
     unsigned int sampleRate   = file.getSampleRate();
 
     // Read the samples from the provided file
-    m_samples.resize(sampleCount);
+    m_samples.resize(static_cast<std::size_t>(sampleCount));
     if (file.read(&m_samples[0], sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples

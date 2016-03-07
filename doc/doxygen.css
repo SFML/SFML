@@ -233,7 +233,7 @@ p.formulaDsp {
 }
 
 img.formulaDsp {
-    
+
 }
 
 img.formulaInl {
@@ -291,20 +291,20 @@ span.charliteral {
     color: #008080
 }
 
-span.vhdldigit { 
-    color: #ff00ff 
+span.vhdldigit {
+    color: #ff00ff
 }
 
-span.vhdlchar { 
-    color: #000000 
+span.vhdlchar {
+    color: #000000
 }
 
-span.vhdlkeyword { 
-    color: #700070 
+span.vhdlkeyword {
+    color: #700070
 }
 
-span.vhdllogic { 
-    color: #ff0000 
+span.vhdllogic {
+    color: #ff0000
 }
 
 blockquote {
@@ -464,7 +464,7 @@ table.memberdecls {
 }
 
 .memdoc, dl.reflist dd {
-    border: 1px solid #A8B8D9;      
+    border: 1px solid #A8B8D9;
     padding: 6px 10px 2px 10px;
     background-color: #FBFCFD;
     background-color: #FFFFFF;
@@ -507,18 +507,18 @@ dl.reflist dd {
 .params, .retval, .exception, .tparams {
     margin-left: 0px;
     padding-left: 0px;
-}       
+}
 
 .params .paramname, .retval .paramname {
     font-weight: bold;
     vertical-align: top;
 }
-    
+
 .params .paramtype {
     font-style: italic;
     vertical-align: top;
-}       
-    
+}
+
 .params .paramdir {
     font-family: "courier new",courier,monospace;
     vertical-align: top;
@@ -754,7 +754,7 @@ table.fieldtable {
     color: #283A5D;
     font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
     text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
-    text-decoration: none;    
+    text-decoration: none;
 }
 
 .navpath li.navelem a:hover {
@@ -777,7 +777,7 @@ table.fieldtable {
 div.summary {
     font-size: 8pt;
     padding-right: 5px;
-}       
+}
 
 div.summary a {
     white-space: nowrap;
@@ -875,17 +875,17 @@ dl.section dd {
     vertical-align: bottom;
     border-collapse: separate;
 }
- 
-#projectlogo img { 
+
+#projectlogo img {
     border: 0px none;
 }
- 
+
 #projectname {
     font: 300% Tahoma, Arial,sans-serif;
     margin: 0px;
     padding: 2px 0px;
 }
-    
+
 #projectbrief {
     font: 120% Tahoma, Arial,sans-serif;
     margin: 0px;
@@ -971,7 +971,7 @@ div.toc ul {
     list-style: none outside none;
     border: medium none;
     padding: 0px;
-}       
+}
 
 div.toc li.level1 {
     margin-left: 0px;
@@ -1022,7 +1022,7 @@ tr.heading h2 {
     h1, h2, h3, h4, h5, h6 { page-break-after: avoid; }
     .summary { display: none; }
     .memitem { page-break-inside: avoid; }
-    
+
     #doc-content {
         margin-left:0 !important;
         height:auto !important;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/ALCheck.hpp>
-#include <SFML/Audio/SoundFile.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
@@ -37,7 +36,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Music::Music() :
-m_file    (new priv::SoundFile),
+m_file    (),
 m_duration()
 {
 
@@ -49,8 +48,6 @@ Music::~Music()
 {
     // We must stop before destroying the file
     stop();
-
-    delete m_file;
 }
 
 
@@ -61,7 +58,7 @@ bool Music::openFromFile(const std::string& filename)
     stop();
 
     // Open the underlying sound file
-    if (!m_file->openRead(filename))
+    if (!m_file.openFromFile(filename))
         return false;
 
     // Perform common initializations
@@ -78,7 +75,7 @@ bool Music::openFromMemory(const void* data, std::size_t sizeInBytes)
     stop();
 
     // Open the underlying sound file
-    if (!m_file->openRead(data, sizeInBytes))
+    if (!m_file.openFromMemory(data, sizeInBytes))
         return false;
 
     // Perform common initializations
@@ -95,7 +92,7 @@ bool Music::openFromStream(InputStream& stream)
     stop();
 
     // Open the underlying sound file
-    if (!m_file->openRead(stream))
+    if (!m_file.openFromStream(stream))
         return false;
 
     // Perform common initializations
@@ -119,7 +116,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
 
     // Fill the chunk parameters
     data.samples     = &m_samples[0];
-    data.sampleCount = m_file->read(&m_samples[0], m_samples.size());
+    data.sampleCount = static_cast<std::size_t>(m_file.read(&m_samples[0], m_samples.size()));
 
     // Check if we have reached the end of the audio file
     return data.sampleCount == m_samples.size();
@@ -131,7 +128,7 @@ void Music::onSeek(Time timeOffset)
 {
     Lock lock(m_mutex);
 
-    m_file->seek(timeOffset);
+    m_file.seek(timeOffset);
 }
 
 
@@ -139,13 +136,13 @@ void Music::onSeek(Time timeOffset)
 void Music::initialize()
 {
     // Compute the music duration
-    m_duration = seconds(static_cast<float>(m_file->getSampleCount()) / m_file->getSampleRate() / m_file->getChannelCount());
+    m_duration = m_file.getDuration();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    m_samples.resize(m_file->getSampleRate() * m_file->getChannelCount());
+    m_samples.resize(m_file.getSampleRate() * m_file.getChannelCount());
 
     // Initialize the stream
-    SoundStream::initialize(m_file->getChannelCount(), m_file->getSampleRate());
+    SoundStream::initialize(m_file.getChannelCount(), m_file.getSampleRate());
 }
 
 } // namespace sf

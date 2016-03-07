@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -322,7 +322,7 @@ In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 template <typename Out>
 Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
 {
-    if (input < 0xFFFF)
+    if (input <= 0xFFFF)
     {
         // The character can be copied directly, we just need to check if it's in the valid range
         if ((input >= 0xD800) && (input <= 0xDFFF))

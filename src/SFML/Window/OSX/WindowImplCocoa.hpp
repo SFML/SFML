@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -90,7 +90,7 @@ public:
     ~WindowImplCocoa();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Closed Event – called by the cocoa window object
+    /// \brief Window Closed Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -98,7 +98,7 @@ public:
     void windowClosed(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Resized Event – called by the cocoa window object
+    /// \brief Window Resized Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -109,7 +109,7 @@ public:
     void windowResized(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Lost Focus Event – called by the cocoa window object
+    /// \brief Window Lost Focus Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -117,7 +117,7 @@ public:
     void windowLostFocus(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Window Get Focus Event – called by the cocoa window object
+    /// \brief Window Get Focus Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -125,7 +125,7 @@ public:
     void windowGainedFocus(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Down Event – called by the cocoa view object
+    /// \brief Mouse Down Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -137,7 +137,7 @@ public:
     void mouseDownAt(Mouse::Button button, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Up Event – called by the cocoa view object
+    /// \brief Mouse Up Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -149,7 +149,7 @@ public:
     void mouseUpAt(Mouse::Button button, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Moved Event – called by the cocoa view object
+    /// \brief Mouse Moved Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -160,19 +160,20 @@ public:
     void mouseMovedAt(int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Wheel Scrolled Event – called by the cocoa view object
+    /// \brief Mouse Wheel Scrolled Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param delta scrolling delta
+    /// \param deltaX horizontal scrolling delta
+    /// \param deltaY vertical scrolling delta
     /// \param x mouse x position
     /// \param y mouse y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseWheelScrolledAt(float delta, int x, int y);
+    void mouseWheelScrolledAt(float deltaX, float deltaY, int x, int y);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse In Event – called by the cocoa view object
+    /// \brief Mouse In Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -180,7 +181,7 @@ public:
     void mouseMovedIn(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse Out Event – called by the cocoa view object
+    /// \brief Mouse Out Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -188,7 +189,7 @@ public:
     void mouseMovedOut(void);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Key Down Event – called by the cocoa view object
+    /// \brief Key Down Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -198,7 +199,7 @@ public:
     void keyDown(Event::KeyEvent key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Key Up Event – called by the cocoa view object
+    /// \brief Key Up Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
@@ -208,7 +209,7 @@ public:
     void keyUp(Event::KeyEvent key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Text Entred Event – called by the cocoa view object
+    /// \brief Text Entred Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///

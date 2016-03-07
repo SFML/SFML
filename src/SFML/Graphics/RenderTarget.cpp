@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,8 +32,8 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
+#include <cassert>
 #include <iostream>
-
 
 namespace
 {
@@ -42,7 +42,6 @@ namespace
     {
         switch (blendFactor)
         {
-            default:
             case sf::BlendMode::Zero:             return GL_ZERO;
             case sf::BlendMode::One:              return GL_ONE;
             case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
@@ -54,6 +53,10 @@ namespace
             case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
             case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
         }
+
+        sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+        assert(false);
+        return GL_ZERO;
     }
 
 
@@ -62,10 +65,14 @@ namespace
     {
         switch (blendEquation)
         {
-            default:
             case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
             case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
+            case sf::BlendMode::ReverseSubtract: return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
         }
+
+        sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
+        assert(false);
+        return GLEXT_GL_FUNC_ADD;
     }
 }
 
@@ -283,6 +290,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         if (states.shader)
             applyShader(NULL);
 
+        // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
+        // This prevents a bug where some drivers do not clear RenderTextures properly.
+        if (states.texture && states.texture->m_fboAttachment)
+            applyTexture(NULL);
+
         // Update the cache
         m_cache.useVertexCache = useVertexCache;
     }
@@ -434,15 +446,31 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
             factorToGlConstant(mode.colorDstFactor)));
     }
 
-    if (GLEXT_blend_equation_separate)
+    if (GLEXT_blend_minmax && GLEXT_blend_subtract)
     {
-        glCheck(GLEXT_glBlendEquationSeparate(
-            equationToGlConstant(mode.colorEquation),
-            equationToGlConstant(mode.alphaEquation)));
+        if (GLEXT_blend_equation_separate)
+        {
+            glCheck(GLEXT_glBlendEquationSeparate(
+                equationToGlConstant(mode.colorEquation),
+                equationToGlConstant(mode.alphaEquation)));
+        }
+        else
+        {
+            glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
+        }
     }
-    else
+    else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
     {
-        glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "OpenGL extension EXT_blend_minmax and/or EXT_blend_subtract unavailable" << std::endl;
+            err() << "Selecting a blend equation not possible" << std::endl;
+            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+            warned = true;
+        }
     }
 
     m_cache.lastBlendMode = mode;

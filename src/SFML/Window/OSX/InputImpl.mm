@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent.gom@gmail.com),
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -70,9 +70,26 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
         // Subview doesn't match ?
         if (![view isKindOfClass:[SFOpenGLView class]])
         {
-            sf::err() << "The content view is not a valid SFOpenGLView"
-                      << std::endl;
-            view = nil;
+            if([view isKindOfClass:[NSView class]])
+            {
+                NSArray* subviews = [view subviews];
+                for (NSView* subview in subviews)
+                {
+                    if ([subview isKindOfClass:[SFOpenGLView class]])
+                    {
+                        view = (SFOpenGLView*)subview;
+                        break;
+                    }
+                }
+
+            }
+            else
+            {
+                sf::err() << "The content view is not a valid SFOpenGLView"
+                          << std::endl;
+
+                view = nil;
+            }
         }
 
     }
@@ -168,7 +185,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
     CGEventRef event = CGEventCreateMouseEvent(NULL,
                                                kCGEventMouseMoved,
                                                pos,
-                                               /*we don't care about this: */0);
+                                               /* we don't care about this: */ kCGMouseButtonLeft);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
     // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.

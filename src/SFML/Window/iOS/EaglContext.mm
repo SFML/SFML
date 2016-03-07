@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -132,13 +132,15 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
     if (glView)
         [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(CAEAGLLayer*)glView.layer];
-	glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
+    glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
 
     // Create a depth buffer if requested
     if (m_settings.depthBits > 0)
     {
         // Find the best internal format
-        GLenum format = m_settings.depthBits > 16 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH_COMPONENT16_OES;
+        GLenum format = m_settings.depthBits > 16
+            ? (m_settings.stencilBits == 0 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH24_STENCIL8_OES)
+            : GL_DEPTH_COMPONENT16_OES;
 
         // Get the size of the color-buffer (which fits the current size of the GL view)
         GLint width, height;
@@ -150,6 +152,8 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
         glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_depthbuffer);
         glRenderbufferStorageOES(GL_RENDERBUFFER_OES, format, width, height);
         glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
+        if (m_settings.stencilBits > 0)
+            glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_STENCIL_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
     }
 
     // Make sure that everything's ok

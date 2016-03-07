@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2013 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,11 +49,11 @@ public:
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Accelerometer,    ///< Measures the raw acceleration (m/s²)
+        Accelerometer,    ///< Measures the raw acceleration (m/s^2)
         Gyroscope,        ///< Measures the raw rotation rates (degrees/s)
         Magnetometer,     ///< Measures the ambient magnetic field (micro-teslas)
-        Gravity,          ///< Measures the direction and intensity of gravity, independent of device acceleration (m/s²)
-        UserAcceleration, ///< Measures the direction and intensity of device acceleration, independent of the gravity (m/s²)
+        Gravity,          ///< Measures the direction and intensity of gravity, independent of device acceleration (m/s^2)
+        UserAcceleration, ///< Measures the direction and intensity of device acceleration, independent of the gravity (m/s^2)
         Orientation,      ///< Measures the absolute 3D orientation (degrees)
 
         Count             ///< Keep last -- the total number of sensor types
@@ -72,7 +72,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable a sensor
     ///
-    /// All sensors are disabled by default, to avoid consuming too 
+    /// All sensors are disabled by default, to avoid consuming too
     /// much battery power. Once a sensor is enabled, it starts
     /// sending events of the corresponding type.
     ///
@@ -122,7 +122,7 @@ public:
 ///
 /// You may wonder why some sensor types look so similar, for example
 /// Accelerometer and Gravity / UserAcceleration. The first one
-/// is the raw measurement of the acceleration, and takes in account
+/// is the raw measurement of the acceleration, and takes into account
 /// both the earth gravity and the user movement. The others are
 /// more precise: they provide these components separately, which is
 /// usually more useful. In fact they are not direct sensors, they

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2014 Laurent Gomila (laurent.gom@gmail.com)
+// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,7 +32,8 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
 #include <X11/Xlib-xcb.h>
-#include <set>
+#include <xcb/randr.h>
+#include <deque>
 
 
 namespace sf
@@ -179,13 +180,100 @@ protected:
 
 private:
 
+    struct WMHints
+    {
+        int32_t      flags;
+        uint32_t     input;
+        int32_t      initial_state;
+        xcb_pixmap_t icon_pixmap;
+        xcb_window_t icon_window;
+        int32_t      icon_x;
+        int32_t      icon_y;
+        xcb_pixmap_t icon_mask;
+        xcb_window_t window_group;
+    };
+
+    struct WMSizeHints
+    {
+        uint32_t flags;
+        int32_t  x, y;
+        int32_t  width, height;
+        int32_t  min_width, min_height;
+        int32_t  max_width, max_height;
+        int32_t  width_inc, height_inc;
+        int32_t  min_aspect_num, min_aspect_den;
+        int32_t  max_aspect_num, max_aspect_den;
+        int32_t  base_width, base_height;
+        uint32_t win_gravity;
+    };
+
     ////////////////////////////////////////////////////////////
-    /// \brief Switch to fullscreen mode
+    /// \brief Request the WM to make the current window active
+    ///
+    ////////////////////////////////////////////////////////////
+    void grabFocus();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set fullscreen video mode
     ///
     /// \param Mode video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void switchToFullscreen(const VideoMode& mode);
+    void setVideoMode(const VideoMode& mode);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset to desktop video mode
+    ///
+    ////////////////////////////////////////////////////////////
+    void resetVideoMode();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Switch to fullscreen mode
+    ///
+    ////////////////////////////////////////////////////////////
+    void switchToFullscreen();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the WM protocols we support
+    ///
+    ////////////////////////////////////////////////////////////
+    void setProtocols();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set Motif WM hints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMotifHints(unsigned long style);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set WM hints
+    ///
+    /// \param hints Hints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWMHints(const WMHints& hints);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set WM size hints
+    ///
+    /// \param hints Size hints
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWMSizeHints(const WMSizeHints& hints);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Change a XCB window property
+    ///
+    /// \param property Property to change
+    /// \param type     Type of the property
+    /// \param format   Format of the property
+    /// \param length   Length of the new value
+    /// \param data     The new value of the property
+    ///
+    /// \return True if successful, false if unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool changeWindowProperty(xcb_atom_t property, xcb_atom_t type, uint8_t format, uint32_t length, const void* data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
@@ -213,34 +301,24 @@ private:
     /// \return True if the event was processed, false if it was discarded
     ///
     ////////////////////////////////////////////////////////////
-    bool processEvent(xcb_generic_event_t *windowEvent);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert a X11 keysym to SFML key code
-    ///
-    /// \param symbol Key symbol to convert
-    ///
-    /// \return Corresponding SFML key code
-    ///
-    ////////////////////////////////////////////////////////////
-    static Keyboard::Key keysymToSF(xcb_keysym_t symbol);
+    bool processEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window                m_window;              ///< X11 structure defining our window
-    ::Display*              m_display;             ///< Pointer to the display
-    xcb_connection_t*       m_connection;          ///< Pointer to the xcb connection
-    xcb_screen_t*           m_screen;              ///< Screen identifier
-    XIM                     m_inputMethod;         ///< Input method linked to the X display
-    XIC                     m_inputContext;        ///< Input context used to get unicode input in our window
-    bool                    m_isExternal;          ///< Tell whether the window has been created externally or by SFML
-    Atom                    m_atomClose;           ///< Atom used to identify the close event
-    int                     m_oldVideoMode;        ///< Video mode in use before we switch to fullscreen
-    Cursor                  m_hiddenCursor;        ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool                    m_keyRepeat;           ///< Is the KeyRepeat feature enabled?
-    Vector2i                m_previousSize;        ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
-    bool                    m_useSizeHints;        ///< Is the size of the window fixed with size hints?
+    xcb_window_t                      m_window;          ///< xcb identifier defining our window
+    ::Display*                        m_display;         ///< Pointer to the display
+    xcb_connection_t*                 m_connection;      ///< Pointer to the xcb connection
+    xcb_screen_t*                     m_screen;          ///< Screen identifier
+    XIM                               m_inputMethod;     ///< Input method linked to the X display
+    XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
+    bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
+    xcb_randr_get_screen_info_reply_t m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
+    Cursor                            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    bool                              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?
+    Vector2i                          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
+    bool                              m_fullscreen;      ///< Is window in fullscreen?
 };
 
 } // namespace priv
