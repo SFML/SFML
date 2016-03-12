@@ -69,7 +69,8 @@ namespace
                                                       XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_BUTTON_MOTION    |
                                                       XCB_EVENT_MASK_POINTER_MOTION | XCB_EVENT_MASK_KEY_PRESS        |
                                                       XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-                                                      XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW;
+                                                      XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW     |
+                                                      XCB_EVENT_MASK_VISIBILITY_CHANGE;
 
     // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
@@ -367,7 +368,8 @@ m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     (false),
-m_cursorGrabbed  (false)
+m_cursorGrabbed  (false),
+m_windowMapped   (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -422,7 +424,8 @@ m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
-m_cursorGrabbed  (m_fullscreen)
+m_cursorGrabbed  (m_fullscreen),
+m_windowMapped   (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -913,6 +916,13 @@ void WindowImplX11::setVisible(bool visible)
 
         if (error)
             err() << "Failed to change window visibility" << std::endl;
+
+        xcb_flush(m_connection);
+
+        // Before continuing, make sure the WM has
+        // internally marked the window as viewable
+        while (!m_windowMapped)
+            processEvents();
     }
     else
     {
@@ -926,9 +936,14 @@ void WindowImplX11::setVisible(bool visible)
 
         if (error)
             err() << "Failed to change window visibility" << std::endl;
-    }
 
-    xcb_flush(m_connection);
+        xcb_flush(m_connection);
+
+        // Before continuing, make sure the WM has
+        // internally marked the window as unviewable
+        while (m_windowMapped)
+            processEvents();
+    }
 }
 
 
@@ -963,13 +978,51 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 
     if (grabbed)
     {
-        // TODO XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-        m_cursorGrabbed = true;
+        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+        sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
+            m_connection,
+            xcb_grab_pointer(
+                m_connection,
+                true,
+                m_window,
+                XCB_NONE,
+                XCB_GRAB_MODE_ASYNC,
+                XCB_GRAB_MODE_ASYNC,
+                m_window,
+                XCB_NONE,
+                XCB_CURRENT_TIME
+            ),
+            &error
+        ));
+
+        if (!error && grabPointerReply && (grabPointerReply->status == XCB_GRAB_STATUS_SUCCESS))
+        {
+            m_cursorGrabbed = true;
+        }
+        else
+        {
+            err() << "Failed to grab mouse cursor" << std::endl;
+        }
     }
     else
     {
-        // TODO XUngrabPointer(m_display, CurrentTime);
-        m_cursorGrabbed = false;
+        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+            m_connection,
+            xcb_ungrab_pointer_checked(
+                m_connection,
+                XCB_CURRENT_TIME
+            )
+        ));
+
+        if (!error)
+        {
+            m_cursorGrabbed = false;
+        }
+        else
+        {
+            err() << "Failed to ungrab mouse cursor" << std::endl;
+        }
     }
 }
 
@@ -1685,7 +1738,32 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
             // Grab cursor
             if (m_cursorGrabbed)
-                ;// TODO XGrabPointer(m_display, m_window, true, 0, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+            {
+                sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+
+                sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
+                    m_connection,
+                    xcb_grab_pointer(
+                        m_connection,
+                        true,
+                        m_window,
+                        XCB_NONE,
+                        XCB_GRAB_MODE_ASYNC,
+                        XCB_GRAB_MODE_ASYNC,
+                        m_window,
+                        XCB_NONE,
+                        XCB_CURRENT_TIME
+                    ),
+                    &error
+                ));
+
+                if (error || !grabPointerReply || (grabPointerReply->status != XCB_GRAB_STATUS_SUCCESS))
+                {
+                    err() << "Failed to grab mouse cursor" << std::endl;
+
+                    m_cursorGrabbed = false;
+                }
+            }
 
             Event event;
             event.type = Event::GainedFocus;
@@ -1731,7 +1809,18 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
             // Release cursor
             if (m_cursorGrabbed)
-                ;// TODO XUngrabPointer(m_display, CurrentTime);
+            {
+                ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
+                    m_connection,
+                    xcb_ungrab_pointer_checked(
+                        m_connection,
+                        XCB_CURRENT_TIME
+                    )
+                ));
+
+                if (error)
+                    err() << "Failed to ungrab mouse cursor" << std::endl;
+            }
 
             Event event;
             event.type = Event::LostFocus;
@@ -2007,16 +2096,33 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             break;
         }
 
-        // Parent window changed
-        case ReparentNotify:
+        // Window unmapped
+        case UnmapNotify:
         {
-            // Catch reparent events to properly apply fullscreen on
-            // some "strange" window managers (like Awesome) which
-            // seem to make use of temporary parents during mapping
-            if (m_fullscreen)
-                switchToFullscreen();
+            if (windowEvent.xunmap.window == m_window)
+                m_windowMapped = false;
 
-            XSync(m_display, True); // Discard remaining events
+            break;
+        }
+
+        // Window visibility change
+        case VisibilityNotify:
+        {
+            // We prefer using VisibilityNotify over MapNotify because
+            // some window managers like awesome don't internally flag a
+            // window as viewable even after it is mapped but before it
+            // is visible leading to certain function calls failing with
+            // an unviewable error if called before VisibilityNotify arrives
+
+            // Empirical testing on most widely used window managers shows
+            // that mapping a window will always lead to a VisibilityNotify
+            // event that is not VisibilityFullyObscured
+            if (windowEvent.xvisibility.window == m_window)
+            {
+                if (windowEvent.xvisibility.state != VisibilityFullyObscured)
+                    m_windowMapped = true;
+            }
+
             break;
         }
     }
