@@ -328,6 +328,7 @@ private:
     bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
     bool                              m_fullscreen;      ///< Is the window in fullscreen?
     bool                              m_cursorGrabbed;   ///< Is the mouse cursor trapped?
+    bool                              m_windowMapped;    ///< Has the window been mapped by the window manager?
 };
 
 } // namespace priv
