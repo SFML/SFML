@@ -484,7 +484,7 @@ public:
     /// \see download
     ///
     ////////////////////////////////////////////////////////////
-    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
+    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary, const append = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a command to the FTP server
