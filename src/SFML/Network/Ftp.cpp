@@ -346,13 +346,7 @@ Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remot
     if (response.isOk())
     {
         // Tell the server to start the transfer
-        if(append)
-        {
-            response = m_ftp.sendCommand("APPE", path + filename);
-        } else
-        {
-            response = m_ftp.sendCommand("STOR", path + filename);
-        }
+        response = sendCommand(append ? "APPE" : "STOR", path + filename);
         if (response.isOk())
         {
             // Send the file data
