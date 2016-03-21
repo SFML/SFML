@@ -322,7 +322,7 @@ Ftp::Response Ftp::download(const std::string& remoteFile, const std::string& lo
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remotePath, TransferMode mode, const bool append)
+Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remotePath, TransferMode mode, bool append)
 {
     // Get the contents of the file to send
     std::ifstream file(localFile.c_str(), std::ios_base::binary);
