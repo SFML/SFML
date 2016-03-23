@@ -81,6 +81,16 @@ void Transformable::setRotation(float angle)
 
 
 ////////////////////////////////////////////////////////////
+void Transformable::setScale(float factor)
+{
+    m_scale.x = factor;
+    m_scale.y = factor;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
+}
+
+
+////////////////////////////////////////////////////////////
 void Transformable::setScale(float factorX, float factorY)
 {
     m_scale.x = factorX;
