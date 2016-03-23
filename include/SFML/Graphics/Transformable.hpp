@@ -104,6 +104,20 @@ public:
     /// See the scale function to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
     ///
+    /// \param factor New scale factor
+    ///
+    /// \see scale, getScale
+    ///
+    ////////////////////////////////////////////////////////////
+    void setScale(float factor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief set the scale factors of the object
+    ///
+    /// This function completely overwrites the previous scale.
+    /// See the scale function to add a factor based on the previous scale instead.
+    /// The default scale of a transformable object is (1, 1).
+    ///
     /// \param factorX New horizontal scale factor
     /// \param factorY New vertical scale factor
     ///
