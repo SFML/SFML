@@ -268,6 +268,24 @@ public:
     ////////////////////////////////////////////////////////////
     void rotate(float angle);
 
+	////////////////////////////////////////////////////////////
+    /// \brief Scale the object
+    ///
+    /// This function multiplies the current scale of the object,
+    /// unlike setScale which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// sf::Vector2f scale = object.getScale();
+    /// object.setScale(scale.x * factor, scale.y * factor);
+    /// \endcode
+    ///
+    /// \param factor Scale factor
+    ///
+    /// \see setScale
+    ///
+    ////////////////////////////////////////////////////////////
+    void scale(float factor);
+
     ////////////////////////////////////////////////////////////
     /// \brief Scale the object
     ///

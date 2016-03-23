@@ -181,6 +181,13 @@ void Transformable::scale(float factorX, float factorY)
 
 
 ////////////////////////////////////////////////////////////
+void Transformable::scale(float factor)
+{
+    setScale(m_scale.x * factor, m_scale.y * factor);
+}
+
+
+////////////////////////////////////////////////////////////
 void Transformable::scale(const Vector2f& factor)
 {
     setScale(m_scale.x * factor.x, m_scale.y * factor.y);
