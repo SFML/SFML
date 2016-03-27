@@ -34,6 +34,17 @@
 #include <locale>
 #include <string>
 
+#ifndef SFML_FORCE_I18N
+#if __cplusplus >= 201103L // C++ 11 introduced utf-x strings
+#define SFML_FORCE_I18N
+#endif
+#endif
+
+#ifdef SFML_FORCE_I18N
+#include <codecvt>
+#include <sstream>
+#endif
+
 
 namespace sf
 {
@@ -103,7 +114,14 @@ public:
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(const char* ansiString, const std::locale& locale = std::locale());
+    String(const char* ansiString, const std::locale& locale = std::locale(
+#ifdef SFML_FORCE_I18N
+		std::locale(),
+		new std::codecvt_utf8<char32_t>
+		// please do not worry about memory leak caused by using "new"
+		// see here: http://www.cplusplus.com/reference/locale/codecvt/codecvt/
+#endif
+		));
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an ANSI string and a locale
@@ -140,6 +158,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     String(const Uint32* utf32String);
+
+#ifdef SFML_FORCE_I18N
+
+	////////////////////////////////////////////////////////////
+	/// \brief Construct from a C++11 Utf-32 String (U"text")
+	///
+	/// \param utf32String UTF-32 string to assign
+	///
+	////////////////////////////////////////////////////////////
+	String(const char32_t* utf32String);
+
+	////////////////////////////////////////////////////////////
+	/// \brief Construct from a C++11 Utf-16 String (u"text")
+	///
+	/// \param utf32String UTF-16 string to assign
+	///
+	////////////////////////////////////////////////////////////
+	String(const char16_t* utf16String);
+
+#endif // !SFML_FORCE_I18N
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an UTF-32 string
