@@ -34,12 +34,19 @@
 
 #include <iostream>
 
-// Make sure to write int into buffer little endian
-#define writeint(buf, offset, val) { buf[offset+3]=((val)>>24)&0xff; \
-                                     buf[offset+2]=((val)>>16)&0xff; \
-                                     buf[offset+1]=((val)>>8)&0xff; \
-                                     buf[offset]=(val)&0xff; \
-                                   }
+
+// Anonymous namespace
+namespace
+{
+    // Make sure to write int into buffer little endian
+    void writeInt(unsigned char buf[], size_t offset, sf::Uint32 val)
+    {
+        buf[offset+3]=((val)>>24)&0xff;
+        buf[offset+2]=((val)>>16)&0xff;
+        buf[offset+1]=((val)>>8)&0xff;
+        buf[offset]=(val)&0xff;
+    }
+}
 
 namespace sf
 {
@@ -116,7 +123,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     memcpy(static_cast<void*>(headerData), "OpusHead", 8);
     headerData[8] = 1; // Version
     headerData[9] = channelCount;
-    writeint(headerData, 12, static_cast<Uint32>(sampleRate));
+    writeInt(headerData, 12, static_cast<Uint32>(sampleRate));
     headerData[18] = channelCount > 8 ? 255 : (channelCount > 2); // Mapping family
 
     // Map opus header to ogg packet
@@ -141,12 +148,15 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
 
     // Magic bytes
     memcpy(static_cast<void*>(commentData), "OpusTags", 8);
+
     // unsigned 32bit integer: Length of vendor string (encoding library)
-    writeint(commentData, 8, opusVersionLength);
+    writeInt(commentData, 8, opusVersionLength);
+
     // Vendor string
     memcpy(static_cast<void*>(commentData+12), opusVersion, opusVersionLength);
+
     // Length of user comments (E.g. you can add a ENCODER tag for SFML)
-    writeint(commentData, 12+opusVersionLength, 0);
+    writeInt(commentData, 12+opusVersionLength, 0);
 
     op.packet     = commentData;
     op.bytes      = commentLength;
@@ -178,6 +188,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
     while (count > 0)
     {
         opus_int32 packet_size;
+
         // Check if wee need to pad the input
         if (count < (frame_size * m_channelCount))
         {
@@ -209,6 +220,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
 
         frame_number++;
     }
+
     // Flush any produced block
     flushBlocks();
 }
@@ -232,7 +244,6 @@ void SoundFileWriterOpus::close()
     if (m_file.is_open())
     {
         flushBlocks();
-        // Close the file
         m_file.close();
     }
 
