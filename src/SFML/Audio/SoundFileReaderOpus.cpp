@@ -54,6 +54,7 @@ namespace
             case SEEK_END:
                 offset = stream->getSize() - offset;
         }
+
         // Return value expected from libopusfile: 0 - Success and -1 - Failure
         return static_cast<int>(stream->seek(offset)) >= 0 ? 0 : -1;
     }
@@ -120,6 +121,7 @@ bool SoundFileReaderOpus::open(InputStream& stream, Info& info)
     info.channelCount = opusHead->channel_count;
     info.sampleRate = opusHead->input_sample_rate;
     info.sampleCount = static_cast<std::size_t>(op_pcm_total(m_opus, -1) * opusHead->channel_count);
+
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
 
@@ -142,10 +144,12 @@ Uint64 SoundFileReaderOpus::read(Int16* samples, Uint64 maxCount)
     assert(m_opus != NULL);
 
     int samplesToRead;
+
     // Try to read the requested number of samples, stop only on error or end of file
     Uint64 count = 0;
     while (maxCount > 0)
     {
+
         // since maxCount is uint64 we have to ensure that samplesToRead is <= INT_MAX (int overflow)
         if (maxCount > INT_MAX)
         {
@@ -155,6 +159,7 @@ Uint64 SoundFileReaderOpus::read(Int16* samples, Uint64 maxCount)
         {
             samplesToRead = maxCount;
         }
+
         // op_read returns number of SAMPLES read PER CHANNEL
         int samplesRead = op_read(m_opus, samples, samplesToRead, NULL) * m_channelCount;
         if (samplesRead > 0)
