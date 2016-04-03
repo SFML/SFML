@@ -32,19 +32,17 @@
 #include <ctime>
 #include <cassert>
 
-#include <iostream>
-
 
 // Anonymous namespace
 namespace
 {
     // Make sure to write int into buffer little endian
-    void writeInt(unsigned char buf[], size_t offset, sf::Uint32 val)
+    void writeUint32(unsigned char* buffer, sf::Uint32 value)
     {
-        buf[offset+3]=((val)>>24)&0xff;
-        buf[offset+2]=((val)>>16)&0xff;
-        buf[offset+1]=((val)>>8)&0xff;
-        buf[offset]=(val)&0xff;
+        buffer[0] = static_cast<unsigned char>(value & 0x000000FF);
+        buffer[1] = static_cast<unsigned char>((value & 0x0000FF00) >> 8);
+        buffer[2] = static_cast<unsigned char>((value & 0x00FF0000) >> 16);
+        buffer[3] = static_cast<unsigned char>((value & 0xFF000000) >> 24);
     }
 }
 
@@ -123,7 +121,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     memcpy(static_cast<void*>(headerData), "OpusHead", 8);
     headerData[8] = 1; // Version
     headerData[9] = channelCount;
-    writeInt(headerData, 12, static_cast<Uint32>(sampleRate));
+    writeUint32(headerData + 12, static_cast<Uint32>(sampleRate));
     headerData[18] = channelCount > 8 ? 255 : (channelCount > 2); // Mapping family
 
     // Map opus header to ogg packet
@@ -150,13 +148,13 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     memcpy(static_cast<void*>(commentData), "OpusTags", 8);
 
     // unsigned 32bit integer: Length of vendor string (encoding library)
-    writeInt(commentData, 8, opusVersionLength);
+    writeUint32(commentData + 8, opusVersionLength);
 
     // Vendor string
     memcpy(static_cast<void*>(commentData+12), opusVersion, opusVersionLength);
 
     // Length of user comments (E.g. you can add a ENCODER tag for SFML)
-    writeInt(commentData, 12+opusVersionLength, 0);
+    writeUint32(commentData + 12+opusVersionLength, 0);
 
     op.packet     = commentData;
     op.bytes      = commentLength;
