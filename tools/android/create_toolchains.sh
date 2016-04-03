@@ -19,13 +19,13 @@ create_toolchain () {
 
     if [ "$2" = "arm" ]
     then
-        TOOLCHAIN=--toolchain=arm-linux-androideabi-4.8
+        TOOLCHAIN=--toolchain=arm-linux-androideabi-4.9
     elif [ "$2" = "x86" ]
     then
-        TOOLCHAIN=--toolchain=x86-4.8
+        TOOLCHAIN=--toolchain=x86-4.9
     elif [ "$2" = "mips" ]
     then
-        TOOLCHAIN=--toolchain=mipsel-linux-android-4.8
+        TOOLCHAIN=--toolchain=mipsel-linux-android-4.9
     else
         echo "Abort."
         exit 1
