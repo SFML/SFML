@@ -65,7 +65,7 @@ namespace
         return static_cast<opus_int64>(stream->tell());
     }
 
-    static OpusFileCallbacks callbacks = {&read, &seek, &tell, NULL};
+    const OpusFileCallbacks callbacks = {&read, &seek, &tell, NULL};
 }
 
 namespace sf
@@ -149,7 +149,6 @@ Uint64 SoundFileReaderOpus::read(Int16* samples, Uint64 maxCount)
     Uint64 count = 0;
     while (maxCount > 0)
     {
-
         // since maxCount is uint64 we have to ensure that samplesToRead is <= INT_MAX (int overflow)
         if (maxCount > INT_MAX)
         {
@@ -185,6 +184,7 @@ void SoundFileReaderOpus::close()
     if (m_opus != NULL)
     {
         op_free(m_opus);
+        m_opus = NULL;
         m_channelCount = 0;
     }
 }
