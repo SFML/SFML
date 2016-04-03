@@ -91,7 +91,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
         return false;
     }
 
-    int status = OPUS_OK;
+    int status = OPUS_INTERNAL_ERROR;
     m_opus = opus_encoder_create(sampleRate, channelCount, OPUS_APPLICATION_AUDIO, &status);
     if (status != OPUS_OK)
     {
@@ -113,12 +113,20 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     // Set bitrate (VBR is default)
     opus_encoder_ctl(m_opus, OPUS_SET_BITRATE(128000));
 
-    // Create opus header MAGICBYTES VERSION
-    std::string magicBytes("OpusHead1");
+    // Create opus header MAGICBYTES, C++11: init headerData with initializer_list
+    std::string magicBytes("OpusHead");
     std::vector<unsigned char> headerData(magicBytes.begin(), magicBytes.end());
 
+    headerData.push_back(1); // Version
     headerData.push_back(channelCount);
+    headerData.push_back(0); // Preskip
+    headerData.push_back(0);
+
     writeUint32(headerData, static_cast<Uint32>(sampleRate));
+
+    headerData.push_back(0); // Gain
+    headerData.push_back(0);
+
     headerData.push_back(channelCount > 8 ? 255 : (channelCount > 2)); // Mapping family
 
     // Map opus header to ogg packet
@@ -169,53 +177,52 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
 {
     assert(m_opus);
 
-    const opus_uint32 frame_size = 960;
-    const opus_int32 buffer_size = frame_size * m_channelCount * sizeof(Int16);
-    unsigned char* buffer = new unsigned char[buffer_size];
+    const opus_uint32 frameSize = 960;
+    std::vector<unsigned char> buffer(frameSize * m_channelCount);
 
-    Uint32 frame_number = 0;
+    Uint32 frameNumber = 0;
     Uint8 endOfStream = 0;
 
     while (count > 0)
     {
-        ogg_packet op;
-        opus_int32 packet_size;
+        opus_int32 packetSize;
 
         // Check if wee need to pad the input
-        if (count < frame_size * m_channelCount)
+        if (count < frameSize * m_channelCount)
         {
-            const Uint32 begin = (frame_number * frame_size * m_channelCount);
+            const Uint32 begin = frameNumber * frameSize * m_channelCount;
             std::vector<opus_int16> pad(samples + begin, samples + begin + count);
-            pad.insert(pad.end(), (frame_size * m_channelCount) - pad.size(),0);
-            packet_size = opus_encode(m_opus, &pad.front(), frame_size, buffer, buffer_size);
+            pad.insert(pad.end(), (frameSize * m_channelCount) - pad.size(),0);
+            packetSize = opus_encode(m_opus, &pad.front(), frameSize, &buffer.front(), buffer.size()); // C++11: replace &buffer.front() with buffer.data()
             endOfStream = 1;
             count = 0;
         }
         else
         {
-            packet_size = opus_encode(m_opus, samples + (frame_number * frame_size * m_channelCount), frame_size, buffer, buffer_size);
-            count -= frame_size * m_channelCount;
+            packetSize = opus_encode(m_opus, samples + (frameNumber * frameSize * m_channelCount), frameSize, &buffer.front(), buffer.size());
+            count -= frameSize * m_channelCount;
         }
 
-        if (packet_size < 0)
+        if (packetSize < 0)
         {
             err() << "An error occurred when encoding sound to opus." << std::endl;
             break;
         }
-        op.packet     = buffer;
-        op.bytes      = packet_size;
-        op.granulepos = frame_number * frame_size * 48000ul / m_sampleRate;
+
+        ogg_packet op;
+        op.packet     = &buffer.front();
+        op.bytes      = packetSize;
+        op.granulepos = frameNumber * frameSize * 48000ul / m_sampleRate;
         op.packetno   = m_packageNumber++;
         op.b_o_s      = 0;
         op.e_o_s      = endOfStream;
         ogg_stream_packetin(&m_ogg, &op);
 
-        frame_number++;
+        frameNumber++;
     }
 
     // Flush any produced block
     flushBlocks();
-    delete[] buffer;
 }
 
 
@@ -242,6 +249,7 @@ void SoundFileWriterOpus::close()
 
     // Clear all the ogg/opus structures
     ogg_stream_clear(&m_ogg);
+
     if (m_opus != NULL)
     {
         opus_encoder_destroy(m_opus);
