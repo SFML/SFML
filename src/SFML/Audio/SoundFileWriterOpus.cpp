@@ -28,21 +28,19 @@
 #include <SFML/Audio/SoundFileWriterOpus.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
-#include <cstring>
-#include <ctime>
 #include <cassert>
-
+#include <vector>
 
 // Anonymous namespace
 namespace
 {
     // Make sure to write int into buffer little endian
-    void writeUint32(unsigned char* buffer, sf::Uint32 value)
+    void writeUint32(std::vector<unsigned char>& buffer, const sf::Uint32 value)
     {
-        buffer[0] = static_cast<unsigned char>(value & 0x000000FF);
-        buffer[1] = static_cast<unsigned char>((value & 0x0000FF00) >> 8);
-        buffer[2] = static_cast<unsigned char>((value & 0x00FF0000) >> 16);
-        buffer[3] = static_cast<unsigned char>((value & 0xFF000000) >> 24);
+        buffer.push_back(static_cast<unsigned char>(value & 0x000000FF));
+        buffer.push_back(static_cast<unsigned char>((value & 0x0000FF00) >> 8));
+        buffer.push_back(static_cast<unsigned char>((value & 0x00FF0000) >> 16));
+        buffer.push_back(static_cast<unsigned char>((value & 0xFF000000) >> 24));
     }
 }
 
@@ -84,7 +82,6 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     // Save the channel count
     m_channelCount = channelCount;
     m_sampleRate = sampleRate;
-    std::srand(std::time(0));
 
     // Initialize the ogg/opus stream
     if (ogg_stream_init(&m_ogg, std::rand()) == -1)
@@ -93,13 +90,14 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
         close();
         return false;
     }
-    int status = 0;
+
+    int status = OPUS_OK;
     m_opus = opus_encoder_create(sampleRate, channelCount, OPUS_APPLICATION_AUDIO, &status);
     if (status != OPUS_OK)
     {
         err() << "Failed to write ogg/opus file \"" << filename << "\"" << std::endl;
         if (status == OPUS_BAD_ARG)
-            err() << "Possible wrong sample rate, allowed are 8000, 12000, 16000, 24000, or 48000 Hz." << std::endl;
+            err() << "Possibly wrong sample rate, allowed are 8000, 12000, 16000, 24000, or 48000 Hz." << std::endl;
         close();
         return false;
     }
@@ -115,19 +113,18 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     // Set bitrate (VBR is default)
     opus_encoder_ctl(m_opus, OPUS_SET_BITRATE(128000));
 
-    // Create opus header
-    unsigned char headerData[19];
-    memset(static_cast<void*>(headerData), 0, 19);
-    memcpy(static_cast<void*>(headerData), "OpusHead", 8);
-    headerData[8] = 1; // Version
-    headerData[9] = channelCount;
-    writeUint32(headerData + 12, static_cast<Uint32>(sampleRate));
-    headerData[18] = channelCount > 8 ? 255 : (channelCount > 2); // Mapping family
+    // Create opus header MAGICBYTES VERSION
+    std::string magicBytes("OpusHead1");
+    std::vector<unsigned char> headerData(magicBytes.begin(), magicBytes.end());
+
+    headerData.push_back(channelCount);
+    writeUint32(headerData, static_cast<Uint32>(sampleRate));
+    headerData.push_back(channelCount > 8 ? 255 : (channelCount > 2)); // Mapping family
 
     // Map opus header to ogg packet
     ogg_packet op;
-    op.packet = headerData;
-    op.bytes = 19;
+    op.packet = &headerData.front(); // C++11: headerData.data();
+    op.bytes = headerData.size();
     op.b_o_s = 1;
     op.e_o_s = 0;
     op.granulepos = 0;
@@ -138,26 +135,22 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     flushBlocks();
 
     // Create comment header, needs to be in a new page
-    const char* opusVersion = opus_get_version_string();
-    Uint32 opusVersionLength = strlen(opusVersion);
-    const int commentLength  = 8 + 4 + opusVersionLength + 4;
-
-    unsigned char commentData[commentLength];
-
-    // Magic bytes
-    memcpy(static_cast<void*>(commentData), "OpusTags", 8);
-
-    // unsigned 32bit integer: Length of vendor string (encoding library)
-    writeUint32(commentData + 8, opusVersionLength);
+    // commentData initialized with magic bytes
+    magicBytes = "OpusTags";
+    std::vector<unsigned char> commentData(magicBytes.begin(), magicBytes.end()); // C++11: commentData({'O', 'p', 'u', 's', 'T', 'a', 'g', 's'});
 
     // Vendor string
-    memcpy(static_cast<void*>(commentData+12), opusVersion, opusVersionLength);
+    const std::string opusVersion(opus_get_version_string());
+
+    // unsigned 32bit integer: Length of vendor string (encoding library)
+    writeUint32(commentData, opusVersion.size());
+    commentData.insert(commentData.end(), opusVersion.begin(), opusVersion.end());
 
     // Length of user comments (E.g. you can add a ENCODER tag for SFML)
-    writeUint32(commentData + 12+opusVersionLength, 0);
+    writeUint32(commentData, 0);
 
-    op.packet     = commentData;
-    op.bytes      = commentLength;
+    op.packet     = &commentData.front();
+    op.bytes      = commentData.size();
     op.b_o_s      = 0;
     op.e_o_s      = 0;
     op.granulepos = 0;
@@ -178,22 +171,23 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
 
     const opus_uint32 frame_size = 960;
     const opus_int32 buffer_size = frame_size * m_channelCount * sizeof(Int16);
-    unsigned char buffer[buffer_size];
+    unsigned char* buffer = new unsigned char[buffer_size];
+
     Uint32 frame_number = 0;
     Uint8 endOfStream = 0;
-    ogg_packet op;
 
     while (count > 0)
     {
+        ogg_packet op;
         opus_int32 packet_size;
 
         // Check if wee need to pad the input
-        if (count < (frame_size * m_channelCount))
+        if (count < frame_size * m_channelCount)
         {
-            Int16 pad[frame_size*m_channelCount];
-            memset(pad, 0, frame_size * m_channelCount);
-            memcpy(pad, samples + (frame_number * frame_size * m_channelCount), count);
-            packet_size = opus_encode(m_opus, pad, frame_size, buffer, buffer_size);
+            const Uint32 begin = (frame_number * frame_size * m_channelCount);
+            std::vector<opus_int16> pad(samples + begin, samples + begin + count);
+            pad.insert(pad.end(), (frame_size * m_channelCount) - pad.size(),0);
+            packet_size = opus_encode(m_opus, &pad.front(), frame_size, buffer, buffer_size);
             endOfStream = 1;
             count = 0;
         }
@@ -221,6 +215,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
 
     // Flush any produced block
     flushBlocks();
+    delete[] buffer;
 }
 
 
@@ -228,7 +223,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
 void SoundFileWriterOpus::flushBlocks()
 {
     ogg_page page;
-    while (ogg_stream_pageout(&m_ogg, &page) > 0 || ogg_stream_flush(&m_ogg, &page) > 0)
+    while ((ogg_stream_pageout(&m_ogg, &page) > 0) || (ogg_stream_flush(&m_ogg, &page) > 0))
     {
         m_file.write(reinterpret_cast<const char*>(page.header), page.header_len);
         m_file.write(reinterpret_cast<const char*>(page.body), page.body_len);
