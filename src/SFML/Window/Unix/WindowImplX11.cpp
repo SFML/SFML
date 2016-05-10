@@ -372,7 +372,9 @@ m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     (false),
 m_cursorGrabbed  (false),
-m_windowMapped   (false)
+m_windowMapped   (false),
+m_iconPixmap     (0),
+m_iconMaskPixmap (0)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -428,7 +430,9 @@ m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed  (m_fullscreen),
-m_windowMapped   (false)
+m_windowMapped   (false),
+m_iconPixmap     (0),
+m_iconMaskPixmap (0)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -561,6 +565,42 @@ WindowImplX11::~WindowImplX11()
 {
     // Cleanup graphical resources
     cleanup();
+
+    // Destroy icon pixmap
+    if (m_iconPixmap)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+            m_connection,
+            xcb_free_pixmap_checked(
+                m_connection,
+                m_iconPixmap
+            )
+        ));
+
+        if (freePixmapError)
+        {
+            err() << "Failed to free icon pixmap: ";
+            err() << "Error code " << static_cast<int>(freePixmapError->error_code) << std::endl;
+        }
+    }
+
+    // Destroy icon mask pixmap
+    if (m_iconMaskPixmap)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> freePixmapMaskError(xcb_request_check(
+            m_connection,
+            xcb_free_pixmap_checked(
+                m_connection,
+                m_iconMaskPixmap
+            )
+        ));
+
+        if (freePixmapMaskError)
+        {
+            err() << "Failed to free icon mask pixmap: ";
+            err() << "Error code " << static_cast<int>(freePixmapMaskError->error_code) << std::endl;
+        }
+    }
 
     // Destroy the cursor
     if (m_hiddenCursor)
@@ -756,25 +796,67 @@ void WindowImplX11::setTitle(const String& title)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
-    // X11 wants BGRA pixels: swap red and blue channels
-    Uint8 iconPixels[width * height * 4];
+    // X11 and ICCCM want BGRA pixels: swap red and blue channels
+    // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
+    Uint8 iconPixels[8 + width * height * 4];
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
-        iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
-        iconPixels[i * 4 + 2] = pixels[i * 4 + 0];
-        iconPixels[i * 4 + 3] = pixels[i * 4 + 3];
+        iconPixels[8 + i * 4 + 0] = pixels[i * 4 + 2];
+        iconPixels[8 + i * 4 + 1] = pixels[i * 4 + 1];
+        iconPixels[8 + i * 4 + 2] = pixels[i * 4 + 0];
+        iconPixels[8 + i * 4 + 3] = pixels[i * 4 + 3];
+    }
+
+    reinterpret_cast<Uint32*>(iconPixels)[0] = width;
+    reinterpret_cast<Uint32*>(iconPixels)[1] = height;
+
+    if (m_iconPixmap)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
+            m_connection,
+            xcb_free_pixmap_checked(
+                m_connection,
+                m_iconPixmap
+            )
+        ));
+
+        if (freePixmapError)
+        {
+            err() << "Failed to free icon pixmap: ";
+            err() << "Error code " << static_cast<int>(freePixmapError->error_code) << std::endl;
+        }
+
+        m_iconPixmap = 0;
+    }
+
+    if (m_iconMaskPixmap)
+    {
+        ScopedXcbPtr<xcb_generic_error_t> freePixmapMaskError(xcb_request_check(
+            m_connection,
+            xcb_free_pixmap_checked(
+                m_connection,
+                m_iconMaskPixmap
+            )
+        ));
+
+        if (freePixmapMaskError)
+        {
+            err() << "Failed to free icon mask pixmap: ";
+            err() << "Error code " << static_cast<int>(freePixmapMaskError->error_code) << std::endl;
+        }
+
+        m_iconMaskPixmap = 0;
     }
 
     // Create the icon pixmap
-    xcb_pixmap_t iconPixmap = xcb_generate_id(m_connection);
+    m_iconPixmap = xcb_generate_id(m_connection);
 
     ScopedXcbPtr<xcb_generic_error_t> createPixmapError(xcb_request_check(
         m_connection,
         xcb_create_pixmap_checked(
             m_connection,
             m_screen->root_depth,
-            iconPixmap,
+            m_iconPixmap,
             m_screen->root,
             width,
             height
@@ -788,6 +870,42 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         return;
     }
 
+    // Create the mask pixmap (must have 1 bit depth)
+    std::size_t pitch = (width + 7) / 8;
+    std::vector<Uint8> maskPixels(pitch * height, 0);
+    for (std::size_t j = 0; j < height; ++j)
+    {
+        for (std::size_t i = 0; i < pitch; ++i)
+        {
+            for (std::size_t k = 0; k < 8; ++k)
+            {
+                if (i * 8 + k < width)
+                {
+                    Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
+                    maskPixels[i + j * pitch] |= (opacity << k);
+                }
+            }
+        }
+    }
+
+    m_iconMaskPixmap = xcb_create_pixmap_from_bitmap_data(
+        m_connection,
+        m_window,
+        reinterpret_cast<uint8_t*>(&maskPixels[0]),
+        width,
+        height,
+        1,
+        0,
+        1,
+        NULL
+    );
+
+    if (!m_iconMaskPixmap)
+    {
+        err() << "Failed to set the window's icon (create_pixmap_from_bitmap_data)" << std::endl;
+        return;
+    }
+
     xcb_gcontext_t iconGC = xcb_generate_id(m_connection);
 
     ScopedXcbPtr<xcb_generic_error_t> createGcError(xcb_request_check(
@@ -795,7 +913,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         xcb_create_gc(
             m_connection,
             iconGC,
-            iconPixmap,
+            m_iconPixmap,
             0,
             NULL
         )
@@ -813,7 +931,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         xcb_put_image_checked(
             m_connection,
             XCB_IMAGE_FORMAT_Z_PIXMAP,
-            iconPixmap,
+            m_iconPixmap,
             iconGC,
             width,
             height,
@@ -821,8 +939,8 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
             0,
             0,
             m_screen->root_depth,
-            sizeof(iconPixels),
-            iconPixels
+            width * height * 4,
+            iconPixels + 8
         )
     ));
 
@@ -847,60 +965,21 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
         return;
     }
 
-    // Create the mask pixmap (must have 1 bit depth)
-    std::size_t pitch = (width + 7) / 8;
-    static std::vector<Uint8> maskPixels(pitch * height, 0);
-    for (std::size_t j = 0; j < height; ++j)
-    {
-        for (std::size_t i = 0; i < pitch; ++i)
-        {
-            for (std::size_t k = 0; k < 8; ++k)
-            {
-                if (i * 8 + k < width)
-                {
-                    Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= (opacity << k);
-                }
-            }
-        }
-    }
-
-    xcb_pixmap_t maskPixmap = xcb_create_pixmap_from_bitmap_data(
-        m_connection,
-        m_window,
-        reinterpret_cast<uint8_t*>(&maskPixels[0]),
-        width,
-        height,
-        1,
-        0,
-        1,
-        NULL
-    );
-
     // Send our new icon to the window through the WMHints
     WMHints hints;
     std::memset(&hints, 0, sizeof(hints));
     hints.flags      |= ((1 << 2) | (1 << 5));
-    hints.icon_pixmap = iconPixmap;
-    hints.icon_mask   = maskPixmap;
+    hints.icon_pixmap = m_iconPixmap;
+    hints.icon_mask   = m_iconMaskPixmap;
 
     setWMHints(hints);
 
+    xcb_atom_t netWmIcon = getAtom("_NET_WM_ICON");
+
+    if (!changeWindowProperty(netWmIcon, XCB_ATOM_CARDINAL, 32, 2 + width * height, iconPixels))
+        err() << "Failed to set the window's icon (changeWindowProperty)" << std::endl;
+
     xcb_flush(m_connection);
-
-    ScopedXcbPtr<xcb_generic_error_t> freePixmapError(xcb_request_check(
-        m_connection,
-        xcb_free_pixmap_checked(
-            m_connection,
-            iconPixmap
-        )
-    ));
-
-    if (freePixmapError)
-    {
-        err() << "Failed to free icon pixmap: ";
-        err() << "Error code " << static_cast<int>(freePixmapError->error_code) << std::endl;
-    }
 }
 
 
