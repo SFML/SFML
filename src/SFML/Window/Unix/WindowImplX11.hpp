@@ -329,6 +329,8 @@ private:
     bool                              m_fullscreen;      ///< Is the window in fullscreen?
     bool                              m_cursorGrabbed;   ///< Is the mouse cursor trapped?
     bool                              m_windowMapped;    ///< Has the window been mapped by the window manager?
+    xcb_pixmap_t                      m_iconPixmap;      ///< The current icon pixmap if in use
+    xcb_pixmap_t                      m_iconMaskPixmap;  ///< The current icon mask pixmap if in use
 };
 
 } // namespace priv
