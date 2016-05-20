@@ -25,6 +25,8 @@
 #ifndef SFML_SOUNDFILEWRITERFLAC_HPP
 #define SFML_SOUNDFILEWRITERFLAC_HPP
 
+#ifdef SFML_FLAC
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -110,5 +112,6 @@ private:
 
 } // namespace sf
 
+#endif // SFML_FLAC
 
 #endif // SFML_SOUNDFILEWRITERFLAC_HPP
