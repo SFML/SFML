@@ -72,6 +72,9 @@ sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES imple
 # add an option for disabling FLAC
 sfml_set_option(SFML_ENABLE_FLAC TRUE BOOL "TRUE to build FLAC support, FALSE to disable it")
 
+# add an option for disabling vorbis encoders
+sfml_set_option(SFML_ENABLE_VORBIS_ENCODING TRUE BOOL "TRUE to build Vorbis encoding support, FALSE to disable it")
+
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
@@ -152,6 +155,11 @@ endif()
 # enable FLAC if needed
 if(SFML_ENABLE_FLAC)
     add_definitions(-DSFML_FLAC)
+endif()
+
+# enable Vorbis encoding if needed
+if(SFML_ENABLE_VORBIS_ENCODING)
+    add_definitions(-DSFML_VORBIS_ENCODING)
 endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)

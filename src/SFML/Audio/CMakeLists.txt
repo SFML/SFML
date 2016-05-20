@@ -44,11 +44,13 @@ set(CODECS_SRC
     ${SRCROOT}/SoundFileReaderWav.hpp
     ${SRCROOT}/SoundFileReaderWav.cpp
     ${INCROOT}/SoundFileWriter.hpp
-    ${SRCROOT}/SoundFileWriterOgg.hpp
-    ${SRCROOT}/SoundFileWriterOgg.cpp
     ${SRCROOT}/SoundFileWriterWav.hpp
     ${SRCROOT}/SoundFileWriterWav.cpp
 )
+if(SFML_ENABLE_VORBIS_ENCODING)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterOgg.cpp)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterOgg.hpp)
+endif()
 if(SFML_ENABLE_FLAC)
     list(APPEND CODECS_SRC ${SRCROOT}/SoundFileReaderFlac.cpp)
     list(APPEND CODECS_SRC ${SRCROOT}/SoundFileReaderFlac.hpp)

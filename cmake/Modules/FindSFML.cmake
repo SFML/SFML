@@ -330,7 +330,9 @@ if(SFML_STATIC_LIBRARIES)
         find_sfml_dependency(OGG_LIBRARY "Ogg" ogg)
         find_sfml_dependency(VORBIS_LIBRARY "Vorbis" vorbis)
         find_sfml_dependency(VORBISFILE_LIBRARY "VorbisFile" vorbisfile)
-        find_sfml_dependency(VORBISENC_LIBRARY "VorbisEnc" vorbisenc)
+        if(SFML_ENABLE_VORBIS_ENCODING)
+            find_sfml_dependency(VORBISENC_LIBRARY "VorbisEnc" vorbisenc)
+        endif()
         find_sfml_dependency(FLAC_LIBRARY "FLAC" FLAC)
 
         # update the list
