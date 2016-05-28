@@ -7,14 +7,14 @@
 # When you try to locate the SFML libraries, you must specify which modules you want to use (system, window, graphics, network, audio, main).
 # If none is given, the SFML_LIBRARIES variable will be empty and you'll end up linking to nothing.
 # example:
-#   find_package(SFML COMPONENTS graphics window system) // find the graphics, window and system modules
+#   find_package(SFML COMPONENTS graphics window system) # find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
 # If nothing is specified, the version won't be checked (i.e. any version will be accepted).
 # example:
-#   find_package(SFML COMPONENTS ...)     // no specific version required
-#   find_package(SFML 2 COMPONENTS ...)   // any 2.x version
-#   find_package(SFML 2.4 COMPONENTS ...) // version 2.4 or greater
+#   find_package(SFML COMPONENTS ...)     # no specific version required
+#   find_package(SFML 2 COMPONENTS ...)   # any 2.x version
+#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
