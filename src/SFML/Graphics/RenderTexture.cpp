@@ -103,6 +103,20 @@ bool RenderTexture::isSmooth() const
 
 
 ////////////////////////////////////////////////////////////
+void RenderTexture::setSrgb(bool sRgb)
+{
+    m_texture.setSrgb(sRgb);
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::isSrgb() const
+{
+    return m_texture.isSrgb();
+}
+
+
+////////////////////////////////////////////////////////////
 void RenderTexture::setRepeated(bool repeated)
 {
     m_texture.setRepeated(repeated);

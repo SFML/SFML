@@ -109,6 +109,41 @@ public:
     bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable sRGB conversion
+    ///
+    /// When providing texture data from an image file or memory, it can
+    /// either be stored in a linear color space or an sRGB color space.
+    /// Most digital images account for gamma correction already, so they
+    /// would need to be "uncorrected" back to linear color space before
+    /// being processed by the hardware. The hardware can automatically
+    /// convert it from the sRGB color space to a linear color space when
+    /// it gets sampled. When the rendered image gets output to the final
+    /// framebuffer, it gets converted back to sRGB.
+    ///
+    /// After enabling or disabling sRGB conversion, make sure to re-draw
+    /// to the RenderTexture in order for the setting to take effect.
+    ///
+    /// This option is only useful in conjunction with an sRGB capable
+    /// framebuffer. This can be requested during window creation.
+    ///
+    /// \param sRgb True to enable sRGB conversion, false to disable it
+    ///
+    /// \see isSrgb
+    ///
+    ////////////////////////////////////////////////////////////
+    void setSrgb(bool sRgb);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether sRGB conversion is enabled or not
+    ///
+    /// \return True if sRGB conversion is enabled, false if not
+    ///
+    /// \see setSrgb
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSrgb() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable texture repeating
     ///
     /// This function is similar to Texture::setRepeated.
