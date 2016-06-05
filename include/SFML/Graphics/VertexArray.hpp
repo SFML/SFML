@@ -209,7 +209,7 @@ private:
 ///
 /// Example:
 /// \code
-/// sf::VertexArray lines(sf::LinesStrip, 4);
+/// sf::VertexArray lines(sf::LineStrip, 4);
 /// lines[0].position = sf::Vector2f(10, 0);
 /// lines[1].position = sf::Vector2f(20, 0);
 /// lines[2].position = sf::Vector2f(30, 5);
