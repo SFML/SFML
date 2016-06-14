@@ -202,7 +202,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with
 /// \code
 /// sf::BlendMode alphaBlending          = sf::BlendAlpha;
 /// sf::BlendMode additiveBlending       = sf::BlendAdd;
-/// sf::BlendMode multiplicativeBlending = sf::BlendMultipy;
+/// sf::BlendMode multiplicativeBlending = sf::BlendMultiply;
 /// sf::BlendMode noBlending             = sf::BlendNone;
 /// \endcode
 ///
