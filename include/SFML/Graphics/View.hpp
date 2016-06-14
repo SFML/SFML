@@ -302,11 +302,11 @@ private:
 /// The viewport allows to map the scene to a custom part
 /// of the render target, and can be used for split-screen
 /// or for displaying a minimap, for example. If the source
-/// rectangle has not the same size as the viewport, its
+/// rectangle doesn't have the same size as the viewport, its
 /// contents will be stretched to fit in.
 ///
 /// To apply a view, you have to assign it to the render target.
-/// Then, every objects drawn in this render target will be
+/// Then, objects drawn in this render target will be
 /// affected by the view until you use another view.
 ///
 /// Usage example:
