@@ -28,16 +28,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Export.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Export.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/System/Vector2.hpp>
 
 
 namespace sf
@@ -56,29 +57,6 @@ class Event;
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Window : GlResource, NonCopyable
 {
-public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enumeration of the native system cursor types
-    ///
-    ////////////////////////////////////////////////////////////
-    enum Cursor
-    {
-        Arrow,                  ///< Arrow cursor (default)
-        ArrowWait,              ///< Busy arrow cursor
-        Wait,                   ///< Busy cursor
-        Text,                   ///< I-beam, cursor when hovering over a field allowing text entry
-        Hand,                   ///< Pointing hand cursor
-        SizeHorizontal,         ///< Horizontal double arrow cursor
-        SizeVertical,           ///< Vertical double arrow cursor
-        SizeTopLeftBottomRight, ///< Double arrow cursor going from top-left to bottom-right
-        SizeBottomLeftTopRight, ///< Double arrow cursor going from bottom-left to top-right
-        SizeAll,                ///< Combination of CursorSizeHorizontal and CursorSizeVertical
-        Cross,                  ///< Crosshair cursor
-        Help,                   ///< Help cursor
-        NotAllowed              ///< Action not allowed cursor
-    };
-
 public:
 
     ////////////////////////////////////////////////////////////
@@ -389,37 +367,16 @@ public:
     ///
     /// Upon window creation, the arrow cursor is used by default.
     ///
+    /// \warning Features related to Cursor are not supported on
+    ///          iOS and Android.
+    ///
     /// \param cursor Native system cursor type to display
     ///
-    ////////////////////////////////////////////////////////////
-    void setMouseCursor(Cursor cursor);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the displayed cursor to the provided image
-    ///
-    /// \a pixels must be an array of \a width x \a height pixels
-    /// in 32-bit RGBA format. If not, this will cause undefined behavior.
-    ///
-    /// If \a pixels is null or either \a width or \a height are 0,
-    /// the current cursor is left unchanged.
-    ///
-    /// In addition to specifying the pixel data, you can also
-    /// specify the location of the hotspot of the cursor. The
-    /// hotspot is the pixel coordinate within the cursor image
-    /// which will be located exactly where the mouse pointer
-    /// position is. Any mouse actions that are performed will
-    /// return the window/screen location of the hotspot.
-    ///
-    /// Upon window creation, the arrow cursor is used by default.
-    ///
-    /// \param pixels   Array of pixels of the image
-    /// \param width    Width of the image
-    /// \param height   Height of the image
-    /// \param hotspotX X location of the hotspot
-    /// \param hotspotY Y location of the hotspot
+    /// \see sf::Cursor::loadFromSystem
+    /// \see sf::Cursor::loadFromPixels
     ///
     ////////////////////////////////////////////////////////////
-    void setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY);
+    void setMouseCursor(const Cursor& cursor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat

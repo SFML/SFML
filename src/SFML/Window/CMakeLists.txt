@@ -6,6 +6,9 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 set(SRC
     ${SRCROOT}/Context.cpp
     ${INCROOT}/Context.hpp
+    ${SRCROOT}/Cursor.cpp
+    ${INCROOT}/Cursor.hpp
+    ${SRCROOT}/CursorImpl.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
@@ -51,6 +54,8 @@ source_group("" FILES ${SRC})
 # add platform specific sources
 if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
+        ${SRCROOT}/Win32/CursorImpl.hpp
+        ${SRCROOT}/Win32/CursorImpl.cpp
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/WglExtensions.cpp
@@ -71,6 +76,8 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
+        ${SRCROOT}/Unix/CursorImpl.hpp
+        ${SRCROOT}/Unix/CursorImpl.cpp
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
@@ -110,6 +117,8 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
         ${SRCROOT}/OSX/cg_sf_conversion.mm
+        ${SRCROOT}/OSX/CursorImpl.hpp
+        ${SRCROOT}/OSX/CursorImpl.mm
         ${SRCROOT}/OSX/InputImpl.mm
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/HIDInputManager.hpp
@@ -155,6 +164,8 @@ elseif(SFML_OS_MACOSX)
     source_group("mac" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_IOS)
     set(PLATFORM_SRC
+        ${SRCROOT}/iOS/CursorImpl.hpp
+        ${SRCROOT}/iOS/CursorImpl.cpp
         ${SRCROOT}/iOS/EaglContext.mm
         ${SRCROOT}/iOS/EaglContext.hpp
         ${SRCROOT}/iOS/InputImpl.mm
@@ -179,6 +190,8 @@ elseif(SFML_OS_IOS)
     source_group("ios" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
+        ${SRCROOT}/Android/CursorImpl.hpp
+        ${SRCROOT}/Android/CursorImpl.cpp
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp

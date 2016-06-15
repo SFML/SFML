@@ -494,16 +494,9 @@ void WindowImplCocoa::setMouseCursorGrabbed(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setMouseCursor(Window::Cursor cursor)
+void WindowImplCocoa::setMouseCursor(const CursorImpl& cursor)
 {
-    // TODO: Implement OS X cursor setting
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplCocoa::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
-{
-    // TODO: Implement OS X cursor setting
+    [m_delegate setCursor:cursor.m_cursor];
 }
 
 

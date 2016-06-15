@@ -41,6 +41,25 @@
 @implementation SFOpenGLView (mouse)
 
 ////////////////////////////////////////////////////////
+-(void)setCursor:(NSCursor*)cursor
+{
+    m_cursor = cursor;
+
+    // indirect call to resetCursorRects to set the cursor
+    [self.window invalidateCursorRectsForView:self]; 
+}
+
+
+////////////////////////////////////////////////////////
+-(void)resetCursorRects
+{
+    // addCursorRect:cursor: has to be called from within this function!
+    [self addCursorRect:[self frame] cursor:m_cursor];
+    [m_cursor setOnMouseEntered:YES];
+}
+
+
+////////////////////////////////////////////////////////
 -(BOOL)isMouseInside
 {
     NSPoint relativeToWindow = [[self window] mouseLocationOutsideOfEventStream];

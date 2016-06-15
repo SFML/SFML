@@ -191,14 +191,7 @@ void WindowImplUIKit::setMouseCursorGrabbed(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setMouseCursor(Window::Cursor cursor)
-{
-    // Not applicable
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplUIKit::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
+void WindowImplUIKit::setMouseCursor(const CursorImpl& cursor)
 {
     // Not applicable
 }

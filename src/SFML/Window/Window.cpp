@@ -297,18 +297,10 @@ void Window::setMouseCursorGrabbed(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
-void Window::setMouseCursor(Cursor cursor)
+void Window::setMouseCursor(const Cursor& cursor)
 {
     if (m_impl)
-        m_impl->setMouseCursor(cursor);
-}
-
-
-////////////////////////////////////////////////////////////
-void Window::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
-{
-    if (m_impl && pixels && width && height)
-        m_impl->setMouseCursor(pixels, width, height, hotspotX, hotspotY);
+        m_impl->setMouseCursor(cursor.getImpl());
 }
 
 

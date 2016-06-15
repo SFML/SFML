@@ -224,7 +224,7 @@ m_cursorGrabbed   (m_fullscreen)
 
         ++handleCount;
     }
-    
+
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
     setSize(Vector2u(mode.width, mode.height));
@@ -418,48 +418,8 @@ void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setMouseCursor(Window::Cursor cursor)
+void WindowImplWin32::setMouseCursor(const CursorImpl& cursor)
 {
-    HCURSOR newCursor = NULL;
-
-    switch (cursor)
-    {
-        case Window::Arrow:                  newCursor = LoadCursor(NULL, IDC_ARROW);       break;
-        case Window::ArrowWait:              newCursor = LoadCursor(NULL, IDC_APPSTARTING); break;
-        case Window::Wait:                   newCursor = LoadCursor(NULL, IDC_WAIT);        break;
-        case Window::Text:                   newCursor = LoadCursor(NULL, IDC_IBEAM);       break;
-        case Window::Hand:                   newCursor = LoadCursor(NULL, IDC_HAND);        break;
-        case Window::SizeHorizontal:         newCursor = LoadCursor(NULL, IDC_SIZEWE);      break;
-        case Window::SizeVertical:           newCursor = LoadCursor(NULL, IDC_SIZENS);      break;
-        case Window::SizeTopLeftBottomRight: newCursor = LoadCursor(NULL, IDC_SIZENWSE);    break;
-        case Window::SizeBottomLeftTopRight: newCursor = LoadCursor(NULL, IDC_SIZENESW);    break;
-        case Window::SizeAll:                newCursor = LoadCursor(NULL, IDC_SIZEALL);     break;
-        case Window::Cross:                  newCursor = LoadCursor(NULL, IDC_CROSS);       break;
-        case Window::Help:                   newCursor = LoadCursor(NULL, IDC_HELP);        break;
-        case Window::NotAllowed:             newCursor = LoadCursor(NULL, IDC_NO);          break;
-        default: return;
-    }
-
-    // Create a copy of the shared system cursor that we can destroy later
-    newCursor = CopyCursor(newCursor);
-
-    if (!newCursor)
-    {
-        err() << "Could not create copy of a system cursor" << std::endl;
-        return;
-    }
-
-    HCURSOR oldCursor = m_loadedCursor;
-    m_loadedCursor = newCursor;
-
-    if (m_cursor)
-    {
-        m_cursor = m_loadedCursor;
-        SetCursor(m_cursor);
-    }
-
-    if (oldCursor)
-        DestroyCursor(oldCursor);
 }
 
 

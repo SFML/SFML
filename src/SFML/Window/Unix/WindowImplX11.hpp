@@ -160,19 +160,7 @@ public:
     /// \param cursor Native system cursor type to display
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursor(Window::Cursor cursor);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the displayed cursor to the provided image
-    ///
-    /// \param pixels   Array of pixels of the image
-    /// \param width    Width of the image
-    /// \param height   Height of the image
-    /// \param hotspotX X location of the hotspot
-    /// \param hotspotY Y location of the hotspot
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY);
+    virtual void setMouseCursor(const CursorImpl& cursor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -279,7 +267,7 @@ private:
     XIC        m_inputContext;   ///< Input context used to get unicode input in our window
     bool       m_isExternal;     ///< Tell whether the window has been created externally or by SFML
     int        m_oldVideoMode;   ///< Video mode in use before we switch to fullscreen
-    Cursor     m_hiddenCursor;   ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    ::Cursor   m_hiddenCursor;   ///< As X11 doesn't provide cursor hidding, we must create a transparent one
     bool       m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
     Vector2i   m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool       m_useSizeHints;   ///< Is the size of the window fixed with size hints?
