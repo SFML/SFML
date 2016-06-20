@@ -192,7 +192,7 @@ if(SFML_OS_MACOSX)
         message(FATAL_ERROR "Only 64-bit architecture is supported")
         return()
     endif()
-        
+
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
