@@ -34,6 +34,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
+#include <SFML/System/Sleep.hpp>
 #include <xcb/xcb_image.h>
 #include <xcb/randr.h>
 #include <X11/Xlibint.h>
@@ -71,6 +72,8 @@ namespace
                                                       XCB_EVENT_MASK_KEY_RELEASE    | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
                                                       XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW     |
                                                       XCB_EVENT_MASK_VISIBILITY_CHANGE;
+
+    static const unsigned int             maxTrialsCount = 5;
 
     // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
@@ -978,32 +981,39 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 
     if (grabbed)
     {
-        sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        // Try multiple times to grab the cursor
+        for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
+        {
+            sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-        sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
-            m_connection,
-            xcb_grab_pointer(
+            sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
                 m_connection,
-                true,
-                m_window,
-                XCB_NONE,
-                XCB_GRAB_MODE_ASYNC,
-                XCB_GRAB_MODE_ASYNC,
-                m_window,
-                XCB_NONE,
-                XCB_CURRENT_TIME
-            ),
-            &error
-        ));
+                xcb_grab_pointer(
+                    m_connection,
+                    true,
+                    m_window,
+                    XCB_NONE,
+                    XCB_GRAB_MODE_ASYNC,
+                    XCB_GRAB_MODE_ASYNC,
+                    m_window,
+                    XCB_NONE,
+                    XCB_CURRENT_TIME
+                ),
+                &error
+            ));
 
-        if (!error && grabPointerReply && (grabPointerReply->status == XCB_GRAB_STATUS_SUCCESS))
-        {
-            m_cursorGrabbed = true;
+            if (!error && grabPointerReply && (grabPointerReply->status == XCB_GRAB_STATUS_SUCCESS))
+            {
+                m_cursorGrabbed = true;
+                break;
+            }
+
+            // The cursor grab failed, trying again after a small sleep
+            sf::sleep(sf::milliseconds(50));
         }
-        else
-        {
+
+        if (!m_cursorGrabbed)
             err() << "Failed to grab mouse cursor" << std::endl;
-        }
     }
     else
     {
@@ -1739,30 +1749,39 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Grab cursor
             if (m_cursorGrabbed)
             {
-                sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-                sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
-                    m_connection,
-                    xcb_grab_pointer(
-                        m_connection,
-                        true,
-                        m_window,
-                        XCB_NONE,
-                        XCB_GRAB_MODE_ASYNC,
-                        XCB_GRAB_MODE_ASYNC,
-                        m_window,
-                        XCB_NONE,
-                        XCB_CURRENT_TIME
-                    ),
-                    &error
-                ));
-
-                if (error || !grabPointerReply || (grabPointerReply->status != XCB_GRAB_STATUS_SUCCESS))
+                // Try multiple times to grab the cursor
+                for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
                 {
-                    err() << "Failed to grab mouse cursor" << std::endl;
+                    sf::priv::ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-                    m_cursorGrabbed = false;
+                    sf::priv::ScopedXcbPtr<xcb_grab_pointer_reply_t> grabPointerReply(xcb_grab_pointer_reply(
+                        m_connection,
+                        xcb_grab_pointer(
+                            m_connection,
+                            true,
+                            m_window,
+                            XCB_NONE,
+                            XCB_GRAB_MODE_ASYNC,
+                            XCB_GRAB_MODE_ASYNC,
+                            m_window,
+                            XCB_NONE,
+                            XCB_CURRENT_TIME
+                        ),
+                        &error
+                    ));
+
+                    if (!error && grabPointerReply && (grabPointerReply->status == XCB_GRAB_STATUS_SUCCESS))
+                    {
+                        m_cursorGrabbed = true;
+                        break;
+                    }
+
+                    // The cursor grab failed, trying again after a small sleep
+                    sf::sleep(sf::milliseconds(50));
                 }
+
+                if (!m_cursorGrabbed)
+                    err() << "Failed to grab mouse cursor" << std::endl;
             }
 
             Event event;
