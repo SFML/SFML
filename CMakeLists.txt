@@ -24,7 +24,7 @@ set(ANDROID_NATIVE_API_LEVEL ${ANDROID_API_MIN})
 sfml_set_option(ANDROID_NDK "$ENV{ANDROID_NDK}" PATH "Path to the Android NDK")
 
 # define the STL implementation to be used
-sfml_set_option(ANDROID_STL stlport_shared STRING "Choose the STL implementation to be used (experimental)")
+sfml_set_option(ANDROID_STL c++_shared STRING "Choose the STL implementation to be used (experimental)")
 
 # default the ABI to ARM v7a for hardware floating point
 if(NOT ANDROID_ABI)
