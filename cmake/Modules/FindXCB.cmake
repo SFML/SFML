@@ -68,7 +68,7 @@ IF(NOT WIN32)
         endif()
     ELSE()
         # Add component name to the component list
-        set(${XCB_COMPONENTS} ${XCB_FIND_COMPONENTS})
+        set(XCB_COMPONENTS ${XCB_FIND_COMPONENTS})
     ENDIF()
 
     # Loop through requested xcb components (does not contain xlib_xcb)
