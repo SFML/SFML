@@ -77,7 +77,9 @@ SoundStream::~SoundStream()
 void SoundStream::initialize(unsigned int channelCount, unsigned int sampleRate)
 {
     m_channelCount = channelCount;
-    m_sampleRate   = sampleRate;
+    m_sampleRate = sampleRate;
+    m_samplesProcessed = 0;
+    m_isStreaming = false;
 
     // Deduce the format from the number of channels
     m_format = priv::AudioDevice::getFormatFromChannelCount(channelCount);
@@ -127,11 +129,7 @@ void SoundStream::play()
         stop();
     }
 
-    // Move to the beginning
-    onSeek(Time::Zero);
-
     // Start updating the stream in a separate thread to avoid blocking the application
-    m_samplesProcessed = 0;
     m_isStreaming = true;
     m_threadStartState = Playing;
     m_thread.launch();
@@ -397,7 +395,7 @@ void SoundStream::streamData()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundStream::fillAndPushBuffer(unsigned int bufferNum)
+bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
 {
     bool requestStop = false;
 
@@ -417,6 +415,13 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum)
             // If we previously had no data, try to fill the buffer once again
             if (!data.samples || (data.sampleCount == 0))
             {
+                // If immediateLoop is specified, we have to immediately adjust the sample count
+                if (immediateLoop)
+                {
+                    // We just tried to begin preloading at EOF: reset the sample count
+                    m_samplesProcessed = 0;
+                    m_endBuffers[bufferNum] = false;
+                }
                 return fillAndPushBuffer(bufferNum);
             }
         }
@@ -451,7 +456,9 @@ bool SoundStream::fillQueue()
     bool requestStop = false;
     for (int i = 0; (i < BufferCount) && !requestStop; ++i)
     {
-        if (fillAndPushBuffer(i))
+        // Since no sound has been loaded yet, we can't schedule loop seeks preemptively,
+        // So if we start on EOF or Loop End, we let fillAndPushBuffer() adjust the sample count
+        if (fillAndPushBuffer(i, (i == 0)))
             requestStop = true;
     }
 

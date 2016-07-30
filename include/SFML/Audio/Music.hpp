@@ -168,10 +168,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile     m_file;     ///< The streamed music file
-    Time               m_duration; ///< Music duration
-    std::vector<Int16> m_samples;  ///< Temporary buffer of samples
-    Mutex              m_mutex;    ///< Mutex protecting the data
+    InputSoundFile     m_file;    ///< The streamed music file
+    std::vector<Int16> m_samples; ///< Temporary buffer of samples
+    Mutex              m_mutex;   ///< Mutex protecting the data
 };
 
 } // namespace sf
