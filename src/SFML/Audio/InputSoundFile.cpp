@@ -41,6 +41,7 @@ InputSoundFile::InputSoundFile() :
 m_reader      (NULL),
 m_stream      (NULL),
 m_streamOwned (false),
+m_sampleOffset   (0),
 m_sampleCount (0),
 m_channelCount(0),
 m_sampleRate  (0)
@@ -195,7 +196,29 @@ unsigned int InputSoundFile::getSampleRate() const
 ////////////////////////////////////////////////////////////
 Time InputSoundFile::getDuration() const
 {
+    // Make sure we don't divide by 0
+    if (m_channelCount == 0 || m_sampleRate == 0)
+        return Time::Zero;
+
     return seconds(static_cast<float>(m_sampleCount) / m_channelCount / m_sampleRate);
+}
+
+
+////////////////////////////////////////////////////////////
+Time InputSoundFile::getTimeOffset() const
+{
+    // Make sure we don't divide by 0
+    if (m_channelCount == 0 || m_sampleRate == 0)
+        return Time::Zero;
+
+    return seconds(static_cast<float>(m_sampleOffset) / m_channelCount / m_sampleRate);
+}
+
+
+////////////////////////////////////////////////////////////
+Uint64 InputSoundFile::getSampleOffset() const
+{
+    return m_sampleOffset;
 }
 
 
@@ -203,7 +226,12 @@ Time InputSoundFile::getDuration() const
 void InputSoundFile::seek(Uint64 sampleOffset)
 {
     if (m_reader)
-        m_reader->seek(sampleOffset);
+    {
+        // The reader handles an overrun gracefully, but we
+        // pre-check to keep our known position consistent
+        m_sampleOffset = std::min(sampleOffset, m_sampleCount);
+        m_reader->seek(m_sampleOffset);
+    }
 }
 
 
@@ -217,10 +245,11 @@ void InputSoundFile::seek(Time timeOffset)
 ////////////////////////////////////////////////////////////
 Uint64 InputSoundFile::read(Int16* samples, Uint64 maxCount)
 {
+    Uint64 readSamples = 0;
     if (m_reader && samples && maxCount)
-        return m_reader->read(samples, maxCount);
-    else
-        return 0;
+        readSamples = m_reader->read(samples, maxCount);
+    m_sampleOffset += readSamples;
+    return readSamples;
 }
 
 
@@ -238,6 +267,7 @@ void InputSoundFile::close()
         m_streamOwned = false;
     }
     m_stream = NULL;
+    m_sampleOffset = 0;
 
     // Reset the sound file attributes
     m_sampleCount = 0;

@@ -254,11 +254,12 @@ private:
     /// playing queue.
     ///
     /// \param bufferNum Number of the buffer to fill (in [0, BufferCount])
+    /// \param immediateLoop Treat empty buffers as spent, and act on loops immediately
     ///
     /// \return True if the stream source has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool fillAndPushBuffer(unsigned int bufferNum);
+    bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill the audio buffers and put them all into the playing queue
