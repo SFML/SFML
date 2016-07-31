@@ -504,7 +504,7 @@ void Font::cleanup()
     m_streamRec = NULL;
     m_refCount  = NULL;
     m_pages.clear();
-    m_pixelBuffer.clear();
+    std::vector<Uint8>().swap(m_pixelBuffer);
 }
 
 
@@ -583,11 +583,14 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         // pollute them with pixels from neighbors
         const unsigned int padding = 1;
 
+        width += 2 * padding;
+        height += 2 * padding;
+
         // Get the glyphs page corresponding to the character size
         Page& page = m_pages[characterSize];
 
         // Find a good position for the new glyph into the texture
-        glyph.textureRect = findGlyphRect(page, width + 2 * padding, height + 2 * padding);
+        glyph.textureRect = findGlyphRect(page, width, height);
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
@@ -602,19 +605,32 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         glyph.bounds.width  =  static_cast<float>(face->glyph->metrics.width)        / static_cast<float>(1 << 6) + outlineThickness * 2;
         glyph.bounds.height =  static_cast<float>(face->glyph->metrics.height)       / static_cast<float>(1 << 6) + outlineThickness * 2;
 
+        // Resize the pixel buffer to the new size and fill it with transparent white pixels
+        m_pixelBuffer.resize(width * height * 4);
+
+        Uint8* current = &m_pixelBuffer[0];
+        Uint8* end = current + width * height * 4;
+
+        while (current != end)
+        {
+            (*current++) = 255;
+            (*current++) = 255;
+            (*current++) = 255;
+            (*current++) = 0;
+        }
+
         // Extract the glyph's pixels from the bitmap
-        m_pixelBuffer.resize(width * height * 4, 255);
         const Uint8* pixels = bitmap.buffer;
         if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
             // Pixels are 1 bit monochrome values
-            for (int y = 0; y < height; ++y)
+            for (int y = padding; y < height - padding; ++y)
             {
-                for (int x = 0; x < width; ++x)
+                for (int x = padding; x < width - padding; ++x)
                 {
                     // The color channels remain white, just fill the alpha channel
-                    std::size_t index = (x + y * width) * 4 + 3;
-                    m_pixelBuffer[index] = ((pixels[x / 8]) & (1 << (7 - (x % 8)))) ? 255 : 0;
+                    std::size_t index = x + y * width;
+                    m_pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
                 }
                 pixels += bitmap.pitch;
             }
@@ -622,23 +638,23 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         else
         {
             // Pixels are 8 bits gray levels
-            for (int y = 0; y < height; ++y)
+            for (int y = padding; y < height - padding; ++y)
             {
-                for (int x = 0; x < width; ++x)
+                for (int x = padding; x < width - padding; ++x)
                 {
                     // The color channels remain white, just fill the alpha channel
-                    std::size_t index = (x + y * width) * 4 + 3;
-                    m_pixelBuffer[index] = pixels[x];
+                    std::size_t index = x + y * width;
+                    m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
                 }
                 pixels += bitmap.pitch;
             }
         }
 
         // Write the pixels to the texture
-        unsigned int x = glyph.textureRect.left;
-        unsigned int y = glyph.textureRect.top;
-        unsigned int w = glyph.textureRect.width;
-        unsigned int h = glyph.textureRect.height;
+        unsigned int x = glyph.textureRect.left - padding;
+        unsigned int y = glyph.textureRect.top - padding;
+        unsigned int w = glyph.textureRect.width + 2 * padding;
+        unsigned int h = glyph.textureRect.height + 2 * padding;
         page.texture.update(&m_pixelBuffer[0], w, h, x, y);
     }
 
@@ -689,10 +705,10 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             if ((textureWidth * 2 <= Texture::getMaximumSize()) && (textureHeight * 2 <= Texture::getMaximumSize()))
             {
                 // Make the texture 2 times bigger
-                Image newImage;
-                newImage.create(textureWidth * 2, textureHeight * 2, Color(255, 255, 255, 0));
-                newImage.copy(page.texture.copyToImage(), 0, 0);
-                page.texture.loadFromImage(newImage);
+                Texture newTexture;
+                newTexture.create(textureWidth * 2, textureHeight * 2);
+                newTexture.update(page.texture);
+                page.texture.swap(newTexture);
             }
             else
             {

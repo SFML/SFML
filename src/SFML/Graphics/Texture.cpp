@@ -88,7 +88,20 @@ m_hasMipmap    (false),
 m_cacheId      (getUniqueId())
 {
     if (copy.m_texture)
-        loadFromImage(copy.copyToImage());
+    {
+        if (create(copy.getSize().x, copy.getSize().y))
+        {
+            update(copy);
+
+            // Force an OpenGL flush, so that the texture will appear updated
+            // in all contexts immediately (solves problems in multi-threaded apps)
+            glCheck(glFlush());
+        }
+        else
+        {
+            err() << "Failed to copy texture, failed to create new texture" << std::endl;
+        }
+    }
 }
 
 
@@ -423,6 +436,97 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
 
 
 ////////////////////////////////////////////////////////////
+void Texture::update(const Texture& texture)
+{
+    // Update the whole texture
+    update(texture, 0, 0);
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
+{
+    assert(x + texture.m_size.x <= m_size.x);
+    assert(y + texture.m_size.x <= m_size.y);
+
+    if (!m_texture || !texture.m_texture)
+        return;
+
+#ifndef SFML_OPENGL_ES
+
+    {
+        TransientContextLock lock;
+
+        // Make sure that extensions are initialized
+        priv::ensureExtensionsInit();
+    }
+
+    if (GLEXT_framebuffer_object && GLEXT_framebuffer_blit)
+    {
+        TransientContextLock lock;
+
+        // Save the current bindings so we can restore them after we are done
+        GLint readFramebuffer = 0;
+        GLint drawFramebuffer = 0;
+
+        glCheck(glGetIntegerv(GLEXT_GL_READ_FRAMEBUFFER_BINDING, &readFramebuffer));
+        glCheck(glGetIntegerv(GLEXT_GL_DRAW_FRAMEBUFFER_BINDING, &drawFramebuffer));
+
+        // Create the framebuffers
+        GLuint sourceFrameBuffer = 0;
+        GLuint destFrameBuffer = 0;
+        glCheck(GLEXT_glGenFramebuffers(1, &sourceFrameBuffer));
+        glCheck(GLEXT_glGenFramebuffers(1, &destFrameBuffer));
+
+        if (!sourceFrameBuffer || !destFrameBuffer)
+        {
+            err() << "Cannot copy texture, failed to create a frame buffer object" << std::endl;
+            return;
+        }
+
+        // Link the source texture to the source frame buffer
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_READ_FRAMEBUFFER, sourceFrameBuffer));
+        glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_READ_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.m_texture, 0));
+
+        // Link the destination texture to the destination frame buffer
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, destFrameBuffer));
+        glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_DRAW_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+
+        // A final check, just to be sure...
+        GLenum sourceStatus;
+        glCheck(sourceStatus = GLEXT_glCheckFramebufferStatus(GLEXT_GL_READ_FRAMEBUFFER));
+
+        GLenum destStatus;
+        glCheck(destStatus = GLEXT_glCheckFramebufferStatus(GLEXT_GL_DRAW_FRAMEBUFFER));
+
+        if ((sourceStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE) && (destStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE))
+        {
+            // Blit the texture contents from the source to the destination texture
+            glCheck(GLEXT_glBlitFramebuffer(0, 0, texture.m_size.x, texture.m_size.y, x, y, x + texture.m_size.x, y + texture.m_size.y, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+        }
+        else
+        {
+            err() << "Cannot copy texture, failed to link texture to frame buffer" << std::endl;
+        }
+
+        // Restore previously bound framebuffers
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_READ_FRAMEBUFFER, readFramebuffer));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, drawFramebuffer));
+
+        // Delete the framebuffers
+        glCheck(GLEXT_glDeleteFramebuffers(1, &sourceFrameBuffer));
+        glCheck(GLEXT_glDeleteFramebuffers(1, &destFrameBuffer));
+
+        return;
+    }
+
+#endif // SFML_OPENGL_ES
+
+    update(texture.copyToImage(), x, y);
+}
+
+
+////////////////////////////////////////////////////////////
 void Texture::update(const Image& image)
 {
     // Update the whole texture
@@ -695,17 +799,27 @@ Texture& Texture::operator =(const Texture& right)
 {
     Texture temp(right);
 
-    std::swap(m_size,          temp.m_size);
-    std::swap(m_actualSize,    temp.m_actualSize);
-    std::swap(m_texture,       temp.m_texture);
-    std::swap(m_isSmooth,      temp.m_isSmooth);
-    std::swap(m_isRepeated,    temp.m_isRepeated);
-    std::swap(m_pixelsFlipped, temp.m_pixelsFlipped);
-    std::swap(m_fboAttachment, temp.m_fboAttachment);
-    std::swap(m_hasMipmap,     temp.m_hasMipmap);
-    m_cacheId = getUniqueId();
+    swap(temp);
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::swap(Texture& right)
+{
+    std::swap(m_size,          right.m_size);
+    std::swap(m_actualSize,    right.m_actualSize);
+    std::swap(m_texture,       right.m_texture);
+    std::swap(m_isSmooth,      right.m_isSmooth);
+    std::swap(m_sRgb,          right.m_sRgb);
+    std::swap(m_isRepeated,    right.m_isRepeated);
+    std::swap(m_pixelsFlipped, right.m_pixelsFlipped);
+    std::swap(m_fboAttachment, right.m_fboAttachment);
+    std::swap(m_hasMipmap,     right.m_hasMipmap);
+
+    m_cacheId = getUniqueId();
+    right.m_cacheId = getUniqueId();
 }
 
 

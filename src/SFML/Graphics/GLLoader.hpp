@@ -184,6 +184,7 @@ extern int sfogl_ext_ARB_texture_non_power_of_two;
 extern int sfogl_ext_EXT_blend_equation_separate;
 extern int sfogl_ext_EXT_texture_sRGB;
 extern int sfogl_ext_EXT_framebuffer_object;
+extern int sfogl_ext_EXT_framebuffer_blit;
 extern int sfogl_ext_ARB_geometry_shader4;
 
 #define GL_CLAMP_TO_EDGE_SGIS 0x812F
@@ -378,6 +379,11 @@ extern int sfogl_ext_ARB_geometry_shader4;
 #define GL_STENCIL_INDEX1_EXT 0x8D46
 #define GL_STENCIL_INDEX4_EXT 0x8D47
 #define GL_STENCIL_INDEX8_EXT 0x8D48
+
+#define GL_DRAW_FRAMEBUFFER_BINDING_EXT 0x8CA6
+#define GL_DRAW_FRAMEBUFFER_EXT 0x8CA9
+#define GL_READ_FRAMEBUFFER_BINDING_EXT 0x8CAA
+#define GL_READ_FRAMEBUFFER_EXT 0x8CA8
 
 #define GL_FRAMEBUFFER_ATTACHMENT_LAYERED_ARB 0x8DA7
 #define GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER 0x8CD4
@@ -1241,6 +1247,12 @@ extern GLboolean (GL_FUNCPTR *sf_ptrc_glIsRenderbufferEXT)(GLuint);
 extern void (GL_FUNCPTR *sf_ptrc_glRenderbufferStorageEXT)(GLenum, GLenum, GLsizei, GLsizei);
 #define glRenderbufferStorageEXT sf_ptrc_glRenderbufferStorageEXT
 #endif // GL_EXT_framebuffer_object
+
+#ifndef GL_EXT_framebuffer_blit
+#define GL_EXT_framebuffer_blit 1
+extern void (GL_FUNCPTR *sf_ptrc_glBlitFramebufferEXT)(GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum);
+#define glBlitFramebufferEXT sf_ptrc_glBlitFramebufferEXT
+#endif // GL_EXT_framebuffer_blit
 
 #ifndef GL_ARB_geometry_shader4
 #define GL_ARB_geometry_shader4 1
