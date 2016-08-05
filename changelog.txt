@@ -1,3 +1,111 @@
+SFML 2.4.0
+==========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.0
+
+General
+=======
+
+* Added deprecation macro (#969)
+* Fixed issues reported by Coverity Scan static analysis (#1064)
+* Fixed some initialization issues reported by Cppcheck (#1008)
+* Changed comment chars in FindSFML.cmake to # (#1090)
+* Fixed some typos (#1098, #993, #1099, #956, #963, #979)
+* Updated/fixed string comparisons in Config.cmake (#1102)
+* Added the missing -s postfix for the RelWithDebInfo config (#1014)
+* [Android] Fixed current Android compilation issues (#1116, #1111, #1079)
+* [OS X] Update Xcode template material (#976, #968)
+* [Windows] Added support for VS 2015 (#972)
+* [Windows] Create and install PDB debug symbols alongside binaries (#1037)
+
+System
+======
+
+Features
+--------
+* [Android] Added sf::getNativeActivity() (#1005, #680)
+
+Bugfixes
+--------
+* Added missing <iterator> include in String.hpp (#1069, #1068)
+* Fixed encoding of UTF-16 (#997)
+* [Android] Fixed crash when trying to load a non-existing font file (#1058)
+
+
+Window
+======
+
+Features
+--------
+* Added ability to grab cursor (#614, #394, #1107)
+* Added Multi-GPU preference (#869, #867)
+* Added support for sRGB capable framebuffers (#981, #175)
+* [Linux, Windows] Improved OpenGL context creation (#884)
+* [Linux, Windows] Added support for pbuffers on Windows and Unix (#885, #434)
+
+Bugfixes
+--------
+* Updated platform-specific handle documentation (#961)
+* [Android] Accept touch events from "multiple" devices (#954, #953)
+* [Android] Copy the selected EGL context's settings to SFML (#1039)
+* [Linux] Fixed modifiers causing sf::Keyboard::Unknown being returned (#1022, #1012)
+* [OS X] Improved memory management on OS X (#962, #790)
+* [OS X] Fixed crash when resizing a window to a zero-height/width size (#986, #984)
+* [OS X] Use the mouse button constant instead of 0 to avoid a compiler error on OSX (#1035)
+* [OS X] OS X improvement: warnings + bugfix + refactoring, the lot! (#1042)
+
+
+Graphics
+========
+
+Features
+--------
+* Added support for outlined text (#840)
+* Add support for geometry shaders (#886, #428)
+* Feature/blend mode reverse subtract (#945, #944)
+* Implemented support for mipmap generation (#973, #498, #123)
+* Added new API to set shader uniforms (#983, #538)
+* Rewrite RenderWindow::capture (#1001)
+
+Bugfixes
+--------
+* Exporting some Glsl utility functions due to linking issues (#1044, #1046)
+* Fixed missing initialisation of Font::m_stroker (#1059)
+* Changed primitive types to be grammatically correct (#1095, #939)
+
+
+Audio
+=====
+
+Features
+--------
+* Implemented stereo audio recording (#1010)
+
+Bugfixes
+--------
+* Added an assignment operator to SoundSource (#864)
+* [OS X] Updates OpenAL-soft for OS X to version 1.17.2 (#1057, #900, #1000)
+* Fixed a bug where vorbis can't handle large buffers (#1067)
+* Added support for 24-bit .wav files (#958, #955)
+* Fixed threading issue in sf::SoundRecorder (#1011)
+* Made WAV file reader no longer assume that data chunk goes till end of file to prevent reading trailing metadata as samples (#1018)
+* Fixed seeking in multi channel FLAC files (#1041, #1040)
+
+Network
+=======
+
+Features
+--------
+* Added optional argument on which address to bind (socket). (#850, #678)
+
+Bugfixes
+--------
+* Fixed FTP directory listing blocking forever (#1086, #1025)
+
+
+
+
+
 SFML 2.3.2
 ==========
 
