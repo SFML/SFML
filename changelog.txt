@@ -18,6 +18,17 @@ General
 * [Windows] Added support for VS 2015 (#972)
 * [Windows] Create and install PDB debug symbols alongside binaries (#1037)
 
+Deprecated API
+==============
+
+* sf::RenderWindow::capture(): Use a sf::Texture and its sf::Texture::update(const Window&) function and copy its contents into an sf::Image instead.
+* sf::Shader::setParameter(): Use setUniform() instead.
+* sf::Text::getColor(): There is now fill and outline colors instead of a single global color. Use getFillColor() or getOutlineColor() instead.
+* sf::Text::setColor(): There is now fill and outline colors instead of a single global color. Use setFillColor() or setOutlineColor() instead.
+* sf::LinesStrip: Use LineStrip instead.
+* sf::TrianglesFan: Use TriangleFan instead.
+* sf::TrianglesStrip: Use TriangleStrip instead.
+
 System
 ======
 
@@ -198,6 +209,11 @@ General
 * [Android] Updated toolchain file and dependencies (#791)
 * [Linux] Fixed missing pthread dependency (#794)
 * [OS X] Relaxed CMake installation rules regarding framework dependencies (#767)
+
+Deprecated API
+==============
+
+* sf::Event::MouseWheelEvent: This event is deprecated and potentially inaccurate. Use MouseWheelScrollEvent instead.
 
 Window
 ======
