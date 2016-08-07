@@ -47,9 +47,9 @@ enum PrimitiveType
     Quads,         ///< List of individual quads (deprecated, don't work with OpenGL ES)
 
     // Deprecated names
-    LinesStrip     = LineStrip,     /// \deprecated Use LineStrip instead
-    TrianglesStrip = TriangleStrip, /// \deprecated Use TriangleStrip instead
-    TrianglesFan   = TriangleFan    /// \deprecated Use TriangleFan instead
+    LinesStrip     = LineStrip,     ///< \deprecated Use LineStrip instead
+    TrianglesStrip = TriangleStrip, ///< \deprecated Use TriangleStrip instead
+    TrianglesFan   = TriangleFan    ///< \deprecated Use TriangleFan instead
 };
 
 } // namespace sf
