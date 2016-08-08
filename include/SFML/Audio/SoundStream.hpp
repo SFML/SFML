@@ -156,14 +156,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
     ///
-    /// If set, the stream will restart from beginning after
-    /// reaching the end and so on, until it is stopped or
+    /// If set, the stream will restart from the beginning (or loop offset, if
+    /// configured) after reaching the end and so on, until it is stopped or
     /// setLoop(false) is called.
     /// The default looping state for streams is false.
     ///
     /// \param loop True to play in loop, false to play once
     ///
-    /// \see getLoop
+    /// \see getLoop, setLoopOffset, getLoopOffset
     ///
     ////////////////////////////////////////////////////////////
     void setLoop(bool loop);
@@ -177,6 +177,27 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool getLoop() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set what offset to being playing when looping.
+    ///
+    /// \param offset Where to start playing when looping.
+    ///  Specify Time::Zero to play from the beginning.
+    ///
+    /// \see getLoopOffset
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLoopOffset(Time offset);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell which offset the stream is reset to when looping is enabled.
+    ///
+    /// \return Which offset the stream will begin playing when it loops.
+    ///
+    /// \see setLoopOffset, getPlayingOffset
+    ///
+    ////////////////////////////////////////////////////////////
+    Time getLoopOffset() const;
 
 protected:
 
@@ -295,6 +316,7 @@ private:
     unsigned int  m_channelCount;            ///< Number of channels (1 = mono, 2 = stereo, ...)
     unsigned int  m_sampleRate;              ///< Frequency (samples / second)
     Uint32        m_format;                  ///< Format of the internal sound buffers
+    Time          m_loopOffset;              ///< Offset to begin playing when looping.
     bool          m_loop;                    ///< Loop flag (true to loop, false to play once)
     Uint64        m_samplesProcessed;        ///< Number of buffers processed since beginning of the stream
     bool          m_endBuffers[BufferCount]; ///< Each buffer is marked as "end buffer" or not, for proper duration calculation
