@@ -27,7 +27,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # don't use the OpenGL ES implementation on Linux
         set(OPENGL_ES 0)
     endif()
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+elseif(CMAKE_SYSTEM_NAME MATCHES "^k?FreeBSD$")
     set(SFML_OS_FREEBSD 1)
     # don't use the OpenGL ES implementation on FreeBSD
     set(OPENGL_ES 0)
