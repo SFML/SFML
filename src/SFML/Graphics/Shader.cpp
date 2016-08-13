@@ -1022,7 +1022,7 @@ int Shader::getUniformLocation(const std::string& name)
         m_uniforms.insert(std::make_pair(name, location));
 
         if (location == -1)
-            err() << "Parameter \"" << name << "\" not found in shader" << std::endl;
+            err() << "Uniform \"" << name << "\" not found in shader" << std::endl;
 
         return location;
     }
