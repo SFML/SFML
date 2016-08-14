@@ -194,8 +194,8 @@ GlxContext::~GlxContext()
     // Destroy the window if we own it
     if (m_window && m_ownsWindow)
     {
-        xcb_destroy_window(m_connection, m_window);
-        xcb_flush(m_connection);
+        XDestroyWindow(m_display, m_window);
+        XFlush(m_display);
     }
 
     // Close the connection with the X server
@@ -444,7 +444,6 @@ void GlxContext::updateSettingsFromWindow()
 void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel)
 {
     m_display = OpenDisplay();
-    m_connection = XGetXCBConnection(m_display);
 
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = selectBestVisual(m_display, bitsPerPixel, m_settings);
@@ -513,28 +512,22 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
     }
 
     // If pbuffers are not available we use a hidden window as the off-screen surface to draw to
-    xcb_screen_t* screen = XCBScreenOfDisplay(m_connection, DefaultScreen(m_display));
+    int screen = DefaultScreen(m_display);
 
     // Define the window attributes
-    xcb_colormap_t colormap = xcb_generate_id(m_connection);
-    xcb_create_colormap(m_connection, XCB_COLORMAP_ALLOC_NONE, colormap, screen->root, visualInfo.visualid);
-    const uint32_t value_list[] = {colormap};
+    XSetWindowAttributes attributes;
+    attributes.colormap = XCreateColormap(m_display, RootWindow(m_display, screen), visualInfo.visual, AllocNone);
 
-    // Create a dummy window (disabled and hidden)
-    m_window = xcb_generate_id(m_connection);
-    xcb_create_window(
-        m_connection,
-        static_cast<uint8_t>(visualInfo.depth),
-        m_window,
-        screen->root,
-        0, 0,
-        width, height,
-        0,
-        XCB_WINDOW_CLASS_INPUT_OUTPUT,
-        visualInfo.visualid,
-        XCB_CW_COLORMAP,
-        value_list
-    );
+    m_window = XCreateWindow(m_display,
+                             RootWindow(m_display, screen),
+                             0, 0,
+                             width, height,
+                             0,
+                             DefaultDepth(m_display, screen),
+                             InputOutput,
+                             visualInfo.visual,
+                             CWColormap,
+                             &attributes);
 
     m_ownsWindow = true;
 
@@ -546,7 +539,6 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
 void GlxContext::createSurface(::Window window)
 {
     m_display = OpenDisplay();
-    m_connection = XGetXCBConnection(m_display);
 
     // A window already exists, so just use it
     m_window = window;

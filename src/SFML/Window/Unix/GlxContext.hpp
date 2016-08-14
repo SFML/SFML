@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/Unix/GlxExtensions.hpp>
-#include <X11/Xlib-xcb.h>
+#include <X11/Xlib.h>
 
 
 namespace sf
@@ -178,7 +178,6 @@ private:
     ////////////////////////////////////////////////////////////
     ::Display*        m_display;    ///< Connection to the X server
     ::Window          m_window;     ///< Window to which the context is attached
-    xcb_connection_t* m_connection; ///< Pointer to the xcb connection
     GLXContext        m_context;    ///< OpenGL context
     GLXPbuffer        m_pbuffer;    ///< GLX pbuffer ID if one was created
     bool              m_ownsWindow; ///< Do we own the window associated to the context?
