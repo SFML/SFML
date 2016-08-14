@@ -75,8 +75,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
         ${SRCROOT}/Unix/InputImpl.hpp
-        ${SRCROOT}/Unix/ScopedXcbPtr.hpp
-        ${SRCROOT}/Unix/ScopedXcbPtr.inl
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
@@ -200,18 +198,14 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     if(NOT X11_FOUND)
         message(FATAL_ERROR "X11 library not found")
     endif()
+    if(NOT X11_Xrandr_FOUND)
+        message(FATAL_ERROR "Xrandr library not found")
+    endif()
     include_directories(${X11_INCLUDE_DIR})
 endif()
 if(NOT SFML_OPENGL_ES)
     find_package(OpenGL REQUIRED)
     include_directories(${OPENGL_INCLUDE_DIR})
-    if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-        find_package(XCB COMPONENTS xlib_xcb image randr REQUIRED)
-        if(NOT LIBXCB_FOUND)
-            message(FATAL_ERROR "Xcb library not found")
-        endif()
-        include_directories(${LIBXCB_INCLUDE_DIRS})
-    endif()
 endif()
 if(SFML_OPENGL_ES AND SFML_OS_LINUX)
     find_package(EGL REQUIRED)
@@ -231,9 +225,9 @@ endif()
 if(SFML_OS_WINDOWS)
     list(APPEND WINDOW_EXT_LIBS winmm gdi32)
 elseif(SFML_OS_LINUX)
-    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${LIBXCB_LIBRARIES} ${UDEV_LIBRARIES})
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
 elseif(SFML_OS_FREEBSD)
-    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${LIBXCB_LIBRARIES} usbhid)
+    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} usbhid)
 elseif(SFML_OS_MACOSX)
     list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
 elseif(SFML_OS_IOS)
