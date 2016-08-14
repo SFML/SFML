@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <X11/keysym.h>
 #include <cassert>
+#include <cstdlib>
 #include <map>
 
 
@@ -39,7 +39,7 @@ namespace
     Display* sharedDisplay = NULL;
     unsigned int referenceCount = 0;
 
-    typedef std::map<std::string, xcb_atom_t> AtomMap;
+    typedef std::map<std::string, Atom> AtomMap;
     AtomMap atoms;
 }
 
@@ -69,13 +69,6 @@ Display* OpenDisplay()
 
 
 ////////////////////////////////////////////////////////////
-xcb_connection_t* OpenConnection()
-{
-    return XGetXCBConnection(OpenDisplay());
-}
-
-
-////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
     assert(display == sharedDisplay);
@@ -87,81 +80,22 @@ void CloseDisplay(Display* display)
 
 
 ////////////////////////////////////////////////////////////
-void CloseConnection(xcb_connection_t* connection)
-{
-    assert(connection == XGetXCBConnection(sharedDisplay));
-    return CloseDisplay(sharedDisplay);
-}
-
-
-////////////////////////////////////////////////////////////
-xcb_screen_t* XCBScreenOfDisplay(xcb_connection_t* connection, int screen_nbr)
-{
-    xcb_screen_iterator_t iter = xcb_setup_roots_iterator(xcb_get_setup(connection));
-
-    for (; iter.rem; --screen_nbr, xcb_screen_next (&iter))
-    {
-        if (screen_nbr == 0)
-            return iter.data;
-    }
-
-    return NULL;
-}
-
-
-////////////////////////////////////////////////////////////
-xcb_screen_t* XCBDefaultScreen(xcb_connection_t* connection)
-{
-    assert(connection == XGetXCBConnection(sharedDisplay));
-    return XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
-}
-
-
-////////////////////////////////////////////////////////////
-xcb_window_t XCBDefaultRootWindow(xcb_connection_t* connection)
-{
-    assert(connection == XGetXCBConnection(sharedDisplay));
-    xcb_screen_t* screen = XCBScreenOfDisplay(connection, XDefaultScreen(sharedDisplay));
-    if (screen)
-        return screen->root;
-    return 0;
-}
-
-
-////////////////////////////////////////////////////////////
-xcb_atom_t getAtom(const std::string& name, bool onlyIfExists)
+Atom getAtom(const std::string& name, bool onlyIfExists)
 {
     AtomMap::const_iterator iter = atoms.find(name);
 
     if (iter != atoms.end())
         return iter->second;
 
-    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+    Display* display = OpenDisplay();
 
-    xcb_connection_t* connection = OpenConnection();
+    Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
 
-    ScopedXcbPtr<xcb_intern_atom_reply_t> reply(xcb_intern_atom_reply(
-        connection,
-        xcb_intern_atom(
-            connection,
-            onlyIfExists,
-            name.size(),
-            name.c_str()
-        ),
-        &error
-    ));
+    CloseDisplay(display);
 
-    CloseConnection(connection);
+    atoms[name] = atom;
 
-    if (error || !reply)
-    {
-        err() << "Failed to get " << name << " atom." << std::endl;
-        return XCB_ATOM_NONE;
-    }
-
-    atoms[name] = reply->atom;
-
-    return reply->atom;
+    return atom;
 }
 
 } // namespace priv
