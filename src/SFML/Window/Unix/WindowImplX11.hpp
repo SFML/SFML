@@ -31,8 +31,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
-#include <X11/Xlib-xcb.h>
-#include <xcb/randr.h>
+#include <X11/Xlib.h>
 #include <deque>
 
 
@@ -188,33 +187,6 @@ protected:
 
 private:
 
-    struct WMHints
-    {
-        int32_t      flags;
-        uint32_t     input;
-        int32_t      initial_state;
-        xcb_pixmap_t icon_pixmap;
-        xcb_window_t icon_window;
-        int32_t      icon_x;
-        int32_t      icon_y;
-        xcb_pixmap_t icon_mask;
-        xcb_window_t window_group;
-    };
-
-    struct WMSizeHints
-    {
-        uint32_t flags;
-        int32_t  x, y;
-        int32_t  width, height;
-        int32_t  min_width, min_height;
-        int32_t  max_width, max_height;
-        int32_t  width_inc, height_inc;
-        int32_t  min_aspect_num, min_aspect_den;
-        int32_t  max_aspect_num, max_aspect_den;
-        int32_t  base_width, base_height;
-        uint32_t win_gravity;
-    };
-
     ////////////////////////////////////////////////////////////
     /// \brief Request the WM to make the current window active
     ///
@@ -248,40 +220,12 @@ private:
     void setProtocols();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set Motif WM hints
+    /// \brief Update the last time we received user input
+    ///
+    /// \param time Last time we received user input
     ///
     ////////////////////////////////////////////////////////////
-    void setMotifHints(unsigned long style);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set WM hints
-    ///
-    /// \param hints Hints
-    ///
-    ////////////////////////////////////////////////////////////
-    void setWMHints(const WMHints& hints);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set WM size hints
-    ///
-    /// \param hints Size hints
-    ///
-    ////////////////////////////////////////////////////////////
-    void setWMSizeHints(const WMSizeHints& hints);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a XCB window property
-    ///
-    /// \param property Property to change
-    /// \param type     Type of the property
-    /// \param format   Format of the property
-    /// \param length   Length of the new value
-    /// \param data     The new value of the property
-    ///
-    /// \return True if successful, false if unsuccessful
-    ///
-    ////////////////////////////////////////////////////////////
-    bool changeWindowProperty(xcb_atom_t property, xcb_atom_t type, uint8_t format, uint32_t length, const void* data);
+    void updateLastInputTime(::Time time);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
@@ -314,23 +258,23 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    xcb_window_t                      m_window;          ///< xcb identifier defining our window
-    ::Display*                        m_display;         ///< Pointer to the display
-    xcb_connection_t*                 m_connection;      ///< Pointer to the xcb connection
-    xcb_screen_t*                     m_screen;          ///< Screen identifier
-    XIM                               m_inputMethod;     ///< Input method linked to the X display
-    XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
-    bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
-    xcb_randr_get_screen_info_reply_t m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
-    Cursor                            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool                              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?
-    Vector2i                          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
-    bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
-    bool                              m_fullscreen;      ///< Is the window in fullscreen?
-    bool                              m_cursorGrabbed;   ///< Is the mouse cursor trapped?
-    bool                              m_windowMapped;    ///< Has the window been mapped by the window manager?
-    xcb_pixmap_t                      m_iconPixmap;      ///< The current icon pixmap if in use
-    xcb_pixmap_t                      m_iconMaskPixmap;  ///< The current icon mask pixmap if in use
+    ::Window   m_window;         ///< X identifier defining our window
+    ::Display* m_display;        ///< Pointer to the display
+    int        m_screen;         ///< Screen identifier
+    XIM        m_inputMethod;    ///< Input method linked to the X display
+    XIC        m_inputContext;   ///< Input context used to get unicode input in our window
+    bool       m_isExternal;     ///< Tell whether the window has been created externally or by SFML
+    int        m_oldVideoMode;   ///< Video mode in use before we switch to fullscreen
+    Cursor     m_hiddenCursor;   ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    bool       m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
+    Vector2i   m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    bool       m_useSizeHints;   ///< Is the size of the window fixed with size hints?
+    bool       m_fullscreen;     ///< Is the window in fullscreen?
+    bool       m_cursorGrabbed;  ///< Is the mouse cursor trapped?
+    bool       m_windowMapped;   ///< Has the window been mapped by the window manager?
+    Pixmap     m_iconPixmap;     ///< The current icon pixmap if in use
+    Pixmap     m_iconMaskPixmap; ///< The current icon mask pixmap if in use
+    ::Time     m_lastInputTime;  ///< Last time we received user input
 };
 
 } // namespace priv
