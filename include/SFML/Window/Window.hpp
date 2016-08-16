@@ -354,9 +354,7 @@ public:
     /// If set, grabs the mouse cursor inside this window's client
     /// area so it may no longer be moved outside its bounds.
     /// Note that grabbing is only active while the window has
-    /// focus and calling this function for fullscreen windows
-    /// won't have any effect (fullscreen windows always grab the
-    /// cursor).
+    /// focus.
     ///
     /// \param grabbed True to enable, false to disable
     ///
