@@ -482,8 +482,11 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
                 if (visual->visualid == visualInfo.visualid)
                 {
                     config = &configs[i];
+                    XFree(visual);
                     break;
                 }
+
+                XFree(visual);
             }
 
             if (config)
@@ -640,8 +643,11 @@ void GlxContext::createContext(GlxContext* shared)
             if (visual->visualid == visualInfo->visualid)
             {
                 config = &configs[i];
+                XFree(visual);
                 break;
             }
+
+            XFree(visual);
         }
 
         if (!config)
