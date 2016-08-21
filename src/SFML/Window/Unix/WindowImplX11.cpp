@@ -1003,7 +1003,7 @@ void WindowImplX11::setVisible(bool visible)
 
         // Before continuing, make sure the WM has
         // internally marked the window as viewable
-        while (!m_windowMapped)
+        while (!m_windowMapped && !m_isExternal)
             processEvents();
     }
     else
@@ -1023,7 +1023,7 @@ void WindowImplX11::setVisible(bool visible)
 
         // Before continuing, make sure the WM has
         // internally marked the window as unviewable
-        while (m_windowMapped)
+        while (m_windowMapped && !m_isExternal)
             processEvents();
     }
 }
