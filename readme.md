@@ -7,15 +7,15 @@ It is written in C++, and has bindings for various languages such as C, .Net, Ru
 Authors
 -------
 
-Laurent Gomila - main developer (laurent@sfml-dev.org)
-Marco Antognini - OS X developer (hiura@sfml-dev.org)
-Jonathan De Wachter - Android developer (dewachter.jonathan@gmail.com)
-Jan Haller (bromeon@sfml-dev.org)
-Stefan Schindler (tank@sfml-dev.org)
-Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
-binary1248 (binary1248@hotmail.com)
-Artur Moreira (artturmoreira@gmail.com)
-Mario Liebisch (mario@sfml-dev.org)
+* Laurent Gomila - main developer (laurent@sfml-dev.org)
+* Marco Antognini - OS X developer (hiura@sfml-dev.org)
+* Jonathan De Wachter - Android developer (dewachter.jonathan@gmail.com)
+* Jan Haller (bromeon@sfml-dev.org)
+* Stefan Schindler (tank@sfml-dev.org)
+* Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
+* binary1248 (binary1248@hotmail.com)
+* Artur Moreira (artturmoreira@gmail.com)
+* Mario Liebisch (mario@sfml-dev.org)
 
 Download
 --------
