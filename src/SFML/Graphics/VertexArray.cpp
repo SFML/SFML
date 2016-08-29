@@ -106,39 +106,36 @@ PrimitiveType VertexArray::getPrimitiveType() const
 ////////////////////////////////////////////////////////////
 FloatRect VertexArray::getBounds() const
 {
-    if (!m_vertices.empty())
+    if (m_vertices.empty())
     {
-        float left   = m_vertices[0].position.x;
-        float top    = m_vertices[0].position.y;
-        float right  = m_vertices[0].position.x;
-        float bottom = m_vertices[0].position.y;
-
-        for (std::size_t i = 1; i < m_vertices.size(); ++i)
-        {
-            Vector2f position = m_vertices[i].position;
-
-            // Update left and right
-            if (position.x < left)
-                left = position.x;
-            else if (position.x > right)
-                right = position.x;
-
-            // Update top and bottom
-            if (position.y < top)
-                top = position.y;
-            else if (position.y > bottom)
-                bottom = position.y;
-        }
-
-        return FloatRect(left, top, right - left, bottom - top);
-    }
-    else
-    {
-        // Array is empty
         return FloatRect();
     }
-}
 
+    float left   = m_vertices[0].position.x;
+    float top    = m_vertices[0].position.y;
+    float right  = m_vertices[0].position.x;
+    float bottom = m_vertices[0].position.y;
+
+    const std::size_t count = m_vertices.size();
+    for (std::size_t i = 1; i < count; ++i)
+    {
+        Vector2f position = m_vertices[i].position;
+
+        // Update left and right
+        if (position.x < left)
+            left = position.x;
+        else if (position.x > right)
+            right = position.x;
+
+        // Update top and bottom
+        if (position.y < top)
+            top = position.y;
+        else if (position.y > bottom)
+            bottom = position.y;
+    }
+
+    return FloatRect(left, top, right - left, bottom - top);
+}
 
 ////////////////////////////////////////////////////////////
 void VertexArray::draw(RenderTarget& target, RenderStates states) const
