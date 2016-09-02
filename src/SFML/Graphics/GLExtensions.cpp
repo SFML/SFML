@@ -29,6 +29,14 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
 
+#if !defined(GL_MAJOR_VERSION)
+    #define GL_MAJOR_VERSION 0x821B
+#endif
+
+#if !defined(GL_MINOR_VERSION)
+    #define GL_MINOR_VERSION 0x821C
+#endif
+
 
 namespace sf
 {
@@ -41,22 +49,41 @@ void ensureExtensionsInit()
     static bool initialized = false;
     if (!initialized)
     {
-        const Context* context = Context::getActiveContext();
-
-        if (!context)
-            return;
+        initialized = true;
 
         sfogl_LoadFunctions();
 
-        ContextSettings settings = context->getSettings();
+        // Retrieve the context version number
+        int majorVersion = 0;
+        int minorVersion = 0;
 
-        if ((settings.majorVersion < 1) || ((settings.majorVersion == 1) && (settings.minorVersion < 1)))
+        // Try the new way first
+        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+        glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+        if (glGetError() == GL_INVALID_ENUM)
+        {
+            // Try the old way
+            const GLubyte* version = glGetString(GL_VERSION);
+            if (version)
+            {
+                // The beginning of the returned string is "major.minor" (this is standard)
+                majorVersion = version[0] - '0';
+                minorVersion = version[2] - '0';
+            }
+            else
+            {
+                // Can't get the version number, assume 1.1
+                majorVersion = 1;
+                minorVersion = 1;
+            }
+        }
+
+        if ((majorVersion < 1) || ((majorVersion == 1) && (minorVersion < 1)))
         {
             err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << std::endl;
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
-
-        initialized = true;
     }
 #endif
 }

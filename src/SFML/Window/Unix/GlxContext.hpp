@@ -94,10 +94,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target for rendering
     ///
+    /// \param current Whether to make the context current or no longer current
+    ///
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent();
+    virtual bool makeCurrent(bool current);
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far

@@ -211,7 +211,7 @@ GlFunctionPointer GlxContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-bool GlxContext::makeCurrent()
+bool GlxContext::makeCurrent(bool current)
 {
     if (!m_context)
         return false;
@@ -222,13 +222,20 @@ bool GlxContext::makeCurrent()
 
     bool result = false;
 
-    if (m_pbuffer)
+    if (current)
     {
-        result = glXMakeContextCurrent(m_display, m_pbuffer, m_pbuffer, m_context);
+        if (m_pbuffer)
+        {
+            result = glXMakeContextCurrent(m_display, m_pbuffer, m_pbuffer, m_context);
+        }
+        else if (m_window)
+        {
+            result = glXMakeCurrent(m_display, m_window, m_context);
+        }
     }
-    else if (m_window)
+    else
     {
-        result = glXMakeCurrent(m_display, m_window, m_context);
+        result = glXMakeCurrent(m_display, None, NULL);
     }
 
 #if defined(GLX_DEBUGGING)
@@ -694,6 +701,15 @@ void GlxContext::createContext(GlxContext* shared)
             // On an error, glXCreateContextAttribsARB will return 0 anyway
             GlxErrorHandler handler(m_display);
 
+            if (toShare)
+            {
+                if (!glXMakeCurrent(m_display, None, NULL))
+                {
+                    err() << "Failed to deactivate shared context before sharing" << std::endl;
+                    return;
+                }
+            }
+
             // Create the context
             m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, &attributes[0]);
 
@@ -739,6 +755,15 @@ void GlxContext::createContext(GlxContext* shared)
 #if defined(GLX_DEBUGGING)
     GlxErrorHandler handler(m_display);
 #endif
+
+        if (toShare)
+        {
+            if (!glXMakeCurrent(m_display, None, NULL))
+            {
+                err() << "Failed to deactivate shared context before sharing" << std::endl;
+                return;
+            }
+        }
 
         // Create the context, using the target window's visual
         m_context = glXCreateContext(m_display, visualInfo, toShare, true);
