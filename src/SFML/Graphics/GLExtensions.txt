@@ -15,4 +15,5 @@ ARB_texture_non_power_of_two
 EXT_blend_equation_separate
 EXT_texture_sRGB
 EXT_framebuffer_object
+EXT_framebuffer_blit
 ARB_geometry_shader4
