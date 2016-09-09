@@ -149,9 +149,9 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::NumpadReturn: keysym = XK_KP_Enter;     break;
         case Keyboard::NumpadComma:  keysym = XK_KP_Separator; break;
         case Keyboard::NumLock:      keysym = XK_Num_Lock;     break;
-        case Keyboard::Caps_Lock:    keysym = XK_Caps_Lock;    break;
-        case Keyboard::Scroll_Lock:  keysym = XK_Scroll_Lock;  break;
-        case Keyboard::Print:        keysym = XK_Print;        break; 
+        case Keyboard::CapsLock:    keysym = XK_Caps_Lock;    break;
+        case Keyboard::ScrollLock:  keysym = XK_Scroll_Lock;  break;
+        case Keyboard::PrintScreen:        keysym = XK_Print;        break; 
         default:                     keysym = 0;               break;
     }
 
