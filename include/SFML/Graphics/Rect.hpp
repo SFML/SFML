@@ -145,20 +145,20 @@ public:
     ////////////////////////////////////////////////////////////
     bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
-	////////////////////////////////////////////////////////////
-	/// \brief Check the intersection with a circle. 
-	///
-	/// This overload returns True if the rectangle and the circle overlap with each other. 
-	///
-	/// \param center    Center of the circle
-	/// \param radius    Radius of the circle
-	///
-	/// \return True if rectangles overlap, false otherwise
-	///
-	/// \see contains
-	///
-	////////////////////////////////////////////////////////////
-	bool intersects(const T center, const T radius) const;
+    ////////////////////////////////////////////////////////////
+    /// \brief Check the intersection with a circle. 
+    ///
+    /// This overload returns True if the rectangle and the circle overlap with each other. 
+    ///
+    /// \param center    Center of the circle
+    /// \param radius    Radius of the circle
+    ///
+    /// \return True if rectangles overlap, false otherwise
+    ///
+    /// \see contains
+    ///
+    ////////////////////////////////////////////////////////////
+    bool intersects(const T center, const T radius) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

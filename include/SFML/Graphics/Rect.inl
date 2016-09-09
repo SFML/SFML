@@ -155,7 +155,7 @@ bool Rect<T>::intersects(const T center, const T radius) const
 	if (center < left)
 	{
 		T e = center - left;
-		d += e * e
+		d += e * e;
 	}
 
 	if (center > left + width)
@@ -167,13 +167,13 @@ bool Rect<T>::intersects(const T center, const T radius) const
 	if (center < top)
 	{
 		T e = center - top;
-		d += e * e
+		d += e * e;
 	}
 
 	if (center > top + height)
 	{
-		T e = center - top;
-		d += e * e
+		T e = center - (top + height);
+		d += e * e;
 	}
 
 	return d <= radius * radius;
