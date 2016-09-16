@@ -70,8 +70,7 @@
 /// \brief Check whether the cursor is grabbed or not
 ///
 /// The cursor is grabbed if the window is active (key) and
-/// either it is in fullscreen mode or the user wants to
-/// grab it.
+/// the user wants to grab it.
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)isCursorCurrentlyGrabbed;

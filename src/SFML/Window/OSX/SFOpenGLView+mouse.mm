@@ -230,7 +230,7 @@
 ////////////////////////////////////////////////////////
 -(BOOL)isCursorCurrentlyGrabbed
 {
-    return [[self window] isKeyWindow] && (m_cursorGrabbed || m_fullscreen);
+    return [[self window] isKeyWindow] && m_cursorGrabbed;
 }
 
 
