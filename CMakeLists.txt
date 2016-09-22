@@ -13,6 +13,9 @@ endmacro()
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
 
+# Suppress Cygwin legacy warning
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+
 # set Android specific options
 
 # define the minimum API level to be used
@@ -30,6 +33,8 @@ sfml_set_option(ANDROID_STL c++_shared STRING "Choose the STL implementation to 
 if(NOT ANDROID_ABI)
     set(ANDROID_ABI armeabi-v7a)
 endif()
+
+#end of Android specific options
 
 # project name
 project(SFML)
