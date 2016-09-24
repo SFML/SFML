@@ -399,37 +399,37 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
 {
     bool requestStop = false;
 
-    // Acquire audio data
+    // Acquire audio data, also address EOF and error cases if they occur
     Chunk data = {NULL, 0};
-    if (!onGetData(data))
+    for (Uint32 retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
     {
         // Mark the buffer as the last one (so that we know when to reset the playing position)
         m_endBuffers[bufferNum] = true;
 
         // Check if the stream must loop or stop
-        if (m_loop)
-        {
-            // Return to the beginning of the stream source
-            onSeek(Time::Zero);
-
-            // If we previously had no data, try to fill the buffer once again
-            if (!data.samples || (data.sampleCount == 0))
-            {
-                // If immediateLoop is specified, we have to immediately adjust the sample count
-                if (immediateLoop)
-                {
-                    // We just tried to begin preloading at EOF: reset the sample count
-                    m_samplesProcessed = 0;
-                    m_endBuffers[bufferNum] = false;
-                }
-                return fillAndPushBuffer(bufferNum);
-            }
-        }
-        else
+        if (!m_loop)
         {
             // Not looping: request stop
             requestStop = true;
+            break;
         }
+
+        // Return to the beginning of the stream source
+        onSeek(Time::Zero);
+
+        // If we got data, break and process it, else try to fill the buffer once again
+        if (data.samples && data.sampleCount)
+            break;
+
+        // If immediateLoop is specified, we have to immediately adjust the sample count
+        if (immediateLoop)
+        {
+            // We just tried to begin preloading at EOF: reset the sample count
+            m_samplesProcessed = 0;
+            m_endBuffers[bufferNum] = false;
+        }
+
+        // We're a looping sound that got no data, so we retry onGetData()
     }
 
     // Fill the buffer if some data was returned
@@ -443,6 +443,11 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
 
         // Push it into the sound queue
         alCheck(alSourceQueueBuffers(m_source, 1, &buffer));
+    }
+    else
+    {
+        // If we get here, we most likely ran out of retries
+        requestStop = true;
     }
 
     return requestStop;

@@ -282,7 +282,8 @@ private:
 
     enum
     {
-        BufferCount = 3 ///< Number of audio buffers used by the streaming loop
+        BufferCount = 3,    ///< Number of audio buffers used by the streaming loop
+        BufferRetries = 2   ///< Number of retries (excluding initial try) for onGetData()
     };
 
     ////////////////////////////////////////////////////////////
