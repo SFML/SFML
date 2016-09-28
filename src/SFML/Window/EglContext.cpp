@@ -31,6 +31,7 @@
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#include <memory>
 #include <mutex>
 #include <ostream>
 #ifdef SFML_SYSTEM_ANDROID
@@ -80,18 +81,27 @@ EGLDisplay getInitializedDisplay()
 ////////////////////////////////////////////////////////////
 void ensureInit()
 {
-    static bool initialized = false;
-    if (!initialized)
-    {
-        initialized = true;
+    static std::once_flag flag;
 
-        // We don't check the return value since the extension
-        // flags are cleared even if loading fails
-        gladLoaderLoadEGL(EGL_NO_DISPLAY);
+    std::call_once(flag,
+                   []()
+                   {
+                       if (!gladLoaderLoadEGL(EGL_NO_DISPLAY))
+                       {
+                           // At this point, the failure is unrecoverable
+                           // Dump a message to the console and let the application terminate
+                           sf::err() << "Failed to load EGL entry points" << std::endl;
 
-        // Continue loading with a display
-        gladLoaderLoadEGL(getInitializedDisplay());
-    }
+                           assert(false);
+
+                           return false;
+                       }
+
+                       // Continue loading with a display
+                       gladLoaderLoadEGL(getInitializedDisplay());
+
+                       return true;
+                   });
 }
 } // namespace EglContextImpl
 } // namespace
@@ -287,67 +297,100 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 {
     EglContextImpl::ensureInit();
 
-    // Set our video settings constraint
-    const EGLint attributes[] =
-        {EGL_BUFFER_SIZE,
-         static_cast<EGLint>(bitsPerPixel),
-         EGL_DEPTH_SIZE,
-         static_cast<EGLint>(settings.depthBits),
-         EGL_STENCIL_SIZE,
-         static_cast<EGLint>(settings.stencilBits),
-         EGL_SAMPLE_BUFFERS,
-         settings.antialiasingLevel ? 1 : 0,
-         EGL_SAMPLES,
-         static_cast<EGLint>(settings.antialiasingLevel),
-         EGL_SURFACE_TYPE,
-         EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-         EGL_RENDERABLE_TYPE,
-         EGL_OPENGL_ES_BIT,
-         EGL_NONE};
+    // Determine the number of available configs
+    EGLint configCount;
+    eglCheck(eglGetConfigs(display, nullptr, 0, &configCount));
 
-    EGLint    configCount;
-    EGLConfig configs[1];
+    // Retrieve the list of available configs
+    auto configs = std::make_unique<EGLConfig[]>(static_cast<std::size_t>(configCount));
 
-    // Ask EGL for the best config matching our video settings
-    eglCheck(eglChooseConfig(display, attributes, configs, 1, &configCount));
+    eglCheck(eglGetConfigs(display, configs.get(), configCount, &configCount));
 
-    // TODO: This should check EGL_CONFORMANT and pick the first conformant configuration.
+    // Evaluate all the returned configs, and pick the best one
+    int       bestScore = 0x7FFFFFFF;
+    EGLConfig bestConfig{};
 
-    return configs[0];
+    for (std::size_t i = 0; i < static_cast<std::size_t>(configCount); ++i)
+    {
+        // Check mandatory attributes
+        int surfaceType;
+        int renderableType;
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surfaceType));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderableType));
+        if (!(surfaceType & (EGL_WINDOW_BIT | EGL_PBUFFER_BIT)) || !(renderableType & EGL_OPENGL_ES_BIT))
+            continue;
+
+        // Extract the components of the current config
+        int red;
+        int green;
+        int blue;
+        int alpha;
+        int depth;
+        int stencil;
+        int multiSampling;
+        int samples;
+        int caveat;
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_RED_SIZE, &red));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_GREEN_SIZE, &green));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_BLUE_SIZE, &blue));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_ALPHA_SIZE, &alpha));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_DEPTH_SIZE, &depth));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_STENCIL_SIZE, &stencil));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_SAMPLE_BUFFERS, &multiSampling));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_SAMPLES, &samples));
+        eglCheck(eglGetConfigAttrib(display, configs[i], EGL_CONFIG_CAVEAT, &caveat));
+
+        // Evaluate the config
+        int color = red + green + blue + alpha;
+        int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, caveat == EGL_NONE, false);
+
+        // If it's better than the current best, make it the new best
+        if (score < bestScore)
+        {
+            bestScore  = score;
+            bestConfig = configs[i];
+        }
+    }
+
+    assert(bestScore < 0x7FFFFFFF);
+
+    return bestConfig;
 }
 
 
 ////////////////////////////////////////////////////////////
 void EglContext::updateSettings()
 {
+    m_settings.majorVersion      = 1;
+    m_settings.minorVersion      = 1;
+    m_settings.attributeFlags    = ContextSettings::Default;
+    m_settings.depthBits         = 0;
+    m_settings.stencilBits       = 0;
+    m_settings.antialiasingLevel = 0;
+
     EGLBoolean result = EGL_FALSE;
     EGLint     tmp    = 0;
 
     // Update the internal context settings with the current config
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp));
 
-    if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_DEPTH_SIZE" << std::endl;
-
-    m_settings.depthBits = static_cast<unsigned int>(tmp);
+    if (result != EGL_FALSE)
+        m_settings.depthBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
 
-    if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_STENCIL_SIZE" << std::endl;
+    if (result != EGL_FALSE)
+        m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
-    m_settings.stencilBits = static_cast<unsigned int>(tmp);
+    eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLE_BUFFERS, &tmp));
 
-    eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
+    if ((result != EGL_FALSE) && tmp)
+    {
+        eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
 
-    if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_SAMPLES" << std::endl;
-
-    m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
-
-    m_settings.majorVersion   = 1;
-    m_settings.minorVersion   = 1;
-    m_settings.attributeFlags = ContextSettings::Default;
+        if (result != EGL_FALSE)
+            m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
+    }
 }
 
 

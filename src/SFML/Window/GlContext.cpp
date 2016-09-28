@@ -275,8 +275,6 @@ std::vector<std::string> extensions;
 // Load our extensions vector with the supported extensions
 void loadExtensions()
 {
-    extensions.clear();
-
     auto glGetErrorFunc    = reinterpret_cast<glGetErrorFuncType>(sf::priv::GlContext::getFunction("glGetError"));
     auto glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(sf::priv::GlContext::getFunction("glGetIntegerv"));
     auto glGetStringFunc   = reinterpret_cast<glGetStringFuncType>(sf::priv::GlContext::getFunction("glGetString"));
@@ -290,21 +288,25 @@ void loadExtensions()
 
     auto glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
 
-    if (glGetErrorFunc() == GL_INVALID_ENUM || !glGetStringiFunc)
+    if (glGetErrorFunc() == GL_INVALID_ENUM || !majorVersion || !glGetStringiFunc)
     {
         // Try to load the < 3.0 way
         const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS));
-        assert(extensionString);
 
-        do
+        if (extensionString)
         {
-            const char* extension = extensionString;
+            extensions.clear();
 
-            while (*extensionString && (*extensionString != ' '))
-                ++extensionString;
+            do
+            {
+                const char* extension = extensionString;
 
-            extensions.emplace_back(extension, extensionString);
-        } while (*extensionString++);
+                while (*extensionString && (*extensionString != ' '))
+                    ++extensionString;
+
+                extensions.emplace_back(extension, extensionString);
+            } while (*extensionString++);
+        }
     }
     else
     {
@@ -314,10 +316,14 @@ void loadExtensions()
 
         if (numExtensions)
         {
+            extensions.clear();
+
             for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
             {
                 const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
-                extensions.emplace_back(extensionString);
+
+                if (extensionString)
+                    extensions.emplace_back(extensionString);
             }
         }
     }
@@ -807,7 +813,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
     glGetIntegervFunc(GL_MINOR_VERSION, &minorVersion);
 
-    if (glGetErrorFunc() != GL_INVALID_ENUM)
+    if ((glGetErrorFunc() != GL_INVALID_ENUM) && (majorVersion != 0))
     {
         m_settings.majorVersion = static_cast<unsigned int>(majorVersion);
         m_settings.minorVersion = static_cast<unsigned int>(minorVersion);
