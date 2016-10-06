@@ -98,7 +98,7 @@ RenderTarget::~RenderTarget()
 ////////////////////////////////////////////////////////////
 void RenderTarget::clear(const Color& color)
 {
-    if (activate(true))
+    if (setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(NULL);
@@ -214,7 +214,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         #define GL_QUADS 0
     #endif
 
-    if (activate(true))
+    if (setActive(true))
     {
         // First set the persistent OpenGL states if it's the very first call
         if (!m_cache.glStatesSet)
@@ -304,7 +304,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
 ////////////////////////////////////////////////////////////
 void RenderTarget::pushGLStates()
 {
-    if (activate(true))
+    if (setActive(true))
     {
         #ifdef SFML_DEBUG
             // make sure that the user didn't leave an unchecked OpenGL error
@@ -336,7 +336,7 @@ void RenderTarget::pushGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::popGLStates()
 {
-    if (activate(true))
+    if (setActive(true))
     {
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -358,7 +358,7 @@ void RenderTarget::resetGLStates()
     // Check here to make sure a context change does not happen after activate(true)
     bool shaderAvailable = Shader::isAvailable();
 
-    if (activate(true))
+    if (setActive(true))
     {
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();

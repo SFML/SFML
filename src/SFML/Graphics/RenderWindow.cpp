@@ -62,16 +62,16 @@ RenderWindow::~RenderWindow()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderWindow::activate(bool active)
+Vector2u RenderWindow::getSize() const
 {
-    return setActive(active);
+    return Window::getSize();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2u RenderWindow::getSize() const
+bool RenderWindow::setActive(bool active)
 {
-    return Window::getSize();
+    return Window::setActive(active);
 }
 
 
