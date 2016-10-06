@@ -205,19 +205,6 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Activate the target for rendering
-    ///
-    /// This function is called by the base class
-    /// everytime it's going to use OpenGL calls.
-    ///
-    /// \param active True to make the target active, false to deactivate it
-    ///
-    /// \return True if the function succeeded
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     priv::RenderTextureImpl* m_impl;    ///< Platform/hardware specific implementation

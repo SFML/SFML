@@ -63,6 +63,9 @@ int main()
         // mipmapping is purely optional in this example
         texture.generateMipmap();
 
+        // Make the window the active window for OpenGL calls
+        window.setActive(true);
+
         // Enable Z-buffer read and write
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
@@ -141,6 +144,9 @@ int main()
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
 
+        // Make the window no longer the active window for OpenGL calls
+        window.setActive(false);
+
         // Create a clock for measuring the time elapsed
         sf::Clock clock;
 
@@ -196,13 +202,24 @@ int main()
 
                 // Adjust the viewport when the window is resized
                 if (event.type == sf::Event::Resized)
+                {
+                    // Make the window the active window for OpenGL calls
+                    window.setActive(true);
+
                     glViewport(0, 0, event.size.width, event.size.height);
+
+                    // Make the window no longer the active window for OpenGL calls
+                    window.setActive(false);
+                }
             }
 
             // Draw the background
             window.pushGLStates();
             window.draw(background);
             window.popGLStates();
+
+            // Make the window the active window for OpenGL calls
+            window.setActive(true);
 
             // Clear the depth buffer
             glClear(GL_DEPTH_BUFFER_BIT);
@@ -221,6 +238,9 @@ int main()
 
             // Draw the cube
             glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            // Make the window no longer the active window for OpenGL calls
+            window.setActive(false);
 
             // Draw some text on top of our OpenGL object
             window.pushGLStates();
