@@ -49,6 +49,7 @@ m_buffers         (),
 m_channelCount    (0),
 m_sampleRate      (0),
 m_format          (0),
+m_loopOffset      (Time::Zero),
 m_loop            (false),
 m_samplesProcessed(0),
 m_endBuffers      ()
@@ -259,6 +260,19 @@ bool SoundStream::getLoop() const
     return m_loop;
 }
 
+////////////////////////////////////////////////////////////
+void SoundStream::setLoopOffset(Time offset)
+{
+    m_loopOffset = offset;
+}
+
+
+////////////////////////////////////////////////////////////
+Time SoundStream::getLoopOffset() const
+{
+    return m_loopOffset;
+}
+
 
 ////////////////////////////////////////////////////////////
 void SoundStream::streamData()
@@ -410,7 +424,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
         if (m_loop)
         {
             // Return to the beginning of the stream source
-            onSeek(Time::Zero);
+            onSeek(m_loopOffset);
 
             // If we previously had no data, try to fill the buffer once again
             if (!data.samples || (data.sampleCount == 0))
