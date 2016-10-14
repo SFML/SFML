@@ -131,9 +131,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamDecoder* m_decoder;      ///< FLAC decoder
-    ClientData           m_clientData;   ///< Structure passed to the decoder callbacks
-    unsigned int         m_channelCount; ///< number of channels of the sound file
+    FLAC__StreamDecoder* m_decoder;    ///< FLAC decoder
+    ClientData           m_clientData; ///< Structure passed to the decoder callbacks
 };
 
 } // namespace priv
