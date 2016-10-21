@@ -1,3 +1,51 @@
+SFML 2.4.1
+==========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.1
+
+General
+=======
+
+* [kFreeBSD] Define SFML_OS_FREEBSD when compiling for kFreeBSD (#1129)
+* [Window] Added some simple messaging when trying to build under Cygwin (#1153)
+
+
+Window
+======
+
+Bugfixes
+--------
+* Fixed stack overflow on GlContext creation with multiple threads (#989, #1002)
+* Adjusted mouse cursor grab documentation (#1133)
+* [iOS] Fixed orientation change not rescaling window size properly (#1049, #1050)
+* [Linux] Fixed fullscreen issue (#921, #1138)
+* [Linux] Switched from XCB back to Xlib for windowing (#1138)
+* [Linux] Fixed window icon not showing up on some distros (#1087, #1088)
+* [Linux] Fixed an issue where GNOME flags window unresponsive (#1089, #1138)
+* [Linux] Fixed leak of XVisualInfo objects during GlxContext creation (#1135)
+* [Linux] Fixed possible hang when setting visibility if external window sources (#1136)
+* [OS X] Fixed inconsistency between doc and impl on OS X for the grab feature (#1133, #1148, #1150)
+* [Windows] Fixed context memory leaks (#1143, #1002)
+
+
+Graphics
+========
+
+Bugfixes
+--------
+* Adjusted uniform error message (#1131)
+* Clarify documentation on Rect::contains function bounds (#1151)
+
+
+Network
+=======
+
+Bugfixes
+--------
+* Fixed a typo in comment for void unbind() (#1121)
+
+
+
 SFML 2.4.0
 ==========
 
@@ -115,8 +163,6 @@ Bugfixes
 
 
 
-
-
 SFML 2.3.2
 ==========
 
@@ -150,6 +196,7 @@ Bugfixes
 * Fixed clear bug on RenderTextures (#915)
 * Fixed image file extension detection (#929, #930, #931)
 * Secure function against random data return (#935, #942)
+
 
 
 SFML 2.3.1
