@@ -73,6 +73,13 @@ GlResource::~GlResource()
 
 
 ////////////////////////////////////////////////////////////
+void GlResource::ensureGlContext()
+{
+    // Empty function for ABI compatibility, use acquireTransientContext instead
+}
+
+
+////////////////////////////////////////////////////////////
 GlResource::TransientContextLock::TransientContextLock() :
 m_context(0)
 {
