@@ -219,11 +219,8 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
     target.draw(m_vertices, states);
 
     // Render the outline
-    if (m_outlineThickness != 0)
-    {
-        states.texture = NULL;
-        target.draw(m_outlineVertices, states);
-    }
+    states.texture = NULL;
+    target.draw(m_outlineVertices, states);
 }
 
 
@@ -251,6 +248,14 @@ void Shape::updateTexCoords()
 ////////////////////////////////////////////////////////////
 void Shape::updateOutline()
 {
+    // Return if there is no outline to build.
+    if (m_outlineThickness == 0.f)
+    {
+        m_outlineVertices.clear();
+        m_bounds = m_insideBounds;
+        return;
+    }
+
     std::size_t count = m_vertices.getVertexCount() - 2;
     m_outlineVertices.resize((count + 1) * 2);
 
