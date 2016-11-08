@@ -414,7 +414,7 @@ private:
 /// sf::Text text2;
 /// text2.setFont(font);
 /// text2.setCharacterSize(50);
-/// text1.setStyle(sf::Text::Italic);
+/// text2.setStyle(sf::Text::Italic);
 /// \endcode
 ///
 /// Apart from loading font files, and passing them to instances

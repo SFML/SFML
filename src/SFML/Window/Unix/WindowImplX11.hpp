@@ -301,18 +301,7 @@ private:
     /// \return True if the event was processed, false if it was discarded
     ///
     ////////////////////////////////////////////////////////////
-    bool processEvent(xcb_generic_event_t* windowEvent);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Pass an incoming event to another window
-    ///
-    /// \param windowEvent Event which is being processed
-    /// \param window      Window to pass to
-    ///
-    /// \return True if the event was passed to another window, false if it is destined for the current window
-    ///
-    ////////////////////////////////////////////////////////////
-    bool passEvent(xcb_generic_event_t* windowEvent, xcb_window_t window);
+    bool processEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -323,7 +312,6 @@ private:
     xcb_screen_t*                     m_screen;          ///< Screen identifier
     XIM                               m_inputMethod;     ///< Input method linked to the X display
     XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
-    std::deque<xcb_generic_event_t*>  m_xcbEvents;       ///< Events that were received in another window's loop
     bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
     xcb_randr_get_screen_info_reply_t m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
     Cursor                            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one

@@ -32,8 +32,8 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
+#include <cassert>
 #include <iostream>
-
 
 namespace
 {
@@ -53,6 +53,10 @@ namespace
             case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
             case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
         }
+
+        sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+        assert(false);
+        return GL_ZERO;
     }
 
 
@@ -64,6 +68,10 @@ namespace
             case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
             case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
         }
+
+        sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
+        assert(false);
+        return GLEXT_GL_FUNC_ADD;
     }
 }
 
@@ -280,6 +288,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         // Unbind the shader, if any
         if (states.shader)
             applyShader(NULL);
+
+        // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
+        // This prevents a bug where some drivers do not clear RenderTextures properly.
+        if (states.texture && states.texture->m_fboAttachment)
+            applyTexture(NULL);
 
         // Update the cache
         m_cache.useVertexCache = useVertexCache;
