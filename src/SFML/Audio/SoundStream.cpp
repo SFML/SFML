@@ -51,7 +51,7 @@ m_sampleRate      (0),
 m_format          (0),
 m_loop            (false),
 m_samplesProcessed(0),
-m_endBuffers      ()
+m_bufferSeeks     ()
 {
 
 }
@@ -167,9 +167,6 @@ void SoundStream::stop()
 
     // Move to the beginning
     onSeek(Time::Zero);
-
-    // Reset the playing position
-    m_samplesProcessed = 0;
 }
 
 
@@ -261,6 +258,14 @@ bool SoundStream::getLoop() const
 
 
 ////////////////////////////////////////////////////////////
+Int64 SoundStream::onLoop()
+{
+    onSeek(Time::Zero);
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
 void SoundStream::streamData()
 {
     bool requestStop = false;
@@ -279,7 +284,7 @@ void SoundStream::streamData()
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));
     for (int i = 0; i < BufferCount; ++i)
-        m_endBuffers[i] = false;
+        m_bufferSeeks[i] = NoLoop;
 
     // Fill the queue
     requestStop = fillQueue();
@@ -339,11 +344,11 @@ void SoundStream::streamData()
                 }
 
             // Retrieve its size and add it to the samples count
-            if (m_endBuffers[bufferNum])
+            if (m_bufferSeeks[bufferNum] != NoLoop)
             {
-                // This was the last buffer: reset the sample count
-                m_samplesProcessed = 0;
-                m_endBuffers[bufferNum] = false;
+                // This was the last buffer before EOF or Loop End: reset the sample count
+                m_samplesProcessed = m_bufferSeeks[bufferNum];
+                m_bufferSeeks[bufferNum] = NoLoop;
             }
             else
             {
@@ -388,6 +393,9 @@ void SoundStream::streamData()
     // Dequeue any buffer left in the queue
     clearQueue();
 
+    // Reset the playing position
+    m_samplesProcessed = 0;
+
     // Delete the buffers
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
     alCheck(alDeleteBuffers(BufferCount, m_buffers));
@@ -403,30 +411,30 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
     Chunk data = {NULL, 0};
     for (Uint32 retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
     {
-        // Mark the buffer as the last one (so that we know when to reset the playing position)
-        m_endBuffers[bufferNum] = true;
-
         // Check if the stream must loop or stop
         if (!m_loop)
         {
-            // Not looping: request stop
+            // Not looping: Mark this buffer as ending with 0 and request stop
+            if (data.samples != NULL && data.sampleCount != 0)
+                m_bufferSeeks[bufferNum] = 0;
             requestStop = true;
             break;
         }
 
-        // Return to the beginning of the stream source
-        onSeek(Time::Zero);
+        // Return to the beginning or loop-start of the stream source using onLoop(), and store the result in the buffer seek array
+        // This marks the buffer as the "last" one (so that we know where to reset the playing position)
+        m_bufferSeeks[bufferNum] = onLoop();
 
         // If we got data, break and process it, else try to fill the buffer once again
-        if (data.samples && data.sampleCount)
+        if (data.samples != NULL && data.sampleCount != 0)
             break;
 
         // If immediateLoop is specified, we have to immediately adjust the sample count
-        if (immediateLoop)
+        if (immediateLoop && (m_bufferSeeks[bufferNum] != NoLoop))
         {
-            // We just tried to begin preloading at EOF: reset the sample count
-            m_samplesProcessed = 0;
-            m_endBuffers[bufferNum] = false;
+            // We just tried to begin preloading at EOF or Loop End: reset the sample count
+            m_samplesProcessed = m_bufferSeeks[bufferNum];
+            m_bufferSeeks[bufferNum] = NoLoop;
         }
 
         // We're a looping sound that got no data, so we retry onGetData()
