@@ -777,10 +777,10 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     Uint8* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        iconPixels[8 + i * 4 + 0] = pixels[i * 4 + 2];
-        iconPixels[8 + i * 4 + 1] = pixels[i * 4 + 1];
-        iconPixels[8 + i * 4 + 2] = pixels[i * 4 + 0];
-        iconPixels[8 + i * 4 + 3] = pixels[i * 4 + 3];
+        iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        iconPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        iconPixels[i * 4 + 3] = pixels[i * 4 + 3];
     }
 
     // Create the icon pixmap
@@ -835,17 +835,19 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
-    std::vector<Uint8> icccmIconPixels(8 + width * height * 4, 0);
+    std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
+    unsigned long* ptr = &icccmIconPixels[0];
+
+    *ptr++ = width;
+    *ptr++ = height;
+
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        icccmIconPixels[8 + i * 4 + 0] = pixels[i * 4 + 2];
-        icccmIconPixels[8 + i * 4 + 1] = pixels[i * 4 + 1];
-        icccmIconPixels[8 + i * 4 + 2] = pixels[i * 4 + 0];
-        icccmIconPixels[8 + i * 4 + 3] = pixels[i * 4 + 3];
+        *ptr++ = (pixels[i * 4 + 2] << 0 ) |
+                 (pixels[i * 4 + 1] << 8 ) |
+                 (pixels[i * 4 + 0] << 16) |
+                 (pixels[i * 4 + 3] << 24);
     }
-
-    reinterpret_cast<Uint32*>(&icccmIconPixels[0])[0] = width;
-    reinterpret_cast<Uint32*>(&icccmIconPixels[0])[1] = height;
 
     Atom netWmIcon = getAtom("_NET_WM_ICON");
 
@@ -1147,7 +1149,7 @@ void WindowImplX11::switchToFullscreen()
 
         if (netWmBypassCompositor)
         {
-            static const Uint32 bypassCompositor = 1;
+            static const unsigned long bypassCompositor = 1;
 
             XChangeProperty(m_display,
                             m_window,
@@ -1226,7 +1228,7 @@ void WindowImplX11::setProtocols()
 
     if (netWmPing && netWmPid)
     {
-        uint32_t pid = getpid();
+        const long pid = getpid();
 
         XChangeProperty(m_display,
                         m_window,
