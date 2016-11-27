@@ -75,9 +75,6 @@ protected:
         ///
         ////////////////////////////////////////////////////////////
         ~TransientContextLock();
-
-    private:
-        Context* m_context; ///< Temporary context, in case we needed to create one
     };
 };
 

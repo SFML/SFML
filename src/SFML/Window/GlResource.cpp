@@ -27,17 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
-
-
-namespace
-{
-    // OpenGL resources counter and its mutex
-    unsigned int count = 0;
-    sf::Mutex mutex;
-}
 
 
 namespace sf
@@ -45,45 +34,20 @@ namespace sf
 ////////////////////////////////////////////////////////////
 GlResource::GlResource()
 {
-    // Protect from concurrent access
-    Lock lock(mutex);
-
-    // If this is the very first resource, trigger the global context initialization
-    if (count == 0)
-        priv::GlContext::globalInit();
-
-    // Increment the resources counter
-    count++;
+    priv::GlContext::initResource();
 }
 
 
 ////////////////////////////////////////////////////////////
 GlResource::~GlResource()
 {
-    // Protect from concurrent access
-    Lock lock(mutex);
-
-    // Decrement the resources counter
-    count--;
-
-    // If there's no more resource alive, we can trigger the global context cleanup
-    if (count == 0)
-        priv::GlContext::globalCleanup();
+    priv::GlContext::cleanupResource();
 }
 
 
 ////////////////////////////////////////////////////////////
-GlResource::TransientContextLock::TransientContextLock() :
-m_context(0)
+GlResource::TransientContextLock::TransientContextLock()
 {
-    Lock lock(mutex);
-
-    if (count == 0)
-    {
-        m_context = new Context;
-        return;
-    }
-
     priv::GlContext::acquireTransientContext();
 }
 
@@ -91,12 +55,6 @@ m_context(0)
 ////////////////////////////////////////////////////////////
 GlResource::TransientContextLock::~TransientContextLock()
 {
-    if (m_context)
-    {
-        delete m_context;
-        return;
-    }
-
     priv::GlContext::releaseTransientContext();
 }
 

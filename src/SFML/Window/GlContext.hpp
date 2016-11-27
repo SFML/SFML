@@ -49,28 +49,25 @@ class GlContext : NonCopyable
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global initialization
+    /// \brief Perform resource initialization
     ///
-    /// This function is called once, before the very first OpenGL
-    /// resource is created. It makes sure that everything is ready
-    /// for contexts to work properly.
-    /// Note: this function doesn't need to be thread-safe, as it
-    /// can be called only once.
+    /// This function is called every time an OpenGL resource is
+    /// created. When the first resource is initialized, it makes
+    /// sure that everything is ready for contexts to work properly.
     ///
     ////////////////////////////////////////////////////////////
-    static void globalInit();
+    static void initResource();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global cleanup
+    /// \brief Perform resource cleanup
     ///
-    /// This function is called after the very last OpenGL resource
-    /// is destroyed. It makes sure that everything that was
-    /// created by initialize() is properly released.
-    /// Note: this function doesn't need to be thread-safe, as it
-    /// can be called only once.
+    /// This function is called every time an OpenGL resource is
+    /// destroyed. When the last resource is destroyed, it makes
+    /// sure that everything that was created by initResource()
+    /// is properly released.
     ///
     ////////////////////////////////////////////////////////////
-    static void globalCleanup();
+    static void cleanupResource();
 
     ////////////////////////////////////////////////////////////
     /// \brief Acquires a context for short-term use on the current thread
