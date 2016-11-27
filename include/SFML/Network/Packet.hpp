@@ -113,6 +113,19 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     std::size_t getDataSize() const;
+    
+    ////////////////////////////////////////////////////////////
+    /// \Get current position of readed data in the packet
+    ///
+    /// This function returns the number of bytes readeed in
+    /// packet.
+    ///
+    /// \return Readed Data size, in bytes
+    ///
+    /// \see getData, getDataSize
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t getCurrentDataPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the

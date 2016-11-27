@@ -87,6 +87,13 @@ std::size_t Packet::getDataSize() const
 
 
 ////////////////////////////////////////////////////////////
+std::size_t Packet::getCurrentDataPosition() const
+{
+    return m_readPos;
+}
+
+
+////////////////////////////////////////////////////////////
 bool Packet::endOfPacket() const
 {
     return m_readPos >= m_data.size();
