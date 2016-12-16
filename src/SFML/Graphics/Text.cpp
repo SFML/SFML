@@ -444,12 +444,15 @@ void Text::ensureGeometryUpdate() const
     {
         Uint32 curChar = m_string[i];
 
+        // Skip the \r char to avoid weird graphical issues
+        if (curChar == '\r')
+            continue;
+
         // Apply the kerning offset
         x += m_font->getKerning(prevChar, curChar, m_characterSize);
-        prevChar = curChar;
 
         // If we're using the underlined style and there's a new line, draw a line
-        if (isUnderlined && (curChar == L'\n'))
+        if (isUnderlined && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
@@ -458,13 +461,15 @@ void Text::ensureGeometryUpdate() const
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
-        if (isStrikeThrough && (curChar == L'\n'))
+        if (isStrikeThrough && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
                 addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
         }
+
+        prevChar = curChar;
 
         // Handle special characters
         if ((curChar == L' ') || (curChar == L'\n') || (curChar == L'\t'))
