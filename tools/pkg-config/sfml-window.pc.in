@@ -9,4 +9,6 @@ URL: http://www.sfml-dev.org
 Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
 Requires: sfml-system
 Libs: -L${libdir} -lsfml-window
+# gl may not be in pkg-config
+Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
 Cflags: -I${includedir}

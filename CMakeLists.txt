@@ -16,6 +16,9 @@ sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug
 # Suppress Cygwin legacy warning
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
+# Suppress Mac OS X RPATH warnings and adopt new related behaviors
+cmake_policy(SET CMP0042 NEW)
+
 # set Android specific options
 
 # define the minimum API level to be used
@@ -130,6 +133,39 @@ if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
 
+# allow not using bundled dependencies with a switch
+# (except for stb_image)
+# yes this is horrible, but GLOB_RECURSE sucks
+sfml_set_option(SFML_USE_SYSTEM_DEPS FALSE BOOL "TRUE to use system dependencies, FALSE to use the bundled ones.")
+if(SFML_USE_SYSTEM_DEPS)
+    if(SFML_INSTALL_XCODE_TEMPLATES)
+        message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
+    endif()
+
+    file(GLOB_RECURSE DEP_LIBS    "${CMAKE_SOURCE_DIR}/extlibs/libs*/*")
+    file(GLOB_RECURSE DEP_BINS    "${CMAKE_SOURCE_DIR}/extlibs/bin*/*")
+    file(GLOB_RECURSE DEP_HEADERS "${CMAKE_SOURCE_DIR}/extlibs/headers/*")
+
+    foreach(DEP_FILE ${DEP_LIBS} ${DEP_BINS} ${DEP_HEADERS})
+        get_filename_component(DEP_DIR ${DEP_FILE} PATH)
+
+        if(NOT DEP_DIR MATCHES "/stb_image(/|$)")
+            set(CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH} ${DEP_DIR})
+        endif()
+
+        get_filename_component(DEP_PARENT_DIR ${DEP_DIR} PATH)
+        while(NOT DEP_PARENT_DIR STREQUAL "${CMAKE_SOURCE_DIR}/extlibs")
+            if(NOT DEP_DIR MATCHES "/stb_image(/|$)")
+                set(CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH} ${DEP_PARENT_DIR})
+            endif()
+
+            get_filename_component(DEP_PARENT_DIR ${DEP_PARENT_DIR} PATH)
+        endwhile()
+    endforeach()
+
+    list(REMOVE_DUPLICATES CMAKE_IGNORE_PATH)
+endif()
+
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
@@ -202,30 +238,6 @@ if(SFML_OS_MACOSX)
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
 
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    set(PKGCONFIG_DIR lib${LIB_SUFFIX}/pkgconfig)
-    if(SFML_OS_FREEBSD)
-        set(PKGCONFIG_DIR libdata/pkgconfig)
-    endif()
-    if(BUILD_SHARED_LIBS)
-        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
-        if(SFML_INSTALL_PKGCONFIG_FILES)
-            foreach(sfml_module IN ITEMS all system window graphics audio network)
-                CONFIGURE_FILE(
-                    "tools/pkg-config/sfml-${sfml_module}.pc.in"
-                    "tools/pkg-config/sfml-${sfml_module}.pc"
-                    @ONLY)
-                INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-                    DESTINATION "${CMAKE_INSTALL_PREFIX}/${PKGCONFIG_DIR}")
-            endforeach()
-        endif()
-    else()
-        if(SFML_INSTALL_PKGCONFIG_FILES)
-            message(WARNING "No pkg-config files are provided for the static SFML libraries (SFML_INSTALL_PKGCONFIG_FILES will be ignored).")
-        endif()
-    endif()
-endif()
-
 # enable project folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
@@ -237,6 +249,19 @@ if(SFML_BUILD_EXAMPLES)
 endif()
 if(SFML_BUILD_DOC)
     add_subdirectory(doc)
+endif()
+
+sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+
+if(SFML_OS_SUPPORTS_PKGCONFIG OR SFML_INSTALL_PKGCONFIG_FILES)
+    foreach(sfml_module IN ITEMS all system window graphics audio network)
+        CONFIGURE_FILE(
+            "tools/pkg-config/sfml-${sfml_module}.pc.in"
+            "tools/pkg-config/sfml-${sfml_module}.pc"
+            @ONLY)
+        INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+            DESTINATION "${CMAKE_INSTALL_PREFIX}/${SFML_OS_PKGCONFIG_DIR}")
+    endforeach()
 endif()
 
 # setup the install rules

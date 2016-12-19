@@ -73,6 +73,19 @@ else()
     return()
 endif()
 
+# check if OS or package system supports pkg-config
+# this could be e.g. macports on mac or msys2 on windows etc.
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_EXECUTABLE)
+    if(EXISTS "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
+        set(SFML_OS_SUPPORTS_PKGCONFIG ON)
+        set(SFML_OS_PKGCONFIG_DIR "/lib${LIB_SUFFIX}/pkgconfig")
+    elseif(EXISTS "${CMAKE_INSTALL_PREFIX}/libdata/pkgconfig")
+        set(SFML_OS_SUPPORTS_PKGCONFIG ON)
+        set(SFML_OS_PKGCONFIG_DIR "/libdata/pkgconfig")
+    endif()
+endif()
+
 # detect the compiler and its version
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
