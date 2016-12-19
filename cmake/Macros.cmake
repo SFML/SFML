@@ -105,9 +105,17 @@ macro(sfml_add_library target)
         endif()
 
         # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
-        set_target_properties(${target} PROPERTIES
-                              BUILD_WITH_INSTALL_RPATH 1
-                              INSTALL_NAME_DIR "@rpath")
+        # but only if cmake rpath options aren't set
+        if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH AND NOT CMAKE_INSTALL_RPATH AND NOT CMAKE_INSTALL_RPATH_USE_LINK_PATH AND NOT CMAKE_INSTALL_NAME_DIR)
+            if(CMAKE_SKIP_BUILD_RPATH)
+                set_target_properties(${target} PROPERTIES
+                                      INSTALL_NAME_DIR "@rpath")
+            else()
+                set_target_properties(${target} PROPERTIES
+                                      BUILD_WITH_INSTALL_RPATH 1
+                                      INSTALL_NAME_DIR "@rpath")
+            endif()
+        endif()
     endif()
 
     # enable automatic reference counting on iOS
