@@ -395,8 +395,16 @@ void Text::ensureGeometryUpdate() const
         // Apply the kerning offset
         x += m_font->getKerning(prevChar, curChar, m_characterSize);
 
+		// If we use '\r\n' as a new line character skip this loop cycle now, without updating it's V space and it's bound, since this was taken care in the previous loop cycle
+		if (curChar == '\n' && prevChar == '\r')
+		{
+			prevChar = curChar;
+
+			continue;
+		}
+
         // If we're using the underlined style and there's a new line, draw a line
-        if (underlined && (curChar == L'\n') && (prevChar == L'\n'))
+		if (underlined && ((curChar == L'\n' || curChar == L'\r') && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
@@ -405,7 +413,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
-        if (strikeThrough && (curChar == L'\n') && (prevChar == L'\n'))
+		if (strikeThrough && ((curChar == L'\n' || curChar == L'\r') && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
