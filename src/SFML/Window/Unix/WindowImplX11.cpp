@@ -75,6 +75,11 @@ namespace
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
+        if(event->type == GenericEvent)
+        {
+            const XIDeviceEvent *deviceEvent = (const XIDeviceEvent *) event->xcookie.data;
+            return deviceEvent->event == reinterpret_cast< ::Window >(userData);
+        }
         return event->xany.window == reinterpret_cast< ::Window >(userData);
     }
 
@@ -407,7 +412,6 @@ m_fullscreen     (false)
     }
 }
 
-
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window         (0),
@@ -542,6 +546,26 @@ m_fullscreen     ((style & Style::Fullscreen) != 0)
         setPosition(Vector2i(0, 0));
         setVideoMode(mode);
         switchToFullscreen();
+    }
+
+    int event;
+    int error;
+    if (XQueryExtension(m_display, "XInputExtension", &m_xiOpcode, &event, &error))
+    {
+        // XInputExtension available
+        XIEventMask eventMask;
+
+        eventMask.deviceid = XIAllMasterDevices;
+        eventMask.mask_len = XIMaskLen(XI_LASTEVENT);
+        eventMask.mask = (unsigned char*) calloc(eventMask.mask_len, sizeof(char));
+
+        // Events we want to listen for
+        XISetMask(eventMask.mask, XI_TouchBegin);
+        XISetMask(eventMask.mask, XI_TouchUpdate);
+        XISetMask(eventMask.mask, XI_TouchEnd);
+
+        // Register events on the window
+        XISelectEvents(m_display, m_window, &eventMask, 1);
     }
 }
 
@@ -1602,377 +1626,437 @@ void WindowImplX11::cleanup()
     setMouseCursorVisible(true);
 }
 
+Event WindowImplX11::deviceEventToTouchEvent(const XIDeviceEvent* deviceEvent, Event::EventType type) const
+{
+    Event event;
+    event.touch.finger = deviceEvent->detail;
+    event.touch.x = deviceEvent->event_x;
+    event.touch.y = deviceEvent->event_y;
+    event.type = type;
+    return event;
+}
+
+bool WindowImplX11::processXI2Event(XGenericEventCookie* cookie)
+{
+    if (cookie->extension == m_xiOpcode)
+    {
+        switch (cookie->evtype)
+        {
+            case XI_TouchBegin:
+            {
+                XIDeviceEvent* xev = reinterpret_cast<XIDeviceEvent*>(cookie->data);
+                Event event = deviceEventToTouchEvent(xev, Event::TouchBegan);
+                pushEvent(event);
+                break; 
+            }
+            case XI_TouchUpdate:
+            {
+                XIDeviceEvent* xev = reinterpret_cast<XIDeviceEvent*>(cookie->data);
+                Event event = deviceEventToTouchEvent(xev, Event::TouchMoved);
+                pushEvent(event);
+                break;
+            }
+            case XI_TouchEnd:
+            {
+                XIDeviceEvent* xev = reinterpret_cast<XIDeviceEvent*>(cookie->data);
+                Event event = deviceEventToTouchEvent(xev, Event::TouchEnded);
+                pushEvent(event);
+                break;
+            }
+            default:
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
 
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(XEvent windowEvent)
 {
-    // This function implements a workaround to properly discard
-    // repeated key events when necessary. The problem is that the
-    // system's key events policy doesn't match SFML's one: X server will generate
-    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
-    // SFML only wants repeated KeyPress events. Thus, we have to:
-    // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
-    // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
-
-    // Detect repeated key events
-    // (code shamelessly taken from SDL)
-    if (windowEvent.type == KeyRelease)
+    if(windowEvent.type == GenericEvent)
     {
-        // Check if there's a matching KeyPress event in the queue
-        XEvent nextEvent;
-        if (XPending(m_display))
+        bool eventProcessed = false;
+        XGenericEventCookie* cookie = &windowEvent.xcookie;
+        if(XGetEventData(m_display, cookie))
         {
-            // Grab it but don't remove it from the queue, it still needs to be processed :)
-            XPeekEvent(m_display, &nextEvent);
-            if (nextEvent.type == KeyPress)
-            {
-                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
-                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
-                {
-                    // If we don't want repeated events, remove the next KeyPress from the queue
-                    if (!m_keyRepeat)
-                        XNextEvent(m_display, &nextEvent);
+            eventProcessed = processXI2Event(cookie);
+        }
+        XFreeEventData(m_display, cookie);
+        return eventProcessed;
+    }
+    else
+    {
+        // This function implements a workaround to properly discard
+        // repeated key events when necessary. The problem is that the
+        // system's key events policy doesn't match SFML's one: X server will generate
+        // both repeated KeyPress and KeyRelease events when maintaining a key down, while
+        // SFML only wants repeated KeyPress events. Thus, we have to:
+        // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
+        // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
-                    // This KeyRelease is a repeated event and we don't want it
-                    return false;
+        // Detect repeated key events
+        // (code shamelessly taken from SDL)
+        if (windowEvent.type == KeyRelease)
+        {
+            // Check if there's a matching KeyPress event in the queue
+            XEvent nextEvent;
+            if (XPending(m_display))
+            {
+                // Grab it but don't remove it from the queue, it still needs to be processed :)
+                XPeekEvent(m_display, &nextEvent);
+                if (nextEvent.type == KeyPress)
+                {
+                    // Check if it is a duplicated event (same timestamp as the KeyRelease event)
+                    if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                        (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                    {
+                        // If we don't want repeated events, remove the next KeyPress from the queue
+                        if (!m_keyRepeat)
+                            XNextEvent(m_display, &nextEvent);
+
+                        // This KeyRelease is a repeated event and we don't want it
+                        return false;
+                    }
                 }
             }
         }
-    }
 
-    // Convert the X11 event to a sf::Event
-    switch (windowEvent.type)
-    {
-        // Destroy event
-        case DestroyNotify:
+        // Convert the X11 event to a sf::Event
+        switch (windowEvent.type)
         {
-            // The window is about to be destroyed: we must cleanup resources
-            cleanup();
-            break;
-        }
-
-        // Gain focus event
-        case FocusIn:
-        {
-            // Update the input context
-            if (m_inputContext)
-                XSetICFocus(m_inputContext);
-
-            Event event;
-            event.type = Event::GainedFocus;
-            pushEvent(event);
-
-            // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-            ScopedXcbPtr<xcb_get_property_reply_t> hintsReply(xcb_get_property_reply(
-                m_connection,
-                xcb_get_property(m_connection, 0, m_window, XCB_ATOM_WM_HINTS, XCB_ATOM_WM_HINTS, 0, 9),
-                &error
-            ));
-
-            if (error || !hintsReply)
+            // Destroy event
+            case DestroyNotify:
             {
-                err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                // The window is about to be destroyed: we must cleanup resources
+                cleanup();
                 break;
             }
 
-            WMHints* hints = reinterpret_cast<WMHints*>(xcb_get_property_value(hintsReply.get()));
-
-            if (!hints)
+            // Gain focus event
+            case FocusIn:
             {
-                err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
-                break;
-            }
+                // Update the input context
+                if (m_inputContext)
+                    XSetICFocus(m_inputContext);
 
-            // Remove urgency (notification) flag from hints
-            hints->flags &= ~(1 << 8);
-
-            setWMHints(*hints);
-
-            break;
-        }
-
-        // Lost focus event
-        case FocusOut:
-        {
-            // Update the input context
-            if (m_inputContext)
-                XUnsetICFocus(m_inputContext);
-
-            Event event;
-            event.type = Event::LostFocus;
-            pushEvent(event);
-            break;
-        }
-
-        // Resize event
-        case ConfigureNotify:
-        {
-            // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
-            if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
-            {
                 Event event;
-                event.type        = Event::Resized;
-                event.size.width  = windowEvent.xconfigure.width;
-                event.size.height = windowEvent.xconfigure.height;
+                event.type = Event::GainedFocus;
                 pushEvent(event);
 
-                m_previousSize.x = windowEvent.xconfigure.width;
-                m_previousSize.y = windowEvent.xconfigure.height;
-            }
-            break;
-        }
+                // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
+                ScopedXcbPtr<xcb_generic_error_t> error(NULL);
 
-        // Close event
-        case ClientMessage:
-        {
-            static xcb_atom_t wmProtocols = getAtom("WM_PROTOCOLS");
+                ScopedXcbPtr<xcb_get_property_reply_t> hintsReply(xcb_get_property_reply(
+                    m_connection,
+                    xcb_get_property(m_connection, 0, m_window, XCB_ATOM_WM_HINTS, XCB_ATOM_WM_HINTS, 0, 9),
+                    &error
+                ));
 
-            // Handle window manager protocol messages we support
-            if (windowEvent.xclient.message_type == wmProtocols)
-            {
-                static xcb_atom_t wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
-                static xcb_atom_t netWmPing = ewmhSupported() ? getAtom("_NET_WM_PING", true) : XCB_ATOM_NONE;
-
-                if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
+                if (error || !hintsReply)
                 {
-                    // Handle the WM_DELETE_WINDOW message
-                    Event event;
-                    event.type = Event::Closed;
-                    pushEvent(event);
+                    err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                    break;
                 }
-                else if (netWmPing && (windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
+
+                WMHints* hints = reinterpret_cast<WMHints*>(xcb_get_property_value(hintsReply.get()));
+
+                if (!hints)
                 {
-                    // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
-                    windowEvent.xclient.window = XCBDefaultRootWindow(m_connection);
-
-                    XSendEvent(m_display, windowEvent.xclient.window, False, SubstructureNotifyMask | SubstructureRedirectMask, &windowEvent);
+                    err() << "Failed to get WM hints in XCB_FOCUS_IN" << std::endl;
+                    break;
                 }
+
+                // Remove urgency (notification) flag from hints
+                hints->flags &= ~(1 << 8);
+
+                setWMHints(*hints);
+
+                break;
             }
-            break;
-        }
 
-        // Key down event
-        case KeyPress:
-        {
-            // Get the keysym of the key that has been pressed
-            static XComposeStatus keyboard;
-            char buffer[32];
-            KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
-
-            // Fill the event parameters
-            // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
-            Event event;
-            event.type        = Event::KeyPressed;
-            event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
-            pushEvent(event);
-
-            // Generate a TextEntered event
-            if (!XFilterEvent(&windowEvent, None))
+            // Lost focus event
+            case FocusOut:
             {
-                #ifdef X_HAVE_UTF8_STRING
+                // Update the input context
                 if (m_inputContext)
+                    XUnsetICFocus(m_inputContext);
+
+                Event event;
+                event.type = Event::LostFocus;
+                pushEvent(event);
+                break;
+            }
+
+            // Resize event
+            case ConfigureNotify:
+            {
+                // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
+                if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
                 {
-                    Status status;
-                    Uint8  keyBuffer[16];
+                    Event event;
+                    event.type        = Event::Resized;
+                    event.size.width  = windowEvent.xconfigure.width;
+                    event.size.height = windowEvent.xconfigure.height;
+                    pushEvent(event);
 
-                    int length = Xutf8LookupString(
-                        m_inputContext,
-                        &windowEvent.xkey,
-                        reinterpret_cast<char*>(keyBuffer),
-                        sizeof(keyBuffer),
-                        NULL,
-                        &status
-                    );
+                    m_previousSize.x = windowEvent.xconfigure.width;
+                    m_previousSize.y = windowEvent.xconfigure.height;
+                }
+                break;
+            }
 
-                    if (length > 0)
+            // Close event
+            case ClientMessage:
+            {
+                static xcb_atom_t wmProtocols = getAtom("WM_PROTOCOLS");
+
+                // Handle window manager protocol messages we support
+                if (windowEvent.xclient.message_type == wmProtocols)
+                {
+                    static xcb_atom_t wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+                    static xcb_atom_t netWmPing = ewmhSupported() ? getAtom("_NET_WM_PING", true) : XCB_ATOM_NONE;
+
+                    if ((windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
                     {
-                        Uint32 unicode = 0;
-                        Utf8::decode(keyBuffer, keyBuffer + length, unicode, 0);
-                        if (unicode != 0)
+                        // Handle the WM_DELETE_WINDOW message
+                        Event event;
+                        event.type = Event::Closed;
+                        pushEvent(event);
+                    }
+                    else if (netWmPing && (windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
+                    {
+                        // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
+                        windowEvent.xclient.window = XCBDefaultRootWindow(m_connection);
+
+                        XSendEvent(m_display, windowEvent.xclient.window, False, SubstructureNotifyMask | SubstructureRedirectMask, &windowEvent);
+                    }
+                }
+                break;
+            }
+
+            // Key down event
+            case KeyPress:
+            {
+                // Get the keysym of the key that has been pressed
+                static XComposeStatus keyboard;
+                char buffer[32];
+                KeySym symbol;
+                XLookupString(&windowEvent.xkey, buffer, sizeof(buffer), &symbol, &keyboard);
+
+                // Fill the event parameters
+                // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
+                Event event;
+                event.type        = Event::KeyPressed;
+                event.key.code    = keysymToSF(symbol);
+                event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+                event.key.control = windowEvent.xkey.state & ControlMask;
+                event.key.shift   = windowEvent.xkey.state & ShiftMask;
+                event.key.system  = windowEvent.xkey.state & Mod4Mask;
+                pushEvent(event);
+
+                // Generate a TextEntered event
+                if (!XFilterEvent(&windowEvent, None))
+                {
+                    #ifdef X_HAVE_UTF8_STRING
+                    if (m_inputContext)
+                    {
+                        Status status;
+                        Uint8  keyBuffer[16];
+
+                        int length = Xutf8LookupString(
+                            m_inputContext,
+                            &windowEvent.xkey,
+                            reinterpret_cast<char*>(keyBuffer),
+                            sizeof(keyBuffer),
+                            NULL,
+                            &status
+                        );
+
+                        if (length > 0)
+                        {
+                            Uint32 unicode = 0;
+                            Utf8::decode(keyBuffer, keyBuffer + length, unicode, 0);
+                            if (unicode != 0)
+                            {
+                                Event textEvent;
+                                textEvent.type         = Event::TextEntered;
+                                textEvent.text.unicode = unicode;
+                                pushEvent(textEvent);
+                            }
+                        }
+                    }
+                    else
+                    #endif
+                    {
+                        static XComposeStatus status;
+                        char keyBuffer[16];
+                        if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
                         {
                             Event textEvent;
                             textEvent.type         = Event::TextEntered;
-                            textEvent.text.unicode = unicode;
+                            textEvent.text.unicode = static_cast<Uint32>(keyBuffer[0]);
                             pushEvent(textEvent);
                         }
                     }
                 }
-                else
-                #endif
+
+                break;
+            }
+
+            // Key up event
+            case KeyRelease:
+            {
+                // Get the keysym of the key that has been pressed
+                char buffer[32];
+                KeySym symbol;
+                XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
+
+                // Fill the event parameters
+                Event event;
+                event.type        = Event::KeyReleased;
+                event.key.code    = keysymToSF(symbol);
+                event.key.alt     = windowEvent.xkey.state & Mod1Mask;
+                event.key.control = windowEvent.xkey.state & ControlMask;
+                event.key.shift   = windowEvent.xkey.state & ShiftMask;
+                event.key.system  = windowEvent.xkey.state & Mod4Mask;
+                pushEvent(event);
+
+                break;
+            }
+
+            // Mouse button pressed
+            case ButtonPress:
+            {
+                // XXX: Why button 8 and 9?
+                // Because 4 and 5 are the vertical wheel and 6 and 7 are horizontal wheel ;)
+                unsigned int button = windowEvent.xbutton.button;
+                if ((button == Button1) ||
+                    (button == Button2) ||
+                    (button == Button3) ||
+                    (button == 8) ||
+                    (button == 9))
                 {
-                    static XComposeStatus status;
-                    char keyBuffer[16];
-                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    Event event;
+                    event.type          = Event::MouseButtonPressed;
+                    event.mouseButton.x = windowEvent.xbutton.x;
+                    event.mouseButton.y = windowEvent.xbutton.y;
+                    switch(button)
                     {
-                        Event textEvent;
-                        textEvent.type         = Event::TextEntered;
-                        textEvent.text.unicode = static_cast<Uint32>(keyBuffer[0]);
-                        pushEvent(textEvent);
+                        case Button1: event.mouseButton.button = Mouse::Left;     break;
+                        case Button2: event.mouseButton.button = Mouse::Middle;   break;
+                        case Button3: event.mouseButton.button = Mouse::Right;    break;
+                        case 8:       event.mouseButton.button = Mouse::XButton1; break;
+                        case 9:       event.mouseButton.button = Mouse::XButton2; break;
                     }
+                    pushEvent(event);
                 }
+                break;
             }
 
-            break;
-        }
-
-        // Key up event
-        case KeyRelease:
-        {
-            // Get the keysym of the key that has been pressed
-            char buffer[32];
-            KeySym symbol;
-            XLookupString(&windowEvent.xkey, buffer, 32, &symbol, NULL);
-
-            // Fill the event parameters
-            Event event;
-            event.type        = Event::KeyReleased;
-            event.key.code    = keysymToSF(symbol);
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
-            pushEvent(event);
-
-            break;
-        }
-
-        // Mouse button pressed
-        case ButtonPress:
-        {
-            // XXX: Why button 8 and 9?
-            // Because 4 and 5 are the vertical wheel and 6 and 7 are horizontal wheel ;)
-            unsigned int button = windowEvent.xbutton.button;
-            if ((button == Button1) ||
-                (button == Button2) ||
-                (button == Button3) ||
-                (button == 8) ||
-                (button == 9))
+            // Mouse button released
+            case ButtonRelease:
             {
-                Event event;
-                event.type          = Event::MouseButtonPressed;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
-                switch(button)
+                unsigned int button = windowEvent.xbutton.button;
+                if ((button == Button1) ||
+                    (button == Button2) ||
+                    (button == Button3) ||
+                    (button == 8) ||
+                    (button == 9))
                 {
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    Event event;
+                    event.type          = Event::MouseButtonReleased;
+                    event.mouseButton.x = windowEvent.xbutton.x;
+                    event.mouseButton.y = windowEvent.xbutton.y;
+                    switch(button)
+                    {
+                        case Button1: event.mouseButton.button = Mouse::Left;     break;
+                        case Button2: event.mouseButton.button = Mouse::Middle;   break;
+                        case Button3: event.mouseButton.button = Mouse::Right;    break;
+                        case 8:       event.mouseButton.button = Mouse::XButton1; break;
+                        case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    }
+                    pushEvent(event);
                 }
-                pushEvent(event);
-            }
-            break;
-        }
-
-        // Mouse button released
-        case ButtonRelease:
-        {
-            unsigned int button = windowEvent.xbutton.button;
-            if ((button == Button1) ||
-                (button == Button2) ||
-                (button == Button3) ||
-                (button == 8) ||
-                (button == 9))
-            {
-                Event event;
-                event.type          = Event::MouseButtonReleased;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
-                switch(button)
+                else if ((button == Button4) || (button == Button5))
                 {
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    Event event;
+
+                    event.type             = Event::MouseWheelMoved;
+                    event.mouseWheel.delta = (button == Button4) ? 1 : -1;
+                    event.mouseWheel.x     = windowEvent.xbutton.x;
+                    event.mouseWheel.y     = windowEvent.xbutton.y;
+                    pushEvent(event);
+
+                    event.type                   = Event::MouseWheelScrolled;
+                    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+                    event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
+                    event.mouseWheelScroll.x     = windowEvent.xbutton.x;
+                    event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                    pushEvent(event);
                 }
-                pushEvent(event);
+                else if ((button == 6) || (button == 7))
+                {
+                    Event event;
+                    event.type                   = Event::MouseWheelScrolled;
+                    event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+                    event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
+                    event.mouseWheelScroll.x     = windowEvent.xbutton.x;
+                    event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                    pushEvent(event);
+                }
+                break;
             }
-            else if ((button == Button4) || (button == Button5))
+
+            // Mouse moved
+            case MotionNotify:
             {
                 Event event;
-
-                event.type             = Event::MouseWheelMoved;
-                event.mouseWheel.delta = (button == Button4) ? 1 : -1;
-                event.mouseWheel.x     = windowEvent.xbutton.x;
-                event.mouseWheel.y     = windowEvent.xbutton.y;
+                event.type        = Event::MouseMoved;
+                event.mouseMove.x = windowEvent.xmotion.x;
+                event.mouseMove.y = windowEvent.xmotion.y;
                 pushEvent(event);
-
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
-                event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
-                pushEvent(event);
+                break;
             }
-            else if ((button == 6) || (button == 7))
+
+            // Mouse entered
+            case EnterNotify:
             {
-                Event event;
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
-                event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
-                pushEvent(event);
+                if (windowEvent.xcrossing.mode == NotifyNormal)
+                {
+                    Event event;
+                    event.type = Event::MouseEntered;
+                    pushEvent(event);
+                }
+                break;
             }
-            break;
-        }
 
-        // Mouse moved
-        case MotionNotify:
-        {
-            Event event;
-            event.type        = Event::MouseMoved;
-            event.mouseMove.x = windowEvent.xmotion.x;
-            event.mouseMove.y = windowEvent.xmotion.y;
-            pushEvent(event);
-            break;
-        }
-
-        // Mouse entered
-        case EnterNotify:
-        {
-            if (windowEvent.xcrossing.mode == NotifyNormal)
+            // Mouse left
+            case LeaveNotify:
             {
-                Event event;
-                event.type = Event::MouseEntered;
-                pushEvent(event);
+                if (windowEvent.xcrossing.mode == NotifyNormal)
+                {
+                    Event event;
+                    event.type = Event::MouseLeft;
+                    pushEvent(event);
+                }
+                break;
             }
-            break;
-        }
 
-        // Mouse left
-        case LeaveNotify:
-        {
-            if (windowEvent.xcrossing.mode == NotifyNormal)
+            // Parent window changed
+            case ReparentNotify:
             {
-                Event event;
-                event.type = Event::MouseLeft;
-                pushEvent(event);
+                // Catch reparent events to properly apply fullscreen on
+                // some "strange" window managers (like Awesome) which
+                // seem to make use of temporary parents during mapping
+                if (m_fullscreen)
+                    switchToFullscreen();
+
+                XSync(m_display, True); // Discard remaining events
+                break;
             }
-            break;
-        }
-
-        // Parent window changed
-        case ReparentNotify:
-        {
-            // Catch reparent events to properly apply fullscreen on
-            // some "strange" window managers (like Awesome) which
-            // seem to make use of temporary parents during mapping
-            if (m_fullscreen)
-                switchToFullscreen();
-
-            XSync(m_display, True); // Discard remaining events
-            break;
         }
     }
 

@@ -31,6 +31,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
+#include <X11/extensions/XI2.h>
+#include <X11/extensions/XInput2.h>
 #include <X11/Xlib-xcb.h>
 #include <xcb/randr.h>
 #include <deque>
@@ -304,6 +306,26 @@ private:
     bool processEvent(XEvent windowEvent);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Process an incoming XInput2 event from the window
+    ///
+    /// \param cookie XGenericEventCookie which has been received
+    ///
+    /// \return True if the event was processed, false if it was discarded
+    ///
+    ////////////////////////////////////////////////////////////
+    bool processXI2Event(XGenericEventCookie *cookie);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert a XIDeviceEvent into a Event
+    ///
+    /// \param xiDeviceEvent XIDeviceEvent which has been received
+    ///
+    /// \return True if the event was processed, false if it was discarded
+    ///
+    ////////////////////////////////////////////////////////////
+    Event deviceEventToTouchEvent(const XIDeviceEvent* deviceEvent, Event::EventType type) const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     xcb_window_t                      m_window;          ///< xcb identifier defining our window
@@ -319,6 +341,7 @@ private:
     Vector2i                          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
     bool                              m_fullscreen;      ///< Is window in fullscreen?
+    int                               m_xiOpcode;        ///< Major opcode for the extension (0 if not available)
 };
 
 } // namespace priv
