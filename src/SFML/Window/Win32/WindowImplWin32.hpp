@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -146,6 +146,14 @@ public:
     virtual void setMouseCursorVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursorGrabbed(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -167,6 +175,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get global touch state for a finger
+    ///
+    /// \param finger Finger index
+    ///
+    /// \return True, if the finger is active
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isTouchDown(unsigned int finger);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get global touch coordinates for a finger
+    ///
+    /// \param finger Finger index
+    ///
+    /// \return Touch position
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector2i getTouchPosition(unsigned int finger);
 
 protected:
 
@@ -217,6 +245,19 @@ private:
     void setTracking(bool track);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// This is not to be confused with setMouseCursorGrabbed.
+    /// Here m_cursorGrabbed is not modified; it is used,
+    /// for example, to release the cursor when switching to
+    /// another application.
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void grabCursor(bool grabbed);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code
     ///
     /// \param key   Virtual key code to convert
@@ -244,7 +285,7 @@ private:
     /// \brief Helper function to prepare and enable touch handling
     ///
     ////////////////////////////////////////////////////////////
-    void WindowImplWin32::prepareTouch();
+    void prepareTouch();
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -258,6 +299,8 @@ private:
     bool     m_resizing;         ///< Is the window being resized?
     Uint16   m_surrogate;        ///< First half of the surrogate pair, in case we're receiving a Unicode character in two events
     bool     m_mouseInside;      ///< Mouse is inside the window?
+    bool     m_fullscreen;       ///< Is the window fullscreen?
+    bool     m_cursorGrabbed;    ///< Is the mouse cursor trapped?
 };
 
 } // namespace priv

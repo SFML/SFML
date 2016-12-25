@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,6 +35,7 @@
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
+#include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <windows.h>
 
 
@@ -229,26 +230,34 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int /*finger*/)
+bool InputImpl::isTouchDown(unsigned int finger)
 {
-    // Not applicable
-    return false;
+    return WindowImplWin32::isTouchDown(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    // Not applicable
-    return Vector2i();
+    return WindowImplWin32::getTouchPosition(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+Vector2i InputImpl::getTouchPosition(unsigned int finger, const Window& relativeTo)
 {
-    // Not applicable
-    return Vector2i();
+    WindowHandle handle = relativeTo.getSystemHandle();
+    Vector2i pos;
+
+    if (handle && WindowImplWin32::isTouchDown(finger))
+    {
+        pos = WindowImplWin32::getTouchPosition(finger);
+        POINT point = { pos.x, pos.y };
+        ScreenToClient(handle, &point);
+        pos.x = point.x;
+        pos.y = point.y;
+    }
+    return pos;
 }
 
 } // namespace priv

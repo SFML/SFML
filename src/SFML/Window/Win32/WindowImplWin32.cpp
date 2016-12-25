@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -116,6 +116,9 @@ namespace
         {
             if (touchIDs[i] == id)
                 return i;
+        }
+        for (int i = 0; i < 10; ++i)
+        {
             if (touchIDs[i] == -1)
             {
                 touchIDs[i] = id;
@@ -204,7 +207,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_fullscreen      (false),
+m_cursorGrabbed   (false)
 {
     // Load User32, if necessary (very first window/control only)
     if (windowCount + externCount == 0) {
@@ -240,7 +245,9 @@ m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
-m_mouseInside     (false)
+m_mouseInside     (false),
+m_fullscreen      (style & Style::Fullscreen),
+m_cursorGrabbed   (m_fullscreen)
 {
     // Load User32, if necessary (very first window/control only)
     if (windowCount + externCount == 0) {
@@ -277,8 +284,7 @@ m_mouseInside     (false)
     }
 
     // In windowed mode, adjust width and height so that window will have the requested client area
-    bool fullscreen = (style & Style::Fullscreen) != 0;
-    if (!fullscreen)
+    if (!m_fullscreen)
     {
         RECT rectangle = {0, 0, width, height};
         AdjustWindowRect(&rectangle, win32Style, false);
@@ -294,7 +300,7 @@ m_mouseInside     (false)
     setSize(Vector2u(mode.width, mode.height));
 
     // Switch to fullscreen if requested
-    if (fullscreen)
+    if (m_fullscreen)
         switchToFullscreen(mode);
 
     // Try to prepare touch events, if necessary
@@ -383,6 +389,9 @@ Vector2i WindowImplWin32::getPosition() const
 void WindowImplWin32::setPosition(const Vector2i& position)
 {
     SetWindowPos(m_handle, NULL, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+    if(m_cursorGrabbed)
+        grabCursor(true);
 }
 
 
@@ -466,6 +475,14 @@ void WindowImplWin32::setMouseCursorVisible(bool visible)
         m_cursor = NULL;
 
     SetCursor(m_cursor);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
+{
+    m_cursorGrabbed = grabbed;
+    grabCursor(m_cursorGrabbed);
 }
 
 
@@ -592,6 +609,23 @@ void WindowImplWin32::setTracking(bool track)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::grabCursor(bool grabbed)
+{
+    if (grabbed)
+    {
+        RECT rect;
+        GetClientRect(m_handle, &rect);
+        MapWindowPoints(m_handle, NULL, reinterpret_cast<LPPOINT>(&rect), 2);
+        ClipCursor(&rect);
+    }
+    else
+    {
+        ClipCursor(NULL);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Don't process any message until window is created
@@ -642,6 +676,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.width  = m_lastSize.x;
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
+
+                // Restore/update cursor grabbing
+                grabCursor(m_cursorGrabbed);
             }
             break;
         }
@@ -650,6 +687,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_ENTERSIZEMOVE:
         {
             m_resizing = true;
+            grabCursor(false);
             break;
         }
 
@@ -671,6 +709,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
             }
+
+            // Restore/update cursor grabbing
+            grabCursor(m_cursorGrabbed);
             break;
         }
 
@@ -688,6 +729,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Gain focus event
         case WM_SETFOCUS:
         {
+            // Restore cursor grabbing
+            grabCursor(m_cursorGrabbed);
+
             Event event;
             event.type = Event::GainedFocus;
             pushEvent(event);
@@ -697,6 +741,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Lost focus event
         case WM_KILLFOCUS:
         {
+            // Ungrab the cursor
+            grabCursor(false);
+
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
@@ -1025,9 +1072,11 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                         event.touch.finger = index;
                         point.x = TOUCH_COORD_TO_PIXEL(events[i].x);
                         point.y = TOUCH_COORD_TO_PIXEL(events[i].y);
-                        ScreenToClient(m_handle, &point);
-                        event.touch.x = point.x;
-                        event.touch.y = point.y;
+
+                        POINT cpoint = point;
+                        ScreenToClient(m_handle, &cpoint);
+                        event.touch.x = cpoint.x;
+                        event.touch.y = cpoint.y;
 
                         if (events[i].dwFlags & TOUCHEVENTF_DOWN) {
                             event.type = Event::TouchBegan;
@@ -1035,7 +1084,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                             // Prevent initial move event
                             touches[index] = point;
-                            err() << "down: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
                         }
                         if (events[i].dwFlags & TOUCHEVENTF_UP) {
                             event.type = Event::TouchEnded;
@@ -1043,7 +1091,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                             // Remove the stored ID
                             touchIDs[index] = -1;
-                            err() << "up: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
                         }
                         if (events[i].dwFlags & TOUCHEVENTF_MOVE) {
                             // Only handle real movement
@@ -1052,7 +1099,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                                 touches[index] = point;
                                 event.type = Event::TouchMoved;
                                 pushEvent(event);
-                                err() << "moved: " << events[i].dwID << ", x: " << point.x << ", y: " << point.y << std::endl;
                             }
                         }
 
@@ -1259,6 +1305,18 @@ void WindowImplWin32::prepareTouch()
 
     if (touchEnabled)
         RegisterTouchWindow(m_handle, 0);
+}
+
+////////////////////////////////////////////////////////////
+bool WindowImplWin32::isTouchDown(unsigned int finger)
+{
+    return touchIDs[finger] != -1;
+}
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplWin32::getTouchPosition(unsigned int finger)
+{
+    return Vector2i(touches[finger].x, touches[finger].y);
 }
 
 } // namespace priv
