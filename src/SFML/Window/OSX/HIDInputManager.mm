@@ -399,12 +399,12 @@ bool HIDInputManager::isPressed(IOHIDElements& elements)
 UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
 {
     // Some usage key doesn't have any corresponding virtual
-    // code or it was not found.
+    // code or it was not found (return 0xff).
     switch (usage)
     {
-        //case kHIDUsage_KeyboardErrorRollOver:       return 0xff;
-        //case kHIDUsage_KeyboardPOSTFail:            return 0xff;
-        //case kHIDUsage_KeyboardErrorUndefined:      return 0xff;
+        case kHIDUsage_KeyboardErrorRollOver:       return 0xff;
+        case kHIDUsage_KeyboardPOSTFail:            return 0xff;
+        case kHIDUsage_KeyboardErrorUndefined:      return 0xff;
 
         case kHIDUsage_KeyboardA:                   return 0x00;
         case kHIDUsage_KeyboardB:                   return 0x0b;
@@ -454,7 +454,7 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_KeyboardOpenBracket:         return 0x21;
         case kHIDUsage_KeyboardCloseBracket:        return 0x1e;
         case kHIDUsage_KeyboardBackslash:           return 0x2a;
-        //case kHIDUsage_KeyboardNonUSPound:          return 0xff;
+        case kHIDUsage_KeyboardNonUSPound:          return 0xff;
         case kHIDUsage_KeyboardSemicolon:           return 0x29;
         case kHIDUsage_KeyboardQuote:               return 0x27;
         case kHIDUsage_KeyboardGraveAccentAndTilde: return 0x32;
@@ -476,9 +476,9 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_KeyboardF11:                 return 0x67;
         case kHIDUsage_KeyboardF12:                 return 0x6f;
 
-        //case kHIDUsage_KeyboardPrintScreen:         return 0xff;
-        //case kHIDUsage_KeyboardScrollLock:          return 0xff;
-        //case kHIDUsage_KeyboardPause:               return 0xff;
+        case kHIDUsage_KeyboardPrintScreen:         return 0xff;
+        case kHIDUsage_KeyboardScrollLock:          return 0xff;
+        case kHIDUsage_KeyboardPause:               return 0xff;
         case kHIDUsage_KeyboardInsert:              return 0x72;
         case kHIDUsage_KeyboardHome:                return 0x73;
         case kHIDUsage_KeyboardPageUp:              return 0x74;
@@ -510,9 +510,9 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_Keypad0:                     return 0x52;
 
         case kHIDUsage_KeypadPeriod:                return 0x41;
-        //case kHIDUsage_KeyboardNonUSBackslash:      return 0xff;
+        case kHIDUsage_KeyboardNonUSBackslash:      return 0xff;
         case kHIDUsage_KeyboardApplication:         return 0x6e;
-        //case kHIDUsage_KeyboardPower:               return 0xff;
+        case kHIDUsage_KeyboardPower:               return 0xff;
         case kHIDUsage_KeypadEqualSign:             return 0x51;
 
         case kHIDUsage_KeyboardF13:                 return 0x69;
@@ -523,65 +523,65 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_KeyboardF18:                 return 0x4f;
         case kHIDUsage_KeyboardF19:                 return 0x50;
         case kHIDUsage_KeyboardF20:                 return 0x5a;
-        //case kHIDUsage_KeyboardF21:                 return 0xff;
-        //case kHIDUsage_KeyboardF22:                 return 0xff;
-        //case kHIDUsage_KeyboardF23:                 return 0xff;
-        //case kHIDUsage_KeyboardF24:                 return 0xff;
+        case kHIDUsage_KeyboardF21:                 return 0xff;
+        case kHIDUsage_KeyboardF22:                 return 0xff;
+        case kHIDUsage_KeyboardF23:                 return 0xff;
+        case kHIDUsage_KeyboardF24:                 return 0xff;
 
-        //case kHIDUsage_KeyboardExecute:             return 0xff;
-        //case kHIDUsage_KeyboardHelp:                return 0xff;
+        case kHIDUsage_KeyboardExecute:             return 0xff;
+        case kHIDUsage_KeyboardHelp:                return 0xff;
         case kHIDUsage_KeyboardMenu:                return 0x7F;
         case kHIDUsage_KeyboardSelect:              return 0x4c;
-        //case kHIDUsage_KeyboardStop:                return 0xff;
-        //case kHIDUsage_KeyboardAgain:               return 0xff;
-        //case kHIDUsage_KeyboardUndo:                return 0xff;
-        //case kHIDUsage_KeyboardCut:                 return 0xff;
-        //case kHIDUsage_KeyboardCopy:                return 0xff;
-        //case kHIDUsage_KeyboardPaste:               return 0xff;
-        //case kHIDUsage_KeyboardFind:                return 0xff;
+        case kHIDUsage_KeyboardStop:                return 0xff;
+        case kHIDUsage_KeyboardAgain:               return 0xff;
+        case kHIDUsage_KeyboardUndo:                return 0xff;
+        case kHIDUsage_KeyboardCut:                 return 0xff;
+        case kHIDUsage_KeyboardCopy:                return 0xff;
+        case kHIDUsage_KeyboardPaste:               return 0xff;
+        case kHIDUsage_KeyboardFind:                return 0xff;
 
         case kHIDUsage_KeyboardMute:                return 0x4a;
         case kHIDUsage_KeyboardVolumeUp:            return 0x48;
         case kHIDUsage_KeyboardVolumeDown:          return 0x49;
 
-        //case kHIDUsage_KeyboardLockingCapsLock:     return 0xff;
-        //case kHIDUsage_KeyboardLockingNumLock:      return 0xff;
-        //case kHIDUsage_KeyboardLockingScrollLock:   return 0xff;
+        case kHIDUsage_KeyboardLockingCapsLock:     return 0xff;
+        case kHIDUsage_KeyboardLockingNumLock:      return 0xff;
+        case kHIDUsage_KeyboardLockingScrollLock:   return 0xff;
 
-        //case kHIDUsage_KeypadComma:                 return 0xff;
-        //case kHIDUsage_KeypadEqualSignAS400:        return 0xff;
-        //case kHIDUsage_KeyboardInternational1:      return 0xff;
-        //case kHIDUsage_KeyboardInternational2:      return 0xff;
-        //case kHIDUsage_KeyboardInternational3:      return 0xff;
-        //case kHIDUsage_KeyboardInternational4:      return 0xff;
-        //case kHIDUsage_KeyboardInternational5:      return 0xff;
-        //case kHIDUsage_KeyboardInternational6:      return 0xff;
-        //case kHIDUsage_KeyboardInternational7:      return 0xff;
-        //case kHIDUsage_KeyboardInternational8:      return 0xff;
-        //case kHIDUsage_KeyboardInternational9:      return 0xff;
+        case kHIDUsage_KeypadComma:                 return 0xff;
+        case kHIDUsage_KeypadEqualSignAS400:        return 0xff;
+        case kHIDUsage_KeyboardInternational1:      return 0xff;
+        case kHIDUsage_KeyboardInternational2:      return 0xff;
+        case kHIDUsage_KeyboardInternational3:      return 0xff;
+        case kHIDUsage_KeyboardInternational4:      return 0xff;
+        case kHIDUsage_KeyboardInternational5:      return 0xff;
+        case kHIDUsage_KeyboardInternational6:      return 0xff;
+        case kHIDUsage_KeyboardInternational7:      return 0xff;
+        case kHIDUsage_KeyboardInternational8:      return 0xff;
+        case kHIDUsage_KeyboardInternational9:      return 0xff;
 
-        //case kHIDUsage_KeyboardLANG1:               return 0xff;
-        //case kHIDUsage_KeyboardLANG2:               return 0xff;
-        //case kHIDUsage_KeyboardLANG3:               return 0xff;
-        //case kHIDUsage_KeyboardLANG4:               return 0xff;
-        //case kHIDUsage_KeyboardLANG5:               return 0xff;
-        //case kHIDUsage_KeyboardLANG6:               return 0xff;
-        //case kHIDUsage_KeyboardLANG7:               return 0xff;
-        //case kHIDUsage_KeyboardLANG8:               return 0xff;
-        //case kHIDUsage_KeyboardLANG9:               return 0xff;
+        case kHIDUsage_KeyboardLANG1:               return 0xff;
+        case kHIDUsage_KeyboardLANG2:               return 0xff;
+        case kHIDUsage_KeyboardLANG3:               return 0xff;
+        case kHIDUsage_KeyboardLANG4:               return 0xff;
+        case kHIDUsage_KeyboardLANG5:               return 0xff;
+        case kHIDUsage_KeyboardLANG6:               return 0xff;
+        case kHIDUsage_KeyboardLANG7:               return 0xff;
+        case kHIDUsage_KeyboardLANG8:               return 0xff;
+        case kHIDUsage_KeyboardLANG9:               return 0xff;
 
-        //case kHIDUsage_KeyboardAlternateErase:      return 0xff;
-        //case kHIDUsage_KeyboardSysReqOrAttention:   return 0xff;
-        //case kHIDUsage_KeyboardCancel:              return 0xff;
-        //case kHIDUsage_KeyboardClear:               return 0xff;
-        //case kHIDUsage_KeyboardPrior:               return 0xff;
-        //case kHIDUsage_KeyboardReturn:              return 0xff;
-        //case kHIDUsage_KeyboardSeparator:           return 0xff;
-        //case kHIDUsage_KeyboardOut:                 return 0xff;
-        //case kHIDUsage_KeyboardOper:                return 0xff;
-        //case kHIDUsage_KeyboardClearOrAgain:        return 0xff;
-        //case kHIDUsage_KeyboardCrSelOrProps:        return 0xff;
-        //case kHIDUsage_KeyboardExSel:               return 0xff;
+        case kHIDUsage_KeyboardAlternateErase:      return 0xff;
+        case kHIDUsage_KeyboardSysReqOrAttention:   return 0xff;
+        case kHIDUsage_KeyboardCancel:              return 0xff;
+        case kHIDUsage_KeyboardClear:               return 0xff;
+        case kHIDUsage_KeyboardPrior:               return 0xff;
+        case kHIDUsage_KeyboardReturn:              return 0xff;
+        case kHIDUsage_KeyboardSeparator:           return 0xff;
+        case kHIDUsage_KeyboardOut:                 return 0xff;
+        case kHIDUsage_KeyboardOper:                return 0xff;
+        case kHIDUsage_KeyboardClearOrAgain:        return 0xff;
+        case kHIDUsage_KeyboardCrSelOrProps:        return 0xff;
+        case kHIDUsage_KeyboardExSel:               return 0xff;
 
             /* 0xa5-0xdf Reserved */
 
@@ -596,7 +596,7 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
 
             /* 0xe8-0xffff Reserved */
 
-        //case kHIDUsage_Keyboard_Reserved:           return 0xff;
+        case kHIDUsage_Keyboard_Reserved:           return 0xff;
         default:                                    return 0xff;
     }
 }
