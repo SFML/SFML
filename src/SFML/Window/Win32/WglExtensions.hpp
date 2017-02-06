@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2017 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -136,7 +136,7 @@ extern int sfwgl_ext_ARB_create_context_profile;
 #define WGL_NUMBER_UNDERLAYS_ARB 0x2009
 #define WGL_PIXEL_TYPE_ARB 0x2013
 #define WGL_RED_BITS_ARB 0x2015
-#define WGL_RED_SHIFT_ARB 0x2016
+#define WGL_RED_SHIFT_ARB 0x2017
 #define WGL_SHARE_ACCUM_ARB 0x200E
 #define WGL_SHARE_DEPTH_ARB 0x200C
 #define WGL_SHARE_STENCIL_ARB 0x200D
