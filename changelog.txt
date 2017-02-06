@@ -1,3 +1,36 @@
+SFML 2.4.2
+==========
+
+Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.2
+
+System
+======
+
+Bugfixes
+--------
+* [Windows] Removed thread affinity changes in sf::Clock (#1107)
+
+
+Window
+======
+
+Bugfixes
+--------
+* Fixed bug where TransientContextLock would hang (#1165, #1172)
+* [Linux] Fixed GLX extensions being loaded too late (#1183)
+* [Linux] Fix wrong types passed to XChangeProperty (#1168 #1171)
+* [Windows] Make context disabling via wglMakeCurrent more tolerant of broken drivers (#1186)
+
+
+Graphics
+========
+
+Bugfixes
+--------
+* Optimized sf::Image::create and made it more exception safe (#1166)
+
+
+
 SFML 2.4.1
 ==========
 
@@ -7,7 +40,7 @@ General
 =======
 
 * [kFreeBSD] Define SFML_OS_FREEBSD when compiling for kFreeBSD (#1129)
-* [Window] Added some simple messaging when trying to build under Cygwin (#1153)
+* [Windows] Added some simple messaging when trying to build under Cygwin (#1153)
 
 
 Window
