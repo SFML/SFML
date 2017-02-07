@@ -224,7 +224,8 @@ bool SoundBuffer::initialize(InputSoundFile& file)
 
     // Read the samples from the provided file
     m_samples.resize(static_cast<std::size_t>(sampleCount));
-    if (file.read(&m_samples[0], sampleCount) == sampleCount)
+    // Some wavs have fewer samples than they claim to have
+    if (file.read(&m_samples[0], sampleCount) <= sampleCount)
     {
         // Update the internal buffer with the new samples
         return update(channelCount, sampleRate);
