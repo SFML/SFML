@@ -78,6 +78,20 @@ public:
     static bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable lazy enumeration updates
+    ///
+    /// \param status Whether to rely on windows triggering enumeration updates
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setLazyUpdates(bool status);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the connection status of all joysticks
+    ///
+    ////////////////////////////////////////////////////////////
+    static void updateConnections();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the joystick
     ///
     /// \param index Index assigned to the joystick

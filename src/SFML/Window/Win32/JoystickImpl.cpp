@@ -44,9 +44,12 @@ namespace
         bool connected;
         sf::Clock timer;
     };
-
     const sf::Time connectionRefreshDelay = sf::milliseconds(500);
+
     ConnectionCache connectionCache[sf::Joystick::Count];
+
+    // If true, will only update when WM_DEVICECHANGE message is received
+    bool lazyUpdates = false;
 
     // Get a system error string from an error code
     std::string getErrorString(DWORD error)
@@ -150,19 +153,7 @@ namespace priv
 void JoystickImpl::initialize()
 {
     // Perform the initial scan and populate the connection cache
-    for (unsigned int i = 0; i < Joystick::Count; ++i)
-    {
-        ConnectionCache& cache = connectionCache[i];
-
-        // Check if the joystick is connected
-        JOYINFOEX joyInfo;
-        joyInfo.dwSize = sizeof(joyInfo);
-        joyInfo.dwFlags = 0;
-        cache.connected = joyGetPosEx(JOYSTICKID1 + i, &joyInfo) == JOYERR_NOERROR;
-
-        // start the timeout
-        cache.timer.restart();
-    }
+    updateConnections();
 }
 
 
@@ -176,27 +167,39 @@ void JoystickImpl::cleanup()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    // We check the connection state of joysticks only every N milliseconds,
-    // because of a strange (buggy?) behavior of joyGetPosEx when joysticks
-    // are just plugged/unplugged -- it takes really long and kills the app performances
     ConnectionCache& cache = connectionCache[index];
-    if (cache.timer.getElapsedTime() > connectionRefreshDelay)
+    if (!lazyUpdates && cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
-        cache.timer.restart();
-
         JOYINFOEX joyInfo;
         joyInfo.dwSize = sizeof(joyInfo);
         joyInfo.dwFlags = 0;
-
         cache.connected = joyGetPosEx(JOYSTICKID1 + index, &joyInfo) == JOYERR_NOERROR;
-        return cache.connected;
+
+        cache.timer.restart();
     }
-    else
-    {
-        return cache.connected;
-    }
+    return cache.connected;
 }
 
+////////////////////////////////////////////////////////////
+void JoystickImpl::setLazyUpdates(bool status)
+{
+    lazyUpdates = status;
+}
+
+////////////////////////////////////////////////////////////
+void JoystickImpl::updateConnections()
+{
+    for (unsigned int i = 0; i < Joystick::Count; ++i)
+    {
+        JOYINFOEX joyInfo;
+        joyInfo.dwSize = sizeof(joyInfo);
+        joyInfo.dwFlags = 0;
+        ConnectionCache& cache = connectionCache[i];
+        cache.connected = joyGetPosEx(JOYSTICKID1 + i, &joyInfo) == JOYERR_NOERROR;
+
+        cache.timer.restart();
+    }
+}
 
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
