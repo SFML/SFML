@@ -91,7 +91,7 @@ public:
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Note that this function know nothing about the standard
+    /// Note that this function knows nothing about the standard
     /// fonts installed on the user's system, thus you can't
     /// load them directly.
     ///
