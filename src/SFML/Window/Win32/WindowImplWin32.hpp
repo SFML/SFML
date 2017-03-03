@@ -274,8 +274,8 @@ private:
     ////////////////////////////////////////////////////////////
     HWND     m_handle;           ///< Win32 handle of the window
     LONG_PTR m_callback;         ///< Stores the original event callback function of the control
-    HCURSOR  m_cursor;           ///< The system cursor currently displayed into the window, NULL if hidden
-    HCURSOR  m_loadedCursor;     ///< The system cursor selected to be displayed into the window
+    bool     m_cursorVisible;    ///< Is the cursor visible or hidden?
+    HCURSOR  m_lastCursor;       ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     HICON    m_icon;             ///< Custom icon assigned to the window
     bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
     Vector2u m_lastSize;         ///< The last handled size of the window

@@ -132,8 +132,8 @@ namespace priv
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
-m_cursor          (NULL),
-m_loadedCursor    (NULL),
+m_cursorVisible   (true), // might need to call GetCursorInfo
+m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
@@ -165,8 +165,8 @@ m_cursorGrabbed   (false)
 WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
 m_handle          (NULL),
 m_callback        (0),
-m_cursor          (NULL),
-m_loadedCursor    (NULL),
+m_cursorVisible   (true), // might need to call GetCursorInfo
+m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
@@ -241,9 +241,7 @@ m_cursorGrabbed   (m_fullscreen)
 ////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
-    // Destroy the cursor
-    if (m_loadedCursor)
-        DestroyCursor(m_loadedCursor);
+    // TODO should we restore the cursor shape and visibility?
 
     // Destroy the custom icon, if any
     if (m_icon)
@@ -396,16 +394,14 @@ void WindowImplWin32::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setMouseCursorVisible(bool visible)
 {
-    // Set the default mouse cursor if none has been loaded yet
-    if (!m_loadedCursor)
-        setMouseCursor(Window::Arrow);
-
-    if (visible)
-        m_cursor = m_loadedCursor;
-    else
-        m_cursor = NULL;
-
-    SetCursor(m_cursor);
+    // Don't call twice ShowCursor with the same parameter value;
+    // we don't want to increment/decrement the internal counter
+    // more than once.
+    if (visible != m_cursorVisible)
+    {
+        m_cursorVisible = visible;
+        ShowCursor(visible);
+    }
 }
 
 
@@ -420,93 +416,8 @@ void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setMouseCursor(const CursorImpl& cursor)
 {
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImplWin32::setMouseCursor(const Uint8* pixels, unsigned int width, unsigned int height, Uint16 hotspotX, Uint16 hotspotY)
-{
-    // Create the bitmap that will hold our color data
-    BITMAPV5HEADER bitmapHeader;
-    std::memset(&bitmapHeader, 0, sizeof(BITMAPV5HEADER));
-
-    bitmapHeader.bV5Size        = sizeof(BITMAPV5HEADER);
-    bitmapHeader.bV5Width       = width;
-    bitmapHeader.bV5Height      = -height; // Negative indicates origin is in upper-left corner
-    bitmapHeader.bV5Planes      = 1;
-    bitmapHeader.bV5BitCount    = 32;
-    bitmapHeader.bV5Compression = BI_BITFIELDS;
-    bitmapHeader.bV5RedMask     = 0x00ff0000;
-    bitmapHeader.bV5GreenMask   = 0x0000ff00;
-    bitmapHeader.bV5BlueMask    = 0x000000ff;
-    bitmapHeader.bV5AlphaMask   = 0xff000000;
-
-    Uint8* bitmapData = NULL;
-
-    HDC screenDC = GetDC(NULL);
-    HBITMAP color = CreateDIBSection(
-        screenDC,
-        reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
-        DIB_RGB_COLORS,
-        reinterpret_cast<void**>(&bitmapData),
-        NULL,
-        0
-    );
-    ReleaseDC(NULL, screenDC);
-
-    if (!color)
-    {
-        err() << "Failed to create cursor color bitmap" << std::endl;
-        return;
-    }
-
-    // Fill our bitmap with the cursor color data
-    std::memcpy(bitmapData, pixels, width * height * 4);
-
-    // Create a dummy mask bitmap (it won't be used)
-    HBITMAP mask = CreateBitmap(width, height, 1, 1, NULL);
-
-    if (!mask)
-    {
-        DeleteObject(color);
-        err() << "Failed to create cursor mask bitmap" << std::endl;
-        return;
-    }
-
-    // Create the structure that describes our cursor
-    ICONINFO cursorInfo;
-    std::memset(&cursorInfo, 0, sizeof(ICONINFO));
-
-    cursorInfo.fIcon    = FALSE; // This is a cursor and not an icon
-    cursorInfo.xHotspot = hotspotX;
-    cursorInfo.yHotspot = hotspotY;
-    cursorInfo.hbmColor = color;
-    cursorInfo.hbmMask  = mask;
-
-    // Create the cursor
-    HCURSOR newCursor = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
-
-    // The data has been copied into the cursor, so get rid of these
-    DeleteObject(color);
-    DeleteObject(mask);
-
-    if (!newCursor)
-    {
-        err() << "Failed to create cursor from bitmaps" << std::endl;
-        return;
-    }
-
-    HCURSOR oldCursor = m_loadedCursor;
-    m_loadedCursor = newCursor;
-
-    if (m_cursor)
-    {
-        m_cursor = m_loadedCursor;
-        SetCursor(m_cursor);
-    }
-
-    if (oldCursor)
-        DestroyCursor(oldCursor);
+    m_lastCursor = cursor.m_cursor;
+    SetCursor(m_lastCursor);
 }
 
 
@@ -671,7 +582,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // The mouse has moved, if the cursor is in our window we must refresh the cursor
             if (LOWORD(lParam) == HTCLIENT)
-                SetCursor(m_cursor);
+                SetCursor(m_lastCursor);
 
             break;
         }

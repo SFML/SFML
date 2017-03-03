@@ -56,18 +56,18 @@ public:
     ///  Type                               | Linux | Mac OS X | Windows
     /// ------------------------------------|:-----:|:--------:|:--------:
     ///  sf::Cursor::Arrow                  |  yes  |    yes   |   yes
-    ///  sf::Cursor::ArrowWait              |  no   |    no    |   no
-    ///  sf::Cursor::Wait                   |  no   |    no    |   no
-    ///  sf::Cursor::Text                   |  no   |    yes   |   no
-    ///  sf::Cursor::Hand                   |  no   |    yes   |   no
-    ///  sf::Cursor::SizeHorizontal         |  no   |    yes   |   no
-    ///  sf::Cursor::SizeVertical           |  no   |    yes   |   no
-    ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    no    |   no
-    ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    no    |   no
-    ///  sf::Cursor::SizeAll                |  no   |    no    |   no
-    ///  sf::Cursor::Cross                  |  no   |    yes   |   no
-    ///  sf::Cursor::Help                   |  no   |    no    |   no
-    ///  sf::Cursor::NotAllowed             |  no   |    yes   |   no
+    ///  sf::Cursor::ArrowWait              |  no   |    no    |   yes
+    ///  sf::Cursor::Wait                   |  no   |    no    |   yes
+    ///  sf::Cursor::Text                   |  no   |    yes   |   yes
+    ///  sf::Cursor::Hand                   |  no   |    yes   |   yes
+    ///  sf::Cursor::SizeHorizontal         |  no   |    yes   |   yes
+    ///  sf::Cursor::SizeVertical           |  no   |    yes   |   yes
+    ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    no    |   yes
+    ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    no    |   yes
+    ///  sf::Cursor::SizeAll                |  no   |    no    |   yes
+    ///  sf::Cursor::Cross                  |  no   |    yes   |   yes
+    ///  sf::Cursor::Help                   |  no   |    no    |   yes
+    ///  sf::Cursor::NotAllowed             |  no   |    yes   |   yes
     ///
     ////////////////////////////////////////////////////////////
     enum Type
@@ -195,8 +195,8 @@ private:
 /// with either loadFromPixels() or loadFromSystem(), the
 /// cursor can be changed with sf::Window::setMouseCursor().
 ///
-/// \todo Does Windows or Linux requires the Cursor instance
-/// to outlive it's usage?
+/// The behaviour is undefined if the cursor is destroyed while
+/// in use by the window.
 ///
 /// Usage example:
 /// \code

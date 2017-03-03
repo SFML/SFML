@@ -32,6 +32,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include <windows.h>
 
 namespace sf
 {
@@ -83,8 +84,15 @@ private:
     friend class WindowImplWin32;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Release the cursor, if we have loaded one.
+    ///
+    ////////////////////////////////////////////////////////////
+    void release();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    HCURSOR m_cursor;
 };
 
 } // namespace priv
