@@ -31,7 +31,8 @@
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
-
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <X11/Xlib.h>
 
 namespace sf
 {
@@ -83,8 +84,16 @@ private:
     friend class WindowImplX11;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Release the cursor, if we have loaded one.
+    ///
+    ////////////////////////////////////////////////////////////
+    void release();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    ::Display* m_display;
+    ::Cursor   m_cursor;
 };
 
 } // namespace priv

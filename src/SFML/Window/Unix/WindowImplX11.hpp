@@ -31,6 +31,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
 #include <X11/Xlib.h>
 #include <deque>
 
@@ -242,6 +243,12 @@ private:
     void initialize();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create a transparent mouse cursor
+    ///
+    ////////////////////////////////////////////////////////////
+    void createHiddenCursor();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Cleanup graphical resources attached to the window
     ///
     ////////////////////////////////////////////////////////////
@@ -267,7 +274,8 @@ private:
     XIC        m_inputContext;   ///< Input context used to get unicode input in our window
     bool       m_isExternal;     ///< Tell whether the window has been created externally or by SFML
     int        m_oldVideoMode;   ///< Video mode in use before we switch to fullscreen
-    ::Cursor   m_hiddenCursor;   ///< As X11 doesn't provide cursor hidding, we must create a transparent one
+    ::Cursor   m_hiddenCursor;   ///< As X11 doesn't provide cursor hiding, we must create a transparent one
+    ::Cursor   m_lastCursor;     ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     bool       m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
     Vector2i   m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool       m_useSizeHints;   ///< Is the size of the window fixed with size hints?

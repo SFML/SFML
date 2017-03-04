@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
@@ -387,6 +386,7 @@ m_inputContext   (NULL),
 m_isExternal     (true),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
+m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
@@ -434,6 +434,7 @@ m_inputContext   (NULL),
 m_isExternal     (false),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
+m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
@@ -895,7 +896,7 @@ void WindowImplX11::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
-    XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
+    XDefineCursor(m_display, m_window, visible ? m_lastCursor : m_hiddenCursor);
     XFlush(m_display);
 }
 
@@ -903,7 +904,8 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 {
-    // TODO
+    m_lastCursor = cursor.m_cursor;
+    XDefineCursor(m_display, m_window, m_lastCursor);
 }
 
 
@@ -1313,6 +1315,9 @@ void WindowImplX11::initialize()
     // Raise the window and grab input focus
     grabFocus();
 
+    // Create the hidden cursor
+    createHiddenCursor();
+
     // Flush the commands queue
     XFlush(m_display);
 
@@ -1343,6 +1348,26 @@ void WindowImplX11::updateLastInputTime(::Time time)
 
         m_lastInputTime = time;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::createHiddenCursor()
+{
+    // Create the cursor's pixmap (1x1 pixels)
+    Pixmap cursorPixmap = XCreatePixmap(m_display, m_window, 1, 1, 1);
+    GC graphicsContext = XCreateGC(m_display, cursorPixmap, 0, NULL);
+    XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
+    XFreeGC(m_display, graphicsContext);
+
+    // Create the cursor, using the pixmap as both the shape and the mask of the cursor
+    XColor color;
+    color.flags = DoRed | DoGreen | DoBlue;
+    color.red = color.blue = color.green = 0;
+    m_hiddenCursor = XCreatePixmapCursor(m_display, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
+
+    // We don't need the pixmap any longer, free it
+    XFreePixmap(m_display, cursorPixmap);
 }
 
 

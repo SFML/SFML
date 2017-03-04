@@ -57,17 +57,17 @@ public:
     /// ------------------------------------|:-----:|:--------:|:--------:
     ///  sf::Cursor::Arrow                  |  yes  |    yes   |   yes
     ///  sf::Cursor::ArrowWait              |  no   |    no    |   yes
-    ///  sf::Cursor::Wait                   |  no   |    no    |   yes
-    ///  sf::Cursor::Text                   |  no   |    yes   |   yes
-    ///  sf::Cursor::Hand                   |  no   |    yes   |   yes
-    ///  sf::Cursor::SizeHorizontal         |  no   |    yes   |   yes
-    ///  sf::Cursor::SizeVertical           |  no   |    yes   |   yes
+    ///  sf::Cursor::Wait                   |  yes  |    no    |   yes
+    ///  sf::Cursor::Text                   |  yes  |    yes   |   yes
+    ///  sf::Cursor::Hand                   |  yes  |    yes   |   yes
+    ///  sf::Cursor::SizeHorizontal         |  yes  |    yes   |   yes
+    ///  sf::Cursor::SizeVertical           |  yes  |    yes   |   yes
     ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    no    |   yes
     ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    no    |   yes
-    ///  sf::Cursor::SizeAll                |  no   |    no    |   yes
-    ///  sf::Cursor::Cross                  |  no   |    yes   |   yes
-    ///  sf::Cursor::Help                   |  no   |    no    |   yes
-    ///  sf::Cursor::NotAllowed             |  no   |    yes   |   yes
+    ///  sf::Cursor::SizeAll                |  yes  |    no    |   yes
+    ///  sf::Cursor::Cross                  |  yes  |    yes   |   yes
+    ///  sf::Cursor::Help                   |  yes  |    no    |   yes
+    ///  sf::Cursor::NotAllowed             |  yes  |    yes   |   yes
     ///
     ////////////////////////////////////////////////////////////
     enum Type
@@ -125,6 +125,11 @@ public:
     /// which will be located exactly where the mouse pointer
     /// position is. Any mouse actions that are performed will
     /// return the window/screen location of the hotspot.
+    ///
+    /// \warning On Unix, the pixels are mapped into a monochrome
+    ///          bitmap: pixels with an alpha channel to 0 are
+    ///          transparent, black if the RGB channel are close
+    ///          to zero, and white otherwise.
     ///
     /// \param pixels   Array of pixels of the image
     /// \param size     Width and height of the image
