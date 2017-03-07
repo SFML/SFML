@@ -65,26 +65,6 @@
 ////////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent*)theEvent;
 
-////////////////////////////////////////////////////////////
-/// \brief This action method simulates the user clicking the close button
-///
-/// Override NSWindow implementation, see implementation for details
-///
-/// \param sender The message's sender
-///
-////////////////////////////////////////////////////////////
--(void)performClose:(id)sender;
-
-////////////////////////////////////////////////////////////
-/// \brief Enabling or disabling a specific menu item
-///
-/// \param menuItem An NSMenuItem object that represents the menu item
-///
-/// \return YES to enable menuItem, NO to disable it.
-///
-////////////////////////////////////////////////////////////
--(BOOL)validateMenuItem:(NSMenuItem*)menuItem;
-
 @end
 
 
