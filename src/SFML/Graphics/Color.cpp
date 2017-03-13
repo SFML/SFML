@@ -34,6 +34,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 // Static member data
 ////////////////////////////////////////////////////////////
+const Color Color::Transparent(0, 0, 0, 0);
 const Color Color::AliceBlue(240, 248, 255);
 const Color Color::AntiqueWhite(250, 235, 215);
 const Color Color::Aqua(0, 255, 255);
