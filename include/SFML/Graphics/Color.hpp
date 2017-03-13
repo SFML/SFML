@@ -80,6 +80,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    static const Color Transparent;
     static const Color AliceBlue;
     static const Color AntiqueWhite;
     static const Color Aqua;
