@@ -80,147 +80,147 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Color Transparent;
-    static const Color AliceBlue;
-    static const Color AntiqueWhite;
-    static const Color Aqua;
-    static const Color Aquamarine;
-    static const Color Azure;
-    static const Color Beige;
-    static const Color Bisque;
-    static const Color Black;
-    static const Color BlanchedAlmond;
-    static const Color Blue;
-    static const Color BlueViolet;
-    static const Color Brown;
-    static const Color BurlyWood;
-    static const Color CadetBlue;
-    static const Color Chartreuse;
-    static const Color Chocolate;
-    static const Color Coral;
-    static const Color CornflowerBlue;
-    static const Color Cornsilk;
-    static const Color Crimson;
-    static const Color Cyan;
-    static const Color DarkBlue;
-    static const Color DarkCyan;
-    static const Color DarkGoldenrod;
-    static const Color DarkGray;
-    static const Color DarkGreen;
-    static const Color DarkKhaki;
-    static const Color DarkMagenta;
-    static const Color DarkOliveGreen;
-    static const Color DarkOrange;
-    static const Color DarkOrchid;
-    static const Color DarkRed;
-    static const Color DarkSalmon;
-    static const Color DarkSeaGreen;
-    static const Color DarkSlateBlue;
-    static const Color DarkSlateGray;
-    static const Color DarkTurquoise;
-    static const Color DarkViolet;
-    static const Color DeepPink;
-    static const Color DeepSkyBlue;
-    static const Color DimGray;
-    static const Color DodgerBlue;
-    static const Color Firebrick;
-    static const Color FloralWhite;
-    static const Color ForestGreen;
-    static const Color Fuchsia;
-    static const Color Gainsboro;
-    static const Color GhostWhite;
-    static const Color Gold;
-    static const Color Goldenrod;
-    static const Color Gray;
-    static const Color Green;
-    static const Color GreenYellow;
-    static const Color Honeydew;
-    static const Color HotPink;
-    static const Color IndianRed;
-    static const Color Indigo;
-    static const Color Ivory;
-    static const Color Khaki;
-    static const Color Lavender;
-    static const Color LavenderBlush;
-    static const Color LawnGreen;
-    static const Color LemonChiffon;
-    static const Color LightBlue;
-    static const Color LightCoral;
-    static const Color LightCyan;
-    static const Color LightGoldenrodYellow;
-    static const Color LightGreen;
-    static const Color LightGray;
-    static const Color LightPink;
-    static const Color LightSalmon;
-    static const Color LightSeaGreen;
-    static const Color LightSkyBlue;
-    static const Color LightSlateGray;
-    static const Color LightSteelBlue;
-    static const Color LightYellow;
-    static const Color Lime;
-    static const Color LimeGreen;
-    static const Color Linen;
-    static const Color Magenta;
-    static const Color Maroon;
-    static const Color MediumAquamarine;
-    static const Color MediumBlue;
-    static const Color MediumOrchid;
-    static const Color MediumPurple;
-    static const Color MediumSeaGreen;
-    static const Color MediumSlateBlue;
-    static const Color MediumSpringGreen;
-    static const Color MediumTurquoise;
-    static const Color MediumVioletRed;
-    static const Color MidnightBlue;
-    static const Color MintCream;
-    static const Color MistyRose;
-    static const Color Moccasin;
-    static const Color NavajoWhite;
-    static const Color Navy;
-    static const Color OldLace;
-    static const Color Olive;
-    static const Color OliveDrab;
-    static const Color Orange;
-    static const Color OrangeRed;
-    static const Color Orchid;
-    static const Color PaleGoldenrod;
-    static const Color PaleGreen;
-    static const Color PaleTurquoise;
-    static const Color PaleVioletRed;
-    static const Color PapayaWhip;
-    static const Color PeachPuff;
-    static const Color Peru;
-    static const Color Pink;
-    static const Color Plum;
-    static const Color PowderBlue;
-    static const Color Purple;
-    static const Color Red;
-    static const Color RosyBrown;
-    static const Color RoyalBlue;
-    static const Color SaddleBrown;
-    static const Color Salmon;
-    static const Color SandyBrown;
-    static const Color SeaGreen;
-    static const Color SeaShell;
-    static const Color Sienna;
-    static const Color Silver;
-    static const Color SkyBlue;
-    static const Color SlateBlue;
-    static const Color SlateGray;
-    static const Color Snow;
-    static const Color SpringGreen;
-    static const Color SteelBlue;
-    static const Color Tan;
-    static const Color Teal;
-    static const Color Thistle;
-    static const Color Tomato;
-    static const Color Turquoise;
-    static const Color Violet;
-    static const Color Wheat;
-    static const Color White;
-    static const Color WhiteSmoke;
-    static const Color Yellow;
-    static const Color YellowGreen;
+    static const Color Transparent                 ///< Transparent (black) predefined color
+    static const Color AliceBlue                   ///< AliceBlue predefined color
+    static const Color AntiqueWhite                ///< AntiqueWhite predefined color
+    static const Color Aqua                        ///< Aqua predefined color
+    static const Color Aquamarine                  ///< Aquamarine predefined color
+    static const Color Azure                       ///< Azure predefined color
+    static const Color Beige                       ///< Beige predefined color
+    static const Color Bisque                      ///< Bisque predefined color
+    static const Color Black                       ///< Black predefined color
+    static const Color BlanchedAlmond              ///< BlanchedAlmond predefined color
+    static const Color Blue                        ///< Blue predefined color
+    static const Color BlueViolet                  ///< BlueViolet predefined color
+    static const Color Brown                       ///< Brown predefined color
+    static const Color BurlyWood                   ///< BurlyWood predefined color
+    static const Color CadetBlue                   ///< CadetBlue predefined color
+    static const Color Chartreuse                  ///< Chartreuse predefined color
+    static const Color Chocolate                   ///< Chocolate predefined color
+    static const Color Coral                       ///< Coral predefined color
+    static const Color CornflowerBlue              ///< CornflowerBlue predefined color
+    static const Color Cornsilk                    ///< Cornsilk predefined color
+    static const Color Crimson                     ///< Crimson predefined color
+    static const Color Cyan                        ///< Cyan predefined color
+    static const Color DarkBlue                    ///< DarkBlue predefined color
+    static const Color DarkCyan                    ///< DarkCyan predefined color
+    static const Color DarkGoldenrod               ///< DarkGoldenrod predefined color
+    static const Color DarkGray                    ///< DarkGray predefined color
+    static const Color DarkGreen                   ///< DarkGreen predefined color
+    static const Color DarkKhaki                   ///< DarkKhaki predefined color
+    static const Color DarkMagenta                 ///< DarkMagenta predefined color
+    static const Color DarkOliveGreen              ///< DarkOliveGreen predefined color
+    static const Color DarkOrange                  ///< DarkOrange predefined color
+    static const Color DarkOrchid                  ///< DarkOrchid predefined color
+    static const Color DarkRed                     ///< DarkRed predefined color
+    static const Color DarkSalmon                  ///< DarkSalmon predefined color
+    static const Color DarkSeaGreen                ///< DarkSeaGreen predefined color
+    static const Color DarkSlateBlue               ///< DarkSlateBlue predefined color
+    static const Color DarkSlateGray               ///< DarkSlateGray predefined color
+    static const Color DarkTurquoise               ///< DarkTurquoise predefined color
+    static const Color DarkViolet                  ///< DarkViolet predefined color
+    static const Color DeepPink                    ///< DeepPink predefined color
+    static const Color DeepSkyBlue                 ///< DeepSkyBlue predefined color
+    static const Color DimGray                     ///< DimGray predefined color
+    static const Color DodgerBlue                  ///< DodgerBlue predefined color
+    static const Color Firebrick                   ///< Firebrick predefined color
+    static const Color FloralWhite                 ///< FloralWhite predefined color
+    static const Color ForestGreen                 ///< ForestGreen predefined color
+    static const Color Fuchsia                     ///< Fuchsia predefined color
+    static const Color Gainsboro                   ///< Gainsboro predefined color
+    static const Color GhostWhite                  ///< GhostWhite predefined color
+    static const Color Gold                        ///< Gold predefined color
+    static const Color Goldenrod                   ///< Goldenrod predefined color
+    static const Color Gray                        ///< Gray predefined color
+    static const Color Green                       ///< Green predefined color
+    static const Color GreenYellow                 ///< GreenYellow predefined color
+    static const Color Honeydew                    ///< Honeydew predefined color
+    static const Color HotPink                     ///< HotPink predefined color
+    static const Color IndianRed                   ///< IndianRed predefined color
+    static const Color Indigo                      ///< Indigo predefined color
+    static const Color Ivory                       ///< Ivory predefined color
+    static const Color Khaki                       ///< Khaki predefined color
+    static const Color Lavender                    ///< Lavender predefined color
+    static const Color LavenderBlush               ///< LavenderBlush predefined color
+    static const Color LawnGreen                   ///< LawnGreen predefined color
+    static const Color LemonChiffon                ///< LemonChiffon predefined color
+    static const Color LightBlue                   ///< LightBlue predefined color
+    static const Color LightCoral                  ///< LightCoral predefined color
+    static const Color LightCyan                   ///< LightCyan predefined color
+    static const Color LightGoldenrodYellow        ///< LightGoldenrodYellow predefined color
+    static const Color LightGreen                  ///< LightGreen predefined color
+    static const Color LightGray                   ///< LightGray predefined color
+    static const Color LightPink                   ///< LightPink predefined color
+    static const Color LightSalmon                 ///< LightSalmon predefined color
+    static const Color LightSeaGreen               ///< LightSeaGreen predefined color
+    static const Color LightSkyBlue                ///< LightSkyBlue predefined color
+    static const Color LightSlateGray              ///< LightSlateGray predefined color
+    static const Color LightSteelBlue              ///< LightSteelBlue predefined color
+    static const Color LightYellow                 ///< LightYellow predefined color
+    static const Color Lime                        ///< Lime predefined color
+    static const Color LimeGreen                   ///< LimeGreen predefined color
+    static const Color Linen                       ///< Linen predefined color
+    static const Color Magenta                     ///< Magenta predefined color
+    static const Color Maroon                      ///< Maroon predefined color
+    static const Color MediumAquamarine            ///< MediumAquamarine predefined color
+    static const Color MediumBlue                  ///< MediumBlue predefined color
+    static const Color MediumOrchid                ///< MediumOrchid predefined color
+    static const Color MediumPurple                ///< MediumPurple predefined color
+    static const Color MediumSeaGreen              ///< MediumSeaGreen predefined color
+    static const Color MediumSlateBlue             ///< MediumSlateBlue predefined color
+    static const Color MediumSpringGreen           ///< MediumSpringGreen predefined color
+    static const Color MediumTurquoise             ///< MediumTurquoise predefined color
+    static const Color MediumVioletRed             ///< MediumVioletRed predefined color
+    static const Color MidnightBlue                ///< MidnightBlue predefined color
+    static const Color MintCream                   ///< MintCream predefined color
+    static const Color MistyRose                   ///< MistyRose predefined color
+    static const Color Moccasin                    ///< Moccasin predefined color
+    static const Color NavajoWhite                 ///< NavajoWhite predefined color
+    static const Color Navy                        ///< Navy predefined color
+    static const Color OldLace                     ///< OldLace predefined color
+    static const Color Olive                       ///< Olive predefined color
+    static const Color OliveDrab                   ///< OliveDrab predefined color
+    static const Color Orange                      ///< Orange predefined color
+    static const Color OrangeRed                   ///< OrangeRed predefined color
+    static const Color Orchid                      ///< Orchid predefined color
+    static const Color PaleGoldenrod               ///< PaleGoldenrod predefined color
+    static const Color PaleGreen                   ///< PaleGreen predefined color
+    static const Color PaleTurquoise               ///< PaleTurquoise predefined color
+    static const Color PaleVioletRed               ///< PaleVioletRed predefined color
+    static const Color PapayaWhip                  ///< PapayaWhip predefined color
+    static const Color PeachPuff                   ///< PeachPuff predefined color
+    static const Color Peru                        ///< Peru predefined color
+    static const Color Pink                        ///< Pink predefined color
+    static const Color Plum                        ///< Plum predefined color
+    static const Color PowderBlue                  ///< PowderBlue predefined color
+    static const Color Purple                      ///< Purple predefined color
+    static const Color Red                         ///< Red predefined color
+    static const Color RosyBrown                   ///< RosyBrown predefined color
+    static const Color RoyalBlue                   ///< RoyalBlue predefined color
+    static const Color SaddleBrown                 ///< SaddleBrown predefined color
+    static const Color Salmon                      ///< Salmon predefined color
+    static const Color SandyBrown                  ///< SandyBrown predefined color
+    static const Color SeaGreen                    ///< SeaGreen predefined color
+    static const Color SeaShell                    ///< SeaShell predefined color
+    static const Color Sienna                      ///< Sienna predefined color
+    static const Color Silver                      ///< Silver predefined color
+    static const Color SkyBlue                     ///< SkyBlue predefined color
+    static const Color SlateBlue                   ///< SlateBlue predefined color
+    static const Color SlateGray                   ///< SlateGray predefined color
+    static const Color Snow                        ///< Snow predefined color
+    static const Color SpringGreen                 ///< SpringGreen predefined color
+    static const Color SteelBlue                   ///< SteelBlue predefined color
+    static const Color Tan                         ///< Tan predefined color
+    static const Color Teal                        ///< Teal predefined color
+    static const Color Thistle                     ///< Thistle predefined color
+    static const Color Tomato                      ///< Tomato predefined color
+    static const Color Turquoise                   ///< Turquoise predefined color
+    static const Color Violet                      ///< Violet predefined color
+    static const Color Wheat                       ///< Wheat predefined color
+    static const Color White                       ///< White predefined color
+    static const Color WhiteSmoke                  ///< WhiteSmoke predefined color
+    static const Color Yellow                      ///< Yellow predefined color
+    static const Color YellowGreen                 ///< YellowGreen predefined color
 
     ////////////////////////////////////////////////////////////
     // Member data
