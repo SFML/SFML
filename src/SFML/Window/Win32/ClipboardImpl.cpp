@@ -36,7 +36,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-String ClipboardImpl::getText()
+String ClipboardImpl::getString()
 {
 	String text;
 
@@ -70,7 +70,7 @@ String ClipboardImpl::getText()
 
 
 ////////////////////////////////////////////////////////////
-void ClipboardImpl::setText(const String& text)
+void ClipboardImpl::setString(const String& text)
 {
     if (!OpenClipboard(NULL))
     {

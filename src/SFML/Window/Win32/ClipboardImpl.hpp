@@ -53,7 +53,7 @@ public:
     /// \return Current content of the clipboard
     ///
     ////////////////////////////////////////////////////////////
-    static String getText();
+    static String getString();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the content of the clipboard as string data
@@ -64,7 +64,7 @@ public:
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static void setText(const String& text);
+    static void setString(const String& text);
 };
 
 } // namespace priv

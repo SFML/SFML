@@ -22,24 +22,29 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARD_HPP
-#define SFML_CLIPBOARD_HPP
+#ifndef SFML_CLIPBOARDIMPLX11_HPP
+#define SFML_CLIPBOARDIMPLX11_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Export.hpp>
+#include <SFML/Window/Clipboard.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/System/Thread.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <X11/Xlib.h>
 
 
 namespace sf
+{
+namespace priv
 {
 
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the system clipboard
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Clipboard
+class ClipboardImpl
 {
 public:
 
@@ -66,28 +71,9 @@ public:
     static void setString(const String& text);
 };
 
+} // namespace priv
+
 } // namespace sf
 
 
-#endif // SFML_CLIPBOARD_HPP
-
-
-////////////////////////////////////////////////////////////
-/// \class sf::Clipboard
-/// \ingroup window
-///
-/// sf::Clipboard provides an interface to access the clipboard
-/// on the host system. It contains functions for getting data
-/// from and setting data to the clipboard.
-///
-/// Usage example:
-/// \code
-/// sf::String str = sf::Clipboard::getText();
-///
-/// // set clipboard text
-/// sf::Clipboard::setText("SFML is awesome!");
-/// \endcode
-///
-/// \see sf::Mouse, sf::Window
-///
-////////////////////////////////////////////////////////////
+#endif // SFML_CLIPBOARDIMPLX11_HPP
