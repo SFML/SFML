@@ -17,7 +17,9 @@ sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 # Suppress Mac OS X RPATH warnings and adopt new related behaviors
-cmake_policy(SET CMP0042 NEW)
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+    cmake_policy(SET CMP0042 NEW)
+endif()
 
 # set Android specific options
 
