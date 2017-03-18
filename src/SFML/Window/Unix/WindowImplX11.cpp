@@ -1275,7 +1275,7 @@ void WindowImplX11::initialize()
                                    m_window,
                                    XNInputStyle,
                                    XIMPreeditNothing | XIMStatusNothing,
-                                   reinterpret_cast<void*>(NULL));
+                                   NULL);
     }
     else
     {
