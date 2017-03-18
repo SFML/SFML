@@ -89,7 +89,7 @@ endif()
 # detect the compiler and its version
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
-if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang")
    # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
    # but there is no other way to detect CLang at the moment
    set(SFML_COMPILER_CLANG 1)
@@ -122,7 +122,7 @@ elseif(MSVC)
         set(SFML_MSVC_VERSION 14)
     endif()
 else()
-    message(FATAL_ERROR "Unsupported compiler")
+    message(FATAL_ERROR "Unsupported compiler ('${CMAKE_CXX_COMPILER_ID}' by '${CMAKE_CXX_COMPILER}')")
     return()
 endif()
 
