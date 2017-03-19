@@ -28,8 +28,6 @@
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/String.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <iostream>
 #include <string>
@@ -78,21 +76,21 @@ namespace
 
         if(utf8_text == None)
         {
-            std::cerr << "UTF8 format unavailable on clipboard." << std::endl;
+            std::cerr << "UTF-8 format unavailable on clipboard." << std::endl;
             utf8_text = xa_string;
         }
 
         if(pthread_mutex_init(&mutex, NULL))
         {
             is_fail = true;
-            std::cerr << "Unable to initialize mutex. Failed to initialize Clipboard." << std::endl;
+            std::cerr << "Unable to initialize mutex. Failed to initialize clipboard." << std::endl;
             return;
         }
 
         if(pthread_create(&host_thread, NULL, hostSelection, NULL))
         {
             is_fail = true;
-            std::cerr << "Unable to create host thread. Failed to initialize Clipboard." << std::endl;
+            std::cerr << "Unable to create host thread. Failed to initialize clipboard." << std::endl;
             return;
         }
     }
@@ -124,8 +122,6 @@ namespace
                     {
                         if(event.xselectionrequest.selection == selection)
                         {
-                            std::cerr << "Sending clipboard data" << std::endl;
-
                             XSelectionRequestEvent* sel_req_event = &event.xselectionrequest;
                             XSelectionEvent sel_event = {0};
 
@@ -159,9 +155,6 @@ namespace
                                 XSendEvent(display, sel_event.requestor, 0, 0, 
                                     reinterpret_cast<XEvent*>(&sel_event));
                         }
-                        else
-                            std::cerr << "Unable to process event." << std::endl;
-
                         break;
                     }
                     default: break;

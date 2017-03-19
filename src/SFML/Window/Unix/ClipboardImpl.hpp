@@ -30,9 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Clipboard.hpp>
 #include <SFML/System/String.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <X11/Xlib.h>
 
 
 namespace sf
