@@ -76,6 +76,8 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
+        ${SRCROOT}/Unix/ClipboardImpl.hpp
+        ${SRCROOT}/Unix/ClipboardImpl.cpp
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
