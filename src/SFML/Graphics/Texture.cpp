@@ -447,7 +447,7 @@ void Texture::update(const Texture& texture)
 void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
 {
     assert(x + texture.m_size.x <= m_size.x);
-    assert(y + texture.m_size.x <= m_size.y);
+    assert(y + texture.m_size.y <= m_size.y);
 
     if (!m_texture || !texture.m_texture)
         return;
