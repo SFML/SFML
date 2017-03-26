@@ -32,6 +32,7 @@
     #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 
 
@@ -274,6 +275,8 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
 ////////////////////////////////////////////////////////////
 void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
 {
+    // Check that coordinates requested are within the area of the image
+    assert((x < m_size.x) && (y< m_size.y));
     Uint8* pixel = &m_pixels[(x + y * m_size.x) * 4];
     *pixel++ = color.r;
     *pixel++ = color.g;
@@ -285,6 +288,8 @@ void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
 ////////////////////////////////////////////////////////////
 Color Image::getPixel(unsigned int x, unsigned int y) const
 {
+    // Check that coordinates requested are within the area of the image
+    assert((x < m_size.x) && (y <m_size.y));
     const Uint8* pixel = &m_pixels[(x + y * m_size.x) * 4];
     return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
