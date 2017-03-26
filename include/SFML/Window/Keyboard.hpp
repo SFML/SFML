@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+#include <SFML/System/String.hpp>
 
 
 namespace sf
@@ -274,6 +275,158 @@ public:
         ScanPlus,              ///< Keypad + key
         ScanNumpadEquals,      ///< keypad = key, probably Mac only
         ScanNumpadEnter,       ///< Keypad Enter/Return key
+        ScanDecimal,           ///< Keypad . and Delete key
+        ScanNumpad1,           ///< Keypad 1 and End key
+        ScanNumpad2,           ///< Keypad 2 and Down Arrow key
+        ScanNumpad3,           ///< Keypad 3 and Page Down key
+        ScanNumpad4,           ///< Keypad 4 and Left Arrow key
+        ScanNumpad5,           ///< Keypad 5 key
+        ScanNumpad6,           ///< Keypad 6 and Right Arrow key
+        ScanNumpad7,           ///< Keypad 7 and Home key
+        ScanNumpad8,           ///< Keypad 8 and Up Arrow key
+        ScanNumpad9,           ///< Keypad 9 and Page Up key
+        ScanNumpad0,           ///< Keypad 0 and Insert key
+        ScanReverseSolidus,    ///< Keyboard Non-US \ and | key
+        // FIXME what is this one? Might need better name. The doc says:
+        // - Typically near the Left-Shift key in AT-102 implementations.
+        // - Typical language mappings: Belg:<\> FrCa:«°» Dan:<\> Dutch:]|[ Fren:<> Ger:<|> Ital:<> LatAm:<> Nor:<> Span:<> Swed:<|> Swiss:<\> UK:\| Brazil: \|.
+        // What is the difference with "regular" \ and | key?
+        ScanApplication,       ///< Keyboard Application key
+        ScanExecute,           ///< Keyboard Execute key
+        ScanHelp,              ///< Keyboard Help key
+        ScanMenu,              ///< Keyboard Menu key
+        ScanSelect,            ///< Keyboard Select key
+        ScanStop,              ///< Keyboard Stop key
+        ScanAgain,             ///< Keyboard Again key
+        ScanUndo,              ///< Keyboard Undo key
+        ScanCut,               ///< Keyboard Cut key
+        ScanCopy,              ///< Keyboard Copy key
+        ScanPaste,             ///< Keyboard Paste key
+        ScanFind,              ///< Keyboard Find key
+        ScanMute,              ///< Keyboard Mute key
+        ScanVolumeUp,          ///< Keyboard Volume Up key
+        ScanVolumeDown,        ///< Keyboard Volume Down key
+        ScanLControl,          ///< Keyboard Left Control key
+        ScanLShift,            ///< Keyboard Left Shift key
+        ScanLAlt,              ///< Keyboard Left Alt key
+        ScanLSystem,           ///< Keyboard Left System key
+        ScanRControl,          ///< Keyboard Right Control key
+        ScanRShift,            ///< Keyboard Right Shift key
+        ScanRAlt,              ///< Keyboard Right Alt key
+        ScanRSystem,           ///< Keyboard Right System key
+
+        ScanCodeCount          ///< Keep last -- the total number of scancodes
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Scancodes
+    ///
+    /// The enumerators are bound to a physical key and do *not* depend
+    /// on the keyboard layout used by the operating system. Usually, the AT-101
+    /// keyboard can be used as reference for the physical position of the keys.
+    ///
+    /// The scancodes are based on a subset of Table 12: Keyboard/Keypad Page
+    /// of Universal Serial Bus (USB): HID Usage Tables, v1.12.
+    ///
+    /// \todo When porting this for SFML 3, remove the `s` prefix and use
+    ///       enum class.
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Scancode
+    {
+        ScanUnknown = -1,      ///< Represents any scancode not present in this enum
+        ScanA = 0,             ///< Keyboard a and A key
+        ScanB,                 ///< Keyboard b and B key
+        ScanC,                 ///< Keyboard c and C key
+        ScanD,                 ///< Keyboard d and D key
+        ScanE,                 ///< Keyboard e and E key
+        ScanF,                 ///< Keyboard f and F key
+        ScanG,                 ///< Keyboard g and G key
+        ScanH,                 ///< Keyboard h and H key
+        ScanI,                 ///< Keyboard i and I key
+        ScanJ,                 ///< Keyboard j and J key
+        ScanK,                 ///< Keyboard k and K key
+        ScanL,                 ///< Keyboard l and L key
+        ScanM,                 ///< Keyboard m and M key
+        ScanN,                 ///< Keyboard n and N key
+        ScanO,                 ///< Keyboard o and O key
+        ScanP,                 ///< Keyboard p and P key
+        ScanQ,                 ///< Keyboard q and Q key
+        ScanR,                 ///< Keyboard r and R key
+        ScanS,                 ///< Keyboard s and S key
+        ScanT,                 ///< Keyboard t and T key
+        ScanU,                 ///< Keyboard u and U key
+        ScanV,                 ///< Keyboard v and V key
+        ScanW,                 ///< Keyboard w and W key
+        ScanX,                 ///< Keyboard x and X key
+        ScanY,                 ///< Keyboard y and Y key
+        ScanZ,                 ///< Keyboard z and Z key
+        ScanNum1,              ///< Keyboard 1 and ! key
+        ScanNum2,              ///< Keyboard 2 and @ key
+        ScanNum3,              ///< Keyboard 3 and # key
+        ScanNum4,              ///< Keyboard 4 and $ key
+        ScanNum5,              ///< Keyboard 5 and % key
+        ScanNum6,              ///< Keyboard 6 and ^ key
+        ScanNum7,              ///< Keyboard 7 and & key
+        ScanNum8,              ///< Keyboard 8 and * key
+        ScanNum9,              ///< Keyboard 9 and ) key
+        ScanNum0,              ///< Keyboard 0 and ) key
+        ScanEnter,             ///< Keyboard Return (ENTER) key
+        ScanEscape,            ///< Keyboard Escape key
+        ScanBackspace,         ///< Keyboard Backspace key
+        // TODO above it's BackSpace, but is it correct? What do we use here?
+        ScanTab,               ///< Keyboard Tab key
+        ScanSpace,             ///< Keyboard Space key
+        ScanHyphen,            ///< Keyboard - and _ key
+        ScanEquals,            ///< Keyboard = and +
+        ScanLBracket,          ///< Keyboard [ and { key
+        ScanRBracket,          ///< Keyboard ] and } key
+        ScanBackslash,         ///< Keyboard \ and | key
+        // TODO capitalisation
+        ScanDash,              ///< Keyboard Non-US # and ~
+        ScanSemicolon,         ///< Keyboard ; and : key
+        // TODO capitalisation
+        ScanQuote,             ///< Keyboard ' and " key
+        ScanGraveAccent,       ///< Keyboard ` and ~ key
+        ScanComma,             ///< Keyboard , and < key
+        ScanPeriod,            ///< Keyboard . and > key
+        ScanForwardSlash,      ///< Keyboard / and ? key
+        ScanF1,                ///< Keyboard F1 key
+        ScanF2,                ///< Keyboard F2 key
+        ScanF3,                ///< Keyboard F3 key
+        ScanF4,                ///< Keyboard F4 key
+        ScanF5,                ///< Keyboard F5 key
+        ScanF6,                ///< Keyboard F6 key
+        ScanF7,                ///< Keyboard F7 key
+        ScanF8,                ///< Keyboard F8 key
+        ScanF9,                ///< Keyboard F9 key
+        ScanF10,               ///< Keyboard F10 key
+        ScanF11,               ///< Keyboard F11 key
+        ScanF12,               ///< Keyboard F12 key
+        ScanF13,               ///< Keyboard F13 key
+        ScanF14,               ///< Keyboard F14 key
+        ScanF15,               ///< Keyboard F15 key
+        ScanCapsLock,          ///< Keyboard Caps Lock key
+        ScanPrintScreen,       ///< Keyboard Print Screen key
+        ScanScrollLock,        ///< Keyboard Scroll Lock key
+        ScanPause,             ///< Keyboard Pause key
+        ScanInsert,            ///< Keyboard Insert key
+        ScanHome,              ///< Keyboard Home key
+        ScanPageUp,            ///< Keyboard Page Up key
+        ScanDelete,            ///< Keyboard Delete Forward key
+        ScanEnd,               ///< Keyboard End key
+        ScanPageDown,          ///< Keyboard Page Down key
+        ScanRight,             ///< Keyboard Right Arrow key
+        ScanLeft,              ///< Keyboard Left Arrow key
+        ScanDown,              ///< Keyboard Down Arrow key
+        ScanUp,                ///< Keyboard Up Arrow key
+        ScanNumLock,           ///< Keypad Num Lock and Clear key
+        ScanDivide,            ///< Keypad / key
+        ScanMultiply,          ///< Keypad * key
+        ScanMinus,             ///< Keypad - key
+        ScanPlus,              ///< Keypad + key
+        ScanPadEquals,         ///< keypad = key, probably Mac only
+        ScanReturn,            ///< Keypad Enter (return) key
         ScanDecimal,           ///< Keypad . and Delete key
         ScanNumpad1,           ///< Keypad 1 and End key
         ScanNumpad2,           ///< Keypad 2 and Down Arrow key
