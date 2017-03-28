@@ -56,7 +56,8 @@ void initialiseKeyboardHelper(void);
 /// \brief Set up a SFML key event based on the given modifiers flags and key code
 ///
 ////////////////////////////////////////////////////////////
-sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key);
+sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key,
+                                          sf::Keyboard::Scancode code);
 
 
 ////////////////////////////////////////////////////////////
