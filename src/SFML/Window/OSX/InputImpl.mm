@@ -40,9 +40,6 @@
 /// In order to keep track of the keyboard's state and mouse buttons' state
 /// we use the HID manager. Mouse position is handled differently.
 ///
-/// NB: we probably could use
-/// NSEvent +addGlobalMonitorForEventsMatchingMask:handler: for mouse only.
-///
 ////////////////////////////////////////////////////////////
 
 namespace sf
@@ -123,11 +120,40 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
     return view;
 }
 
+
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     AutoreleasePool pool;
     return HIDInputManager::getInstance().isKeyPressed(key);
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isKeyPressed(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().isKeyPressed(code);
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().localize(code);
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode InputImpl::unlocalize(Keyboard::Key key)
+{
+    return HIDInputManager::getInstance().unlocalize(key);
+}
+
+
+////////////////////////////////////////////////////////////
+String InputImpl::localizedRepresentation(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().localizedRepresentation(code);
 }
 
 
