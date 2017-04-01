@@ -30,25 +30,6 @@
 #include <SFML/System/Lock.hpp>
 #include <windows.h>
 
-
-namespace
-{
-    sf::Mutex oldWindowsMutex;
-
-    LARGE_INTEGER getFrequency()
-    {
-        LARGE_INTEGER frequency;
-        QueryPerformanceFrequency(&frequency);
-        return frequency;
-    }
-
-    bool isWindowsXpOrOlder()
-    {
-        // Windows XP was the last 5.x version of Windows
-        return static_cast<DWORD>(LOBYTE(LOWORD(GetVersion()))) < 6;
-    }
-}
-
 namespace sf
 {
 namespace priv
@@ -58,15 +39,26 @@ Time ClockImpl::getCurrentTime()
 {
     // Get the frequency of the performance counter
     // (it is constant across the program lifetime)
-    static LARGE_INTEGER frequency = getFrequency();
+    static const auto frequency = []
+    {
+        LARGE_INTEGER frequency;
+        QueryPerformanceFrequency(&frequency);
+        return frequency;
+    }();
 
     // Detect if we are on Windows XP or older
-    static bool oldWindows = isWindowsXpOrOlder();
+    static const auto oldWindows = []
+    {
+        // Windows XP was the last 5.x version of Windows
+        return static_cast<DWORD>(LOBYTE(LOWORD(GetVersion()))) < 6;
+    }();
 
     LARGE_INTEGER time;
 
     if (oldWindows)
     {
+        static sf::Mutex oldWindowsMutex;
+
         // Acquire a lock (CRITICAL_SECTION) to prevent travelling back in time
         Lock lock(oldWindowsMutex);
 

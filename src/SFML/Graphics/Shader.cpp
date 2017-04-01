@@ -534,7 +534,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
-                const static auto maxUnits = []
+                static const auto maxUnits = []
                 {
                     // Retrieve the maximum number of texture units available
                     GLint maxUnits = 0;
@@ -759,7 +759,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    const static auto available = []
+    static const auto available = []
     {
         TransientContextLock contextLock;
 
@@ -780,7 +780,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    const static auto available = []
+    static const auto available = []
     {
         TransientContextLock contextLock;
 

@@ -35,6 +35,7 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 
 
 namespace
@@ -42,8 +43,8 @@ namespace
     // Register all the built-in readers and writers if not already done
     void ensureDefaultReadersWritersRegistered()
     {
-        static bool registered = false;
-        if (!registered)
+        static std::once_flag registered;
+        std::call_once(registered, []
         {
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
@@ -51,8 +52,7 @@ namespace
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterWav>();
-            registered = true;
-        }
+        });
     }
 }
 

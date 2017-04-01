@@ -28,6 +28,7 @@
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 
 #if !defined(GL_MAJOR_VERSION)
     #define GL_MAJOR_VERSION 0x821B
@@ -46,11 +47,10 @@ namespace priv
 void ensureExtensionsInit()
 {
 #if !defined(SFML_OPENGL_ES)
-    static bool initialized = false;
-    if (!initialized)
-    {
-        initialized = true;
+    static std::once_flag initialized;
 
+    std::call_once(initialized, []
+    {
         sfogl_LoadFunctions();
 
         // Retrieve the context version number
@@ -84,7 +84,7 @@ void ensureExtensionsInit()
             err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << std::endl;
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
-    }
+    });
 #endif
 }
 

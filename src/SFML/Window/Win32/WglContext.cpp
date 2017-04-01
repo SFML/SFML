@@ -34,6 +34,7 @@
 #include <SFML/System/Err.hpp>
 #include <sstream>
 #include <vector>
+#include <mutex>
 
 
 namespace
@@ -51,15 +52,13 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit(HDC deviceContext)
 {
-    static bool initialized = false;
-    if (!initialized)
+    std::once_flag initialized;
+    std::call_once(initialized, [deviceContext]
     {
-        initialized = true;
-
         // We don't check the return value since the extension
         // flags are cleared even if loading fails
         sfwgl_LoadFunctions(deviceContext);
-    }
+    });
 }
 
 
@@ -200,10 +199,11 @@ GlFunctionPointer WglContext::getFunction(const char* name)
             return address;
     }
 
-    static HMODULE module = NULL;
-
-    if (!module)
-        module = GetModuleHandleA("OpenGL32.dll");
+    static const auto module = []
+    {
+        return GetModuleHandleA("OpenGL32.dll");
+    }();
+        
 
     if (module)
         return reinterpret_cast<GlFunctionPointer>(GetProcAddress(module, reinterpret_cast<LPCSTR>(name)));
@@ -251,15 +251,12 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
     }
     else
     {
-        static bool warned = false;
-
-        if (!warned)
+        std::once_flag warned;
+        std::call_once(warned, []
         {
             // wglSwapIntervalEXT not supported
             err() << "Setting vertical sync not supported" << std::endl;
-
-            warned = true;
-        }
+        });
     }
 }
 

@@ -36,6 +36,7 @@
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <cstring>
+#include <mutex>
 
 
 namespace
@@ -165,29 +166,25 @@ bool Texture::create(unsigned int width, unsigned int height)
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
 
-    static bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_EXT_texture_edge_clamp;
+    static const auto textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_EXT_texture_edge_clamp;
 
     if (!m_isRepeated && !textureEdgeClamp)
     {
-        static bool warned = false;
-
-        if (!warned)
+        std::once_flag warned;
+        std::call_once(warned, []
         {
             err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
             err() << "Artifacts may occur along texture edges" << std::endl;
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
-
-            warned = true;
-        }
+        });
     }
 
-    static bool textureSrgb = GLEXT_texture_sRGB;
+    static const auto textureSrgb = GLEXT_texture_sRGB;
 
     if (m_sRgb && !textureSrgb)
     {
-        static bool warned = false;
-
-        if (!warned)
+        std::once_flag warned;
+        std::call_once(warned, []
         {
 #ifndef SFML_OPENGL_ES
             err() << "OpenGL extension EXT_texture_sRGB unavailable" << std::endl;
@@ -195,9 +192,7 @@ bool Texture::create(unsigned int width, unsigned int height)
             err() << "OpenGL ES extension EXT_sRGB unavailable" << std::endl;
 #endif
             err() << "Automatic sRGB to linear conversion disabled" << std::endl;
-
-            warned = true;
-        }
+        });
 
         m_sRgb = false;
     }
@@ -640,20 +635,17 @@ void Texture::setRepeated(bool repeated)
             // Make sure that the current texture binding will be preserved
             priv::TextureSaver save;
 
-            static bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_EXT_texture_edge_clamp;
+            static const auto textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_EXT_texture_edge_clamp;
 
             if (!m_isRepeated && !textureEdgeClamp)
             {
-                static bool warned = false;
-
-                if (!warned)
+                std::once_flag warned;
+                std::call_once(warned, []
                 {
                     err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
                     err() << "Artifacts may occur along texture edges" << std::endl;
                     err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
-
-                    warned = true;
-                }
+                });
             }
 
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
@@ -775,7 +767,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    const static auto size = []
+    static const auto size = []
     {
         TransientContextLock lock;
 

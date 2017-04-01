@@ -34,6 +34,7 @@
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <iostream>
+#include <mutex>
 
 namespace
 {
@@ -279,7 +280,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         }
 
         // Find the OpenGL primitive type
-        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+        constexpr GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                                        GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
         GLenum mode = modes[type];
 
@@ -461,16 +462,13 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
     }
     else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
     {
-        static bool warned = false;
-
-        if (!warned)
+        static std::once_flag warned;
+        std::call_once(warned, []
         {
             err() << "OpenGL extension EXT_blend_minmax and/or EXT_blend_subtract unavailable" << std::endl;
             err() << "Selecting a blend equation not possible" << std::endl;
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
-
-            warned = true;
-        }
+        });
     }
 
     m_cache.lastBlendMode = mode;
