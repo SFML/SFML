@@ -44,10 +44,7 @@ FileInputStream::FileInputStream()
 ////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream()
 {
-#ifdef ANDROID
-    if (m_file)
-        delete m_file;
-#else
+#ifndef ANDROID
     if (m_file)
         std::fclose(m_file);
 #endif
@@ -58,9 +55,7 @@ FileInputStream::~FileInputStream()
 bool FileInputStream::open(const std::string& filename)
 {
 #ifdef ANDROID
-    if (m_file)
-        delete m_file;
-    m_file = new priv::ResourceStream(filename);
+    m_file = std::make_unique<priv::ResourceStream>(filename);
     return m_file->tell() != -1;
 #else
     if (m_file)

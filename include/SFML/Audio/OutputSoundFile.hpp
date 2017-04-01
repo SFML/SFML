@@ -31,6 +31,7 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <string>
+#include <memory>
 
 
 namespace sf
@@ -93,7 +94,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileWriter* m_writer; ///< Writer that handles I/O on the file's format
+    std::shared_ptr<SoundFileWriter> m_writer; ///< Writer that handles I/O on the file's format
 };
 
 } // namespace sf

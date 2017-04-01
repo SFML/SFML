@@ -40,19 +40,13 @@ public:
 
     DefaultErrStreamBuf()
     {
-        // Allocate the write buffer
-        constexpr auto size = 64;
-        char* buffer = new char[size];
-        setp(buffer, buffer + size);
+        setp(m_buffer, m_buffer + sizeof(m_buffer));
     }
 
     ~DefaultErrStreamBuf()
     {
         // Synchronize
         sync();
-
-        // Delete the write buffer
-        delete[] pbase();
     }
 
 private:
@@ -92,6 +86,8 @@ private:
 
         return 0;
     }
+
+    char m_buffer[64];
 };
 }
 

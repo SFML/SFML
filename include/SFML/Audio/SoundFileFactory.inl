@@ -31,8 +31,8 @@ namespace sf
 {
 namespace priv
 {
-    template <typename T> SoundFileReader* createReader() {return new T;}
-    template <typename T> SoundFileWriter* createWriter() {return new T;}
+    template <typename T> std::shared_ptr<SoundFileReader> createReader() {return std::make_shared<T>();}
+    template <typename T> std::shared_ptr<SoundFileWriter> createWriter() {return std::make_shared<T>();}
 }
 
 ////////////////////////////////////////////////////////////

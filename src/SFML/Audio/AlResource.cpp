@@ -29,6 +29,7 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
+#include <memory>
 
 
 namespace
@@ -40,7 +41,7 @@ namespace
     // The audio device is instantiated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.
     // It is destroyed when it is no longer needed.
-    sf::priv::AudioDevice* globalDevice;
+    std::unique_ptr<sf::priv::AudioDevice> globalDevice;
 }
 
 
@@ -54,7 +55,7 @@ AlResource::AlResource()
 
     // If this is the very first resource, trigger the global device initialization
     if (count == 0)
-        globalDevice = new priv::AudioDevice;
+        globalDevice = std::make_unique<priv::AudioDevice>();
 
     // Increment the resources counter
     count++;
@@ -72,7 +73,7 @@ AlResource::~AlResource()
 
     // If there's no more resource alive, we can destroy the device
     if (count == 0)
-        delete globalDevice;
+        globalDevice.reset();
 }
 
 } // namespace sf

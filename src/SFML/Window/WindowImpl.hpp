@@ -41,6 +41,8 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <queue>
 #include <set>
+#include <memory>
+
 
 namespace sf
 {
@@ -67,7 +69,7 @@ public:
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
+    static std::unique_ptr<WindowImpl> create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -77,7 +79,7 @@ public:
     /// \return Pointer to the created window (don't forget to delete it)
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(WindowHandle handle);
+    static std::unique_ptr<WindowImpl> create(WindowHandle handle);
 
 public:
 

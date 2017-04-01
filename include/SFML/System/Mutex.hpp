@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <memory>
 
 
 namespace sf
@@ -85,7 +86,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::MutexImpl* m_mutexImpl; ///< OS-specific implementation
+    std::shared_ptr<priv::MutexImpl> m_mutexImpl; ///< OS-specific implementation
 };
 
 } // namespace sf

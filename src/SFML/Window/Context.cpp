@@ -50,7 +50,6 @@ Context::Context()
 Context::~Context()
 {
     setActive(false);
-    delete m_context;
 }
 
 

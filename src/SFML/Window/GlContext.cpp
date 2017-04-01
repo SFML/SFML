@@ -143,7 +143,7 @@ namespace
     sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
 
     // The hidden, inactive context that will be shared with all other contexts
-    ContextType* sharedContext = NULL;
+    std::unique_ptr<ContextType> sharedContext;
 
     // This structure contains all the state necessary to
     // track TransientContext usage
@@ -155,17 +155,15 @@ namespace
         ////////////////////////////////////////////////////////////
         TransientContext() :
         referenceCount   (0),
-        context          (0),
-        sharedContextLock(0),
         useSharedContext (false)
         {
             if (resourceCount == 0)
             {
-                context = new sf::Context;
+                context = std::make_unique<sf::Context>();
             }
             else if (!currentContext)
             {
-                sharedContextLock = new sf::Lock(mutex);
+                sharedContextLock = std::make_unique<sf::Lock>(mutex);
                 useSharedContext = true;
                 sharedContext->setActive(true);
             }
@@ -179,23 +177,20 @@ namespace
         {
             if (useSharedContext)
                 sharedContext->setActive(false);
-
-            delete sharedContextLock;
-            delete context;
         }
 
         ///////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
         unsigned int referenceCount;
-        sf::Context* context;
-        sf::Lock*    sharedContextLock;
+        std::unique_ptr<sf::Context> context;
+        std::unique_ptr<sf::Lock>    sharedContextLock;
         bool         useSharedContext;
     };
 
     // This per-thread variable tracks if and how a transient
     // context is currently being used on the current thread
-    sf::ThreadLocalPtr<TransientContext> transientContext(NULL);
+    thread_local std::unique_ptr<TransientContext> transientContext;
 
     // Supported OpenGL extensions
     std::vector<std::string> extensions;
@@ -224,7 +219,7 @@ void GlContext::initResource()
         }
 
         // Create the shared context
-        sharedContext = new ContextType(NULL);
+        sharedContext = std::make_unique<ContextType>(nullptr);
         sharedContext->initialize(ContextSettings());
 
         // Load our extensions vector
@@ -294,12 +289,8 @@ void GlContext::cleanupResource()
     // If there's no more resource alive, we can trigger the global context cleanup
     if (resourceCount == 0)
     {
-        if (!sharedContext)
-            return;
-
         // Destroy the shared context
-        delete sharedContext;
-        sharedContext = NULL;
+        sharedContext.reset();
     }
 }
 
@@ -313,7 +304,7 @@ void GlContext::acquireTransientContext()
     // If this is the first TransientContextLock on this thread
     // construct the state object
     if (!transientContext)
-        transientContext = new TransientContext;
+        transientContext = std::make_unique<TransientContext>();
 
     // Increase the reference count
     transientContext->referenceCount++;
@@ -335,22 +326,19 @@ void GlContext::releaseTransientContext()
     // If this is the last TransientContextLock that is released
     // destroy the state object
     if (transientContext->referenceCount == 0)
-    {
-        delete transientContext;
-        transientContext = NULL;
-    }
+        transientContext.reset();
 }
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::create()
+std::unique_ptr<GlContext> GlContext::create()
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != NULL);
 
     Lock lock(mutex);
 
-    GlContext* context = NULL;
+    std::unique_ptr<GlContext> context;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -359,7 +347,7 @@ GlContext* GlContext::create()
         sharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext);
+        context = std::make_unique<ContextType>(sharedContext.get());
 
         sharedContext->setActive(false);
     }
@@ -371,14 +359,14 @@ GlContext* GlContext::create()
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
+std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != NULL);
 
     Lock lock(mutex);
 
-    GlContext* context = NULL;
+    std::unique_ptr<GlContext> context;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -387,7 +375,7 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
         sharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
+        context = std::make_unique<ContextType>(sharedContext.get(), settings, owner, bitsPerPixel);
 
         sharedContext->setActive(false);
     }
@@ -400,14 +388,14 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 
 
 ////////////////////////////////////////////////////////////
-GlContext* GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
+std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != NULL);
 
     Lock lock(mutex);
 
-    GlContext* context = NULL;
+    std::unique_ptr<GlContext> context;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -416,7 +404,7 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
         sharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext, settings, width, height);
+        context = std::make_unique<ContextType>(sharedContext.get(), settings, width, height);
 
         sharedContext->setActive(false);
     }

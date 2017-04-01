@@ -5,6 +5,7 @@
 #include "Effect.hpp"
 #include <vector>
 #include <cmath>
+#include <memory>
 
 
 const sf::Font* Effect::s_font = NULL;
@@ -357,12 +358,12 @@ int main()
     Effect::setFont(font);
 
     // Create the effects
-    std::vector<Effect*> effects;
-    effects.push_back(new Pixelate);
-    effects.push_back(new WaveBlur);
-    effects.push_back(new StormBlink);
-    effects.push_back(new Edge);
-    effects.push_back(new Geometry);
+    std::vector<std::unique_ptr<Effect>> effects;
+    effects.push_back(std::make_unique<Pixelate>());
+    effects.push_back(std::make_unique<WaveBlur>());
+    effects.push_back(std::make_unique<StormBlink>());
+    effects.push_back(std::make_unique<Edge>());
+    effects.push_back(std::make_unique<Geometry>());
     std::size_t current = 0;
 
     // Initialize them
@@ -451,10 +452,6 @@ int main()
         // Finally, display the rendered frame on screen
         window.display();
     }
-
-    // delete the effects
-    for (std::size_t i = 0; i < effects.size(); ++i)
-        delete effects[i];
 
     return EXIT_SUCCESS;
 }

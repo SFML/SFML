@@ -70,14 +70,9 @@ namespace sf
 Font::Font() :
 m_library  (NULL),
 m_face     (NULL),
-m_streamRec(NULL),
 m_stroker  (NULL),
-m_refCount (NULL),
 m_info     ()
 {
-    #ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
-    #endif
 }
 
 
@@ -92,10 +87,6 @@ m_info       (copy.m_info),
 m_pages      (copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
-    #ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
-    #endif
-
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers
 
@@ -108,13 +99,6 @@ m_pixelBuffer(copy.m_pixelBuffer)
 Font::~Font()
 {
     cleanup();
-
-    #ifdef SFML_SYSTEM_ANDROID
-
-    if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
-
-    #endif
 }
 
 
@@ -125,7 +109,7 @@ bool Font::loadFromFile(const std::string& filename)
 
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -173,11 +157,8 @@ bool Font::loadFromFile(const std::string& filename)
 
     #else
 
-    if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
-
-    m_stream = new priv::ResourceStream(filename);
-    return loadFromStream(*(priv::ResourceStream*)m_stream);
+    m_stream = std::make_shared<priv::ResourceStream>(filename);
+    return loadFromStream(*std::static_pointer_cast<priv::ResourceStream>(m_stream));
 
     #endif
 }
@@ -188,7 +169,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -241,7 +222,7 @@ bool Font::loadFromStream(InputStream& stream)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -258,8 +239,8 @@ bool Font::loadFromStream(InputStream& stream)
     stream.seek(0);
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
-    FT_StreamRec* rec = new FT_StreamRec;
-    std::memset(rec, 0, sizeof(*rec));
+    auto rec = std::make_shared<FT_StreamRec>();
+    std::memset(rec.get(), 0, sizeof(FT_StreamRec));
     rec->base               = NULL;
     rec->size               = static_cast<unsigned long>(stream.getSize());
     rec->pos                = 0;
@@ -270,7 +251,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Setup the FreeType callbacks that will read our stream
     FT_Open_Args args;
     args.flags  = FT_OPEN_STREAM;
-    args.stream = rec;
+    args.stream = rec.get();
     args.driver = 0;
 
     // Load the new font face from the specified stream
@@ -278,7 +259,6 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0)
     {
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
-        delete rec;
         return false;
     }
 
@@ -296,7 +276,6 @@ bool Font::loadFromStream(InputStream& stream)
     {
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
         FT_Done_Face(face);
-        delete rec;
         return false;
     }
 
@@ -477,7 +456,7 @@ void Font::cleanup()
         if (*m_refCount == 0)
         {
             // Delete the reference counter
-            delete m_refCount;
+            m_refCount.reset();
 
             // Destroy the stroker
             if (m_stroker)
@@ -488,8 +467,7 @@ void Font::cleanup()
                 FT_Done_Face(static_cast<FT_Face>(m_face));
 
             // Destroy the stream rec instance, if any (must be done after FT_Done_Face!)
-            if (m_streamRec)
-                delete static_cast<FT_StreamRec*>(m_streamRec);
+            m_streamRec.reset();
 
             // Close the library
             if (m_library)
@@ -502,7 +480,6 @@ void Font::cleanup()
     m_face      = NULL;
     m_stroker   = NULL;
     m_streamRec = NULL;
-    m_refCount  = NULL;
     m_pages.clear();
     std::vector<Uint8>().swap(m_pixelBuffer);
 }

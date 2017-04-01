@@ -31,6 +31,7 @@
 #include <SFML/System/Export.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <cstdlib>
+#include <memory>
 
 
 namespace sf
@@ -83,7 +84,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ThreadLocalImpl* m_impl; ///< Pointer to the OS specific implementation
+    std::shared_ptr<priv::ThreadLocalImpl> m_impl; ///< Pointer to the OS specific implementation
 };
 
 } // namespace sf

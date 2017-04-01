@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
+#include <memory>
 
 
 namespace sf
@@ -158,7 +159,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SocketSelectorImpl* m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
+    std::shared_ptr<SocketSelectorImpl> m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
 };
 
 } // namespace sf

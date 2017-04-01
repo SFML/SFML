@@ -33,8 +33,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile() :
-m_writer(NULL)
+OutputSoundFile::OutputSoundFile()
 {
 }
 
@@ -80,9 +79,8 @@ void OutputSoundFile::write(const Int16* samples, Uint64 count)
 ////////////////////////////////////////////////////////////
 void OutputSoundFile::close()
 {
-    // Destroy the reader
-    delete m_writer;
-    m_writer = NULL;
+    // Destroy the writer
+    m_writer.reset();
 }
 
 } // namespace sf

@@ -38,19 +38,10 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplDefault::RenderTextureImplDefault() :
-m_context(0),
 m_width  (0),
 m_height (0)
 {
 
-}
-
-
-////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
-{
-    // Destroy the context
-    delete m_context;
 }
 
 
@@ -62,7 +53,7 @@ bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, u
     m_height = height;
 
     // Create the in-memory OpenGL context
-    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
+    m_context = std::make_unique<Context>(ContextSettings(depthBuffer ? 32 : 0), width, height);
 
     return true;
 }

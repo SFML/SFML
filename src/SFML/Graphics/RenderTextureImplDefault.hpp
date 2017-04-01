@@ -31,6 +31,7 @@
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/Context.hpp>
+#include <memory>
 
 
 namespace sf
@@ -51,12 +52,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderTextureImplDefault();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~RenderTextureImplDefault();
 
 private:
 
@@ -94,9 +89,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     m_context; ///< P-Buffer based context
-    unsigned int m_width;   ///< Width of the P-Buffer
-    unsigned int m_height;  ///< Height of the P-Buffer
+    std::unique_ptr<Context> m_context; ///< P-Buffer based context
+    unsigned int             m_width;   ///< Width of the P-Buffer
+    unsigned int             m_height;  ///< Height of the P-Buffer
 };
 
 } // namespace priv

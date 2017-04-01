@@ -31,6 +31,7 @@
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <memory>
 
 
 namespace sf
@@ -102,9 +103,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     m_context;     ///< Needs a separate OpenGL context for not messing up the other ones
-    unsigned int m_frameBuffer; ///< OpenGL frame buffer object
-    unsigned int m_depthBuffer; ///< Optional depth buffer attached to the frame buffer
+    std::unique_ptr<Context> m_context;     ///< Needs a separate OpenGL context for not messing up the other ones
+    unsigned int             m_frameBuffer; ///< OpenGL frame buffer object
+    unsigned int             m_depthBuffer; ///< Optional depth buffer attached to the frame buffer
 };
 
 } // namespace priv

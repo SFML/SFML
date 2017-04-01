@@ -37,7 +37,6 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO() :
-m_context    (NULL),
 m_frameBuffer(0),
 m_depthBuffer(0)
 {
@@ -63,9 +62,6 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
         GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
         glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
     }
-
-    // Delete the context
-    delete m_context;
 }
 
 
@@ -85,7 +81,7 @@ bool RenderTextureImplFBO::isAvailable()
 bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer)
 {
     // Create the context
-    m_context = new Context;
+    m_context = std::make_unique<Context>();
 
     // Create the framebuffer object
     GLuint frameBuffer = 0;

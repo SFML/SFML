@@ -34,6 +34,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <cstdio>
 #include <string>
+#include <memory>
 
 #ifdef ANDROID
 namespace sf
@@ -123,7 +124,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
 #ifdef ANDROID
-    priv::ResourceStream* m_file;
+    std::unique_ptr<priv::ResourceStream> m_file;
 #else
     std::FILE* m_file; ///< stdio file stream
 #endif
