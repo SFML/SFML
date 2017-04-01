@@ -29,7 +29,6 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Err.hpp>
-#include <memory>
 
 
 namespace
@@ -103,50 +102,67 @@ AudioDevice::~AudioDevice()
 ////////////////////////////////////////////////////////////
 bool AudioDevice::isExtensionSupported(const std::string& extension)
 {
-    // Create a temporary audio device in case none exists yet.
-    // This device will not be used in this function and merely
-    // makes sure there is a valid OpenAL device for extension
-    // queries if none has been created yet.
-    std::auto_ptr<AudioDevice> device;
-    if (!audioDevice)
-        device.reset(new AudioDevice);
+    auto checkExtension = [&extension]
+    {
 
-    if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
-        return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
-    else
-        return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
+        if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
+            return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
+        else
+            return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
+    };
+
+    if (!audioDevice)
+    {
+        // Create a temporary audio device in case none exists yet.
+        // This device will not be used in this function and merely
+        // makes sure there is a valid OpenAL device for extension
+        // queries if none has been created yet.
+        AudioDevice device;
+
+        return checkExtension();
+    }
+
+    return checkExtension();
 }
 
 
 ////////////////////////////////////////////////////////////
 int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 {
-    // Create a temporary audio device in case none exists yet.
-    // This device will not be used in this function and merely
-    // makes sure there is a valid OpenAL device for format
-    // queries if none has been created yet.
-    std::auto_ptr<AudioDevice> device;
-    if (!audioDevice)
-        device.reset(new AudioDevice);
-
-    // Find the good format according to the number of channels
-    int format = 0;
-    switch (channelCount)
+    auto getFormat = [channelCount]
     {
-        case 1:  format = AL_FORMAT_MONO16;                    break;
-        case 2:  format = AL_FORMAT_STEREO16;                  break;
-        case 4:  format = alGetEnumValue("AL_FORMAT_QUAD16");  break;
-        case 6:  format = alGetEnumValue("AL_FORMAT_51CHN16"); break;
-        case 7:  format = alGetEnumValue("AL_FORMAT_61CHN16"); break;
-        case 8:  format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
-        default: format = 0;                                   break;
+        // Find the good format according to the number of channels
+        int format = 0;
+        switch (channelCount)
+        {
+            case 1:  format = AL_FORMAT_MONO16;                    break;
+            case 2:  format = AL_FORMAT_STEREO16;                  break;
+            case 4:  format = alGetEnumValue("AL_FORMAT_QUAD16");  break;
+            case 6:  format = alGetEnumValue("AL_FORMAT_51CHN16"); break;
+            case 7:  format = alGetEnumValue("AL_FORMAT_61CHN16"); break;
+            case 8:  format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
+            default: format = 0;                                   break;
+        }
+
+        // Fixes a bug on OS X
+        if (format == -1)
+            format = 0;
+
+        return format;
+    };
+
+    if (!audioDevice)
+    {
+        // Create a temporary audio device in case none exists yet.
+        // This device will not be used in this function and merely
+        // makes sure there is a valid OpenAL device for format
+        // queries if none has been created yet.
+        AudioDevice device;
+
+        return getFormat();
     }
 
-    // Fixes a bug on OS X
-    if (format == -1)
-        format = 0;
-
-    return format;
+    return getFormat();
 }
 
 
