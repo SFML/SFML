@@ -56,28 +56,6 @@
 
 namespace
 {
-    sf::Mutex maxTextureUnitsMutex;
-    sf::Mutex isAvailableMutex;
-
-    GLint checkMaxTextureUnits()
-    {
-        GLint maxUnits = 0;
-        glCheck(glGetIntegerv(GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxUnits));
-
-        return maxUnits;
-    }
-
-    // Retrieve the maximum number of texture units available
-    GLint getMaxTextureUnits()
-    {
-        // TODO: Remove this lock when it becomes unnecessary in C++11
-        sf::Lock lock(maxTextureUnitsMutex);
-
-        static GLint maxUnits = checkMaxTextureUnits();
-
-        return maxUnits;
-    }
-
     // Read the contents of a file into an array of char
     bool getFileContents(const std::string& filename, std::vector<char>& buffer)
     {
@@ -556,7 +534,15 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
-                GLint maxUnits = getMaxTextureUnits();
+                const static auto maxUnits = []
+                {
+                    // Retrieve the maximum number of texture units available
+                    GLint maxUnits = 0;
+                    glCheck(glGetIntegerv(GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxUnits));
+
+                    return maxUnits;
+                }();
+
                 if (m_textures.size() + 1 >= static_cast<std::size_t>(maxUnits))
                 {
                     err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
@@ -773,26 +759,19 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    Lock lock(isAvailableMutex);
-
-    static bool checked = false;
-    static bool available = false;
-
-    if (!checked)
+    const static auto available = []
     {
-        checked = true;
-
         TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = GLEXT_multitexture         &&
-                    GLEXT_shading_language_100 &&
-                    GLEXT_shader_objects       &&
-                    GLEXT_vertex_shader        &&
-                    GLEXT_fragment_shader;
-    }
+        return GLEXT_multitexture         &&
+               GLEXT_shading_language_100 &&
+               GLEXT_shader_objects       &&
+               GLEXT_vertex_shader        &&
+               GLEXT_fragment_shader;
+    }();
 
     return available;
 }
@@ -801,22 +780,15 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    Lock lock(isAvailableMutex);
-
-    static bool checked = false;
-    static bool available = false;
-
-    if (!checked)
+    const static auto available = []
     {
-        checked = true;
-
         TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = isAvailable() && GLEXT_geometry_shader4;
-    }
+        return isAvailable() && GLEXT_geometry_shader4;
+    }();
 
     return available;
 }

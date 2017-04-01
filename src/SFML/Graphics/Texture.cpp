@@ -41,7 +41,6 @@
 namespace
 {
     sf::Mutex idMutex;
-    sf::Mutex maximumSizeMutex;
 
     // Thread-safe unique identifier generator,
     // is used for states cache (see RenderTarget)
@@ -776,21 +775,17 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    Lock lock(maximumSizeMutex);
-
-    static bool checked = false;
-    static GLint size = 0;
-
-    if (!checked)
+    const static auto size = []
     {
-        checked = true;
-
         TransientContextLock lock;
 
+        GLint size;
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
-    }
 
-    return static_cast<unsigned int>(size);
+        return static_cast<unsigned int>(size);
+    }();
+
+    return size;
 }
 
 
