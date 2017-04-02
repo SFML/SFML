@@ -49,7 +49,7 @@ public:
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Shape();
+    ~Shape() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
@@ -274,7 +274,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void draw(RenderTarget& target, RenderStates states) const;
+    void draw(RenderTarget& target, RenderStates states) const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the fill vertices' color

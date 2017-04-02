@@ -57,7 +57,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderTextureImplFBO();
+    ~RenderTextureImplFBO() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the system supports FBOs or not
@@ -80,7 +80,7 @@ private:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -90,7 +90,7 @@ private:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
+    bool activate(bool active) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -98,7 +98,7 @@ private:
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void updateTexture(unsigned textureId);
+    void updateTexture(unsigned textureId) override;
 
     ////////////////////////////////////////////////////////////
     // Member data

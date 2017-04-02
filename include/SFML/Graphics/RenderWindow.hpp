@@ -99,7 +99,7 @@ public:
     /// Closes the window and frees all the resources attached to it.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderWindow();
+    ~RenderWindow() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rendering region of the window
@@ -110,7 +110,7 @@ public:
     /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const;
+    Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the window as the current target
@@ -128,7 +128,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setActive(bool active = true);
+    bool setActive(bool active = true) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the current contents of the window to an image
@@ -167,7 +167,7 @@ protected:
     /// the window is created.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onCreate();
+    void onCreate() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called after the window has been resized
@@ -176,7 +176,7 @@ protected:
     /// perform custom actions when the size of the window changes.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onResize();
+    void onResize() override;
 };
 
 } // namespace sf

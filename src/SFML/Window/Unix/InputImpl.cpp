@@ -212,8 +212,6 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
         case Mouse::XButton2: return false; // not supported by X
         default:              return false;
     }
-
-    return false;
 }
 
 
