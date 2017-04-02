@@ -33,31 +33,14 @@ set(SRC
 source_group("" FILES ${SRC})
 
 # add platform specific sources
-if(SFML_OS_WINDOWS)
-    set(PLATFORM_SRC
-        ${SRCROOT}/Win32/ClockImpl.cpp
-        ${SRCROOT}/Win32/ClockImpl.hpp
-        ${SRCROOT}/Win32/SleepImpl.cpp
-        ${SRCROOT}/Win32/SleepImpl.hpp
+if(SFML_OS_ANDROID)
+    set(PLATFORM_SRC ${PLATFORM_SRC}
+        ${SRCROOT}/Android/Activity.hpp
+        ${SRCROOT}/Android/Activity.cpp
+        ${SRCROOT}/Android/NativeActivity.cpp
+        ${SRCROOT}/Android/ResourceStream.cpp
+        ${SRCROOT}/Android/ResourceStream.cpp
     )
-    source_group("windows" FILES ${PLATFORM_SRC})
-else()
-    set(PLATFORM_SRC
-        ${SRCROOT}/Unix/ClockImpl.cpp
-        ${SRCROOT}/Unix/ClockImpl.hpp
-        ${SRCROOT}/Unix/SleepImpl.cpp
-        ${SRCROOT}/Unix/SleepImpl.hpp
-    )
-
-    if(SFML_OS_ANDROID)
-        set(PLATFORM_SRC ${PLATFORM_SRC}
-            ${SRCROOT}/Android/Activity.hpp
-            ${SRCROOT}/Android/Activity.cpp
-            ${SRCROOT}/Android/NativeActivity.cpp
-            ${SRCROOT}/Android/ResourceStream.cpp
-            ${SRCROOT}/Android/ResourceStream.cpp
-        )
-    endif()
 
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()

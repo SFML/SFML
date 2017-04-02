@@ -36,7 +36,7 @@ const Time Time::Zero;
 
 ////////////////////////////////////////////////////////////
 Time::Time() :
-m_microseconds(0)
+m_nanoseconds(0)
 {
 }
 
@@ -44,27 +44,34 @@ m_microseconds(0)
 ////////////////////////////////////////////////////////////
 float Time::asSeconds() const
 {
-    return m_microseconds / 1000000.f;
+    return std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1>>>(m_nanoseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 Int32 Time::asMilliseconds() const
 {
-    return static_cast<Int32>(m_microseconds / 1000);
+    return std::chrono::duration_cast<std::chrono::duration<Int32, std::milli>>(m_nanoseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 Time::asMicroseconds() const
 {
-    return m_microseconds;
+    return std::chrono::duration_cast<std::chrono::duration<Int64, std::micro>>(m_nanoseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
-Time::Time(Int64 microseconds) :
-m_microseconds(microseconds)
+Int64 Time::asNanoseconds() const
+{
+    return std::chrono::duration_cast<std::chrono::duration<Int64, std::nano>>(m_nanoseconds).count();
+}
+
+
+////////////////////////////////////////////////////////////
+Time::Time(Int64 nanoseconds) :
+m_nanoseconds(std::chrono::nanoseconds(nanoseconds))
 {
 }
 
@@ -72,19 +79,26 @@ m_microseconds(microseconds)
 ////////////////////////////////////////////////////////////
 Time seconds(float amount)
 {
-    return Time(static_cast<Int64>(amount * 1000000));
+    return Time(static_cast<Int64>(amount * 1000000000));
 }
 
 
 ////////////////////////////////////////////////////////////
 Time milliseconds(Int32 amount)
 {
-    return Time(static_cast<Int64>(amount) * 1000);
+    return Time(static_cast<Int64>(amount) * 1000000);
 }
 
 
 ////////////////////////////////////////////////////////////
 Time microseconds(Int64 amount)
+{
+    return Time(static_cast<Int64>(amount) * 1000);
+}
+
+
+////////////////////////////////////////////////////////////
+Time nanoseconds(Int64 amount)
 {
     return Time(amount);
 }

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+#include <chrono>
 
 
 namespace sf
@@ -54,7 +55,7 @@ public:
     ///
     /// \return Time in seconds
     ///
-    /// \see asMilliseconds, asMicroseconds
+    /// \see asMilliseconds, asMicroseconds, asNanoseconds
     ///
     ////////////////////////////////////////////////////////////
     float asSeconds() const;
@@ -64,7 +65,7 @@ public:
     ///
     /// \return Time in milliseconds
     ///
-    /// \see asSeconds, asMicroseconds
+    /// \see asSeconds, asMicroseconds, asNanoseconds
     ///
     ////////////////////////////////////////////////////////////
     Int32 asMilliseconds() const;
@@ -74,10 +75,20 @@ public:
     ///
     /// \return Time in microseconds
     ///
-    /// \see asSeconds, asMilliseconds
+    /// \see asSeconds, asMilliseconds, asNanoseconds
     ///
     ////////////////////////////////////////////////////////////
     Int64 asMicroseconds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the time value as a number of nanoseconds
+    ///
+    /// \return Time in nanoseconds
+    ///
+    /// \see asSeconds, asMilliseconds, asMicroseconds
+    ///
+    ////////////////////////////////////////////////////////////
+    Int64 asNanoseconds() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -89,24 +100,25 @@ private:
     friend SFML_SYSTEM_API Time seconds(float);
     friend SFML_SYSTEM_API Time milliseconds(Int32);
     friend SFML_SYSTEM_API Time microseconds(Int64);
+    friend SFML_SYSTEM_API Time nanoseconds(Int64);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a number of microseconds
+    /// \brief Construct from a number of nanoseconds
     ///
     /// This function is internal. To construct time values,
-    /// use sf::seconds, sf::milliseconds or sf::microseconds instead.
+    /// use sf::seconds, sf::milliseconds or sf::nanoseconds instead.
     ///
-    /// \param microseconds Number of microseconds
+    /// \param nanoseconds Number of nanoseconds
     ///
     ////////////////////////////////////////////////////////////
-    explicit Time(Int64 microseconds);
+    explicit Time(Int64 nanoseconds);
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Int64 m_microseconds; ///< Time value stored as microseconds
+    std::chrono::nanoseconds m_nanoseconds; ///< Time value stored as nanoseconds
 };
 
 ////////////////////////////////////////////////////////////
