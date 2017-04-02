@@ -46,7 +46,7 @@ namespace
     // Convert a string to lower case
     std::string toLower(std::string str)
     {
-        std::transform(str.begin(), str.end(), str.begin(), std::tolower);
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
         return str;
     }
 
