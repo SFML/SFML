@@ -76,11 +76,11 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
     }
 
     // Test the filename in all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const auto& reader : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (reader.check(stream))
+            return reader.create();
     }
 
     // No suitable reader found
@@ -100,11 +100,11 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromMemory(const 
     stream.open(data, sizeInBytes);
 
     // Test the stream for all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const auto& reader : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (reader.check(stream))
+            return reader.create();
     }
 
     // No suitable reader found
@@ -120,11 +120,11 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromStream(InputS
     ensureDefaultReadersWritersRegistered();
 
     // Test the stream for all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const auto& reader : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (reader.check(stream))
+            return reader.create();
     }
 
     // No suitable reader found
@@ -140,10 +140,10 @@ std::unique_ptr<SoundFileWriter> SoundFileFactory::createWriterFromFilename(cons
     ensureDefaultReadersWritersRegistered();
 
     // Test the filename in all the registered factories
-    for (WriterFactoryArray::const_iterator it = s_writers.begin(); it != s_writers.end(); ++it)
+    for (const auto& writer : s_writers)
     {
-        if (it->check(filename))
-            return it->create();
+        if (writer.check(filename))
+            return writer.create();
     }
 
     // No suitable writer found

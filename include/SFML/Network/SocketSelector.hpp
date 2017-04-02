@@ -241,9 +241,9 @@ private:
 ///         else
 ///         {
 ///             // The listener socket is not ready, test all other sockets (the clients)
-///             for (std::list<sf::TcpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it)
+///             for (auto c : clients)
 ///             {
-///                 sf::TcpSocket& client = **it;
+///                 sf::TcpSocket& client = *c;
 ///                 if (selector.isReady(client))
 ///                 {
 ///                     // The client has sent some data, we can receive it

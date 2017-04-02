@@ -282,8 +282,8 @@ void SoundStream::streamData()
 
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));
-    for (int i = 0; i < BufferCount; ++i)
-        m_endBuffers[i] = false;
+    for (auto& buffer : m_endBuffers)
+        buffer = false;
 
     // Fill the queue
     requestStop = fillQueue();
@@ -335,7 +335,7 @@ void SoundStream::streamData()
 
             // Find its number
             unsigned int bufferNum = 0;
-            for (int i = 0; i < BufferCount; ++i)
+            for (auto i = 0; i < BufferCount; ++i)
                 if (m_buffers[i] == buffer)
                 {
                     bufferNum = i;

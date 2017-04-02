@@ -103,8 +103,8 @@ int main()
                 sf::Ftp::ListingResponse response = server.getDirectoryListing();
                 std::cout << response << std::endl;
                 const std::vector<std::string>& names = response.getListing();
-                for (std::vector<std::string>::const_iterator it = names.begin(); it != names.end(); ++it)
-                    std::cout << *it << std::endl;
+                for (const auto& name : names)
+                    std::cout << name << std::endl;
                 break;
             }
 

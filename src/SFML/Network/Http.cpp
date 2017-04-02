@@ -39,8 +39,7 @@ namespace
     // Convert a string to lower case
     std::string toLower(std::string str)
     {
-        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
-            *i = static_cast<char>(std::tolower(*i));
+        std::transform(str.begin(), str.end(), str.begin(), std::tolower);
         return str;
     }
 }
@@ -119,9 +118,9 @@ std::string Http::Request::prepare() const
     out << "HTTP/" << m_majorVersion << "." << m_minorVersion << "\r\n";
 
     // Write fields
-    for (FieldTable::const_iterator i = m_fields.begin(); i != m_fields.end(); ++i)
+    for (const auto& field : m_fields)
     {
-        out << i->first << ": " << i->second << "\r\n";
+        out << field.first << ": " << field.second << "\r\n";
     }
 
     // Use an extra \r\n to separate the header from the body

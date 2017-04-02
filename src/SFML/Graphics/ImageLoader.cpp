@@ -37,6 +37,7 @@ extern "C"
     #include <jpeglib.h>
     #include <jerror.h>
 }
+#include <algorithm>
 #include <cctype>
 
 
@@ -45,8 +46,7 @@ namespace
     // Convert a string to lower case
     std::string toLower(std::string str)
     {
-        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
-            *i = static_cast<char>(std::tolower(*i));
+        std::transform(str.begin(), str.end(), str.begin(), std::tolower);
         return str;
     }
 
