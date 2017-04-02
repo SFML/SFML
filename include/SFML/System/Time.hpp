@@ -106,7 +106,8 @@ private:
     /// \brief Construct from a number of nanoseconds
     ///
     /// This function is internal. To construct time values,
-    /// use sf::seconds, sf::milliseconds or sf::nanoseconds instead.
+    /// use sf::seconds, sf::milliseconds, sf::microseconds
+    /// or sf::nanoseconds instead.
     ///
     /// \param nanoseconds Number of nanoseconds
     ///
@@ -129,7 +130,7 @@ private:
 ///
 /// \return Time value constructed from the amount of seconds
 ///
-/// \see milliseconds, microseconds
+/// \see milliseconds, microseconds, nanoseconds
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time seconds(float amount);
@@ -142,7 +143,7 @@ SFML_SYSTEM_API Time seconds(float amount);
 ///
 /// \return Time value constructed from the amount of milliseconds
 ///
-/// \see seconds, microseconds
+/// \see seconds, microseconds, nanoseconds
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time milliseconds(Int32 amount);
@@ -155,10 +156,23 @@ SFML_SYSTEM_API Time milliseconds(Int32 amount);
 ///
 /// \return Time value constructed from the amount of microseconds
 ///
-/// \see seconds, milliseconds
+/// \see seconds, milliseconds, nanoseconds
 ///
 ////////////////////////////////////////////////////////////
 SFML_SYSTEM_API Time microseconds(Int64 amount);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
+/// \brief Construct a time value from a number of nanoseconds
+///
+/// \param amount Number of nanoseconds
+///
+/// \return Time value constructed from the amount of nanoseconds
+///
+/// \see seconds, milliseconds, microseconds
+///
+////////////////////////////////////////////////////////////
+SFML_SYSTEM_API Time nanoseconds(Int64 amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
