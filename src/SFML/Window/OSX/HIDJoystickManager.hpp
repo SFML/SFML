@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDManager.h>
 
@@ -44,9 +43,12 @@ namespace priv
 /// It's only purpose is to help sf::priv::JoystickImpl class.
 ///
 ////////////////////////////////////////////////////////////
-class HIDJoystickManager : NonCopyable
+class HIDJoystickManager
 {
 public:
+
+    HIDJoystickManager(const HIDJoystickManager&) = delete;
+    HIDJoystickManager& operator=(const HIDJoystickManager&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class

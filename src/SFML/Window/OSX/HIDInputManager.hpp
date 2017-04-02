@@ -31,7 +31,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDManager.h>
@@ -51,9 +50,12 @@ typedef std::vector<IOHIDElementRef> IOHIDElements;
 /// Its purpose is to help sf::priv::InputImpl class.
 ///
 ////////////////////////////////////////////////////////////
-class HIDInputManager : NonCopyable
+class HIDInputManager
 {
 public:
+
+    HIDInputManager(const HIDInputManager&) = delete;
+    HIDInputManager& operator=(const HIDInputManager&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class
