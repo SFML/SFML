@@ -96,7 +96,7 @@ public:
     /// \see createReaderFromMemory, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static std::shared_ptr<SoundFileReader> createReaderFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
@@ -111,7 +111,7 @@ public:
     /// \see createReaderFromFilename, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static std::shared_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
+    static std::unique_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in stream
@@ -125,7 +125,7 @@ public:
     /// \see createReaderFromFilename, createReaderFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    static std::shared_ptr<SoundFileReader> createReaderFromStream(InputStream& stream);
+    static std::unique_ptr<SoundFileReader> createReaderFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right writer for the given file on disk
@@ -137,7 +137,7 @@ public:
     /// \return A new sound file writer that can write given file, or null if no writer can handle it
     ///
     ////////////////////////////////////////////////////////////
-    static std::shared_ptr<SoundFileWriter> createWriterFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::string& filename);
 
 private:
 
@@ -147,14 +147,14 @@ private:
     struct ReaderFactory
     {
         bool (*check)(InputStream&);
-        std::shared_ptr<SoundFileReader> (*create)();
+        std::unique_ptr<SoundFileReader> (*create)();
     };
     typedef std::vector<ReaderFactory> ReaderFactoryArray;
 
     struct WriterFactory
     {
         bool (*check)(const std::string&);
-        std::shared_ptr<SoundFileWriter> (*create)();
+        std::unique_ptr<SoundFileWriter> (*create)();
     };
     typedef std::vector<WriterFactory> WriterFactoryArray;
 

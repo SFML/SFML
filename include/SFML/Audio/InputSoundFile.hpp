@@ -218,8 +218,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<SoundFileReader> m_reader;       ///< Reader that handles I/O on the file's format
-    std::shared_ptr<InputStream>     m_ownedStream;  ///< The stream we own if any
+    std::unique_ptr<SoundFileReader> m_reader;       ///< Reader that handles I/O on the file's format
+    std::unique_ptr<InputStream>     m_ownedStream;  ///< The stream we own if any
     InputStream*                     m_stream;       ///< Input stream used to access the file's data
     Uint64                           m_sampleOffset; ///< Sample Read Position
     Uint64                           m_sampleCount;  ///< Total number of samples in the file

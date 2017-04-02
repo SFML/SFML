@@ -42,8 +42,6 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Window::Window() :
-m_impl          (NULL),
-m_context       (NULL),
 m_frameTimeLimit(Time::Zero),
 m_size          (0, 0)
 {
@@ -53,8 +51,6 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
-m_impl          (NULL),
-m_context       (NULL),
 m_frameTimeLimit(Time::Zero),
 m_size          (0, 0)
 {
@@ -64,8 +60,6 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
-m_impl          (NULL),
-m_context       (NULL),
 m_frameTimeLimit(Time::Zero),
 m_size          (0, 0)
 {

@@ -67,9 +67,7 @@ bool InputSoundFile::openFromFile(const std::string& filename)
         return false;
 
     // Wrap the file into a stream
-    auto file = std::make_shared<FileInputStream>();
-    m_ownedStream = file;
-    m_stream = m_ownedStream.get();
+    auto file = std::make_unique<FileInputStream>();
 
     // Open it
     if (!file->open(filename))
@@ -91,6 +89,9 @@ bool InputSoundFile::openFromFile(const std::string& filename)
     m_channelCount = info.channelCount;
     m_sampleRate = info.sampleRate;
 
+    m_ownedStream = std::move(file);
+    m_stream = m_ownedStream.get();
+
     return true;
 }
 
@@ -107,9 +108,7 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
         return false;
 
     // Wrap the memory file into a stream
-    auto memory = std::make_shared<MemoryInputStream>();
-    m_ownedStream = memory;
-    m_stream = m_ownedStream.get();
+    auto memory = std::make_unique<MemoryInputStream>();
 
     // Open it
     memory->open(data, sizeInBytes);
@@ -126,6 +125,9 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     m_sampleCount = info.sampleCount;
     m_channelCount = info.channelCount;
     m_sampleRate = info.sampleRate;
+
+    m_ownedStream = std::move(memory);
+    m_stream = m_ownedStream.get();
 
     return true;
 }

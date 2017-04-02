@@ -51,7 +51,7 @@ struct SocketSelector::SocketSelectorImpl
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector() :
-m_impl(std::make_shared<SocketSelectorImpl>())
+m_impl(std::make_unique<SocketSelectorImpl>())
 {
     clear();
 }
@@ -59,7 +59,7 @@ m_impl(std::make_shared<SocketSelectorImpl>())
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector(const SocketSelector& copy) :
-m_impl(std::make_shared<SocketSelectorImpl>(*copy.m_impl))
+m_impl(std::make_unique<SocketSelectorImpl>(*copy.m_impl))
 {
 
 }

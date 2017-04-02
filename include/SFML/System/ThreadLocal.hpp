@@ -84,7 +84,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<priv::ThreadLocalImpl> m_impl; ///< Pointer to the OS specific implementation
+    std::unique_ptr<priv::ThreadLocalImpl> m_impl; ///< Pointer to the OS specific implementation
 };
 
 } // namespace sf

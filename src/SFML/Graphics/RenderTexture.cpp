@@ -34,11 +34,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderTexture::RenderTexture() :
-m_impl(NULL)
-{
-
-}
+RenderTexture::RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -62,7 +58,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     if (priv::RenderTextureImplFBO::isAvailable())
     {
         // Use frame-buffer object (FBO)
-        m_impl = std::make_shared<priv::RenderTextureImplFBO>();
+        m_impl = std::make_unique<priv::RenderTextureImplFBO>();
 
         // Mark the texture as being a framebuffer object attachment
         m_texture.m_fboAttachment = true;
@@ -70,7 +66,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     else
     {
         // Use default implementation
-        m_impl = std::make_shared<priv::RenderTextureImplDefault>();
+        m_impl = std::make_unique<priv::RenderTextureImplDefault>();
     }
 
     // Initialize the render texture

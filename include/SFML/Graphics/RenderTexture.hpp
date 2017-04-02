@@ -208,7 +208,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<priv::RenderTextureImpl> m_impl;    ///< Platform/hardware specific implementation
+    std::unique_ptr<priv::RenderTextureImpl> m_impl;    ///< Platform/hardware specific implementation
     Texture                                  m_texture; ///< Target texture to draw on
 };
 

@@ -159,7 +159,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<SocketSelectorImpl> m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
+    std::unique_ptr<SocketSelectorImpl> m_impl; ///< Opaque pointer to the implementation (which requires OS-specific types)
 };
 
 } // namespace sf

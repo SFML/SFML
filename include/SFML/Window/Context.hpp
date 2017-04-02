@@ -136,7 +136,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<priv::GlContext> m_context; ///< Internal OpenGL context
+    std::unique_ptr<priv::GlContext> m_context; ///< Internal OpenGL context
 };
 
 } // namespace sf

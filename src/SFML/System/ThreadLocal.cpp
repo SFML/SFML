@@ -39,7 +39,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 ThreadLocal::ThreadLocal(void* value)
 {
-    m_impl = std::make_shared<priv::ThreadLocalImpl>();
+    m_impl = std::make_unique<priv::ThreadLocalImpl>();
     setValue(value);
 }
 
