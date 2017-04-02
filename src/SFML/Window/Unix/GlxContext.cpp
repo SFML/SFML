@@ -28,10 +28,9 @@
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <vector>
+#include <mutex>
 
 #if !defined(GLX_DEBUGGING) && defined(SFML_DEBUG)
     // Enable this to print messages to err() everytime GLX produces errors
@@ -40,7 +39,7 @@
 
 namespace
 {
-    sf::Mutex glxErrorMutex;
+    std::mutex glxErrorMutex;
     bool glxErrorOccurred = false;
 
     int HandleXError(::Display*, XErrorEvent*)
@@ -68,9 +67,9 @@ namespace
         }
 
     private:
-        sf::Lock   m_lock;
-        ::Display* m_display;
-        int      (*m_previousHandler)(::Display*, XErrorEvent*);
+        std::lock_guard<std::mutex> m_lock;
+        ::Display*                  m_display;
+        int                       (*m_previousHandler)(::Display*, XErrorEvent*);
     };
 }
 

@@ -31,14 +31,13 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #ifdef SFML_SYSTEM_ANDROID
     #include <SFML/System/Android/Activity.hpp>
 #endif
 #ifdef SFML_SYSTEM_LINUX
     #include <X11/Xlib.h>
 #endif
+#include <mutex>
 
 namespace
 {
@@ -60,7 +59,7 @@ namespace
 
     // On Android, its native activity handles this for us
     sf::priv::ActivityStates* states = sf::priv::getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->display;
 
@@ -113,7 +112,7 @@ m_config  (NULL)
 
     // On Android, we must save the created context
     ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    std::lock_guard<std::mutex> lock(states->mutex);
 
     states->context = this;
 
