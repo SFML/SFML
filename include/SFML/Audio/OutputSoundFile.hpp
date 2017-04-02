@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <string>
 #include <memory>
 
@@ -42,7 +41,7 @@ class SoundFileWriter;
 /// \brief Provide write access to sound files
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API OutputSoundFile : NonCopyable
+class SFML_AUDIO_API OutputSoundFile
 {
 public:
 
@@ -59,6 +58,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~OutputSoundFile();
+
+    OutputSoundFile(const OutputSoundFile&) = delete;
+    OutputSoundFile& operator=(const OutputSoundFile&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing

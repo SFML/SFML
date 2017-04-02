@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <algorithm>
@@ -45,7 +44,7 @@ class SoundFileReader;
 /// \brief Provide read access to sound files
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API InputSoundFile : NonCopyable
+class SFML_AUDIO_API InputSoundFile
 {
 public:
 
@@ -60,6 +59,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~InputSoundFile();
+
+    InputSoundFile(const InputSoundFile&) = delete;
+    InputSoundFile& operator=(const InputSoundFile&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading

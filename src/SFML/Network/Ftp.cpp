@@ -39,12 +39,15 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-class Ftp::DataChannel : NonCopyable
+class Ftp::DataChannel
 {
 public:
 
     ////////////////////////////////////////////////////////////
     DataChannel(Ftp& owner);
+
+    DataChannel(const DataChannel&) = delete;
+    DataChannel& operator=(const DataChannel&) = delete;
 
     ////////////////////////////////////////////////////////////
     Ftp::Response open(Ftp::TransferMode mode);

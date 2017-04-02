@@ -37,7 +37,6 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -48,7 +47,7 @@ class Drawable;
 /// \brief Base class for all render targets (window, texture, ...)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderTarget : NonCopyable
+class SFML_GRAPHICS_API RenderTarget
 {
 public:
 
@@ -57,6 +56,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~RenderTarget();
+
+    RenderTarget(const RenderTarget&) = delete;
+    RenderTarget& operator=(const RenderTarget&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the entire target with a single color

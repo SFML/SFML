@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/SocketHandle.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <vector>
 
 
@@ -42,7 +41,7 @@ class SocketSelector;
 /// \brief Base class for all the socket types
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API Socket : NonCopyable
+class SFML_NETWORK_API Socket
 {
 public:
 
@@ -75,6 +74,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Socket();
+
+    Socket(const Socket&) = delete;
+    Socket& operator=(const Socket&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the blocking state of the socket

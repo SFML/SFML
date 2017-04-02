@@ -31,7 +31,6 @@
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/ContextSettings.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <memory>
 
 
@@ -48,7 +47,7 @@ typedef void (*GlFunctionPointer)();
 /// \brief Class holding a valid drawing context
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Context : GlResource, NonCopyable
+class SFML_WINDOW_API Context : GlResource
 {
 public:
 
@@ -67,6 +66,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Context();
+
+    Context(const Context&) = delete;
+    Context& operator=(const Context&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate explicitly the context

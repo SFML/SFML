@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Config.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <string>
 #include <vector>
@@ -44,9 +44,12 @@ namespace priv
 /// \brief Load/save image files
 ///
 ////////////////////////////////////////////////////////////
-class ImageLoader : NonCopyable
+class ImageLoader
 {
 public:
+
+    ImageLoader(const ImageLoader&) = delete;
+    ImageLoader& operator=(const ImageLoader&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class

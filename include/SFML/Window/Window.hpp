@@ -36,7 +36,6 @@
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
 #include <memory>
 
@@ -55,7 +54,7 @@ class Event;
 /// \brief Window that serves as a target for OpenGL rendering
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Window : GlResource, NonCopyable
+class SFML_WINDOW_API Window : GlResource
 {
 public:
 
@@ -112,6 +111,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Window();
+
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window

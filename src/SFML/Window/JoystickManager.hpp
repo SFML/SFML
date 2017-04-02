@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -41,9 +40,12 @@ namespace priv
 /// \brief Global joystick manager
 ///
 ////////////////////////////////////////////////////////////
-class JoystickManager : NonCopyable
+class JoystickManager
 {
 public:
+
+    JoystickManager(const JoystickManager&) = delete;
+    JoystickManager& operator=(const JoystickManager&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the global unique instance of the manager

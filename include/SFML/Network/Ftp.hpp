@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/TcpSocket.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
@@ -44,7 +43,7 @@ class IpAddress;
 /// \brief A FTP client
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API Ftp : NonCopyable
+class SFML_NETWORK_API Ftp
 {
 public:
 
@@ -249,6 +248,13 @@ public:
 
 
     ////////////////////////////////////////////////////////////
+    /// \brief Constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Ftp() = default;
+
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     /// Automatically closes the connection with the server if
@@ -256,6 +262,9 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Ftp();
+
+    Ftp(const Ftp&) = delete;
+    Ftp& operator=(const Ftp&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Connect to the specified FTP server
