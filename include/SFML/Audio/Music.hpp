@@ -31,10 +31,10 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
+#include <mutex>
 
 
 namespace sf
@@ -170,7 +170,7 @@ private:
     ////////////////////////////////////////////////////////////
     InputSoundFile     m_file;    ///< The streamed music file
     std::vector<Int16> m_samples; ///< Temporary buffer of samples
-    Mutex              m_mutex;   ///< Mutex protecting the data
+    std::mutex         m_mutex;   ///< Mutex protecting the data
 };
 
 } // namespace sf

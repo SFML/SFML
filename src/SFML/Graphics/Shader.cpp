@@ -33,8 +33,6 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
 #include <vector>

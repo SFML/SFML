@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <mutex>
 
 
 const sf::Uint8 audioData   = 1;
@@ -83,7 +84,7 @@ private:
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
         {
-            sf::Lock lock(m_mutex);
+            std::lock_guard<std::mutex> lock(m_mutex);
             m_tempBuffer.assign(m_samples.begin() + m_offset, m_samples.end());
         }
 
@@ -132,7 +133,7 @@ private:
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
-                    sf::Lock lock(m_mutex);
+                    std::lock_guard<std::mutex> lock(m_mutex);
                     std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
                 }
             }
@@ -156,7 +157,7 @@ private:
     ////////////////////////////////////////////////////////////
     sf::TcpListener        m_listener;
     sf::TcpSocket          m_client;
-    sf::Mutex              m_mutex;
+    std::mutex             m_mutex;
     std::vector<sf::Int16> m_samples;
     std::vector<sf::Int16> m_tempBuffer;
     std::size_t            m_offset;

@@ -27,13 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/System/ThreadLocalPtr.hpp>
 
 
 namespace
 {
     // This per-thread variable holds the current context for each thread
-    sf::ThreadLocalPtr<sf::Context> currentContext(NULL);
+    thread_local sf::Context* currentContext = nullptr;
 }
 
 namespace sf

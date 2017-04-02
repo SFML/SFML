@@ -30,10 +30,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
-#include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
 #include <vector>
 #include <string>
+#include <thread>
 
 
 namespace sf
@@ -285,7 +285,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread             m_thread;             ///< Thread running the background recording task
+    std::thread        m_thread;             ///< Thread running the background recording task
     std::vector<Int16> m_samples;            ///< Buffer to store captured samples
     unsigned int       m_sampleRate;         ///< Sample rate
     Time               m_processingInterval; ///< Time period between calls to onProcessSamples

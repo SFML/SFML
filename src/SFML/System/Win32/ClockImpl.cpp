@@ -26,9 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Win32/ClockImpl.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <windows.h>
+#include <mutex>
 
 namespace sf
 {
@@ -57,10 +56,10 @@ Time ClockImpl::getCurrentTime()
 
     if (oldWindows)
     {
-        static sf::Mutex oldWindowsMutex;
+        static std::mutex oldWindowsMutex;
 
-        // Acquire a lock (CRITICAL_SECTION) to prevent travelling back in time
-        Lock lock(oldWindowsMutex);
+        // Acquire a lock to prevent travelling back in time
+        std::lock_guard<std::mutex> lock(oldWindowsMutex);
 
         // Get the current time
         QueryPerformanceCounter(&time);
