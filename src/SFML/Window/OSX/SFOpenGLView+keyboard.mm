@@ -86,7 +86,7 @@
     {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
 
-        if (key.code != sf::Keyboard::Unknown) // The key is recognized.
+        if (key.code != sf::Keyboard::Key::Unknown) // The key is recognized.
             m_requester->keyDown(key);
     }
 
@@ -158,7 +158,7 @@
 
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
 
-    if (key.code != sf::Keyboard::Unknown) // The key is recognized.
+    if (key.code != sf::Keyboard::Key::Unknown) // The key is recognized.
         m_requester->keyUp(key);
 }
 
@@ -181,7 +181,7 @@
 +(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event
 {
     // Key code
-    sf::Keyboard::Key key = sf::Keyboard::Unknown;
+    sf::Keyboard::Key key = sf::Keyboard::Key::Unknown;
 
     // First we look if the key down is from a list of characters
     // that depend on keyboard localization.
@@ -191,7 +191,7 @@
 
     // If the key is not a localized one, we try to find a corresponding code
     // through virtual key code.
-    if (key == sf::Keyboard::Unknown)
+    if (key == sf::Keyboard::Key::Unknown)
         key = sf::priv::HIDInputManager::nonLocalizedKeys([event keyCode]);
 
     return keyEventWithModifiers([event modifierFlags], key);

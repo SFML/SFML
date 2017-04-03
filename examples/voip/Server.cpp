@@ -43,12 +43,12 @@ public:
         if (!m_hasFinished)
         {
             // Listen to the given port for incoming connections
-            if (m_listener.listen(port) != sf::Socket::Done)
+            if (m_listener.listen(port) != sf::Socket::Status::Done)
                 return;
             std::cout << "Server is listening to port " << port << ", waiting for connections... " << std::endl;
 
             // Wait for a connection
-            if (m_listener.accept(m_client) != sf::Socket::Done)
+            if (m_listener.accept(m_client) != sf::Socket::Status::Done)
                 return;
             std::cout << "Client connected: " << m_client.getRemoteAddress() << std::endl;
 
@@ -117,7 +117,7 @@ private:
         {
             // Get waiting audio data from the network
             sf::Packet packet;
-            if (m_client.receive(packet) != sf::Socket::Done)
+            if (m_client.receive(packet) != sf::Socket::Status::Done)
                 break;
 
             // Extract the message ID
@@ -177,7 +177,7 @@ void doServer(unsigned short port)
     audioStream.start(port);
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));
@@ -193,7 +193,7 @@ void doServer(unsigned short port)
     audioStream.play();
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));

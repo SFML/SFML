@@ -47,11 +47,11 @@ struct JoystickCaps
     JoystickCaps()
     {
         buttonCount = 0;
-        std::fill(axes, axes + Joystick::AxisCount, false);
+        std::fill(std::begin(axes), std::end(axes), false);
     }
 
     unsigned int buttonCount;               ///< Number of buttons supported by the joystick
-    bool         axes[Joystick::AxisCount]; ///< Support for each axis
+    bool         axes[static_cast<size_t>(Joystick::Axis::Count)]; ///< Support for each axis
 };
 
 
@@ -64,12 +64,12 @@ struct JoystickState
     JoystickState()
     {
         connected = false;
-        std::fill(axes, axes + Joystick::AxisCount, 0.f);
+        std::fill(std::begin(axes), std::end(axes), 0.f);
         std::fill(buttons, buttons + Joystick::ButtonCount, false);
     }
 
     bool  connected;                      ///< Is the joystick currently connected?
-    float axes[Joystick::AxisCount];      ///< Position of each axis, in range [-100, 100]
+    float axes[static_cast<size_t>(Joystick::Axis::Count)];      ///< Position of each axis, in range [-100, 100]
     bool  buttons[Joystick::ButtonCount]; ///< Status of each button (true = pressed)
 };
 

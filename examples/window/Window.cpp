@@ -112,15 +112,15 @@ int main()
         while (window.pollEvent(event))
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Type::Closed)
                 window.close();
 
             // Escape key: exit
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+            if ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape))
                 window.close();
 
             // Resize event: adjust the viewport
-            if (event.type == sf::Event::Resized)
+            if (event.type == sf::Event::Type::Resized)
                 glViewport(0, 0, event.size.width, event.size.height);
         }
 

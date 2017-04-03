@@ -91,15 +91,15 @@ int main()
         while (window.pollEvent(event))
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-               ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+            if ((event.type == sf::Event::Type::Closed) ||
+               ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
             {
                 window.close();
                 break;
             }
 
             // Space key pressed: play
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            if ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Space))
             {
                 if (!isPlaying)
                 {
@@ -128,12 +128,12 @@ int main()
             float deltaTime = clock.restart().asSeconds();
 
             // Move the player's paddle
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) &&
                (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
             {
                 leftPaddle.move(0.f, -paddleSpeed * deltaTime);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) &&
                (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);

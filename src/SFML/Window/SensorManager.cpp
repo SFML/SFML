@@ -44,17 +44,17 @@ SensorManager& SensorManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool SensorManager::isAvailable(Sensor::Type sensor)
 {
-    return m_sensors[sensor].available;
+    return m_sensors[static_cast<size_t>(sensor)].available;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 {
-    if (m_sensors[sensor].available)
+    if (m_sensors[static_cast<size_t>(sensor)].available)
     {
-        m_sensors[sensor].enabled = enabled;
-        m_sensors[sensor].sensor.setEnabled(enabled);
+        m_sensors[static_cast<size_t>(sensor)].enabled = enabled;
+        m_sensors[static_cast<size_t>(sensor)].sensor.setEnabled(enabled);
     }
     else
     {
@@ -66,25 +66,25 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 ////////////////////////////////////////////////////////////
 bool SensorManager::isEnabled(Sensor::Type sensor) const
 {
-    return m_sensors[sensor].enabled;
+    return m_sensors[static_cast<size_t>(sensor)].enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorManager::getValue(Sensor::Type sensor) const
 {
-    return m_sensors[sensor].value;
+    return m_sensors[static_cast<size_t>(sensor)].value;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorManager::update()
 {
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (auto& sensor : m_sensors)
     {
         // Only process available sensors
-        if (m_sensors[i].available)
-            m_sensors[i].value = m_sensors[i].sensor.update();
+        if (sensor.available)
+            sensor.value = sensor.sensor.update();
     }
 }
 
@@ -96,7 +96,7 @@ SensorManager::SensorManager()
     SensorImpl::initialize();
 
     // Per sensor initialization
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (auto i = 0u; i < static_cast<size_t>(Sensor::Type::Count); ++i)
     {
         // Check which sensors are available
         m_sensors[i].available = SensorImpl::isAvailable(static_cast<Sensor::Type>(i));
@@ -114,10 +114,10 @@ SensorManager::SensorManager()
 SensorManager::~SensorManager()
 {
     // Per sensor cleanup
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (auto& sensor : m_sensors)
     {
-        if (m_sensors[i].available)
-            m_sensors[i].sensor.close();
+        if (sensor.available)
+            sensor.sensor.close();
     }
 
     // Global sensor cleanup

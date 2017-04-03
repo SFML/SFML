@@ -46,7 +46,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// The factors are mapped directly to their OpenGL equivalents,
     /// specified by glBlendFunc() or glBlendFuncSeparate().
     ////////////////////////////////////////////////////////
-    enum Factor
+    enum class Factor : unsigned char
     {
         Zero,             ///< (0, 0, 0, 0)
         One,              ///< (1, 1, 1, 1)
@@ -66,7 +66,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// The equations are mapped directly to their OpenGL equivalents,
     /// specified by glBlendEquation() or glBlendEquationSeparate().
     ////////////////////////////////////////////////////////
-    enum Equation
+    enum class Equation : unsigned char
     {
         Add,            ///< Pixel = Src * SrcFactor + Dst * DstFactor
         Subtract,       ///< Pixel = Src * SrcFactor - Dst * DstFactor
@@ -92,7 +92,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param blendEquation     Specifies how to combine the source and destination colors and alpha.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
+    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Equation::Add);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.

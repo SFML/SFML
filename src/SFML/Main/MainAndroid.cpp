@@ -248,7 +248,7 @@ static void onResume(ANativeActivity* activity)
 
     // Send an event to warn people the activity has been resumed
     sf::Event event;
-    event.type = sf::Event::MouseEntered;
+    event.type = sf::Event::Type::MouseEntered;
 
     states->forwardEvent(event);
 }
@@ -263,7 +263,7 @@ static void onPause(ANativeActivity* activity)
 
     // Send an event to warn people the activity has been paused
     sf::Event event;
-    event.type = sf::Event::MouseLeft;
+    event.type = sf::Event::Type::MouseLeft;
 
     states->forwardEvent(event);
 }
@@ -290,7 +290,7 @@ static void onDestroy(ANativeActivity* activity)
         if (!states->mainOver)
         {
             sf::Event event;
-            event.type = sf::Event::Closed;
+            event.type = sf::Event::Type::Closed;
 
             states->forwardEvent(event);
         }
@@ -332,7 +332,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 
     // Notify SFML mechanism
     sf::Event event;
-    event.type = sf::Event::GainedFocus;
+    event.type = sf::Event::Type::GainedFocus;
     states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
@@ -357,7 +357,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 
     // Notify SFML mechanism
     sf::Event event;
-    event.type = sf::Event::LostFocus;
+    event.type = sf::Event::Type::LostFocus;
     states->forwardEvent(event);
 
     // Wait for the event to be taken into account by SFML
@@ -432,7 +432,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     if (states->window != nullptr) {
         // Send an event to warn people about the window move/resize
         sf::Event event;
-        event.type = sf::Event::Resized;
+        event.type = sf::Event::Type::Resized;
         event.size.width = ANativeWindow_getWidth(states->window);
         event.size.height = ANativeWindow_getHeight(states->window);
 
@@ -476,7 +476,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     states->inputQueue = nullptr;
     states->config     = nullptr;
 
-    for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
+    for (auto i = 0u; i < static_cast<size_t>(sf::Mouse::Button::Count); i++)
         states->isButtonPressed[i] = false;
 
     states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);

@@ -47,7 +47,7 @@ public:
     /// \brief Sensor type
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type : unsigned char
     {
         Accelerometer,    ///< Measures the raw acceleration (m/s^2)
         Gyroscope,        ///< Measures the raw rotation rates (degrees/s)

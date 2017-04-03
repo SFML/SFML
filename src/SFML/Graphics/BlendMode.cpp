@@ -33,22 +33,22 @@ namespace sf
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
-const BlendMode BlendAlpha(BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, BlendMode::Add,
-                           BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add);
-const BlendMode BlendAdd(BlendMode::SrcAlpha, BlendMode::One, BlendMode::Add,
-                         BlendMode::One, BlendMode::One, BlendMode::Add);
-const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero);
-const BlendMode BlendNone(BlendMode::One, BlendMode::Zero);
+const BlendMode BlendAlpha(BlendMode::Factor::SrcAlpha, BlendMode::Factor::OneMinusSrcAlpha, BlendMode::Equation::Add,
+                           BlendMode::Factor::One, BlendMode::Factor::OneMinusSrcAlpha, BlendMode::Equation::Add);
+const BlendMode BlendAdd(BlendMode::Factor::SrcAlpha, BlendMode::Factor::One, BlendMode::Equation::Add,
+                         BlendMode::Factor::One, BlendMode::Factor::One, BlendMode::Equation::Add);
+const BlendMode BlendMultiply(BlendMode::Factor::DstColor, BlendMode::Factor::Zero);
+const BlendMode BlendNone(BlendMode::Factor::One, BlendMode::Factor::Zero);
 
 
 ////////////////////////////////////////////////////////////
 BlendMode::BlendMode() :
-colorSrcFactor(BlendMode::SrcAlpha),
-colorDstFactor(BlendMode::OneMinusSrcAlpha),
-colorEquation (BlendMode::Add),
-alphaSrcFactor(BlendMode::One),
-alphaDstFactor(BlendMode::OneMinusSrcAlpha),
-alphaEquation (BlendMode::Add)
+colorSrcFactor(BlendMode::Factor::SrcAlpha),
+colorDstFactor(BlendMode::Factor::OneMinusSrcAlpha),
+colorEquation (BlendMode::Equation::Add),
+alphaSrcFactor(BlendMode::Factor::One),
+alphaDstFactor(BlendMode::Factor::OneMinusSrcAlpha),
+alphaEquation (BlendMode::Equation::Add)
 {
 
 }

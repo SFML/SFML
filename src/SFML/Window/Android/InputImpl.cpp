@@ -141,7 +141,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     priv::ActivityStates* states = priv::getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
-    return states->isButtonPressed[button];
+    return states->isButtonPressed[static_cast<size_t>(button)];
 }
 
 

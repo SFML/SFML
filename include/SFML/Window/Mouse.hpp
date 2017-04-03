@@ -48,7 +48,7 @@ public:
     /// \brief Mouse buttons
     ///
     ////////////////////////////////////////////////////////////
-    enum Button
+    enum class Button : unsigned char
     {
         Left,       ///< The left mouse button
         Right,      ///< The right mouse button
@@ -56,14 +56,14 @@ public:
         XButton1,   ///< The first extra mouse button
         XButton2,   ///< The second extra mouse button
 
-        ButtonCount ///< Keep last -- the total number of mouse buttons
+        Count       ///< Keep last -- the total number of mouse buttons
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse wheels
     ///
     ////////////////////////////////////////////////////////////
-    enum Wheel
+    enum class Wheel : unsigned char
     {
         VerticalWheel,  ///< The vertical mouse wheel
         HorizontalWheel ///< The horizontal mouse wheel

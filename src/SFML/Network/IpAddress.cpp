@@ -150,9 +150,9 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
     // (not very hard: the web page contains only our IP address).
 
     Http server("www.sfml-dev.org");
-    Http::Request request("/ip-provider.php", Http::Request::Get);
+    Http::Request request("/ip-provider.php", Http::Request::Method::Get);
     Http::Response page = server.sendRequest(request, timeout);
-    if (page.getStatus() == Http::Response::Ok)
+    if (page.getStatus() == Http::Response::Status::Ok)
         return IpAddress(page.getBody());
 
     // Something failed: return an invalid address

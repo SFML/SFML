@@ -249,12 +249,12 @@ bool JoystickImpl::open(unsigned int index)
             case kIOHIDElementTypeInput_Misc:
                 switch (IOHIDElementGetUsage(element))
                 {
-                    case kHIDUsage_GD_X:  m_axis[Joystick::X] = element; break;
-                    case kHIDUsage_GD_Y:  m_axis[Joystick::Y] = element; break;
-                    case kHIDUsage_GD_Z:  m_axis[Joystick::Z] = element; break;
-                    case kHIDUsage_GD_Rx: m_axis[Joystick::U] = element; break;
-                    case kHIDUsage_GD_Ry: m_axis[Joystick::V] = element; break;
-                    case kHIDUsage_GD_Rz: m_axis[Joystick::R] = element; break;
+                    case kHIDUsage_GD_X:  m_axis[Joystick::Axis::X] = element; break;
+                    case kHIDUsage_GD_Y:  m_axis[Joystick::Axis::Y] = element; break;
+                    case kHIDUsage_GD_Z:  m_axis[Joystick::Axis::Z] = element; break;
+                    case kHIDUsage_GD_Rx: m_axis[Joystick::Axis::U] = element; break;
+                    case kHIDUsage_GD_Ry: m_axis[Joystick::Axis::V] = element; break;
+                    case kHIDUsage_GD_Rz: m_axis[Joystick::Axis::R] = element; break;
                     default: break;
                     // kHIDUsage_GD_Vx, kHIDUsage_GD_Vy, kHIDUsage_GD_Vz are ignored.
                 }
@@ -281,8 +281,8 @@ bool JoystickImpl::open(unsigned int index)
     // Retain all these objects for personal use
     for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it)
         CFRetain(*it);
-    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
-        CFRetain(it->second);
+    for (auto& axis : m_axis)
+        CFRetain(axis.second);
 
     // Note: we didn't retain element in the switch because we might have multiple
     // Axis X (for example) and we want to keep only the last one. So to prevent
@@ -302,8 +302,8 @@ void JoystickImpl::close()
         CFRelease(*it);
     m_buttons.clear();
 
-    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
-        CFRelease(it->second);
+    for (auto& axis : m_axis)
+        CFRelease(axis.second);
     m_axis.clear();
 
     // And we unregister this joystick
@@ -320,8 +320,8 @@ JoystickCaps JoystickImpl::getCapabilities() const
     caps.buttonCount = m_buttons.size();
 
     // Axis:
-    for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it) {
-        caps.axes[it->first] = true;
+    for (const auto& axis : m_axis) {
+        caps.axes[static_cast<size_t>(axis.first)] = true;
     }
 
     return caps;
@@ -339,7 +339,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     static const JoystickState disconnectedState; // return this if joystick was disconnected
-    JoystickState       state; // otherwise return that
+    JoystickState state; // otherwise return that
     state.connected = true;
 
     // Note: free up is done in close() which is called, if required,
@@ -396,10 +396,10 @@ JoystickState JoystickImpl::update()
     }
 
     // Update axes' state
-    for (AxisMap::iterator it = m_axis.begin(); it != m_axis.end(); ++it)
+    for (auto& axis : m_axis)
     {
         IOHIDValueRef value = 0;
-        IOHIDDeviceGetValue(IOHIDElementGetDevice(it->second), it->second, &value);
+        IOHIDDeviceGetValue(IOHIDElementGetDevice(axis.second), axis.second, &value);
 
         // Check for plug out.
         if (!value)
@@ -418,13 +418,13 @@ JoystickState JoystickImpl::update()
         // This method might not be very accurate (the "0 position" can be
         // slightly shift with some device) but we don't care because most
         // of devices are so sensitive that this is not relevant.
-        double  physicalMax   = IOHIDElementGetPhysicalMax(it->second);
-        double  physicalMin   = IOHIDElementGetPhysicalMin(it->second);
+        double  physicalMax   = IOHIDElementGetPhysicalMax(axis.second);
+        double  physicalMin   = IOHIDElementGetPhysicalMin(axis.second);
         double  scaledMin     = -100;
         double  scaledMax     =  100;
         double  physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
         float   scaledValue   = (((physicalValue - physicalMin) * (scaledMax - scaledMin)) / (physicalMax - physicalMin)) + scaledMin;
-        state.axes[it->first] = scaledValue;
+        state.axes[static_cast<size_t>(axis.first)] = scaledValue;
     }
 
     return state;

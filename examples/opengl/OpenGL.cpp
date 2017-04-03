@@ -161,21 +161,21 @@ int main()
             while (window.pollEvent(event))
             {
                 // Close window: exit
-                if (event.type == sf::Event::Closed)
+                if (event.type == sf::Event::Type::Closed)
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Escape key: exit
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+                if ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape))
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Return key: toggle mipmapping
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return))
+                if ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Return))
                 {
                     if (mipmapEnabled)
                     {
@@ -194,14 +194,14 @@ int main()
                 }
 
                 // Space key: toggle sRGB conversion
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+                if ((event.type == sf::Event::Type::KeyPressed) && (event.key.code == sf::Keyboard::Key::Space))
                 {
                     sRgb = !sRgb;
                     window.close();
                 }
 
                 // Adjust the viewport when the window is resized
-                if (event.type == sf::Event::Resized)
+                if (event.type == sf::Event::Type::Resized)
                 {
                     // Make the window the active window for OpenGL calls
                     window.setActive(true);

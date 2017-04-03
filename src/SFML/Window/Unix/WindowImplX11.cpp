@@ -264,111 +264,111 @@ namespace
     {
         switch (symbol)
         {
-            case XK_Shift_L:      return sf::Keyboard::LShift;
-            case XK_Shift_R:      return sf::Keyboard::RShift;
-            case XK_Control_L:    return sf::Keyboard::LControl;
-            case XK_Control_R:    return sf::Keyboard::RControl;
-            case XK_Alt_L:        return sf::Keyboard::LAlt;
-            case XK_Alt_R:        return sf::Keyboard::RAlt;
-            case XK_Super_L:      return sf::Keyboard::LSystem;
-            case XK_Super_R:      return sf::Keyboard::RSystem;
-            case XK_Menu:         return sf::Keyboard::Menu;
-            case XK_Escape:       return sf::Keyboard::Escape;
-            case XK_semicolon:    return sf::Keyboard::SemiColon;
-            case XK_slash:        return sf::Keyboard::Slash;
-            case XK_equal:        return sf::Keyboard::Equal;
-            case XK_minus:        return sf::Keyboard::Dash;
-            case XK_bracketleft:  return sf::Keyboard::LBracket;
-            case XK_bracketright: return sf::Keyboard::RBracket;
-            case XK_comma:        return sf::Keyboard::Comma;
-            case XK_period:       return sf::Keyboard::Period;
-            case XK_apostrophe:   return sf::Keyboard::Quote;
-            case XK_backslash:    return sf::Keyboard::BackSlash;
-            case XK_grave:        return sf::Keyboard::Tilde;
-            case XK_space:        return sf::Keyboard::Space;
-            case XK_Return:       return sf::Keyboard::Return;
-            case XK_KP_Enter:     return sf::Keyboard::Return;
-            case XK_BackSpace:    return sf::Keyboard::BackSpace;
-            case XK_Tab:          return sf::Keyboard::Tab;
-            case XK_Prior:        return sf::Keyboard::PageUp;
-            case XK_Next:         return sf::Keyboard::PageDown;
-            case XK_End:          return sf::Keyboard::End;
-            case XK_Home:         return sf::Keyboard::Home;
-            case XK_Insert:       return sf::Keyboard::Insert;
-            case XK_Delete:       return sf::Keyboard::Delete;
-            case XK_KP_Add:       return sf::Keyboard::Add;
-            case XK_KP_Subtract:  return sf::Keyboard::Subtract;
-            case XK_KP_Multiply:  return sf::Keyboard::Multiply;
-            case XK_KP_Divide:    return sf::Keyboard::Divide;
-            case XK_Pause:        return sf::Keyboard::Pause;
-            case XK_F1:           return sf::Keyboard::F1;
-            case XK_F2:           return sf::Keyboard::F2;
-            case XK_F3:           return sf::Keyboard::F3;
-            case XK_F4:           return sf::Keyboard::F4;
-            case XK_F5:           return sf::Keyboard::F5;
-            case XK_F6:           return sf::Keyboard::F6;
-            case XK_F7:           return sf::Keyboard::F7;
-            case XK_F8:           return sf::Keyboard::F8;
-            case XK_F9:           return sf::Keyboard::F9;
-            case XK_F10:          return sf::Keyboard::F10;
-            case XK_F11:          return sf::Keyboard::F11;
-            case XK_F12:          return sf::Keyboard::F12;
-            case XK_F13:          return sf::Keyboard::F13;
-            case XK_F14:          return sf::Keyboard::F14;
-            case XK_F15:          return sf::Keyboard::F15;
-            case XK_Left:         return sf::Keyboard::Left;
-            case XK_Right:        return sf::Keyboard::Right;
-            case XK_Up:           return sf::Keyboard::Up;
-            case XK_Down:         return sf::Keyboard::Down;
-            case XK_KP_Insert:    return sf::Keyboard::Numpad0;
-            case XK_KP_End:       return sf::Keyboard::Numpad1;
-            case XK_KP_Down:      return sf::Keyboard::Numpad2;
-            case XK_KP_Page_Down: return sf::Keyboard::Numpad3;
-            case XK_KP_Left:      return sf::Keyboard::Numpad4;
-            case XK_KP_Begin:     return sf::Keyboard::Numpad5;
-            case XK_KP_Right:     return sf::Keyboard::Numpad6;
-            case XK_KP_Home:      return sf::Keyboard::Numpad7;
-            case XK_KP_Up:        return sf::Keyboard::Numpad8;
-            case XK_KP_Page_Up:   return sf::Keyboard::Numpad9;
-            case XK_a:            return sf::Keyboard::A;
-            case XK_b:            return sf::Keyboard::B;
-            case XK_c:            return sf::Keyboard::C;
-            case XK_d:            return sf::Keyboard::D;
-            case XK_e:            return sf::Keyboard::E;
-            case XK_f:            return sf::Keyboard::F;
-            case XK_g:            return sf::Keyboard::G;
-            case XK_h:            return sf::Keyboard::H;
-            case XK_i:            return sf::Keyboard::I;
-            case XK_j:            return sf::Keyboard::J;
-            case XK_k:            return sf::Keyboard::K;
-            case XK_l:            return sf::Keyboard::L;
-            case XK_m:            return sf::Keyboard::M;
-            case XK_n:            return sf::Keyboard::N;
-            case XK_o:            return sf::Keyboard::O;
-            case XK_p:            return sf::Keyboard::P;
-            case XK_q:            return sf::Keyboard::Q;
-            case XK_r:            return sf::Keyboard::R;
-            case XK_s:            return sf::Keyboard::S;
-            case XK_t:            return sf::Keyboard::T;
-            case XK_u:            return sf::Keyboard::U;
-            case XK_v:            return sf::Keyboard::V;
-            case XK_w:            return sf::Keyboard::W;
-            case XK_x:            return sf::Keyboard::X;
-            case XK_y:            return sf::Keyboard::Y;
-            case XK_z:            return sf::Keyboard::Z;
-            case XK_0:            return sf::Keyboard::Num0;
-            case XK_1:            return sf::Keyboard::Num1;
-            case XK_2:            return sf::Keyboard::Num2;
-            case XK_3:            return sf::Keyboard::Num3;
-            case XK_4:            return sf::Keyboard::Num4;
-            case XK_5:            return sf::Keyboard::Num5;
-            case XK_6:            return sf::Keyboard::Num6;
-            case XK_7:            return sf::Keyboard::Num7;
-            case XK_8:            return sf::Keyboard::Num8;
-            case XK_9:            return sf::Keyboard::Num9;
+            case XK_Shift_L:      return sf::Keyboard::Key::LShift;
+            case XK_Shift_R:      return sf::Keyboard::Key::RShift;
+            case XK_Control_L:    return sf::Keyboard::Key::LControl;
+            case XK_Control_R:    return sf::Keyboard::Key::RControl;
+            case XK_Alt_L:        return sf::Keyboard::Key::LAlt;
+            case XK_Alt_R:        return sf::Keyboard::Key::RAlt;
+            case XK_Super_L:      return sf::Keyboard::Key::LSystem;
+            case XK_Super_R:      return sf::Keyboard::Key::RSystem;
+            case XK_Menu:         return sf::Keyboard::Key::Menu;
+            case XK_Escape:       return sf::Keyboard::Key::Escape;
+            case XK_semicolon:    return sf::Keyboard::Key::SemiColon;
+            case XK_slash:        return sf::Keyboard::Key::Slash;
+            case XK_equal:        return sf::Keyboard::Key::Equal;
+            case XK_minus:        return sf::Keyboard::Key::Dash;
+            case XK_bracketleft:  return sf::Keyboard::Key::LBracket;
+            case XK_bracketright: return sf::Keyboard::Key::RBracket;
+            case XK_comma:        return sf::Keyboard::Key::Comma;
+            case XK_period:       return sf::Keyboard::Key::Period;
+            case XK_apostrophe:   return sf::Keyboard::Key::Quote;
+            case XK_backslash:    return sf::Keyboard::Key::BackSlash;
+            case XK_grave:        return sf::Keyboard::Key::Tilde;
+            case XK_space:        return sf::Keyboard::Key::Space;
+            case XK_Return:       return sf::Keyboard::Key::Return;
+            case XK_KP_Enter:     return sf::Keyboard::Key::Return;
+            case XK_BackSpace:    return sf::Keyboard::Key::BackSpace;
+            case XK_Tab:          return sf::Keyboard::Key::Tab;
+            case XK_Prior:        return sf::Keyboard::Key::PageUp;
+            case XK_Next:         return sf::Keyboard::Key::PageDown;
+            case XK_End:          return sf::Keyboard::Key::End;
+            case XK_Home:         return sf::Keyboard::Key::Home;
+            case XK_Insert:       return sf::Keyboard::Key::Insert;
+            case XK_Delete:       return sf::Keyboard::Key::Delete;
+            case XK_KP_Add:       return sf::Keyboard::Key::Add;
+            case XK_KP_Subtract:  return sf::Keyboard::Key::Subtract;
+            case XK_KP_Multiply:  return sf::Keyboard::Key::Multiply;
+            case XK_KP_Divide:    return sf::Keyboard::Key::Divide;
+            case XK_Pause:        return sf::Keyboard::Key::Pause;
+            case XK_F1:           return sf::Keyboard::Key::F1;
+            case XK_F2:           return sf::Keyboard::Key::F2;
+            case XK_F3:           return sf::Keyboard::Key::F3;
+            case XK_F4:           return sf::Keyboard::Key::F4;
+            case XK_F5:           return sf::Keyboard::Key::F5;
+            case XK_F6:           return sf::Keyboard::Key::F6;
+            case XK_F7:           return sf::Keyboard::Key::F7;
+            case XK_F8:           return sf::Keyboard::Key::F8;
+            case XK_F9:           return sf::Keyboard::Key::F9;
+            case XK_F10:          return sf::Keyboard::Key::F10;
+            case XK_F11:          return sf::Keyboard::Key::F11;
+            case XK_F12:          return sf::Keyboard::Key::F12;
+            case XK_F13:          return sf::Keyboard::Key::F13;
+            case XK_F14:          return sf::Keyboard::Key::F14;
+            case XK_F15:          return sf::Keyboard::Key::F15;
+            case XK_Left:         return sf::Keyboard::Key::Left;
+            case XK_Right:        return sf::Keyboard::Key::Right;
+            case XK_Up:           return sf::Keyboard::Key::Up;
+            case XK_Down:         return sf::Keyboard::Key::Down;
+            case XK_KP_Insert:    return sf::Keyboard::Key::Numpad0;
+            case XK_KP_End:       return sf::Keyboard::Key::Numpad1;
+            case XK_KP_Down:      return sf::Keyboard::Key::Numpad2;
+            case XK_KP_Page_Down: return sf::Keyboard::Key::Numpad3;
+            case XK_KP_Left:      return sf::Keyboard::Key::Numpad4;
+            case XK_KP_Begin:     return sf::Keyboard::Key::Numpad5;
+            case XK_KP_Right:     return sf::Keyboard::Key::Numpad6;
+            case XK_KP_Home:      return sf::Keyboard::Key::Numpad7;
+            case XK_KP_Up:        return sf::Keyboard::Key::Numpad8;
+            case XK_KP_Page_Up:   return sf::Keyboard::Key::Numpad9;
+            case XK_a:            return sf::Keyboard::Key::A;
+            case XK_b:            return sf::Keyboard::Key::B;
+            case XK_c:            return sf::Keyboard::Key::C;
+            case XK_d:            return sf::Keyboard::Key::D;
+            case XK_e:            return sf::Keyboard::Key::E;
+            case XK_f:            return sf::Keyboard::Key::F;
+            case XK_g:            return sf::Keyboard::Key::G;
+            case XK_h:            return sf::Keyboard::Key::H;
+            case XK_i:            return sf::Keyboard::Key::I;
+            case XK_j:            return sf::Keyboard::Key::J;
+            case XK_k:            return sf::Keyboard::Key::K;
+            case XK_l:            return sf::Keyboard::Key::L;
+            case XK_m:            return sf::Keyboard::Key::M;
+            case XK_n:            return sf::Keyboard::Key::N;
+            case XK_o:            return sf::Keyboard::Key::O;
+            case XK_p:            return sf::Keyboard::Key::P;
+            case XK_q:            return sf::Keyboard::Key::Q;
+            case XK_r:            return sf::Keyboard::Key::R;
+            case XK_s:            return sf::Keyboard::Key::S;
+            case XK_t:            return sf::Keyboard::Key::T;
+            case XK_u:            return sf::Keyboard::Key::U;
+            case XK_v:            return sf::Keyboard::Key::V;
+            case XK_w:            return sf::Keyboard::Key::W;
+            case XK_x:            return sf::Keyboard::Key::X;
+            case XK_y:            return sf::Keyboard::Key::Y;
+            case XK_z:            return sf::Keyboard::Key::Z;
+            case XK_0:            return sf::Keyboard::Key::Num0;
+            case XK_1:            return sf::Keyboard::Key::Num1;
+            case XK_2:            return sf::Keyboard::Key::Num2;
+            case XK_3:            return sf::Keyboard::Key::Num3;
+            case XK_4:            return sf::Keyboard::Key::Num4;
+            case XK_5:            return sf::Keyboard::Key::Num5;
+            case XK_6:            return sf::Keyboard::Key::Num6;
+            case XK_7:            return sf::Keyboard::Key::Num7;
+            case XK_8:            return sf::Keyboard::Key::Num8;
+            case XK_9:            return sf::Keyboard::Key::Num9;
         }
 
-        return sf::Keyboard::Unknown;
+        return sf::Keyboard::Key::Unknown;
     }
 }
 
@@ -1451,7 +1451,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             }
 
             Event event;
-            event.type = Event::GainedFocus;
+            event.type = Event::Type::GainedFocus;
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
@@ -1479,7 +1479,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 XUngrabPointer(m_display, CurrentTime);
 
             Event event;
-            event.type = Event::LostFocus;
+            event.type = Event::Type::LostFocus;
             pushEvent(event);
             break;
         }
@@ -1491,7 +1491,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
                 Event event;
-                event.type        = Event::Resized;
+                event.type        = Event::Type::Resized;
                 event.size.width  = windowEvent.xconfigure.width;
                 event.size.height = windowEvent.xconfigure.height;
                 pushEvent(event);
@@ -1517,7 +1517,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 {
                     // Handle the WM_DELETE_WINDOW message
                     Event event;
-                    event.type = Event::Closed;
+                    event.type = Event::Type::Closed;
                     pushEvent(event);
                 }
                 else if (netWmPing && (windowEvent.xclient.format == 32) && (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
@@ -1534,7 +1534,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Key down event
         case KeyPress:
         {
-            Keyboard::Key key = Keyboard::Unknown;
+            Keyboard::Key key = Keyboard::Key::Unknown;
 
             // Try each KeySym index (modifier group) until we get a match
             for (int i = 0; i < 4; ++i)
@@ -1542,14 +1542,14 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 // Get the SFML keyboard code from the keysym of the key that has been pressed
                 key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
 
-                if (key != Keyboard::Unknown)
+                if (key != Keyboard::Key::Unknown)
                     break;
             }
 
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
-            event.type        = Event::KeyPressed;
+            event.type        = Event::Type::KeyPressed;
             event.key.code    = key;
             event.key.alt     = windowEvent.xkey.state & Mod1Mask;
             event.key.control = windowEvent.xkey.state & ControlMask;
@@ -1582,7 +1582,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         if (unicode != 0)
                         {
                             Event textEvent;
-                            textEvent.type         = Event::TextEntered;
+                            textEvent.type         = Event::Type::TextEntered;
                             textEvent.text.unicode = unicode;
                             pushEvent(textEvent);
                         }
@@ -1596,7 +1596,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
                     {
                         Event textEvent;
-                        textEvent.type         = Event::TextEntered;
+                        textEvent.type         = Event::Type::TextEntered;
                         textEvent.text.unicode = static_cast<Uint32>(keyBuffer[0]);
                         pushEvent(textEvent);
                     }
@@ -1611,7 +1611,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Key up event
         case KeyRelease:
         {
-            Keyboard::Key key = Keyboard::Unknown;
+            Keyboard::Key key = Keyboard::Key::Unknown;
 
             // Try each KeySym index (modifier group) until we get a match
             for (int i = 0; i < 4; ++i)
@@ -1619,13 +1619,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 // Get the SFML keyboard code from the keysym of the key that has been released
                 key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
 
-                if (key != Keyboard::Unknown)
+                if (key != Keyboard::Key::Unknown)
                     break;
             }
 
             // Fill the event parameters
             Event event;
-            event.type        = Event::KeyReleased;
+            event.type        = Event::Type::KeyReleased;
             event.key.code    = key;
             event.key.alt     = windowEvent.xkey.state & Mod1Mask;
             event.key.control = windowEvent.xkey.state & ControlMask;
@@ -1649,16 +1649,16 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 (button == 9))
             {
                 Event event;
-                event.type          = Event::MouseButtonPressed;
+                event.type          = Event::Type::MouseButtonPressed;
                 event.mouseButton.x = windowEvent.xbutton.x;
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch(button)
                 {
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    case Button1: event.mouseButton.button = Mouse::Button::Left;     break;
+                    case Button2: event.mouseButton.button = Mouse::Button::Middle;   break;
+                    case Button3: event.mouseButton.button = Mouse::Button::Right;    break;
+                    case 8:       event.mouseButton.button = Mouse::Button::XButton1; break;
+                    case 9:       event.mouseButton.button = Mouse::Button::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -1679,16 +1679,16 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 (button == 9))
             {
                 Event event;
-                event.type          = Event::MouseButtonReleased;
+                event.type          = Event::Type::MouseButtonReleased;
                 event.mouseButton.x = windowEvent.xbutton.x;
                 event.mouseButton.y = windowEvent.xbutton.y;
                 switch(button)
                 {
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    case Button1: event.mouseButton.button = Mouse::Button::Left;     break;
+                    case Button2: event.mouseButton.button = Mouse::Button::Middle;   break;
+                    case Button3: event.mouseButton.button = Mouse::Button::Right;    break;
+                    case 8:       event.mouseButton.button = Mouse::Button::XButton1; break;
+                    case 9:       event.mouseButton.button = Mouse::Button::XButton2; break;
                 }
                 pushEvent(event);
             }
@@ -1696,14 +1696,14 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             {
                 Event event;
 
-                event.type             = Event::MouseWheelMoved;
+                event.type             = Event::Type::MouseWheelMoved;
                 event.mouseWheel.delta = (button == Button4) ? 1 : -1;
                 event.mouseWheel.x     = windowEvent.xbutton.x;
                 event.mouseWheel.y     = windowEvent.xbutton.y;
                 pushEvent(event);
 
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+                event.type                   = Event::Type::MouseWheelScrolled;
+                event.mouseWheelScroll.wheel = Mouse::Wheel::VerticalWheel;
                 event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
                 event.mouseWheelScroll.x     = windowEvent.xbutton.x;
                 event.mouseWheelScroll.y     = windowEvent.xbutton.y;
@@ -1712,8 +1712,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             else if ((button == 6) || (button == 7))
             {
                 Event event;
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+                event.type                   = Event::Type::MouseWheelScrolled;
+                event.mouseWheelScroll.wheel = Mouse::Wheel::HorizontalWheel;
                 event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
                 event.mouseWheelScroll.x     = windowEvent.xbutton.x;
                 event.mouseWheelScroll.y     = windowEvent.xbutton.y;
@@ -1726,7 +1726,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case MotionNotify:
         {
             Event event;
-            event.type        = Event::MouseMoved;
+            event.type        = Event::Type::MouseMoved;
             event.mouseMove.x = windowEvent.xmotion.x;
             event.mouseMove.y = windowEvent.xmotion.y;
             pushEvent(event);
@@ -1739,7 +1739,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (windowEvent.xcrossing.mode == NotifyNormal)
             {
                 Event event;
-                event.type = Event::MouseEntered;
+                event.type = Event::Type::MouseEntered;
                 pushEvent(event);
             }
             break;
@@ -1751,7 +1751,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (windowEvent.xcrossing.mode == NotifyNormal)
             {
                 Event event;
-                event.type = Event::MouseLeft;
+                event.type = Event::Type::MouseLeft;
                 pushEvent(event);
             }
             break;

@@ -49,7 +49,7 @@ public:
     /// \brief Status codes that may be returned by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    enum Status
+    enum class Status : unsigned char
     {
         Done,         ///< The socket has sent / received the data
         NotReady,     ///< The socket is not ready to send / receive data yet
@@ -113,7 +113,7 @@ protected:
     /// \brief Types of protocols that the socket can use
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type : unsigned char
     {
         Tcp, ///< TCP protocol
         Udp  ///< UDP protocol

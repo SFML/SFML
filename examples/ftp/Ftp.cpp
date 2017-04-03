@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////
 std::ostream& operator <<(std::ostream& stream, const sf::Ftp::Response& response)
 {
-    return stream << response.getStatus() << response.getMessage();
+    return stream << static_cast<unsigned short>(response.getStatus()) << response.getMessage();
 }
 
 

@@ -80,7 +80,7 @@ m_message(message)
 ////////////////////////////////////////////////////////////
 bool Ftp::Response::isOk() const
 {
-    return m_status < 400;
+    return static_cast<unsigned short>(m_status) < 400;
 }
 
 
@@ -154,8 +154,8 @@ Ftp::~Ftp()
 Ftp::Response Ftp::connect(const IpAddress& server, unsigned short port, Time timeout)
 {
     // Connect to the server
-    if (m_commandSocket.connect(server, port, timeout) != Socket::Done)
-        return Response(Response::ConnectionFailed);
+    if (m_commandSocket.connect(server, port, timeout) != Socket::Status::Done)
+        return Response(Response::Status::ConnectionFailed);
 
     // Get the response to the connection
     return getResponse();
@@ -212,7 +212,7 @@ Ftp::ListingResponse Ftp::getDirectoryListing(const std::string& directory)
     // Open a data channel on default port (20) using ASCII transfer mode
     std::ostringstream directoryData;
     DataChannel data(*this);
-    Response response = data.open(Ascii);
+    Response response = data.open(TransferMode::Ascii);
     if (response.isOk())
     {
         // Tell the server to send us the listing
@@ -303,7 +303,7 @@ Ftp::Response Ftp::download(const std::string& remoteFile, const std::string& lo
             // Create the file and truncate it if necessary
             std::ofstream file((path + filename).c_str(), std::ios_base::binary | std::ios_base::trunc);
             if (!file)
-                return Response(Response::InvalidFile);
+                return Response(Response::Status::InvalidFile);
 
             // Receive the file data
             data.receive(file);
@@ -330,7 +330,7 @@ Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remot
     // Get the contents of the file to send
     std::ifstream file(localFile.c_str(), std::ios_base::binary);
     if (!file)
-        return Response(Response::InvalidFile);
+        return Response(Response::Status::InvalidFile);
 
     // Extract the filename from the file path
     std::string filename = localFile;
@@ -375,8 +375,8 @@ Ftp::Response Ftp::sendCommand(const std::string& command, const std::string& pa
         commandStr = command + "\r\n";
 
     // Send it to the server
-    if (m_commandSocket.send(commandStr.c_str(), commandStr.length()) != Socket::Done)
-        return Response(Response::ConnectionClosed);
+    if (m_commandSocket.send(commandStr.c_str(), commandStr.length()) != Socket::Status::Done)
+        return Response(Response::Status::ConnectionClosed);
 
     // Get the response
     return getResponse();
@@ -401,8 +401,8 @@ Ftp::Response Ftp::getResponse()
 
         if (m_receiveBuffer.empty())
         {
-            if (m_commandSocket.receive(buffer, sizeof(buffer), length) != Socket::Done)
-                return Response(Response::ConnectionClosed);
+            if (m_commandSocket.receive(buffer, sizeof(buffer), length) != Socket::Status::Done)
+                return Response(Response::Status::ConnectionClosed);
         }
         else
         {
@@ -516,7 +516,7 @@ Ftp::Response Ftp::getResponse()
             else
             {
                 // Error: cannot extract the code, and we are not in a multiline response
-                return Response(Response::InvalidResponse);
+                return Response(Response::Status::InvalidResponse);
             }
         }
     }
@@ -568,15 +568,15 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
                               static_cast<Uint8>(data[3]));
 
             // Connect the data channel to the server
-            if (m_dataSocket.connect(address, port) == Socket::Done)
+            if (m_dataSocket.connect(address, port) == Socket::Status::Done)
             {
                 // Translate the transfer mode to the corresponding FTP parameter
                 std::string modeStr;
                 switch (mode)
                 {
-                    case Ftp::Binary: modeStr = "I"; break;
-                    case Ftp::Ascii:  modeStr = "A"; break;
-                    case Ftp::Ebcdic: modeStr = "E"; break;
+                    case Ftp::TransferMode::Binary: modeStr = "I"; break;
+                    case Ftp::TransferMode::Ascii:  modeStr = "A"; break;
+                    case Ftp::TransferMode::Ebcdic: modeStr = "E"; break;
                 }
 
                 // Set the transfer mode
@@ -585,7 +585,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             else
             {
                 // Failed to connect to the server
-                response = Ftp::Response(Ftp::Response::ConnectionFailed);
+                response = Ftp::Response(Ftp::Response::Status::ConnectionFailed);
             }
         }
     }
@@ -600,7 +600,7 @@ void Ftp::DataChannel::receive(std::ostream& stream)
     // Receive data
     char buffer[1024];
     std::size_t received;
-    while (m_dataSocket.receive(buffer, sizeof(buffer), received) == Socket::Done)
+    while (m_dataSocket.receive(buffer, sizeof(buffer), received) == Socket::Status::Done)
     {
         stream.write(buffer, static_cast<std::streamsize>(received));
 
@@ -639,7 +639,7 @@ void Ftp::DataChannel::send(std::istream& stream)
         if (count > 0)
         {
             // we could read more data from the stream: send them
-            if (m_dataSocket.send(buffer, count) != Socket::Done)
+            if (m_dataSocket.send(buffer, count) != Socket::Status::Done)
                 break;
         }
         else

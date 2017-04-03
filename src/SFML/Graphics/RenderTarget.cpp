@@ -43,16 +43,16 @@ namespace
     {
         switch (blendFactor)
         {
-            case sf::BlendMode::Zero:             return GL_ZERO;
-            case sf::BlendMode::One:              return GL_ONE;
-            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            case sf::BlendMode::Factor::Zero:             return GL_ZERO;
+            case sf::BlendMode::Factor::One:              return GL_ONE;
+            case sf::BlendMode::Factor::SrcColor:         return GL_SRC_COLOR;
+            case sf::BlendMode::Factor::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+            case sf::BlendMode::Factor::DstColor:         return GL_DST_COLOR;
+            case sf::BlendMode::Factor::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+            case sf::BlendMode::Factor::SrcAlpha:         return GL_SRC_ALPHA;
+            case sf::BlendMode::Factor::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case sf::BlendMode::Factor::DstAlpha:         return GL_DST_ALPHA;
+            case sf::BlendMode::Factor::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
         }
 
         sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
@@ -66,9 +66,9 @@ namespace
     {
         switch (blendEquation)
         {
-            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
-            case sf::BlendMode::ReverseSubtract: return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
+            case sf::BlendMode::Equation::Add:             return GLEXT_GL_FUNC_ADD;
+            case sf::BlendMode::Equation::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
+            case sf::BlendMode::Equation::ReverseSubtract: return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
         }
 
         sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
@@ -282,7 +282,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         // Find the OpenGL primitive type
         constexpr GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
                                        GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-        GLenum mode = modes[type];
+        GLenum mode = modes[static_cast<size_t>(type)];
 
         // Draw the primitives
         glCheck(glDrawArrays(mode, 0, vertexCount));
@@ -460,7 +460,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
             glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
         }
     }
-    else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
+    else if ((mode.colorEquation != BlendMode::Equation::Add) || (mode.alphaEquation != BlendMode::Equation::Add))
     {
         static std::once_flag warned;
         std::call_once(warned, []
@@ -487,7 +487,7 @@ void RenderTarget::applyTransform(const Transform& transform)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyTexture(const Texture* texture)
 {
-    Texture::bind(texture, Texture::Pixels);
+    Texture::bind(texture, Texture::CoordinateType::Pixels);
 
     m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
 }

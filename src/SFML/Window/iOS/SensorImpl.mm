@@ -63,18 +63,18 @@ bool SensorImpl::isAvailable(Sensor::Type sensor)
 {
     switch (sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             return [SFAppDelegate getInstance].motionManager.accelerometerAvailable;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             return [SFAppDelegate getInstance].motionManager.gyroAvailable;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             return [SFAppDelegate getInstance].motionManager.magnetometerAvailable;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             return [SFAppDelegate getInstance].motionManager.deviceMotionAvailable;
 
         default:
@@ -96,21 +96,21 @@ bool SensorImpl::open(Sensor::Type sensor)
     static const NSTimeInterval updateInterval = 1. / 60.;
     switch (sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             [SFAppDelegate getInstance].motionManager.accelerometerUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             [SFAppDelegate getInstance].motionManager.gyroUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             [SFAppDelegate getInstance].motionManager.deviceMotionUpdateInterval = updateInterval;
             break;
 
@@ -137,35 +137,35 @@ Vector3f SensorImpl::update()
 
     switch (m_sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             // Acceleration is given in G, convert to m/s^2
             value.x = manager.accelerometerData.acceleration.x * 9.81f;
             value.y = manager.accelerometerData.acceleration.y * 9.81f;
             value.z = manager.accelerometerData.acceleration.z * 9.81f;
             break;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             // Rotation rates are given in rad/s, convert to deg/s
             value.x = toDegrees(manager.gyroData.rotationRate.x);
             value.y = toDegrees(manager.gyroData.rotationRate.y);
             value.z = toDegrees(manager.gyroData.rotationRate.z);
             break;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             // Magnetic field is given in microteslas
             value.x = manager.magnetometerData.magneticField.x;
             value.y = manager.magnetometerData.magneticField.y;
             value.z = manager.magnetometerData.magneticField.z;
             break;
 
-        case Sensor::UserAcceleration:
+        case Sensor::Type::UserAcceleration:
             // User acceleration is given in G, convert to m/s^2
             value.x = manager.deviceMotion.userAcceleration.x * 9.81f;
             value.y = manager.deviceMotion.userAcceleration.y * 9.81f;
             value.z = manager.deviceMotion.userAcceleration.z * 9.81f;
             break;
 
-        case Sensor::Orientation:
+        case Sensor::Type::Orientation:
             // Absolute rotation (Euler) angles are given in radians, convert to degrees
             value.x = toDegrees(manager.deviceMotion.attitude.yaw);
             value.y = toDegrees(manager.deviceMotion.attitude.pitch);
@@ -189,30 +189,30 @@ void SensorImpl::setEnabled(bool enabled)
 
     switch (m_sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startAccelerometerUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopAccelerometerUpdates];
             break;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startGyroUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopGyroUpdates];
             break;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
             break;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             // these 3 sensors all share the same implementation, so we must disable
             // it only if the three sensors are disabled
             if (enabled)

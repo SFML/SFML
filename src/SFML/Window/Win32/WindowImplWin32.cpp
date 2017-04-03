@@ -576,7 +576,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CLOSE:
         {
             Event event;
-            event.type = Event::Closed;
+            event.type = Event::Type::Closed;
             pushEvent(event);
             break;
         }
@@ -592,7 +592,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Push a resize event
                 Event event;
-                event.type        = Event::Resized;
+                event.type        = Event::Type::Resized;
                 event.size.width  = m_lastSize.x;
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
@@ -624,7 +624,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Push a resize event
                 Event event;
-                event.type        = Event::Resized;
+                event.type        = Event::Type::Resized;
                 event.size.width  = m_lastSize.x;
                 event.size.height = m_lastSize.y;
                 pushEvent(event);
@@ -653,7 +653,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             grabCursor(m_cursorGrabbed);
 
             Event event;
-            event.type = Event::GainedFocus;
+            event.type = Event::Type::GainedFocus;
             pushEvent(event);
             break;
         }
@@ -665,7 +665,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             grabCursor(false);
 
             Event event;
-            event.type = Event::LostFocus;
+            event.type = Event::Type::LostFocus;
             pushEvent(event);
             break;
         }
@@ -697,7 +697,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                     // Send a TextEntered event
                     Event event;
-                    event.type = Event::TextEntered;
+                    event.type = Event::Type::TextEntered;
                     event.text.unicode = character;
                     pushEvent(event);
                 }
@@ -712,7 +712,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (m_keyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
             {
                 Event event;
-                event.type        = Event::KeyPressed;
+                event.type        = Event::Type::KeyPressed;
                 event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
                 event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
                 event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
@@ -728,7 +728,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SYSKEYUP:
         {
             Event event;
-            event.type        = Event::KeyReleased;
+            event.type        = Event::Type::KeyReleased;
             event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
             event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
             event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
@@ -751,14 +751,14 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             Event event;
 
-            event.type             = Event::MouseWheelMoved;
+            event.type             = Event::Type::MouseWheelMoved;
             event.mouseWheel.delta = delta / 120;
             event.mouseWheel.x     = position.x;
             event.mouseWheel.y     = position.y;
             pushEvent(event);
 
-            event.type                   = Event::MouseWheelScrolled;
-            event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+            event.type                   = Event::Type::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::Wheel::VerticalWheel;
             event.mouseWheelScroll.delta = static_cast<float>(delta) / 120.f;
             event.mouseWheelScroll.x     = position.x;
             event.mouseWheelScroll.y     = position.y;
@@ -778,8 +778,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Int16 delta = static_cast<Int16>(HIWORD(wParam));
 
             Event event;
-            event.type                   = Event::MouseWheelScrolled;
-            event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+            event.type                   = Event::Type::MouseWheelScrolled;
+            event.mouseWheelScroll.wheel = Mouse::Wheel::HorizontalWheel;
             event.mouseWheelScroll.delta = -static_cast<float>(delta) / 120.f;
             event.mouseWheelScroll.x     = position.x;
             event.mouseWheelScroll.y     = position.y;
@@ -791,8 +791,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
         {
             Event event;
-            event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Left;
+            event.type               = Event::Type::MouseButtonPressed;
+            event.mouseButton.button = Mouse::Button::Left;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -803,8 +803,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONUP:
         {
             Event event;
-            event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Left;
+            event.type               = Event::Type::MouseButtonReleased;
+            event.mouseButton.button = Mouse::Button::Left;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -815,8 +815,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RBUTTONDOWN:
         {
             Event event;
-            event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Right;
+            event.type               = Event::Type::MouseButtonPressed;
+            event.mouseButton.button = Mouse::Button::Right;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -827,8 +827,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RBUTTONUP:
         {
             Event event;
-            event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Right;
+            event.type               = Event::Type::MouseButtonReleased;
+            event.mouseButton.button = Mouse::Button::Right;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -839,8 +839,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MBUTTONDOWN:
         {
             Event event;
-            event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Middle;
+            event.type               = Event::Type::MouseButtonPressed;
+            event.mouseButton.button = Mouse::Button::Middle;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -851,8 +851,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MBUTTONUP:
         {
             Event event;
-            event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Middle;
+            event.type               = Event::Type::MouseButtonReleased;
+            event.mouseButton.button = Mouse::Button::Middle;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -863,8 +863,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_XBUTTONDOWN:
         {
             Event event;
-            event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
+            event.type               = Event::Type::MouseButtonPressed;
+            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::XButton1 : Mouse::Button::XButton2;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -875,8 +875,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_XBUTTONUP:
         {
             Event event;
-            event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
+            event.type               = Event::Type::MouseButtonReleased;
+            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::XButton1 : Mouse::Button::XButton2;
             event.mouseButton.x      = static_cast<Int16>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<Int16>(HIWORD(lParam));
             pushEvent(event);
@@ -893,7 +893,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Generate a MouseLeft event
                 Event event;
-                event.type = Event::MouseLeft;
+                event.type = Event::Type::MouseLeft;
                 pushEvent(event);
             }
             break;
@@ -936,7 +936,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                     // Generate a MouseLeft event
                     Event event;
-                    event.type = Event::MouseLeft;
+                    event.type = Event::Type::MouseLeft;
                     pushEvent(event);
                 }
             }
@@ -952,14 +952,14 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                     // Generate a MouseEntered event
                     Event event;
-                    event.type = Event::MouseEntered;
+                    event.type = Event::Type::MouseEntered;
                     pushEvent(event);
                 }
             }
 
             // Generate a MouseMove event
             Event event;
-            event.type        = Event::MouseMoved;
+            event.type        = Event::Type::MouseMoved;
             event.mouseMove.x = x;
             event.mouseMove.y = y;
             pushEvent(event);
@@ -986,114 +986,114 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         {
             static const auto lShift = MapVirtualKeyW(VK_LSHIFT, MAPVK_VK_TO_VSC);
             UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
-            return scancode == lShift ? Keyboard::LShift : Keyboard::RShift;
+            return scancode == lShift ? Keyboard::Key::LShift : Keyboard::Key::RShift;
         }
 
         // Check the "extended" flag to distinguish between left and right alt
-        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RAlt : Keyboard::LAlt;
+        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::Key::RAlt : Keyboard::Key::LAlt;
 
         // Check the "extended" flag to distinguish between left and right control
-        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RControl : Keyboard::LControl;
+        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::Key::RControl : Keyboard::Key::LControl;
 
         // Other keys are reported properly
-        case VK_LWIN:       return Keyboard::LSystem;
-        case VK_RWIN:       return Keyboard::RSystem;
-        case VK_APPS:       return Keyboard::Menu;
-        case VK_OEM_1:      return Keyboard::SemiColon;
-        case VK_OEM_2:      return Keyboard::Slash;
-        case VK_OEM_PLUS:   return Keyboard::Equal;
-        case VK_OEM_MINUS:  return Keyboard::Dash;
-        case VK_OEM_4:      return Keyboard::LBracket;
-        case VK_OEM_6:      return Keyboard::RBracket;
-        case VK_OEM_COMMA:  return Keyboard::Comma;
-        case VK_OEM_PERIOD: return Keyboard::Period;
-        case VK_OEM_7:      return Keyboard::Quote;
-        case VK_OEM_5:      return Keyboard::BackSlash;
-        case VK_OEM_3:      return Keyboard::Tilde;
-        case VK_ESCAPE:     return Keyboard::Escape;
-        case VK_SPACE:      return Keyboard::Space;
-        case VK_RETURN:     return Keyboard::Return;
-        case VK_BACK:       return Keyboard::BackSpace;
-        case VK_TAB:        return Keyboard::Tab;
-        case VK_PRIOR:      return Keyboard::PageUp;
-        case VK_NEXT:       return Keyboard::PageDown;
-        case VK_END:        return Keyboard::End;
-        case VK_HOME:       return Keyboard::Home;
-        case VK_INSERT:     return Keyboard::Insert;
-        case VK_DELETE:     return Keyboard::Delete;
-        case VK_ADD:        return Keyboard::Add;
-        case VK_SUBTRACT:   return Keyboard::Subtract;
-        case VK_MULTIPLY:   return Keyboard::Multiply;
-        case VK_DIVIDE:     return Keyboard::Divide;
-        case VK_PAUSE:      return Keyboard::Pause;
-        case VK_F1:         return Keyboard::F1;
-        case VK_F2:         return Keyboard::F2;
-        case VK_F3:         return Keyboard::F3;
-        case VK_F4:         return Keyboard::F4;
-        case VK_F5:         return Keyboard::F5;
-        case VK_F6:         return Keyboard::F6;
-        case VK_F7:         return Keyboard::F7;
-        case VK_F8:         return Keyboard::F8;
-        case VK_F9:         return Keyboard::F9;
-        case VK_F10:        return Keyboard::F10;
-        case VK_F11:        return Keyboard::F11;
-        case VK_F12:        return Keyboard::F12;
-        case VK_F13:        return Keyboard::F13;
-        case VK_F14:        return Keyboard::F14;
-        case VK_F15:        return Keyboard::F15;
-        case VK_LEFT:       return Keyboard::Left;
-        case VK_RIGHT:      return Keyboard::Right;
-        case VK_UP:         return Keyboard::Up;
-        case VK_DOWN:       return Keyboard::Down;
-        case VK_NUMPAD0:    return Keyboard::Numpad0;
-        case VK_NUMPAD1:    return Keyboard::Numpad1;
-        case VK_NUMPAD2:    return Keyboard::Numpad2;
-        case VK_NUMPAD3:    return Keyboard::Numpad3;
-        case VK_NUMPAD4:    return Keyboard::Numpad4;
-        case VK_NUMPAD5:    return Keyboard::Numpad5;
-        case VK_NUMPAD6:    return Keyboard::Numpad6;
-        case VK_NUMPAD7:    return Keyboard::Numpad7;
-        case VK_NUMPAD8:    return Keyboard::Numpad8;
-        case VK_NUMPAD9:    return Keyboard::Numpad9;
-        case 'A':           return Keyboard::A;
-        case 'Z':           return Keyboard::Z;
-        case 'E':           return Keyboard::E;
-        case 'R':           return Keyboard::R;
-        case 'T':           return Keyboard::T;
-        case 'Y':           return Keyboard::Y;
-        case 'U':           return Keyboard::U;
-        case 'I':           return Keyboard::I;
-        case 'O':           return Keyboard::O;
-        case 'P':           return Keyboard::P;
-        case 'Q':           return Keyboard::Q;
-        case 'S':           return Keyboard::S;
-        case 'D':           return Keyboard::D;
-        case 'F':           return Keyboard::F;
-        case 'G':           return Keyboard::G;
-        case 'H':           return Keyboard::H;
-        case 'J':           return Keyboard::J;
-        case 'K':           return Keyboard::K;
-        case 'L':           return Keyboard::L;
-        case 'M':           return Keyboard::M;
-        case 'W':           return Keyboard::W;
-        case 'X':           return Keyboard::X;
-        case 'C':           return Keyboard::C;
-        case 'V':           return Keyboard::V;
-        case 'B':           return Keyboard::B;
-        case 'N':           return Keyboard::N;
-        case '0':           return Keyboard::Num0;
-        case '1':           return Keyboard::Num1;
-        case '2':           return Keyboard::Num2;
-        case '3':           return Keyboard::Num3;
-        case '4':           return Keyboard::Num4;
-        case '5':           return Keyboard::Num5;
-        case '6':           return Keyboard::Num6;
-        case '7':           return Keyboard::Num7;
-        case '8':           return Keyboard::Num8;
-        case '9':           return Keyboard::Num9;
+        case VK_LWIN:       return Keyboard::Key::LSystem;
+        case VK_RWIN:       return Keyboard::Key::RSystem;
+        case VK_APPS:       return Keyboard::Key::Menu;
+        case VK_OEM_1:      return Keyboard::Key::SemiColon;
+        case VK_OEM_2:      return Keyboard::Key::Slash;
+        case VK_OEM_PLUS:   return Keyboard::Key::Equal;
+        case VK_OEM_MINUS:  return Keyboard::Key::Dash;
+        case VK_OEM_4:      return Keyboard::Key::LBracket;
+        case VK_OEM_6:      return Keyboard::Key::RBracket;
+        case VK_OEM_COMMA:  return Keyboard::Key::Comma;
+        case VK_OEM_PERIOD: return Keyboard::Key::Period;
+        case VK_OEM_7:      return Keyboard::Key::Quote;
+        case VK_OEM_5:      return Keyboard::Key::BackSlash;
+        case VK_OEM_3:      return Keyboard::Key::Tilde;
+        case VK_ESCAPE:     return Keyboard::Key::Escape;
+        case VK_SPACE:      return Keyboard::Key::Space;
+        case VK_RETURN:     return Keyboard::Key::Return;
+        case VK_BACK:       return Keyboard::Key::BackSpace;
+        case VK_TAB:        return Keyboard::Key::Tab;
+        case VK_PRIOR:      return Keyboard::Key::PageUp;
+        case VK_NEXT:       return Keyboard::Key::PageDown;
+        case VK_END:        return Keyboard::Key::End;
+        case VK_HOME:       return Keyboard::Key::Home;
+        case VK_INSERT:     return Keyboard::Key::Insert;
+        case VK_DELETE:     return Keyboard::Key::Delete;
+        case VK_ADD:        return Keyboard::Key::Add;
+        case VK_SUBTRACT:   return Keyboard::Key::Subtract;
+        case VK_MULTIPLY:   return Keyboard::Key::Multiply;
+        case VK_DIVIDE:     return Keyboard::Key::Divide;
+        case VK_PAUSE:      return Keyboard::Key::Pause;
+        case VK_F1:         return Keyboard::Key::F1;
+        case VK_F2:         return Keyboard::Key::F2;
+        case VK_F3:         return Keyboard::Key::F3;
+        case VK_F4:         return Keyboard::Key::F4;
+        case VK_F5:         return Keyboard::Key::F5;
+        case VK_F6:         return Keyboard::Key::F6;
+        case VK_F7:         return Keyboard::Key::F7;
+        case VK_F8:         return Keyboard::Key::F8;
+        case VK_F9:         return Keyboard::Key::F9;
+        case VK_F10:        return Keyboard::Key::F10;
+        case VK_F11:        return Keyboard::Key::F11;
+        case VK_F12:        return Keyboard::Key::F12;
+        case VK_F13:        return Keyboard::Key::F13;
+        case VK_F14:        return Keyboard::Key::F14;
+        case VK_F15:        return Keyboard::Key::F15;
+        case VK_LEFT:       return Keyboard::Key::Left;
+        case VK_RIGHT:      return Keyboard::Key::Right;
+        case VK_UP:         return Keyboard::Key::Up;
+        case VK_DOWN:       return Keyboard::Key::Down;
+        case VK_NUMPAD0:    return Keyboard::Key::Numpad0;
+        case VK_NUMPAD1:    return Keyboard::Key::Numpad1;
+        case VK_NUMPAD2:    return Keyboard::Key::Numpad2;
+        case VK_NUMPAD3:    return Keyboard::Key::Numpad3;
+        case VK_NUMPAD4:    return Keyboard::Key::Numpad4;
+        case VK_NUMPAD5:    return Keyboard::Key::Numpad5;
+        case VK_NUMPAD6:    return Keyboard::Key::Numpad6;
+        case VK_NUMPAD7:    return Keyboard::Key::Numpad7;
+        case VK_NUMPAD8:    return Keyboard::Key::Numpad8;
+        case VK_NUMPAD9:    return Keyboard::Key::Numpad9;
+        case 'A':           return Keyboard::Key::A;
+        case 'Z':           return Keyboard::Key::Z;
+        case 'E':           return Keyboard::Key::E;
+        case 'R':           return Keyboard::Key::R;
+        case 'T':           return Keyboard::Key::T;
+        case 'Y':           return Keyboard::Key::Y;
+        case 'U':           return Keyboard::Key::U;
+        case 'I':           return Keyboard::Key::I;
+        case 'O':           return Keyboard::Key::O;
+        case 'P':           return Keyboard::Key::P;
+        case 'Q':           return Keyboard::Key::Q;
+        case 'S':           return Keyboard::Key::S;
+        case 'D':           return Keyboard::Key::D;
+        case 'F':           return Keyboard::Key::F;
+        case 'G':           return Keyboard::Key::G;
+        case 'H':           return Keyboard::Key::H;
+        case 'J':           return Keyboard::Key::J;
+        case 'K':           return Keyboard::Key::K;
+        case 'L':           return Keyboard::Key::L;
+        case 'M':           return Keyboard::Key::M;
+        case 'W':           return Keyboard::Key::W;
+        case 'X':           return Keyboard::Key::X;
+        case 'C':           return Keyboard::Key::C;
+        case 'V':           return Keyboard::Key::V;
+        case 'B':           return Keyboard::Key::B;
+        case 'N':           return Keyboard::Key::N;
+        case '0':           return Keyboard::Key::Num0;
+        case '1':           return Keyboard::Key::Num1;
+        case '2':           return Keyboard::Key::Num2;
+        case '3':           return Keyboard::Key::Num3;
+        case '4':           return Keyboard::Key::Num4;
+        case '5':           return Keyboard::Key::Num5;
+        case '6':           return Keyboard::Key::Num6;
+        case '7':           return Keyboard::Key::Num7;
+        case '8':           return Keyboard::Key::Num8;
+        case '9':           return Keyboard::Key::Num9;
     }
 
-    return Keyboard::Unknown;
+    return Keyboard::Key::Unknown;
 }
 
 

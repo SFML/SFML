@@ -51,7 +51,7 @@ public:
     /// \brief Enumeration of transfer modes
     ///
     ////////////////////////////////////////////////////////////
-    enum TransferMode
+    enum class TransferMode : unsigned char
     {
         Binary, ///< Binary mode (file is transfered as a sequence of bytes)
         Ascii,  ///< Text mode using ASCII encoding
@@ -70,7 +70,7 @@ public:
         /// \brief Status codes possibly returned by a FTP response
         ///
         ////////////////////////////////////////////////////////////
-        enum Status
+        enum class Status : unsigned short
         {
             // 1xx: the requested action is being initiated,
             // expect another reply before proceeding with a new command
@@ -142,7 +142,7 @@ public:
         /// \param message Response message
         ///
         ////////////////////////////////////////////////////////////
-        explicit Response(Status code = InvalidResponse, const std::string& message = "");
+        explicit Response(Status code = Status::InvalidResponse, const std::string& message = "");
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the status code means a success
@@ -474,7 +474,7 @@ public:
     /// \see upload
     ///
     ////////////////////////////////////////////////////////////
-    Response download(const std::string& remoteFile, const std::string& localPath, TransferMode mode = Binary);
+    Response download(const std::string& remoteFile, const std::string& localPath, TransferMode mode = TransferMode::Binary);
 
     ////////////////////////////////////////////////////////////
     /// \brief Upload a file to the server
@@ -493,7 +493,7 @@ public:
     /// \see download
     ///
     ////////////////////////////////////////////////////////////
-    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
+    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = TransferMode::Binary);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a command to the FTP server

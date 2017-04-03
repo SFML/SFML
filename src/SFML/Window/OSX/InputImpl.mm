@@ -140,7 +140,7 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     NSUInteger state = [NSEvent pressedMouseButtons];
-    NSUInteger flag = 1 << button;
+    NSUInteger flag = 1 << static_cast<size_t>(button);
     return (state & flag) != 0;
 }
 

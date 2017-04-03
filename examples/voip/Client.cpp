@@ -52,7 +52,7 @@ private:
     ////////////////////////////////////////////////////////////
     virtual bool onStart()
     {
-        if (m_socket.connect(m_host, m_port) == sf::Socket::Done)
+        if (m_socket.connect(m_host, m_port) == sf::Socket::Status::Done)
         {
             std::cout << "Connected to server " << m_host << std::endl;
             return true;
@@ -75,7 +75,7 @@ private:
         packet.append(samples, sampleCount * sizeof(sf::Int16));
 
         // Send the audio packet to the server
-        return m_socket.send(packet) == sf::Socket::Done;
+        return m_socket.send(packet) == sf::Socket::Status::Done;
     }
 
     ////////////////////////////////////////////////////////////

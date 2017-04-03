@@ -717,7 +717,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
         glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
 
         // Check if we need to define a special texture matrix
-        if ((coordinateType == Pixels) || texture->m_pixelsFlipped)
+        if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped)
         {
             GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
                                   0.f, 1.f, 0.f, 0.f,
@@ -726,7 +726,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 
             // If non-normalized coordinates (= pixels) are requested, we need to
             // setup scale factors that convert the range [0 .. size] to [0 .. 1]
-            if (coordinateType == Pixels)
+            if (coordinateType == CoordinateType::Pixels)
             {
                 matrix[0] = 1.f / texture->m_actualSize.x;
                 matrix[5] = 1.f / texture->m_actualSize.y;

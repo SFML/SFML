@@ -184,7 +184,7 @@ public:
     /// \brief Enumeration of the different types of events
     ///
     ////////////////////////////////////////////////////////////
-    enum EventType
+    enum class Type : unsigned char
     {
         Closed,                 ///< The window requested to be closed (no data)
         Resized,                ///< The window was resized (data in event.size)
@@ -216,7 +216,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EventType type; ///< Type of the event
+    Type type; ///< Type of the event
 
     union
     {

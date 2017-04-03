@@ -72,7 +72,7 @@ int main()
         sound.play();
 
         // Wait until finished
-        while (sound.getStatus() == sf::Sound::Playing)
+        while (sound.getStatus() == sf::Sound::Status::Playing)
         {
             // Display the playing position
             std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";

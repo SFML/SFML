@@ -49,15 +49,14 @@ public:
     enum
     {
         Count       = 8,  ///< Maximum number of supported joysticks
-        ButtonCount = 32, ///< Maximum number of supported buttons
-        AxisCount   = 8   ///< Maximum number of supported axes
+        ButtonCount = 32  ///< Maximum number of supported buttons
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Axes supported by SFML joysticks
     ///
     ////////////////////////////////////////////////////////////
-    enum Axis
+    enum class Axis : unsigned char
     {
         X,    ///< The X axis
         Y,    ///< The Y axis
@@ -66,7 +65,9 @@ public:
         U,    ///< The U axis
         V,    ///< The V axis
         PovX, ///< The X axis of the point-of-view hat
-        PovY  ///< The Y axis of the point-of-view hat
+        PovY, ///< The Y axis of the point-of-view hat
+
+        Count ///< Maximum number of supported axes
     };
 
     ////////////////////////////////////////////////////////////

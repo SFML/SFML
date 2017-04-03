@@ -89,8 +89,8 @@ m_joystickThreshold(0.1f)
         m_joystickStates[i] = JoystickManager::getInstance().getState(i);
 
     // Get the initial sensor states
-    for (unsigned int i = 0; i < Sensor::Count; ++i)
-        m_sensorValue[i] = Vector3f(0, 0, 0);
+    for (auto& sensorValue : m_sensorValue)
+        sensorValue = Vector3f(0, 0, 0);
 }
 
 
@@ -173,7 +173,7 @@ void WindowImpl::processJoystickEvents()
         if (previousState.connected ^ connected)
         {
             Event event;
-            event.type = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
+            event.type = connected ? Event::Type::JoystickConnected : Event::Type::JoystickDisconnected;
             event.joystickButton.joystickId = i;
             pushEvent(event);
         }
@@ -181,19 +181,18 @@ void WindowImpl::processJoystickEvents()
         if (connected)
         {
             // Axes
-            for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
+            for (auto j = 0u; j < static_cast<size_t>(Joystick::Axis::Count); ++j)
             {
                 if (caps.axes[j])
                 {
-                    Joystick::Axis axis = static_cast<Joystick::Axis>(j);
-                    float prevPos = previousState.axes[axis];
-                    float currPos = m_joystickStates[i].axes[axis];
+                    float prevPos = previousState.axes[j];
+                    float currPos = m_joystickStates[i].axes[j];
                     if (fabs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
-                        event.type = Event::JoystickMoved;
+                        event.type = Event::Type::JoystickMoved;
                         event.joystickMove.joystickId = i;
-                        event.joystickMove.axis = axis;
+                        event.joystickMove.axis = static_cast<Joystick::Axis>(j);
                         event.joystickMove.position = currPos;
                         pushEvent(event);
                     }
@@ -209,7 +208,7 @@ void WindowImpl::processJoystickEvents()
                 if (prevPressed ^ currPressed)
                 {
                     Event event;
-                    event.type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
+                    event.type = currPressed ? Event::Type::JoystickButtonPressed : Event::Type::JoystickButtonReleased;
                     event.joystickButton.joystickId = i;
                     event.joystickButton.button = j;
                     pushEvent(event);
@@ -226,7 +225,7 @@ void WindowImpl::processSensorEvents()
     // First update the sensor states
     SensorManager::getInstance().update();
 
-    for (unsigned int i = 0; i < Sensor::Count; ++i)
+    for (auto i = 0u; i < static_cast<size_t>(Sensor::Type::Count); ++i)
     {
         Sensor::Type sensor = static_cast<Sensor::Type>(i);
 
@@ -241,7 +240,7 @@ void WindowImpl::processSensorEvents()
             if (m_sensorValue[i] != previousValue) // @todo use a threshold?
             {
                 Event event;
-                event.type = Event::SensorChanged;
+                event.type = Event::Type::SensorChanged;
                 event.sensor.type = sensor;
                 event.sensor.x = m_sensorValue[i].x;
                 event.sensor.y = m_sensorValue[i].y;

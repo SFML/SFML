@@ -209,7 +209,7 @@ void WindowImplCocoa::setUpProcess(void)
 void WindowImplCocoa::windowClosed(void)
 {
     Event event;
-    event.type = Event::Closed;
+    event.type = Event::Type::Closed;
 
     pushEvent(event);
 }
@@ -219,7 +219,7 @@ void WindowImplCocoa::windowClosed(void)
 void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
 {
     Event event;
-    event.type = Event::Resized;
+    event.type = Event::Type::Resized;
     event.size.width  = width;
     event.size.height = height;
     scaleOutWidthHeight(event.size, m_delegate);
@@ -235,7 +235,7 @@ void WindowImplCocoa::windowLostFocus(void)
         showMouseCursor(); // Make sure the cursor is visible
 
     Event event;
-    event.type = Event::LostFocus;
+    event.type = Event::Type::LostFocus;
 
     pushEvent(event);
 }
@@ -248,7 +248,7 @@ void WindowImplCocoa::windowGainedFocus(void)
         hideMouseCursor(); // Restore user's setting
 
     Event event;
-    event.type = Event::GainedFocus;
+    event.type = Event::Type::GainedFocus;
 
     pushEvent(event);
 }
@@ -261,7 +261,7 @@ void WindowImplCocoa::windowGainedFocus(void)
 void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
 {
     Event event;
-    event.type = Event::MouseButtonPressed;
+    event.type = Event::Type::MouseButtonPressed;
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
@@ -275,7 +275,7 @@ void WindowImplCocoa::mouseDownAt(Mouse::Button button, int x, int y)
 void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
 {
     Event event;
-    event.type = Event::MouseButtonReleased;
+    event.type = Event::Type::MouseButtonReleased;
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
@@ -289,7 +289,7 @@ void WindowImplCocoa::mouseUpAt(Mouse::Button button, int x, int y)
 void WindowImplCocoa::mouseMovedAt(int x, int y)
 {
     Event event;
-    event.type = Event::MouseMoved;
+    event.type = Event::Type::MouseMoved;
     event.mouseMove.x = x;
     event.mouseMove.y = y;
     scaleOutXY(event.mouseMove, m_delegate);
@@ -302,23 +302,23 @@ void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, in
 {
     Event event;
 
-    event.type = Event::MouseWheelMoved;
+    event.type = Event::Type::MouseWheelMoved;
     event.mouseWheel.delta = deltaY;
     event.mouseWheel.x = x;
     event.mouseWheel.y = y;
     scaleOutXY(event.mouseWheel, m_delegate);
     pushEvent(event);
 
-    event.type = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+    event.type = Event::Type::MouseWheelScrolled;
+    event.mouseWheelScroll.wheel = Mouse::Wheel::VerticalWheel;
     event.mouseWheelScroll.delta = deltaY;
     event.mouseWheelScroll.x = x;
     event.mouseWheelScroll.y = y;
     scaleOutXY(event.mouseWheelScroll, m_delegate);
     pushEvent(event);
 
-    event.type = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+    event.type = Event::Type::MouseWheelScrolled;
+    event.mouseWheelScroll.wheel = Mouse::Wheel::HorizontalWheel;
     event.mouseWheelScroll.delta = deltaX;
     event.mouseWheelScroll.x = x;
     event.mouseWheelScroll.y = y;
@@ -333,7 +333,7 @@ void WindowImplCocoa::mouseMovedIn(void)
         hideMouseCursor(); // Restore user's setting
 
     Event event;
-    event.type = Event::MouseEntered;
+    event.type = Event::Type::MouseEntered;
 
     pushEvent(event);
 }
@@ -345,7 +345,7 @@ void WindowImplCocoa::mouseMovedOut(void)
         showMouseCursor(); // Make sure the cursor is visible
 
     Event event;
-    event.type = Event::MouseLeft;
+    event.type = Event::Type::MouseLeft;
 
     pushEvent(event);
 }
@@ -359,7 +359,7 @@ void WindowImplCocoa::mouseMovedOut(void)
 void WindowImplCocoa::keyDown(Event::KeyEvent key)
 {
     Event event;
-    event.type = Event::KeyPressed;
+    event.type = Event::Type::KeyPressed;
     event.key = key;
 
     pushEvent(event);
@@ -370,7 +370,7 @@ void WindowImplCocoa::keyDown(Event::KeyEvent key)
 void WindowImplCocoa::keyUp(Event::KeyEvent key)
 {
     Event event;
-    event.type = Event::KeyReleased;
+    event.type = Event::Type::KeyReleased;
     event.key = key;
 
     pushEvent(event);
@@ -381,7 +381,7 @@ void WindowImplCocoa::keyUp(Event::KeyEvent key)
 void WindowImplCocoa::textEntered(unichar charcode)
 {
     Event event;
-    event.type = Event::TextEntered;
+    event.type = Event::Type::TextEntered;
     event.text.unicode = charcode;
 
     pushEvent(event);

@@ -81,8 +81,8 @@ m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
 m_outlineThickness  (0),
-m_vertices          (Triangles),
-m_outlineVertices   (Triangles),
+m_vertices          (PrimitiveType::Triangles),
+m_outlineVertices   (PrimitiveType::Triangles),
 m_bounds            (),
 m_geometryNeedUpdate(false)
 {
@@ -99,8 +99,8 @@ m_style             (Regular),
 m_fillColor         (255, 255, 255),
 m_outlineColor      (0, 0, 0),
 m_outlineThickness  (0),
-m_vertices          (Triangles),
-m_outlineVertices   (Triangles),
+m_vertices          (PrimitiveType::Triangles),
+m_outlineVertices   (PrimitiveType::Triangles),
 m_bounds            (),
 m_geometryNeedUpdate(true)
 {

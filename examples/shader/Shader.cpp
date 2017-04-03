@@ -30,7 +30,7 @@ public:
         m_sprite.setTexture(m_texture);
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
@@ -135,7 +135,7 @@ public:
     bool onLoad()
     {
         // Create the points
-        m_points.setPrimitiveType(sf::Points);
+        m_points.setPrimitiveType(sf::PrimitiveType::Points);
         for (int i = 0; i < 40000; ++i)
         {
             float x = static_cast<float>(std::rand() % 800);
@@ -214,7 +214,7 @@ public:
         }
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
@@ -268,7 +268,7 @@ public:
 
     Geometry() :
         Effect("geometry shader billboards"),
-        m_pointCloud(sf::Points, 10000)
+        m_pointCloud(sf::PrimitiveType::Points, 10000)
     {
     }
 
@@ -397,20 +397,20 @@ int main()
         while (window.pollEvent(event))
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Type::Closed)
                 window.close();
 
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::Type::KeyPressed)
             {
                 switch (event.key.code)
                 {
                     // Escape key: exit
-                    case sf::Keyboard::Escape:
+                    case sf::Keyboard::Key::Escape:
                         window.close();
                         break;
 
                     // Left arrow key: previous shader
-                    case sf::Keyboard::Left:
+                    case sf::Keyboard::Key::Left:
                         if (current == 0)
                             current = effects.size() - 1;
                         else
@@ -419,7 +419,7 @@ int main()
                         break;
 
                     // Right arrow key: next shader
-                    case sf::Keyboard::Right:
+                    case sf::Keyboard::Key::Right:
                         if (current == effects.size() - 1)
                             current = 0;
                         else

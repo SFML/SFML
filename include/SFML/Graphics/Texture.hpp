@@ -52,7 +52,7 @@ public:
     /// \brief Types of texture coordinates that can be used for rendering
     ///
     ////////////////////////////////////////////////////////////
-    enum CoordinateType
+    enum class CoordinateType : unsigned char
     {
         Normalized, ///< Texture coordinates in range [0 .. 1]
         Pixels      ///< Texture coordinates in range [0 .. size]
@@ -568,7 +568,7 @@ public:
     /// \param coordinateType Type of texture coordinates to use
     ///
     ////////////////////////////////////////////////////////////
-    static void bind(const Texture* texture, CoordinateType coordinateType = Normalized);
+    static void bind(const Texture* texture, CoordinateType coordinateType = CoordinateType::Normalized);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum texture size allowed

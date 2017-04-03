@@ -137,7 +137,7 @@ ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
         ASENSOR_TYPE_MAGNETIC_FIELD, ASENSOR_TYPE_GRAVITY, ASENSOR_TYPE_LINEAR_ACCELERATION,
         ASENSOR_TYPE_ORIENTATION};
 
-    int type = types[sensor];
+    int type = types[static_cast<size_t>(sensor)];
 
     // Retrieve the default sensor matching this type
     return ASensorManager_getDefaultSensor(sensorManager, type);
@@ -151,48 +151,48 @@ int SensorImpl::processSensorEvents(int fd, int events, void* data)
 
     while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0)
     {
-        unsigned int type = Sensor::Count;
+        unsigned int type = Sensor::Type::Count;
         Vector3f data;
 
         switch (event.type)
         {
             case ASENSOR_TYPE_ACCELEROMETER:
-                type = Sensor::Accelerometer;
+                type = Sensor::Type::Accelerometer;
                 data.x = event.acceleration.x;
                 data.y = event.acceleration.y;
                 data.z = event.acceleration.z;
                 break;
 
             case ASENSOR_TYPE_GYROSCOPE:
-                type = Sensor::Gyroscope;
+                type = Sensor::Type::Gyroscope;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
                 break;
 
             case ASENSOR_TYPE_MAGNETIC_FIELD:
-                type = Sensor::Magnetometer;
+                type = Sensor::Type::Magnetometer;
                 data.x = event.magnetic.x;
                 data.y = event.magnetic.y;
                 data.z = event.magnetic.z;
                 break;
 
             case ASENSOR_TYPE_GRAVITY:
-                type = Sensor::Gravity;
+                type = Sensor::Type::Gravity;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
                 break;
 
             case ASENSOR_TYPE_LINEAR_ACCELERATION:
-                type = Sensor::UserAcceleration;
+                type = Sensor::Type::UserAcceleration;
                 data.x = event.acceleration.x;
                 data.y = event.acceleration.y;
                 data.z = event.acceleration.z;
                 break;
 
             case ASENSOR_TYPE_ORIENTATION:
-                type = Sensor::Orientation;
+                type = Sensor::Type::Orientation;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
@@ -200,7 +200,7 @@ int SensorImpl::processSensorEvents(int fd, int events, void* data)
         }
 
         // An unknown sensor event has been detected, we don't know how to process it
-        if (type == Sensor::Count)
+        if (type == Sensor::Type::Count)
             continue;
 
         sensorData[type] = data;

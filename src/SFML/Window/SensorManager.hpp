@@ -129,7 +129,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Item m_sensors[Sensor::Count]; ///< Sensors information and state
+    Item m_sensors[static_cast<size_t>(Sensor::Type::Count)]; ///< Sensors information and state
 };
 
 } // namespace priv

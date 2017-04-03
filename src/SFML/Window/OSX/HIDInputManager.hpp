@@ -214,12 +214,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool              m_isValid;                    ///< If any error occurs this variable is false
-    CFDataRef         m_layoutData;                 ///< CFData containing the layout
-    UCKeyboardLayout* m_layout;                     ///< Current Keyboard Layout
-    IOHIDManagerRef   m_manager;                    ///< HID Manager
+    bool              m_isValid;                                         ///< If any error occurs this variable is false
+    CFDataRef         m_layoutData;                                      ///< CFData containing the layout
+    UCKeyboardLayout* m_layout;                                          ///< Current Keyboard Layout
+    IOHIDManagerRef   m_manager;                                         ///< HID Manager
 
-    IOHIDElements     m_keys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
+    IOHIDElements     m_keys[static_cast<size_t>(Keyboard::Key::Count)]; ///< All the keys on any connected keyboard
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Key enum.

@@ -264,10 +264,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event> m_events;                          ///< Queue of available events
-    JoystickState     m_joystickStates[Joystick::Count]; ///< Previous state of the joysticks
-    Vector3f          m_sensorValue[Sensor::Count];      ///< Previous value of the sensors
-    float             m_joystickThreshold;               ///< Joystick threshold (minimum motion for "move" event to be generated)
+    std::queue<Event> m_events;                                                ///< Queue of available events
+    JoystickState     m_joystickStates[Joystick::Count];                       ///< Previous state of the joysticks
+    Vector3f          m_sensorValue[static_cast<size_t>(Sensor::Type::Count)]; ///< Previous value of the sensors
+    float             m_joystickThreshold;                                     ///< Joystick threshold (minimum motion for "move" event to be generated)
 };
 
 } // namespace priv

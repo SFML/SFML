@@ -45,7 +45,7 @@ HIDInputManager& HIDInputManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 {
-    return isPressed(m_keys[key]);
+    return isPressed(m_keys[static_cast<size_t>(key)]);
 }
 
 
@@ -252,7 +252,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         // Translation went fine
 
         // The corresponding SFML key code
-        Keyboard::Key code = Keyboard::Unknown; // KeyCound means 'none'
+        Keyboard::Key code = Keyboard::Key::Unknown;
 
         // First we look if the key down is from a list of characters
         // that depend on keyboard localization
@@ -261,18 +261,18 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
 
         // The key is not a localized one so we try to find a
         // corresponding code through virtual key code
-        if (code == Keyboard::Unknown)
+        if (code == Keyboard::Key::Unknown)
             code = nonLocalizedKeys(virtualCode);
 
         // A code was found, wonderful!
-        if (code != Keyboard::Unknown)
+        if (code != Keyboard::Key::Unknown)
         {
             // Ok, everything went fine. Now we have a unique
             // corresponding sf::Keyboard::Key to one IOHIDElementRef
-            m_keys[code].push_back(key);
+            m_keys[static_cast<size_t>(code)].push_back(key);
 
             // And don't forget to keep the reference alive for our usage
-            CFRetain(m_keys[code].back());
+            CFRetain(m_keys[static_cast<size_t>(code)].back());
         }
 
         ////////////////////////////////////////////////////////////
@@ -317,12 +317,12 @@ void HIDInputManager::freeUp()
     if (m_manager != 0)
         CFRelease(m_manager);
 
-    for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
+    for (auto& key : m_keys)
     {
-        for (IOHIDElements::iterator it = m_keys[i].begin(); it != m_keys[i].end(); ++it)
-            CFRelease(*it);
+        for (auto& element : key)
+            CFRelease(element);
 
-        m_keys[i].clear();
+        key.clear();
     }
 }
 
@@ -608,85 +608,85 @@ Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
     switch (ch)
     {
         case 'a':
-        case 'A':                   return sf::Keyboard::A;
+        case 'A':                   return sf::Keyboard::Key::A;
 
         case 'b':
-        case 'B':                   return sf::Keyboard::B;
+        case 'B':                   return sf::Keyboard::Key::B;
 
         case 'c':
-        case 'C':                   return sf::Keyboard::C;
+        case 'C':                   return sf::Keyboard::Key::C;
 
         case 'd':
-        case 'D':                   return sf::Keyboard::D;
+        case 'D':                   return sf::Keyboard::Key::D;
 
         case 'e':
-        case 'E':                   return sf::Keyboard::E;
+        case 'E':                   return sf::Keyboard::Key::E;
 
         case 'f':
-        case 'F':                   return sf::Keyboard::F;
+        case 'F':                   return sf::Keyboard::Key::F;
 
         case 'g':
-        case 'G':                   return sf::Keyboard::G;
+        case 'G':                   return sf::Keyboard::Key::G;
 
         case 'h':
-        case 'H':                   return sf::Keyboard::H;
+        case 'H':                   return sf::Keyboard::Key::H;
 
         case 'i':
-        case 'I':                   return sf::Keyboard::I;
+        case 'I':                   return sf::Keyboard::Key::I;
 
         case 'j':
-        case 'J':                   return sf::Keyboard::J;
+        case 'J':                   return sf::Keyboard::Key::J;
 
         case 'k':
-        case 'K':                   return sf::Keyboard::K;
+        case 'K':                   return sf::Keyboard::Key::K;
 
         case 'l':
-        case 'L':                   return sf::Keyboard::L;
+        case 'L':                   return sf::Keyboard::Key::L;
 
         case 'm':
-        case 'M':                   return sf::Keyboard::M;
+        case 'M':                   return sf::Keyboard::Key::M;
 
         case 'n':
-        case 'N':                   return sf::Keyboard::N;
+        case 'N':                   return sf::Keyboard::Key::N;
 
         case 'o':
-        case 'O':                   return sf::Keyboard::O;
+        case 'O':                   return sf::Keyboard::Key::O;
 
         case 'p':
-        case 'P':                   return sf::Keyboard::P;
+        case 'P':                   return sf::Keyboard::Key::P;
 
         case 'q':
-        case 'Q':                   return sf::Keyboard::Q;
+        case 'Q':                   return sf::Keyboard::Key::Q;
 
         case 'r':
-        case 'R':                   return sf::Keyboard::R;
+        case 'R':                   return sf::Keyboard::Key::R;
 
         case 's':
-        case 'S':                   return sf::Keyboard::S;
+        case 'S':                   return sf::Keyboard::Key::S;
 
         case 't':
-        case 'T':                   return sf::Keyboard::T;
+        case 'T':                   return sf::Keyboard::Key::T;
 
         case 'u':
-        case 'U':                   return sf::Keyboard::U;
+        case 'U':                   return sf::Keyboard::Key::U;
 
         case 'v':
-        case 'V':                   return sf::Keyboard::V;
+        case 'V':                   return sf::Keyboard::Key::V;
 
         case 'w':
-        case 'W':                   return sf::Keyboard::W;
+        case 'W':                   return sf::Keyboard::Key::W;
 
         case 'x':
-        case 'X':                   return sf::Keyboard::X;
+        case 'X':                   return sf::Keyboard::Key::X;
 
         case 'y':
-        case 'Y':                   return sf::Keyboard::Y;
+        case 'Y':                   return sf::Keyboard::Key::Y;
 
         case 'z':
-        case 'Z':                   return sf::Keyboard::Z;
+        case 'Z':                   return sf::Keyboard::Key::Z;
 
             // The key is not 'localized'.
-        default:                    return sf::Keyboard::Unknown;
+        default:                    return sf::Keyboard::Key::Unknown;
     }
 }
 
@@ -699,167 +699,167 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
     switch (virtualKeycode)
     {
             // These cases should not be used but anyway...
-        case 0x00:                      return sf::Keyboard::A;
-        case 0x0b:                      return sf::Keyboard::B;
-        case 0x08:                      return sf::Keyboard::C;
-        case 0x02:                      return sf::Keyboard::D;
-        case 0x0e:                      return sf::Keyboard::E;
-        case 0x03:                      return sf::Keyboard::F;
-        case 0x05:                      return sf::Keyboard::G;
-        case 0x04:                      return sf::Keyboard::H;
-        case 0x22:                      return sf::Keyboard::I;
-        case 0x26:                      return sf::Keyboard::J;
-        case 0x28:                      return sf::Keyboard::K;
-        case 0x25:                      return sf::Keyboard::L;
-        case 0x2e:                      return sf::Keyboard::M;
-        case 0x2d:                      return sf::Keyboard::N;
-        case 0x1f:                      return sf::Keyboard::O;
-        case 0x23:                      return sf::Keyboard::P;
-        case 0x0c:                      return sf::Keyboard::Q;
-        case 0x0f:                      return sf::Keyboard::R;
-        case 0x01:                      return sf::Keyboard::S;
-        case 0x11:                      return sf::Keyboard::T;
-        case 0x20:                      return sf::Keyboard::U;
-        case 0x09:                      return sf::Keyboard::V;
-        case 0x0d:                      return sf::Keyboard::W;
-        case 0x07:                      return sf::Keyboard::X;
-        case 0x10:                      return sf::Keyboard::Y;
-        case 0x06:                      return sf::Keyboard::Z;
+        case 0x00:                      return sf::Keyboard::Key::A;
+        case 0x0b:                      return sf::Keyboard::Key::B;
+        case 0x08:                      return sf::Keyboard::Key::C;
+        case 0x02:                      return sf::Keyboard::Key::D;
+        case 0x0e:                      return sf::Keyboard::Key::E;
+        case 0x03:                      return sf::Keyboard::Key::F;
+        case 0x05:                      return sf::Keyboard::Key::G;
+        case 0x04:                      return sf::Keyboard::Key::H;
+        case 0x22:                      return sf::Keyboard::Key::I;
+        case 0x26:                      return sf::Keyboard::Key::J;
+        case 0x28:                      return sf::Keyboard::Key::K;
+        case 0x25:                      return sf::Keyboard::Key::L;
+        case 0x2e:                      return sf::Keyboard::Key::M;
+        case 0x2d:                      return sf::Keyboard::Key::N;
+        case 0x1f:                      return sf::Keyboard::Key::O;
+        case 0x23:                      return sf::Keyboard::Key::P;
+        case 0x0c:                      return sf::Keyboard::Key::Q;
+        case 0x0f:                      return sf::Keyboard::Key::R;
+        case 0x01:                      return sf::Keyboard::Key::S;
+        case 0x11:                      return sf::Keyboard::Key::T;
+        case 0x20:                      return sf::Keyboard::Key::U;
+        case 0x09:                      return sf::Keyboard::Key::V;
+        case 0x0d:                      return sf::Keyboard::Key::W;
+        case 0x07:                      return sf::Keyboard::Key::X;
+        case 0x10:                      return sf::Keyboard::Key::Y;
+        case 0x06:                      return sf::Keyboard::Key::Z;
 
             // These cases should not be used but anyway...
-        case 0x1d:                      return sf::Keyboard::Num0;
-        case 0x12:                      return sf::Keyboard::Num1;
-        case 0x13:                      return sf::Keyboard::Num2;
-        case 0x14:                      return sf::Keyboard::Num3;
-        case 0x15:                      return sf::Keyboard::Num4;
-        case 0x17:                      return sf::Keyboard::Num5;
-        case 0x16:                      return sf::Keyboard::Num6;
-        case 0x1a:                      return sf::Keyboard::Num7;
-        case 0x1c:                      return sf::Keyboard::Num8;
-        case 0x19:                      return sf::Keyboard::Num9;
+        case 0x1d:                      return sf::Keyboard::Key::Num0;
+        case 0x12:                      return sf::Keyboard::Key::Num1;
+        case 0x13:                      return sf::Keyboard::Key::Num2;
+        case 0x14:                      return sf::Keyboard::Key::Num3;
+        case 0x15:                      return sf::Keyboard::Key::Num4;
+        case 0x17:                      return sf::Keyboard::Key::Num5;
+        case 0x16:                      return sf::Keyboard::Key::Num6;
+        case 0x1a:                      return sf::Keyboard::Key::Num7;
+        case 0x1c:                      return sf::Keyboard::Key::Num8;
+        case 0x19:                      return sf::Keyboard::Key::Num9;
 
-        case 0x35:                      return sf::Keyboard::Escape;
+        case 0x35:                      return sf::Keyboard::Key::Escape;
 
             // Modifier keys : never happen with keyDown/keyUp methods (?)
-        case 0x3b:                      return sf::Keyboard::LControl;
-        case 0x38:                      return sf::Keyboard::LShift;
-        case 0x3a:                      return sf::Keyboard::LAlt;
-        case 0x37:                      return sf::Keyboard::LSystem;
-        case 0x3e:                      return sf::Keyboard::RControl;
-        case 0x3c:                      return sf::Keyboard::RShift;
-        case 0x3d:                      return sf::Keyboard::RAlt;
-        case 0x36:                      return sf::Keyboard::RSystem;
+        case 0x3b:                      return sf::Keyboard::Key::LControl;
+        case 0x38:                      return sf::Keyboard::Key::LShift;
+        case 0x3a:                      return sf::Keyboard::Key::LAlt;
+        case 0x37:                      return sf::Keyboard::Key::LSystem;
+        case 0x3e:                      return sf::Keyboard::Key::RControl;
+        case 0x3c:                      return sf::Keyboard::Key::RShift;
+        case 0x3d:                      return sf::Keyboard::Key::RAlt;
+        case 0x36:                      return sf::Keyboard::Key::RSystem;
 
-        case 0x7f:                      return sf::Keyboard::Menu;
-        case NSMenuFunctionKey:         return sf::Keyboard::Menu;
+        case 0x7f:                      return sf::Keyboard::Key::Menu;
+        case NSMenuFunctionKey:         return sf::Keyboard::Key::Menu;
 
-        case 0x21:                      return sf::Keyboard::LBracket;
-        case 0x1e:                      return sf::Keyboard::RBracket;
-        case 0x29:                      return sf::Keyboard::SemiColon;
-        case 0x2b:                      return sf::Keyboard::Comma;
-        case 0x41: /* keypad         */ return sf::Keyboard::Period;
-        case 0x2f: /* keyboard       */ return sf::Keyboard::Period;
-        case 0x27:                      return sf::Keyboard::Quote;
-        case 0x2c:                      return sf::Keyboard::Slash;
-        case 0x2a:                      return sf::Keyboard::BackSlash;
+        case 0x21:                      return sf::Keyboard::Key::LBracket;
+        case 0x1e:                      return sf::Keyboard::Key::RBracket;
+        case 0x29:                      return sf::Keyboard::Key::SemiColon;
+        case 0x2b:                      return sf::Keyboard::Key::Comma;
+        case 0x41: /* keypad         */ return sf::Keyboard::Key::Period;
+        case 0x2f: /* keyboard       */ return sf::Keyboard::Key::Period;
+        case 0x27:                      return sf::Keyboard::Key::Quote;
+        case 0x2c:                      return sf::Keyboard::Key::Slash;
+        case 0x2a:                      return sf::Keyboard::Key::BackSlash;
 
-            // sf::Keyboard::Tilde might be in conflict with some other key.
+            // sf::Keyboard::Key::Tilde might be in conflict with some other key.
             // 0x0a is for "Non-US Backslash" according to HID Calibrator,
             // a sample provided by Apple.
-        case 0x0a:                      return sf::Keyboard::Tilde;
+        case 0x0a:                      return sf::Keyboard::Key::Tilde;
 
-        case 0x51: /* keypad         */ return sf::Keyboard::Equal;
-        case 0x18: /* keyboard       */ return sf::Keyboard::Equal;
-        case 0x32:                      return sf::Keyboard::Dash;
-        case 0x31:                      return sf::Keyboard::Space;
-        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
-        case 0x24: /* keyboard       */ return sf::Keyboard::Return;
-        case 0x33:                      return sf::Keyboard::BackSpace;
-        case 0x30:                      return sf::Keyboard::Tab;
-
-            // Duplicates (see next section).
-        case 0x74:                      return sf::Keyboard::PageUp;
-        case 0x79:                      return sf::Keyboard::PageDown;
-        case 0x77:                      return sf::Keyboard::End;
-        case 0x73:                      return sf::Keyboard::Home;
-
-        case NSPageUpFunctionKey:       return sf::Keyboard::PageUp;
-        case NSPageDownFunctionKey:     return sf::Keyboard::PageDown;
-        case NSEndFunctionKey:          return sf::Keyboard::End;
-        case NSHomeFunctionKey:         return sf::Keyboard::Home;
-
-        case 0x72:                      return sf::Keyboard::Insert;
-        case NSInsertFunctionKey:       return sf::Keyboard::Insert;
-        case 0x75:                      return sf::Keyboard::Delete;
-        case NSDeleteFunctionKey:       return sf::Keyboard::Delete;
-
-        case 0x45:                      return sf::Keyboard::Add;
-        case 0x4e:                      return sf::Keyboard::Subtract;
-        case 0x43:                      return sf::Keyboard::Multiply;
-        case 0x4b:                      return sf::Keyboard::Divide;
+        case 0x51: /* keypad         */ return sf::Keyboard::Key::Equal;
+        case 0x18: /* keyboard       */ return sf::Keyboard::Key::Equal;
+        case 0x32:                      return sf::Keyboard::Key::Dash;
+        case 0x31:                      return sf::Keyboard::Key::Space;
+        case 0x4c: /* keypad         */ return sf::Keyboard::Key::Return;
+        case 0x24: /* keyboard       */ return sf::Keyboard::Key::Return;
+        case 0x33:                      return sf::Keyboard::Key::BackSpace;
+        case 0x30:                      return sf::Keyboard::Key::Tab;
 
             // Duplicates (see next section).
-        case 0x7b:                      return sf::Keyboard::Left;
-        case 0x7c:                      return sf::Keyboard::Right;
-        case 0x7e:                      return sf::Keyboard::Up;
-        case 0x7d:                      return sf::Keyboard::Down;
+        case 0x74:                      return sf::Keyboard::Key::PageUp;
+        case 0x79:                      return sf::Keyboard::Key::PageDown;
+        case 0x77:                      return sf::Keyboard::Key::End;
+        case 0x73:                      return sf::Keyboard::Key::Home;
 
-        case NSLeftArrowFunctionKey:    return sf::Keyboard::Left;
-        case NSRightArrowFunctionKey:   return sf::Keyboard::Right;
-        case NSUpArrowFunctionKey:      return sf::Keyboard::Up;
-        case NSDownArrowFunctionKey:    return sf::Keyboard::Down;
+        case NSPageUpFunctionKey:       return sf::Keyboard::Key::PageUp;
+        case NSPageDownFunctionKey:     return sf::Keyboard::Key::PageDown;
+        case NSEndFunctionKey:          return sf::Keyboard::Key::End;
+        case NSHomeFunctionKey:         return sf::Keyboard::Key::Home;
 
-        case 0x52:                      return sf::Keyboard::Numpad0;
-        case 0x53:                      return sf::Keyboard::Numpad1;
-        case 0x54:                      return sf::Keyboard::Numpad2;
-        case 0x55:                      return sf::Keyboard::Numpad3;
-        case 0x56:                      return sf::Keyboard::Numpad4;
-        case 0x57:                      return sf::Keyboard::Numpad5;
-        case 0x58:                      return sf::Keyboard::Numpad6;
-        case 0x59:                      return sf::Keyboard::Numpad7;
-        case 0x5b:                      return sf::Keyboard::Numpad8;
-        case 0x5c:                      return sf::Keyboard::Numpad9;
+        case 0x72:                      return sf::Keyboard::Key::Insert;
+        case NSInsertFunctionKey:       return sf::Keyboard::Key::Insert;
+        case 0x75:                      return sf::Keyboard::Key::Delete;
+        case NSDeleteFunctionKey:       return sf::Keyboard::Key::Delete;
+
+        case 0x45:                      return sf::Keyboard::Key::Add;
+        case 0x4e:                      return sf::Keyboard::Key::Subtract;
+        case 0x43:                      return sf::Keyboard::Key::Multiply;
+        case 0x4b:                      return sf::Keyboard::Key::Divide;
 
             // Duplicates (see next section).
-        case 0x7a:                      return sf::Keyboard::F1;
-        case 0x78:                      return sf::Keyboard::F2;
-        case 0x63:                      return sf::Keyboard::F3;
-        case 0x76:                      return sf::Keyboard::F4;
-        case 0x60:                      return sf::Keyboard::F5;
-        case 0x61:                      return sf::Keyboard::F6;
-        case 0x62:                      return sf::Keyboard::F7;
-        case 0x64:                      return sf::Keyboard::F8;
-        case 0x65:                      return sf::Keyboard::F9;
-        case 0x6d:                      return sf::Keyboard::F10;
-        case 0x67:                      return sf::Keyboard::F11;
-        case 0x6f:                      return sf::Keyboard::F12;
-        case 0x69:                      return sf::Keyboard::F13;
-        case 0x6b:                      return sf::Keyboard::F14;
-        case 0x71:                      return sf::Keyboard::F15;
+        case 0x7b:                      return sf::Keyboard::Key::Left;
+        case 0x7c:                      return sf::Keyboard::Key::Right;
+        case 0x7e:                      return sf::Keyboard::Key::Up;
+        case 0x7d:                      return sf::Keyboard::Key::Down;
 
-        case NSF1FunctionKey:           return sf::Keyboard::F1;
-        case NSF2FunctionKey:           return sf::Keyboard::F2;
-        case NSF3FunctionKey:           return sf::Keyboard::F3;
-        case NSF4FunctionKey:           return sf::Keyboard::F4;
-        case NSF5FunctionKey:           return sf::Keyboard::F5;
-        case NSF6FunctionKey:           return sf::Keyboard::F6;
-        case NSF7FunctionKey:           return sf::Keyboard::F7;
-        case NSF8FunctionKey:           return sf::Keyboard::F8;
-        case NSF9FunctionKey:           return sf::Keyboard::F9;
-        case NSF10FunctionKey:          return sf::Keyboard::F10;
-        case NSF11FunctionKey:          return sf::Keyboard::F11;
-        case NSF12FunctionKey:          return sf::Keyboard::F12;
-        case NSF13FunctionKey:          return sf::Keyboard::F13;
-        case NSF14FunctionKey:          return sf::Keyboard::F14;
-        case NSF15FunctionKey:          return sf::Keyboard::F15;
+        case NSLeftArrowFunctionKey:    return sf::Keyboard::Key::Left;
+        case NSRightArrowFunctionKey:   return sf::Keyboard::Key::Right;
+        case NSUpArrowFunctionKey:      return sf::Keyboard::Key::Up;
+        case NSDownArrowFunctionKey:    return sf::Keyboard::Key::Down;
 
-        case NSPauseFunctionKey:        return sf::Keyboard::Pause;
+        case 0x52:                      return sf::Keyboard::Key::Numpad0;
+        case 0x53:                      return sf::Keyboard::Key::Numpad1;
+        case 0x54:                      return sf::Keyboard::Key::Numpad2;
+        case 0x55:                      return sf::Keyboard::Key::Numpad3;
+        case 0x56:                      return sf::Keyboard::Key::Numpad4;
+        case 0x57:                      return sf::Keyboard::Key::Numpad5;
+        case 0x58:                      return sf::Keyboard::Key::Numpad6;
+        case 0x59:                      return sf::Keyboard::Key::Numpad7;
+        case 0x5b:                      return sf::Keyboard::Key::Numpad8;
+        case 0x5c:                      return sf::Keyboard::Key::Numpad9;
+
+            // Duplicates (see next section).
+        case 0x7a:                      return sf::Keyboard::Key::F1;
+        case 0x78:                      return sf::Keyboard::Key::F2;
+        case 0x63:                      return sf::Keyboard::Key::F3;
+        case 0x76:                      return sf::Keyboard::Key::F4;
+        case 0x60:                      return sf::Keyboard::Key::F5;
+        case 0x61:                      return sf::Keyboard::Key::F6;
+        case 0x62:                      return sf::Keyboard::Key::F7;
+        case 0x64:                      return sf::Keyboard::Key::F8;
+        case 0x65:                      return sf::Keyboard::Key::F9;
+        case 0x6d:                      return sf::Keyboard::Key::F10;
+        case 0x67:                      return sf::Keyboard::Key::F11;
+        case 0x6f:                      return sf::Keyboard::Key::F12;
+        case 0x69:                      return sf::Keyboard::Key::F13;
+        case 0x6b:                      return sf::Keyboard::Key::F14;
+        case 0x71:                      return sf::Keyboard::Key::F15;
+
+        case NSF1FunctionKey:           return sf::Keyboard::Key::F1;
+        case NSF2FunctionKey:           return sf::Keyboard::Key::F2;
+        case NSF3FunctionKey:           return sf::Keyboard::Key::F3;
+        case NSF4FunctionKey:           return sf::Keyboard::Key::F4;
+        case NSF5FunctionKey:           return sf::Keyboard::Key::F5;
+        case NSF6FunctionKey:           return sf::Keyboard::Key::F6;
+        case NSF7FunctionKey:           return sf::Keyboard::Key::F7;
+        case NSF8FunctionKey:           return sf::Keyboard::Key::F8;
+        case NSF9FunctionKey:           return sf::Keyboard::Key::F9;
+        case NSF10FunctionKey:          return sf::Keyboard::Key::F10;
+        case NSF11FunctionKey:          return sf::Keyboard::Key::F11;
+        case NSF12FunctionKey:          return sf::Keyboard::Key::F12;
+        case NSF13FunctionKey:          return sf::Keyboard::Key::F13;
+        case NSF14FunctionKey:          return sf::Keyboard::Key::F14;
+        case NSF15FunctionKey:          return sf::Keyboard::Key::F15;
+
+        case NSPauseFunctionKey:        return sf::Keyboard::Key::Pause;
 
             // keycode 0x1b is not bound to any key.
             // This key is ' on CH-FR, ) on FR and - on US layouts.
 
             // An unknown key.
-        default:                        return sf::Keyboard::Unknown;
+        default:                        return sf::Keyboard::Key::Unknown;
     }
 }
 

@@ -76,7 +76,7 @@ struct ActivityStates
 
     std::map<int, Vector2i> touchEvents;
     Vector2i mousePosition;
-    bool isButtonPressed[Mouse::ButtonCount];
+    bool isButtonPressed[static_cast<size_t>(Mouse::Button::Count)];
 
     bool mainOver;
 
