@@ -317,13 +317,13 @@ Socket::Status TcpSocket::send(Packet& packet)
     std::vector<char> blockToSend(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the block to send
-    std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    std::memcpy(blockToSend.data(), &packetSize, sizeof(packetSize));
     if (size > 0)
-        std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
+        std::memcpy(blockToSend.data() + sizeof(packetSize), data, size);
 
     // Send the data block
     std::size_t sent;
-    Status status = send(&blockToSend[0] + packet.m_sendPos, blockToSend.size() - packet.m_sendPos, sent);
+    Status status = send(blockToSend.data() + packet.m_sendPos, blockToSend.size() - packet.m_sendPos, sent);
 
     // In the case of a partial send, record the location to resume from
     if (status == Partial)
@@ -385,14 +385,14 @@ Socket::Status TcpSocket::receive(Packet& packet)
         if (received > 0)
         {
             m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            char* begin = &m_pendingPacket.Data[0] + m_pendingPacket.Data.size() - received;
+            char* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
             std::memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the packet data: we can copy it to the user packet
     if (!m_pendingPacket.Data.empty())
-        packet.onReceive(&m_pendingPacket.Data[0], m_pendingPacket.Data.size());
+        packet.onReceive(m_pendingPacket.Data.data(), m_pendingPacket.Data.size());
 
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();

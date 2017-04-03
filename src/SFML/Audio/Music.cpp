@@ -113,8 +113,8 @@ bool Music::onGetData(SoundStream::Chunk& data)
     std::lock_guard<std::mutex> lock(m_mutex);
 
     // Fill the chunk parameters
-    data.samples     = &m_samples[0];
-    data.sampleCount = static_cast<std::size_t>(m_file.read(&m_samples[0], m_samples.size()));
+    data.samples     = m_samples.data();
+    data.sampleCount = static_cast<std::size_t>(m_file.read(m_samples.data(), m_samples.size()));
 
     // Check if we have stopped obtaining samples or reached the end of the audio file
     return (data.sampleCount != 0) && (m_file.getSampleOffset() < m_file.getSampleCount());

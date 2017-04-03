@@ -585,7 +585,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(width * height * 4);
 
-        Uint8* current = &m_pixelBuffer[0];
+        Uint8* current = m_pixelBuffer.data();
         Uint8* end = current + width * height * 4;
 
         while (current != end)
@@ -632,7 +632,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         unsigned int y = glyph.textureRect.top - padding;
         unsigned int w = glyph.textureRect.width + 2 * padding;
         unsigned int h = glyph.textureRect.height + 2 * padding;
-        page.texture.update(&m_pixelBuffer[0], w, h, x, y);
+        page.texture.update(m_pixelBuffer.data(), w, h, x, y);
     }
 
     // Delete the FT glyph

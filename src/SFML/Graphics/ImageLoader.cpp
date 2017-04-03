@@ -118,7 +118,7 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(width * height * 4);
-            memcpy(&pixels[0], ptr, pixels.size());
+            memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
@@ -162,7 +162,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
             {
                 // Copy the loaded pixels to the pixel buffer
                 pixels.resize(width * height * 4);
-                memcpy(&pixels[0], ptr, pixels.size());
+                memcpy(pixels.data(), ptr, pixels.size());
             }
 
             // Free the loaded pixels (they are now in our own pixel buffer)
@@ -217,7 +217,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(width * height * 4);
-            memcpy(&pixels[0], ptr, pixels.size());
+            memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
@@ -250,19 +250,19 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         if (extension == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+            if (stbi_write_bmp(filename.c_str(), size.x, size.y, 4, pixels.data()))
                 return true;
         }
         else if (extension == "tga")
         {
             // TGA format
-            if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, &pixels[0]))
+            if (stbi_write_tga(filename.c_str(), size.x, size.y, 4, pixels.data()))
                 return true;
         }
         else if (extension == "png")
         {
             // PNG format
-            if (stbi_write_png(filename.c_str(), size.x, size.y, 4, &pixels[0], 0))
+            if (stbi_write_png(filename.c_str(), size.x, size.y, 4, pixels.data(), 0))
                 return true;
         }
         else if (extension == "jpg" || extension == "jpeg")
@@ -309,7 +309,7 @@ bool ImageLoader::writeJpg(const std::string& filename, const std::vector<Uint8>
         buffer[i * 3 + 1] = pixels[i * 4 + 1];
         buffer[i * 3 + 2] = pixels[i * 4 + 2];
     }
-    Uint8* ptr = &buffer[0];
+    Uint8* ptr = buffer.data();
 
     // Start compression
     jpeg_start_compress(&compressInfos, TRUE);
