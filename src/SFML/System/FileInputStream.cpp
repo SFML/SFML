@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 FileInputStream::FileInputStream()
-: m_file(NULL)
+: m_file(nullptr)
 {
 
 }
@@ -63,7 +63,7 @@ bool FileInputStream::open(const std::string& filename)
 
     m_file = std::fopen(filename.c_str(), "rb");
 
-    return m_file != NULL;
+    return m_file != nullptr;
 #endif
 }
 

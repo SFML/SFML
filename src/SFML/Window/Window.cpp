@@ -34,7 +34,7 @@
 
 namespace
 {
-    const sf::Window* fullscreenWindow = NULL;
+    const sf::Window* fullscreenWindow = nullptr;
 }
 
 
@@ -153,14 +153,14 @@ void Window::close()
 
     // Update the fullscreen window
     if (this == fullscreenWindow)
-        fullscreenWindow = NULL;
+        fullscreenWindow = nullptr;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Window::isOpen() const
 {
-    return m_impl != NULL;
+    return m_impl != nullptr;
 }
 
 

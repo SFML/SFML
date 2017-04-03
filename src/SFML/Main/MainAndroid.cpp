@@ -60,11 +60,11 @@ int getAndroidApiLevel(ANativeActivity* activity)
     JNIEnv* lJNIEnv = activity->env;
 
     jclass versionClass = lJNIEnv->FindClass("android/os/Build$VERSION");
-    if (versionClass == NULL)
+    if (versionClass == nullptr)
         return 0;
 
     jfieldID sdkIntFieldID = lJNIEnv->GetStaticFieldID(versionClass, "SDK_INT", "I");
-    if (sdkIntFieldID == NULL)
+    if (sdkIntFieldID == nullptr)
         return 0;
     
     jint sdkInt = 0;
@@ -117,7 +117,7 @@ void* main(ActivityStates* states)
     initializeMain(states);
 
     sleep(seconds(0.5));
-    ::main(0, NULL);
+    ::main(0, nullptr);
 
     // Terminate properly the main thread and wait until it's done
     terminateMain(states);
@@ -128,7 +128,7 @@ void* main(ActivityStates* states)
         states->terminated = true;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 } // namespace priv
@@ -315,7 +315,7 @@ static void onDestroy(ANativeActivity* activity)
     delete states;
 
     // Reset the activity pointer for all modules
-    sf::priv::getActivity(NULL, true);
+    sf::priv::getActivity(nullptr, true);
 
     // The application should now terminate
 }
@@ -353,7 +353,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     std::lock_guard<std::mutex> lock(states->mutex);
 
     // Update the activity states
-    states->window = NULL;
+    states->window = nullptr;
 
     // Notify SFML mechanism
     sf::Event event;
@@ -393,7 +393,7 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
     {
         std::lock_guard<std::mutex> lock(states->mutex);
 
-        AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, NULL);
+        AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, nullptr);
         states->inputQueue = queue;
     }
 }
@@ -409,7 +409,7 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
     {
         std::lock_guard<std::mutex> lock(states->mutex);
 
-        states->inputQueue = NULL;
+        states->inputQueue = nullptr;
         AInputQueue_detachLooper(queue);
     }
 }
@@ -429,7 +429,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     std::lock_guard<std::mutex> lock(states->mutex);
 
     // Make sure the window still exists before we access the dimensions on it
-    if (states->window != NULL) {
+    if (states->window != nullptr) {
         // Send an event to warn people about the window move/resize
         sf::Event event;
         event.type = sf::Event::Resized;
@@ -452,7 +452,7 @@ static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 {
     *outLen = 0;
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -466,22 +466,22 @@ static void onLowMemory(ANativeActivity* activity)
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
-    sf::priv::ActivityStates* states = NULL;
+    sf::priv::ActivityStates* states = nullptr;
     states = new sf::priv::ActivityStates;
 
     // Initialize the states value
-    states->activity   = NULL;
-    states->window     = NULL;
-    states->looper     = NULL;
-    states->inputQueue = NULL;
-    states->config     = NULL;
+    states->activity   = nullptr;
+    states->window     = nullptr;
+    states->looper     = nullptr;
+    states->inputQueue = nullptr;
+    states->config     = nullptr;
 
     for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
         states->isButtonPressed[i] = false;
 
     states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    if (savedState != NULL)
+    if (savedState != nullptr)
     {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
@@ -527,7 +527,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
         AWINDOW_FLAG_KEEP_SCREEN_ON);
 
     // Initialize the display
-    eglInitialize(states->display, NULL, NULL);
+    eglInitialize(states->display, nullptr, nullptr);
 
     getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
 

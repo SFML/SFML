@@ -33,7 +33,7 @@
 namespace
 {
     // Save the global instance of the delegate
-    SFAppDelegate* delegateInstance = NULL;
+    SFAppDelegate* delegateInstance = nullptr;
 
     // Current touches positions
     std::vector<sf::Vector2i> touchPositions;
@@ -64,7 +64,7 @@ namespace
 - (void)runUserMain
 {
     // Arguments intentionally dropped, see comments in main in sfml-main
-    sfmlMain(0, NULL);
+    sfmlMain(0, nullptr);
 }
 
 

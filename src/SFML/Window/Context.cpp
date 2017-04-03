@@ -58,7 +58,7 @@ bool Context::setActive(bool active)
     bool result = m_context->setActive(active);
 
     if (result)
-        currentContext = (active ? this : NULL);
+        currentContext = (active ? this : nullptr);
 
     return result;
 }

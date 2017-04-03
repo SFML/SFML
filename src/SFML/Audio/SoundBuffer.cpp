@@ -162,7 +162,7 @@ bool SoundBuffer::saveToFile(const std::string& filename) const
 ////////////////////////////////////////////////////////////
 const Int16* SoundBuffer::getSamples() const
 {
-    return m_samples.empty() ? NULL : m_samples.data();
+    return m_samples.empty() ? nullptr : m_samples.data();
 }
 
 

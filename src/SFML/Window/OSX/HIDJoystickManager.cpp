@@ -85,7 +85,7 @@ m_joystickCount(0)
     maskArray[0] = mask0;
     maskArray[1] = mask1;
 
-    CFArrayRef mask = CFArrayCreate(NULL, (const void**)maskArray, 2, NULL);
+    CFArrayRef mask = CFArrayCreate(nullptr, (const void**)maskArray, 2, nullptr);
 
     IOHIDManagerSetDeviceMatchingMultiple(m_manager, mask);
     CFRelease(mask);
@@ -111,8 +111,8 @@ HIDJoystickManager::~HIDJoystickManager()
                                       CFRunLoopGetCurrent(),
                                       RunLoopMode);
 
-    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, NULL, 0);
-    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, NULL, 0);
+    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, 0);
+    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, 0);
 
     IOHIDManagerClose(m_manager, kIOHIDOptionsTypeNone);
 }

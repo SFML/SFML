@@ -58,7 +58,7 @@ namespace priv
 {
 ActivityStates* getActivity(ActivityStates* initializedStates, bool reset)
 {
-    static ActivityStates* states = NULL;
+    static ActivityStates* states = nullptr;
 
     if (!states || reset)
         states = initializedStates;

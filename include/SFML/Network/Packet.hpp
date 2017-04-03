@@ -92,7 +92,7 @@ public:
     /// Warning: the returned pointer may become invalid after
     /// you append data to the packet, therefore it should never
     /// be stored.
-    /// The return pointer is NULL if the packet is empty.
+    /// The return pointer is nullptr if the packet is empty.
     ///
     /// \return Pointer to the data
     ///

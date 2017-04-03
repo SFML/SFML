@@ -118,7 +118,7 @@ SFContext::~SFContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer SFContext::getFunction(const char* name)
 {
-    static void* image = NULL;
+    static void* image = nullptr;
 
     if (!image)
         image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
@@ -267,7 +267,7 @@ void SFContext::createContext(SFContext* shared,
     }
 
     // Use the shared context if one is given.
-    NSOpenGLContext* sharedContext = shared != NULL ? shared->m_context : nil;
+    NSOpenGLContext* sharedContext = shared != nullptr ? shared->m_context : nil;
 
     if (sharedContext != nil)
     {

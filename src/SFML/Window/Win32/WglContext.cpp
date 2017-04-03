@@ -64,7 +64,7 @@ String getErrorString(DWORD errorCode)
 {
     std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
     TCHAR errBuff[256];
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0, errBuff, sizeof(errBuff), NULL);
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errorCode, 0, errBuff, sizeof(errBuff), nullptr);
     ss << errBuff;
     String errMsg(ss.str());
 
@@ -74,10 +74,10 @@ String getErrorString(DWORD errorCode)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     // Save the creation settings
@@ -99,10 +99,10 @@ m_ownsWindow   (false)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     // Save the creation settings
@@ -124,10 +124,10 @@ m_ownsWindow   (false)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     // Save the creation settings
@@ -155,8 +155,8 @@ WglContext::~WglContext()
     {
         if (currentContext == this)
         {
-            if (wglMakeCurrent(m_deviceContext, NULL) == TRUE)
-                currentContext = NULL;
+            if (wglMakeCurrent(m_deviceContext, nullptr) == TRUE)
+                currentContext = nullptr;
         }
 
         wglDeleteContext(m_context);
@@ -215,13 +215,13 @@ bool WglContext::makeCurrent(bool current)
     if (!m_deviceContext || !m_context)
         return false;
 
-    if (wglMakeCurrent(m_deviceContext, current ? m_context : NULL) == FALSE)
+    if (wglMakeCurrent(m_deviceContext, current ? m_context : nullptr) == FALSE)
     {
         err() << "Failed to " << (current ? "activate" : "deactivate") << " OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
         return false;
     }
 
-    currentContext = (current ? this : NULL);
+    currentContext = (current ? this : nullptr);
 
     return true;
 }
@@ -278,7 +278,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         // Let's check how many formats are supporting our requirements
         int  formats[512];
         UINT nbFormats;
-        bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 512, formats, &nbFormats) != FALSE;
+        bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != FALSE;
 
         if (!isValid)
             err() << "Failed to enumerate pixel formats: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
@@ -536,7 +536,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
                     err() << "Failed to retrieve pixel buffer device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
 
                     wglDestroyPbufferARB(m_pbuffer);
-                    m_pbuffer = NULL;
+                    m_pbuffer = nullptr;
                 }
             }
             else
@@ -553,7 +553,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         // with other contexts and thus wglShareLists would always fail
 
         // Create the hidden window
-        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, NULL, NULL, GetModuleHandle(NULL), NULL);
+        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
         ShowWindow(m_window, SW_HIDE);
         m_deviceContext = GetDC(m_window);
 
@@ -589,7 +589,7 @@ void WglContext::createContext(WglContext* shared)
     ContextSettings settings = m_settings;
 
     // Get the context to share display lists with
-    HGLRC sharedContext = shared ? shared->m_context : NULL;
+    HGLRC sharedContext = shared ? shared->m_context : nullptr;
 
     // Create the OpenGL context -- first try using wglCreateContextAttribsARB
     while (!m_context && m_settings.majorVersion)
@@ -638,13 +638,13 @@ void WglContext::createContext(WglContext* shared)
 
                 if (currentContext == shared)
                 {
-                    if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
+                    if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                     {
                         err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
                         return;
                     }
 
-                    currentContext = NULL;
+                    currentContext = nullptr;
                 }
             }
 
@@ -708,13 +708,13 @@ void WglContext::createContext(WglContext* shared)
 
             if (currentContext == shared)
             {
-                if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
+                if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                 {
                     err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
                     return;
                 }
 
-                currentContext = NULL;
+                currentContext = nullptr;
             }
 
             if (wglShareLists(sharedContext, m_context) == FALSE)

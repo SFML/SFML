@@ -61,7 +61,7 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    sf::priv::WindowImplX11*              fullscreenWindow = NULL;
+    sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
     std::vector<sf::priv::WindowImplX11*> allWindows;
     std::mutex                            allWindowsMutex;
     sf::String                            windowManagerName;
@@ -381,8 +381,8 @@ namespace priv
 WindowImplX11::WindowImplX11(WindowHandle handle) :
 m_window         (0),
 m_screen         (0),
-m_inputMethod    (NULL),
-m_inputContext   (NULL),
+m_inputMethod    (nullptr),
+m_inputContext   (nullptr),
 m_isExternal     (true),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
@@ -428,8 +428,8 @@ m_lastInputTime  (0)
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window         (0),
 m_screen         (0),
-m_inputMethod    (NULL),
-m_inputContext   (NULL),
+m_inputMethod    (nullptr),
+m_inputContext   (nullptr),
 m_isExternal     (false),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
@@ -749,21 +749,21 @@ void WindowImplX11::setTitle(const String& title)
                          m_window,
                          title.toAnsiString().c_str(),
                          title.toAnsiString().c_str(),
-                         NULL,
+                         nullptr,
                          0,
-                         NULL,
-                         NULL,
-                         NULL);
+                         nullptr,
+                         nullptr,
+                         nullptr);
     #else
     XmbSetWMProperties(m_display,
                        m_window,
                        title.toAnsiString().c_str(),
                        title.toAnsiString().c_str(),
-                       NULL,
+                       nullptr,
                        0,
-                       NULL,
-                       NULL,
-                       NULL);
+                       nullptr,
+                       nullptr,
+                       nullptr);
     #endif
 }
 
@@ -982,7 +982,7 @@ void WindowImplX11::requestFocus()
         // Otherwise: display urgency hint (flashing application logo)
         // Ensure WM hints exist, allocate if necessary
         XWMHints* hints = XGetWMHints(m_display, m_window);
-        if (hints == NULL)
+        if (hints == nullptr)
             hints = XAllocWMHints();
 
         // Add urgency (notification) flag to hints
@@ -1132,7 +1132,7 @@ void WindowImplX11::resetVideoMode()
         }
 
         // Reset the fullscreen window
-        fullscreenWindow = NULL;
+        fullscreenWindow = nullptr;
     }
 }
 
@@ -1263,7 +1263,7 @@ void WindowImplX11::setProtocols()
 void WindowImplX11::initialize()
 {
     // Create the input context
-    m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
+    m_inputMethod = XOpenIM(m_display, nullptr, nullptr, nullptr);
 
     if (m_inputMethod)
     {
@@ -1274,11 +1274,11 @@ void WindowImplX11::initialize()
                                    m_window,
                                    XNInputStyle,
                                    XIMPreeditNothing | XIMStatusNothing,
-                                   NULL);
+                                   nullptr);
     }
     else
     {
-        m_inputContext = NULL;
+        m_inputContext = nullptr;
     }
 
     if (!m_inputContext)
@@ -1346,7 +1346,7 @@ void WindowImplX11::createHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
     Pixmap cursorPixmap = XCreatePixmap(m_display, m_window, 1, 1, 1);
-    GC graphicsContext = XCreateGC(m_display, cursorPixmap, 0, NULL);
+    GC graphicsContext = XCreateGC(m_display, cursorPixmap, 0, nullptr);
     XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
     XFreeGC(m_display, graphicsContext);
 
@@ -1456,7 +1456,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
             XWMHints* hints = XGetWMHints(m_display, m_window);
-            if (hints != NULL)
+            if (hints != nullptr)
             {
                 // Remove urgency (notification) flag from hints
                 hints->flags &= ~XUrgencyHint;
@@ -1571,7 +1571,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         &windowEvent.xkey,
                         reinterpret_cast<char*>(keyBuffer),
                         sizeof(keyBuffer),
-                        NULL,
+                        nullptr,
                         &status
                     );
 
@@ -1593,7 +1593,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 {
                     static XComposeStatus status;
                     char keyBuffer[16];
-                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
+                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;

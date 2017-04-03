@@ -68,9 +68,9 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Font::Font() :
-m_library  (NULL),
-m_face     (NULL),
-m_stroker  (NULL),
+m_library  (nullptr),
+m_face     (nullptr),
+m_stroker  (nullptr),
 m_info     ()
 {
 }
@@ -241,7 +241,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     auto rec = std::make_shared<FT_StreamRec>();
     std::memset(rec.get(), 0, sizeof(FT_StreamRec));
-    rec->base               = NULL;
+    rec->base               = nullptr;
     rec->size               = static_cast<unsigned long>(stream.getSize());
     rec->pos                = 0;
     rec->descriptor.pointer = &stream;
@@ -476,10 +476,10 @@ void Font::cleanup()
     }
 
     // Reset members
-    m_library   = NULL;
-    m_face      = NULL;
-    m_stroker   = NULL;
-    m_streamRec = NULL;
+    m_library   = nullptr;
+    m_face      = nullptr;
+    m_stroker   = nullptr;
+    m_streamRec = nullptr;
     m_pages.clear();
     std::vector<Uint8>().swap(m_pixelBuffer);
 }
@@ -647,7 +647,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height) const
 {
     // Find the line that fits well the glyph
-    Row* row = NULL;
+    Row* row = nullptr;
     float bestRatio = 0;
     for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it)
     {

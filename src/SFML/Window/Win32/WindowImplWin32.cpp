@@ -65,7 +65,7 @@ namespace
     unsigned int               windowCount      = 0; // Windows owned by SFML
     unsigned int               handleCount      = 0; // All window handles
     const wchar_t*             className        = L"SFML_Window";
-    sf::priv::WindowImplWin32* fullscreenWindow = NULL;
+    sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
     void setProcessDpiAware()
     {
@@ -131,8 +131,8 @@ namespace priv
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
-m_cursor          (NULL),
-m_icon            (NULL),
+m_cursor          (nullptr),
+m_icon            (nullptr),
 m_keyRepeatEnabled(true),
 m_lastSize        (0, 0),
 m_resizing        (false),
@@ -161,10 +161,10 @@ m_cursorGrabbed   (false)
 
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
-m_handle          (NULL),
+m_handle          (nullptr),
 m_callback        (0),
-m_cursor          (NULL),
-m_icon            (NULL),
+m_cursor          (nullptr),
+m_icon            (nullptr),
 m_keyRepeatEnabled(true),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
@@ -181,12 +181,12 @@ m_cursorGrabbed   (m_fullscreen)
         registerWindowClass();
 
     // Compute position and size
-    HDC screenDC = GetDC(NULL);
+    HDC screenDC = GetDC(nullptr);
     int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.width))  / 2;
     int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.height)) / 2;
     int width  = mode.width;
     int height = mode.height;
-    ReleaseDC(NULL, screenDC);
+    ReleaseDC(nullptr, screenDC);
 
     // Choose the window style according to the Style parameter
     DWORD win32Style = WS_VISIBLE;
@@ -211,7 +211,7 @@ m_cursorGrabbed   (m_fullscreen)
     }
 
     // Create the window
-    m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+    m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, nullptr, nullptr, GetModuleHandle(nullptr), this);
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
     if (m_handle)
@@ -262,7 +262,7 @@ WindowImplWin32::~WindowImplWin32()
 
         // Unregister window class if we were the last window
         if (windowCount == 0)
-            UnregisterClassW(className, GetModuleHandleW(NULL));
+            UnregisterClassW(className, GetModuleHandleW(nullptr));
     }
     else
     {
@@ -286,7 +286,7 @@ void WindowImplWin32::processEvents()
     if (!m_callback)
     {
         MSG message;
-        while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&message);
             DispatchMessageW(&message);
@@ -308,7 +308,7 @@ Vector2i WindowImplWin32::getPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setPosition(const Vector2i& position)
 {
-    SetWindowPos(m_handle, NULL, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(m_handle, nullptr, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
     if(m_cursorGrabbed)
         grabCursor(true);
@@ -335,7 +335,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
 
-    SetWindowPos(m_handle, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
+    SetWindowPos(m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 
@@ -364,7 +364,7 @@ void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uin
     }
 
     // Create the icon from the pixel array
-    m_icon = CreateIcon(GetModuleHandleW(NULL), width, height, 1, 32, NULL, iconPixels.data());
+    m_icon = CreateIcon(GetModuleHandleW(nullptr), width, height, 1, 32, nullptr, iconPixels.data());
 
     // Set it as both big and small icon of the window
     if (m_icon)
@@ -390,9 +390,9 @@ void WindowImplWin32::setVisible(bool visible)
 void WindowImplWin32::setMouseCursorVisible(bool visible)
 {
     if (visible)
-        m_cursor = LoadCursorW(NULL, IDC_ARROW);
+        m_cursor = LoadCursorW(nullptr, IDC_ARROW);
     else
-        m_cursor = NULL;
+        m_cursor = nullptr;
 
     SetCursor(m_cursor);
 }
@@ -417,8 +417,8 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 void WindowImplWin32::requestFocus()
 {
     // Allow focus stealing only within the same process; compare PIDs of current and foreground window
-    DWORD thisPid       = GetWindowThreadProcessId(m_handle, NULL);
-    DWORD foregroundPid = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+    DWORD thisPid       = GetWindowThreadProcessId(m_handle, nullptr);
+    DWORD foregroundPid = GetWindowThreadProcessId(GetForegroundWindow(), nullptr);
 
     if (thisPid == foregroundPid)
     {
@@ -455,11 +455,11 @@ void WindowImplWin32::registerWindowClass()
     windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
-    windowClass.hInstance     = GetModuleHandleW(NULL);
-    windowClass.hIcon         = NULL;
+    windowClass.hInstance     = GetModuleHandleW(nullptr);
+    windowClass.hIcon         = nullptr;
     windowClass.hCursor       = 0;
     windowClass.hbrBackground = 0;
-    windowClass.lpszMenuName  = NULL;
+    windowClass.lpszMenuName  = nullptr;
     windowClass.lpszClassName = className;
     RegisterClassW(&windowClass);
 }
@@ -501,8 +501,8 @@ void WindowImplWin32::cleanup()
     // Restore the previous video mode (in case we were running in fullscreen)
     if (fullscreenWindow == this)
     {
-        ChangeDisplaySettingsW(NULL, 0);
-        fullscreenWindow = NULL;
+        ChangeDisplaySettingsW(nullptr, 0);
+        fullscreenWindow = nullptr;
     }
 
     // Unhide the mouse cursor (in case it was hidden)
@@ -535,12 +535,12 @@ void WindowImplWin32::grabCursor(bool grabbed)
     {
         RECT rect;
         GetClientRect(m_handle, &rect);
-        MapWindowPoints(m_handle, NULL, reinterpret_cast<LPPOINT>(&rect), 2);
+        MapWindowPoints(m_handle, nullptr, reinterpret_cast<LPPOINT>(&rect), 2);
         ClipCursor(&rect);
     }
     else
     {
-        ClipCursor(NULL);
+        ClipCursor(nullptr);
     }
 }
 
@@ -549,7 +549,7 @@ void WindowImplWin32::grabCursor(bool grabbed)
 void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Don't process any message until window is created
-    if (m_handle == NULL)
+    if (m_handle == nullptr)
         return;
 
     switch (message)
@@ -1111,7 +1111,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     }
 
     // Get the WindowImpl instance corresponding to the window handle
-    WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : NULL;
+    WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : nullptr;
 
     // Forward the event to the appropriate function
     if (window)

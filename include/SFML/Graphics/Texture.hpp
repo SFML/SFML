@@ -551,7 +551,7 @@ public:
     /// // draw OpenGL stuff that use t1...
     /// sf::Texture::bind(&t2);
     /// // draw OpenGL stuff that use t2...
-    /// sf::Texture::bind(NULL);
+    /// sf::Texture::bind(nullptr);
     /// // draw OpenGL stuff that use no texture...
     /// \endcode
     ///
@@ -723,7 +723,7 @@ private:
 /// \code
 /// sf::Texture::bind(&texture);
 /// ... render OpenGL geometry ...
-/// sf::Texture::bind(NULL);
+/// sf::Texture::bind(nullptr);
 /// \endcode
 ///
 /// \see sf::Sprite, sf::Image, sf::RenderTexture

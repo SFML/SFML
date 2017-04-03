@@ -150,7 +150,7 @@ void HIDInputManager::initializeKeyboard()
 
     // Get only keyboards
     CFSetRef keyboards = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
-    if (keyboards == NULL)
+    if (keyboards == nullptr)
     {
         freeUp();
         return;
@@ -180,9 +180,9 @@ void HIDInputManager::initializeKeyboard()
 void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 {
     CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard,
-                                                      NULL,
+                                                      nullptr,
                                                       kIOHIDOptionsTypeNone);
-    if (keys == NULL)
+    if (keys == nullptr)
     {
         sf::err() << "We got a keyboard without any keys (1)" << std::endl;
         return;
@@ -339,15 +339,15 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
     mask = 0;
 
     CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
-    if (devices == NULL)
-        return NULL;
+    if (devices == nullptr)
+        return nullptr;
 
     // Is there at least one device?
     CFIndex deviceCount = CFSetGetCount(devices);
     if (deviceCount < 1)
     {
         CFRelease(devices);
-        return NULL;
+        return nullptr;
     }
 
     return devices;

@@ -92,7 +92,7 @@ struct ActivityStates
     LogcatStream logcat;
 };
 
-SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);
+SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=nullptr, bool reset=false);
 
 } // namespace priv
 } // namespace sf

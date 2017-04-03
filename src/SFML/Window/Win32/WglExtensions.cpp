@@ -46,8 +46,8 @@ int sfwgl_ext_ARB_pbuffer = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_create_context = sfwgl_LOAD_FAILED;
 int sfwgl_ext_ARB_create_context_profile = sfwgl_LOAD_FAILED;
 
-int (CODEGEN_FUNCPTR *sf_ptrc_wglGetSwapIntervalEXT)(void) = NULL;
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglSwapIntervalEXT)(int) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_wglGetSwapIntervalEXT)(void) = nullptr;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglSwapIntervalEXT)(int) = nullptr;
 
 static int Load_EXT_swap_control(void)
 {
@@ -61,9 +61,9 @@ static int Load_EXT_swap_control(void)
     return numFailed;
 }
 
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglChoosePixelFormatARB)(HDC, const int*, const FLOAT*, UINT, int*, UINT*) = NULL;
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribfvARB)(HDC, int, int, UINT, const int*, FLOAT*) = NULL;
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribivARB)(HDC, int, int, UINT, const int*, int*) = NULL;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglChoosePixelFormatARB)(HDC, const int*, const FLOAT*, UINT, int*, UINT*) = nullptr;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribfvARB)(HDC, int, int, UINT, const int*, FLOAT*) = nullptr;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglGetPixelFormatAttribivARB)(HDC, int, int, UINT, const int*, int*) = nullptr;
 
 static int Load_ARB_pixel_format(void)
 {
@@ -80,11 +80,11 @@ static int Load_ARB_pixel_format(void)
     return numFailed;
 }
 
-HPBUFFERARB (CODEGEN_FUNCPTR *sf_ptrc_wglCreatePbufferARB)(HDC, int, int, int, const int*) = NULL;
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglDestroyPbufferARB)(HPBUFFERARB) = NULL;
-HDC (CODEGEN_FUNCPTR *sf_ptrc_wglGetPbufferDCARB)(HPBUFFERARB) = NULL;
-BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglQueryPbufferARB)(HPBUFFERARB, int, int*) = NULL;
-int (CODEGEN_FUNCPTR *sf_ptrc_wglReleasePbufferDCARB)(HPBUFFERARB, HDC) = NULL;
+HPBUFFERARB (CODEGEN_FUNCPTR *sf_ptrc_wglCreatePbufferARB)(HDC, int, int, int, const int*) = nullptr;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglDestroyPbufferARB)(HPBUFFERARB) = nullptr;
+HDC (CODEGEN_FUNCPTR *sf_ptrc_wglGetPbufferDCARB)(HPBUFFERARB) = nullptr;
+BOOL (CODEGEN_FUNCPTR *sf_ptrc_wglQueryPbufferARB)(HPBUFFERARB, int, int*) = nullptr;
+int (CODEGEN_FUNCPTR *sf_ptrc_wglReleasePbufferDCARB)(HPBUFFERARB, HDC) = nullptr;
 
 static int Load_ARB_pbuffer()
 {
@@ -107,7 +107,7 @@ static int Load_ARB_pbuffer()
     return numFailed;
 }
 
-HGLRC (CODEGEN_FUNCPTR *sf_ptrc_wglCreateContextAttribsARB)(HDC, HGLRC, const int*) = NULL;
+HGLRC (CODEGEN_FUNCPTR *sf_ptrc_wglCreateContextAttribsARB)(HDC, HGLRC, const int*) = nullptr;
 
 static int Load_ARB_create_context(void)
 {
@@ -119,7 +119,7 @@ static int Load_ARB_create_context(void)
 }
 
 
-static const char* (CODEGEN_FUNCPTR *sf_ptrc_wglGetExtensionsStringARB)(HDC) = NULL;
+static const char* (CODEGEN_FUNCPTR *sf_ptrc_wglGetExtensionsStringARB)(HDC) = nullptr;
 
 typedef int (*PFN_LOADFUNCPOINTERS)(void);
 typedef struct sfwgl_StrToExtMap_s
@@ -131,13 +131,13 @@ typedef struct sfwgl_StrToExtMap_s
 
 static sfwgl_StrToExtMap ExtensionMap[8] = {
     {"WGL_EXT_swap_control", &sfwgl_ext_EXT_swap_control, Load_EXT_swap_control},
-    {"WGL_EXT_framebuffer_sRGB", &sfwgl_ext_EXT_framebuffer_sRGB, NULL},
-    {"WGL_ARB_framebuffer_sRGB", &sfwgl_ext_ARB_framebuffer_sRGB, NULL},
-    {"WGL_ARB_multisample", &sfwgl_ext_ARB_multisample, NULL},
+    {"WGL_EXT_framebuffer_sRGB", &sfwgl_ext_EXT_framebuffer_sRGB, nullptr},
+    {"WGL_ARB_framebuffer_sRGB", &sfwgl_ext_ARB_framebuffer_sRGB, nullptr},
+    {"WGL_ARB_multisample", &sfwgl_ext_ARB_multisample, nullptr},
     {"WGL_ARB_pixel_format", &sfwgl_ext_ARB_pixel_format, Load_ARB_pixel_format},
     {"WGL_ARB_pbuffer", &sfwgl_ext_ARB_pbuffer, Load_ARB_pbuffer},
     {"WGL_ARB_create_context", &sfwgl_ext_ARB_create_context, Load_ARB_create_context},
-    {"WGL_ARB_create_context_profile", &sfwgl_ext_ARB_create_context_profile, NULL}
+    {"WGL_ARB_create_context_profile", &sfwgl_ext_ARB_create_context_profile, nullptr}
 };
 
 static int g_extensionMapSize = 8;
@@ -152,7 +152,7 @@ static sfwgl_StrToExtMap* FindExtEntry(const char* extensionName)
             return currLoc;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -171,7 +171,7 @@ static void ClearExtensionVars(void)
 
 static void LoadExtByName(const char* extensionName)
 {
-    sfwgl_StrToExtMap* entry = NULL;
+    sfwgl_StrToExtMap* entry = nullptr;
     entry = FindExtEntry(extensionName);
     if (entry)
     {

@@ -48,7 +48,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 {
     // todo: Check if the window is active
 
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     // Initializes JNI
@@ -61,7 +61,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
     lJavaVMAttachArgs.name = "NativeThread";
-    lJavaVMAttachArgs.group = NULL;
+    lJavaVMAttachArgs.group = nullptr;
 
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
@@ -136,9 +136,9 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
+    priv::ActivityStates* states = priv::getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->isButtonPressed[button];
@@ -148,9 +148,9 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
+    priv::ActivityStates* states = priv::getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->mousePosition;
@@ -181,9 +181,9 @@ void InputImpl::setMousePosition(const Vector2i& position, const Window& relativ
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
+    priv::ActivityStates* states = priv::getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->touchEvents.find(finger) != states->touchEvents.end();
@@ -193,9 +193,9 @@ bool InputImpl::isTouchDown(unsigned int finger)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
+    priv::ActivityStates* states = priv::getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->touchEvents.find(finger)->second;

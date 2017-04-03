@@ -47,7 +47,7 @@ int sfglx_ext_SGIX_pbuffer = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context = sfglx_LOAD_FAILED;
 int sfglx_ext_ARB_create_context_profile = sfglx_LOAD_FAILED;
 
-void (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalEXT)(Display*, GLXDrawable, int) = NULL;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalEXT)(Display*, GLXDrawable, int) = nullptr;
 
 static int Load_EXT_swap_control(void)
 {
@@ -58,7 +58,7 @@ static int Load_EXT_swap_control(void)
     return numFailed;
 }
 
-int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalMESA)(int) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalMESA)(int) = nullptr;
 
 static int Load_MESA_swap_control(void)
 {
@@ -69,7 +69,7 @@ static int Load_MESA_swap_control(void)
     return numFailed;
 }
 
-int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalSGI)(int) = NULL;
+int (CODEGEN_FUNCPTR *sf_ptrc_glXSwapIntervalSGI)(int) = nullptr;
 
 static int Load_SGI_swap_control(void)
 {
@@ -80,11 +80,11 @@ static int Load_SGI_swap_control(void)
     return numFailed;
 }
 
-GLXPbufferSGIX (CODEGEN_FUNCPTR *sf_ptrc_glXCreateGLXPbufferSGIX)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glXDestroyGLXPbufferSGIX)(Display*, GLXPbufferSGIX) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glXGetSelectedEventSGIX)(Display*, GLXDrawable, unsigned long*) = NULL;
-int (CODEGEN_FUNCPTR *sf_ptrc_glXQueryGLXPbufferSGIX)(Display*, GLXPbufferSGIX, int, unsigned int*) = NULL;
-void (CODEGEN_FUNCPTR *sf_ptrc_glXSelectEventSGIX)(Display*, GLXDrawable, unsigned long) = NULL;
+GLXPbufferSGIX (CODEGEN_FUNCPTR *sf_ptrc_glXCreateGLXPbufferSGIX)(Display*, GLXFBConfigSGIX, unsigned int, unsigned int, int*) = nullptr;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXDestroyGLXPbufferSGIX)(Display*, GLXPbufferSGIX) = nullptr;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXGetSelectedEventSGIX)(Display*, GLXDrawable, unsigned long*) = nullptr;
+int (CODEGEN_FUNCPTR *sf_ptrc_glXQueryGLXPbufferSGIX)(Display*, GLXPbufferSGIX, int, unsigned int*) = nullptr;
+void (CODEGEN_FUNCPTR *sf_ptrc_glXSelectEventSGIX)(Display*, GLXDrawable, unsigned long) = nullptr;
 
 static int Load_SGIX_pbuffer(void)
 {
@@ -107,7 +107,7 @@ static int Load_SGIX_pbuffer(void)
     return numFailed;
 }
 
-GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display*, GLXFBConfig, GLXContext, Bool, const int*) = NULL;
+GLXContext (CODEGEN_FUNCPTR *sf_ptrc_glXCreateContextAttribsARB)(Display*, GLXFBConfig, GLXContext, Bool, const int*) = nullptr;
 
 static int Load_ARB_create_context(void)
 {
@@ -130,12 +130,12 @@ static sfglx_StrToExtMap ExtensionMap[9] = {
     {"GLX_EXT_swap_control", &sfglx_ext_EXT_swap_control, Load_EXT_swap_control},
     {"GLX_MESA_swap_control", &sfglx_ext_MESA_swap_control, Load_MESA_swap_control},
     {"GLX_SGI_swap_control", &sfglx_ext_SGI_swap_control, Load_SGI_swap_control},
-    {"GLX_EXT_framebuffer_sRGB", &sfglx_ext_EXT_framebuffer_sRGB, NULL},
-    {"GLX_ARB_framebuffer_sRGB", &sfglx_ext_ARB_framebuffer_sRGB, NULL},
-    {"GLX_ARB_multisample", &sfglx_ext_ARB_multisample, NULL},
+    {"GLX_EXT_framebuffer_sRGB", &sfglx_ext_EXT_framebuffer_sRGB, nullptr},
+    {"GLX_ARB_framebuffer_sRGB", &sfglx_ext_ARB_framebuffer_sRGB, nullptr},
+    {"GLX_ARB_multisample", &sfglx_ext_ARB_multisample, nullptr},
     {"GLX_SGIX_pbuffer", &sfglx_ext_SGIX_pbuffer, Load_SGIX_pbuffer},
     {"GLX_ARB_create_context", &sfglx_ext_ARB_create_context, Load_ARB_create_context},
-    {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, NULL}
+    {"GLX_ARB_create_context_profile", &sfglx_ext_ARB_create_context_profile, nullptr}
 };
 
 static int g_extensionMapSize = 9;
@@ -150,7 +150,7 @@ static sfglx_StrToExtMap* FindExtEntry(const char* extensionName)
             return currLoc;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -170,7 +170,7 @@ static void ClearExtensionVars(void)
 
 static void LoadExtByName(const char* extensionName)
 {
-    sfglx_StrToExtMap* entry = NULL;
+    sfglx_StrToExtMap* entry = nullptr;
     entry = FindExtEntry(extensionName);
     if (entry)
     {

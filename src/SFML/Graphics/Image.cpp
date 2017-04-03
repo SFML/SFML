@@ -284,7 +284,7 @@ const Uint8* Image::getPixelsPtr() const
     else
     {
         err() << "Trying to access the pixels of an empty image" << std::endl;
-        return NULL;
+        return nullptr;
     }
 }
 

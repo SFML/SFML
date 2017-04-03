@@ -112,7 +112,7 @@ namespace
         return true;
     }
 
-    void updatePluggedList(udev_device* udevDevice = NULL)
+    void updatePluggedList(udev_device* udevDevice = nullptr)
     {
         if (udevDevice)
         {
@@ -258,7 +258,7 @@ namespace
         FD_SET(monitorFd, &descriptorSet);
         timeval timeout = {0, 0};
 
-        return (select(monitorFd + 1, &descriptorSet, NULL, NULL, &timeout) > 0) &&
+        return (select(monitorFd + 1, &descriptorSet, nullptr, nullptr, &timeout) > 0) &&
                FD_ISSET(monitorFd, &descriptorSet);
     }
 
@@ -274,7 +274,7 @@ namespace
         udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(udevDevice, "usb", "usb_device");
 
         if (!udevDeviceParent)
-            return NULL;
+            return nullptr;
 
         return udev_device_get_sysattr_value(udevDeviceParent, attributeName.c_str());
     }
@@ -289,7 +289,7 @@ namespace
         unsigned int value = 0;
 
         if (attribute)
-            value = static_cast<unsigned int>(std::strtoul(attribute, NULL, 16));
+            value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
         return value;
     }
@@ -304,7 +304,7 @@ namespace
         unsigned int value = 0;
 
         if (attribute)
-            value = static_cast<unsigned int>(std::strtoul(attribute, NULL, 16));
+            value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
         return value;
     }
@@ -466,7 +466,7 @@ void JoystickImpl::initialize()
     }
     else
     {
-        int error = udev_monitor_filter_add_match_subsystem_devtype(udevMonitor, "input", NULL);
+        int error = udev_monitor_filter_add_match_subsystem_devtype(udevMonitor, "input", nullptr);
 
         if (error < 0)
         {
@@ -528,7 +528,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         udev_device* udevDevice = udev_monitor_receive_device(udevMonitor);
 
         // If we can get the specific device, we check that,
-        // otherwise just do a full scan if udevDevice == NULL
+        // otherwise just do a full scan if udevDevice == nullptr
         updatePluggedList(udevDevice);
 
         if (udevDevice)

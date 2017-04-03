@@ -42,9 +42,9 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Retrieve all modes available for main screen only.
-    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), NULL);
+    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), nullptr);
 
-    if (cgmodes == NULL)
+    if (cgmodes == nullptr)
     {
         sf::err() << "Couldn't get VideoMode for main display." << std::endl;
         return modes;

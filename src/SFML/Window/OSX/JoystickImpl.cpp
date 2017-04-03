@@ -136,7 +136,7 @@ bool JoystickImpl::isConnected(unsigned int index)
             // Get all devices
             CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
 
-            if (devices != NULL)
+            if (devices != nullptr)
             {
                 CFIndex size = CFSetGetCount(devices);
                 if (size > 0)
@@ -189,7 +189,7 @@ bool JoystickImpl::open(unsigned int index)
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
-    if (devices == NULL)
+    if (devices == nullptr)
         return false;
 
     // Get a usable copy of the joysticks devices.
@@ -221,9 +221,9 @@ bool JoystickImpl::open(unsigned int index)
     m_identification.productId = getDeviceUint(self, CFSTR(kIOHIDProductIDKey), m_index);
 
     // Get a list of all elements attached to the device.
-    CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self, NULL, kIOHIDOptionsTypeNone);
+    CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone);
 
-    if (elements == NULL)
+    if (elements == nullptr)
     {
         CFRelease(devices);
         return false;
@@ -350,7 +350,7 @@ JoystickState JoystickImpl::update()
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
-    if (devices == NULL)
+    if (devices == nullptr)
         return disconnectedState;
 
     // Get a usable copy of the joysticks devices.

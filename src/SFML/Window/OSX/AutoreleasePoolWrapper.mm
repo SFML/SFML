@@ -85,7 +85,7 @@ static void createNewPool(void)
 void ensureThreadHasPool(void)
 {
     pthread_once(&initOnceToken, createPoolKey);
-    if (pthread_getspecific(poolKey) == NULL)
+    if (pthread_getspecific(poolKey) == nullptr)
     {
         createNewPool();
     }
@@ -96,7 +96,7 @@ void ensureThreadHasPool(void)
 void drainThreadPool(void)
 {
     void* data = pthread_getspecific(poolKey);
-    assert(data != NULL);
+    assert(data != nullptr);
 
     // Drain the pool but keep it alive by creating a new one
     destroyPool(data);

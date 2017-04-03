@@ -46,7 +46,7 @@ namespace sf
 {
 namespace priv
 {
-WindowImplAndroid* WindowImplAndroid::singleInstance = NULL;
+WindowImplAndroid* WindowImplAndroid::singleInstance = nullptr;
 
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(WindowHandle handle)
@@ -65,7 +65,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
 {
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     if (style& Style::Fullscreen)
@@ -90,7 +90,7 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     return states->window;
@@ -101,9 +101,9 @@ WindowHandle WindowImplAndroid::getSystemHandle() const
 void WindowImplAndroid::processEvents()
 {
     // Process incoming OS events
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     if (m_windowBeingCreated)
@@ -209,7 +209,7 @@ bool WindowImplAndroid::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::forwardEvent(const Event& event)
 {
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
 
     if (event.type == Event::GainedFocus)
     {
@@ -231,10 +231,10 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int fd, int events, void* data)
 {
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
-    AInputEvent* _event = NULL;
+    AInputEvent* _event = nullptr;
 
     if (AInputQueue_getEvent(states->inputQueue, &_event) >= 0)
     {
@@ -315,7 +315,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* s
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
     lJavaVMAttachArgs.name = "NativeThread";
-    lJavaVMAttachArgs.group = NULL;
+    lJavaVMAttachArgs.group = nullptr;
 
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
@@ -665,7 +665,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
-    ActivityStates* states = getActivity(NULL);
+    ActivityStates* states = getActivity(nullptr);
     std::lock_guard<std::mutex> lock(states->mutex);
 
     // Initializes JNI
@@ -678,7 +678,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
     lJavaVMAttachArgs.name = "NativeThread";
-    lJavaVMAttachArgs.group = NULL;
+    lJavaVMAttachArgs.group = nullptr;
 
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
