@@ -79,6 +79,9 @@ sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentatio
 # add an option for choosing the OpenGL implementation
 sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 
+# add an option for disabling the network library
+sfml_set_option(SFML_ENABLE_NETWORKING TRUE BOOL "TRUE to build the network library, FALSE to not build it")
+
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
