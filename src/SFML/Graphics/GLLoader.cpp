@@ -47,6 +47,7 @@ int sfogl_ext_ARB_texture_non_power_of_two = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_equation_separate = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_texture_sRGB = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_framebuffer_object = sfogl_LOAD_FAILED;
+int sfogl_ext_EXT_framebuffer_blit = sfogl_LOAD_FAILED;
 int sfogl_ext_ARB_geometry_shader4 = sfogl_LOAD_FAILED;
 
 void (GL_FUNCPTR *sf_ptrc_glBlendEquationEXT)(GLenum) = NULL;
@@ -800,6 +801,19 @@ static int Load_EXT_framebuffer_object()
     return numFailed;
 }
 
+void (GL_FUNCPTR *sf_ptrc_glBlitFramebufferEXT)(GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum) = NULL;
+
+static int Load_EXT_framebuffer_blit()
+{
+    int numFailed = 0;
+
+    sf_ptrc_glBlitFramebufferEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum)>(glLoaderGetProcAddress("glBlitFramebufferEXT"));
+    if (!sf_ptrc_glBlitFramebufferEXT)
+        numFailed++;
+
+    return numFailed;
+}
+
 void (GL_FUNCPTR *sf_ptrc_glFramebufferTextureARB)(GLenum, GLenum, GLuint, GLint) = NULL;
 void (GL_FUNCPTR *sf_ptrc_glFramebufferTextureFaceARB)(GLenum, GLenum, GLuint, GLint, GLenum) = NULL;
 void (GL_FUNCPTR *sf_ptrc_glFramebufferTextureLayerARB)(GLenum, GLenum, GLuint, GLint, GLint) = NULL;
@@ -836,7 +850,7 @@ typedef struct sfogl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfogl_StrToExtMap;
 
-static sfogl_StrToExtMap ExtensionMap[15] = {
+static sfogl_StrToExtMap ExtensionMap[16] = {
     {"GL_SGIS_texture_edge_clamp", &sfogl_ext_SGIS_texture_edge_clamp, NULL},
     {"GL_EXT_texture_edge_clamp", &sfogl_ext_EXT_texture_edge_clamp, NULL},
     {"GL_EXT_blend_minmax", &sfogl_ext_EXT_blend_minmax, Load_EXT_blend_minmax},
@@ -851,10 +865,11 @@ static sfogl_StrToExtMap ExtensionMap[15] = {
     {"GL_EXT_blend_equation_separate", &sfogl_ext_EXT_blend_equation_separate, Load_EXT_blend_equation_separate},
     {"GL_EXT_texture_sRGB", &sfogl_ext_EXT_texture_sRGB, NULL},
     {"GL_EXT_framebuffer_object", &sfogl_ext_EXT_framebuffer_object, Load_EXT_framebuffer_object},
+    {"GL_EXT_framebuffer_blit", &sfogl_ext_EXT_framebuffer_blit, Load_EXT_framebuffer_blit},
     {"GL_ARB_geometry_shader4", &sfogl_ext_ARB_geometry_shader4, Load_ARB_geometry_shader4}
 };
 
-static int g_extensionMapSize = 15;
+static int g_extensionMapSize = 16;
 
 
 static void ClearExtensionVars()
@@ -873,6 +888,7 @@ static void ClearExtensionVars()
     sfogl_ext_EXT_blend_equation_separate = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_texture_sRGB = sfogl_LOAD_FAILED;
     sfogl_ext_EXT_framebuffer_object = sfogl_LOAD_FAILED;
+    sfogl_ext_EXT_framebuffer_blit = sfogl_LOAD_FAILED;
     sfogl_ext_ARB_geometry_shader4 = sfogl_LOAD_FAILED;
 }
 
