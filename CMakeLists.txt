@@ -21,6 +21,23 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0042 NEW)
 endif()
 
+# add some default value for some additional macOS variable
+# note that those variables are ignored on other systems
+if(NOT CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "macOS architecture to build; 64-bit is expected" FORCE)
+endif()
+if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING "macOS deployement target; 10.7+ is expected" FORCE)
+endif()
+if(NOT CMAKE_OSX_SYSROOT)
+    # query the path to the default SDK, will fail on non-macOS, but it's okay.
+    execute_process(COMMAND xcodebuild -sdk macosx -version Path
+                    COMMAND head -n 1
+                    COMMAND tr -d '\n'
+                    OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+                    ERROR_QUIET)
+endif()
+
 # set Android specific options
 
 # define the minimum API level to be used
@@ -247,9 +264,13 @@ if(SFML_OS_MACOSX)
     endif()
 
     # only the default architecture (i.e. 64-bit) is supported
-    if(CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+    if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         message(FATAL_ERROR "Only 64-bit architecture is supported")
-        return()
+    endif()
+
+    # Ensure macOS 10.7+ is used
+    if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.7")
+        message(FATAL_ERROR "macOS 10.7 or greater is required for the deployment target.")
     endif()
 
     # configure Xcode templates
