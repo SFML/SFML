@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.1.0)
 
 # set the minimum required C++ standard to C++14
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -21,6 +22,23 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 # Suppress Mac OS X RPATH warnings and adopt new related behaviors
 cmake_policy(SET CMP0042 NEW)
+
+# add some default value for some additional macOS variable
+# note that those variables are ignored on other systems
+if(NOT CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "macOS architecture to build; 64-bit is expected" FORCE)
+endif()
+if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "macOS deployement target; 10.9+ is expected" FORCE)
+endif()
+if(NOT CMAKE_OSX_SYSROOT)
+    # query the path to the default SDK, will fail on non-macOS, but it's okay.
+    execute_process(COMMAND xcodebuild -sdk macosx -version Path
+                    COMMAND head -n 1
+                    COMMAND tr -d '\n'
+                    OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+                    ERROR_QUIET)
+endif()
 
 # set Android specific options
 
@@ -90,25 +108,6 @@ if(SFML_OS_MACOSX)
 
     # add an option to automatically install Xcode templates
     sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
-
-    # add some default value for some additional macOS variable
-    if(NOT CMAKE_OSX_ARCHITECTURES)
-        set(CMAKE_OSX_ARCHITECTURES "x86_64")
-    endif()
-    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
-    endif()
-    if(NOT CMAKE_OSX_SYSROOT)
-        # query the path to the default SDK
-        execute_process(COMMAND xcodebuild -sdk macosx -version Path | head -n 1
-                        RESULT_VARIABLE STATUS_QUERY
-                        OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
-                        ERROR_QUIET)
-
-        if(NOT STATUS_QUERY EQUAL 0)
-            message(FATAL_ERROR "Querying the default SDK failed with status ${STATUS_QUERY}.")
-        endif()
-    endif()
 endif()
 
 # Android options
@@ -253,13 +252,11 @@ if(SFML_OS_MACOSX)
     # only the default architecture (i.e. 64-bit) is supported
     if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         message(FATAL_ERROR "Only 64-bit architecture is supported")
-        return()
     endif()
 
     # Ensure macOS 10.9+ is used
     if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.9")
         message(FATAL_ERROR "macOS 10.9 or greater is required for the deployment target.")
-        return()
     endif()
 
     # configure Xcode templates
