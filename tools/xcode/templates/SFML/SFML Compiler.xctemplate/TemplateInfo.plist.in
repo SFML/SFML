@@ -25,7 +25,7 @@ subject to the following restrictions:
  -->
 
 <!--
-     This template defines :
+     This template defines:
       - the compiler & std lib
       - the supported arch (only 64 bit)
       - some other target's settings (e.g. warnings flags)
@@ -43,74 +43,6 @@ subject to the following restrictions:
 
         <key>Kind</key>
         <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
-
-        <!--
-             OPTIONS
-         -->
-        <key>Options</key>
-        <array>
-            <dict>
-                <key>Identifier</key>
-                <string>compilerSettingsType</string>
-
-                <key>Name</key>
-                <string>[ADVANCED] C++ Compiler and Standard Library</string>
-
-                <key>Description</key>
-                <string>If you don't know what is it about, use the default value. Note that you'll need a version of SFML compiled with Clang and libc++ to use C++11!</string>
-
-                <key>Default</key>
-                <string>C++11 with Clang and libc++</string>
-
-                <key>NotPersisted</key>
-                <true />
-
-                <key>Type</key>
-                <string>popup</string>
-
-                <key>Units</key>
-                <dict>
-                    <!-- Use Clang and libstdc++ -->
-                    <key>C++98 with Clang and libstdc++</key>
-                    <dict>
-                        <key>Project</key>
-                        <dict>
-                            <key>SharedSettings</key>
-                            <dict>
-                                <key>GCC_VERSION</key>
-                                <string>com.apple.compilers.llvm.clang.1_0</string>
-
-                                <key>CLANG_CXX_LANGUAGE_STANDARD</key>
-                                <string>c++98</string>
-
-                                <key>CLANG_CXX_LIBRARY</key>
-                                <string>libstdc++</string>
-                            </dict>
-                        </dict>
-                    </dict>
-
-                    <!-- Use Clang and libc++ -->
-                    <key>C++11 with Clang and libc++</key>
-                    <dict>
-                        <key>Project</key>
-                        <dict>
-                            <key>SharedSettings</key>
-                            <dict>
-                                <key>GCC_VERSION</key>
-                                <string>com.apple.compilers.llvm.clang.1_0</string>
-
-                                <key>CLANG_CXX_LANGUAGE_STANDARD</key>
-                                <string>c++0x</string>
-
-                                <key>CLANG_CXX_LIBRARY</key>
-                                <string>libc++</string>
-                            </dict>
-                        </dict>
-                    </dict>
-                </dict>
-            </dict>
-
-        </array>
 
         <!--
              SETTINGS
@@ -140,6 +72,16 @@ subject to the following restrictions:
 
                 <key>LIBRARY_SEARCH_PATHS</key>
                 <string> /usr/local/lib/ $(inherited) </string>
+
+                <!-- Use Clang and libc++ -->
+                <key>GCC_VERSION</key>
+                <string>com.apple.compilers.llvm.clang.1_0</string>
+
+                <key>CLANG_CXX_LANGUAGE_STANDARD</key>
+                <string>gnu++14</string>
+
+                <key>CLANG_CXX_LIBRARY</key>
+                <string>libc++</string>
             </dict>
 
             <key>Configurations</key>

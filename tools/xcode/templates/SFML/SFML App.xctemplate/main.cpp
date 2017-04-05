@@ -64,12 +64,12 @@ int main(int, char const**)
         while (window.pollEvent(event))
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Type::Closed) {
                 window.close();
             }
 
             // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            if (event.type == sf::Event::Type::KeyPressed && event.key.code == sf::Keyboard::Key::Escape) {
                 window.close();
             }
         }
