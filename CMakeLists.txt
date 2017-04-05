@@ -90,6 +90,25 @@ if(SFML_OS_MACOSX)
 
     # add an option to automatically install Xcode templates
     sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
+
+    # add some default value for some additional macOS variable
+    if(NOT CMAKE_OSX_ARCHITECTURES)
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    endif()
+    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
+    endif()
+    if(NOT CMAKE_OSX_SYSROOT)
+        # query the path to the default SDK
+        execute_process(COMMAND xcodebuild -sdk macosx -version Path | head -n 1
+                        RESULT_VARIABLE STATUS_QUERY
+                        OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+                        ERROR_QUIET)
+
+        if(NOT STATUS_QUERY EQUAL 0)
+            message(FATAL_ERROR "Querying the default SDK failed with status ${STATUS_QUERY}.")
+        endif()
+    endif()
 endif()
 
 # Android options
@@ -232,11 +251,17 @@ if(SFML_OS_MACOSX)
     endif()
 
     # only the default architecture (i.e. 64-bit) is supported
-    if(CMAKE_OSX_ARCHITECTURES AND NOT "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64")
+    if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         message(FATAL_ERROR "Only 64-bit architecture is supported")
         return()
     endif()
-        
+
+    # Ensure macOS 10.9+ is used
+    if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.9")
+        message(FATAL_ERROR "macOS 10.9 or greater is required for the deployment target.")
+        return()
+    endif()
+
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
