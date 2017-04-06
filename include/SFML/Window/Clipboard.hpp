@@ -43,27 +43,27 @@ class SFML_WINDOW_API Clipboard
 {
 public:
 
-	////////////////////////////////////////////////////////////
-	/// \brief Get the content of the clipboard as string data
-	///
-	/// This function returns the content of the clipboard
-	/// as a string.
-	///
-	/// \return Current content of the clipboard
-	///
-	////////////////////////////////////////////////////////////
-	static String getString();
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the content of the clipboard as string data
+    ///
+    /// This function returns the content of the clipboard
+    /// as a string.
+    ///
+    /// \return Current content of the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    static String getString();
 
-	////////////////////////////////////////////////////////////
-	/// \brief Set the content of the clipboard as string data
-	///
-	/// This function sets the content of the clipboard to a
-	/// string
-	///
-	/// \return Current position of the mouse
-	///
-	////////////////////////////////////////////////////////////
-	static void setString(const String& text);
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the content of the clipboard as string data
+    ///
+    /// This function sets the content of the clipboard to a
+    /// string
+    ///
+    /// \return Current position of the mouse
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setString(const String& text);
 };
 
 } // namespace sf

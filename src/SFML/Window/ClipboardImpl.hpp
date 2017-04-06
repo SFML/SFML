@@ -31,15 +31,15 @@
 #include <SFML/Config.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-	#include <SFML/Window/Win32/ClipboardImpl.hpp>
+    #include <SFML/Window/Win32/ClipboardImpl.hpp>
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
-	#include <SFML/Window/Unix/ClipboardImpl.hpp>
+    #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #elif defined(SFML_SYSTEM_MACOS)
-	#include <SFML/Window/OSX/ClipboardImpl.hpp>
+    #include <SFML/Window/OSX/ClipboardImpl.hpp>
 #elif defined(SFML_SYSTEM_IOS)
-	#include <SFML/Window/iOS/ClipboardImpl.hpp>
+    #include <SFML/Window/iOS/ClipboardImpl.hpp>
 #elif defined(SFML_SYSTEM_ANDROID)
-	#include <SFML/Window/Android/ClipboardImpl.hpp>
+    #include <SFML/Window/Android/ClipboardImpl.hpp>
 #endif
 
 #endif // SFML_CLIPBOARDIMPL_HPP

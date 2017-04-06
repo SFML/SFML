@@ -35,14 +35,14 @@ namespace sf
 ////////////////////////////////////////////////////////////
 String Clipboard::getString()
 {
-	return priv::ClipboardImpl::getString();
+    return priv::ClipboardImpl::getString();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Clipboard::setString(const String& text)
 {
-	return priv::ClipboardImpl::setString(text);
+    return priv::ClipboardImpl::setString(text);
 }
 
 } // namespace sf
