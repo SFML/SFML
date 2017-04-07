@@ -151,19 +151,21 @@ bool Font::loadFromFile(const std::string& filename)
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
         err() << "Failed to load font \"" << filename << "\" (failed to create the stroker)" << std::endl;
+        FT_Done_Face(face);
         return false;
     }
-    m_stroker = stroker;
 
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        FT_Stroker_Done(stroker);
         FT_Done_Face(face);
         return false;
     }
 
     // Store the loaded font in our ugly void* :)
+    m_stroker = stroker;
     m_face = face;
 
     // Store the font information
@@ -214,19 +216,21 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
         err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
+        FT_Done_Face(face);
         return false;
     }
-    m_stroker = stroker;
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        FT_Stroker_Done(stroker);
         FT_Done_Face(face);
         return false;
     }
 
     // Store the loaded font in our ugly void* :)
+    m_stroker = stroker;
     m_face = face;
 
     // Store the font information
@@ -287,20 +291,23 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
         err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
+        FT_Done_Face(face);
+        delete rec;
         return false;
     }
-    m_stroker = stroker;
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
         FT_Done_Face(face);
+        FT_Stroker_Done(stroker);
         delete rec;
         return false;
     }
 
     // Store the loaded font in our ugly void* :)
+    m_stroker = stroker;
     m_face = face;
     m_streamRec = rec;
 
