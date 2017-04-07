@@ -287,6 +287,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
         err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
+        delete rec;
         return false;
     }
     m_stroker = stroker;
