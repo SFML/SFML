@@ -48,7 +48,8 @@ public:
     /// \brief Get the content of the clipboard as string data
     ///
     /// This function returns the content of the clipboard
-    /// as a string.
+    /// as a string. If the clipboard does not contain string
+    /// it returns an empty sf::String object.
     ///
     /// \return Current content of the clipboard
     ///
@@ -58,10 +59,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the content of the clipboard as string data
     ///
-    /// This function sets the content of the clipboard to a
-    /// string
+    /// This function sets the content of the clipboard as a
+    /// string.
     ///
-    /// \return Current position of the mouse
+    /// \param sf::String object containing the data to be sent 
+    /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////
     static void setString(const String& text);

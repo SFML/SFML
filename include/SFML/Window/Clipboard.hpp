@@ -34,7 +34,6 @@
 
 namespace sf
 {
-
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the system clipboard
 ///
@@ -47,7 +46,8 @@ public:
     /// \brief Get the content of the clipboard as string data
     ///
     /// This function returns the content of the clipboard
-    /// as a string.
+    /// as a string. If the clipboard does not contain string
+    /// it returns an empty sf::String object.
     ///
     /// \return Current content of the clipboard
     ///
@@ -57,10 +57,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the content of the clipboard as string data
     ///
-    /// This function sets the content of the clipboard to a
-    /// string
+    /// This function sets the content of the clipboard as a
+    /// string.
     ///
-    /// \return Current position of the mouse
+    /// \param sf::String object containing the data to be sent 
+    /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////
     static void setString(const String& text);
@@ -76,16 +77,16 @@ public:
 /// \class sf::Clipboard
 /// \ingroup window
 ///
-/// sf::Clipboard provides an interface to access the clipboard
-/// on the host system. It contains functions for getting data
-/// from and setting data to the clipboard.
+/// sf::Clipboard provides an interface for getting and
+/// setting the contents of the system clipboard.
 ///
 /// Usage example:
 /// \code
-/// sf::String str = sf::Clipboard::getText();
+/// // get the clipboard content as a string
+/// sf::String string = sf::Clipboard::getString();
 ///
-/// // set clipboard text
-/// sf::Clipboard::setText("SFML is awesome!");
+/// // set the clipboard to a string
+/// sf::Clipboard::setString("Hello World!");
 /// \endcode
 ///
 /// \see sf::Mouse, sf::Window

@@ -1,6 +1,5 @@
 
 # add the examples subdirectories
-add_subdirectory(clipboard)
 add_subdirectory(ftp)
 add_subdirectory(opengl)
 add_subdirectory(pong)
