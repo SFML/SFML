@@ -49,7 +49,7 @@ public:
     /// as a string. If the clipboard does not contain string
     /// it returns an empty sf::String object.
     ///
-    /// \return Current content of the clipboard
+    /// \return Clipboard contents as sf::String object
     ///
     ////////////////////////////////////////////////////////////
     static String getString();
@@ -60,7 +60,7 @@ public:
     /// This function sets the content of the clipboard as a
     /// string.
     ///
-    /// \param sf::String object containing the data to be sent 
+    /// \param sf::String containing the data to be sent 
     /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////
@@ -85,10 +85,24 @@ public:
 /// // get the clipboard content as a string
 /// sf::String string = sf::Clipboard::getString();
 ///
+/// // or use it in the event loop
+/// sf::Event event;
+/// while(window.pollEvent(event))
+/// {
+///     if(event.type == sf::Event::Closed)
+///         window.close();
+///     if(event.type == sf::Event::KeyPressed)
+///     {
+///         // Using Ctrl + V to paste a string into SFML
+///         if(event.key.control && event.key.code == sf::Keyboard::V)
+///             string = sf::Clipboard::getString();
+///     }
+/// }
+///
 /// // set the clipboard to a string
 /// sf::Clipboard::setString("Hello World!");
 /// \endcode
 ///
-/// \see sf::Mouse, sf::Window
+/// \see sf::String, sf::Event
 ///
 ////////////////////////////////////////////////////////////
