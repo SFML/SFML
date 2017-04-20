@@ -252,8 +252,10 @@ bool operator !=(const Vector3<T>& left, const Vector3<T>& right);
 #include <SFML/System/Vector3.inl>
 
 // Define the most common types
-typedef Vector3<int>   Vector3i;
-typedef Vector3<float> Vector3f;
+typedef Vector3<int>          Vector3i;
+typedef Vector3<unsigned int> Vector3u;
+typedef Vector3<float>        Vector3f;
+typedef Vector3<double>       Vector3d;
 
 } // namespace sf
 
