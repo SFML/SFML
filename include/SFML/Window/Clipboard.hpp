@@ -60,7 +60,7 @@ public:
     /// This function sets the content of the clipboard as a
     /// string.
     ///
-    /// \param sf::String containing the data to be sent 
+    /// \param text sf::String containing the data to be sent 
     /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////

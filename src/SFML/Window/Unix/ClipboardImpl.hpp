@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Clipboard.hpp>
 #include <SFML/System/String.hpp>
 
 
@@ -63,7 +62,7 @@ public:
     /// This function sets the content of the clipboard as a
     /// string.
     ///
-    /// \param sf::String object containing the data to be sent 
+    /// \param text sf::String object containing the data to be sent 
     /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////
