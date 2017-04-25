@@ -518,11 +518,11 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_KeyboardF13:                 return 0x69;
         case kHIDUsage_KeyboardF14:                 return 0x6b;
         case kHIDUsage_KeyboardF15:                 return 0x71;
-        case kHIDUsage_KeyboardF16:                 return 0xff;
-        case kHIDUsage_KeyboardF17:                 return 0xff;
-        case kHIDUsage_KeyboardF18:                 return 0xff;
-        case kHIDUsage_KeyboardF19:                 return 0xff;
-        case kHIDUsage_KeyboardF20:                 return 0xff;
+        case kHIDUsage_KeyboardF16:                 return 0x6a;
+        case kHIDUsage_KeyboardF17:                 return 0x40;
+        case kHIDUsage_KeyboardF18:                 return 0x4f;
+        case kHIDUsage_KeyboardF19:                 return 0x50;
+        case kHIDUsage_KeyboardF20:                 return 0x5a;
         case kHIDUsage_KeyboardF21:                 return 0xff;
         case kHIDUsage_KeyboardF22:                 return 0xff;
         case kHIDUsage_KeyboardF23:                 return 0xff;
@@ -540,9 +540,9 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_KeyboardPaste:               return 0xff;
         case kHIDUsage_KeyboardFind:                return 0xff;
 
-        case kHIDUsage_KeyboardMute:                return 0xff;
-        case kHIDUsage_KeyboardVolumeUp:            return 0xff;
-        case kHIDUsage_KeyboardVolumeDown:          return 0xff;
+        case kHIDUsage_KeyboardMute:                return 0x4a;
+        case kHIDUsage_KeyboardVolumeUp:            return 0x48;
+        case kHIDUsage_KeyboardVolumeDown:          return 0x49;
 
         case kHIDUsage_KeyboardLockingCapsLock:     return 0xff;
         case kHIDUsage_KeyboardLockingNumLock:      return 0xff;
@@ -856,7 +856,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
         case NSPauseFunctionKey:        return sf::Keyboard::Pause;
 
             // keycode 0x1b is not bound to any key.
-            // This key is ' on CH-FR, ) on FR and - on US layouts.
+            // This key is `'` on CH-FR, `)` on FR and `-` on US layouts.
 
             // An unknown key.
         default:                        return sf::Keyboard::Unknown;
