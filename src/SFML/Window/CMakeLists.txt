@@ -4,6 +4,9 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 
 # all source files
 set(SRC
+    ${INCROOT}/Clipboard.hpp
+    ${SRCROOT}/Clipboard.cpp
+    ${SRCROOT}/ClipboardImpl.hpp
     ${SRCROOT}/Context.cpp
     ${INCROOT}/Context.hpp
     ${INCROOT}/Export.hpp
@@ -51,6 +54,8 @@ source_group("" FILES ${SRC})
 # add platform specific sources
 if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
+        ${SRCROOT}/Win32/ClipboardImpl.hpp
+        ${SRCROOT}/Win32/ClipboardImpl.cpp
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/WglExtensions.cpp
@@ -71,6 +76,8 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
     set(PLATFORM_SRC
+        ${SRCROOT}/Unix/ClipboardImpl.hpp
+        ${SRCROOT}/Unix/ClipboardImpl.cpp
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp

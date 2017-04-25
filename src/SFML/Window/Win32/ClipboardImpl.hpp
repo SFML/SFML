@@ -22,36 +22,55 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_WINDOW_HPP
-#define SFML_SFML_WINDOW_HPP
+#ifndef SFML_CLIPBOARDIMPLWIN32_HPP
+#define SFML_CLIPBOARDIMPLWIN32_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/System.hpp>
-#include <SFML/Window/Clipboard.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Sensor.hpp>
-#include <SFML/Window/Touch.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Window.hpp>
-#include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#include <SFML/System/String.hpp>
 
 
-
-#endif // SFML_SFML_WINDOW_HPP
-
+namespace sf
+{
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// \defgroup window Window module
-///
-/// Provides OpenGL-based windows, and abstractions for
-/// events and input handling.
+/// \brief Give access to the system clipboard
 ///
 ////////////////////////////////////////////////////////////
+class ClipboardImpl
+{
+public:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the content of the clipboard as string data
+    ///
+    /// This function returns the content of the clipboard
+    /// as a string. If the clipboard does not contain string
+    /// it returns an empty sf::String object.
+    ///
+    /// \return Current content of the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    static String getString();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the content of the clipboard as string data
+    ///
+    /// This function sets the content of the clipboard as a
+    /// string.
+    ///
+    /// \param text sf::String object containing the data to be sent 
+    /// to the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setString(const String& text);
+};
+
+} // namespace priv
+
+} // namespace sf
+
+
+#endif // SFML_INPUTIMPLWIN32_HPP
