@@ -59,6 +59,8 @@ if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/CursorImpl.hpp
         ${SRCROOT}/Win32/CursorImpl.cpp
+        ${SRCROOT}/Win32/ClipboardImpl.hpp
+        ${SRCROOT}/Win32/ClipboardImpl.cpp
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/WglExtensions.cpp
