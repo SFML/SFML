@@ -4,6 +4,9 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 
 # all source files
 set(SRC
+    ${INCROOT}/Clipboard.hpp
+    ${SRCROOT}/Clipboard.cpp
+    ${SRCROOT}/ClipboardImpl.hpp
     ${SRCROOT}/Context.cpp
     ${INCROOT}/Context.hpp
     ${SRCROOT}/Cursor.cpp

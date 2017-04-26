@@ -22,37 +22,24 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_WINDOW_HPP
-#define SFML_SFML_WINDOW_HPP
+#ifndef SFML_CLIPBOARDIMPL_HPP
+#define SFML_CLIPBOARDIMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
 
-#include <SFML/System.hpp>
-#include <SFML/Window/Clipboard.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Cursor.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Sensor.hpp>
-#include <SFML/Window/Touch.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/Window.hpp>
-#include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#if defined(SFML_SYSTEM_WINDOWS)
+    #include <SFML/Window/Win32/ClipboardImpl.hpp>
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+    #include <SFML/Window/Unix/ClipboardImpl.hpp>
+#elif defined(SFML_SYSTEM_MACOS)
+    #include <SFML/Window/OSX/ClipboardImpl.hpp>
+#elif defined(SFML_SYSTEM_IOS)
+    #include <SFML/Window/iOS/ClipboardImpl.hpp>
+#elif defined(SFML_SYSTEM_ANDROID)
+    #include <SFML/Window/Android/ClipboardImpl.hpp>
+#endif
 
-
-
-#endif // SFML_SFML_WINDOW_HPP
-
-////////////////////////////////////////////////////////////
-/// \defgroup window Window module
-///
-/// Provides OpenGL-based windows, and abstractions for
-/// events and input handling.
-///
-////////////////////////////////////////////////////////////
+#endif // SFML_CLIPBOARDIMPL_HPP
