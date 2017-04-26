@@ -126,6 +126,8 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/cg_sf_conversion.mm
         ${SRCROOT}/OSX/CursorImpl.hpp
         ${SRCROOT}/OSX/CursorImpl.mm
+        ${SRCROOT}/OSX/ClipboardImpl.hpp
+        ${SRCROOT}/OSX/ClipboardImpl.mm
         ${SRCROOT}/OSX/InputImpl.mm
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/HIDInputManager.hpp
