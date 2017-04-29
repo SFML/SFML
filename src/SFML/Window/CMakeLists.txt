@@ -175,6 +175,8 @@ elseif(SFML_OS_IOS)
     set(PLATFORM_SRC
         ${SRCROOT}/iOS/CursorImpl.hpp
         ${SRCROOT}/iOS/CursorImpl.cpp
+        ${SRCROOT}/iOS/ClipboardImpl.mm
+        ${SRCROOT}/iOS/ClipboardImpl.hpp
         ${SRCROOT}/iOS/EaglContext.mm
         ${SRCROOT}/iOS/EaglContext.hpp
         ${SRCROOT}/iOS/InputImpl.mm
@@ -201,6 +203,8 @@ elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
         ${SRCROOT}/Android/CursorImpl.hpp
         ${SRCROOT}/Android/CursorImpl.cpp
+        ${SRCROOT}/Android/ClipboardImpl.hpp
+        ${SRCROOT}/Android/ClipboardImpl.cpp
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
