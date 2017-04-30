@@ -32,6 +32,8 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
 #include <windows.h>
+#include <vector>
+#include <list>
 
 
 namespace sf
@@ -162,6 +164,16 @@ public:
     virtual void setKeyRepeatEnabled(bool enabled);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable file dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool setFileDroppingEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Request the current window to be made the active
     ///        foreground window
     ///
@@ -262,19 +274,25 @@ private:
     static LRESULT CALLBACK globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
+    // Type for storing a batch of dropped files
+    ////////////////////////////////////////////////////////////
+    typedef std::vector<String> FilesType;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND     m_handle;           ///< Win32 handle of the window
-    LONG_PTR m_callback;         ///< Stores the original event callback function of the control
-    HCURSOR  m_cursor;           ///< The system cursor to display into the window
-    HICON    m_icon;             ///< Custom icon assigned to the window
-    bool     m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
-    Vector2u m_lastSize;         ///< The last handled size of the window
-    bool     m_resizing;         ///< Is the window being resized?
-    Uint16   m_surrogate;        ///< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool     m_mouseInside;      ///< Mouse is inside the window?
-    bool     m_fullscreen;       ///< Is the window fullscreen?
-    bool     m_cursorGrabbed;    ///< Is the mouse cursor trapped?
+    HWND                 m_handle;           ///< Win32 handle of the window
+    LONG_PTR             m_callback;         ///< Stores the original event callback function of the control
+    HCURSOR              m_cursor;           ///< The system cursor to display into the window
+    HICON                m_icon;             ///< Custom icon assigned to the window
+    bool                 m_keyRepeatEnabled; ///< Automatic key-repeat state for keydown events
+    Vector2u             m_lastSize;         ///< The last handled size of the window
+    bool                 m_resizing;         ///< Is the window being resized?
+    Uint16               m_surrogate;        ///< First half of the surrogate pair, in case we're receiving a Unicode character in two events
+    bool                 m_mouseInside;      ///< Mouse is inside the window?
+    bool                 m_fullscreen;       ///< Is the window fullscreen?
+    bool                 m_cursorGrabbed;    ///< Is the mouse cursor trapped?
+    std::list<FilesType> m_droppedFiles;     ///< Buffer for the dropped files
 };
 
 } // namespace priv

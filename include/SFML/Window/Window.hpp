@@ -406,6 +406,22 @@ public:
     void setJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable file dropping
+    ///
+    /// If file dropping is enabled, you will receive FilesDropped
+    /// events whenever the user drags and drops a file into the
+    /// window.
+    ///
+    /// File dropping is disabled by default.
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool setFileDroppingEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the window as the current target
     ///        for OpenGL rendering
     ///

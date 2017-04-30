@@ -203,6 +203,16 @@ public:
     virtual void setKeyRepeatEnabled(bool enabled) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable file dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool setFileDroppingEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Request the current window to be made the active
     ///        foreground window
     ///

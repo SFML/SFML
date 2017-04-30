@@ -323,6 +323,14 @@ void Window::setJoystickThreshold(float threshold)
 
 
 ////////////////////////////////////////////////////////////
+bool Window::setFileDroppingEnabled(bool enabled)
+{
+    if (m_impl)
+        m_impl->setFileDroppingEnabled(enabled);
+}
+
+
+////////////////////////////////////////////////////////////
 bool Window::setActive(bool active) const
 {
     if (m_context)
@@ -424,6 +432,7 @@ void Window::initialize()
     setVerticalSyncEnabled(false);
     setKeyRepeatEnabled(true);
     setFramerateLimit(0);
+    setFileDroppingEnabled(false);
 
     // Get and cache the initial size of the window
     m_size = m_impl->getSize();

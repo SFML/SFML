@@ -221,7 +221,7 @@ m_cursorGrabbed   (m_fullscreen)
 
         ++handleCount;
     }
-    
+
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
     setSize(Vector2u(mode.width, mode.height));
@@ -412,6 +412,13 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
     m_keyRepeatEnabled = enabled;
 }
 
+
+////////////////////////////////////////////////////////////
+bool WindowImplWin32::setFileDroppingEnabled(bool enabled)
+{
+    DragAcceptFiles(m_handle, enabled);
+    return true;
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::requestFocus()
@@ -970,6 +977,49 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             // Some sort of device change has happened, update joystick connections
             if (wParam == DBT_DEVNODES_CHANGED)
                 JoystickImpl::updateConnections();
+            break;
+        }
+
+        // File drop event
+        case WM_DROPFILES:
+        {
+            const HDROP hDrop = (HDROP)wParam;
+
+            // Generate a FilesDropped event
+            Event event;
+            event.type = Event::FilesDropped;
+
+            // Get the count
+            event.droppedFiles.count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+            if (event.droppedFiles.count == 0)
+                break;
+
+            // Expand the buffer list by one vector
+            FilesType& files = *m_droppedFiles.insert(m_droppedFiles.end(), FilesType());
+
+            // Resize and fill said buffer vector
+            files.resize(event.droppedFiles.count);
+            for (unsigned int i = 0; i < event.droppedFiles.count; ++i)
+            {
+                std::vector<wchar_t> buf;
+                buf.resize(DragQueryFileW(hDrop, i, NULL, 0) + 1);
+                DragQueryFileW(hDrop, i, &buf.front(), buf.size());
+                files[i] = &buf.front();
+            }
+
+            // Let the event point to the buffer vector
+            event.droppedFiles.files = &files.front();
+
+            // Fetch the cursor's window-relative position
+            POINT point;
+            DragQueryPoint(hDrop, &point);
+            event.droppedFiles.x = static_cast<int>(point.x);
+            event.droppedFiles.y = static_cast<int>(point.y);
+
+            // Tell the WinAPI to release the internal buffer
+            DragFinish(hDrop);
+
+            pushEvent(event);
             break;
         }
     }

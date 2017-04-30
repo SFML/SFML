@@ -109,6 +109,16 @@ void WindowImpl::setJoystickThreshold(float threshold)
 
 
 ////////////////////////////////////////////////////////////
+bool WindowImpl::setFileDroppingEnabled(bool enabled)
+{
+    // This is the fallback for unsupported platforms.
+    // Trying to enable file dropping returns a bad value
+    // indicating an error, whereas disabling it is fine.
+    return !enabled;
+}
+
+
+////////////////////////////////////////////////////////////
 bool WindowImpl::popEvent(Event& event, bool block)
 {
     // If the event queue is empty, let's first check if new events are available from the OS

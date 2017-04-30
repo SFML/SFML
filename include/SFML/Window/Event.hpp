@@ -33,6 +33,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Sensor.hpp>
+#include <SFML/System/String.hpp>
 
 
 namespace sf
@@ -181,6 +182,18 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief File dropping parameters (FilesDropped)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct FileDropEvent
+    {
+        unsigned int count;  ///< Number of dropped files
+        const String* files; ///< Pointer to the first file, access with event.droppedFiles.files[i] (in range [0 .. event.droppedFiles.count - 1])
+        int x;               ///< X position of the mouse pointer, relative to the left of the owner window
+        int y;               ///< Y position of the mouse pointer, relative to the top of the owner window
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the different types of events
     ///
     ////////////////////////////////////////////////////////////
@@ -209,6 +222,7 @@ public:
         TouchMoved,             ///< A touch moved (data in event.touch)
         TouchEnded,             ///< A touch event ended (data in event.touch)
         SensorChanged,          ///< A sensor value changed (data in event.sensor)
+        FilesDropped,           ///< Files have been dragged and dropped into the window (data in event.droppedFiles)
 
         Count                   ///< Keep last -- the total number of event types
     };
@@ -232,6 +246,7 @@ public:
         JoystickConnectEvent  joystickConnect;   ///< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
         TouchEvent            touch;             ///< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
         SensorEvent           sensor;            ///< Sensor event parameters (Event::SensorChanged)
+        FileDropEvent         droppedFiles;      ///< File dropping parameters (Event::FilesDropped)
     };
 };
 
