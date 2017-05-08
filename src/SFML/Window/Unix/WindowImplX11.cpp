@@ -1392,21 +1392,26 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         XEvent nextEvent;
         if (XPending(m_display))
         {
-            // Grab it but don't remove it from the queue, it still needs to be processed :)
-            XPeekEvent(m_display, &nextEvent);
-            if (nextEvent.type == KeyPress)
+            // Grab the next event from the queue (we will have to put it back because it still needs to be processed)
+            if (XCheckIfEvent(m_display, &nextEvent, &checkEvent, reinterpret_cast<XPointer>(m_window)))
             {
-                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
-                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                if (nextEvent.type == KeyPress)
                 {
-                    // If we don't want repeated events, remove the next KeyPress from the queue
-                    if (!m_keyRepeat)
-                        XNextEvent(m_display, &nextEvent);
+                    // Check if it is a duplicated event (same timestamp as the KeyRelease event)
+                    if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
+                        (nextEvent.xkey.time - windowEvent.xkey.time < 2))
+                    {
+                        // If we want repeated events then put the KeyPress back on the queue
+                        if (m_keyRepeat)
+                            XPutBackEvent(m_display, &nextEvent);
 
-                    // This KeyRelease is a repeated event and we don't want it
-                    return false;
+                        // This KeyRelease is a repeated event and we don't want it
+                        return false;
+                    }
                 }
+
+                // We removed the event from the queue but did not want this (as it still needs to be processed), so put it back
+                XPutBackEvent(m_display, &nextEvent);
             }
         }
     }
