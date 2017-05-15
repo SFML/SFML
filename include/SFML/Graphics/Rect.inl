@@ -142,6 +142,44 @@ bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 }
 
 
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+bool Rect<T>::intersects(const T center, const T radius) const
+{
+	// Using Arvo's algorithm. 
+	// Unroll loop would gain 2x performance. 
+	T d = 0;
+
+	if (center < left)
+	{
+		T e = center - left;
+		d += e * e;
+	}
+
+	if (center > left + width)
+	{
+		T e = left + width - center;
+		d += e * e;
+	}
+
+	if (center < top)
+	{
+		T e = center - top;
+		d += e * e;
+	}
+
+	if (center > top + height)
+	{
+		T e = center - (top + height);
+		d += e * e;
+	}
+
+	return d <= radius * radius;
+}
+
+
 ////////////////////////////////////////////////////////////
 template <typename T>
 inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
@@ -157,3 +195,4 @@ inline bool operator !=(const Rect<T>& left, const Rect<T>& right)
 {
     return !(left == right);
 }
+
