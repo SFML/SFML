@@ -279,12 +279,12 @@ void Shape::updateOutline()
         Vector2f normal = (n1 + n2) / factor;
 
         // Update the outline points
-        m_outlineVertices[i * 2 + 0].position = p1;
+        m_outlineVertices[i * 2].position = p1;
         m_outlineVertices[i * 2 + 1].position = p1 + normal * m_outlineThickness;
     }
 
     // Duplicate the first point at the end, to close the outline
-    m_outlineVertices[count * 2 + 0].position = m_outlineVertices[0].position;
+    m_outlineVertices[count * 2].position = m_outlineVertices[0].position;
     m_outlineVertices[count * 2 + 1].position = m_outlineVertices[1].position;
 
     // Update outline colors
