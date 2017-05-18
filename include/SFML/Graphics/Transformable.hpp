@@ -104,6 +104,20 @@ public:
     /// See the scale function to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
     ///
+    /// \param factor New scale factor
+    ///
+    /// \see scale, getScale
+    ///
+    ////////////////////////////////////////////////////////////
+    void setScale(float factor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief set the scale factors of the object
+    ///
+    /// This function completely overwrites the previous scale.
+    /// See the scale function to add a factor based on the previous scale instead.
+    /// The default scale of a transformable object is (1, 1).
+    ///
     /// \param factorX New horizontal scale factor
     /// \param factorY New vertical scale factor
     ///
@@ -253,6 +267,24 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void rotate(float angle);
+
+	////////////////////////////////////////////////////////////
+    /// \brief Scale the object
+    ///
+    /// This function multiplies the current scale of the object,
+    /// unlike setScale which overwrites it.
+    /// Thus, it is equivalent to the following code:
+    /// \code
+    /// sf::Vector2f scale = object.getScale();
+    /// object.setScale(scale.x * factor, scale.y * factor);
+    /// \endcode
+    ///
+    /// \param factor Scale factor
+    ///
+    /// \see setScale
+    ///
+    ////////////////////////////////////////////////////////////
+    void scale(float factor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Scale the object
