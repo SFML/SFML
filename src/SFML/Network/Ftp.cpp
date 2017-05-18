@@ -213,7 +213,7 @@ Ftp::ListingResponse Ftp::getDirectoryListing(const std::string& directory)
     if (response.isOk())
     {
         // Tell the server to send us the listing
-        response = sendCommand("NLST", directory);
+        response = sendCommand("LIST", directory);
         if (response.isOk())
         {
             // Receive the listing
