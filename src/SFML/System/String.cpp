@@ -117,6 +117,24 @@ String::String(const Uint32* utf32String)
         m_string = utf32String;
 }
 
+#ifdef SFML_FORCE_I18N
+
+String::String(const char32_t* utf32String) {
+	if (utf32String)
+		m_string = (Uint32*)utf32String;
+}
+
+String::String(const char16_t * utf16String) {
+	if (utf16String) {
+		std::locale loc(std::locale(), new std::codecvt_utf16<char32_t>);
+		std::basic_stringstream<uint32_t> oss;
+		oss.imbue(loc);
+		oss << utf16String;
+		m_string = oss.str();
+	}
+}
+
+#endif // !SFML_FORCE_I18N
 
 ////////////////////////////////////////////////////////////
 String::String(const std::basic_string<Uint32>& utf32String) :
