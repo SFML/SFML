@@ -30,6 +30,15 @@
 #include <SFML/System/Err.hpp>
 #include <AppKit/AppKit.h>
 
+namespace
+{
+    void keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+    {
+        sf::priv::HIDInputManager* manager = static_cast<sf::priv::HIDInputManager*>(observer);
+        manager->buildMappings();
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -228,8 +237,19 @@ m_manager(0)
         return;
     }
 
+    // Build up our knownledge of the hardware
     initializeKeyboard();
     buildMappings();
+
+    // Register for notification on keyboard layout changes
+    CFNotificationCenterAddObserver(
+      CFNotificationCenterGetDistributedCenter(),
+      this,
+      keyboardChanged, // callback
+      kTISNotifySelectedKeyboardInputSourceChanged,
+      NULL, // use callback
+      CFNotificationSuspensionBehaviorDeliverImmediately
+    );
 }
 
 
@@ -237,6 +257,8 @@ m_manager(0)
 HIDInputManager::~HIDInputManager()
 {
     freeUp();
+
+    CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDistributedCenter(), this);
 }
 
 
