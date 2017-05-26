@@ -206,10 +206,15 @@ private:
     void loadKey(IOHIDElementRef key);
 
     ////////////////////////////////////////////////////////////
-    /// Regenerate the mappings from/to Key and Scancode
+    /// Regenerate the mappings from/to Key and Scancode.
+    ///
+    /// It is public to allow regular callback to forward the
+    /// information to the manager.
     ///
     ////////////////////////////////////////////////////////////
+public:
     void buildMappings();
+private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
