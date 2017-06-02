@@ -408,24 +408,26 @@ endif()
 # install 3rd-party libraries and tools
 if(SFML_OS_WINDOWS)
 
-    # install the binaries of SFML dependencies
-    if(ARCH_32BITS)
-        install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
-            install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION lib)
-        elseif(SFML_COMPILER_MSVC)
-            install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION lib)
-        else()
-            install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION lib)
-        endif()
-    elseif(ARCH_64BITS)
-        install(DIRECTORY extlibs/bin/x64/ DESTINATION bin)
-        if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
-            install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION lib)
-        elseif(SFML_COMPILER_MSVC)
-            install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION lib)
-        else()
-            install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
+    if(NOT SFML_USE_SYSTEM_DEPS)
+        # install the binaries of SFML dependencies
+        if(ARCH_32BITS)
+            install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
+            if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
+                install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION lib)
+            elseif(SFML_COMPILER_MSVC)
+                install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION lib)
+            else()
+                install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION lib)
+            endif()
+        elseif(ARCH_64BITS)
+            install(DIRECTORY extlibs/bin/x64/ DESTINATION bin)
+            if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
+                install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION lib)
+            elseif(SFML_COMPILER_MSVC)
+                install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION lib)
+            else()
+                install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
+            endif()
         endif()
     endif()
 
@@ -486,17 +488,21 @@ elseif(SFML_OS_IOS)
         install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
     endif()
 
-    # since the iOS libraries are built as static, we must install the SFML dependencies
-    # too so that the end user can easily link them to its final application
-    if(SFML_BUILD_GRAPHICS)
-        install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
+    if(NOT SFML_USE_SYSTEM_DEPS)
+        # since the iOS libraries are built as static, we must install the SFML dependencies
+        # too so that the end user can easily link them to its final application
+        if(SFML_BUILD_GRAPHICS)
+            install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
+        endif()
     endif()
 
 elseif(SFML_OS_ANDROID)
 
-    # install extlibs
-    install(DIRECTORY extlibs/libs-android/${ANDROID_ABI} DESTINATION extlibs/lib)
-    install(FILES extlibs/Android.mk DESTINATION extlibs)
+    if(NOT SFML_USE_SYSTEM_DEPS)
+        # install extlibs
+        install(DIRECTORY extlibs/libs-android/${ANDROID_ABI} DESTINATION extlibs/lib)
+        install(FILES extlibs/Android.mk DESTINATION extlibs)
+    endif()
 
     # install Android.mk so the NDK knows how to set up SFML
     install(FILES src/SFML/Android.mk DESTINATION .)
