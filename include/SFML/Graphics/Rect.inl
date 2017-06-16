@@ -78,10 +78,10 @@ bool Rect<T>::contains(T x, T y) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the real min and max of the rectangle on both axes
-    T minX = std::min(left, static_cast<T>(left + width));
-    T maxX = std::max(left, static_cast<T>(left + width));
-    T minY = std::min(top, static_cast<T>(top + height));
-    T maxY = std::max(top, static_cast<T>(top + height));
+    T const minX = std::min(left, static_cast<T>(left + width));
+    T const maxX = std::max(left, static_cast<T>(left + width));
+    T const minY = std::min(top, static_cast<T>(top + height));
+    T const maxY = std::max(top, static_cast<T>(top + height));
 
     return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
 }
@@ -111,22 +111,22 @@ bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the min and max of the first rectangle on both axes
-    T r1MinX = std::min(left, static_cast<T>(left + width));
-    T r1MaxX = std::max(left, static_cast<T>(left + width));
-    T r1MinY = std::min(top, static_cast<T>(top + height));
-    T r1MaxY = std::max(top, static_cast<T>(top + height));
+    T const r1MinX = std::min(left, static_cast<T>(left + width));
+    T const r1MaxX = std::max(left, static_cast<T>(left + width));
+    T const r1MinY = std::min(top, static_cast<T>(top + height));
+    T const r1MaxY = std::max(top, static_cast<T>(top + height));
 
     // Compute the min and max of the second rectangle on both axes
-    T r2MinX = std::min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    T r2MaxX = std::max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    T r2MinY = std::min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
-    T r2MaxY = std::max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+    T const r2MinX = std::min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    T const r2MaxX = std::max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    T const r2MinY = std::min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+    T const r2MaxY = std::max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
 
     // Compute the intersection boundaries
-    T interLeft   = std::max(r1MinX, r2MinX);
-    T interTop    = std::max(r1MinY, r2MinY);
-    T interRight  = std::min(r1MaxX, r2MaxX);
-    T interBottom = std::min(r1MaxY, r2MaxY);
+    T const interLeft   = std::max(r1MinX, r2MinX);
+    T const interTop    = std::max(r1MinY, r2MinY);
+    T const interRight  = std::min(r1MaxX, r2MaxX);
+    T const interBottom = std::min(r1MaxY, r2MaxY);
 
     // If the intersection is valid (positive non zero area), then there is an intersection
     if ((interLeft < interRight) && (interTop < interBottom))
