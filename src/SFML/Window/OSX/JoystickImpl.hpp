@@ -120,8 +120,9 @@ private:
     typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
     typedef std::vector<IOHIDElementRef>                  ButtonsVector;
 
-    AxisMap                  m_axis;           ///< Axis (IOHIDElementRef) connected to the joystick
-    ButtonsVector            m_buttons;        ///< Buttons (IOHIDElementRef) connected to the joystick
+    AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
+    IOHIDElementRef          m_hat;            ///< POV/Hat axis of the joystick
+    ButtonsVector            m_buttons;        ///< Buttons of the joystick
     unsigned int             m_index;          ///< SFML index
     Joystick::Identification m_identification; ///< Joystick identification
 
