@@ -364,7 +364,7 @@ else()
     endif()
 
     # add network module headers if enabled
-    if(SFML_BUILD_GRAPHICS)
+    if(SFML_BUILD_NETWORK)
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network
