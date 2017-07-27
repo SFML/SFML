@@ -257,7 +257,7 @@ public:
 /// filled; all other members will have undefined values and must not
 /// be read if the type of the event doesn't match. For example,
 /// if you received a KeyPressed event, then you must read the
-/// event.key member, all other members such as event.MouseMove
+/// event.key member, all other members such as event.mouseMove
 /// or event.text will have undefined values.
 ///
 /// Usage example:
