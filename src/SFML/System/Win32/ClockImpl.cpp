@@ -33,8 +33,6 @@
 
 namespace
 {
-    sf::Mutex oldWindowsMutex;
-
     LARGE_INTEGER getFrequency()
     {
         LARGE_INTEGER frequency;
@@ -67,6 +65,8 @@ Time ClockImpl::getCurrentTime()
 
     if (oldWindows)
     {
+        static sf::Mutex oldWindowsMutex;
+
         // Acquire a lock (CRITICAL_SECTION) to prevent travelling back in time
         Lock lock(oldWindowsMutex);
 
