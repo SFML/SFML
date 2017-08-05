@@ -101,18 +101,6 @@ public:
     bool openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open the sound file from the disk for writing
-    ///
-    /// \param filename     Path of the sound file to write
-    /// \param channelCount Number of channels in the sound
-    /// \param sampleRate   Sample rate of the sound
-    ///
-    /// \return True if the file was successfully opened
-    ///
-    ////////////////////////////////////////////////////////////
-    bool openForWriting(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
     ///
     /// \return Number of samples
