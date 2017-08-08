@@ -30,8 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #ifdef SFML_SYSTEM_IOS
-    #include <OpenAl/al.h>
-    #include <OpenAl/alc.h>
+    #include <AL/al.h>
+    #include <AL/alc.h>
 #else
     #include <al.h>
     #include <alc.h>
