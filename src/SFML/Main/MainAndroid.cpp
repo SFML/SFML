@@ -93,6 +93,13 @@ static void initializeMain(ActivityStates* states)
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
     states->looper = looper;
 
+    /**
+     * Acquire increments a reference counter on the looper. This keeps android 
+     * from collecting it before the activity thread has a chance to detach its 
+     * input queue.
+     */
+    ALooper_acquire(states->looper);
+
     // Get the default configuration
     states->config = AConfiguration_new();
     AConfiguration_fromAssetManager(states->config, states->activity->assetManager);
@@ -338,7 +345,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
-    while(!states->updated)
+    while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -363,7 +370,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
-    while(!states->updated)
+    while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -410,8 +417,10 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
     {
         sf::Lock lock(states->mutex);
 
-        states->inputQueue = NULL;
         AInputQueue_detachLooper(queue);
+        states->inputQueue = NULL;
+
+        ALooper_release(states->looper);
     }
 }
 
@@ -542,7 +551,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     // Wait for the main thread to be initialized
     states->mutex.lock();
 
-    while (!states->initialized)
+    while (!(states->initialized | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(20));
