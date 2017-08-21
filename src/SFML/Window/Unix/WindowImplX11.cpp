@@ -66,6 +66,8 @@ namespace
     sf::Mutex                             allWindowsMutex;
     sf::String                            windowManagerName;
 
+    sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
+
     static const unsigned long            eventMask = FocusChangeMask      | ButtonPressMask     |
                                                       ButtonReleaseMask    | ButtonMotionMask    |
                                                       PointerMotionMask    | KeyPressMask        |
@@ -258,6 +260,90 @@ namespace
         sf::priv::CloseDisplay(display);
 
         return true;
+    }
+
+    // Get the parent window.
+    ::Window getParentWindow(::Display* disp, ::Window win)
+    {
+        ::Window root, parent;
+        ::Window* children = NULL;
+        unsigned int numChildren;
+
+        XQueryTree(disp, win, &root, &parent, &children, &numChildren);
+
+        // Children information is not used, so must be freed.
+        if (children != NULL)
+            XFree(children);
+
+        return parent;
+    }
+
+    // Get the Frame Extents from EWMH WMs that support it.
+    bool getEWMHFrameExtents(::Display* disp, ::Window win,
+        long& xFrameExtent, long& yFrameExtent)
+    {
+        if (!ewmhSupported())
+            return false;
+
+        Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
+
+        if (frameExtents == None)
+            return false;
+
+        bool gotFrameExtents = false;
+        Atom actualType;
+        int actualFormat;
+        unsigned long numItems;
+        unsigned long numBytesLeft;
+        unsigned char* data = NULL;
+
+        int result = XGetWindowProperty(disp,
+                                        win,
+                                        frameExtents,
+                                        0,
+                                        4,
+                                        False,
+                                        XA_CARDINAL,
+                                        &actualType,
+                                        &actualFormat,
+                                        &numItems,
+                                        &numBytesLeft,
+                                        &data);
+
+        if ((result == Success) && (actualType == XA_CARDINAL) &&
+            (actualFormat == 32) && (numItems == 4) && (numBytesLeft == 0) &&
+            (data != NULL))
+        {
+            gotFrameExtents = true;
+
+            long* extents = (long*) data;
+
+            xFrameExtent = extents[0]; // Left.
+            yFrameExtent = extents[2]; // Top.
+        }
+
+        // Always free data.
+        if (data != NULL)
+            XFree(data);
+
+        return gotFrameExtents;
+    }
+
+    // Check if the current WM is in the list of good WMs that provide
+    // a correct absolute position for the window when queried.
+    bool isWMAbsolutePositionGood()
+    {
+        // This can only work with EWMH, to get the name.
+        if (!ewmhSupported())
+            return false;
+
+        for (size_t i = 0; i < (sizeof(wmAbsPosGood) / sizeof(wmAbsPosGood[0])); i++)
+        {
+            if (wmAbsPosGood[i] == windowManagerName)
+                return true;
+        }
+
+        return false;
     }
 
     sf::Keyboard::Key keysymToSF(KeySym symbol)
@@ -676,14 +762,67 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    ::Window root, child;
-    int localX, localY, x, y;
-    unsigned int width, height, border, depth;
+    // Get absolute position of our window relative to root window. This
+    // takes into account all information that X11 has, including X11
+    // border widths and any decorations. It corresponds to where the
+    // window actually is, but not necessarily to where we told it to
+    // go using setPosition() and XMoveWindow(). To have the two match
+    // as expected, we may have to subtract decorations and borders.
+    ::Window child;
+    int xAbsRelToRoot, yAbsRelToRoot;
 
-    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
-    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+    XTranslateCoordinates(m_display, m_window, DefaultRootWindow(m_display),
+        0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
-    return Vector2i(x, y);
+    // CASE 1: some rare WMs actually put the window exactly where we tell
+    // it to, even with decorations and such, which get shifted back.
+    // In these rare cases, we can use the absolute value directly.
+    if (isWMAbsolutePositionGood())
+        return Vector2i(xAbsRelToRoot, yAbsRelToRoot);
+
+    // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
+    // with the exact frame size to subtract, so if present, we prefer it and
+    // query it first. According to spec, this already includes any borders.
+    long xFrameExtent, yFrameExtent;
+
+    if (getEWMHFrameExtents(m_display, m_window, xFrameExtent, yFrameExtent))
+    {
+        // Get final X/Y coordinates: subtract EWMH frame extents from
+        // absolute window position.
+        return Vector2i((xAbsRelToRoot - xFrameExtent), (yAbsRelToRoot - yFrameExtent));
+    }
+
+    // CASE 3: EWMH frame extents were not available, use geometry.
+    // We climb back up to the window before the root and use its
+    // geometry information to extract X/Y position. This because
+    // re-parenting WMs may re-parent the window multiple times, so
+    // we'd have to climb up to the furthest ancestor and sum the
+    // relative differences and borders anyway; and doing that to
+    // subtract those values from the absolute coordinates of the
+    // window is equivalent to going up the tree and asking the
+    // furthest ancestor what it's relative distance to the root is.
+    // So we use that approach because it's simpler.
+    // This approach assumes that any window between the root and
+    // our window is part of decorations/borders in some way. This
+    // seems to hold true for most reasonable WM implementations.
+    ::Window ancestor = m_window;
+    ::Window root = DefaultRootWindow(m_display);
+
+    while (getParentWindow(m_display, ancestor) != root)
+    {
+        // Next window up (parent window).
+        ancestor = getParentWindow(m_display, ancestor);
+    }
+
+    // Get final X/Y coordinates: take the relative position to
+    // the root of the furthest ancestor window.
+    int xRelToRoot, yRelToRoot;
+    unsigned int width, height, borderWidth, depth;
+
+    XGetGeometry(m_display, ancestor, &root, &xRelToRoot, &yRelToRoot,
+        &width, &height, &borderWidth, &depth);
+
+    return Vector2i(xRelToRoot, yRelToRoot);
 }
 
 
