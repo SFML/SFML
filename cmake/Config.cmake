@@ -35,14 +35,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     if(IOS)
         set(SFML_OS_IOS 1)
 
-        # set the target framework and platforms
-        set(CMAKE_OSX_SYSROOT "iphoneos")
-        set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;i386")
-        set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")
-
-        # help the compiler detection script below
-        set(CMAKE_COMPILER_IS_GNUCXX 1)
-
         # use the OpenGL ES implementation on iOS
         set(OPENGL_ES 1)
     else()
