@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/iOS/ClipboardImpl.hpp>
 
-@import UIKit
+#import <UIKit/UIKit.h>
 
 namespace sf
 {
@@ -40,7 +40,7 @@ String ClipboardImpl::getString()
     UIPasteboard* pboard = [UIPasteboard generalPasteboard];
     if (pboard.hasStrings)
     {
-        NSString* data = pboard.string
+        NSString* data = pboard.string;
 
         char const* utf8 = [data cStringUsingEncoding:NSUTF8StringEncoding];
         NSUInteger length = [data lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
