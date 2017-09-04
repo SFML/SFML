@@ -74,20 +74,20 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Text::Text() :
-m_string            (),
-m_font              (NULL),
-m_characterSize     (30),
-m_letterSpacing     (0.f),
-m_lineSpacing       (0.f),
-m_style             (Regular),
-m_fillColor         (255, 255, 255),
-m_outlineColor      (0, 0, 0),
-m_outlineThickness  (0),
-m_vertices          (Triangles),
-m_outlineVertices   (Triangles),
-m_bounds            (),
-m_geometryNeedUpdate(false),
-m_fontTextureId     (0)
+m_string             (),
+m_font               (NULL),
+m_characterSize      (30),
+m_letterSpacingFactor(1.f),
+m_lineSpacingFactor  (1.f),
+m_style              (Regular),
+m_fillColor          (255, 255, 255),
+m_outlineColor       (0, 0, 0),
+m_outlineThickness   (0),
+m_vertices           (Triangles),
+m_outlineVertices    (Triangles),
+m_bounds             (),
+m_geometryNeedUpdate (false),
+m_fontTextureId      (0)
 {
 
 }
@@ -95,20 +95,20 @@ m_fontTextureId     (0)
 
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
-m_string            (string),
-m_font              (&font),
-m_characterSize     (characterSize),
-m_letterSpacing     (0.f),
-m_lineSpacing       (0.f),
-m_style             (Regular),
-m_fillColor         (255, 255, 255),
-m_outlineColor      (0, 0, 0),
-m_outlineThickness  (0),
-m_vertices          (Triangles),
-m_outlineVertices   (Triangles),
-m_bounds            (),
-m_geometryNeedUpdate(true),
-m_fontTextureId     (0)
+m_string             (string),
+m_font               (&font),
+m_characterSize      (characterSize),
+m_letterSpacingFactor(1.f),
+m_lineSpacingFactor  (1.f),
+m_style              (Regular),
+m_fillColor          (255, 255, 255),
+m_outlineColor       (0, 0, 0),
+m_outlineThickness   (0),
+m_vertices           (Triangles),
+m_outlineVertices    (Triangles),
+m_bounds             (),
+m_geometryNeedUpdate (true),
+m_fontTextureId      (0)
 {
 
 }
@@ -148,22 +148,22 @@ void Text::setCharacterSize(unsigned int size)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setLetterSpacing(float spacing)
+void Text::setLetterSpacing(float spacingFactor)
 {
-    if (m_letterSpacing != spacing)
+    if (m_letterSpacingFactor != spacingFactor)
     {
-        m_letterSpacing = spacing;
+        m_letterSpacingFactor = spacingFactor;
         m_geometryNeedUpdate = true;
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void Text::setLineSpacing(float spacing)
+void Text::setLineSpacing(float spacingFactor)
 {
-    if (m_lineSpacing != spacing)
+    if (m_lineSpacingFactor != spacingFactor)
     {
-        m_lineSpacing = spacing;
+        m_lineSpacingFactor = spacingFactor;
         m_geometryNeedUpdate = true;
     }
 }
@@ -258,14 +258,14 @@ unsigned int Text::getCharacterSize() const
 ////////////////////////////////////////////////////////////
 float Text::getLetterSpacing() const
 {
-    return m_letterSpacing;
+    return m_letterSpacingFactor;
 }
 
 
 ////////////////////////////////////////////////////////////
 float Text::getLineSpacing() const
 {
-    return m_lineSpacing;
+    return m_lineSpacingFactor;
 }
 
 
@@ -317,8 +317,8 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
     // Precompute the variables needed by the algorithm
     bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance + m_letterSpacing;
-    float lineSpacing     = m_font->getLineSpacing(m_characterSize)+ m_lineSpacing;
+    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance * m_letterSpacingFactor;
+    float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
     Vector2f position;
@@ -340,7 +340,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + m_letterSpacing;
+        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance * m_letterSpacingFactor;
     }
 
     // Transform the position to global coordinates
@@ -425,8 +425,8 @@ void Text::ensureGeometryUpdate() const
     float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance + m_letterSpacing;
-    float lineSpacing     = m_font->getLineSpacing(m_characterSize) + m_lineSpacing;
+    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance * m_letterSpacingFactor;
+    float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
     float x               = 0.f;
     float y               = static_cast<float>(m_characterSize);
 
@@ -525,7 +525,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // Advance to the next character
-        x += glyph.advance + m_letterSpacing;
+        x += glyph.advance * m_letterSpacingFactor;
     }
 
     // If we're using the underlined style, add the last line

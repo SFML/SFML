@@ -145,34 +145,32 @@ public:
     void setCharacterSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the additional line spacing offset
+    /// \brief Set the line spacing factor
     ///
-    /// The spacing between lines is defined by the font.
-    /// This method enables you to set an additional spacing
-    /// between lines. By default the additional line
-    /// spacing offset is 0.
+    /// The default spacing between lines is defined by the font.
+    /// This method enables you to set a factor for the spacing
+    /// between lines. By default the line spacing offset is 1.
     ///
-    /// \param spacing New additional line spacing offset, in pixel
+    /// \param spacing New line spacing factor
     ///
     /// \see getLineSpacing
     ///
     ////////////////////////////////////////////////////////////
-    void setLineSpacing(float spacing);
+    void setLineSpacing(float spacingFactor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the additional letter spacing offset
+    /// \brief Set the letter spacing factor
     ///
-    /// The spacing between letters is defined by the font.
-    /// This method enables you to set an additional spacing
-    /// between letters. By default the additional letter
-    /// spacing offset is 0.
+    /// The default spacing between letters is defined by the font.
+    /// This method enables you to set a factor to the spacing
+    /// between letters. By default the letter spacing factor is 1.
     ///
-    /// \param spacing New additional letter spacing offset, in pixel
+    /// \param spacing New letter spacing factor
     ///
     /// \see getLetterSpacing
     ///
     ////////////////////////////////////////////////////////////
-    void setLetterSpacing(float spacing);
+    void setLetterSpacing(float spacingFactor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's style
@@ -291,9 +289,9 @@ public:
     unsigned int getCharacterSize() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the additional letter spacing offset
+    /// \brief Get the size of the letter spacing factor
     ///
-    /// \return Size of the additional letter spacing offset, in pixel
+    /// \return Size of the letter spacing factor
     ///
     /// \see setLetterSpacing
     ///
@@ -301,9 +299,9 @@ public:
     float getLetterSpacing() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the additional line spacing offset
+    /// \brief Get the size of the line spacing factor
     ///
-    /// \return Size of the additional line spacing offset, in pixel
+    /// \return Size of the line spacing factor
     ///
     /// \see setLineSpacing
     ///
@@ -432,20 +430,20 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String              m_string;             ///< String to display
-    const Font*         m_font;               ///< Font used to display the string
-    unsigned int        m_characterSize;      ///< Base size of characters, in pixels
-    float               m_letterSpacing;      ///< Additional spacing offset between letters, in pixel
-    float               m_lineSpacing;        ///< Additional spacing offset between lines, in pixel
-    Uint32              m_style;              ///< Text style (see Style enum)
-    Color               m_fillColor;          ///< Text fill color
-    Color               m_outlineColor;       ///< Text outline color
-    float               m_outlineThickness;   ///< Thickness of the text's outline
-    mutable VertexArray m_vertices;           ///< Vertex array containing the fill geometry
-    mutable VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
-    mutable FloatRect   m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
-    mutable bool        m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
-    mutable Uint64      m_fontTextureId;      ///< The font texture id
+    String              m_string;              ///< String to display
+    const Font*         m_font;                ///< Font used to display the string
+    unsigned int        m_characterSize;       ///< Base size of characters, in pixels
+    float               m_letterSpacingFactor; ///< Spacing factor between letters
+    float               m_lineSpacingFactor;   ///< Spacing factor between lines
+    Uint32              m_style;               ///< Text style (see Style enum)
+    Color               m_fillColor;           ///< Text fill color
+    Color               m_outlineColor;        ///< Text outline color
+    float               m_outlineThickness;    ///< Thickness of the text's outline
+    mutable VertexArray m_vertices;            ///< Vertex array containing the fill geometry
+    mutable VertexArray m_outlineVertices;     ///< Vertex array containing the outline geometry
+    mutable FloatRect   m_bounds;              ///< Bounding rectangle of the text (in local coordinates)
+    mutable bool        m_geometryNeedUpdate;  ///< Does the geometry need to be recomputed?
+    mutable Uint64      m_fontTextureId;       ///< The font texture id
 };
 
 } // namespace sf
