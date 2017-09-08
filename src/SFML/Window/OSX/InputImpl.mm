@@ -151,7 +151,7 @@ Keyboard::Scancode InputImpl::unlocalize(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-String InputImpl::localizedRepresentation(Keyboard::Scancode code)
+String InputImpl::getDescription(Keyboard::Scancode code)
 {
     return HIDInputManager::getInstance().localizedRepresentation(code);
 }
