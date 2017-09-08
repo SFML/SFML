@@ -56,9 +56,9 @@ Keyboard::Scancode Keyboard::unlocalize(Key key)
 }
 
 ////////////////////////////////////////////////////////////
-String Keyboard::localizedRepresentation(Scancode code)
+String Keyboard::getDescription(Scancode code)
 {
-    return priv::InputImpl::localizedRepresentation(code);
+    return priv::InputImpl::getDescription(code);
 }
 
 ////////////////////////////////////////////////////////////
