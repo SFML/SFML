@@ -115,7 +115,7 @@ public:
     /// Try to convert a virtual keycode (HID level) into a
     /// SFML scancode.
     ///
-    /// Return sf::Keyboard::sUnknown if the keycode is unknown.
+    /// Return sf::Keyboard::ScanUnknown if the keycode is unknown.
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Scancode nonLocalizedKey(UniChar virtualKeycode);
@@ -278,10 +278,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef    m_manager;                       ///< Underlying HID Manager
-    IOHIDElements      m_keys[Keyboard::sCodeCount];    ///< All the keys on any connected keyboard
-    Keyboard::Scancode m_mapping[Keyboard::KeyCount];   ///< Mapping from Key to Scancode
-    Keyboard::Key      m_gnippam[Keyboard::sCodeCount]; ///< Mapping from Scancode to Key
+    IOHIDManagerRef    m_manager;                                       ///< Underlying HID Manager
+    IOHIDElements      m_keys[Keyboard::ScanCodeCount];                 ///< All the keys on any connected keyboard
+    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
+    Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScanCodeCount]; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Scancode enum.
