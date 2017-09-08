@@ -10,6 +10,6 @@ Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
 Requires: sfml-window
 Requires.private: sfml-system, freetype2
 Libs: -L${libdir} -lsfml-graphics
-# gl and jpeg may not be in pkg-config
-Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@ @JPEG_LIBRARY@
+# gl may not be in pkg-config
+Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
 Cflags: -I${includedir}

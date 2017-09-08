@@ -13,7 +13,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 ## External libraries used by SFML
 
   * _OpenAL-Soft_ is under the LGPL license
-  * _libjpeg_ is public domain
   * _stb_image_ and _stb_image_write_ are public domain
   * _freetype_ is under the FreeType license or the GPL license
   * _libogg_ is under the BSD license

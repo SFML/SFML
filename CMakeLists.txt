@@ -513,7 +513,7 @@ elseif(SFML_OS_IOS)
         # since the iOS libraries are built as static, we must install the SFML dependencies
         # too so that the end user can easily link them to its final application
         if(SFML_BUILD_GRAPHICS)
-            install(FILES extlibs/libs-ios/libfreetype.a extlibs/libs-ios/libjpeg.a DESTINATION lib)
+            install(FILES extlibs/libs-ios/libfreetype.a DESTINATION lib)
         endif()
     endif()
 
