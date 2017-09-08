@@ -73,7 +73,7 @@ public:
     /// \copydoc sf::Keyboard::localizedRepresentation
     ///
     ////////////////////////////////////////////////////////////
-    static String localizedRepresentation(Keyboard::Scancode code);
+    static String getDescription(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::setVirtualKeyboardVisible
