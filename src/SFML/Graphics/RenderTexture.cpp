@@ -51,6 +51,13 @@ RenderTexture::~RenderTexture()
 ////////////////////////////////////////////////////////////
 bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
 {
+    return create(width, height, ContextSettings(depthBuffer ? 32 : 0));
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
+{
     // Create the texture
     if (!m_texture.create(width, height))
     {
@@ -78,13 +85,27 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     }
 
     // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer))
+    if (!m_impl->create(width, height, m_texture.m_texture, settings))
         return false;
 
     // We can now initialize the render target part
     RenderTarget::initialize();
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int RenderTexture::getMaximumAntialiasingLevel()
+{
+    if (priv::RenderTextureImplFBO::isAvailable())
+    {
+        return priv::RenderTextureImplFBO::getMaximumAntialiasingLevel();
+    }
+    else
+    {
+        return priv::RenderTextureImplDefault::getMaximumAntialiasingLevel();
+    }
 }
 
 
