@@ -69,6 +69,9 @@
     #include <GLES/glext.h>
     
     // We're not using OpenGL ES 2+ yet, but we can use the sRGB extension
+    // We need to import gl2platform.h, would normally be included by gl2.h
+    // which was included by gl2ext.h in older NDK versions
+    #include <GLES2/gl2platform.h>
     #include <GLES2/gl2ext.h>
 
 #endif
