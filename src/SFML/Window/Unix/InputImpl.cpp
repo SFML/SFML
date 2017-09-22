@@ -30,8 +30,8 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
+#include <X11/XKBlib.h>
 #include <X11/keysym.h>
-
 
 namespace sf
 {
@@ -41,7 +41,16 @@ namespace priv
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     // Get the corresponding X11 keysym
-    KeySym keysym = 0;
+
+    if(key==Keyboard::CAPS){
+		Display* display = OpenDisplay();
+		unsigned int n;
+        XkbGetIndicatorState(display, XkbUseCoreKbd, &n);
+        CloseDisplay(display);
+        return (n&0x01)==1;
+	}
+
+    KeySym keysym;
     switch (key)
     {
         case Keyboard::LShift:     keysym = XK_Shift_L;      break;
@@ -177,7 +186,6 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         return false;
     }
 }
-
 
 ////////////////////////////////////////////////////////////
 void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
