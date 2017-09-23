@@ -45,6 +45,7 @@ HIDInputManager& HIDInputManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 {
+	if(key==Keyboard::CAPS)return false;
     return isPressed(m_keys[key]);
 }
 

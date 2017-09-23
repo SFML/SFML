@@ -148,7 +148,8 @@ public:
         F13,          ///< The F13 key
         F14,          ///< The F14 key
         F15,          ///< The F15 key
-        Pause,        ///< The Pause key
+        Pause,        ///< The Pause key,
+        CAPS,          ///< Whether or not caps lock is on
 
         KeyCount      ///< Keep last -- the total number of keyboard keys
     };

@@ -45,7 +45,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    int vkey = 0;
+    int vkey;
     switch (key)
     {
         default:                   vkey = 0;             break;
@@ -150,6 +150,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::F14:        vkey = VK_F14;        break;
         case Keyboard::F15:        vkey = VK_F15;        break;
         case Keyboard::Pause:      vkey = VK_PAUSE;      break;
+        case Keyboard::CAPS:       return (GetKeyState(VK_CAPITAL) & 1) !=0;
     }
 
     return (GetAsyncKeyState(vkey) & 0x8000) != 0;
