@@ -31,7 +31,6 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-
 namespace sf
 {
 namespace priv
@@ -43,6 +42,11 @@ namespace priv
 class InputImpl
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    InputImpl();
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
@@ -69,7 +73,7 @@ public:
     static Keyboard::Scancode unlocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::localizedRepresentation
+    /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
     static String getDescription(Keyboard::Scancode code);
@@ -176,6 +180,20 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static Vector2i getTouchPosition(unsigned int finger, const WindowBase& relativeTo);
+
+private:
+
+    ////////////////////////////////////////////////////////////
+    /// Regenerate the mappings from/to Key and Scancode.
+    ///
+    ////////////////////////////////////////////////////////////
+    void buildMappings();
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
+    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScanCodeCount]; ///< Mapping from Scancode to Key
 };
 
 } // namespace priv
