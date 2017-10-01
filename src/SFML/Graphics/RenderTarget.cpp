@@ -235,7 +235,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
 
             // Since vertices are transformed, we must use an identity transform to render them
             if (!m_cache.useVertexCache)
-                applyTransform(Transform::Identity);
+                glCheck(glLoadIdentity());
         }
         else
         {
@@ -393,6 +393,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnable(GL_TEXTURE_2D));
         glCheck(glEnable(GL_BLEND));
         glCheck(glMatrixMode(GL_MODELVIEW));
+        glCheck(glLoadIdentity());
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
@@ -400,7 +401,6 @@ void RenderTarget::resetGLStates()
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
-        applyTransform(Transform::Identity);
         applyTexture(NULL);
         if (shaderAvailable)
             applyShader(NULL);
@@ -499,7 +499,10 @@ void RenderTarget::applyTransform(const Transform& transform)
 {
     // No need to call glMatrixMode(GL_MODELVIEW), it is always the
     // current mode (for optimization purpose, since it's the most used)
-    glCheck(glLoadMatrixf(transform.getMatrix()));
+    if (transform == Transform::Identity)
+        glCheck(glLoadIdentity());
+    else
+        glCheck(glLoadMatrixf(transform.getMatrix()));
 }
 
 
