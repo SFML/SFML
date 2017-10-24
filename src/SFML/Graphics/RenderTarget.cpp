@@ -30,10 +30,21 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <iostream>
+#include <algorithm>
+
+
+// GL_QUADS is unavailable on OpenGL ES, thus we need to define GL_QUADS ourselves
+#ifdef SFML_OPENGL_ES
+
+    #define GL_QUADS 0
+
+#endif // SFML_OPENGL_ES
+
 
 namespace
 {
@@ -211,17 +222,13 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
             return;
         }
-        #define GL_QUADS 0
     #endif
 
     if (setActive(true))
     {
-        // First set the persistent OpenGL states if it's the very first call
-        if (!m_cache.glStatesSet)
-            resetGLStates();
-
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
+
         if (useVertexCache)
         {
             // Pre-transform the vertices and store them into the vertex cache
@@ -232,32 +239,9 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
                 vertex.color = vertices[i].color;
                 vertex.texCoords = vertices[i].texCoords;
             }
-
-            // Since vertices are transformed, we must use an identity transform to render them
-            if (!m_cache.useVertexCache)
-                glCheck(glLoadIdentity());
-        }
-        else
-        {
-            applyTransform(states.transform);
         }
 
-        // Apply the view
-        if (m_cache.viewChanged)
-            applyCurrentView();
-
-        // Apply the blend mode
-        if (states.blendMode != m_cache.lastBlendMode)
-            applyBlendMode(states.blendMode);
-
-        // Apply the texture
-        Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
-        if (textureId != m_cache.lastTextureId)
-            applyTexture(states.texture);
-
-        // Apply the shader
-        if (states.shader)
-            applyShader(states.shader);
+        setupDraw(useVertexCache, states);
 
         // Check if texture coordinates array is needed, and update client state accordingly
         bool enableTexCoordsArray = (states.texture || states.shader);
@@ -292,26 +276,79 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
         }
 
-        // Find the OpenGL primitive type
-        static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                       GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
-        GLenum mode = modes[type];
-
-        // Draw the primitives
-        glCheck(glDrawArrays(mode, 0, static_cast<GLsizei>(vertexCount)));
-
-        // Unbind the shader, if any
-        if (states.shader)
-            applyShader(NULL);
-
-        // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
-        // This prevents a bug where some drivers do not clear RenderTextures properly.
-        if (states.texture && states.texture->m_fboAttachment)
-            applyTexture(NULL);
+        drawPrimitives(type, 0, vertexCount);
+        cleanupDraw(states);
 
         // Update the cache
         m_cache.useVertexCache = useVertexCache;
         m_cache.texCoordsArrayEnabled = enableTexCoordsArray;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::draw(const VertexBuffer& vertexBuffer, const RenderStates& states)
+{
+    draw(vertexBuffer, 0, vertexBuffer.getVertexCount(), states);
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex,
+                        std::size_t vertexCount, const RenderStates& states)
+{
+    // VertexBuffer not supported?
+    if (!VertexBuffer::isAvailable())
+    {
+        err() << "sf::VertexBuffer is not available, drawing skipped" << std::endl;
+        return;
+    }
+
+    // Sanity check
+    if (firstVertex > vertexBuffer.getVertexCount())
+        return;
+
+    // Clamp vertexCount to something that makes sense
+    vertexCount = std::min(vertexCount, vertexBuffer.getVertexCount() - firstVertex);
+
+    // Nothing to draw?
+    if (!vertexCount || !vertexBuffer.getNativeHandle())
+        return;
+
+    // GL_QUADS is unavailable on OpenGL ES
+    #ifdef SFML_OPENGL_ES
+        if (vertexBuffer.getPrimitiveType() == Quads)
+        {
+            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
+            return;
+        }
+    #endif
+
+    if (setActive(true))
+    {
+        setupDraw(false, states);
+
+        // Bind vertex buffer
+        VertexBuffer::bind(&vertexBuffer);
+
+        // Always enable texture coordinates
+        if (!m_cache.texCoordsArrayEnabled)
+            glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+        glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(0)));
+        glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), reinterpret_cast<const void*>(8)));
+        glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(12)));
+
+        drawPrimitives(vertexBuffer.getPrimitiveType(), firstVertex, vertexCount);
+
+        // Unbind vertex buffer
+        VertexBuffer::bind(NULL);
+
+        cleanupDraw(states);
+
+        // Update the cache
+        m_cache.useVertexCache = false;
+        m_cache.texCoordsArrayEnabled = true;
     }
 }
 
@@ -372,6 +409,7 @@ void RenderTarget::resetGLStates()
 {
     // Check here to make sure a context change does not happen after activate(true)
     bool shaderAvailable = Shader::isAvailable();
+    bool vertexBufferAvailable = VertexBuffer::isAvailable();
 
     // Workaround for states not being properly reset on
     // macOS unless a context switch really takes place
@@ -410,6 +448,9 @@ void RenderTarget::resetGLStates()
         applyTexture(NULL);
         if (shaderAvailable)
             applyShader(NULL);
+
+        if (vertexBufferAvailable)
+            glCheck(VertexBuffer::bind(NULL));
 
         m_cache.texCoordsArrayEnabled = true;
 
@@ -525,6 +566,70 @@ void RenderTarget::applyTexture(const Texture* texture)
 void RenderTarget::applyShader(const Shader* shader)
 {
     Shader::bind(shader);
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
+{
+    // First set the persistent OpenGL states if it's the very first call
+    if (!m_cache.glStatesSet)
+        resetGLStates();
+
+    if (useVertexCache)
+    {
+        // Since vertices are transformed, we must use an identity transform to render them
+        if (!m_cache.useVertexCache)
+            glCheck(glLoadIdentity());
+    }
+    else
+    {
+        applyTransform(states.transform);
+    }
+
+    // Apply the view
+    if (m_cache.viewChanged)
+        applyCurrentView();
+
+    // Apply the blend mode
+    if (states.blendMode != m_cache.lastBlendMode)
+        applyBlendMode(states.blendMode);
+
+    // Apply the texture
+    Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
+    if (textureId != m_cache.lastTextureId)
+        applyTexture(states.texture);
+
+    // Apply the shader
+    if (states.shader)
+        applyShader(states.shader);
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount)
+{
+    // Find the OpenGL primitive type
+    static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+                                   GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+    GLenum mode = modes[type];
+
+    // Draw the primitives
+    glCheck(glDrawArrays(mode, firstVertex, static_cast<GLsizei>(vertexCount)));
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::cleanupDraw(const RenderStates& states)
+{
+    // Unbind the shader, if any
+    if (states.shader)
+        applyShader(NULL);
+
+    // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
+    // This prevents a bug where some drivers do not clear RenderTextures properly.
+    if (states.texture && states.texture->m_fboAttachment)
+        applyTexture(NULL);
 }
 
 } // namespace sf

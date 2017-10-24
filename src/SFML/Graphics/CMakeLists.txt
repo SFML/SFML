@@ -72,6 +72,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
+    ${SRCROOT}/VertexBuffer.cpp
+    ${INCROOT}/VertexBuffer.hpp
 )
 source_group("drawables" FILES ${DRAWABLES_SRC})
 

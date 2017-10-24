@@ -43,6 +43,7 @@
 namespace sf
 {
 class Drawable;
+class VertexBuffer;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -248,6 +249,26 @@ public:
               PrimitiveType type, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by a vertex buffer
+    ///
+    /// \param vertexBuffer Vertex buffer
+    /// \param states       Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const VertexBuffer& vertexBuffer, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by a vertex buffer
+    ///
+    /// \param vertexBuffer Vertex buffer
+    /// \param firstVertex  Index of the first vertex to render
+    /// \param vertexCount  Number of vertices to render
+    /// \param states       Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex, std::size_t vertexCount, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the target
     ///
     /// \return Size in pixels
@@ -401,6 +422,33 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void applyShader(const Shader* shader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Setup environment for drawing
+    ///
+    /// \param useVertexCache Are we going to use the vertex cache?
+    /// \param states         Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setupDraw(bool useVertexCache, const RenderStates& states);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw the primitives
+    ///
+    /// \param type        Type of primitives to draw
+    /// \param firstVertex Index of the first vertex to use when drawing
+    /// \param vertexCount Number of vertices to use when drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clean up environment after drawing
+    ///
+    /// \param states Render states used for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void cleanupDraw(const RenderStates& states);
 
     ////////////////////////////////////////////////////////////
     /// \brief Render states cache

@@ -53,6 +53,19 @@
     #define GLEXT_GL_CLAMP                            GL_CLAMP_TO_EDGE
     #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE
 
+    // Core since 1.1
+    // 1.1 does not support GL_STREAM_DRAW so we just define it to GL_DYNAMIC_DRAW
+    #define GLEXT_vertex_buffer_object                true
+    #define GLEXT_GL_ARRAY_BUFFER                     GL_ARRAY_BUFFER
+    #define GLEXT_GL_DYNAMIC_DRAW                     GL_DYNAMIC_DRAW
+    #define GLEXT_GL_STATIC_DRAW                      GL_STATIC_DRAW
+    #define GLEXT_GL_STREAM_DRAW                      GL_DYNAMIC_DRAW
+    #define GLEXT_glBindBuffer                        glBindBuffer
+    #define GLEXT_glBufferData                        glBufferData
+    #define GLEXT_glBufferSubData                     glBufferSubData
+    #define GLEXT_glDeleteBuffers                     glDeleteBuffers
+    #define GLEXT_glGenBuffers                        glGenBuffers
+
     // The following extensions are listed chronologically
     // Extension macro first, followed by tokens then
     // functions according to the corresponding specification
@@ -114,6 +127,9 @@
     // Core since 3.0
     #define GLEXT_framebuffer_blit                    false
 
+    // Core since 3.0 - NV_copy_buffer
+    #define GLEXT_copy_buffer                         false
+
     // Core since 3.0 - EXT_sRGB
     #ifdef GL_EXT_sRGB
         #define GLEXT_texture_sRGB                        GL_EXT_sRGB
@@ -167,6 +183,22 @@
     // Core since 1.4 - EXT_blend_func_separate
     #define GLEXT_blend_func_separate                 sfogl_ext_EXT_blend_func_separate
     #define GLEXT_glBlendFuncSeparate                 glBlendFuncSeparateEXT
+
+    // Core since 1.5 - ARB_vertex_buffer_object
+    #define GLEXT_vertex_buffer_object                sfogl_ext_ARB_vertex_buffer_object
+    #define GLEXT_GL_ARRAY_BUFFER                     GL_ARRAY_BUFFER_ARB
+    #define GLEXT_GL_DYNAMIC_DRAW                     GL_DYNAMIC_DRAW_ARB
+    #define GLEXT_GL_READ_ONLY                        GL_READ_ONLY_ARB
+    #define GLEXT_GL_STATIC_DRAW                      GL_STATIC_DRAW_ARB
+    #define GLEXT_GL_STREAM_DRAW                      GL_STREAM_DRAW_ARB
+    #define GLEXT_GL_WRITE_ONLY                       GL_WRITE_ONLY_ARB
+    #define GLEXT_glBindBuffer                        glBindBufferARB
+    #define GLEXT_glBufferData                        glBufferDataARB
+    #define GLEXT_glBufferSubData                     glBufferSubDataARB
+    #define GLEXT_glDeleteBuffers                     glDeleteBuffersARB
+    #define GLEXT_glGenBuffers                        glGenBuffersARB
+    #define GLEXT_glMapBuffer                         glMapBufferARB
+    #define GLEXT_glUnmapBuffer                       glUnmapBufferARB
 
     // Core since 2.0 - ARB_shading_language_100
     #define GLEXT_shading_language_100                sfogl_ext_ARB_shading_language_100
@@ -253,6 +285,12 @@
     #define GLEXT_GL_DRAW_FRAMEBUFFER                 GL_DRAW_FRAMEBUFFER_EXT
     #define GLEXT_GL_DRAW_FRAMEBUFFER_BINDING         GL_DRAW_FRAMEBUFFER_BINDING_EXT
     #define GLEXT_GL_READ_FRAMEBUFFER_BINDING         GL_READ_FRAMEBUFFER_BINDING_EXT
+
+    // Core since 3.1 - ARB_copy_buffer
+    #define GLEXT_copy_buffer                         sfogl_ext_ARB_copy_buffer
+    #define GLEXT_GL_COPY_READ_BUFFER                 GL_COPY_READ_BUFFER
+    #define GLEXT_GL_COPY_WRITE_BUFFER                GL_COPY_WRITE_BUFFER
+    #define GLEXT_glCopyBufferSubData                 glCopyBufferSubData
 
     // Core since 3.2 - ARB_geometry_shader4
     #define GLEXT_geometry_shader4                    sfogl_ext_ARB_geometry_shader4
