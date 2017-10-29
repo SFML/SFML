@@ -35,7 +35,19 @@ namespace
 {
     // OpenAL resources counter and its mutex
     unsigned int count = 0;
-    sf::Mutex mutex;
+    sf::Mutex& mutex()
+    {
+        // To prevent uninitialized used of the mutex.
+        // Transform to bool and pointer to create a phoenix singleton if needed
+        static sf::Mutex gMutex;
+        return gMutex;
+    }
+
+    namespace {
+        sf::Mutex& force_creation = mutex();
+        // Hide a force creation on global initialization space (thread safe)
+        // To remove on C++11
+    }
 
     // The audio device is instantiated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.
@@ -50,7 +62,7 @@ namespace sf
 AlResource::AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(mutex());
 
     // If this is the very first resource, trigger the global device initialization
     if (count == 0)
@@ -65,7 +77,7 @@ AlResource::AlResource()
 AlResource::~AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(mutex());
 
     // Decrement the resources counter
     count--;
