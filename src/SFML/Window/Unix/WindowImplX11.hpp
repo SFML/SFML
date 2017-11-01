@@ -34,6 +34,7 @@
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
 #include <X11/Xlib.h>
 #include <deque>
+#include <X11/extensions/Xrandr.h>
 
 
 namespace sf
@@ -265,6 +266,38 @@ private:
     bool processEvent(XEvent& windowEvent);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if a valid version of XRandR extension is present 
+    ///
+    /// \param xRandRMajor XRandR major version
+    /// \param xRandRMinor XRandR minor version
+    ///
+    /// \return True if a valid XRandR version found, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool checkXRandR(int& xRandRMajor, int& xRandRMinor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the RROutput of the primary monitor
+    ///
+    /// \param rootWindow the root window
+    /// \param res screen resources
+    /// \param xRandRMajor XRandR major version
+    /// \param xRandRMinor XRandR minor version
+    ///
+    /// \return RROutput of the primary monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    RROutput getOutputPrimary(::Window& rootWindow, XRRScreenResources* res, int xRandRMajor, int xRandRMinor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get coordinates of the primary monitor
+    ///
+    /// \return Position of the primary monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i getPrimaryMonitorPosition();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     ::Window           m_window;         ///< X identifier defining our window
@@ -275,6 +308,7 @@ private:
     std::deque<XEvent> m_events;         ///< Queue we use to store pending events for this window
     bool               m_isExternal;     ///< Tell whether the window has been created externally or by SFML
     int                m_oldVideoMode;   ///< Video mode in use before we switch to fullscreen
+    RRCrtc             m_oldRRCrtc;      ///< RRCrtc in use before we switch to fullscreen
     ::Cursor           m_hiddenCursor;   ///< As X11 doesn't provide cursor hiding, we must create a transparent one
     ::Cursor           m_lastCursor;     ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     bool               m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
