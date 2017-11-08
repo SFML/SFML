@@ -373,6 +373,12 @@ void RenderTarget::resetGLStates()
     // Check here to make sure a context change does not happen after activate(true)
     bool shaderAvailable = Shader::isAvailable();
 
+    // Workaround for states not being properly reset on
+    // macOS unless a context switch really takes place
+    #if defined(SFML_SYSTEM_MACOS)
+        setActive(false);
+    #endif
+
     if (setActive(true))
     {
         // Make sure that extensions are initialized
