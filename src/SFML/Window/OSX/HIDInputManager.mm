@@ -152,6 +152,7 @@ void HIDInputManager::initializeKeyboard()
     CFSetRef keyboards = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == NULL)
     {
+        sf::err() << "No keyboard detected by the HID manager!" << std::endl;
         freeUp();
         return;
     }
@@ -313,9 +314,11 @@ void HIDInputManager::freeUp()
 
     if (m_layoutData != 0)
         CFRelease(m_layoutData);
+    m_layoutData = 0;
     // Do not release m_layout! It is owned by m_layoutData.
     if (m_manager != 0)
         CFRelease(m_manager);
+    m_manager = 0;
 
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
     {
@@ -355,11 +358,8 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
 
 bool HIDInputManager::isPressed(IOHIDElements& elements)
 {
-    if (!m_isValid)
-    {
-        sf::err() << "HIDInputManager is invalid." << std::endl;
+    if (!m_isValid) 
         return false;
-    }
 
     // state = true if at least one corresponding HID button is pressed
     bool state = false;
