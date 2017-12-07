@@ -631,9 +631,9 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
             // Pixels are 1 bit monochrome values
-            for (int y = padding; y < height - padding; ++y)
+            for (unsigned int y = padding; y < height - padding; ++y)
             {
-                for (int x = padding; x < width - padding; ++x)
+                for (unsigned int x = padding; x < width - padding; ++x)
                 {
                     // The color channels remain white, just fill the alpha channel
                     std::size_t index = x + y * width;
@@ -645,9 +645,9 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         else
         {
             // Pixels are 8 bits gray levels
-            for (int y = padding; y < height - padding; ++y)
+            for (unsigned int y = padding; y < height - padding; ++y)
             {
-                for (int x = padding; x < width - padding; ++x)
+                for (unsigned int x = padding; x < width - padding; ++x)
                 {
                     // The color channels remain white, just fill the alpha channel
                     std::size_t index = x + y * width;

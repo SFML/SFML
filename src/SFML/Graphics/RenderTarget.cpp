@@ -298,7 +298,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         GLenum mode = modes[type];
 
         // Draw the primitives
-        glCheck(glDrawArrays(mode, 0, vertexCount));
+        glCheck(glDrawArrays(mode, 0, static_cast<GLsizei>(vertexCount)));
 
         // Unbind the shader, if any
         if (states.shader)

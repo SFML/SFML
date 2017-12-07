@@ -463,7 +463,7 @@ Ftp::Response Ftp::getResponse()
                         }
 
                         // Save the remaining data for the next time getResponse() is called
-                        m_receiveBuffer.assign(buffer + in.tellg(), length - in.tellg());
+                        m_receiveBuffer.assign(buffer + static_cast<std::streamoff>(in.tellg()), length - static_cast<std::size_t>(in.tellg()));
 
                         // Return the response code and message
                         return Response(static_cast<Response::Status>(code), message);
@@ -631,7 +631,7 @@ void Ftp::DataChannel::send(std::istream& stream)
             break;
         }
 
-        count = stream.gcount();
+        count = static_cast<std::size_t>(stream.gcount());
 
         if (count > 0)
         {

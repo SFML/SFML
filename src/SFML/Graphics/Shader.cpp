@@ -593,7 +593,7 @@ void Shader::setUniformArray(const std::string& name, const float* scalarArray, 
 {
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform1fv(binder.location, length, scalarArray));
+        glCheck(GLEXT_glUniform1fv(binder.location, static_cast<GLsizei>(length), scalarArray));
 }
 
 
@@ -604,7 +604,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec2* vectorAr
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform2fv(binder.location, length, &contiguous[0]));
+        glCheck(GLEXT_glUniform2fv(binder.location, static_cast<GLsizei>(length), &contiguous[0]));
 }
 
 
@@ -615,7 +615,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec3* vectorAr
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform3fv(binder.location, length, &contiguous[0]));
+        glCheck(GLEXT_glUniform3fv(binder.location, static_cast<GLsizei>(length), &contiguous[0]));
 }
 
 
@@ -626,7 +626,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorAr
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform4fv(binder.location, length, &contiguous[0]));
+        glCheck(GLEXT_glUniform4fv(binder.location, static_cast<GLsizei>(length), &contiguous[0]));
 }
 
 
@@ -641,7 +641,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixAr
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, length, GL_FALSE, &contiguous[0]));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, &contiguous[0]));
 }
 
 
@@ -656,7 +656,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixAr
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, length, GL_FALSE, &contiguous[0]));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, &contiguous[0]));
 }
 
 
