@@ -39,6 +39,7 @@
 #include <GL/gl.h>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utf.hpp>
+#include <Dbt.h>
 #include <vector>
 #include <cstring>
 
@@ -54,11 +55,6 @@
 #endif
 #ifndef MAPVK_VK_TO_VSC
     #define MAPVK_VK_TO_VSC (0)
-#endif
-
-// Avoid including <Dbt.h> just for one define
-#ifndef DBT_DEVNODES_CHANGED
-    #define DBT_DEVNODES_CHANGED 0x0007
 #endif
 
 namespace
@@ -215,6 +211,10 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Create the window
     m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+
+    // Register to receive device interface change notifications (used for joystick connection handling)
+    DEV_BROADCAST_HDR deviceBroadcastHeader = {sizeof(DEV_BROADCAST_HDR), DBT_DEVTYP_DEVICEINTERFACE, 0};
+    RegisterDeviceNotification(m_handle, &deviceBroadcastHeader, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
     if (m_handle)
@@ -983,8 +983,15 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DEVICECHANGE:
         {
             // Some sort of device change has happened, update joystick connections
-            if (wParam == DBT_DEVNODES_CHANGED)
-                JoystickImpl::updateConnections();
+            if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
+            {
+                // Some sort of device change has happened, update joystick connections if it is a device interface
+                DEV_BROADCAST_HDR* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
+
+                if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
+                    JoystickImpl::updateConnections();
+            }
+
             break;
         }
     }
