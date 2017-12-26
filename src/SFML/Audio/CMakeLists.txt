@@ -39,20 +39,24 @@ set(CODECS_SRC
     ${INCROOT}/SoundFileFactory.hpp
     ${INCROOT}/SoundFileFactory.inl
     ${INCROOT}/SoundFileReader.hpp
-    ${SRCROOT}/SoundFileReaderFlac.hpp
-    ${SRCROOT}/SoundFileReaderFlac.cpp
     ${SRCROOT}/SoundFileReaderOgg.hpp
     ${SRCROOT}/SoundFileReaderOgg.cpp
     ${SRCROOT}/SoundFileReaderWav.hpp
     ${SRCROOT}/SoundFileReaderWav.cpp
     ${INCROOT}/SoundFileWriter.hpp
-    ${SRCROOT}/SoundFileWriterFlac.hpp
-    ${SRCROOT}/SoundFileWriterFlac.cpp
-    ${SRCROOT}/SoundFileWriterOgg.hpp
-    ${SRCROOT}/SoundFileWriterOgg.cpp
     ${SRCROOT}/SoundFileWriterWav.hpp
     ${SRCROOT}/SoundFileWriterWav.cpp
 )
+if(SFML_ENABLE_VORBIS_ENCODING)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterOgg.cpp)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterOgg.hpp)
+endif()
+if(SFML_ENABLE_FLAC)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileReaderFlac.cpp)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileReaderFlac.hpp)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterFlac.cpp)
+    list(APPEND CODECS_SRC ${SRCROOT}/SoundFileWriterFlac.hpp)
+endif()
 source_group("codecs" FILES ${CODECS_SRC})
 
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
@@ -82,9 +86,14 @@ if(NOT SFML_OS_IOS)
     include_directories(${OPENAL_INCLUDE_DIR})
 endif()
 include_directories(${VORBIS_INCLUDE_DIRS})
-include_directories(${FLAC_INCLUDE_DIR})
+if(SFML_ENABLE_FLAC)
+    include_directories(${FLAC_INCLUDE_DIR})
+endif()
 add_definitions(-DOV_EXCLUDE_STATIC_CALLBACKS) # avoids warnings in vorbisfile.h
-add_definitions(-DFLAC__NO_DLL)
+
+if(SFML_ENABLE_FLAC)
+    add_definitions(-DFLAC__NO_DLL)
+endif()
 
 # build the list of external libraries to link
 if(SFML_OS_IOS)

@@ -25,6 +25,8 @@
 #ifndef SFML_SOUNDFILEREADERFLAC_HPP
 #define SFML_SOUNDFILEREADERFLAC_HPP
 
+#ifdef SFML_FLAC
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -139,5 +141,6 @@ private:
 
 } // namespace sf
 
+#endif // SFML_FLAC
 
 #endif // SFML_SOUNDFILEREADERFLAC_HPP

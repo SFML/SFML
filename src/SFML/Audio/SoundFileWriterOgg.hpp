@@ -25,6 +25,8 @@
 #ifndef SFML_SOUNDFILEWRITEROGG_HPP
 #define SFML_SOUNDFILEWRITEROGG_HPP
 
+#ifdef SFML_VORBIS_ENCODING
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -118,5 +120,6 @@ private:
 
 } // namespace sf
 
+#endif // SFML_VORBIS_ENCODING
 
 #endif // SFML_SOUNDFILEWRITEROGG_HPP

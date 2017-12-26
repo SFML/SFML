@@ -45,10 +45,14 @@ namespace
         static bool registered = false;
         if (!registered)
         {
+#ifdef SFML_FLAC
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
+#endif
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
+#ifdef SFML_VORBIS_ENCODING
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
+#endif
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterWav>();
             registered = true;
