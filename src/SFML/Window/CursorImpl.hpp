@@ -34,7 +34,7 @@
 
     #include <SFML/Window/Win32/CursorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
     #include <SFML/Window/Unix/CursorImpl.hpp>
 
