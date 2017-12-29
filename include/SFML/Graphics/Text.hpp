@@ -37,12 +37,14 @@
 #include <SFML/System/String.hpp>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 
 namespace sf
 {
 class Font;
+class Texture;
 
 ////////////////////////////////////////////////////////////
 /// \brief Graphical text that can be drawn to a render target
@@ -426,6 +428,11 @@ private:
     void ensureGeometryUpdate() const;
 
     ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    using VertexArrayMap = std::unordered_map<const Texture*, VertexArray>; ///< Map from texture to vertex array containing the text's geometry
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     String                m_string;              //!< String to display
@@ -437,8 +444,8 @@ private:
     Color                 m_fillColor;           //!< Text fill color
     Color                 m_outlineColor;        //!< Text outline color
     float                 m_outlineThickness;    //!< Thickness of the text's outline
-    mutable VertexArray   m_vertices;            //!< Vertex array containing the fill geometry
-    mutable VertexArray   m_outlineVertices;     //!< Vertex array containing the outline geometry
+    mutable VertexArrayMap   m_fillVerticesMap;            //!< Vertex array containing the fill geometry
+    mutable VertexArrayMap   m_outlineVerticesMap;     //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;              //!< Bounding rectangle of the text (in local coordinates)
     mutable bool          m_geometryNeedUpdate;  //!< Does the geometry need to be recomputed?
     mutable std::uint64_t m_fontTextureId;       //!< The font texture id
