@@ -38,7 +38,7 @@ namespace sf
 class InputStream;
 class RenderTarget;
 class RenderTexture;
-class Text;
+class Font;
 class Window;
 
 ////////////////////////////////////////////////////////////
@@ -585,7 +585,7 @@ public:
 
 private:
 
-    friend class Text;
+    friend class Font;
     friend class RenderTexture;
     friend class RenderTarget;
 
