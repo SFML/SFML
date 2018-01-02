@@ -119,8 +119,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
     elseif(SFML_OS_OPENBSD)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
-            ${SRCROOT}/Android/JoystickImpl.cpp
-            ${SRCROOT}/Android/JoystickImpl.hpp
+            ${SRCROOT}/OpenBSD/JoystickImpl.cpp
+            ${SRCROOT}/OpenBSD/JoystickImpl.hpp
         )
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
