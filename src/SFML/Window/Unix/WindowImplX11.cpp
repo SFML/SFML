@@ -1034,6 +1034,9 @@ void WindowImplX11::setVisible(bool visible)
     {
         XMapWindow(m_display, m_window);
 
+        if(m_fullscreen)
+            switchToFullscreen();
+
         XFlush(m_display);
 
         // Before continuing, make sure the WM has
