@@ -382,6 +382,7 @@ namespace
             case XK_bracketleft:  return sf::Keyboard::LBracket;
             case XK_bracketright: return sf::Keyboard::RBracket;
             case XK_comma:        return sf::Keyboard::Comma;
+            case XK_exclam:       return sf::Keyboard::Exclamation;
             case XK_period:       return sf::Keyboard::Period;
             case XK_apostrophe:   return sf::Keyboard::Quote;
             case XK_backslash:    return sf::Keyboard::BackSlash;

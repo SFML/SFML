@@ -1022,6 +1022,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case VK_OEM_6:      return Keyboard::RBracket;
         case VK_OEM_COMMA:  return Keyboard::Comma;
         case VK_OEM_PERIOD: return Keyboard::Period;
+        case VK_OEM_8:      return Keyboard::Exclamation;
         case VK_OEM_7:      return Keyboard::Quote;
         case VK_OEM_5:      return Keyboard::BackSlash;
         case VK_OEM_3:      return Keyboard::Tilde;
