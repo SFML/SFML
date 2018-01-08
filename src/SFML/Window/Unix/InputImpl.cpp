@@ -61,6 +61,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::LBracket:   keysym = XK_bracketleft;  break;
         case Keyboard::RBracket:   keysym = XK_bracketright; break;
         case Keyboard::Comma:      keysym = XK_comma;        break;
+        case Keyboard::Exclamation:keysym = XK_exclam;       break;
         case Keyboard::Period:     keysym = XK_period;       break;
         case Keyboard::Quote:      keysym = XK_apostrophe;   break;
         case Keyboard::BackSlash:  keysym = XK_backslash;    break;

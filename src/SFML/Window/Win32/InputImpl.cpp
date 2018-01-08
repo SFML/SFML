@@ -100,6 +100,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::SemiColon:  vkey = VK_OEM_1;      break;
         case Keyboard::Comma:      vkey = VK_OEM_COMMA;  break;
         case Keyboard::Period:     vkey = VK_OEM_PERIOD; break;
+        case Keyboard::Exclamation:vkey = VK_OEM_8;      break;
         case Keyboard::Quote:      vkey = VK_OEM_7;      break;
         case Keyboard::Slash:      vkey = VK_OEM_2;      break;
         case Keyboard::BackSlash:  vkey = VK_OEM_5;      break;
