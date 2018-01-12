@@ -8,4 +8,4 @@ set(SRC ${SRCROOT}/Pong.cpp)
 sfml_add_example(pong GUI_APP
                  SOURCES ${SRC}
                  DEPENDS sfml-audio sfml-graphics sfml-window sfml-system
-                 INSTALL_RESOURCES_DIR)
+                 RESOURCES_DIR resources)

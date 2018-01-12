@@ -8,4 +8,4 @@ set(SRC ${SRCROOT}/Sound.cpp)
 sfml_add_example(sound
                  SOURCES ${SRC}
                  DEPENDS sfml-audio sfml-system
-                 INSTALL_RESOURCES_DIR)
+                 RESOURCES_DIR resources)

@@ -10,4 +10,4 @@ set(SRC
 sfml_add_example(shader GUI_APP
                  SOURCES ${SRC}
                  DEPENDS sfml-graphics sfml-window sfml-system
-                 INSTALL_RESOURCES_DIR)
+                 RESOURCES_DIR resources)
