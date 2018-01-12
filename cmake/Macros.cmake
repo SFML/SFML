@@ -151,21 +151,29 @@ endmacro()
 # add a new target which is a SFML example
 # ex: sfml_add_example(ftp
 #                      SOURCES ftp.cpp ...
-#                      DEPENDS sfml-network sfml-system)
+#                      BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
+#                      DEPENDS sfml-network sfml-system
+#                      [INSTALL_RESOURCES_DIR])             # In addition to the sources, also install the "resources" directory
 macro(sfml_add_example target)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "GUI_APP" "" "SOURCES;DEPENDS" ${ARGN})
+    cmake_parse_arguments(THIS "GUI_APP;INSTALL_RESOURCES_DIR" "" "SOURCES;BUNDLE_RESOURCES;DEPENDS" ${ARGN})
 
     # set a source group for the source files
     source_group("" FILES ${THIS_SOURCES})
 
+    # check whether resources must be added in target
+    set(target_input ${THIS_SOURCES})
+    if(THIS_BUNDLE_RESOURCES)
+        set(target_input ${target_input} ${THIS_BUNDLE_RESOURCES})
+    endif()
+
     # create the target
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
-        add_executable(${target} WIN32 ${THIS_SOURCES})
+        add_executable(${target} WIN32 ${target_input})
         target_link_libraries(${target} sfml-main)
     else()
-        add_executable(${target} ${THIS_SOURCES})
+        add_executable(${target} ${target_input})
     endif()
 
     # set the debug suffix
@@ -198,12 +206,14 @@ macro(sfml_add_example target)
             DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
             COMPONENT examples)
 
-    # install the example's resources as well
-    set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
-    if(EXISTS ${EXAMPLE_RESOURCES})
-        install(DIRECTORY ${EXAMPLE_RESOURCES}
-                DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-                COMPONENT examples)
+    if (THIS_INSTALL_RESOURCES_DIR)
+        # install the example's resources as well
+        set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
+        if(EXISTS ${EXAMPLE_RESOURCES})
+            install(DIRECTORY ${EXAMPLE_RESOURCES}
+                    DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+                    COMPONENT examples)
+        endif()
     endif()
 
 endmacro()
