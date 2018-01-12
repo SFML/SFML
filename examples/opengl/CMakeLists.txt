@@ -13,4 +13,4 @@ set(ADDITIONAL_LIBRARIES ${OPENGL_LIBRARIES})
 sfml_add_example(opengl GUI_APP
                  SOURCES ${SRC}
                  DEPENDS sfml-graphics sfml-window sfml-system ${ADDITIONAL_LIBRARIES}
-                 INSTALL_RESOURCES_DIR)
+                 RESOURCES_DIR resources)

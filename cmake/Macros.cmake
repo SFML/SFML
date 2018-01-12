@@ -153,11 +153,11 @@ endmacro()
 #                      SOURCES ftp.cpp ...
 #                      BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
 #                      DEPENDS sfml-network sfml-system
-#                      [INSTALL_RESOURCES_DIR])             # In addition to the sources, also install the "resources" directory
+#                      RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "GUI_APP;INSTALL_RESOURCES_DIR" "" "SOURCES;BUNDLE_RESOURCES;DEPENDS" ${ARGN})
+    cmake_parse_arguments(THIS "GUI_APP" "RESOURCES_DIR" "SOURCES;BUNDLE_RESOURCES;DEPENDS" ${ARGN})
 
     # set a source group for the source files
     source_group("" FILES ${THIS_SOURCES})
@@ -206,14 +206,16 @@ macro(sfml_add_example target)
             DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
             COMPONENT examples)
 
-    if (THIS_INSTALL_RESOURCES_DIR)
+    if (THIS_RESOURCES_DIR)
         # install the example's resources as well
-        set(EXAMPLE_RESOURCES "${CMAKE_SOURCE_DIR}/examples/${target}/resources")
-        if(EXISTS ${EXAMPLE_RESOURCES})
-            install(DIRECTORY ${EXAMPLE_RESOURCES}
-                    DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
-                    COMPONENT examples)
+        get_filename_component(THIS_RESOURCES_DIR "${THIS_RESOURCES_DIR}" ABSOLUTE)
+
+        if(NOT EXISTS "${THIS_RESOURCES_DIR}")
+            message(FATAL_ERROR "Given resources directory to install does not exist: ${THIS_RESOURCES_DIR}")
         endif()
+        install(DIRECTORY ${THIS_RESOURCES_DIR}
+                DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+                COMPONENT examples)
     endif()
 
 endmacro()
