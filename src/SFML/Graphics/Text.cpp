@@ -84,7 +84,8 @@ m_outlineThickness  (0),
 m_vertices          (Triangles),
 m_outlineVertices   (Triangles),
 m_bounds            (),
-m_geometryNeedUpdate(false)
+m_geometryNeedUpdate(false),
+m_fontTextureId     (0)
 {
 
 }
@@ -102,7 +103,8 @@ m_outlineThickness  (0),
 m_vertices          (Triangles),
 m_outlineVertices   (Triangles),
 m_bounds            (),
-m_geometryNeedUpdate(true)
+m_geometryNeedUpdate(true),
+m_fontTextureId     (0)
 {
 
 }
@@ -346,9 +348,15 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Text::ensureGeometryUpdate() const
 {
-    // Do nothing, if geometry has not changed
-    if (!m_geometryNeedUpdate)
+    if (!m_font)
         return;
+
+    // Do nothing, if geometry has not changed and the font texture has not changed
+    if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).m_cacheId == m_fontTextureId)
+        return;
+
+    // Save the current fonts texture id
+    m_fontTextureId = m_font->getTexture(m_characterSize).m_cacheId;
 
     // Mark geometry as updated
     m_geometryNeedUpdate = false;
@@ -358,8 +366,8 @@ void Text::ensureGeometryUpdate() const
     m_outlineVertices.clear();
     m_bounds = FloatRect();
 
-    // No font or text: nothing to draw
-    if (!m_font || m_string.isEmpty())
+    // No text: nothing to draw
+    if (m_string.isEmpty())
         return;
 
     // Compute values related to the text style
