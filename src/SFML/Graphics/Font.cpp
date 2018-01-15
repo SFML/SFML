@@ -73,7 +73,8 @@ m_face     (NULL),
 m_streamRec(NULL),
 m_stroker  (NULL),
 m_refCount (NULL),
-m_info     ()
+m_info     (),
+m_dirtiness(0)
 {
     #ifdef SFML_SYSTEM_ANDROID
         m_stream = NULL;
@@ -90,7 +91,8 @@ m_stroker    (copy.m_stroker),
 m_refCount   (copy.m_refCount),
 m_info       (copy.m_info),
 m_pages      (copy.m_pages),
-m_pixelBuffer(copy.m_pixelBuffer)
+m_pixelBuffer(copy.m_pixelBuffer),
+m_dirtiness  (1)
 {
     #ifdef SFML_SYSTEM_ANDROID
         m_stream = NULL;
@@ -126,6 +128,9 @@ bool Font::loadFromFile(const std::string& filename)
     // Cleanup the previous resources
     cleanup();
     m_refCount = new int(1);
+
+    // Bump dirtiness
+    ++m_dirtiness;
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -192,6 +197,9 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     cleanup();
     m_refCount = new int(1);
 
+    // Bump dirtiness
+    ++m_dirtiness;
+
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
     // global manager that would create a lot of issues regarding creation and destruction order.
@@ -246,6 +254,9 @@ bool Font::loadFromStream(InputStream& stream)
     // Cleanup the previous resources
     cleanup();
     m_refCount = new int(1);
+
+    // Bump dirtiness
+    ++m_dirtiness;
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -462,12 +473,20 @@ Font& Font::operator =(const Font& right)
     std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
+    std::swap(m_dirtiness,   temp.m_dirtiness);
 
     #ifdef SFML_SYSTEM_ANDROID
         std::swap(m_stream, temp.m_stream);
     #endif
 
     return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint64 Font::getDirtiness() const
+{
+    return m_dirtiness;
 }
 
 

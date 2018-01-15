@@ -393,6 +393,7 @@ private:
     mutable VertexArray m_outlineVertices;    ///< Vertex array containing the outline geometry
     mutable FloatRect   m_bounds;             ///< Bounding rectangle of the text (in local coordinates)
     mutable bool        m_geometryNeedUpdate; ///< Does the geometry need to be recomputed?
+    mutable Uint64      m_lastDirtiness;      ///< Dirtiness value the font had at the time of last geometry update
 };
 
 } // namespace sf
