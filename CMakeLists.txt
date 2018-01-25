@@ -488,16 +488,21 @@ elseif(SFML_OS_MACOSX)
 
 elseif(SFML_OS_IOS)
 
-    # fix CMake install rules broken for iOS (see https://public.kitware.com/Bug/view.php?id=12506)
-    if(SFML_OS_IOS)
-        install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
-    endif()
+    # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
 
     if(NOT SFML_USE_SYSTEM_DEPS)
         # since the iOS libraries are built as static, we must install the SFML dependencies
         # too so that the end user can easily link them to its final application
         if(SFML_BUILD_GRAPHICS)
             install(FILES extlibs/libs-ios/libfreetype.a DESTINATION lib)
+        endif()
+
+        if(SFML_BUILD_AUDIO)
+            install(FILES extlibs/libs-ios/libflac.a 
+                          extlibs/libs-ios/libvorbis.a
+                          extlibs/libs-ios/libogg.a
+                          DESTINATION lib)
         endif()
     endif()
 
