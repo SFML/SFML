@@ -72,6 +72,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
+    ${SRCROOT}/VertexBuffer.cpp
+    ${INCROOT}/VertexBuffer.hpp
 )
 source_group("drawables" FILES ${DRAWABLES_SRC})
 
@@ -91,17 +93,13 @@ include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers/stb_image")
 
 # let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 elseif(SFML_OS_IOS)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_ANDROID)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 endif()
 
@@ -111,21 +109,19 @@ if(NOT SFML_OPENGL_ES)
     if(SFML_OS_LINUX)
         find_package(X11 REQUIRED)
     endif()
-    include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+    include_directories(${FREETYPE_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
 endif()
 if(SFML_OPENGL_ES AND SFML_OS_LINUX)
     find_package(EGL REQUIRED)
     find_package(GLES REQUIRED)
     include_directories(${EGL_INCLUDE_DIR} ${GLES_INCLUDE_DIR})
 endif()
-if(SFML_OS_ANDROID)
-    find_host_package(JPEG REQUIRED)
+if(SFML_OS_ANDROID OR SFML_OS_IOS)
     find_host_package(Freetype REQUIRED)
 else()
-    find_package(JPEG REQUIRED)
     find_package(Freetype REQUIRED)
 endif()
-include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
+include_directories(${FREETYPE_INCLUDE_DIRS})
 
 # build the list of external libraries to link
 if(NOT SFML_OPENGL_ES)
@@ -142,7 +138,7 @@ if(SFML_OS_IOS)
 elseif(SFML_OS_ANDROID)
     list(APPEND GRAPHICS_EXT_LIBS z)
 endif()
-list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY})
 
 # add preprocessor symbols
 add_definitions(-DSTBI_FAILURE_USERMSG)

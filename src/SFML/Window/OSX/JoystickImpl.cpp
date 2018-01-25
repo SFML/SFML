@@ -147,19 +147,16 @@ bool JoystickImpl::isConnected(unsigned int index)
                     // If there exists a device d s.t. there is no j s.t.
                     // m_locationIDs[j] == d's location then we have a new device.
 
-                    for (CFIndex didx(0); didx < size; ++didx)
+                    for (CFIndex didx(0); !state && didx < size; ++didx)
                     {
                         IOHIDDeviceRef d = (IOHIDDeviceRef)array[didx];
                         Location dloc = HIDInputManager::getLocationID(d);
 
                         bool foundJ = false;
-                        for (unsigned int j(0); j < Joystick::Count; ++j)
+                        for (unsigned int j(0); !foundJ && j < Joystick::Count; ++j)
                         {
                             if (m_locationIDs[j] == dloc)
-                            {
                                 foundJ = true;
-                                break; // no need to loop again
-                            }
                         }
 
                         if (!foundJ) {
@@ -167,7 +164,6 @@ bool JoystickImpl::isConnected(unsigned int index)
                             // We set it up for Open(..)
                             m_locationIDs[index] = dloc;
                             state = true;
-                            break; // We stop looking for a new device
                         }
                     }
                 }
@@ -185,6 +181,7 @@ bool JoystickImpl::isConnected(unsigned int index)
 bool JoystickImpl::open(unsigned int index)
 {
     m_index = index;
+    m_hat = NULL;
     Location deviceLoc = m_locationIDs[index]; // The device we need to load
 
     // Get all devices
@@ -199,19 +196,15 @@ bool JoystickImpl::open(unsigned int index)
 
     // Get the desired joystick.
     IOHIDDeviceRef self = 0;
-    for (CFIndex i(0); i < joysticksCount; ++i)
+    for (CFIndex i(0); self == 0 && i < joysticksCount; ++i)
     {
         IOHIDDeviceRef d = (IOHIDDeviceRef)devicesArray[i];
         if (deviceLoc == HIDInputManager::getLocationID(d))
-        {
             self = d;
-            break; // We found it so we stop looping.
-        }
     }
 
     if (self == 0)
     {
-        // This shouldn't happen!
         CFRelease(devices);
         return false;
     }
@@ -229,24 +222,14 @@ bool JoystickImpl::open(unsigned int index)
         return false;
     }
 
-    // How many elements are there?
-    CFIndex elementsCount = CFArrayGetCount(elements);
-
-    if (elementsCount == 0)
-    {
-        // What is a joystick with no element?
-        CFRelease(elements);
-        CFRelease(devices);
-        return false;
-    }
-
     // Go through all connected elements.
+    CFIndex elementsCount = CFArrayGetCount(elements);
     for (int i = 0; i < elementsCount; ++i)
     {
         IOHIDElementRef element = (IOHIDElementRef) CFArrayGetValueAtIndex(elements, i);
-        switch (IOHIDElementGetType(element))
+        switch (IOHIDElementGetUsagePage(element))
         {
-            case kIOHIDElementTypeInput_Misc:
+            case kHIDPage_GenericDesktop:
                 switch (IOHIDElementGetUsage(element))
                 {
                     case kHIDUsage_GD_X:  m_axis[Joystick::X] = element; break;
@@ -255,19 +238,64 @@ bool JoystickImpl::open(unsigned int index)
                     case kHIDUsage_GD_Rx: m_axis[Joystick::U] = element; break;
                     case kHIDUsage_GD_Ry: m_axis[Joystick::V] = element; break;
                     case kHIDUsage_GD_Rz: m_axis[Joystick::R] = element; break;
-                    default: break;
-                    // kHIDUsage_GD_Vx, kHIDUsage_GD_Vy, kHIDUsage_GD_Vz are ignored.
+
+                    case kHIDUsage_GD_Hatswitch:
+                        // From §4.3 MiscellaneousControls of HUT v1.12:
+                        //
+                        // > Hat Switch:
+                        // >   A typical example is four switches that are capable of generating
+                        // >   information about four possible directions in which the knob can be
+                        // >   tilted. Intermediate positions can also be decoded if the hardware
+                        // >   allows two switches to be reported simultaneously.
+                        //
+                        // We assume this model here as well. Hence, with 4 switches and intermediate
+                        // positions we have 8 values (0-7) plus the "null" state (8).
+                        {
+                            CFIndex min = IOHIDElementGetLogicalMin(element);
+                            CFIndex max = IOHIDElementGetLogicalMax(element);
+
+                            if (min != 0 || max != 7)
+                            {
+                                sf::err() << std::hex
+                                          << "Joystick (vendor/product id: 0x" << m_identification.vendorId
+                                          << "/0x" << m_identification.productId << std::dec
+                                          << ") range is an unexpected one: [" << min << ", " << max << "]"
+                                          << std::endl;
+                            }
+                            else
+                            {
+                                m_hat = element;
+                            }
+                        }
+                        break;
+
+                    case kHIDUsage_GD_GamePad:
+                        // We assume a game pad is an application collection, meaning it doesn't hold
+                        // any values per say. They kind of "emit" the joystick's usages.
+                        // See §3.4.3 Usage Types (Collection) of HUT v1.12
+                        if (IOHIDElementGetCollectionType(element) != kIOHIDElementCollectionTypeApplication)
+                        {
+                            sf::err() << std::hex << "Gamepage (vendor/product id: 0x" << m_identification.vendorId
+                                      << "/0x" << m_identification.productId << ") is not an CA but a 0x"
+                                      << IOHIDElementGetCollectionType(element) << std::dec << std::endl;
+                        }
+                        break;
+
+                    default:
+#ifdef SFML_DEBUG
+                        sf::err() << "Unexpected usage for element of Page Generic Desktop: 0x" << std::hex << IOHIDElementGetUsage(element) << std::dec << std::endl;
+#endif
+                        break;
                 }
                 break;
 
-            case kIOHIDElementTypeInput_Button:
+            case kHIDPage_Button:
                 if (m_buttons.size() < Joystick::ButtonCount) // If we have free slot...
                     m_buttons.push_back(element); // ...we add this element to the list
                 // Else: too many buttons. We ignore this one.
                 break;
 
-            default: // Make compiler happy
-                break;
+            default: /* No other page is expected because of the mask applied by the HID manager. */ break;
         }
     }
 
@@ -275,17 +303,16 @@ bool JoystickImpl::open(unsigned int index)
     // HID Usage (assigned by manufacturer and/or a driver).
     std::sort(m_buttons.begin(), m_buttons.end(), JoystickButtonSortPredicate);
 
-    // Note: Joy::AxisPovX/Y are not supported (yet).
-    // Maybe kIOHIDElementTypeInput_Axis is the corresponding type but I can't test.
-
     // Retain all these objects for personal use
     for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it)
         CFRetain(*it);
     for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
         CFRetain(it->second);
+    if (m_hat != NULL)
+        CFRetain(m_hat);
 
     // Note: we didn't retain element in the switch because we might have multiple
-    // Axis X (for example) and we want to keep only the last one. So to prevent
+    // Axis X (for example) and we want to keep only the last one. To prevent
     // leaking we retain objects 'only' now.
 
     CFRelease(devices);
@@ -306,6 +333,10 @@ void JoystickImpl::close()
         CFRelease(it->second);
     m_axis.clear();
 
+    if (m_hat != NULL)
+        CFRelease(m_hat);
+    m_hat = NULL;
+
     // And we unregister this joystick
     m_locationIDs[m_index] = 0;
 }
@@ -320,9 +351,11 @@ JoystickCaps JoystickImpl::getCapabilities() const
     caps.buttonCount = m_buttons.size();
 
     // Axis:
-    for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it) {
+    for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it)
         caps.axes[it->first] = true;
-    }
+
+    if (m_hat != NULL)
+        caps.axes[Joystick::PovX] = caps.axes[Joystick::PovY] = true;
 
     return caps;
 }
@@ -339,7 +372,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     static const JoystickState disconnectedState; // return this if joystick was disconnected
-    JoystickState       state; // otherwise return that
+    JoystickState state; // otherwise return that
     state.connected = true;
 
     // Note: free up is done in close() which is called, if required,
@@ -360,14 +393,11 @@ JoystickState JoystickImpl::update()
 
     // Search for it
     bool found = false;
-    for (CFIndex i(0); i < joysticksCount; ++i)
+    for (CFIndex i(0); !found && i < joysticksCount; ++i)
     {
         IOHIDDeviceRef d = (IOHIDDeviceRef)devicesArray[i];
         if (selfLoc == HIDInputManager::getLocationID(d))
-        {
             found = true;
-            break; // Stop looping
-        }
     }
 
     // Release unused stuff
@@ -387,7 +417,6 @@ JoystickState JoystickImpl::update()
         // Check for plug out.
         if (!value)
         {
-            // No value? Hum... Seems like the joystick is gone
             return disconnectedState;
         }
 
@@ -404,7 +433,6 @@ JoystickState JoystickImpl::update()
         // Check for plug out.
         if (!value)
         {
-            // No value? Hum... Seems like the joystick is gone
             return disconnectedState;
         }
 
@@ -427,9 +455,70 @@ JoystickState JoystickImpl::update()
         state.axes[it->first] = scaledValue;
     }
 
+    // Update POV/Hat state. Assuming model described in `open`, values are:
+    //
+    //   North-West / 7    North / 0   North-East / 1
+    //   West / 6          Null  / 8         East / 2
+    //   South-West / 5    South / 4   South-East / 3
+    //
+    if (m_hat != NULL)
+    {
+        IOHIDValueRef value = 0;
+        IOHIDDeviceGetValue(IOHIDElementGetDevice(m_hat), m_hat, &value);
+
+        // Check for plug out.
+        if (!value)
+        {
+            return disconnectedState;
+        }
+
+        CFIndex raw = IOHIDValueGetIntegerValue(value);
+
+        // Load PovX
+        switch (raw)
+        {
+            case 1:
+            case 2:
+            case 3:
+               state.axes[Joystick::PovX] = +100;
+               break;
+
+             case 5:
+             case 6:
+             case 7:
+               state.axes[Joystick::PovX] = -100;
+               break;
+
+            default:
+               state.axes[Joystick::PovX] = 0;
+               break;
+        }
+
+        // Load PovY
+        switch (raw)
+        {
+            case 0:
+            case 1:
+            case 7:
+               state.axes[Joystick::PovY] = +100;
+               break;
+
+             case 3:
+             case 4:
+             case 5:
+               state.axes[Joystick::PovY] = -100;
+               break;
+
+            default:
+               state.axes[Joystick::PovY] = 0;
+               break;
+        }
+    }
+
     return state;
 }
 
 } // namespace priv
 
 } // namespace sf
+

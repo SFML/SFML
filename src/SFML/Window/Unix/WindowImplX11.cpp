@@ -77,6 +77,21 @@ namespace
 
     static const unsigned int             maxTrialsCount = 5;
 
+    // Predicate we use to find key repeat events in processEvent
+    struct KeyRepeatFinder
+    {
+        KeyRepeatFinder(unsigned int keycode, Time time) : keycode(keycode), time(time) {}
+
+        // Predicate operator that checks event type, keycode and timestamp
+        bool operator()(const XEvent& event)
+        {
+            return ((event.type == KeyPress) && (event.xkey.keycode == keycode) && (event.xkey.time - time < 2));
+        }
+
+        unsigned int keycode;
+        Time time;
+    };
+
     // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
@@ -752,8 +767,16 @@ WindowHandle WindowImplX11::getSystemHandle() const
 void WindowImplX11::processEvents()
 {
     XEvent event;
+
+    // Pick out the events that are interesting for this window
     while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
+        m_events.push_back(event);
+
+    // Handle the events for this window that we just picked out
+    while (!m_events.empty())
     {
+        event = m_events.front();
+        m_events.pop_front();
         processEvent(event);
     }
 }
@@ -1533,29 +1556,23 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
     // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
     // Detect repeated key events
-    // (code shamelessly taken from SDL)
     if (windowEvent.type == KeyRelease)
     {
-        // Check if there's a matching KeyPress event in the queue
-        XEvent nextEvent;
-        if (XPending(m_display))
-        {
-            // Grab it but don't remove it from the queue, it still needs to be processed :)
-            XPeekEvent(m_display, &nextEvent);
-            if (nextEvent.type == KeyPress)
-            {
-                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
-                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
-                {
-                    // If we don't want repeated events, remove the next KeyPress from the queue
-                    if (!m_keyRepeat)
-                        XNextEvent(m_display, &nextEvent);
+        // Find the next KeyPress event with matching keycode and time
+        std::deque<XEvent>::iterator iter = std::find_if(
+            m_events.begin(),
+            m_events.end(),
+            KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time)
+        );
 
-                    // This KeyRelease is a repeated event and we don't want it
-                    return false;
-                }
-            }
+        if (iter != m_events.end())
+        {
+            // If we don't want repeated events, remove the next KeyPress from the queue
+            if (!m_keyRepeat)
+                m_events.erase(iter);
+
+            // This KeyRelease is a repeated event and we don't want it
+            return false;
         }
     }
 

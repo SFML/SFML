@@ -266,7 +266,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Helper to convert a sample position to an sf::Time
     ///
-    /// \param position Sample count to convert to Time
+    /// \param samples Sample count to convert to Time
     ///
     /// \return The Time position of the given sample
     ///

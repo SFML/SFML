@@ -95,7 +95,7 @@ Int64 FileInputStream::seek(Int64 position)
 #else
     if (m_file)
     {
-        if (std::fseek(m_file, static_cast<std::size_t>(position), SEEK_SET))
+        if (std::fseek(m_file, static_cast<long>(position), SEEK_SET))
             return -1;
 
         return tell();

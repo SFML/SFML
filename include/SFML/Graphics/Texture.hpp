@@ -35,10 +35,11 @@
 
 namespace sf
 {
-class Window;
+class InputStream;
 class RenderTarget;
 class RenderTexture;
-class InputStream;
+class Text;
+class Window;
 
 ////////////////////////////////////////////////////////////
 /// \brief Image living on the graphics card that can be used for drawing
@@ -584,6 +585,7 @@ public:
 
 private:
 
+    friend class Text;
     friend class RenderTexture;
     friend class RenderTarget;
 

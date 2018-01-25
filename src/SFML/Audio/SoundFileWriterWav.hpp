@@ -113,8 +113,6 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     std::ofstream m_file;         ///< File stream to write to
-    Uint64        m_sampleCount;  ///< Total number of samples written to the file
-    unsigned int  m_channelCount; ///< Number of channels of the sound
 };
 
 } // namespace priv

@@ -403,6 +403,35 @@ SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right
 ////////////////////////////////////////////////////////////
 SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& right);
 
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator == to compare two transforms
+///
+/// Performs an element-wise comparison of the elements of the
+/// left transform with the elements of the right transform.
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator ==(const Transform& left, const Transform& right);
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator != to compare two transforms
+///
+/// This call is equivalent to !(left == right).
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are not equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator !=(const Transform& left, const Transform& right);
+
 } // namespace sf
 
 

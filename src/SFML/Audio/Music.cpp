@@ -188,7 +188,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
     // This will trip an "onLoop()" call from the underlying SoundStream,
     // and we can then take action.
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset <= loopEnd) && (currentOffset + toFill > loopEnd))
-        toFill = loopEnd - currentOffset;
+        toFill = static_cast<std::size_t>(loopEnd - currentOffset);
 
     // Fill the chunk parameters
     data.samples = &m_samples[0];

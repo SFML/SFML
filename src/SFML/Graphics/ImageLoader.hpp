@@ -118,19 +118,6 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     ~ImageLoader();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Save an image file in JPEG format
-    ///
-    /// \param filename Path of image file to save
-    /// \param pixels   Array of pixels to save to image
-    /// \param width    Width of image to save, in pixels
-    /// \param height   Height of image to save, in pixels
-    ///
-    /// \return True if saving was successful
-    ///
-    ////////////////////////////////////////////////////////////
-    bool writeJpg(const std::string& filename, const std::vector<Uint8>& pixels, unsigned int width, unsigned int height);
 };
 
 } // namespace priv

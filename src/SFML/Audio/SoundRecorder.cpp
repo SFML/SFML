@@ -188,7 +188,7 @@ bool SoundRecorder::setDevice(const std::string& name)
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
         // Open the requested capture device for capturing 16 bits samples
-        captureDevice = alcCaptureOpenDevice(name.c_str(), m_sampleRate, format, m_sampleRate);
+        captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, m_sampleRate);
         if (!captureDevice)
         {
             // Notify derived class

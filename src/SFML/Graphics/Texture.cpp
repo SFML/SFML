@@ -502,7 +502,11 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         if ((sourceStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE) && (destStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE))
         {
             // Blit the texture contents from the source to the destination texture
-            glCheck(GLEXT_glBlitFramebuffer(0, 0, texture.m_size.x, texture.m_size.y, x, y, x + texture.m_size.x, y + texture.m_size.y, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+            glCheck(GLEXT_glBlitFramebuffer(
+                0, texture.m_pixelsFlipped ? texture.m_size.y : 0, texture.m_size.x, texture.m_pixelsFlipped ? 0 : texture.m_size.y, // Source rectangle, flip y if source is flipped
+                x, y, x + texture.m_size.x, y + texture.m_size.y, // Destination rectangle
+                GL_COLOR_BUFFER_BIT, GL_NEAREST
+            ));
         }
         else
         {
@@ -516,6 +520,20 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         // Delete the framebuffers
         glCheck(GLEXT_glDeleteFramebuffers(1, &sourceFrameBuffer));
         glCheck(GLEXT_glDeleteFramebuffers(1, &destFrameBuffer));
+
+        // Make sure that the current texture binding will be preserved
+        priv::TextureSaver save;
+
+        // Set the parameters of this texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+        m_hasMipmap = false;
+        m_pixelsFlipped = false;
+        m_cacheId = getUniqueId();
+
+        // Force an OpenGL flush, so that the texture data will appear updated
+        // in all contexts immediately (solves problems in multi-threaded apps)
+        glCheck(glFlush());
 
         return;
     }

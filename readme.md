@@ -15,6 +15,7 @@ SFML is a simple, fast, cross-platform and object-oriented multimedia API. It pr
   - binary1248 (binary1248@hotmail.com)
   - Artur Moreira (artturmoreira@gmail.com)
   - Mario Liebisch (mario@sfml-dev.org)
+  - And many other members of the SFML community
 
 ## Download
 

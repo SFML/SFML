@@ -11,9 +11,6 @@ OGG=libogg-$OGG_VERSION
 SNDFILE_VERSION=1.0.25
 SNDFILE=libsndfile-$SNDFILE_VERSION
 
-JPEG_VERSION=9
-JPEG=jpeg-$JPEG_VERSION
-
 FREETYPE_VERSION=2.4.0
 FREETYPE=freetype-$FREETYPE_VERSION
 
@@ -41,12 +38,6 @@ wget -nc -P src http://www.mega-nerd.com/libsndfile/files/$SNDFILE.tar.gz
 if [ ! -d "$PWD/tmp/$SNDFILE" ]
 then
     tar -C build -xf src/$SNDFILE.tar.gz
-fi
-
-wget -nc -P src http://www.ijg.org/files/jpegsrc.v$JPEG_VERSION.tar.gz
-if [ ! -d "$PWD/tmp/$JPEG" ]
-then
-    tar -C build -xf src/jpegsrc.v$JPEG_VERSION.tar.gz
 fi
 
 wget -nc -P src http://download.savannah.gnu.org/releases/freetype/$FREETYPE.tar.gz
