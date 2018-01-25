@@ -119,8 +119,11 @@ bool SoundFileReaderOpus::open(InputStream& stream, Info& info)
     // Retrieve the music attributes
     const OpusHead* opusHead = op_head(m_opus, -1);
     info.channelCount = opusHead->channel_count;
-    info.sampleRate = opusHead->input_sample_rate;
     info.sampleCount = static_cast<std::size_t>(op_pcm_total(m_opus, -1) * opusHead->channel_count);
+
+    // All Opus audio is encoded at 48kHz
+    // https://opus-codec.org/docs/opusfile_api-0.5/structOpusHead.html#a73b80a913eca33d829f1667caee80d9e
+    info.sampleRate = 48000;
 
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
