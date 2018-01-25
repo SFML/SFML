@@ -43,7 +43,7 @@ std::streambuf::int_type LogcatStream::overflow (std::streambuf::int_type c)
     if (c == "\n"[0])
     {
         m_message.push_back(c);
-        LOGE(m_message.c_str());
+        LOGE("%s", m_message.c_str());
         m_message.clear();
     }
 

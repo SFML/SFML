@@ -143,6 +143,9 @@ if(SFML_OS_ANDROID)
         add_definitions("-DSTL_LIBRARY=${ANDROID_STL}")
     endif()
 
+    # let the user switch ABIs
+    set(ANDROID_ABI "armeabi-v7a" CACHE STRING "Look at the NDK docs for currently supported ABIs")
+
     # this is a workaround to compile sfml-activity without the stl library as a dependency
     # we save the original compilation command line to restore it later in Macro.cmake
     set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
