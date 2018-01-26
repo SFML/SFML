@@ -173,7 +173,7 @@ m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
-m_fullscreen      (style & Style::Fullscreen),
+m_fullscreen      ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed   (m_fullscreen)
 {
     // Set that this process is DPI aware and can handle DPI scaling
@@ -728,10 +728,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             {
                 Event event;
                 event.type        = Event::KeyPressed;
-                event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
-                event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
-                event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-                event.key.system  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
+                event.key.alt     = HIWORD(GetKeyState(VK_MENU))    != 0;
+                event.key.control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
+                event.key.shift   = HIWORD(GetKeyState(VK_SHIFT))   != 0;
+                event.key.system  = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
                 event.key.code    = virtualKeyCodeToSF(wParam, lParam);
                 pushEvent(event);
             }
@@ -744,10 +744,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type        = Event::KeyReleased;
-            event.key.alt     = HIWORD(GetAsyncKeyState(VK_MENU))    != 0;
-            event.key.control = HIWORD(GetAsyncKeyState(VK_CONTROL)) != 0;
-            event.key.shift   = HIWORD(GetAsyncKeyState(VK_SHIFT))   != 0;
-            event.key.system  = HIWORD(GetAsyncKeyState(VK_LWIN)) || HIWORD(GetAsyncKeyState(VK_RWIN));
+            event.key.alt     = HIWORD(GetKeyState(VK_MENU))    != 0;
+            event.key.control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
+            event.key.shift   = HIWORD(GetKeyState(VK_SHIFT))   != 0;
+            event.key.system  = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
             event.key.code    = virtualKeyCodeToSF(wParam, lParam);
             pushEvent(event);
             break;
