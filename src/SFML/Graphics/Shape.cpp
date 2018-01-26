@@ -251,6 +251,14 @@ void Shape::updateTexCoords()
 ////////////////////////////////////////////////////////////
 void Shape::updateOutline()
 {
+    // Return if there is no outline
+    if (m_outlineThickness == 0.f)
+    {
+        m_outlineVertices.clear();
+        m_bounds = m_insideBounds;
+        return;
+    }
+
     std::size_t count = m_vertices.getVertexCount() - 2;
     m_outlineVertices.resize((count + 1) * 2);
 
