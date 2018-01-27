@@ -38,6 +38,7 @@
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/XInput2.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -371,7 +372,7 @@ namespace
         if (XIQueryVersion(disp, &major, &minor) != BadRequest)
         {
             XIEventMask eventMask;
-            unsigned char mask[XIMaksLen(XI_RawMotion)];
+            unsigned char mask[XIMaskLen(XI_RawMotion)];
             std::memset(mask, 0, sizeof(mask));
 
             eventMask.deviceid = XIAllMasterDevices;
