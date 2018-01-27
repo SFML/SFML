@@ -366,23 +366,10 @@ namespace
     bool initXInput2(::Display* disp)
     {
         int opcode, event, error;
-        if (!XQueryExtension(disp, "XInputExtension", &opcode, &event, &error))
-            return false;
-
-        int major = 2, minor = 0;
-        if (XIQueryVersion(disp, &major, &minor) != BadRequest)
+        if (XQueryExtension(disp, "XInputExtension", &opcode, &event, &error))
         {
-            XIEventMask eventMask;
-            unsigned char mask[XIMaskLen(XI_RawMotion)];
-            std::memset(mask, 0, sizeof(mask));
-
-            eventMask.deviceid = XIAllMasterDevices;
-            eventMask.mask_len = sizeof(mask);
-            eventMask.mask = mask;
-
-            XISetMask(mask, XI_RawMotion);
-
-            if (XISelectEvents(disp, DefaultRootWindow(disp), &eventMask, 1) == Success)
+            int major = 2, minor = 0;
+            if (XIQueryVersion(disp, &major, &minor) != BadRequest)
             {
                 return true;
             }
@@ -519,6 +506,7 @@ m_oldVideoMode   (0),
 m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
+m_rawMouse       (false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     (false),
@@ -567,6 +555,7 @@ m_oldVideoMode   (0),
 m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
+m_rawMouse       (false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
@@ -1144,6 +1133,27 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
     m_keyRepeat = enabled;
 }
 
+void WindowImplX11::setRawMouseEnabled(bool enabled)
+{
+    if (!m_rawMouse)
+        return;
+
+    XIEventMask eventMask;
+    unsigned char mask[XIMaskLen(XI_LASTEVENT)];
+    std::memset(mask, 0, sizeof(mask));
+    eventMask.deviceid = XIAllMasterDevices;
+    eventMask.mask_len = sizeof(mask);
+    eventMask.mask = mask;
+
+    if (enabled)
+        XISetMask(mask, XI_RawMotion);
+    else
+        XISetMask(mask, 0);
+
+    if (XISelectEvents(m_display, DefaultRootWindow(m_display), &eventMask, 1) != Success)
+        err() << "Could not set XInput2 event mask\n" << std::endl;
+}
+
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
@@ -1505,7 +1515,8 @@ void WindowImplX11::initialize()
     }
 
     // Enable raw input
-    if (!initXInput2(m_display))
+    m_rawMouse = initXInput2(m_display);
+    if (!m_rawMouse)
         err() << "Failed to initialize xinput2" << std::endl;
 
     // Show the window
