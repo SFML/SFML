@@ -97,7 +97,8 @@ namespace
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
-        return event->xany.window == reinterpret_cast< ::Window >(userData);
+        return event->xany.window == reinterpret_cast< ::Window >(userData)
+                || event->type == GenericEvent;
     }
 
     // Find the name of the current executable
