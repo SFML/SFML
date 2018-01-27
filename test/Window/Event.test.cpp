@@ -123,6 +123,13 @@ TEST_CASE("[Window] sf::Event")
         const auto& mouseMoved = *event.getIf<sf::Event::MouseMoved>();
         CHECK(mouseMoved.position == sf::Vector2i(4, 2));
 
+        event = sf::Event::MouseMovedRaw{{3, 7}};
+        CHECK(event);
+        CHECK(event.is<sf::Event::MouseMovedRaw>());
+        CHECK(event.getIf<sf::Event::MouseMovedRaw>());
+        const auto& mouseMovedRaw = *event.getIf<sf::Event::MouseMovedRaw>();
+        CHECK(mouseMovedRaw.delta == sf::Vector2i(3, 7));
+
         event = sf::Event::MouseEntered{};
         CHECK(event);
         CHECK(event.is<sf::Event::MouseEntered>());
@@ -253,6 +260,9 @@ TEST_CASE("[Window] sf::Event")
 
         const sf::Event::MouseMoved mouseMoved;
         CHECK(mouseMoved.position == sf::Vector2i());
+
+        const sf::Event::MouseMovedRaw mouseMovedRaw;
+        CHECK(mouseMovedRaw.delta == sf::Vector2i());
 
         const sf::Event::JoystickButtonPressed joystickButtonPressed;
         CHECK(joystickButtonPressed.joystickId == 0);
