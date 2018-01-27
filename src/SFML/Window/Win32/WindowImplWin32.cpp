@@ -126,6 +126,16 @@ void setProcessDpiAware()
         FreeLibrary(user32Dll);
     }
 }
+
+// Register a RAWINPUTDEVICE representing the mouse to receive raw
+// mouse deltas using WM_INPUT
+void initRawMouse()
+{
+    const RAWINPUTDEVICE rawMouse{0x01, 0x02, 0, nullptr}; // HID usage: mouse device class, no flags, follow keyboard focus
+
+    if (RegisterRawInputDevices(&rawMouse, 1, sizeof(rawMouse)) != TRUE)
+        sf::err() << "Failed to initialize raw mouse input" << std::endl;
+}
 } // namespace
 
 namespace sf::priv
@@ -140,7 +150,11 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
     {
         // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
 
@@ -222,7 +236,11 @@ m_cursorGrabbed(m_fullscreen)
     if (m_handle)
     {
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
     }
@@ -1082,6 +1100,23 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             // Generate a MouseMove event
             pushEvent(Event::MouseMoved{{x, y}});
+            break;
+        }
+
+        // Raw input event
+        case WM_INPUT:
+        {
+            RAWINPUT input;
+            UINT     size = sizeof(input);
+
+            GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
+
+            if (input.header.dwType == RIM_TYPEMOUSE)
+            {
+                if (const RAWMOUSE* rawMouse = &input.data.mouse; (rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
+                    pushEvent(Event::MouseMovedRaw{{rawMouse->lLastX, rawMouse->lLastY}});
+            }
+
             break;
         }
 
