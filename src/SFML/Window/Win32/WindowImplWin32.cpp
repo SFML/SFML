@@ -132,6 +132,7 @@ m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
+m_rawMouseEnabled (false),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0),
@@ -165,6 +166,7 @@ m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
+m_rawMouseEnabled (false),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
@@ -425,6 +427,21 @@ void WindowImplWin32::setMouseCursor(const CursorImpl& cursor)
 void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 {
     m_keyRepeatEnabled = enabled;
+}
+
+
+void WindowImplWin32::setRawMouseEnabled(bool enabled)
+{
+    // Already enabled or disabled
+    if (m_rawMouseEnabled == enabled)
+        return;
+
+    RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL };
+    if (!enabled)
+        rawMouse.dwFlags |= RIDEV_REMOVE;
+
+    // Unregister / register raw input for mice
+    RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE));
 }
 
 
@@ -980,6 +997,30 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             pushEvent(event);
             break;
         }
+
+        case WM_INPUT:
+        {
+            HRAWINPUT hRawInput = (HRAWINPUT)lParam;
+            RAWINPUT input;
+            UINT size = sizeof(input);
+
+            GetRawInputData(hRawInput, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
+
+            if (input.header.dwType == RIM_TYPEMOUSE)
+            {
+                RAWMOUSE* rawMouse = &input.data.mouse;
+                if ((rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
+                {
+                    Event event;
+                    event.type = Event::MouseMotion;
+                    event.mouseMotion.x = rawMouse->lLastX;
+                    event.mouseMotion.y = rawMouse->lLastY;
+                    pushEvent(event);
+                }
+            }
+            break;
+        }
+
         case WM_DEVICECHANGE:
         {
             // Some sort of device change has happened, update joystick connections
