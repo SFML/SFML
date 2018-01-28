@@ -1,5 +1,27 @@
 include(CMakeParseArguments)
 
+# set the appropriate standard library on each platform for the given target
+# ex: sfml_set_stdlib(sfml-system)
+function(sfml_set_stdlib target)
+    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
+        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
+            target_link_libraries(${target} "-static-libgcc" "-static-libstdc++")
+        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
+            target_link_libraries(${target} "-shared-libgcc" "-shared-libstdc++")
+        endif()
+    endif()
+
+    if (SFML_OS_MACOSX)
+        if (${CMAKE_GENERATOR} MATCHES "Xcode")
+            set_property(TARGET ${target} PROPERTY XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+        else()
+            target_compile_options(${target} PRIVATE "-stdlib=libc++")
+            target_link_libraries(${target} "-stdlib=libc++")
+        endif()
+    endif()
+endfunction()
+
 # add a new target which is a SFML library
 # ex: sfml_add_library(sfml-graphics
 #                      SOURCES sprite.cpp image.cpp ...
@@ -50,14 +72,8 @@ macro(sfml_add_library target)
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "SFML")
 
-    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
-        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
-        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-shared-libgcc -shared-libstdc++")
-        endif()
-    endif()
+    # set the target flags to use the appropriate C++ standard library
+    sfml_set_stdlib(${target})
 
     # For Visual Studio on Windows, export debug symbols (PDB files) to lib directory
     if(SFML_GENERATE_PDB)
@@ -182,14 +198,8 @@ macro(sfml_add_example target)
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
 
-    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
-        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-static-libgcc -static-libstdc++")
-        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-shared-libgcc -shared-libstdc++")
-        endif()
-    endif()
+    # set the target flags to use the appropriate C++ standard library
+    sfml_set_stdlib(${target})
 
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
