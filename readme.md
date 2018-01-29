@@ -5,7 +5,7 @@
 This repository includes a raw input implementation for Linux and Windows ([hornta's work](https://github.com/hornta/SFML-2.1-RAWINPUT)). It would be nice if somebody could work out an implementation for OSX.
 
 # Installation
-Refer to the official installation instructions. Note that on Linux you need to link your project against xinput `-lXi` for now.
+Refer to the official installation instructions.
 
 # Usage
 ```c++
