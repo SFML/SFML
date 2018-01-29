@@ -1150,8 +1150,6 @@ void WindowImplX11::setRawMouseEnabled(bool enabled)
 
     if (enabled)
         XISetMask(mask, XI_RawMotion);
-    else
-        XISetMask(mask, 0);
 
     if (XISelectEvents(m_display, DefaultRootWindow(m_display), &eventMask, 1) != Success)
         err() << "Could not set XInput2 event mask\n" << std::endl;
