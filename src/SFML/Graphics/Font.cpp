@@ -558,7 +558,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
             FT_Stroker stroker = static_cast<FT_Stroker>(m_stroker);
 
             FT_Stroker_Set(stroker, static_cast<FT_Fixed>(outlineThickness * static_cast<float>(1 << 6)), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
-            FT_Glyph_Stroke(&glyphDesc, stroker, false);
+            FT_Glyph_Stroke(&glyphDesc, stroker, true);
         }
     }
 
