@@ -281,6 +281,7 @@ private:
     ::Cursor           m_lastCursor;     ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     bool               m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
     bool               m_rawMouse;
+    bool               m_rawMouseEnabled;
     Vector2i           m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
     bool               m_useSizeHints;   ///< Is the size of the window fixed with size hints?
     bool               m_fullscreen;     ///< Is the window in fullscreen?
