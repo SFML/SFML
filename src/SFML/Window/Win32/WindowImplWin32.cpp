@@ -442,6 +442,7 @@ void WindowImplWin32::setRawMouseEnabled(bool enabled)
 
     // Unregister / register raw input for mice
     RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE));
+    m_rawMouseEnabled = enabled;
 }
 
 
