@@ -1,39 +1,45 @@
 [![SFML logo](https://www.sfml-dev.org/images/logo.png)](https://www.sfml-dev.org)
 
-# SFML — Simple and Fast Multimedia Library
+# SFML — Simple and Fast Multimedia Library, raw input implementation
 
-SFML is a simple, fast, cross-platform and object-oriented multimedia API. It provides access to windowing, graphics, audio and network. It is written in C++, and has bindings for various languages such as C, .Net, Ruby, Python.
+This repository includes a raw input implementation for Linux and Windows ([hornta's work](https://github.com/hornta/SFML-2.1-RAWINPUT)). It would be nice if somebody could work out an implementation for OSX.
 
-## Authors
+# Installation
+Refer to the official installation instructions. Note that on Linux you need to link your project against xinput `-lXi` for now.
 
-  - Laurent Gomila — main developer (laurent@sfml-dev.org)
-  - Marco Antognini — OS X developer (hiura@sfml-dev.org)
-  - Jonathan De Wachter — Android developer (dewachter.jonathan@gmail.com)
-  - Jan Haller (bromeon@sfml-dev.org)
-  - Stefan Schindler (tank@sfml-dev.org)
-  - Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
-  - binary1248 (binary1248@hotmail.com)
-  - Artur Moreira (artturmoreira@gmail.com)
-  - Mario Liebisch (mario@sfml-dev.org)
-  - And many other members of the SFML community
+# Usage
+```c++
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
-## Download
+int main()
+{
+        sf::RenderWindow window(sf::VideoMode(400, 400), "Test");
+        window.setRawMouseEnabled(true);
 
-You can get the latest official release on [SFML's website](https://www.sfml-dev.org/download.php). You can also get the current development version from the [Git repository](https://github.com/SFML/SFML).
+        while (window.isOpen())
+        {
+                sf::Event event;
+                while (window.pollEvent(event))
+                {
+                        if (event.type == sf::Event::Closed)
+                        {
+                                window.close();
+                        }
+                        else if (event.type == sf::Event::MouseMotion)
+                        {
+                                std::cout << "Motion: x = ";
+                                std::cout << event.mouseMotion.x;
+                                std::cout << ", y = ";
+                                std::cout << event.mouseMotion.y;
+                                std::cout << std::endl;
+                        }
+                }
 
-## Install
+                window.clear();
+                window.display();
+        }
 
-Follow the instructions of the [tutorials](https://www.sfml-dev.org/tutorials/), there is one for each platform/compiler that SFML supports.
-
-## Learn
-
-There are several places to learn SFML:
-
-  * The [official tutorials](https://www.sfml-dev.org/tutorials/)
-  * The [online API documentation](https://www.sfml-dev.org/documentation/)
-  * The [community wiki](https://github.com/SFML/SFML/wiki/)
-  * The [community forum](https://en.sfml-dev.org/forums/) ([French](https://fr.sfml-dev.org/forums/))
-
-## Contribute
-
-SFML is an open-source project, and it needs your help to go on growing and improving. If you want to get involved and suggest some additional features, file a bug report or submit a patch, please have a look at the [contribution guidelines](https://www.sfml-dev.org/contribute.php).
+        return EXIT_SUCCESS;
+}
+```
