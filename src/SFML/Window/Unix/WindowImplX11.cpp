@@ -363,19 +363,31 @@ namespace
         return false;
     }
 
-    bool initXInput2(::Display* disp)
+    void initRawMouse(::Display* disp)
     {
+        bool enabled = false;
         int opcode, event, error;
+
         if (XQueryExtension(disp, "XInputExtension", &opcode, &event, &error))
         {
             int major = 2, minor = 0;
             if (XIQueryVersion(disp, &major, &minor) != BadRequest)
             {
-                return true;
+                XIEventMask eventMask;
+                unsigned char mask[XIMaskLen(XI_LASTEVENT)];
+                std::memset(mask, 0, sizeof(mask));
+                eventMask.deviceid = XIAllMasterDevices;
+                eventMask.mask_len = sizeof(mask);
+                eventMask.mask = mask;
+
+                XISetMask(mask, XI_RawMotion);
+
+                enabled = XISelectEvents(disp, DefaultRootWindow(disp), &eventMask, 1) == Success;
             }
         }
 
-        return false;
+        if (!enabled)
+            sf::err() << "Failed to initialize raw mouse input" << std::endl;
     }
 
     sf::Keyboard::Key keysymToSF(KeySym symbol)
@@ -506,8 +518,6 @@ m_oldVideoMode   (0),
 m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
-m_rawMouse       (false),
-m_rawMouseEnabled(false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     (false),
@@ -556,8 +566,6 @@ m_oldVideoMode   (0),
 m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
-m_rawMouse       (false),
-m_rawMouseEnabled(false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
@@ -1135,28 +1143,6 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
     m_keyRepeat = enabled;
 }
 
-void WindowImplX11::setRawMouseEnabled(bool enabled)
-{
-    // Check if raw input is availlable and needs to be changed
-    if (!m_rawMouse || m_rawMouseEnabled == enabled)
-        return;
-
-    XIEventMask eventMask;
-    unsigned char mask[XIMaskLen(XI_LASTEVENT)];
-    std::memset(mask, 0, sizeof(mask));
-    eventMask.deviceid = XIAllMasterDevices;
-    eventMask.mask_len = sizeof(mask);
-    eventMask.mask = mask;
-
-    if (enabled)
-        XISetMask(mask, XI_RawMotion);
-
-    if (XISelectEvents(m_display, DefaultRootWindow(m_display), &eventMask, 1) != Success)
-        err() << "Could not set XInput2 event mask\n" << std::endl;
-    else
-        m_rawMouseEnabled = enabled;
-}
-
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
@@ -1517,10 +1503,9 @@ void WindowImplX11::initialize()
                         1);
     }
 
-    // Enable raw input
-    m_rawMouse = initXInput2(m_display);
-    if (!m_rawMouse)
-        err() << "Failed to initialize xinput2" << std::endl;
+    // Enable raw input in first window
+    if (allWindows.empty())
+        initRawMouse(m_display);
 
     // Show the window
     setVisible(true);
@@ -2013,6 +1998,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             break;
         }
 
+        // Mouse moved raw
         case GenericEvent:
         {
             if (XGetEventData(m_display, &windowEvent.xcookie)
@@ -2041,9 +2027,9 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 }
 
                 Event event;
-                event.type = Event::MouseMotion;
-                event.mouseMotion.x = relativeValues[0];
-                event.mouseMotion.y = relativeValues[1];
+                event.type = Event::MouseMovedRaw;
+                event.mouseMoveRaw.dx = relativeValues[0];
+                event.mouseMoveRaw.dy = relativeValues[1];
                 pushEvent(event);
             }
 

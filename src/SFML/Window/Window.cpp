@@ -312,13 +312,6 @@ void Window::setKeyRepeatEnabled(bool enabled)
 }
 
 
-void Window::setRawMouseEnabled(bool enabled)
-{
-    if (m_impl)
-        m_impl->setRawMouseEnabled(enabled);
-}
-
-
 ////////////////////////////////////////////////////////////
 void Window::setFramerateLimit(unsigned int limit)
 {

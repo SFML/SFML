@@ -212,8 +212,6 @@ public:
     ////////////////////////////////////////////////////////////
     virtual void setKeyRepeatEnabled(bool enabled) = 0;
 
-    virtual void setRawMouseEnabled(bool enabled) = 0;
-
     ////////////////////////////////////////////////////////////
     /// \brief Request the current window to be made the active
     ///        foreground window

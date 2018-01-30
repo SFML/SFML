@@ -395,8 +395,6 @@ public:
     ////////////////////////////////////////////////////////////
     void setKeyRepeatEnabled(bool enabled);
 
-    void setRawMouseEnabled(bool enabled);
-
     ////////////////////////////////////////////////////////////
     /// \brief Limit the framerate to a maximum fixed frequency
     ///

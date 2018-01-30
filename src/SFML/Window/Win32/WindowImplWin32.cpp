@@ -118,6 +118,17 @@ namespace
             FreeLibrary(user32Dll);
         }
     }
+
+    // Register a RAWINPUTDEVICE representing the mouse to receive raw
+    // mouse deltas using WM_INPUT
+    void initRawMouse()
+    {
+        RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL };
+        bool enabled = RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == TRUE;
+
+        if (!enabled)
+                sf::err() << "Failed to initialize raw mouse input" << std::endl;
+    }
 }
 
 namespace sf
@@ -132,7 +143,6 @@ m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_rawMouseEnabled (false),
 m_lastSize        (0, 0),
 m_resizing        (false),
 m_surrogate       (0),
@@ -147,7 +157,11 @@ m_cursorGrabbed   (false)
     {
         // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
 
@@ -166,7 +180,6 @@ m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
 m_keyRepeatEnabled(true),
-m_rawMouseEnabled (false),
 m_lastSize        (mode.width, mode.height),
 m_resizing        (false),
 m_surrogate       (0),
@@ -222,7 +235,11 @@ m_cursorGrabbed   (m_fullscreen)
     if (m_handle)
     {
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
     }
@@ -427,22 +444,6 @@ void WindowImplWin32::setMouseCursor(const CursorImpl& cursor)
 void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 {
     m_keyRepeatEnabled = enabled;
-}
-
-
-void WindowImplWin32::setRawMouseEnabled(bool enabled)
-{
-    // Already enabled or disabled
-    if (m_rawMouseEnabled == enabled)
-        return;
-
-    RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL };
-    if (!enabled)
-        rawMouse.dwFlags |= RIDEV_REMOVE;
-
-    // Unregister / register raw input for mice
-    RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE));
-    m_rawMouseEnabled = enabled;
 }
 
 
@@ -999,6 +1000,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        // Mouse move raw event
         case WM_INPUT:
         {
             HRAWINPUT hRawInput = (HRAWINPUT)lParam;
@@ -1013,9 +1015,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 if ((rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
                 {
                     Event event;
-                    event.type = Event::MouseMotion;
-                    event.mouseMotion.x = rawMouse->lLastX;
-                    event.mouseMotion.y = rawMouse->lLastY;
+                    event.type = Event::MouseMovedRaw;
+                    event.mouseMoveRaw.dx = rawMouse->lLastX;
+                    event.mouseMoveRaw.dy = rawMouse->lLastY;
                     pushEvent(event);
                 }
             }
