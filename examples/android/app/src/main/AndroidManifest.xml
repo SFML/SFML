@@ -7,7 +7,7 @@
 
     <uses-feature android:glEsVersion="0x00010001" />
 
-    <uses-sdk android:minSdkVersion="9"
+    <uses-sdk android:minSdkVersion="14"
               android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
