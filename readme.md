@@ -15,7 +15,6 @@ Refer to the official installation instructions.
 int main()
 {
         sf::RenderWindow window(sf::VideoMode(400, 400), "Test");
-        window.setRawMouseEnabled(true);
 
         while (window.isOpen())
         {
@@ -26,12 +25,12 @@ int main()
                         {
                                 window.close();
                         }
-                        else if (event.type == sf::Event::MouseMotion)
+                        else if (event.type == sf::Event::MouseMovedRaw)
                         {
                                 std::cout << "Motion: x = ";
-                                std::cout << event.mouseMotion.x;
+                                std::cout << event.mouseMoveRaw.dx;
                                 std::cout << ", y = ";
-                                std::cout << event.mouseMotion.y;
+                                std::cout << event.mouseMoveRaw.dy;
                                 std::cout << std::endl;
                         }
                 }
