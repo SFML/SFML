@@ -179,5 +179,5 @@ ifdef prebuilt
     include $(PREBUILT_SHARED_LIBRARY)
 endif
 
-$(call import-module,sfml/extlibs)
+$(call import-module,third_party/sfml/extlibs)
 
