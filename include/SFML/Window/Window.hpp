@@ -34,6 +34,7 @@
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
+#include <SFML/Window/WindowState.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/NonCopyable.hpp>
@@ -473,6 +474,30 @@ public:
     bool hasFocus() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// Set the window state.
+    ///
+    /// \param state The new state
+    ///
+    /// \see getState
+    ///
+    ////////////////////////////////////////////////////////////
+    void setState(State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the windows state
+    ///
+    /// Get the window state.
+    ///
+    /// \return The window state
+    ///
+    /// \see setState
+    ///
+    ////////////////////////////////////////////////////////////
+    State getState() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
     ///
     /// This function is typically called after all OpenGL rendering
@@ -537,7 +562,7 @@ private:
     /// \brief Perform some common internal initializations
     ///
     ////////////////////////////////////////////////////////////
-    void initialize();
+    void initialize(Uint32 style);
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -524,6 +524,53 @@ bool WindowImplCocoa::hasFocus() const
 }
 
 
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setState(State state)
+{
+    State currentState = getState();
+
+    switch(state)
+    {
+        case State::Minimized:
+            [m_delegate minimize];
+            break;
+
+        case State::Maximized:
+            if (currentState == State::Windowed)
+                [m_delegate toogleMaximize];
+            if (currentState == State::Minimized)
+            {
+                [m_delegate unminimize];
+                [m_delegate toogleMaximize];
+            }
+            break;
+
+        case State::Windowed:
+            if (currentState == State::Minimized)
+                [m_delegate unminimize];
+            else if (currentState == State::Maximized)
+                [m_delegate toogleMaximize];
+            break;
+
+        case Fullscreen:
+            sf::err() << "Switching to fullscreen is not implemtent on OSX yet." << std::endl;
+            break;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplCocoa::getState() const
+{
+    if ([m_delegate isFullscreen])
+        return State::Fullscreen;
+    if ([m_delegate isMinimized])
+        return State::Minimized;
+    if ([m_delegate isMaximized])
+        return State::Maximized;
+    return State::Windowed;
+}
+
 } // namespace priv
 
 } // namespace sf

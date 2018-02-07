@@ -158,6 +158,9 @@
             [self setupWindowWithMode:mode andStyle:style];
 
         [m_oglView finishInit];
+
+        if (style & sf::Style::Hidden)
+            [m_window orderOut:self];
     }
     return self;
 }
@@ -492,7 +495,7 @@
 ////////////////////////////////////////////////////////
 -(void)hideWindow
 {
-    [m_window orderOut:nil];
+    [m_window orderOut:self];
 }
 
 
@@ -527,6 +530,54 @@
 -(BOOL)hasFocus
 {
     return [NSApp keyWindow] == m_window;
+}
+
+
+////////////////////////////////////////////////////////
+-(void)minimize
+{
+    [m_window miniaturize:self];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)unminimize
+{
+    [m_window deminiaturize:self];
+}
+
+
+////////////////////////////////////////////////////////
+-(void)toogleMaximize
+{
+    [m_window zoom:self];
+}
+
+
+////////////////////////////////////////////////////////
+-(BOOL)isMinimized
+{
+    return [m_window isMiniaturized];
+}
+
+
+////////////////////////////////////////////////////////
+-(BOOL)isMaximized
+{
+    // isZoomed is always true when the windows has the style NSBorderlessWindowMask or is fullscreen
+    // also the other SFML styles besides Resize can't be maximized, so we filter here
+    NSUInteger style = [m_window styleMask];
+    if ( !(style & NSResizableWindowMask) )
+        return NO;
+
+    return [m_window isZoomed];
+}
+
+
+////////////////////////////////////////////////////////
+-(BOOL)isFullscreen
+{
+    return m_fullscreen;
 }
 
 

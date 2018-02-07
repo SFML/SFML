@@ -39,8 +39,9 @@
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/Window.hpp>
+#include <SFML/Window/WindowHandle.hpp>
+#include <SFML/Window/WindowState.hpp>
 #include <queue>
 #include <set>
 
@@ -226,6 +227,22 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// \param state The new state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setState(State state) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window state
+    ///
+    /// \return The window state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual State getState() const = 0;
 
 protected:
 

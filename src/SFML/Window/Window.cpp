@@ -127,7 +127,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
     m_context = priv::GlContext::create(settings, m_impl, mode.bitsPerPixel);
 
     // Perform common initializations
-    initialize();
+    initialize(style);
 }
 
 
@@ -144,7 +144,7 @@ void Window::create(WindowHandle handle, const ContextSettings& settings)
     m_context = priv::GlContext::create(settings, m_impl, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Perform common initializations
-    initialize();
+    initialize(sf::Style::Default);
 }
 
 
@@ -368,7 +368,21 @@ bool Window::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
+void Window::setState(State state)
+{
+    if (m_impl)
+        m_impl->setState(state);
+}
 
+
+////////////////////////////////////////////////////////////
+State Window::getState() const
+{
+    return m_impl ? m_impl->getState() : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::display()
 {
     // Display the backbuffer on screen
@@ -424,14 +438,15 @@ bool Window::filterEvent(const Event& event)
 
 
 ////////////////////////////////////////////////////////////
-void Window::initialize()
+void Window::initialize(Uint32 style)
 {
     // Setup default behaviors (to get a consistent behavior across different implementations)
-    setVisible(true);
-    setMouseCursorVisible(true);
     setVerticalSyncEnabled(false);
     setKeyRepeatEnabled(true);
     setFramerateLimit(0);
+
+    if (!(style & Style::Hidden))
+        setVisible(true);
 
     // Get and cache the initial size of the window
     m_size = m_impl->getSize();
