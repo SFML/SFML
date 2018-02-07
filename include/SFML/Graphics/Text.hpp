@@ -161,13 +161,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the letter spacing factor
     ///
+    /// The default spacing between letters is defined by the font.
     /// This factor doesn't directly apply to the existing
     /// spacing between each character, it rather adds a fixed
     /// space between them which is calculated from the font
     /// metrics and the character size.
     /// Note that factors below 1 (including negative numbers) bring
-    /// characters closer to each other
-    /// 
+    /// characters closer to each other.
+    /// By default the letter spacing factor is 1.
+    ///
     /// \param spacing New letter spacing factor
     ///
     /// \see getLetterSpacing
