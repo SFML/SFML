@@ -193,16 +193,9 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Choose the window style according to the Style parameter
     DWORD win32Style = WS_VISIBLE;
-    if (style == Style::None)
-    {
-        win32Style |= WS_POPUP;
-    }
-    else
-    {
-        if (style & Style::Titlebar) win32Style |= WS_CAPTION | WS_MINIMIZEBOX;
-        if (style & Style::Resize)   win32Style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
-        if (style & Style::Close)    win32Style |= WS_SYSMENU;
-    }
+    if (style & Style::Titlebar) win32Style |= WS_CAPTION | WS_MINIMIZEBOX;
+    if (style & Style::Resize)   win32Style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+    if (style & Style::Close)    win32Style |= WS_SYSMENU;
 
     // In windowed mode, adjust width and height so that window will have the requested client area
     if (!m_fullscreen)
@@ -215,6 +208,12 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Create the window
     m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, NULL, NULL, GetModuleHandle(NULL), this);
+
+    // Remove all decorations if requested
+    if (style == Style::None)
+    {
+        SetWindowLong(m_handle, GWL_STYLE, 0);
+    }
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
     if (m_handle)
