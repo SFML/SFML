@@ -65,7 +65,7 @@
 -(std::wstring)tostdwstring
 {
     // According to Wikipedia, Mac OS X is Little Endian on x86 and x86-64
-    // http://en.wikipedia.org/wiki/Endianness
+    // https://en.wikipedia.org/wiki/Endianness
     NSData* asData = [self dataUsingEncoding:NSUTF32LittleEndianStringEncoding];
     return std::wstring((wchar_t*)[asData bytes], [asData length] / sizeof(wchar_t));
 }

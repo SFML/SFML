@@ -418,7 +418,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* stat
         if (key == AKEYCODE_UNKNOWN)
         {
             // This is a unique sequence, which is not yet exposed in the NDK
-            // http://code.google.com/p/android/issues/detail?id=33998
+            // https://code.google.com/p/android/issues/detail?id=33998
             return 0;
         }
         else if (int unicode = getUnicode(_event)) // This is a repeated sequence

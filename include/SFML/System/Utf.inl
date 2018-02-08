@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // References:
 //
-// http://www.unicode.org/
-// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
-// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
-// http://people.w3.org/rishida/scripts/uniview/conversion
+// https://www.unicode.org/
+// https://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
+// https://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
+// https://people.w3.org/rishida/scripts/uniview/conversion
 //
 ////////////////////////////////////////////////////////////
 

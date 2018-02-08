@@ -65,7 +65,7 @@ void ThreadImpl::terminate()
         #ifndef SFML_SYSTEM_ANDROID
             pthread_cancel(m_thread);
         #else
-            // See http://stackoverflow.com/questions/4610086/pthread-cancel-al
+            // See https://stackoverflow.com/questions/4610086/pthread-cancel-al
             pthread_kill(m_thread, SIGUSR1);
         #endif
     }

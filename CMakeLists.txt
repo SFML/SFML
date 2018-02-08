@@ -505,7 +505,7 @@ elseif(SFML_OS_MACOSX)
 
 elseif(SFML_OS_IOS)
 
-    # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
+    # fix CMake install rules broken for iOS (see https://public.kitware.com/Bug/view.php?id=12506)
     if(SFML_OS_IOS)
         install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
     endif()
