@@ -2,7 +2,7 @@
 
 ## SFML 2.4.2
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.2
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.2
 
 ### System
 
@@ -27,7 +27,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.2
 
 ## SFML 2.4.1
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.1
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.1
 
 ### General
 
@@ -65,7 +65,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.1
 
 ## SFML 2.4.0
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.0
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.0
 
 ### General
 
@@ -169,7 +169,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.4.0
 
 ## SFML 2.3.2
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.2
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3.2
 
 ### General
 
@@ -197,7 +197,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.2
 
 ## SFML 2.3.1
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.1
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3.1
 
 ### Window
 
@@ -225,7 +225,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3.1
 
 ## SFML 2.3
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3
 
 ### General
 
@@ -303,7 +303,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.3
 
 ## SFML 2.2
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.2
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.2
 
 ### General
 
@@ -451,7 +451,7 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.2
 
 ## SFML 2.1
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.1
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.1
 
 ### General
 
@@ -527,10 +527,10 @@ Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.1
 
 ## SFML 2.0
 
-Also available on the website: http://www.sfml-dev.org/changelog.php#sfml-2.0
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.0
 
 No changelog available. *Everything changed.*
 
 ## Older Releases
 
-See the website for changelogs of older releases: http://www.sfml-dev.org/changelog.php
+See the website for changelogs of older releases: https://www.sfml-dev.org/changelog.php

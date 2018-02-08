@@ -136,7 +136,7 @@
     if ([NSThread currentThread] != [NSThread mainThread])
     {
         /*
-         * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
+         * See https://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
          * for more information.
          */
         sf::err() << "Cannot create a window from a worker thread. (OS X limitation)" << std::endl;
@@ -566,7 +566,7 @@
     if ([NSThread currentThread] != [NSThread mainThread])
     {
         /*
-         * See http://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
+         * See https://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
          * for more information.
          */
         sf::err() << "Cannot fetch event from a worker thread. (OS X restriction)" << std::endl;

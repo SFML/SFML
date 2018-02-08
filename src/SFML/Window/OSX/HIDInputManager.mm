@@ -694,7 +694,7 @@ Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
 ////////////////////////////////////////////////////////
 Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 {
-    // (Some) 0x code based on http://forums.macrumors.com/showthread.php?t=780577
+    // (Some) 0x code based on https://forums.macrumors.com/showthread.php?t=780577
     // Some sf::Keyboard::Key are present twice.
     switch (virtualKeycode)
     {

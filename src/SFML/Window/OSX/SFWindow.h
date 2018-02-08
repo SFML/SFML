@@ -40,7 +40,7 @@
 /// acceptsFirstResponder and canBecomeKeyWindow messages must
 /// return YES to grab fullscreen events.
 ///
-/// See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
+/// See https://stackoverflow.com/questions/999464/fullscreen-key-down-actions
 ///
 /// \return YES
 ///
