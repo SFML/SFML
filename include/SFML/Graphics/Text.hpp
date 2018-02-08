@@ -149,9 +149,9 @@ public:
     ///
     /// The default spacing between lines is defined by the font.
     /// This method enables you to set a factor for the spacing
-    /// between lines. By default the line spacing offset is 1.
+    /// between lines. By default the line spacing factor is 1.
     ///
-    /// \param spacing New line spacing factor
+    /// \param spacingFactor New line spacing factor
     ///
     /// \see getLineSpacing
     ///
@@ -170,7 +170,7 @@ public:
     /// characters closer to each other.
     /// By default the letter spacing factor is 1.
     ///
-    /// \param spacing New letter spacing factor
+    /// \param spacingFactor New letter spacing factor
     ///
     /// \see getLetterSpacing
     ///
