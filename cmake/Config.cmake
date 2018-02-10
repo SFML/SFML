@@ -81,7 +81,7 @@ endif()
 # detect the compiler and its version
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
-if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER MATCHES "clang[+][+]" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
    # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
    # but there is no other way to detect CLang at the moment
    set(SFML_COMPILER_CLANG 1)
