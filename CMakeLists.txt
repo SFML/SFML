@@ -25,6 +25,9 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0042 NEW)
 endif()
+if (NOT CMAKE_VERSION VERSION_LESS 3.9)
+    cmake_policy(SET CMP0068 NEW)
+endif()
 
 # add some default value for some additional macOS variable
 # note that those variables are ignored on other systems
@@ -394,9 +397,14 @@ else()
 
     # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
     # NOTE: it's not required to link against SFML.framework
-    set_target_properties(SFML PROPERTIES
-                          BUILD_WITH_INSTALL_RPATH 1
-                          INSTALL_NAME_DIR "@rpath")
+    set_target_properties(SFML PROPERTIES INSTALL_NAME_DIR "@rpath")
+    if(NOT CMAKE_SKIP_BUILD_RPATH)
+        if (CMAKE_VERSION VERSION_LESS 3.9)
+            set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+        else()
+            set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
+        endif()
+    endif()
 
     # install rule
     install(TARGETS SFML
