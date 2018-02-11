@@ -31,6 +31,8 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
 
+#include <iostream>
+
 
 namespace
 {
@@ -371,7 +373,28 @@ bool Window::hasFocus() const
 void Window::setState(State state)
 {
     if (m_impl)
+    {
+        // TODO: this if never evaluates to true, even if state IS State::Windowed
+        //       I can't figure out why. This is ehy you can only switch to fullscreen once
+        if (state == State::Windowed)
+        {
+            if (this == fullscreenWindow)
+                fullscreenWindow == NULL;
+        }
+
+        if (state == State::Fullscreen)
+            if (fullscreenWindow != NULL)
+            {
+                err() << "Creating more than one fullscreen window is not allowed" << std::endl;
+                return;
+            }
+            else
+            {
+                fullscreenWindow = this;
+            }
+
         m_impl->setState(state);
+    }
 }
 
 

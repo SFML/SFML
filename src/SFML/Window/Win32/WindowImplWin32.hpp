@@ -184,6 +184,22 @@ public:
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// \param state The new state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setState(State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window state
+    ///
+    /// \return The window state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual State getState() const;
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -201,12 +217,16 @@ private:
     void registerWindowClass();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Switch to fullscreen mode
-    ///
-    /// \param mode Video mode to switch to
+    /// \brief Switch to fullscreen state
     ///
     ////////////////////////////////////////////////////////////
-    void switchToFullscreen(const VideoMode& mode);
+    void switchToFullscreen();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Switch to windowed state
+    ///
+    ////////////////////////////////////////////////////////////
+    void switchToWindowed();
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the graphical resources attached to the window
@@ -282,8 +302,10 @@ private:
     bool     m_resizing;         ///< Is the window being resized?
     Uint16   m_surrogate;        ///< First half of the surrogate pair, in case we're receiving a Unicode character in two events
     bool     m_mouseInside;      ///< Mouse is inside the window?
-    bool     m_fullscreen;       ///< Is the window fullscreen?
     bool     m_cursorGrabbed;    ///< Is the mouse cursor trapped?
+
+    const DWORD     m_win32Style;      ///< Window style in the windows format
+    const VideoMode m_mode;            ///< Video mode of the window
 };
 
 } // namespace priv
