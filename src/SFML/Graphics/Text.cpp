@@ -317,7 +317,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
     // Precompute the variables needed by the algorithm
     bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance * m_letterSpacingFactor;
+    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance;
+    float letterSpacing   = ( whitespaceWidth / 3.f ) * ( m_letterSpacingFactor - 1.f );
+    whitespaceWidth      += letterSpacing;
     float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
@@ -340,7 +342,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance * m_letterSpacingFactor;
+        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
     }
 
     // Transform the position to global coordinates
@@ -425,7 +427,9 @@ void Text::ensureGeometryUpdate() const
     float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance * m_letterSpacingFactor;
+    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance;
+    float letterSpacing   = ( whitespaceWidth / 3.f ) * ( m_letterSpacingFactor - 1.f );
+    whitespaceWidth      += letterSpacing;
     float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
     float x               = 0.f;
     float y               = static_cast<float>(m_characterSize);
@@ -525,7 +529,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // Advance to the next character
-        x += glyph.advance * m_letterSpacingFactor;
+        x += glyph.advance + letterSpacing;
     }
 
     // If we're using the underlined style, add the last line

@@ -66,7 +66,7 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
-if(SFML_OS_ANDROID OR SFML_OS_IOS)
+if(SFML_OS_IOS)
     if(NOT SFML_OS_IOS)
         find_host_package(OpenAL REQUIRED)
     endif()
