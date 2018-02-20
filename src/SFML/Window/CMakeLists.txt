@@ -92,6 +92,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
+        ${SRCROOT}/Unix/X11InputManager.cpp
+        ${SRCROOT}/Unix/X11InputManager.hpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
