@@ -45,10 +45,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param value Optional value to initialize the variable
+    /// \param value      Optional value to initialize the variable
+    /// \param destructor Optional destructor used to clean up a stored object
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalPtr(T* value = NULL);
+    ThreadLocalPtr(T* value = NULL, ThreadLocalDestructorPointer destructor = NULL);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of unary operator *

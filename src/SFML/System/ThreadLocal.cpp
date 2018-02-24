@@ -37,9 +37,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-ThreadLocal::ThreadLocal(void* value)
+ThreadLocal::ThreadLocal(void* value, ThreadLocalDestructorPointer destructor)
 {
-    m_impl = new priv::ThreadLocalImpl;
+    m_impl = new priv::ThreadLocalImpl(destructor);
     setValue(value);
 }
 
@@ -62,6 +62,13 @@ void ThreadLocal::setValue(void* value)
 void* ThreadLocal::getValue() const
 {
     return m_impl->getValue();
+}
+
+
+////////////////////////////////////////////////////////////
+bool ThreadLocal::isDestructorSupported()
+{
+    return priv::ThreadLocalImpl::isDestructorSupported();
 }
 
 } // namespace sf

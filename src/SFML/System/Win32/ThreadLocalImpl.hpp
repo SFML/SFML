@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/ThreadLocal.hpp>
 #include <windows.h>
 
 
@@ -46,8 +47,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor -- allocate the storage
     ///
+    /// \param destructor Optional destructor used to clean up a stored object
+    ///
     ////////////////////////////////////////////////////////////
-    ThreadLocalImpl();
+    ThreadLocalImpl(ThreadLocalDestructorPointer destructor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor -- free the storage
@@ -71,12 +74,21 @@ public:
     ////////////////////////////////////////////////////////////
     void* getValue() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether or not the system supports calling destructors on thread-local storage
+    ///
+    /// \return True if the system supports calling destructors on thread-local storage, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isDestructorSupported();
+
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    DWORD m_index; ///< Index of our thread-local storage slot
+    DWORD                        m_index;      ///< Index of our thread-local storage slot
+    ThreadLocalDestructorPointer m_destructor; ///< Destructor to be called passing the stored value whenever a thread terminates
 };
 
 } // namespace priv
