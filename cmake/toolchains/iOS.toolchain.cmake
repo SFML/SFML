@@ -173,15 +173,14 @@ message (STATUS "iOS sysroot=${CMAKE_OSX_SYSROOT}")
 # set the architecture for iOS 
 if (${IOS_PLATFORM} STREQUAL OS)
     set (OSX_UNIVERSAL true)
-    set (IOS_ARCH armv7 armv7s arm64)
-elseif (${IOS_PLATFORM} STREQUAL SIMULATOR)
-    set (IOS_ARCH i386)
+    set (IOS_ARCH arm64)
 elseif (${IOS_PLATFORM} STREQUAL SIMULATOR64)
     set (IOS_ARCH x86_64)
 endif (${IOS_PLATFORM} STREQUAL OS)
 
-set (CMAKE_OSX_ARCHITECTURES ${IOS_ARCH} CACHE string  "Build architecture for iOS" FORCE)
-message (STATUS "iOS arches=${IOS_ARCH}")
+set (CMAKE_OSX_ARCHITECTURES ${IOS_ARCH} CACHE string "Build architecture for iOS" FORCE)
+set (CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS ${IOS_ARCH})
+message (STATUS "iOS architecture=${IOS_ARCH}")
 
 # Set the find root to the iOS developer roots and to user defined paths
 set (CMAKE_FIND_ROOT_PATH ${CMAKE_IOS_DEVELOPER_ROOT} ${CMAKE_IOS_SDK_ROOT} ${CMAKE_PREFIX_PATH} CACHE string  "iOS find search path root")
