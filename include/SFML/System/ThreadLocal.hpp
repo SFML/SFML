@@ -40,6 +40,8 @@ namespace priv
     class ThreadLocalImpl;
 }
 
+typedef void(*ThreadLocalDestructorPointer)(void*);
+
 ////////////////////////////////////////////////////////////
 /// \brief Defines variables with thread-local storage
 ///
@@ -51,10 +53,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// \param value Optional value to initialize the variable
+    /// \param value      Optional value to initialize the variable
+    /// \param destructor Optional destructor used to clean up a stored object
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocal(void* value = NULL);
+    ThreadLocal(void* value = NULL, ThreadLocalDestructorPointer destructor = NULL);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -77,6 +80,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void* getValue() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether or not the system supports calling destructors on thread-local storage
+    ///
+    /// \return True if the system supports calling destructors on thread-local storage, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isDestructorSupported();
 
 private:
 

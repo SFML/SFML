@@ -27,8 +27,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 template <typename T>
-ThreadLocalPtr<T>::ThreadLocalPtr(T* value) :
-ThreadLocal(value)
+ThreadLocalPtr<T>::ThreadLocalPtr(T* value, ThreadLocalDestructorPointer destructor) :
+ThreadLocal(value, destructor)
 {
 }
 

@@ -33,10 +33,10 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-ThreadLocalImpl::ThreadLocalImpl() :
+ThreadLocalImpl::ThreadLocalImpl(ThreadLocalDestructorPointer destructor) :
 m_key(0)
 {
-    pthread_key_create(&m_key, NULL);
+    pthread_key_create(&m_key, destructor);
 }
 
 
@@ -58,6 +58,13 @@ void ThreadLocalImpl::setValue(void* value)
 void* ThreadLocalImpl::getValue() const
 {
     return pthread_getspecific(m_key);
+}
+
+
+////////////////////////////////////////////////////////////
+bool ThreadLocalImpl::isDestructorSupported()
+{
+    return true;
 }
 
 } // namespace priv
