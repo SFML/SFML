@@ -67,9 +67,7 @@ endif()
 
 # find external libraries
 if(SFML_OS_IOS)
-    if(NOT SFML_OS_IOS)
-        find_host_package(OpenAL REQUIRED)
-    endif()
+    find_host_package(OpenAL REQUIRED)
     find_host_package(Vorbis REQUIRED)
     find_host_package(FLAC REQUIRED)
 else()
@@ -78,9 +76,7 @@ else()
     find_package(FLAC REQUIRED)
 endif()
 
-if(NOT SFML_OS_IOS)
-    include_directories(${OPENAL_INCLUDE_DIR})
-endif()
+include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${VORBIS_INCLUDE_DIRS})
 include_directories(${FLAC_INCLUDE_DIR})
 add_definitions(-DOV_EXCLUDE_STATIC_CALLBACKS) # avoids warnings in vorbisfile.h
