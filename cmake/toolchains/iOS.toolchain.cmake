@@ -17,10 +17,10 @@
 
 # Options:
 #
-# IOS_PLATFORM = OS (default) or SIMULATOR or SIMULATOR64
+# IOS_PLATFORM = OS (default) or SIMULATOR
 #   This decides if SDKS will be selected from the iPhoneOS.platform or iPhoneSimulator.platform folders
 #   OS - the default, used to build for iPhone and iPad physical devices, which have an arm arch.
-#   SIMULATOR - used to build for the Simulator platforms, which have an x86 arch.
+#   SIMULATOR - used to build for the Simulator platforms, which have an x86_64 arch.
 #
 # CMAKE_IOS_DEVELOPER_ROOT = automatic(default) or /path/to/platform/Developer folder
 #   By default this location is automatcially chosen based on the IOS_PLATFORM value above.
@@ -127,15 +127,9 @@ elseif (${IOS_PLATFORM} STREQUAL SIMULATOR)
 
 	# This causes the installers to properly locate the output libraries
 	set (CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphonesimulator")
-elseif (${IOS_PLATFORM} STREQUAL SIMULATOR64)
-        message (STATUS "Targeting iPhoneSimulator64 platform")
-    	set (SIMULATOR true)
-	set (IOS_PLATFORM_LOCATION "iPhoneSimulator.platform")
 
-	# This causes the installers to properly locate the output libraries
-	set (CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphonesimulator")
 else (${IOS_PLATFORM} STREQUAL OS)
-	message (FATAL_ERROR "Unsupported IOS_PLATFORM value '${IOS_PLATFORM}' selected. Please choose OS, SIMULATOR, or SIMULATOR64")
+	message (FATAL_ERROR "Unsupported IOS_PLATFORM value '${IOS_PLATFORM}' selected. Please choose OS or SIMULATOR")
 endif (${IOS_PLATFORM} STREQUAL OS)
 
 # Setup iOS developer location unless specified manually with CMAKE_IOS_DEVELOPER_ROOT
@@ -174,7 +168,7 @@ message (STATUS "iOS sysroot=${CMAKE_OSX_SYSROOT}")
 if (${IOS_PLATFORM} STREQUAL OS)
     set (OSX_UNIVERSAL true)
     set (IOS_ARCH arm64)
-elseif (${IOS_PLATFORM} STREQUAL SIMULATOR64)
+elseif (${IOS_PLATFORM} STREQUAL SIMULATOR)
     set (IOS_ARCH x86_64)
 endif (${IOS_PLATFORM} STREQUAL OS)
 
