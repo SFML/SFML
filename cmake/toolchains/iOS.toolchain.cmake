@@ -180,7 +180,7 @@ elseif (${IOS_PLATFORM} STREQUAL SIMULATOR64)
     set (IOS_ARCH x86_64)
 endif (${IOS_PLATFORM} STREQUAL OS)
 
-set (CMAKE_OSX_ARCHITECTURES ${IOS_ARCH} CACHE string  "Build architecture for iOS")
+set (CMAKE_OSX_ARCHITECTURES ${IOS_ARCH} CACHE string  "Build architecture for iOS" FORCE)
 message (STATUS "iOS arches=${IOS_ARCH}")
 
 # Set the find root to the iOS developer roots and to user defined paths
