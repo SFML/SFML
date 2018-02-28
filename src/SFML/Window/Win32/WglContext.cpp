@@ -154,6 +154,9 @@ m_ownsWindow   (false)
 ////////////////////////////////////////////////////////////
 WglContext::~WglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     // Destroy the OpenGL context
     if (m_context)
     {

@@ -36,6 +36,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <utility>
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
@@ -145,6 +146,16 @@ namespace
 
     // The hidden, inactive context that will be shared with all other contexts
     ContextType* sharedContext = NULL;
+
+    // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
+    sf::Uint64 id = 1; // start at 1, zero is "no context"
+
+    // Set containing callback functions to be called whenever a
+    // context is going to be destroyed
+    // Unshareable OpenGL resources rely on this to clean up properly
+    // whenever a context containing them is destroyed
+    typedef std::set<std::pair<sf::ContextDestroyCallback, void*> > ContextDestroyCallbacks;
+    ContextDestroyCallbacks contextDestroyCallbacks;
 
     // This structure contains all the state necessary to
     // track TransientContext usage
@@ -326,6 +337,13 @@ void GlContext::cleanupResource()
 
 
 ////////////////////////////////////////////////////////////
+void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
+{
+    contextDestroyCallbacks.insert(std::make_pair(callback, arg));
+}
+
+
+////////////////////////////////////////////////////////////
 void GlContext::acquireTransientContext()
 {
     // Protect from concurrent access
@@ -474,6 +492,13 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
+Uint64 GlContext::getActiveContextId()
+{
+    return currentContext ? currentContext->m_id : 0;
+}
+
+
+////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()
@@ -546,7 +571,8 @@ bool GlContext::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-GlContext::GlContext()
+GlContext::GlContext() :
+m_id(id++)
 {
     // Nothing to do
 }
@@ -578,6 +604,29 @@ int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& 
         score += 100000000;
 
     return score;
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::cleanupUnsharedResources()
+{
+    // Save the current context so we can restore it later
+    GlContext* contextToRestore = currentContext;
+
+    // If this context is already active there is no need to save it
+    if (contextToRestore == this)
+        contextToRestore = NULL;
+
+    // Make this context active so resources can be freed
+    setActive(true);
+
+    // Call the registered destruction callbacks
+    for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter)
+        iter->first(iter->second);
+
+    // Make the originally active context active again
+    if (contextToRestore)
+        contextToRestore->setActive(true);
 }
 
 

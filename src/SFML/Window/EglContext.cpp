@@ -150,6 +150,9 @@ m_config  (NULL)
 ////////////////////////////////////////////////////////////
 EglContext::~EglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     // Deactivate the current context
     EGLContext currentContext = eglCheck(eglGetCurrentContext());
 

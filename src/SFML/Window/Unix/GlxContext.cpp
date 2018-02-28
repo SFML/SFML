@@ -172,6 +172,9 @@ m_ownsWindow(false)
 ////////////////////////////////////////////////////////////
 GlxContext::~GlxContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     // Destroy the context
     if (m_context)
     {

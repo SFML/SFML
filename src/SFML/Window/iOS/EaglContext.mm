@@ -91,6 +91,9 @@ m_clock       ()
 ////////////////////////////////////////////////////////////
 EaglContext::~EaglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     if (m_context)
     {
         // Activate the context, so that we can destroy the buffers

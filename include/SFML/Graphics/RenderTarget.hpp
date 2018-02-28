@@ -296,7 +296,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool setActive(bool active = true) = 0;
+    virtual bool setActive(bool active = true);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices
@@ -458,6 +458,7 @@ private:
     {
         enum {VertexCacheSize = 4};
 
+        bool      enable;         ///< Is the cache enabled?
         bool      glStatesSet;    ///< Are our internal GL states set yet?
         bool      viewChanged;    ///< Has the current view changed since last draw?
         BlendMode lastBlendMode;  ///< Cached blending mode
@@ -473,6 +474,7 @@ private:
     View        m_defaultView; ///< Default view
     View        m_view;        ///< Current view
     StatesCache m_cache;       ///< Render states cache
+    Uint64      m_id;          ///< Unique number that identifies the RenderTarget
 };
 
 } // namespace sf

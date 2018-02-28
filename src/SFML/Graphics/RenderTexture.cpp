@@ -147,7 +147,13 @@ bool RenderTexture::generateMipmap()
 ////////////////////////////////////////////////////////////
 bool RenderTexture::setActive(bool active)
 {
-    return m_impl && m_impl->activate(active);
+    bool result = m_impl && m_impl->activate(active);
+
+    // Update RenderTarget tracking
+    if (result)
+        RenderTarget::setActive(active);
+
+    return result;
 }
 
 
@@ -155,7 +161,7 @@ bool RenderTexture::setActive(bool active)
 void RenderTexture::display()
 {
     // Update the target texture
-    if (setActive(true))
+    if (priv::RenderTextureImplFBO::isAvailable() || setActive(true))
     {
         m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;
