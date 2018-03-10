@@ -64,6 +64,13 @@ void Packet::append(const void* data, std::size_t sizeInBytes)
 
 
 ////////////////////////////////////////////////////////////
+std::size_t Packet::getReadPosition() const
+{
+    return m_readPos;
+}
+
+
+////////////////////////////////////////////////////////////
 void Packet::clear()
 {
     m_data.clear();
