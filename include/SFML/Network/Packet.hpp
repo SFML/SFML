@@ -72,9 +72,20 @@ public:
     /// \param sizeInBytes Number of bytes to append
     ///
     /// \see clear
+    /// \see readCurrentReadPosition
     ///
     ////////////////////////////////////////////////////////////
     void append(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get a current reading position
+    ///
+    /// \return Current position
+    ///
+    /// \see append
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t getReadPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
