@@ -93,8 +93,8 @@ public:
     ////////////////////////////////////////////////////////////
     struct MouseMoveRawEvent
     {
-        int dx; ///< X delta movement of the mouse since the last event
-        int dy; ///< Y delta movement of the mouse since the last event
+        int deltaX; ///< X delta movement of the mouse since the last event
+        int deltaY; ///< Y delta movement of the mouse since the last event
     };
 
     ////////////////////////////////////////////////////////////

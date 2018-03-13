@@ -1016,8 +1016,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     Event event;
                     event.type = Event::MouseMovedRaw;
-                    event.mouseMoveRaw.dx = rawMouse->lLastX;
-                    event.mouseMoveRaw.dy = rawMouse->lLastY;
+                    event.mouseMoveRaw.deltaX = rawMouse->lLastX;
+                    event.mouseMoveRaw.deltaY = rawMouse->lLastY;
                     pushEvent(event);
                 }
             }

@@ -2028,8 +2028,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
                 Event event;
                 event.type = Event::MouseMovedRaw;
-                event.mouseMoveRaw.dx = relativeValues[0];
-                event.mouseMoveRaw.dy = relativeValues[1];
+                event.mouseMoveRaw.deltaX = relativeValues[0];
+                event.mouseMoveRaw.deltaY = relativeValues[1];
                 pushEvent(event);
             }
 
