@@ -2,6 +2,11 @@
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(SFML_OS_WINDOWS 1)
 
+    # set a mingw specific variable
+    if(MINGW)
+        set(SFML_OS_WINDOWS_MINGW 1)
+    endif()
+
     # don't use the OpenGL ES implementation on Windows
     set(OPENGL_ES 0)
 
