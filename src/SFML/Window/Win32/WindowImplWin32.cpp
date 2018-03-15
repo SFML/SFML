@@ -39,7 +39,10 @@
 #include <GL/gl.h>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utf.hpp>
-#include <Dbt.h>
+// dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
+// expects lowercase, and a native compile on windows, whether via msvc
+// or mingw-w64 addresses files in a case insensitive manner.
+#include <dbt.h>
 #include <vector>
 #include <cstring>
 
