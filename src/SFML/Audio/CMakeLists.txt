@@ -58,6 +58,11 @@ source_group("codecs" FILES ${CODECS_SRC})
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
+    CONFIGURE_FILE(
+        "${SRCROOT}/resource.rc.in"
+        "${SRCROOT}/resource.rc"
+        @ONLY)
+    list(APPEND SRC "${SRCROOT}/resource.rc")
 elseif(SFML_OS_MACOSX)
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 elseif(SFML_OS_ANDROID)

@@ -102,6 +102,11 @@ target_include_directories(sfml-graphics PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/
 # let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
+    CONFIGURE_FILE(
+        "${SRCROOT}/resource.rc.in"
+        "${SRCROOT}/resource.rc"
+        @ONLY)
+    list(APPEND SRC "${SRCROOT}/resource.rc")
 elseif(SFML_OS_MACOSX)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")

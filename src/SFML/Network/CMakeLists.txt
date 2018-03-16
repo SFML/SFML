@@ -29,10 +29,15 @@ set(SRC
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
+    CONFIGURE_FILE(
+        "${SRCROOT}/Win32/resource.rc.in"
+        "${SRCROOT}/Win32/resource.rc"
+        @ONLY)
     set(SRC
         ${SRC}
         ${SRCROOT}/Win32/SocketImpl.cpp
         ${SRCROOT}/Win32/SocketImpl.hpp
+        ${SRCROOT}/Win32/resource.rc
     )
 else()
     set(SRC

@@ -45,6 +45,10 @@ source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
+    CONFIGURE_FILE(
+        "${SRCROOT}/Win32/resource.rc.in"
+        "${SRCROOT}/Win32/resource.rc"
+        @ONLY)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/ClockImpl.cpp
         ${SRCROOT}/Win32/ClockImpl.hpp
@@ -56,6 +60,7 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/ThreadImpl.hpp
         ${SRCROOT}/Win32/ThreadLocalImpl.cpp
         ${SRCROOT}/Win32/ThreadLocalImpl.hpp
+        ${SRCROOT}/Win32/resource.rc
     )
     source_group("windows" FILES ${PLATFORM_SRC})
 else()

@@ -56,6 +56,10 @@ source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
+    CONFIGURE_FILE(
+        "${SRCROOT}/Win32/resource.rc.in"
+	"${SRCROOT}/Win32/resource.rc"
+	@ONLY)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/CursorImpl.hpp
         ${SRCROOT}/Win32/CursorImpl.cpp
@@ -73,7 +77,8 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/SensorImpl.cpp
         ${SRCROOT}/Win32/VideoModeImpl.cpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
-        ${SRCROOT}/Win32/WindowImplWin32.hpp
+	${SRCROOT}/Win32/WindowImplWin32.hpp
+	${SRCROOT}/Win32/resource.rc
     )
     source_group("windows" FILES ${PLATFORM_SRC})
 

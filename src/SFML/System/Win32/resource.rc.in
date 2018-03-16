@@ -1,0 +1,32 @@
+#include "winresrc.h"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@
+ PRODUCTVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#ifdef DEBUG
+ FILEFLAGS 1
+#else
+ FILEFLAGS 0
+#endif
+ FILEOS VOS_NT
+ FILETYPE VFT_DLL
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "sfml-system @VERSION_STRING@\0"
+            VALUE "InternalName", "sfml-system-@VERSION_MAJOR@.dll\0"
+            VALUE "LegalCopyright", "Copyright (C) 2007-2018 Laurent Gomila\0"
+            VALUE "OriginalFilename", "sfml-system-@VERSION_MAJOR@.dll\0"
+            VALUE "ProductName", "Simple Fast Multimedia Library System Module\0"
+            VALUE "ProductVersion", "@VERSION_STRING@\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1252 //en-US
+    END
+END
