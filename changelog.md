@@ -1,5 +1,111 @@
 # Changelog
 
+## SFML 2.5
+
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.5
+
+### General
+
+  * Markdown'd and updated readme, changelog, contributing and license files (#1196, #1368, #1317)
+  * Improve packaging support (#1173)
+  * Added Tagfile generation and search (#1327)
+  * Set policy CMP0042 if cmake version > 3.0 (#1206)
+  * Added CMake variables to select the modules to be built (#800)
+  * Updated the binary libs from exlibs/libs-ios in order to work with Xcode 8 and iOS 10 (#1209)
+  * Do not install extlibs if `SFML_USE_SYSTEM_DEPS` is true (#1237)
+  * Updated stb_image to v2.16 and stb_image_write to v1.07 (#1270)
+  * Fixed various type conversion/comparison warnings (#1325)
+  * [macOS] Fixed launch of cocoa examples (#1334)
+  * [macOS] Improved application signing process (#1194)
+  * [macOS] Improve cmake script (#1215)
+  * [macOS] Use `-stdlib=libc++` (#1361)
+  * [macOS] Fix CMake warning since CMake 3.9 (#1371)
+  * [iOS] Use a CMake toolchain file for iOS build (#1269)
+  * [iOS] Install extlibs if needed (#1348)
+  * [iOS] Drop 32 bit support (#1374)
+  * [iOS] Force correct iOS architecture for cmake (#1377)
+  * [iOS] Find OpenAL correctly (#1376)
+  * [Android] Increased minimum API version to 14 (#1362)
+  * [Android] Removed custom toolchain and added support for the newest NDK version (#1350)
+
+### System
+
+**Bugfixes**
+
+  * Fixed crash when `sf::Clock` is constructed in a global scope (#1258)
+
+### Window
+
+**Features**
+
+  * Implemented Cursor API (#827)
+  * Implemented Clipboard API (#1221)
+  * [Windows] Added support for interfacing with joysticks via DirectInput when it is available (#1326)
+
+**Bugfixes**
+
+  * Updated documentation (#1255, #1310)
+  * [macOS] Fixed window menu not working (#1193)
+  * [macOS] Removed unused variable (#1276)
+  * [macOS] Fixed crash with application messing hardware detection e.g. TeamViewer (#1323)
+  * [macOS] Added support for (some) Hat/POV axis (#1248)
+  * [Linux] Fixed `sf::Window::getPosition()` returning incorrect position because of differences in window managers (#1228, #1266)
+  * [Linux] Fix X11 key repeat handling not filtering out events from other windows (#1291, #1223, #1230)
+  * [Linux] Restore fullscreen of a non-visible window (#1339)
+  * [iOS] Fix build error when using @import (#1272)
+  * [iOS] Don't need to find vorbisfile or vorbisenc (#1347)
+  * [Windows] Prevent uninitialized read by zeroing memory (#1264)
+  * [Windows] Fixed modifier keys handling (#1357)
+  * [Android] Return correct key code for delete/backspace (#1362)
+
+### Graphics
+
+**Features**
+
+  * Implemented additional line spacing and letter spacing in `sf::Text` (#928, #1366)
+  * Added `sf::VertexBuffer` class (#1308)
+  * Added GPU local texture copying support, allowing performance optimizations and texture swapping (#1119, #1320)
+  * Optimize performance by skipping `glTexCoordPointer()` call if not needed (#1015)
+  * Generate shape outline vertices only if necessary (#1356)
+  * Removed dependency to libjpeg, stb_image_write now supports writing JPEG files (#1279)
+  * Enable comparing `sf::Transform` and optimize resetting OpenGL back to the identity matrix (#1298)
+
+**Bugfixes**
+
+  * Fixed typo in assert in `sf::Texture::update()` (#1210)
+  * Properly free memory in `sf::Font::cleanup()` (#1119)
+  * Fixed memory leak in `sf::Font` (#1216)
+  * Fix OpenGL texture coordinate pointer not being updated correctly under certain conditions (#1297)
+  * Fix for broken text when the font is reloaded (#1345)
+  * Fix memory leak in `sf::Text` (#1360)
+  * Refactoring of `sf::Text` (#928)
+  * Updated documentation (#1197)
+  * [Windows] Replaced time-based joystick poll with a hardware event handler (#1195, #1179)
+  * [macOS] Worked around render target bug (#1342)
+
+### Audio
+
+**Features**
+
+  * Added loop point support to `sf::Music` (#629)
+  * Added support for extensible format PCM wave files (#1296)
+  * [iOS] Enable audio module (#1338)
+
+**Bugfixes**
+
+  * Allow polymorphism with `sf::SoundSource` (#1185)
+  * Fixed WAV file writer writing wrong header values (#1281)
+  * Small bugfix to argument of `alcCaptureOpenDevice()` (#1305)
+  * Removed dead code (#1261)
+  * Updated documentation (#1321, #1353)
+  * [Windows] Updated OpenAL Soft to 1.18.1 (#1260)
+
+### Network
+
+**Bugfixes**
+
+  * Fixed wrong condition for building network support (#1253)
+
 ## SFML 2.4.2
 
 Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.2
