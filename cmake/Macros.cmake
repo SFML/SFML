@@ -28,6 +28,9 @@ endfunction()
 #                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
 macro(sfml_add_library target)
 
+    # add convenience variable
+    set(TARGET_NAME "${target}")
+
     # parse the arguments
     cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
     if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
@@ -52,6 +55,11 @@ macro(sfml_add_library target)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
             set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            configure_file(
+                "${SFML_SOURCE_DIR}/tools/windows/resource.rc.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc"
+            @ONLY)
+            target_sources(${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc")
         else()
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
         endif()
