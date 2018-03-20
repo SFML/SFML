@@ -85,21 +85,18 @@ else()
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()
 
-# build the list of external libraries to link
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
-    list(APPEND SYSTEM_EXT_LIBS pthread)
-endif()
-if(SFML_OS_LINUX)
-    list(APPEND SYSTEM_EXT_LIBS rt)
-endif()
-if(SFML_OS_WINDOWS)
-    list(APPEND SYSTEM_EXT_LIBS winmm)
-endif()
-if(SFML_OS_ANDROID)
-    list(APPEND SYSTEM_EXT_LIBS android log)
-endif()
-
 # define the sfml-system target
 sfml_add_library(sfml-system
-                 SOURCES ${SRC} ${PLATFORM_SRC}
-                 EXTERNAL_LIBS ${SYSTEM_EXT_LIBS})
+                 SOURCES ${SRC} ${PLATFORM_SRC})
+
+# setup dependencies
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
+    target_link_libraries(sfml-system PRIVATE pthread)
+endif()
+if(SFML_OS_LINUX)
+    target_link_libraries(sfml-system PRIVATE rt)
+elseif(SFML_OS_WINDOWS)
+    target_link_libraries(sfml-system PRIVATE winmm)
+elseif(SFML_OS_ANDROID)
+    target_link_libraries(sfml-system PRIVATE android log)
+endif()

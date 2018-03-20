@@ -6,9 +6,9 @@ function(sfml_set_stdlib target)
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
         if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
-            target_link_libraries(${target} "-static-libgcc" "-static-libstdc++")
+            target_link_libraries(${target} PRIVATE "-static-libgcc" "-static-libstdc++")
         elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
-            target_link_libraries(${target} "-shared-libgcc" "-shared-libstdc++")
+            target_link_libraries(${target} PRIVATE "-shared-libgcc" "-shared-libstdc++")
         endif()
     endif()
 
@@ -17,7 +17,7 @@ function(sfml_set_stdlib target)
             set_property(TARGET ${target} PROPERTY XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
         else()
             target_compile_options(${target} PRIVATE "-stdlib=libc++")
-            target_link_libraries(${target} "-stdlib=libc++")
+            target_link_libraries(${target} PRIVATE "-stdlib=libc++")
         endif()
     endif()
 endfunction()
@@ -25,15 +25,21 @@ endfunction()
 # add a new target which is a SFML library
 # ex: sfml_add_library(sfml-graphics
 #                      SOURCES sprite.cpp image.cpp ...
-#                      DEPENDS sfml-window sfml-system
-#                      EXTERNAL_LIBS opengl freetype ...)
+#                      [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
 macro(sfml_add_library target)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS;EXTERNAL_LIBS" ${ARGN})
+    cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
+    if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_library: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
 
     # create the target
-    add_library(${target} ${THIS_SOURCES})
+    if (THIS_STATIC)
+        add_library(${target} STATIC ${THIS_SOURCES})
+    else()
+        add_library(${target} ${THIS_SOURCES})
+    endif()
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
@@ -41,7 +47,7 @@ macro(sfml_add_library target)
     set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
 
     # adjust the output file prefix/suffix to match our conventions
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_OS_WINDOWS)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
@@ -84,7 +90,7 @@ macro(sfml_add_library target)
             set(SFML_PDB_POSTFIX "")
         endif()
 
-        if(BUILD_SHARED_LIBS)
+        if(BUILD_SHARED_LIBS AND NOT THIS_STATIC)
             # DLLs export debug symbols in the linker PDB (the compiler PDB is an intermediate file)
             set_target_properties(${target} PROPERTIES
                                   PDB_NAME "${target}${SFML_PDB_POSTFIX}"
@@ -103,13 +109,8 @@ macro(sfml_add_library target)
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
-    # link the target to its SFML dependencies
-    if(THIS_DEPENDS)
-        target_link_libraries(${target} ${THIS_DEPENDS})
-    endif()
-
     # build frameworks or dylibs
-    if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)
+    if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
@@ -151,24 +152,36 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # link the target to its external dependencies
-    if(THIS_EXTERNAL_LIBS)
-        target_link_libraries(${target} ${THIS_EXTERNAL_LIBS})
-    endif()
-
     # add the install rule
-    install(TARGETS ${target}
+    install(TARGETS ${target} EXPORT SFMLConfigExport
             RUNTIME DESTINATION bin COMPONENT bin
             LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
             ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
-            FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX} COMPONENT bin)
+            FRAMEWORK DESTINATION "." COMPONENT bin)
+
+    # add <project>/include as public include directory
+    target_include_directories(${target}
+                               PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                               PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+    if (SFML_BUILD_FRAMEWORKS)
+        target_include_directories(${target} INTERFACE $<INSTALL_INTERFACE:SFML.framework>)
+    else()
+        target_include_directories(${target} INTERFACE $<INSTALL_INTERFACE:include>)
+    endif()
+
+    # define SFML_STATIC if the build type is not set to 'shared'
+    if(NOT BUILD_SHARED_LIBS)
+        target_compile_definitions(${target} PUBLIC "SFML_STATIC")
+    endif()
+
 endmacro()
 
 # add a new target which is a SFML example
 # ex: sfml_add_example(ftp
 #                      SOURCES ftp.cpp ...
 #                      BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
-#                      DEPENDS sfml-network sfml-system
+#                      DEPENDS sfml-network
 #                      RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
@@ -187,7 +200,7 @@ macro(sfml_add_example target)
     # create the target
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${target_input})
-        target_link_libraries(${target} sfml-main)
+        target_link_libraries(${target} PRIVATE sfml-main)
     else()
         add_executable(${target} ${target_input})
     endif()
@@ -203,17 +216,17 @@ macro(sfml_add_example target)
 
     # link the target to its SFML dependencies
     if(THIS_DEPENDS)
-        target_link_libraries(${target} ${THIS_DEPENDS})
+        target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
     endif()
 
     # add the install rule
     install(TARGETS ${target}
-            RUNTIME DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples
-            BUNDLE DESTINATION ${INSTALL_MISC_DIR}/examples/${target} COMPONENT examples)
+            RUNTIME DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target} COMPONENT examples
+            BUNDLE DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target} COMPONENT examples)
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}
-            DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+            DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target}
             COMPONENT examples)
 
     if (THIS_RESOURCES_DIR)
@@ -224,8 +237,55 @@ macro(sfml_add_example target)
             message(FATAL_ERROR "Given resources directory to install does not exist: ${THIS_RESOURCES_DIR}")
         endif()
         install(DIRECTORY ${THIS_RESOURCES_DIR}
-                DESTINATION ${INSTALL_MISC_DIR}/examples/${target}
+                DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target}
                 COMPONENT examples)
     endif()
 
 endmacro()
+
+
+# Find the requested package and make an INTERFACE library from it
+# Usage: sfml_find_package(wanted_target_name
+#                          [INCLUDE "OPENGL_INCLUDE_DIR"]
+#                          [LINK "OPENGL_gl_LIBRARY"])
+function(sfml_find_package)
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+    list(GET ARGN 0 target)
+    list(REMOVE_AT ARGN 0)
+
+    if (TARGET ${target})
+        message(FATAL_ERROR "Target '${target}' is already defined")
+    endif()
+
+    cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
+    if (THIS_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments when calling sfml_import_library: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
+
+    if (SFML_OS_IOS)
+        find_host_package(${target} REQUIRED)
+    else()
+        find_package(${target} REQUIRED)
+    endif()
+
+    add_library(${target} INTERFACE)
+
+    if (THIS_INCLUDE)
+        foreach(include_dir IN LISTS "${THIS_INCLUDE}")
+            if (NOT include_dir)
+                message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
+            endif()
+            target_include_directories(${target} INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
+        endforeach()
+    endif()
+
+    if (THIS_LINK)
+        foreach(link_item IN LISTS ${THIS_LINK})
+            if (NOT link_item)
+                message(FATAL_ERROR "Missing item in ${THIS_LINK}")
+            endif()
+            target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${link_item}>")
+        endforeach()
+    endif()
+endfunction()
+

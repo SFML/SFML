@@ -58,4 +58,4 @@ sfml_add_example(cocoa
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE TRUE
                       MACOSX_BUNDLE_INFO_PLIST ${SRCROOT}/resources/Cocoa-Info.plist)
-target_link_libraries(cocoa "-framework Cocoa -framework Foundation")
+target_link_libraries(cocoa PRIVATE "-framework Cocoa" "-framework Foundation" sfml-graphics)

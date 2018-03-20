@@ -2,7 +2,7 @@
 if(CMAKE_SYSTEM_NAME MATCHES "Android")
     cmake_minimum_required(VERSION 3.7.2)
 else()
-    cmake_minimum_required(VERSION 2.8.3)
+    cmake_minimum_required(VERSION 3.0.2)
 endif()
 
 # define a macro that helps defining an option
@@ -22,9 +22,7 @@ sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 # Suppress Mac OS X RPATH warnings and adopt new related behaviors
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-    cmake_policy(SET CMP0042 NEW)
-endif()
+cmake_policy(SET CMP0042 NEW)
 if (NOT CMAKE_VERSION VERSION_LESS 3.9)
     cmake_policy(SET CMP0068 NEW)
 endif()
@@ -56,9 +54,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 4)
 set(VERSION_PATCH 2)
-
-# add the SFML header path
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add an option for choosing the build type (shared or static)
 if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
@@ -97,11 +92,14 @@ if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
-    # add an option to let the user specify a custom directory for frameworks installation (SFML, FLAC, ...)
-    sfml_set_option(CMAKE_INSTALL_FRAMEWORK_PREFIX "/Library/Frameworks" STRING "Frameworks installation directory")
+    # add an option to let the user specify a custom directory for external frameworks installation
+    sfml_set_option(SFML_DEPENDENCIES_INSTALL_PREFIX "/Library/Frameworks" PATH "External frameworks (FLAC, Freetype, Vorbis, ...) installation directory")
 
     # add an option to automatically install Xcode templates
     sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
+else()
+    # add an option to let the user specify a custom directory for external libraries installation
+    sfml_set_option(SFML_DEPENDENCIES_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" PATH "External libraries (FLAC, Freetype, Vorbis, ...) installation directory")
 endif()
 
 # Android options
@@ -141,10 +139,20 @@ if(SFML_OS_ANDROID)
     set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 endif()
 
-# define SFML_STATIC if the build type is not set to 'shared'
-if(NOT BUILD_SHARED_LIBS)
-    add_definitions(-DSFML_STATIC)
+# Install directories
+# For miscellaneous files
+if(SFML_OS_WINDOWS OR SFML_OS_IOS)
+    set(DEFAULT_INSTALL_MISC_DIR .)
+elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
+    set(DEFAULT_INSTALL_MISC_DIR share/SFML)
+elseif(SFML_OS_MACOSX)
+    set(DEFAULT_INSTALL_MISC_DIR /usr/local/share/SFML)
+elseif(SFML_OS_ANDROID)
+    set(DEFAULT_INSTALL_MISC_DIR ${CMAKE_ANDROID_NDK}/sources/third_party/sfml)
 endif()
+# add an option to let the user specify a custom directory for doc, examples, licence, readme and other miscellaneous files
+sfml_set_option(SFML_MISC_INSTALL_PREFIX "${DEFAULT_INSTALL_MISC_DIR}" PATH "Prefix installation path for miscellaneous files")
+
 
 # force building sfml-window, if sfml-graphics module is built
 if(SFML_BUILD_GRAPHICS AND NOT SFML_BUILD_WINDOW)
@@ -408,15 +416,12 @@ else()
 
     # install rule
     install(TARGETS SFML
-            FRAMEWORK DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX}
+            FRAMEWORK DESTINATION "."
             COMPONENT devel)
 endif()
 
-install(FILES license.md DESTINATION ${INSTALL_MISC_DIR})
-install(FILES readme.md DESTINATION ${INSTALL_MISC_DIR})
-if(NOT SFML_OS_ANDROID)
-    install(FILES cmake/Modules/FindSFML.cmake DESTINATION ${INSTALL_MISC_DIR}/cmake/Modules)
-endif()
+install(FILES license.md DESTINATION ${SFML_MISC_INSTALL_PREFIX})
+install(FILES readme.md DESTINATION ${SFML_MISC_INSTALL_PREFIX})
 
 # install 3rd-party libraries and tools
 if(SFML_OS_WINDOWS)
@@ -424,58 +429,57 @@ if(SFML_OS_WINDOWS)
     if(NOT SFML_USE_SYSTEM_DEPS)
         # install the binaries of SFML dependencies
         if(ARCH_32BITS)
-            install(DIRECTORY extlibs/bin/x86/ DESTINATION bin)
+            install(DIRECTORY extlibs/bin/x86/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/bin)
             if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
-                install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             elseif(SFML_COMPILER_MSVC)
-                install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             else()
-                install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             endif()
         elseif(ARCH_64BITS)
-            install(DIRECTORY extlibs/bin/x64/ DESTINATION bin)
+            install(DIRECTORY extlibs/bin/x64/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/bin)
             if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
-                install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             elseif(SFML_COMPILER_MSVC)
-                install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             else()
-                install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION lib)
+                install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX}/lib)
             endif()
         endif()
     endif()
 
 elseif(SFML_OS_MACOSX)
-
     # install extlibs dependencies only when used
     if(SFML_BUILD_GRAPHICS)
         if(FREETYPE_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
     endif()
 
     if(SFML_BUILD_AUDIO)
         if(FLAC_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
 
         if(OGG_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
 
         if(VORBIS_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
 
         if(VORBISENC_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
 
         if(VORBISFILE_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
 
         if(OPENAL_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/OpenAL.framework")
-            install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+            install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${SFML_DEPENDENCIES_INSTALL_PREFIX})
         endif()
     endif()
 
