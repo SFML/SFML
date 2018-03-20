@@ -41,23 +41,14 @@ namespace sf
 Image::Image() :
 m_size(0, 0)
 {
-    #ifdef SFML_SYSTEM_ANDROID
 
-    m_stream = NULL;
-
-    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Image::~Image()
 {
-    #ifdef SFML_SYSTEM_ANDROID
 
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-
-    #endif
 }
 
 
@@ -135,11 +126,8 @@ bool Image::loadFromFile(const std::string& filename)
 
     #else
 
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-
-        m_stream = new priv::ResourceStream(filename);
-        return loadFromStream(*(priv::ResourceStream*)m_stream);
+        priv::ResourceStream stream(filename);
+        return loadFromStream(stream);
 
     #endif
 }
