@@ -287,5 +287,49 @@ function(sfml_find_package)
             target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${link_item}>")
         endforeach()
     endif()
+    install(TARGETS ${target} EXPORT SFMLConfigExport)
+endfunction()
+
+# Generate a SFMLConfig.cmake file (and associated files) from the targets registered against
+# the EXPORT name "SFMLConfigExport" (EXPORT parameter of install(TARGETS))
+function(sfml_export_targets)
+    # CMAKE_CURRENT_LIST_DIR or CMAKE_CURRENT_SOURCE_DIR not usable for files that are to be included like this one
+    set(CURRENT_DIR "${PROJECT_SOURCE_DIR}/cmake")
+
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
+                                     VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                     COMPATIBILITY SameMajorVersion)
+
+    if (BUILD_SHARED_LIBS)
+        set(config_name "Shared")
+    else()
+        set(config_name "Static")
+    endif()
+    set(targets_config_filename "SFML${config_name}Targets.cmake")
+
+    export(EXPORT SFMLConfigExport
+           FILE "${CMAKE_CURRENT_BINARY_DIR}/${targets_config_filename}")
+
+    if (SFML_BUILD_FRAMEWORKS)
+        set(config_package_location "SFML.framework/Resources/CMake")
+    else()
+        set(config_package_location lib/cmake/SFML)
+    endif()
+    configure_package_config_file("${CURRENT_DIR}/SFMLConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
+        INSTALL_DESTINATION "${config_package_location}")
+    configure_package_config_file("${CURRENT_DIR}/SFMLConfigDependencies.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigDependencies.cmake"
+        INSTALL_DESTINATION "${config_package_location}")
+
+
+    install(EXPORT SFMLConfigExport
+            FILE ${targets_config_filename}
+            DESTINATION ${config_package_location})
+
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigDependencies.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
+            DESTINATION ${config_package_location}
+            COMPONENT devel)
 endfunction()
 
