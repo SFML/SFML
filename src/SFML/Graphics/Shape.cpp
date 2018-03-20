@@ -87,6 +87,10 @@ void Shape::setTextureRect(const IntRect& rect)
 {
     m_textureRect = rect;
     updateTexCoords();
+
+    // Update the vertex buffers if they are being used
+    if (m_verticesBuffer.getVertexCount())
+        m_verticesBuffer.update(&m_vertices[0]);
 }
 
 
@@ -102,6 +106,10 @@ void Shape::setFillColor(const Color& color)
 {
     m_fillColor = color;
     updateFillColors();
+
+    // Update the vertex buffers if they are being used
+    if (m_verticesBuffer.getVertexCount())
+        m_verticesBuffer.update(&m_vertices[0]);
 }
 
 
@@ -117,6 +125,10 @@ void Shape::setOutlineColor(const Color& color)
 {
     m_outlineColor = color;
     updateOutlineColors();
+
+    // Update the vertex buffers if they are being used
+    if (m_outlineVerticesBuffer.getVertexCount())
+        m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
 }
 
 
@@ -158,15 +170,17 @@ FloatRect Shape::getGlobalBounds() const
 
 ////////////////////////////////////////////////////////////
 Shape::Shape() :
-m_texture         (NULL),
-m_textureRect     (),
-m_fillColor       (255, 255, 255),
-m_outlineColor    (255, 255, 255),
-m_outlineThickness(0),
-m_vertices        (TriangleFan),
-m_outlineVertices (TriangleStrip),
-m_insideBounds    (),
-m_bounds          ()
+m_texture              (NULL),
+m_textureRect          (),
+m_fillColor            (255, 255, 255),
+m_outlineColor         (255, 255, 255),
+m_outlineThickness     (0),
+m_vertices             (TriangleFan),
+m_outlineVertices      (TriangleStrip),
+m_verticesBuffer       (TriangleFan, VertexBuffer::Static),
+m_outlineVerticesBuffer(TriangleStrip, VertexBuffer::Static),
+m_insideBounds         (),
+m_bounds               ()
 {
 }
 
@@ -180,6 +194,16 @@ void Shape::update()
     {
         m_vertices.resize(0);
         m_outlineVertices.resize(0);
+
+        if (VertexBuffer::isAvailable())
+        {
+            if (m_verticesBuffer.getVertexCount())
+                m_verticesBuffer.create(0);
+
+            if (m_outlineVerticesBuffer.getVertexCount())
+                m_outlineVerticesBuffer.create(0);
+        }
+
         return;
     }
 
@@ -206,6 +230,21 @@ void Shape::update()
 
     // Outline
     updateOutline();
+
+    // Update the vertex buffers if they are being used
+    if (VertexBuffer::isAvailable())
+    {
+        if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
+            m_verticesBuffer.create(m_vertices.getVertexCount());
+
+        m_verticesBuffer.update(&m_vertices[0]);
+
+        if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
+            m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
+
+        if (m_outlineVertices.getVertexCount())
+            m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+    }
 }
 
 
@@ -216,13 +255,29 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
 
     // Render the inside
     states.texture = m_texture;
-    target.draw(m_vertices, states);
+
+    if (VertexBuffer::isAvailable())
+    {
+        target.draw(m_verticesBuffer, states);
+    }
+    else
+    {
+        target.draw(m_vertices, states);
+    }
 
     // Render the outline
     if (m_outlineThickness != 0)
     {
         states.texture = NULL;
-        target.draw(m_outlineVertices, states);
+
+        if (VertexBuffer::isAvailable())
+        {
+            target.draw(m_outlineVerticesBuffer, states);
+        }
+        else
+        {
+            target.draw(m_outlineVertices, states);
+        }
     }
 }
 

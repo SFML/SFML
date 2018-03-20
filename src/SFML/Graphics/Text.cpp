@@ -76,20 +76,22 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Text::Text() :
-m_string             (),
-m_font               (NULL),
-m_characterSize      (30),
-m_letterSpacingFactor(1.f),
-m_lineSpacingFactor  (1.f),
-m_style              (Regular),
-m_fillColor          (255, 255, 255),
-m_outlineColor       (0, 0, 0),
-m_outlineThickness   (0),
-m_vertices           (Triangles),
-m_outlineVertices    (Triangles),
-m_bounds             (),
-m_geometryNeedUpdate (false),
-m_fontTextureId      (0)
+m_string               (),
+m_font                 (NULL),
+m_characterSize        (30),
+m_letterSpacingFactor  (1.f),
+m_lineSpacingFactor    (1.f),
+m_style                (Regular),
+m_fillColor            (255, 255, 255),
+m_outlineColor         (0, 0, 0),
+m_outlineThickness     (0),
+m_vertices             (Triangles),
+m_outlineVertices      (Triangles),
+m_verticesBuffer       (Triangles, VertexBuffer::Static),
+m_outlineVerticesBuffer(Triangles, VertexBuffer::Static),
+m_bounds               (),
+m_geometryNeedUpdate   (false),
+m_fontTextureId        (0)
 {
 
 }
@@ -97,20 +99,22 @@ m_fontTextureId      (0)
 
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
-m_string             (string),
-m_font               (&font),
-m_characterSize      (characterSize),
-m_letterSpacingFactor(1.f),
-m_lineSpacingFactor  (1.f),
-m_style              (Regular),
-m_fillColor          (255, 255, 255),
-m_outlineColor       (0, 0, 0),
-m_outlineThickness   (0),
-m_vertices           (Triangles),
-m_outlineVertices    (Triangles),
-m_bounds             (),
-m_geometryNeedUpdate (true),
-m_fontTextureId      (0)
+m_string               (string),
+m_font                 (&font),
+m_characterSize        (characterSize),
+m_letterSpacingFactor  (1.f),
+m_lineSpacingFactor    (1.f),
+m_style                (Regular),
+m_fillColor            (255, 255, 255),
+m_outlineColor         (0, 0, 0),
+m_outlineThickness     (0),
+m_vertices             (Triangles),
+m_outlineVertices      (Triangles),
+m_verticesBuffer       (Triangles, VertexBuffer::Static),
+m_outlineVerticesBuffer(Triangles, VertexBuffer::Static),
+m_bounds               (),
+m_geometryNeedUpdate   (true),
+m_fontTextureId        (0)
 {
 
 }
@@ -202,6 +206,14 @@ void Text::setFillColor(const Color& color)
         {
             for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                 m_vertices[i].color = m_fillColor;
+
+            if (VertexBuffer::isAvailable())
+            {
+                if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
+                    m_verticesBuffer.create(m_vertices.getVertexCount());
+
+                m_verticesBuffer.update(&m_vertices[0]);
+            }
         }
     }
 }
@@ -220,6 +232,14 @@ void Text::setOutlineColor(const Color& color)
         {
             for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
                 m_outlineVertices[i].color = m_outlineColor;
+
+            if (VertexBuffer::isAvailable())
+            {
+                if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
+                    m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
+
+                m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+            }
         }
     }
 }
@@ -382,9 +402,25 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
         // Only draw the outline if there is something to draw
         if (m_outlineThickness != 0)
-            target.draw(m_outlineVertices, states);
+        {
+            if (VertexBuffer::isAvailable())
+            {
+                target.draw(m_outlineVerticesBuffer, states);
+            }
+            else
+            {
+                target.draw(m_outlineVertices, states);
+            }
+        }
 
-        target.draw(m_vertices, states);
+        if (VertexBuffer::isAvailable())
+        {
+            target.draw(m_verticesBuffer, states);
+        }
+        else
+        {
+            target.draw(m_vertices, states);
+        }
     }
 }
 
@@ -408,11 +444,23 @@ void Text::ensureGeometryUpdate() const
     // Clear the previous geometry
     m_vertices.clear();
     m_outlineVertices.clear();
+
     m_bounds = FloatRect();
 
     // No text: nothing to draw
     if (m_string.isEmpty())
+    {
+        if (VertexBuffer::isAvailable())
+        {
+            if (m_verticesBuffer.getVertexCount())
+                m_verticesBuffer.create(0);
+
+            if (m_outlineVerticesBuffer.getVertexCount())
+                m_outlineVerticesBuffer.create(0);
+        }
+
         return;
+    }
 
     // Compute values related to the text style
     bool  isBold             = m_style & Bold;
@@ -562,6 +610,20 @@ void Text::ensureGeometryUpdate() const
     m_bounds.top = minY;
     m_bounds.width = maxX - minX;
     m_bounds.height = maxY - minY;
+
+    // Update the vertex buffer if it is being used
+    if (VertexBuffer::isAvailable())
+    {
+        if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
+            m_verticesBuffer.create(m_vertices.getVertexCount());
+
+        m_verticesBuffer.update(&m_vertices[0]);
+
+        if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
+            m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
+
+        m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+    }
 }
 
 } // namespace sf
