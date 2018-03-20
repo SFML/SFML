@@ -530,3 +530,5 @@ elseif(SFML_OS_ANDROID)
     install(FILES src/SFML/Android.mk DESTINATION .)
 
 endif()
+
+sfml_export_targets()
