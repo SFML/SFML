@@ -34,6 +34,7 @@ macro(sfml_add_library target)
 
     # create the target
     add_library(${target} ${THIS_SOURCES})
+    target_include_directories(${target} INTERFACE ${PROJECT_SOURCE_DIR}/include) 
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
