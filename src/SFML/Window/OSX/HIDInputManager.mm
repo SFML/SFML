@@ -755,13 +755,13 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 
         case 0x21:                      return sf::Keyboard::LBracket;
         case 0x1e:                      return sf::Keyboard::RBracket;
-        case 0x29:                      return sf::Keyboard::SemiColon;
+        case 0x29:                      return sf::Keyboard::Semicolon;
         case 0x2b:                      return sf::Keyboard::Comma;
         case 0x41: /* keypad         */ return sf::Keyboard::Period;
         case 0x2f: /* keyboard       */ return sf::Keyboard::Period;
         case 0x27:                      return sf::Keyboard::Quote;
         case 0x2c:                      return sf::Keyboard::Slash;
-        case 0x2a:                      return sf::Keyboard::BackSlash;
+        case 0x2a:                      return sf::Keyboard::Backslash;
 
             // sf::Keyboard::Tilde might be in conflict with some other key.
             // 0x0a is for "Non-US Backslash" according to HID Calibrator,
@@ -770,11 +770,11 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 
         case 0x51: /* keypad         */ return sf::Keyboard::Equal;
         case 0x18: /* keyboard       */ return sf::Keyboard::Equal;
-        case 0x32:                      return sf::Keyboard::Dash;
+        case 0x32:                      return sf::Keyboard::Hyphen;
         case 0x31:                      return sf::Keyboard::Space;
-        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
-        case 0x24: /* keyboard       */ return sf::Keyboard::Return;
-        case 0x33:                      return sf::Keyboard::BackSpace;
+        case 0x4c: /* keypad         */ return sf::Keyboard::Enter;
+        case 0x24: /* keyboard       */ return sf::Keyboard::Enter;
+        case 0x33:                      return sf::Keyboard::Backspace;
         case 0x30:                      return sf::Keyboard::Tab;
 
             // Duplicates (see next section).
