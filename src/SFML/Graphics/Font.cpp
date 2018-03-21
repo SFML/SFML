@@ -61,6 +61,21 @@ namespace
     void close(FT_Stream)
     {
     }
+
+    // Helper to intepret memory as a specific type
+    template <typename T, typename U>
+    inline T reinterpret(const U& input)
+    {
+        T output;
+        std::memcpy(&output, &input, sizeof(U));
+        return output;
+    }
+
+    // Combine outline thickness, boldness and codepoint into a single 64-bit key
+    sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 codePoint)
+    {
+        return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) | (static_cast<sf::Uint64>(bold) << 31) | codePoint;
+    }
 }
 
 
@@ -332,9 +347,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
     // Build the key by combining the code point, bold flag, and outline thickness
-    Uint64 key = (static_cast<Uint64>(*reinterpret_cast<Uint32*>(&outlineThickness)) << 32)
-               | (static_cast<Uint64>(bold ? 1 : 0) << 31)
-               |  static_cast<Uint64>(codePoint);
+    Uint64 key = combine(outlineThickness, bold, codePoint);
 
     // Search the glyph into the cache
     GlyphTable::const_iterator it = glyphs.find(key);
