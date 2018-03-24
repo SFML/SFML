@@ -99,7 +99,7 @@ if(SFML_OS_MACOSX)
     sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
 else()
     # add an option to let the user specify a custom directory for external libraries installation
-    sfml_set_option(SFML_DEPENDENCIES_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" PATH "External libraries (FLAC, Freetype, Vorbis, ...) installation directory")
+    sfml_set_option(SFML_DEPENDENCIES_INSTALL_PREFIX "." PATH "External libraries (FLAC, Freetype, Vorbis, ...) installation directory")
 endif()
 
 # Android options
