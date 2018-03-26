@@ -12,6 +12,9 @@ set(SRC
     ${INCROOT}/InputStream.hpp
     ${SRCROOT}/Lock.cpp
     ${INCROOT}/Lock.hpp
+    ${SRCROOT}/Log.cpp
+    ${INCROOT}/Log.hpp
+    ${INCROOT}/Log.inl
     ${SRCROOT}/Mutex.cpp
     ${INCROOT}/Mutex.hpp
     ${INCROOT}/NativeActivity.hpp
