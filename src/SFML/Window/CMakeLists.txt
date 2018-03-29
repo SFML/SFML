@@ -118,6 +118,10 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/ClipboardImpl.cpp
             ${SRCROOT}/Unix/InputImpl.cpp
             ${SRCROOT}/Unix/InputImpl.hpp
+            ${SRCROOT}/Unix/KeyboardImpl.hpp
+            ${SRCROOT}/Unix/KeyboardImpl.cpp
+            ${SRCROOT}/Unix/KeySymToSFKeyMapping.hpp
+            ${SRCROOT}/Unix/KeySymToUnicodeMapping.hpp
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp
