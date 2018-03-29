@@ -29,6 +29,7 @@
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
+#include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -1688,9 +1689,6 @@ void WindowImplX11::initialize()
     // Create the hidden cursor
     createHiddenCursor();
 
-    // init X11 keycode <-> SFML scancode mapping
-    X11InputManager::getInstance().initialize(m_display);
-
     // Flush the commands queue
     XFlush(m_display);
 
@@ -1888,27 +1886,16 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Key down event
         case KeyPress:
         {
-            Keyboard::Key key = Keyboard::Unknown;
-
-            // Try each KeySym index (modifier group) until we get a match
-            for (int i = 0; i < 4; ++i)
-            {
-                // Get the SFML keyboard code from the keysym of the key that has been pressed
-                key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
-
-                if (key != Keyboard::Unknown)
-                    break;
-            }
-
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
-            event.type        = Event::KeyPressed;
-            event.key.code    = key;
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.type         = Event::KeyPressed;
+            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.key.control  = windowEvent.xkey.state & ControlMask;
+            event.key.shift    = windowEvent.xkey.state & ShiftMask;
+            event.key.system   = windowEvent.xkey.state & Mod4Mask;
 
             const bool filtered = XFilterEvent(&windowEvent, None);
 
@@ -1995,26 +1982,15 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Key up event
         case KeyRelease:
         {
-            Keyboard::Key key = Keyboard::Unknown;
-
-            // Try each KeySym index (modifier group) until we get a match
-            for (int i = 0; i < 4; ++i)
-            {
-                // Get the SFML keyboard code from the keysym of the key that has been released
-                key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
-
-                if (key != Keyboard::Unknown)
-                    break;
-            }
-
             // Fill the event parameters
             Event event;
-            event.type        = Event::KeyReleased;
-            event.key.code    = key;
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
+            event.type         = Event::KeyReleased;
+            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.key.control  = windowEvent.xkey.state & ControlMask;
+            event.key.shift    = windowEvent.xkey.state & ShiftMask;
+            event.key.system   = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             break;
