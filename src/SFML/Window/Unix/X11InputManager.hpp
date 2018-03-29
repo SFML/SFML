@@ -17,7 +17,7 @@ public:
 private:
     X11InputManager();
 public:
-    void initialize();
+    void initialize(Display* display);
 
     sf::Keyboard::Scancode unlocalize(sf::Keyboard::Key key) const;
     sf::Keyboard::Key localize(sf::Keyboard::Scancode code) const;
@@ -31,12 +31,14 @@ public:
     String getDescription(Keyboard::Scancode code) const;
 private:
     void buildMapping();
-    KeyCode SFtoKeyCode(Display* display, sf::Keyboard::Key key) const;
-    KeyCode SFtoKeyCode(Display* display, sf::Keyboard::Scancode code) const;
+    KeyCode SFtoKeyCode(sf::Keyboard::Key key) const;
+    KeyCode SFtoKeyCode(sf::Keyboard::Scancode code) const;
     sf::Keyboard::Scancode keyCodeToSF(KeyCode code) const;
 
     KeyCode m_scancodeToKeycode[sf::Keyboard::ScanCodeCount];
     sf::Keyboard::Scancode m_keycodeToScancode[256];
+
+    Display* m_display;
 };
 
 } // end of namespace priv

@@ -1347,15 +1347,15 @@ void WindowImplX11::initialize()
     // Create the hidden cursor
     createHiddenCursor();
 
+    // init X11 keycode <-> SFML scancode mapping
+    X11InputManager::getInstance().initialize(m_display);
+
     // Flush the commands queue
     XFlush(m_display);
 
     // Add this window to the global list of windows (required for focus request)
     Lock lock(allWindowsMutex);
     allWindows.push_back(this);
-
-    // init X11 keycode <-> SFML scancode mapping
-    X11InputManager::getInstance().initialize();
 }
 
 
