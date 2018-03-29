@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_X11INPUTMANAGER_HPP
-#define SFML_X11INPUTMANAGER_HPP
+#ifndef SFML_KEYBOARD_IMPL_HPP
+#define SFML_KEYBOARD_IMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -44,67 +44,39 @@ namespace priv {
 /// Its purpose is to help sf::priv::InputImpl class.
 ///
 ////////////////////////////////////////////////////////////
-class X11InputManager
+class KeyboardImpl
 {
 public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the unique instance of the class
-    ///
-    /// \note Private use only
-    ///
-    /// \return Reference to the X11InputManager instance
-    ///
-    ////////////////////////////////////////////////////////////
-    static X11InputManager& getInstance();
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    X11InputManager();
-public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Initialize the keyboard
-    ///
-    /// Builds a mapping between sf::Keyboard::Scancode and
-    /// X11 keycodes
-    ///
-    ////////////////////////////////////////////////////////////
-    void initialize(Display* display);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
-    bool isKeyPressed(sf::Keyboard::Key key) const;
+    static bool isKeyPressed(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Scancode)
     ///
     ////////////////////////////////////////////////////////////
-    bool isKeyPressed(sf::Keyboard::Scancode code) const;
+    static bool isKeyPressed(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::localize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode unlocalize(sf::Keyboard::Key key) const;
+    static Keyboard::Scancode unlocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::unlocalize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Key localize(sf::Keyboard::Scancode code) const;
+    static Keyboard::Key localize(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
-    sf::String getDescription(Keyboard::Scancode code) const;
+    static String getDescription(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Key from XKeyEvent
@@ -114,7 +86,7 @@ public:
     /// \return A key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Key getKeyFromEvent(XKeyEvent& event) const;
+    static Keyboard::Key getKeyFromEvent(XKeyEvent& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Scancode from XKeyEvent
@@ -124,49 +96,11 @@ public:
     /// \return A scancode of a key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event) const;
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Converts sf::Keyboard::Key to X11 keycode
-    ///
-    /// \param key A key to be converted
-    ///
-    /// \return A corresponding X11 Keycode
-    ///
-    ////////////////////////////////////////////////////////////
-    KeyCode SFtoKeyCode(sf::Keyboard::Key key) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Converts sf::Keyboard::Scancode to X11 keycode
-    ///
-    /// \param code A scancode to be converted
-    ///
-    /// \return A corresponding X11 Keycode
-    ///
-    ////////////////////////////////////////////////////////////
-    KeyCode SFtoKeyCode(sf::Keyboard::Scancode code) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert X11 Keycode to sf::Keyboard::Scancode
-    ///
-    /// \param code X11 keycode
-    ///
-    /// \return The corresponding sf::Keyboard::Scancode
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode keyCodeToSF(KeyCode code) const;
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    KeyCode                m_scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
-    sf::Keyboard::Scancode m_keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
-    Display*               m_display;                                        ///< Pointer to the display
+    static Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event);
 };
 
 } // namespace priv
+
 } // namespace sf
 
-#endif // SFML_X11INPUTMANAGER_HPP
+#endif // SFML_KEYBOARD_IMPL_HPP
