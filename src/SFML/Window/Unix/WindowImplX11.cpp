@@ -1821,5 +1821,4 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 }
 
 } // namespace priv
-
 } // namespace sf

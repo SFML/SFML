@@ -1,15 +1,43 @@
-#include "X11InputManager.hpp"
+////////////////////////////////////////////////////////////
+//
+// SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Window/Unix/X11InputManager.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <SFML/Window/Unix/Display.hpp>
 #include <cstring>
 
-namespace sf {
-namespace priv {
+namespace sf
+{
+namespace priv
+{
 
 namespace {
-
+////////////////////////////////////////////////////////////
 sf::Keyboard::Key keysymToSF(KeySym symbol)
 {
     switch (symbol)
@@ -121,6 +149,8 @@ sf::Keyboard::Key keysymToSF(KeySym symbol)
     return sf::Keyboard::Unknown;
 }
 
+
+////////////////////////////////////////////////////////////
 KeySym SFtoKeysym(sf::Keyboard::Key key)
 {
     // Get the corresponding X11 keysym
@@ -233,11 +263,13 @@ KeySym SFtoKeysym(sf::Keyboard::Key key)
     return keysym;
 }
 
+
+////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 {
     KeySym keySym;
 
-    // Valid key code range is  [8,255], according to the Xlib manual
+    // Valid key code range is [8,255], according to the Xlib manual
     if (keycode < 8 || keycode > 255)
         return sf::Keyboard::ScanUnknown;
 
@@ -318,6 +350,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
         case XK_F13:            return sf::Keyboard::ScanF13;
         case XK_F14:            return sf::Keyboard::ScanF14;
         case XK_F15:            return sf::Keyboard::ScanF15;
+        // SFML doesn't currently have these scancodes
         /* case XK_F16:            return sf::Keyboard::ScanF16;
         case XK_F17:            return sf::Keyboard::ScanF17;
         case XK_F18:            return sf::Keyboard::ScanF18;
@@ -410,34 +443,38 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 }
 
 
-} // end of anonymous namespace
+} // anonymous namespace
 
+
+////////////////////////////////////////////////////////////
 X11InputManager::X11InputManager() :
     m_display(NULL)
 {
-    for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i) {
+    for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
+    {
         m_scancodeToKeycode[i] = 0;
     }
 
-    for (int i = 0; i < 256; ++i) {
+    for (int i = 0; i < 256; ++i)
+    {
         m_keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
     }
 }
 
-void X11InputManager::initialize(Display* display)
-{
-    m_display = display;
-    buildMapping();
-}
 
+////////////////////////////////////////////////////////////
 X11InputManager& X11InputManager::getInstance()
 {
     static X11InputManager instance;
     return instance;
 }
 
-void X11InputManager::buildMapping()
+
+////////////////////////////////////////////////////////////
+void X11InputManager::initialize(Display* display)
 {
+    m_display = display;
+
     // Find the X11 key code -> SFML key code mapping
     // This code was inspired by GLFW implementation
 
@@ -501,7 +538,8 @@ void X11InputManager::buildMapping()
         else if (strcmp(name, "AB10") == 0) sc = sf::Keyboard::ScanForwardSlash;
         else sc = sf::Keyboard::ScanUnknown;
 
-        if ((keycode >= 0) && (keycode < 256)) {
+        if ((keycode >= 0) && (keycode < 256))
+        {
             m_scancodeToKeycode[sc] = keycode;
             m_keycodeToScancode[keycode] = sc;
         }
@@ -511,8 +549,10 @@ void X11InputManager::buildMapping()
     XkbFreeKeyboard(desc, 0, True);
 
     // Translate un-translated keycodes using traditional X11 KeySym lookups
-    for (int keycode = 0;  keycode < 256;  ++keycode) {
-        if (m_keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown) {
+    for (int keycode = 0;  keycode < 256;  ++keycode)
+    {
+        if (m_keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown)
+        {
             sf::Keyboard::Scancode sc = translateKeyCode(m_display, keycode);
             m_scancodeToKeycode[sc] = keycode;
             m_keycodeToScancode[keycode] = sc;
@@ -520,21 +560,10 @@ void X11InputManager::buildMapping()
     }
 }
 
-sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key) const
-{
-    KeyCode keycode = SFtoKeyCode(key);
-    return keyCodeToSF(keycode);
-}
 
-sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code) const
-{
-    KeyCode keycode = SFtoKeyCode(code);
-    KeySym keysym = XkbKeycodeToKeysym(m_display, keycode, 0, 0);
-    return keysymToSF(keysym);
-}
 
 namespace {
-
+////////////////////////////////////////////////////////////
 bool isKeyPressedImpl(Display* display, KeyCode keycode)
 {
     if (keycode != 0)
@@ -549,23 +578,52 @@ bool isKeyPressedImpl(Display* display, KeyCode keycode)
     return false;
 }
 
-}
+} // anonymous namespace
 
+////////////////////////////////////////////////////////////
 bool X11InputManager::isKeyPressed(sf::Keyboard::Key key) const
 {
     KeyCode keycode = SFtoKeyCode(key);
     return isKeyPressedImpl(m_display, keycode);
 }
 
+
+////////////////////////////////////////////////////////////
 bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code) const
 {
     KeyCode keycode = SFtoKeyCode(code);
     return isKeyPressedImpl(m_display, keycode);
 }
 
+
+////////////////////////////////////////////////////////////
+sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key) const
+{
+    KeyCode keycode = SFtoKeyCode(key);
+    return keyCodeToSF(keycode);
+}
+
+
+////////////////////////////////////////////////////////////
+sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code) const
+{
+    KeyCode keycode = SFtoKeyCode(code);
+    KeySym keysym = XkbKeycodeToKeysym(m_display, keycode, 0, 0);
+    return keysymToSF(keysym);
+}
+
+
+////////////////////////////////////////////////////////////
+sf::String X11InputManager::getDescription(Keyboard::Scancode code) const
+{
+    return ""; // TODO
+}
+
+
+////////////////////////////////////////////////////////////
 sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event) const
 {
-    Keyboard::Key key = Keyboard::Unknown;
+    sf::Keyboard::Key key = Keyboard::Unknown;
 
     // Try each KeySym index (modifier group) until we get a match
     for (int i = 0; i < 4; ++i)
@@ -580,31 +638,34 @@ sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event) const
     return key;
 }
 
+
+////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode X11InputManager::getScancodeFromEvent(XKeyEvent& event) const
 {
     return keyCodeToSF(event.keycode);
 }
 
-String X11InputManager::getDescription(Keyboard::Scancode code) const
-{
-    return ""; // TODO
-}
 
+////////////////////////////////////////////////////////////
 KeyCode X11InputManager::SFtoKeyCode(sf::Keyboard::Key key) const
 {
     KeySym keysym = SFtoKeysym(key);
     return XKeysymToKeycode(m_display, keysym);
 }
 
+
+////////////////////////////////////////////////////////////
 KeyCode X11InputManager::SFtoKeyCode(sf::Keyboard::Scancode code) const
 {
     return m_scancodeToKeycode[code];
 }
 
+
+////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode X11InputManager::keyCodeToSF(KeyCode code) const
 {
     return m_keycodeToScancode[code];
 }
 
-} // end of namespace priv
-} // end of namespace sf
+} // namespace priv
+} // namespace sf
