@@ -224,8 +224,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
 
 ////////////////////////////////////////////////////////////
-X11InputManager::X11InputManager() :
-    m_display(NULL)
+X11InputManager::X11InputManager()
 {
     for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
     {
@@ -248,16 +247,16 @@ X11InputManager& X11InputManager::getInstance()
 
 
 ////////////////////////////////////////////////////////////
-void X11InputManager::initialize(Display* display)
+void X11InputManager::initialize()
 {
-    m_display = display;
+    Display* display = OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
     // This code was inspired by GLFW implementation
 
     char name[XkbKeyNameLength + 1];
-    XkbDescPtr desc = XkbGetMap(m_display, 0, XkbUseCoreKbd);
-    XkbGetNames(m_display, XkbKeyNamesMask, desc);
+    XkbDescPtr desc = XkbGetMap(display, 0, XkbUseCoreKbd);
+    XkbGetNames(display, XkbKeyNamesMask, desc);
 
     sf::Keyboard::Scancode sc;
     for (int keycode = desc->min_key_code; keycode <= desc->max_key_code; ++keycode)
@@ -330,11 +329,13 @@ void X11InputManager::initialize(Display* display)
     {
         if (m_keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown)
         {
-            sf::Keyboard::Scancode sc = translateKeyCode(m_display, keycode);
+            sf::Keyboard::Scancode sc = translateKeyCode(display, keycode);
             m_scancodeToKeycode[sc] = keycode;
             m_keycodeToScancode[keycode] = sc;
         }
     }
+
+    CloseDisplay(display);
 }
 
 
@@ -360,16 +361,20 @@ bool isKeyPressedImpl(Display* display, KeyCode keycode)
 ////////////////////////////////////////////////////////////
 bool X11InputManager::isKeyPressed(sf::Keyboard::Key key) const
 {
-    KeyCode keycode = SFKeyToKeyCode(key);
-    return isKeyPressedImpl(m_display, keycode);
+    Display* display = OpenDisplay();
+    bool pressed = isKeyPressedImpl(display, SFKeyToKeyCode(key));
+    CloseDisplay(display);
+    return pressed;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code) const
 {
-    KeyCode keycode = SFScancodeToKeyCode(code);
-    return isKeyPressedImpl(m_display, keycode);
+    Display* display = OpenDisplay();
+    bool pressed = isKeyPressedImpl(display, SFScancodeToKeyCode(code));
+    CloseDisplay(display);
+    return pressed;
 }
 
 
@@ -384,8 +389,7 @@ sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key) const
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code) const
 {
-    KeyCode keycode = SFScancodeToKeyCode(code);
-    KeySym keysym = XkbKeycodeToKeysym(m_display, keycode, 0, 0);
+    KeySym keysym = SFScancodeToKeySym(code);
     return keySymToSFKey(keysym);
 }
 
@@ -407,8 +411,7 @@ sf::String X11InputManager::getDescription(Keyboard::Scancode code) const
 
     if (checkInput)
     {
-        KeyCode keycode = SFScancodeToKeyCode(code);
-        KeySym keysym = XkbKeycodeToKeysym(m_display, keycode, 0, 0);
+        KeySym keysym = SFScancodeToKeySym(code);
         sf::Uint32 unicode = keysymToUnicode(keysym);
         if (unicode != 0)
             return sf::String(unicode);
@@ -536,7 +539,10 @@ sf::Keyboard::Scancode X11InputManager::getScancodeFromEvent(XKeyEvent& event) c
 KeyCode X11InputManager::SFKeyToKeyCode(sf::Keyboard::Key key) const
 {
     KeySym keysym = SFKeyToKeySym(key);
-    return XKeysymToKeycode(m_display, keysym);
+    Display* display = OpenDisplay();
+    KeyCode keycode = XKeysymToKeycode(display, keysym);
+    CloseDisplay(display);
+    return keycode;
 }
 
 
@@ -551,6 +557,16 @@ KeyCode X11InputManager::SFScancodeToKeyCode(sf::Keyboard::Scancode code) const
 sf::Keyboard::Scancode X11InputManager::keyCodeToSFScancode(KeyCode code) const
 {
     return m_keycodeToScancode[code];
+}
+
+////////////////////////////////////////////////////////////
+KeySym X11InputManager::SFScancodeToKeySym(sf::Keyboard::Scancode code) const
+{
+    Display* display = OpenDisplay();
+    KeyCode keycode = SFScancodeToKeyCode(code);
+    KeySym keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
+    CloseDisplay(display);
+    return keysym;
 }
 
 } // namespace priv

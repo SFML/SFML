@@ -74,7 +74,7 @@ public:
     /// X11 keycodes
     ///
     ////////////////////////////////////////////////////////////
-    void initialize(Display* display);
+    void initialize();
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
@@ -159,11 +159,20 @@ private:
     sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert sf::Keyboard::Scancode to KeySym
+    ///
+    /// \param code sf::Keyboard::ScanCode
+    ///
+    /// \return The corresponding X11 KeySym
+    ///
+    ////////////////////////////////////////////////////////////
+    KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code) const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     KeyCode                m_scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
     sf::Keyboard::Scancode m_keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
-    Display*               m_display;                                        ///< Pointer to the display
 };
 
 } // namespace priv
