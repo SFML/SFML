@@ -136,7 +136,7 @@ private:
     /// \return A corresponding X11 Keycode
     ///
     ////////////////////////////////////////////////////////////
-    KeyCode SFtoKeyCode(sf::Keyboard::Key key) const;
+    KeyCode SFKeyToKeyCode(sf::Keyboard::Key key) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Converts sf::Keyboard::Scancode to X11 keycode
@@ -146,7 +146,7 @@ private:
     /// \return A corresponding X11 Keycode
     ///
     ////////////////////////////////////////////////////////////
-    KeyCode SFtoKeyCode(sf::Keyboard::Scancode code) const;
+    KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert X11 Keycode to sf::Keyboard::Scancode
@@ -156,7 +156,7 @@ private:
     /// \return The corresponding sf::Keyboard::Scancode
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode keyCodeToSF(KeyCode code) const;
+    sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
