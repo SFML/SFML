@@ -1347,9 +1347,6 @@ void WindowImplX11::initialize()
     // Create the hidden cursor
     createHiddenCursor();
 
-    // init X11 keycode <-> SFML scancode mapping
-    X11InputManager::getInstance().initialize();
-
     // Flush the commands queue
     XFlush(m_display);
 

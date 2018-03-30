@@ -68,15 +68,6 @@ private:
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Initialize the keyboard
-    ///
-    /// Builds a mapping between sf::Keyboard::Scancode and
-    /// X11 keycodes
-    ///
-    ////////////////////////////////////////////////////////////
-    void initialize();
-
-    ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
@@ -139,26 +130,6 @@ private:
     KeyCode SFKeyToKeyCode(sf::Keyboard::Key key) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Converts sf::Keyboard::Scancode to X11 keycode
-    ///
-    /// \param code A scancode to be converted
-    ///
-    /// \return A corresponding X11 Keycode
-    ///
-    ////////////////////////////////////////////////////////////
-    KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert X11 Keycode to sf::Keyboard::Scancode
-    ///
-    /// \param code X11 keycode
-    ///
-    /// \return The corresponding sf::Keyboard::Scancode
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Convert sf::Keyboard::Scancode to KeySym
     ///
     /// \param code sf::Keyboard::ScanCode
@@ -167,12 +138,6 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code) const;
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    KeyCode                m_scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
-    sf::Keyboard::Scancode m_keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
 };
 
 } // namespace priv

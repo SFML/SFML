@@ -41,6 +41,11 @@ namespace priv
 {
 
 namespace {
+
+KeyCode                scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
+bool is_init = false;
+
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 {
@@ -219,36 +224,18 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
     return sf::Keyboard::ScanUnknown;
 }
 
-
-} // anonymous namespace
-
-
-////////////////////////////////////////////////////////////
-X11InputManager::X11InputManager()
+void init()
 {
     for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
     {
-        m_scancodeToKeycode[i] = 0;
+        scancodeToKeycode[i] = 0;
     }
 
     for (int i = 0; i < 256; ++i)
     {
-        m_keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
+        keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
     }
-}
 
-
-////////////////////////////////////////////////////////////
-X11InputManager& X11InputManager::getInstance()
-{
-    static X11InputManager instance;
-    return instance;
-}
-
-
-////////////////////////////////////////////////////////////
-void X11InputManager::initialize()
-{
     Display* display = OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
@@ -316,8 +303,8 @@ void X11InputManager::initialize()
 
         if ((keycode >= 0) && (keycode < 256))
         {
-            m_scancodeToKeycode[sc] = keycode;
-            m_keycodeToScancode[keycode] = sc;
+            scancodeToKeycode[sc] = keycode;
+            keycodeToScancode[keycode] = sc;
         }
     }
 
@@ -325,20 +312,54 @@ void X11InputManager::initialize()
     XkbFreeKeyboard(desc, 0, True);
 
     // Translate un-translated keycodes using traditional X11 KeySym lookups
-    for (int keycode = 0;  keycode < 256;  ++keycode)
+    for (int keycode = 0; keycode < 256; ++keycode)
     {
-        if (m_keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown)
+        if (keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown)
         {
             sf::Keyboard::Scancode sc = translateKeyCode(display, keycode);
-            m_scancodeToKeycode[sc] = keycode;
-            m_keycodeToScancode[keycode] = sc;
+            scancodeToKeycode[sc] = keycode;
+            keycodeToScancode[keycode] = sc;
         }
     }
 
     CloseDisplay(display);
+
+    is_init = true;
+}
+
+////////////////////////////////////////////////////////////
+KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
+{
+    if (!is_init)
+        init();
+
+    return scancodeToKeycode[code];
+}
+
+////////////////////////////////////////////////////////////
+sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
+{
+    if (!is_init)
+        init();
+
+    return keycodeToScancode[code];
+}
+
+} // anonymous namespace
+
+
+////////////////////////////////////////////////////////////
+X11InputManager::X11InputManager()
+{
 }
 
 
+////////////////////////////////////////////////////////////
+X11InputManager& X11InputManager::getInstance()
+{
+    static X11InputManager instance;
+    return instance;
+}
 
 namespace {
 ////////////////////////////////////////////////////////////
@@ -543,20 +564,6 @@ KeyCode X11InputManager::SFKeyToKeyCode(sf::Keyboard::Key key) const
     KeyCode keycode = XKeysymToKeycode(display, keysym);
     CloseDisplay(display);
     return keycode;
-}
-
-
-////////////////////////////////////////////////////////////
-KeyCode X11InputManager::SFScancodeToKeyCode(sf::Keyboard::Scancode code) const
-{
-    return m_scancodeToKeycode[code];
-}
-
-
-////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode X11InputManager::keyCodeToSFScancode(KeyCode code) const
-{
-    return m_keycodeToScancode[code];
 }
 
 ////////////////////////////////////////////////////////////
