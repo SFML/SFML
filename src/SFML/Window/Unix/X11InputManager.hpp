@@ -165,6 +165,7 @@ private:
     sf::Keyboard::Scancode m_keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
     Display*               m_display;                                        ///< Pointer to the display
     XIC                    m_inputContext;                                   ///< Input context used to get unicode input in our window (used for getDescription)
+};
 
 } // namespace priv
 } // namespace sf
