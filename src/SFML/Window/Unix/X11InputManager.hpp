@@ -74,7 +74,7 @@ public:
     /// X11 keycodes
     ///
     ////////////////////////////////////////////////////////////
-    void initialize(Display* display, XIC inputContext);
+    void initialize(Display* display);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
@@ -164,10 +164,10 @@ private:
     KeyCode                m_scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
     sf::Keyboard::Scancode m_keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
     Display*               m_display;                                        ///< Pointer to the display
-    XIC                    m_inputContext;                                   ///< Input context used to get unicode input in our window (used for getDescription)
 };
 
 } // namespace priv
+
 } // namespace sf
 
 #endif // SFML_X11INPUTMANAGER_HPP

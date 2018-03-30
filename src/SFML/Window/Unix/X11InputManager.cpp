@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/X11InputManager.hpp>
+#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/KeySymToUnicodeMapping.hpp>
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -39,6 +40,7 @@ namespace priv
 {
 
 namespace {
+
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Key keysymToSF(KeySym symbol)
 {
@@ -450,8 +452,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
 ////////////////////////////////////////////////////////////
 X11InputManager::X11InputManager() :
-    m_display(NULL),
-    m_inputContext(NULL)
+    m_display(NULL)
 {
     for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
     {
@@ -474,10 +475,9 @@ X11InputManager& X11InputManager::getInstance()
 
 
 ////////////////////////////////////////////////////////////
-void X11InputManager::initialize(Display* display, XIC inputContext)
+void X11InputManager::initialize(Display* display)
 {
     m_display = display;
-    m_inputContext = inputContext;
 
     // Find the X11 key code -> SFML key code mapping
     // This code was inspired by GLFW implementation
@@ -634,43 +634,11 @@ sf::String X11InputManager::getDescription(Keyboard::Scancode code) const
 
     if (checkInput)
     {
-        // fake keypress event
-        XKeyPressedEvent ev;
-        ev.keycode = SFtoKeyCode(code);
-        ev.display = m_display;
-        ev.type    = KeyPress;
-
-        #ifdef X_HAVE_UTF8_STRING
-        if (m_inputContext)
-        {
-            Status status;
-            Uint8  keyBuffer[16];
-
-            int length = Xutf8LookupString(
-                m_inputContext,
-                &ev,
-                reinterpret_cast<char*>(keyBuffer),
-                sizeof(keyBuffer),
-                NULL,
-                &status
-            );
-
-            if (length > 0)
-            {
-                Uint32 unicode = 0;
-                Utf8::decode(keyBuffer, keyBuffer + length, unicode, 0);
-                if (unicode != 0)
-                    return sf::String(unicode);
-            }
-        }
-        else
-        #endif
-        {
-            static XComposeStatus status;
-            char keyBuffer[16];
-            if (XLookupString(&ev, keyBuffer, sizeof(keyBuffer), NULL, &status))
-                return sf::String(static_cast<Uint32>(keyBuffer[0]));
-        }
+        KeyCode keycode = SFtoKeyCode(code);
+        KeySym keysym = XkbKeycodeToKeysym(m_display, keycode, 0, 0);
+        sf::Uint32 unicode = keysymToUnicode(keysym);
+        if (unicode != 0)
+            return sf::String(unicode);
     }
 
     // Fallback to our best guess for the keys that are known to be independent of the layout.
