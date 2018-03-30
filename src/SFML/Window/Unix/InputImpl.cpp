@@ -28,7 +28,7 @@
 #include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
-#include <SFML/Window/Unix/X11InputManager.hpp>
+#include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -42,34 +42,34 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    return X11InputManager::isKeyPressed(key);
+    return KeyboardImpl::isKeyPressed(key);
 }
 
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Scancode code)
 {
-    return X11InputManager::isKeyPressed(code);
+    return KeyboardImpl::isKeyPressed(code);
 }
 
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
 {
-    return X11InputManager::localize(code);
+    return KeyboardImpl::localize(code);
 }
 
 
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode InputImpl::unlocalize(Keyboard::Key key)
 {
-    return X11InputManager::unlocalize(key);
+    return KeyboardImpl::unlocalize(key);
 }
 
 
 ////////////////////////////////////////////////////////////
 String InputImpl::getDescription(Keyboard::Scancode code)
 {
-    return X11InputManager::getDescription(code);
+    return KeyboardImpl::getDescription(code);
 }
 
 

@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/X11InputManager.hpp>
+#include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeySymToSFKeyMapping.hpp>
@@ -44,7 +44,7 @@ namespace {
 
 KeyCode                scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
 sf::Keyboard::Scancode keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
-bool is_init = false;
+bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
@@ -324,13 +324,13 @@ void initMapping()
 
     CloseDisplay(display);
 
-    is_init = true;
+    isMappingInitialized = true;
 }
 
 ////////////////////////////////////////////////////////////
 KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
 {
-    if (!is_init)
+    if (!isMappingInitialized)
         initMapping();
 
     return scancodeToKeycode[code];
@@ -339,7 +339,7 @@ KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
 {
-    if (!is_init)
+    if (!isMappingInitialized)
         initMapping();
 
     return keycodeToScancode[code];
@@ -383,7 +383,7 @@ bool isKeyPressedImpl(Display* display, KeyCode keycode)
 } // anonymous namespace
 
 ////////////////////////////////////////////////////////////
-bool X11InputManager::isKeyPressed(sf::Keyboard::Key key)
+bool KeyboardImpl::isKeyPressed(sf::Keyboard::Key key)
 {
     Display* display = OpenDisplay();
     bool pressed = isKeyPressedImpl(display, SFKeyToKeyCode(key));
@@ -393,7 +393,7 @@ bool X11InputManager::isKeyPressed(sf::Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code)
+bool KeyboardImpl::isKeyPressed(sf::Keyboard::Scancode code)
 {
     Display* display = OpenDisplay();
     bool pressed = isKeyPressedImpl(display, SFScancodeToKeyCode(code));
@@ -403,7 +403,7 @@ bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key)
+sf::Keyboard::Scancode KeyboardImpl::unlocalize(sf::Keyboard::Key key)
 {
     KeyCode keycode = SFKeyToKeyCode(key);
     return keyCodeToSFScancode(keycode);
@@ -411,23 +411,23 @@ sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code)
+sf::Keyboard::Key KeyboardImpl::localize(sf::Keyboard::Scancode code)
 {
     KeySym keysym = SFScancodeToKeySym(code);
     return keySymToSFKey(keysym);
 }
 
 ////////////////////////////////////////////////////////////
-sf::String X11InputManager::getDescription(Keyboard::Scancode code)
+sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
 {
     bool checkInput = true;
 
     // these scancodes actually correspond to keys with input
     // but we want to return their description, not their behaviour
-    if (code == sf::Keyboard::ScanEnter ||
-        code == sf::Keyboard::ScanReturn ||
-        code == sf::Keyboard::ScanTab ||
-        code == sf::Keyboard::ScanDelete ||
+    if (code == sf::Keyboard::ScanEnter     ||
+        code == sf::Keyboard::ScanReturn    ||
+        code == sf::Keyboard::ScanTab       ||
+        code == sf::Keyboard::ScanDelete    ||
         code == sf::Keyboard::ScanBackspace ||
         code == sf::Keyboard::ScanSpace) {
         checkInput = false;
@@ -437,6 +437,7 @@ sf::String X11InputManager::getDescription(Keyboard::Scancode code)
     {
         KeySym keysym = SFScancodeToKeySym(code);
         sf::Uint32 unicode = keysymToUnicode(keysym);
+
         if (unicode != 0)
             return sf::String(unicode);
     }
@@ -534,7 +535,7 @@ sf::String X11InputManager::getDescription(Keyboard::Scancode code)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event)
+sf::Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
 {
     sf::Keyboard::Key key = Keyboard::Unknown;
 
@@ -553,7 +554,7 @@ sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode X11InputManager::getScancodeFromEvent(XKeyEvent& event)
+sf::Keyboard::Scancode KeyboardImpl::getScancodeFromEvent(XKeyEvent& event)
 {
     return keyCodeToSFScancode(event.keycode);
 }

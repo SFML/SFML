@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_X11INPUTMANAGER_HPP
-#define SFML_X11INPUTMANAGER_HPP
+#ifndef SFML_KEYBOARD_IMPL_HPP
+#define SFML_KEYBOARD_IMPL_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -44,7 +44,7 @@ namespace priv {
 /// Its purpose is to help sf::priv::InputImpl class.
 ///
 ////////////////////////////////////////////////////////////
-class X11InputManager
+class KeyboardImpl
 {
 public:
 
@@ -103,4 +103,4 @@ public:
 
 } // namespace sf
 
-#endif // SFML_X11INPUTMANAGER_HPP
+#endif // SFML_KEYBOARD_IMPL_HPP
