@@ -42,34 +42,34 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    return X11InputManager::getInstance().isKeyPressed(key);
+    return X11InputManager::isKeyPressed(key);
 }
 
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Scancode code)
 {
-    return X11InputManager::getInstance().isKeyPressed(code);
+    return X11InputManager::isKeyPressed(code);
 }
 
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
 {
-    return X11InputManager::getInstance().localize(code);
+    return X11InputManager::localize(code);
 }
 
 
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode InputImpl::unlocalize(Keyboard::Key key)
 {
-    return X11InputManager::getInstance().unlocalize(key);
+    return X11InputManager::unlocalize(key);
 }
 
 
 ////////////////////////////////////////////////////////////
 String InputImpl::getDescription(Keyboard::Scancode code)
 {
-    return X11InputManager::getInstance().getDescription(code);
+    return X11InputManager::getDescription(code);
 }
 
 

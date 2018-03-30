@@ -49,53 +49,34 @@ class X11InputManager
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique instance of the class
-    ///
-    /// \note Private use only
-    ///
-    /// \return Reference to the X11InputManager instance
-    ///
-    ////////////////////////////////////////////////////////////
-    static X11InputManager& getInstance();
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    X11InputManager();
-public:
-
-    ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
-    bool isKeyPressed(sf::Keyboard::Key key) const;
+    static bool isKeyPressed(sf::Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Scancode)
     ///
     ////////////////////////////////////////////////////////////
-    bool isKeyPressed(sf::Keyboard::Scancode code) const;
+    static bool isKeyPressed(sf::Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::localize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode unlocalize(sf::Keyboard::Key key) const;
+    static sf::Keyboard::Scancode unlocalize(sf::Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::unlocalize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Key localize(sf::Keyboard::Scancode code) const;
+    static sf::Keyboard::Key localize(sf::Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
-    sf::String getDescription(Keyboard::Scancode code) const;
+    static sf::String getDescription(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Key from XKeyEvent
@@ -105,7 +86,7 @@ public:
     /// \return A key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Key getKeyFromEvent(XKeyEvent& event) const;
+    static sf::Keyboard::Key getKeyFromEvent(XKeyEvent& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Scancode from XKeyEvent
@@ -115,29 +96,7 @@ public:
     /// \return A scancode of a key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    sf::Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event) const;
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Converts sf::Keyboard::Key to X11 keycode
-    ///
-    /// \param key A key to be converted
-    ///
-    /// \return A corresponding X11 Keycode
-    ///
-    ////////////////////////////////////////////////////////////
-    KeyCode SFKeyToKeyCode(sf::Keyboard::Key key) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert sf::Keyboard::Scancode to KeySym
-    ///
-    /// \param code sf::Keyboard::ScanCode
-    ///
-    /// \return The corresponding X11 KeySym
-    ///
-    ////////////////////////////////////////////////////////////
-    KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code) const;
+    static sf::Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event);
 };
 
 } // namespace priv

@@ -224,7 +224,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
     return sf::Keyboard::ScanUnknown;
 }
 
-void init()
+void initMapping()
 {
     for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
     {
@@ -331,7 +331,7 @@ void init()
 KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
 {
     if (!is_init)
-        init();
+        initMapping();
 
     return scancodeToKeycode[code];
 }
@@ -340,28 +340,31 @@ KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
 sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
 {
     if (!is_init)
-        init();
+        initMapping();
 
     return keycodeToScancode[code];
 }
 
-} // anonymous namespace
-
-
 ////////////////////////////////////////////////////////////
-X11InputManager::X11InputManager()
+KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
 {
+    KeySym keysym = SFKeyToKeySym(key);
+    Display* display = OpenDisplay();
+    KeyCode keycode = XKeysymToKeycode(display, keysym);
+    CloseDisplay(display);
+    return keycode;
 }
 
-
 ////////////////////////////////////////////////////////////
-X11InputManager& X11InputManager::getInstance()
+KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
 {
-    static X11InputManager instance;
-    return instance;
+    Display* display = OpenDisplay();
+    KeyCode keycode = SFScancodeToKeyCode(code);
+    KeySym keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
+    CloseDisplay(display);
+    return keysym;
 }
 
-namespace {
 ////////////////////////////////////////////////////////////
 bool isKeyPressedImpl(Display* display, KeyCode keycode)
 {
@@ -380,7 +383,7 @@ bool isKeyPressedImpl(Display* display, KeyCode keycode)
 } // anonymous namespace
 
 ////////////////////////////////////////////////////////////
-bool X11InputManager::isKeyPressed(sf::Keyboard::Key key) const
+bool X11InputManager::isKeyPressed(sf::Keyboard::Key key)
 {
     Display* display = OpenDisplay();
     bool pressed = isKeyPressedImpl(display, SFKeyToKeyCode(key));
@@ -390,7 +393,7 @@ bool X11InputManager::isKeyPressed(sf::Keyboard::Key key) const
 
 
 ////////////////////////////////////////////////////////////
-bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code) const
+bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code)
 {
     Display* display = OpenDisplay();
     bool pressed = isKeyPressedImpl(display, SFScancodeToKeyCode(code));
@@ -400,7 +403,7 @@ bool X11InputManager::isKeyPressed(sf::Keyboard::Scancode code) const
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key) const
+sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key)
 {
     KeyCode keycode = SFKeyToKeyCode(key);
     return keyCodeToSFScancode(keycode);
@@ -408,14 +411,14 @@ sf::Keyboard::Scancode X11InputManager::unlocalize(sf::Keyboard::Key key) const
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code) const
+sf::Keyboard::Key X11InputManager::localize(sf::Keyboard::Scancode code)
 {
     KeySym keysym = SFScancodeToKeySym(code);
     return keySymToSFKey(keysym);
 }
 
 ////////////////////////////////////////////////////////////
-sf::String X11InputManager::getDescription(Keyboard::Scancode code) const
+sf::String X11InputManager::getDescription(Keyboard::Scancode code)
 {
     bool checkInput = true;
 
@@ -531,7 +534,7 @@ sf::String X11InputManager::getDescription(Keyboard::Scancode code) const
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event) const
+sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event)
 {
     sf::Keyboard::Key key = Keyboard::Unknown;
 
@@ -550,30 +553,9 @@ sf::Keyboard::Key X11InputManager::getKeyFromEvent(XKeyEvent& event) const
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode X11InputManager::getScancodeFromEvent(XKeyEvent& event) const
+sf::Keyboard::Scancode X11InputManager::getScancodeFromEvent(XKeyEvent& event)
 {
     return keyCodeToSFScancode(event.keycode);
-}
-
-
-////////////////////////////////////////////////////////////
-KeyCode X11InputManager::SFKeyToKeyCode(sf::Keyboard::Key key) const
-{
-    KeySym keysym = SFKeyToKeySym(key);
-    Display* display = OpenDisplay();
-    KeyCode keycode = XKeysymToKeycode(display, keysym);
-    CloseDisplay(display);
-    return keycode;
-}
-
-////////////////////////////////////////////////////////////
-KeySym X11InputManager::SFScancodeToKeySym(sf::Keyboard::Scancode code) const
-{
-    Display* display = OpenDisplay();
-    KeyCode keycode = SFScancodeToKeyCode(code);
-    KeySym keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
-    CloseDisplay(display);
-    return keysym;
 }
 
 } // namespace priv

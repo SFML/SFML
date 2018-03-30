@@ -1577,8 +1577,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
             Event event;
             event.type         = Event::KeyPressed;
-            event.key.code     = X11InputManager::getInstance().getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = X11InputManager::getInstance().getScancodeFromEvent(windowEvent.xkey);
+            event.key.code     = X11InputManager::getKeyFromEvent(windowEvent.xkey);
+            event.key.scancode = X11InputManager::getScancodeFromEvent(windowEvent.xkey);
             event.key.alt      = windowEvent.xkey.state & Mod1Mask;
             event.key.control  = windowEvent.xkey.state & ControlMask;
             event.key.shift    = windowEvent.xkey.state & ShiftMask;
@@ -1642,8 +1642,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Fill the event parameters
             Event event;
             event.type         = Event::KeyReleased;
-            event.key.code     = X11InputManager::getInstance().getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = X11InputManager::getInstance().getScancodeFromEvent(windowEvent.xkey);
+            event.key.code     = X11InputManager::getKeyFromEvent(windowEvent.xkey);
+            event.key.scancode = X11InputManager::getScancodeFromEvent(windowEvent.xkey);
             event.key.alt      = windowEvent.xkey.state & Mod1Mask;
             event.key.control  = windowEvent.xkey.state & ControlMask;
             event.key.shift    = windowEvent.xkey.state & ShiftMask;
