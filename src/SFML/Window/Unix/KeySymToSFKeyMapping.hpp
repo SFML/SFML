@@ -157,9 +157,9 @@ inline Keyboard::Key keySymToSFKey(KeySym symbol)
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Convert Keyboard::Key to X11 KeySym
+/// \brief Convert sf::Keyboard::Key to X11 KeySym
 ///
-/// \param key X11 Keyboard::Key
+/// \param key X11 sf::Keyboard::Key
 ///
 /// \return The corresponding X11 KeySym
 ///
@@ -271,7 +271,6 @@ inline KeySym SFKeyToKeySym(Keyboard::Key key)
         case Keyboard::Num7:       keysym = XK_7;            break;
         case Keyboard::Num8:       keysym = XK_8;            break;
         case Keyboard::Num9:       keysym = XK_9;            break;
-        default:                       keysym = 0;               break;
     }
     return keysym;
 }
