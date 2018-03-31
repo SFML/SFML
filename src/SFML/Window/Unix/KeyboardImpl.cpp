@@ -346,7 +346,8 @@ sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
 KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
 {
     KeySym keysym = SFKeyToKeySym(key);
-    if (keysym != NoSymbol) {
+    if (keysym != NoSymbol)
+    {
         Display* display = OpenDisplay();
         KeyCode keycode = XKeysymToKeycode(display, keysym);
         CloseDisplay(display);
@@ -431,7 +432,8 @@ sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
         code == sf::Keyboard::ScanTab       ||
         code == sf::Keyboard::ScanDelete    ||
         code == sf::Keyboard::ScanBackspace ||
-        code == sf::Keyboard::ScanSpace) {
+        code == sf::Keyboard::ScanSpace)
+    {
         checkInput = false;
     }
 
