@@ -52,31 +52,31 @@ public:
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
-    static bool isKeyPressed(sf::Keyboard::Key key);
+    static bool isKeyPressed(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Scancode)
     ///
     ////////////////////////////////////////////////////////////
-    static bool isKeyPressed(sf::Keyboard::Scancode code);
+    static bool isKeyPressed(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::localize
     ///
     ////////////////////////////////////////////////////////////
-    static sf::Keyboard::Scancode unlocalize(sf::Keyboard::Key key);
+    static Keyboard::Scancode unlocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::unlocalize
     ///
     ////////////////////////////////////////////////////////////
-    static sf::Keyboard::Key localize(sf::Keyboard::Scancode code);
+    static Keyboard::Key localize(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
-    static sf::String getDescription(Keyboard::Scancode code);
+    static String getDescription(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Key from XKeyEvent
@@ -86,7 +86,7 @@ public:
     /// \return A key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    static sf::Keyboard::Key getKeyFromEvent(XKeyEvent& event);
+    static Keyboard::Key getKeyFromEvent(XKeyEvent& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sf::Keyboard::Scancode from XKeyEvent
@@ -96,7 +96,7 @@ public:
     /// \return A scancode of a key being pressed or released
     ///
     ////////////////////////////////////////////////////////////
-    static sf::Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event);
+    static Keyboard::Scancode getScancodeFromEvent(XKeyEvent& event);
 };
 
 } // namespace priv

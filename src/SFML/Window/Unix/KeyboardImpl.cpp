@@ -35,11 +35,6 @@
 #include <X11/Xutil.h>
 #include <cstring>
 
-namespace sf
-{
-namespace priv
-{
-
 namespace {
 
 KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { 0 };               ///< Mapping of SFML scancode to X11 KeyCode
@@ -230,7 +225,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
 void initMapping()
 {
-    Display* display = OpenDisplay();
+    Display* display = sf::priv::OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
     // This code was inspired by GLFW implementation
@@ -317,7 +312,7 @@ void initMapping()
         }
     }
 
-    CloseDisplay(display);
+    sf::priv::CloseDisplay(display);
 
     isMappingInitialized = true;
 }
@@ -345,12 +340,12 @@ sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
 ////////////////////////////////////////////////////////////
 KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
 {
-    KeySym keysym = SFKeyToKeySym(key);
+    KeySym keysym = sf::priv::SFKeyToKeySym(key);
     if (keysym != NoSymbol)
     {
-        Display* display = OpenDisplay();
+        Display* display = sf::priv::OpenDisplay();
         KeyCode keycode = XKeysymToKeycode(display, keysym);
-        CloseDisplay(display);
+        sf::priv::CloseDisplay(display);
         return keycode;
     }
     return 0;
@@ -359,12 +354,12 @@ KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
 {
-    Display* display = OpenDisplay();
+    Display* display = sf::priv::OpenDisplay();
     KeySym keysym = NoSymbol;
     KeyCode keycode = SFScancodeToKeyCode(code);
     if (keycode != 0) // ensure that this Scancode is mapped to keycode
         keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
-    CloseDisplay(display);
+    sf::priv::CloseDisplay(display);
     return keysym;
 }
 
@@ -373,13 +368,13 @@ bool isKeyPressedImpl(KeyCode keycode)
 {
     if (keycode != 0)
     {
-        Display* display = OpenDisplay();
+        Display* display = sf::priv::OpenDisplay();
 
         // Get the whole keyboard state
         char keys[32];
         XQueryKeymap(display, keys);
 
-        CloseDisplay(display);
+        sf::priv::CloseDisplay(display);
 
         // Check our keycode
         return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
@@ -389,8 +384,13 @@ bool isKeyPressedImpl(KeyCode keycode)
 
 } // anonymous namespace
 
+namespace sf
+{
+namespace priv
+{
+
 ////////////////////////////////////////////////////////////
-bool KeyboardImpl::isKeyPressed(sf::Keyboard::Key key)
+bool KeyboardImpl::isKeyPressed(Keyboard::Key key)
 {
     KeyCode keycode = SFKeyToKeyCode(key);
     return isKeyPressedImpl(keycode);
@@ -398,7 +398,7 @@ bool KeyboardImpl::isKeyPressed(sf::Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-bool KeyboardImpl::isKeyPressed(sf::Keyboard::Scancode code)
+bool KeyboardImpl::isKeyPressed(Keyboard::Scancode code)
 {
     KeyCode keycode = SFScancodeToKeyCode(code);
     return isKeyPressedImpl(keycode);
@@ -406,7 +406,7 @@ bool KeyboardImpl::isKeyPressed(sf::Keyboard::Scancode code)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode KeyboardImpl::unlocalize(sf::Keyboard::Key key)
+Keyboard::Scancode KeyboardImpl::unlocalize(Keyboard::Key key)
 {
     KeyCode keycode = SFKeyToKeyCode(key);
     return keyCodeToSFScancode(keycode);
@@ -414,25 +414,25 @@ sf::Keyboard::Scancode KeyboardImpl::unlocalize(sf::Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key KeyboardImpl::localize(sf::Keyboard::Scancode code)
+Keyboard::Key KeyboardImpl::localize(Keyboard::Scancode code)
 {
     KeySym keysym = SFScancodeToKeySym(code);
     return keySymToSFKey(keysym);
 }
 
 ////////////////////////////////////////////////////////////
-sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
+String KeyboardImpl::getDescription(Keyboard::Scancode code)
 {
     bool checkInput = true;
 
     // these scancodes actually correspond to keys with input
     // but we want to return their description, not their behaviour
-    if (code == sf::Keyboard::ScanEnter     ||
-        code == sf::Keyboard::ScanReturn    ||
-        code == sf::Keyboard::ScanTab       ||
-        code == sf::Keyboard::ScanDelete    ||
-        code == sf::Keyboard::ScanBackspace ||
-        code == sf::Keyboard::ScanSpace)
+    if (code == Keyboard::ScanEnter     ||
+        code == Keyboard::ScanReturn    ||
+        code == Keyboard::ScanTab       ||
+        code == Keyboard::ScanDelete    ||
+        code == Keyboard::ScanBackspace ||
+        code == Keyboard::ScanSpace)
     {
         checkInput = false;
     }
@@ -440,98 +440,98 @@ sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
     if (checkInput)
     {
         KeySym keysym = SFScancodeToKeySym(code);
-        sf::Uint32 unicode = keysymToUnicode(keysym);
+        Uint32 unicode = keysymToUnicode(keysym);
 
         if (unicode != 0)
-            return sf::String(unicode);
+            return String(unicode);
     }
 
     // Fallback to our best guess for the keys that are known to be independent of the layout.
     switch (code)
     {
-        case sf::Keyboard::ScanEnter:       return "Enter";
-        case sf::Keyboard::ScanEscape:      return "Escape";
-        case sf::Keyboard::ScanBackspace:   return "Backspace";
-        case sf::Keyboard::ScanTab:         return "Tab";
-        case sf::Keyboard::ScanSpace:       return "Space";
+        case Keyboard::ScanEnter:       return "Enter";
+        case Keyboard::ScanEscape:      return "Escape";
+        case Keyboard::ScanBackspace:   return "Backspace";
+        case Keyboard::ScanTab:         return "Tab";
+        case Keyboard::ScanSpace:       return "Space";
 
-        case sf::Keyboard::ScanF1:          return "F1";
-        case sf::Keyboard::ScanF2:          return "F2";
-        case sf::Keyboard::ScanF3:          return "F3";
-        case sf::Keyboard::ScanF4:          return "F4";
-        case sf::Keyboard::ScanF5:          return "F5";
-        case sf::Keyboard::ScanF6:          return "F6";
-        case sf::Keyboard::ScanF7:          return "F7";
-        case sf::Keyboard::ScanF8:          return "F8";
-        case sf::Keyboard::ScanF9:          return "F9";
-        case sf::Keyboard::ScanF10:         return "F10";
-        case sf::Keyboard::ScanF11:         return "F11";
-        case sf::Keyboard::ScanF12:         return "F12";
-        case sf::Keyboard::ScanF13:         return "F13";
-        case sf::Keyboard::ScanF14:         return "F14";
-        case sf::Keyboard::ScanF15:         return "F15";
+        case Keyboard::ScanF1:          return "F1";
+        case Keyboard::ScanF2:          return "F2";
+        case Keyboard::ScanF3:          return "F3";
+        case Keyboard::ScanF4:          return "F4";
+        case Keyboard::ScanF5:          return "F5";
+        case Keyboard::ScanF6:          return "F6";
+        case Keyboard::ScanF7:          return "F7";
+        case Keyboard::ScanF8:          return "F8";
+        case Keyboard::ScanF9:          return "F9";
+        case Keyboard::ScanF10:         return "F10";
+        case Keyboard::ScanF11:         return "F11";
+        case Keyboard::ScanF12:         return "F12";
+        case Keyboard::ScanF13:         return "F13";
+        case Keyboard::ScanF14:         return "F14";
+        case Keyboard::ScanF15:         return "F15";
 
-        case sf::Keyboard::ScanCapsLock:    return "CapsLock";
-        case sf::Keyboard::ScanPrintScreen: return "PrintScreen";
-        case sf::Keyboard::ScanScrollLock:  return "ScrollLock";
+        case Keyboard::ScanCapsLock:    return "CapsLock";
+        case Keyboard::ScanPrintScreen: return "PrintScreen";
+        case Keyboard::ScanScrollLock:  return "ScrollLock";
 
-        case sf::Keyboard::ScanPause:       return "Pause";
-        case sf::Keyboard::ScanInsert:      return "Insert";
-        case sf::Keyboard::ScanHome:        return "Home";
-        case sf::Keyboard::ScanPageUp:      return "PageUp";
-        case sf::Keyboard::ScanDelete:      return "Delete";
-        case sf::Keyboard::ScanEnd:         return "End";
-        case sf::Keyboard::ScanPageDown:    return "PageDown";
+        case Keyboard::ScanPause:       return "Pause";
+        case Keyboard::ScanInsert:      return "Insert";
+        case Keyboard::ScanHome:        return "Home";
+        case Keyboard::ScanPageUp:      return "PageUp";
+        case Keyboard::ScanDelete:      return "Delete";
+        case Keyboard::ScanEnd:         return "End";
+        case Keyboard::ScanPageDown:    return "PageDown";
 
-        case sf::Keyboard::ScanLeft:        return "Left Arrow";
-        case sf::Keyboard::ScanRight:       return "Right Arrow";
-        case sf::Keyboard::ScanDown:        return "Down Arrow";
-        case sf::Keyboard::ScanUp:          return "Up Arrow";
+        case Keyboard::ScanLeft:        return "Left Arrow";
+        case Keyboard::ScanRight:       return "Right Arrow";
+        case Keyboard::ScanDown:        return "Down Arrow";
+        case Keyboard::ScanUp:          return "Up Arrow";
 
-        case sf::Keyboard::ScanNumLock:     return "NumLock";
-        case sf::Keyboard::ScanDivide:      return "Divide (Numpad)";
-        case sf::Keyboard::ScanMultiply:    return "Multiply (Numpad)";
-        case sf::Keyboard::ScanMinus:       return "Minux (Numpad)";
-        case sf::Keyboard::ScanPlus:        return "Plus (Numpad)";
-        case sf::Keyboard::ScanPadEquals:   return "Equals (Numpad)";
-        case sf::Keyboard::ScanReturn:      return "Return (Numpad)";
-        case sf::Keyboard::ScanDecimal:     return "Decimal (Numpad)";
+        case Keyboard::ScanNumLock:     return "NumLock";
+        case Keyboard::ScanDivide:      return "Divide (Numpad)";
+        case Keyboard::ScanMultiply:    return "Multiply (Numpad)";
+        case Keyboard::ScanMinus:       return "Minux (Numpad)";
+        case Keyboard::ScanPlus:        return "Plus (Numpad)";
+        case Keyboard::ScanPadEquals:   return "Equals (Numpad)";
+        case Keyboard::ScanReturn:      return "Return (Numpad)";
+        case Keyboard::ScanDecimal:     return "Decimal (Numpad)";
 
-        case sf::Keyboard::ScanNumpad0:     return "0 (Numpad)";
-        case sf::Keyboard::ScanNumpad1:     return "1 (Numpad)";
-        case sf::Keyboard::ScanNumpad2:     return "2 (Numpad)";
-        case sf::Keyboard::ScanNumpad3:     return "3 (Numpad)";
-        case sf::Keyboard::ScanNumpad4:     return "4 (Numpad)";
-        case sf::Keyboard::ScanNumpad5:     return "5 (Numpad)";
-        case sf::Keyboard::ScanNumpad6:     return "6 (Numpad)";
-        case sf::Keyboard::ScanNumpad7:     return "7 (Numpad)";
-        case sf::Keyboard::ScanNumpad8:     return "8 (Numpad)";
-        case sf::Keyboard::ScanNumpad9:     return "9 (Numpad)";
+        case Keyboard::ScanNumpad0:     return "0 (Numpad)";
+        case Keyboard::ScanNumpad1:     return "1 (Numpad)";
+        case Keyboard::ScanNumpad2:     return "2 (Numpad)";
+        case Keyboard::ScanNumpad3:     return "3 (Numpad)";
+        case Keyboard::ScanNumpad4:     return "4 (Numpad)";
+        case Keyboard::ScanNumpad5:     return "5 (Numpad)";
+        case Keyboard::ScanNumpad6:     return "6 (Numpad)";
+        case Keyboard::ScanNumpad7:     return "7 (Numpad)";
+        case Keyboard::ScanNumpad8:     return "8 (Numpad)";
+        case Keyboard::ScanNumpad9:     return "9 (Numpad)";
 
-        case sf::Keyboard::ScanApplication: return "Application";
-        case sf::Keyboard::ScanExecute:     return "Execute";
-        case sf::Keyboard::ScanHelp:        return "Help";
-        case sf::Keyboard::ScanMenu:        return "Menu";
-        case sf::Keyboard::ScanSelect:      return "Select";
-        case sf::Keyboard::ScanStop:        return "Stop";
-        case sf::Keyboard::ScanAgain:       return "Again";
-        case sf::Keyboard::ScanUndo:        return "Undo";
-        case sf::Keyboard::ScanCut:         return "Cut";
-        case sf::Keyboard::ScanCopy:        return "Copy";
-        case sf::Keyboard::ScanPaste:       return "Paste";
-        case sf::Keyboard::ScanFind:        return "Find";
-        case sf::Keyboard::ScanMute:        return "Mute";
-        case sf::Keyboard::ScanVolumeUp:    return "Volume Up";
-        case sf::Keyboard::ScanVolumeDown:  return "Volume Down";
+        case Keyboard::ScanApplication: return "Application";
+        case Keyboard::ScanExecute:     return "Execute";
+        case Keyboard::ScanHelp:        return "Help";
+        case Keyboard::ScanMenu:        return "Menu";
+        case Keyboard::ScanSelect:      return "Select";
+        case Keyboard::ScanStop:        return "Stop";
+        case Keyboard::ScanAgain:       return "Again";
+        case Keyboard::ScanUndo:        return "Undo";
+        case Keyboard::ScanCut:         return "Cut";
+        case Keyboard::ScanCopy:        return "Copy";
+        case Keyboard::ScanPaste:       return "Paste";
+        case Keyboard::ScanFind:        return "Find";
+        case Keyboard::ScanMute:        return "Mute";
+        case Keyboard::ScanVolumeUp:    return "Volume Up";
+        case Keyboard::ScanVolumeDown:  return "Volume Down";
 
-        case sf::Keyboard::ScanLControl:    return "Control (Left)";
-        case sf::Keyboard::ScanLShift:      return "Shift (Left)";
-        case sf::Keyboard::ScanLAlt:        return "Alt (Left)";
-        case sf::Keyboard::ScanLSystem:     return "Meta (Left)";
-        case sf::Keyboard::ScanRControl:    return "Control (Right)";
-        case sf::Keyboard::ScanRShift:      return "Shift (Right)";
-        case sf::Keyboard::ScanRAlt:        return "Alt (Right)";
-        case sf::Keyboard::ScanRSystem:     return "Meta (Right)";
+        case Keyboard::ScanLControl:    return "Control (Left)";
+        case Keyboard::ScanLShift:      return "Shift (Left)";
+        case Keyboard::ScanLAlt:        return "Alt (Left)";
+        case Keyboard::ScanLSystem:     return "Meta (Left)";
+        case Keyboard::ScanRControl:    return "Control (Right)";
+        case Keyboard::ScanRShift:      return "Shift (Right)";
+        case Keyboard::ScanRAlt:        return "Alt (Right)";
+        case Keyboard::ScanRSystem:     return "Meta (Right)";
     }
 
     return "Unknown Scancode"; // no guess good enough possible.
@@ -539,9 +539,9 @@ sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
+Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
 {
-    sf::Keyboard::Key key = Keyboard::Unknown;
+    Keyboard::Key key = Keyboard::Unknown;
 
     // Try each KeySym index (modifier group) until we get a match
     for (int i = 0; i < 4; ++i)
@@ -558,7 +558,7 @@ sf::Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
 
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode KeyboardImpl::getScancodeFromEvent(XKeyEvent& event)
+Keyboard::Scancode KeyboardImpl::getScancodeFromEvent(XKeyEvent& event)
 {
     return keyCodeToSFScancode(event.keycode);
 }
