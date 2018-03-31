@@ -42,15 +42,13 @@ namespace priv
 
 namespace {
 
-KeyCode                scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[256];                         ///< Mapping of X11 KeyCode to SFML scancode
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { 0 };     ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[256] = { sf::Keyboard::ScanUnknown}; ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 {
-    KeySym keySym;
-
     // Valid key code range is [8,255], according to the Xlib manual
     if (keycode < 8 || keycode > 255)
         return sf::Keyboard::ScanUnknown;
@@ -59,7 +57,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
     // Note: This way we always force "NumLock = ON", which is intentional
     // since the returned key code should correspond to a physical
     // location.
-    keySym = XkbKeycodeToKeysym(display, keycode, 0, 1);
+    KeySym keySym = XkbKeycodeToKeysym(display, keycode, 0, 1);
     switch (keySym)
     {
         case XK_KP_0:           return sf::Keyboard::ScanNumpad0;
@@ -226,16 +224,6 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
 void initMapping()
 {
-    for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
-    {
-        scancodeToKeycode[i] = 0;
-    }
-
-    for (int i = 0; i < 256; ++i)
-    {
-        keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
-    }
-
     Display* display = OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
@@ -366,13 +354,17 @@ KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
 }
 
 ////////////////////////////////////////////////////////////
-bool isKeyPressedImpl(Display* display, KeyCode keycode)
+bool isKeyPressedImpl(KeyCode keycode)
 {
     if (keycode != 0)
     {
+        Display* display = OpenDisplay();
+
         // Get the whole keyboard state
         char keys[32];
         XQueryKeymap(display, keys);
+
+        CloseDisplay(display);
 
         // Check our keycode
         return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
@@ -385,20 +377,16 @@ bool isKeyPressedImpl(Display* display, KeyCode keycode)
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(sf::Keyboard::Key key)
 {
-    Display* display = OpenDisplay();
-    bool pressed = isKeyPressedImpl(display, SFKeyToKeyCode(key));
-    CloseDisplay(display);
-    return pressed;
+    KeyCode keycode = SFKeyToKeyCode(key);
+    return isKeyPressedImpl(keycode);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(sf::Keyboard::Scancode code)
 {
-    Display* display = OpenDisplay();
-    bool pressed = isKeyPressedImpl(display, SFScancodeToKeyCode(code));
-    CloseDisplay(display);
-    return pressed;
+    KeyCode keycode = SFScancodeToKeyCode(code);
+    return isKeyPressedImpl(keycode);
 }
 
 
@@ -530,7 +518,7 @@ sf::String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case sf::Keyboard::ScanRSystem:     return "Meta (Right)";
     }
 
-    return sf::String("Unknown Scancode"); // no guess good enough possible.
+    return "Unknown Scancode"; // no guess good enough possible.
 }
 
 
