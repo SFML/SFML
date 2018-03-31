@@ -167,7 +167,7 @@ inline sf::Keyboard::Key keySymToSFKey(KeySym symbol)
 inline KeySym SFKeyToKeySym(sf::Keyboard::Key key)
 {
     // Get the corresponding X11 keysym
-    KeySym keysym = 0;
+    KeySym keysym = NoSymbol;
     switch (key)
     {
         case sf::Keyboard::LShift:     keysym = XK_Shift_L;      break;

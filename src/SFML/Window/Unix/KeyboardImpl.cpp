@@ -42,15 +42,21 @@ namespace priv
 
 namespace {
 
-KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { 0 };     ///< Mapping of SFML scancode to X11 KeyCode
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { 0 };               ///< Mapping of SFML scancode to X11 KeyCode
 sf::Keyboard::Scancode keycodeToScancode[256] = { sf::Keyboard::ScanUnknown}; ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
+bool isValidKeycode(KeyCode keycode)
 {
     // Valid key code range is [8,255], according to the Xlib manual
-    if (keycode < 8 || keycode > 255)
+    return keycode >= 8 || keycode <= 255;
+}
+
+////////////////////////////////////////////////////////////
+sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
+{
+    if (!isValidKeycode(keycode))
         return sf::Keyboard::ScanUnknown;
 
     // Try secondary keysym, for numeric keypad keys
@@ -289,7 +295,7 @@ void initMapping()
         else if (strcmp(name, "AB10") == 0) sc = sf::Keyboard::ScanForwardSlash;
         else sc = sf::Keyboard::ScanUnknown;
 
-        if ((keycode >= 0) && (keycode < 256))
+        if (isValidKeycode(keycode))
         {
             scancodeToKeycode[sc] = keycode;
             keycodeToScancode[keycode] = sc;
@@ -300,7 +306,8 @@ void initMapping()
     XkbFreeKeyboard(desc, 0, True);
 
     // Translate un-translated keycodes using traditional X11 KeySym lookups
-    for (int keycode = 0; keycode < 256; ++keycode)
+    // Valid keycodes are [8;255], so we only initialize them
+    for (int keycode = 8; keycode < 256; ++keycode)
     {
         if (keycodeToScancode[keycode] == sf::Keyboard::ScanUnknown)
         {
@@ -330,25 +337,32 @@ sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
     if (!isMappingInitialized)
         initMapping();
 
-    return keycodeToScancode[code];
+    if (isValidKeycode(code))
+        return keycodeToScancode[code];
+    return sf::Keyboard::ScanUnknown;
 }
 
 ////////////////////////////////////////////////////////////
 KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
 {
     KeySym keysym = SFKeyToKeySym(key);
-    Display* display = OpenDisplay();
-    KeyCode keycode = XKeysymToKeycode(display, keysym);
-    CloseDisplay(display);
-    return keycode;
+    if (keysym != NoSymbol) {
+        Display* display = OpenDisplay();
+        KeyCode keycode = XKeysymToKeycode(display, keysym);
+        CloseDisplay(display);
+        return keycode;
+    }
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////
 KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
 {
     Display* display = OpenDisplay();
+    KeySym keysym = NoSymbol;
     KeyCode keycode = SFScancodeToKeyCode(code);
-    KeySym keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
+    if (keycode != 0) // ensure that this Scancode is mapped to keycode
+        keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
     CloseDisplay(display);
     return keysym;
 }
