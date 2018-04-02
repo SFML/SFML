@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
-#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
+#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
