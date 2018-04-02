@@ -37,7 +37,8 @@
 
 namespace {
 
-KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { 0 };               ///< Mapping of SFML scancode to X11 KeyCode
+const KeyCode NullKeyCode = 0;
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { NullKeyCode };     ///< Mapping of SFML scancode to X11 KeyCode
 sf::Keyboard::Scancode keycodeToScancode[256] = { sf::Keyboard::ScanUnknown}; ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
@@ -348,7 +349,7 @@ KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
         sf::priv::CloseDisplay(display);
         return keycode;
     }
-    return 0;
+    return NullKeyCode;
 }
 
 ////////////////////////////////////////////////////////////
@@ -357,7 +358,7 @@ KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
     Display* display = sf::priv::OpenDisplay();
     KeySym keysym = NoSymbol;
     KeyCode keycode = SFScancodeToKeyCode(code);
-    if (keycode != 0) // ensure that this Scancode is mapped to keycode
+    if (keycode != NullKeyCode) // ensure that this Scancode is mapped to keycode
         keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
     sf::priv::CloseDisplay(display);
     return keysym;
@@ -366,7 +367,7 @@ KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 bool isKeyPressedImpl(KeyCode keycode)
 {
-    if (keycode != 0)
+    if (keycode != NullKeyCode)
     {
         Display* display = sf::priv::OpenDisplay();
 
