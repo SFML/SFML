@@ -120,8 +120,10 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/InputImpl.hpp
             ${SRCROOT}/Unix/KeyboardImpl.hpp
             ${SRCROOT}/Unix/KeyboardImpl.cpp
-            ${SRCROOT}/Unix/KeySymToSFKeyMapping.hpp
+            ${SRCROOT}/Unix/KeySymToKeyMapping.hpp
+            ${SRCROOT}/Unix/KeySymToKeyMapping.cpp
             ${SRCROOT}/Unix/KeySymToUnicodeMapping.hpp
+            ${SRCROOT}/Unix/KeySymToUnicodeMapping.cpp
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp

@@ -28,21 +28,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <X11/Xlib.h> // XKeyEvent
 
-#include <X11/X.h> // Keycode
-#include <X11/XKBlib.h>
 
-namespace sf {
-namespace priv {
-
+namespace sf
+{
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// \brief sf::priv::InputImpl helper
+/// \brief sf::priv::KeyboardImpl helper
 ///
-/// This class manage as a singleton instance the keyboard state.
-/// Its purpose is to help sf::priv::InputImpl class.
-///
+/// This class implements keyboard handling functions
+/// to help sf::priv::InputImpl class.
 ////////////////////////////////////////////////////////////
 class KeyboardImpl
 {
