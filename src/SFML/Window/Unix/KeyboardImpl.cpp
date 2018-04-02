@@ -216,7 +216,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
         case XK_comma:          return sf::Keyboard::ScanComma;
         case XK_period:         return sf::Keyboard::ScanPeriod;
         case XK_slash:          return sf::Keyboard::ScanForwardSlash;
-        // case XK_less:           return sf::Keyboard::ScanWorld1; // At least in some layouts...
+        case XK_less:           return sf::Keyboard::ScanReverseSolidus;
         default:                break;
     }
 
@@ -295,6 +295,7 @@ void initMapping()
         else if (strcmp(name, "AB08") == 0) sc = sf::Keyboard::ScanComma;
         else if (strcmp(name, "AB09") == 0) sc = sf::Keyboard::ScanPeriod;
         else if (strcmp(name, "AB10") == 0) sc = sf::Keyboard::ScanForwardSlash;
+        else if (strcmp(name, "LSGT") == 0) sc = sf::Keyboard::ScanReverseSolidus;
         else sc = sf::Keyboard::ScanUnknown;
 
         if (isValidKeycode(keycode))
