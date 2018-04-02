@@ -38,8 +38,8 @@
 namespace {
 
 const KeyCode NullKeyCode = 0;
-KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { NullKeyCode };     ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[256] = { sf::Keyboard::ScanUnknown}; ///< Mapping of X11 KeyCode to SFML scancode
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount];     ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[256]; ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
@@ -226,6 +226,12 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
 void initMapping()
 {
+    for (int i = 0; i < 256; ++i)
+        scancodeToKeycode[i] = NullKeyCode;
+
+    for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
+        keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
+
     Display* display = sf::priv::OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
