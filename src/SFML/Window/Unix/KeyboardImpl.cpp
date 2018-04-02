@@ -26,28 +26,31 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/KeySymToSFKeyMapping.hpp>
+#include <SFML/Window/Unix/KeySymToKeyMapping.hpp>
 #include <SFML/Window/Unix/KeySymToUnicodeMapping.hpp>
+#include <SFML/System/String.hpp>
+#include <SFML/System/Utf.hpp>
 #include <X11/keysym.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <cstring>
+#include <X11/XKBlib.h>
+#include <cstring> // strcmp
 
-namespace {
+namespace
+{
 
 const KeyCode NullKeyCode = 0;
-KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount] = { NullKeyCode };     ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[256] = { sf::Keyboard::ScanUnknown}; ///< Mapping of X11 KeyCode to SFML scancode
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[256];          ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
 bool isValidKeycode(KeyCode keycode)
 {
     // Valid key code range is [8,255], according to the Xlib manual
-    return keycode >= 8 || keycode <= 255;
+    return (keycode >= 8) || (keycode <= 255);
 }
+
 
 ////////////////////////////////////////////////////////////
 sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
@@ -60,23 +63,24 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
     // since the returned key code should correspond to a physical
     // location.
     KeySym keySym = XkbKeycodeToKeysym(display, keycode, 0, 1);
+
     switch (keySym)
     {
-        case XK_KP_0:           return sf::Keyboard::ScanNumpad0;
-        case XK_KP_1:           return sf::Keyboard::ScanNumpad1;
-        case XK_KP_2:           return sf::Keyboard::ScanNumpad2;
-        case XK_KP_3:           return sf::Keyboard::ScanNumpad3;
-        case XK_KP_4:           return sf::Keyboard::ScanNumpad4;
-        case XK_KP_5:           return sf::Keyboard::ScanNumpad5;
-        case XK_KP_6:           return sf::Keyboard::ScanNumpad6;
-        case XK_KP_7:           return sf::Keyboard::ScanNumpad7;
-        case XK_KP_8:           return sf::Keyboard::ScanNumpad8;
-        case XK_KP_9:           return sf::Keyboard::ScanNumpad9;
-        case XK_KP_Separator:
-        case XK_KP_Decimal:     return sf::Keyboard::ScanDecimal;
-        case XK_KP_Equal:       return sf::Keyboard::ScanPadEquals;
-        case XK_KP_Enter:       return sf::Keyboard::ScanReturn;
-        default:                break;
+        case XK_KP_0:             return sf::Keyboard::ScanNumpad0;
+        case XK_KP_1:             return sf::Keyboard::ScanNumpad1;
+        case XK_KP_2:             return sf::Keyboard::ScanNumpad2;
+        case XK_KP_3:             return sf::Keyboard::ScanNumpad3;
+        case XK_KP_4:             return sf::Keyboard::ScanNumpad4;
+        case XK_KP_5:             return sf::Keyboard::ScanNumpad5;
+        case XK_KP_6:             return sf::Keyboard::ScanNumpad6;
+        case XK_KP_7:             return sf::Keyboard::ScanNumpad7;
+        case XK_KP_8:             return sf::Keyboard::ScanNumpad8;
+        case XK_KP_9:             return sf::Keyboard::ScanNumpad9;
+        case XK_KP_Separator:     return sf::Keyboard::ScanDecimal;
+        case XK_KP_Decimal:       return sf::Keyboard::ScanDecimal;
+        case XK_KP_Equal:         return sf::Keyboard::ScanPadEquals;
+        case XK_KP_Enter:         return sf::Keyboard::ScanReturn;
+        default:                  break;
     }
 
     // Now try primary keysym for function keys (non-printable keys)
@@ -85,147 +89,142 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 
     switch (keySym)
     {
-        case XK_Escape:         return sf::Keyboard::ScanEscape;
-        case XK_Tab:            return sf::Keyboard::ScanTab;
-        case XK_Shift_L:        return sf::Keyboard::ScanLShift;
-        case XK_Shift_R:        return sf::Keyboard::ScanRShift;
-        case XK_Control_L:      return sf::Keyboard::ScanLControl;
-        case XK_Control_R:      return sf::Keyboard::ScanRControl;
-        case XK_Meta_L:
-        case XK_Alt_L:          return sf::Keyboard::ScanLAlt;
-        case XK_Mode_switch: // Mapped to Alt_R on many keyboards
-        case XK_ISO_Level3_Shift: // AltGr on at least some machines
-        case XK_Meta_R:
-        case XK_Alt_R:          return sf::Keyboard::ScanRAlt;
-        case XK_Super_L:        return sf::Keyboard::ScanLSystem;
-        case XK_Super_R:        return sf::Keyboard::ScanRSystem;
-        case XK_Menu:           return sf::Keyboard::ScanMenu;
-        case XK_Num_Lock:       return sf::Keyboard::ScanNumLock;
-        case XK_Caps_Lock:      return sf::Keyboard::ScanCapsLock;
-        case XK_Print:          return sf::Keyboard::ScanPrintScreen;
-        case XK_Scroll_Lock:    return sf::Keyboard::ScanScrollLock;
-        case XK_Pause:          return sf::Keyboard::ScanPause;
-        case XK_Delete:         return sf::Keyboard::ScanDelete;
-        case XK_BackSpace:      return sf::Keyboard::ScanBackspace;
-        case XK_Return:         return sf::Keyboard::ScanEnter;
-        case XK_Home:           return sf::Keyboard::ScanHome;
-        case XK_End:            return sf::Keyboard::ScanEnd;
-        case XK_Page_Up:        return sf::Keyboard::ScanPageUp;
-        case XK_Page_Down:      return sf::Keyboard::ScanPageDown;
-        case XK_Insert:         return sf::Keyboard::ScanInsert;
-        case XK_Left:           return sf::Keyboard::ScanLeft;
-        case XK_Right:          return sf::Keyboard::ScanRight;
-        case XK_Down:           return sf::Keyboard::ScanDown;
-        case XK_Up:             return sf::Keyboard::ScanUp;
-        case XK_F1:             return sf::Keyboard::ScanF1;
-        case XK_F2:             return sf::Keyboard::ScanF2;
-        case XK_F3:             return sf::Keyboard::ScanF3;
-        case XK_F4:             return sf::Keyboard::ScanF4;
-        case XK_F5:             return sf::Keyboard::ScanF5;
-        case XK_F6:             return sf::Keyboard::ScanF6;
-        case XK_F7:             return sf::Keyboard::ScanF7;
-        case XK_F8:             return sf::Keyboard::ScanF8;
-        case XK_F9:             return sf::Keyboard::ScanF9;
-        case XK_F10:            return sf::Keyboard::ScanF10;
-        case XK_F11:            return sf::Keyboard::ScanF11;
-        case XK_F12:            return sf::Keyboard::ScanF12;
-        case XK_F13:            return sf::Keyboard::ScanF13;
-        case XK_F14:            return sf::Keyboard::ScanF14;
-        case XK_F15:            return sf::Keyboard::ScanF15;
-        // SFML doesn't currently have these scancodes
-        /* case XK_F16:            return sf::Keyboard::ScanF16;
-        case XK_F17:            return sf::Keyboard::ScanF17;
-        case XK_F18:            return sf::Keyboard::ScanF18;
-        case XK_F19:            return sf::Keyboard::ScanF19;
-        case XK_F20:            return sf::Keyboard::ScanF20;
-        case XK_F21:            return sf::Keyboard::ScanF21;
-        case XK_F22:            return sf::Keyboard::ScanF22;
-        case XK_F23:            return sf::Keyboard::ScanF23;
-        case XK_F24:            return sf::Keyboard::ScanF24;
-        case XK_F25:            return sf::Keyboard::ScanF25; */
+        case XK_Escape:           return sf::Keyboard::ScanEscape;
+        case XK_Tab:              return sf::Keyboard::ScanTab;
+        case XK_Shift_L:          return sf::Keyboard::ScanLShift;
+        case XK_Shift_R:          return sf::Keyboard::ScanRShift;
+        case XK_Control_L:        return sf::Keyboard::ScanLControl;
+        case XK_Control_R:        return sf::Keyboard::ScanRControl;
+        case XK_Meta_L:           return sf::Keyboard::ScanLAlt;
+        case XK_Alt_L:            return sf::Keyboard::ScanLAlt;
+        case XK_Mode_switch:      return sf::Keyboard::ScanRAlt; // Mapped to Alt_R on many keyboards
+        case XK_ISO_Level3_Shift: return sf::Keyboard::ScanRAlt; // AltGr on at least some machines
+        case XK_Meta_R:           return sf::Keyboard::ScanRAlt;
+        case XK_Alt_R:            return sf::Keyboard::ScanRAlt;
+        case XK_Super_L:          return sf::Keyboard::ScanLSystem;
+        case XK_Super_R:          return sf::Keyboard::ScanRSystem;
+        case XK_Menu:             return sf::Keyboard::ScanMenu;
+        case XK_Num_Lock:         return sf::Keyboard::ScanNumLock;
+        case XK_Caps_Lock:        return sf::Keyboard::ScanCapsLock;
+        case XK_Print:            return sf::Keyboard::ScanPrintScreen;
+        case XK_Scroll_Lock:      return sf::Keyboard::ScanScrollLock;
+        case XK_Pause:            return sf::Keyboard::ScanPause;
+        case XK_Delete:           return sf::Keyboard::ScanDelete;
+        case XK_BackSpace:        return sf::Keyboard::ScanBackspace;
+        case XK_Return:           return sf::Keyboard::ScanEnter;
+        case XK_Home:             return sf::Keyboard::ScanHome;
+        case XK_End:              return sf::Keyboard::ScanEnd;
+        case XK_Page_Up:          return sf::Keyboard::ScanPageUp;
+        case XK_Page_Down:        return sf::Keyboard::ScanPageDown;
+        case XK_Insert:           return sf::Keyboard::ScanInsert;
+        case XK_Left:             return sf::Keyboard::ScanLeft;
+        case XK_Right:            return sf::Keyboard::ScanRight;
+        case XK_Down:             return sf::Keyboard::ScanDown;
+        case XK_Up:               return sf::Keyboard::ScanUp;
+        case XK_F1:               return sf::Keyboard::ScanF1;
+        case XK_F2:               return sf::Keyboard::ScanF2;
+        case XK_F3:               return sf::Keyboard::ScanF3;
+        case XK_F4:               return sf::Keyboard::ScanF4;
+        case XK_F5:               return sf::Keyboard::ScanF5;
+        case XK_F6:               return sf::Keyboard::ScanF6;
+        case XK_F7:               return sf::Keyboard::ScanF7;
+        case XK_F8:               return sf::Keyboard::ScanF8;
+        case XK_F9:               return sf::Keyboard::ScanF9;
+        case XK_F10:              return sf::Keyboard::ScanF10;
+        case XK_F11:              return sf::Keyboard::ScanF11;
+        case XK_F12:              return sf::Keyboard::ScanF12;
+        case XK_F13:              return sf::Keyboard::ScanF13;
+        case XK_F14:              return sf::Keyboard::ScanF14;
+        case XK_F15:              return sf::Keyboard::ScanF15;
+        // TODO: add scancodes for F16-F25 when they're added in Scancode enum
 
         // Numeric keypad
-        case XK_KP_Divide:      return sf::Keyboard::ScanDivide;
-        case XK_KP_Multiply:    return sf::Keyboard::ScanMultiply;
-        case XK_KP_Subtract:    return sf::Keyboard::ScanMinus;
-        case XK_KP_Add:         return sf::Keyboard::ScanPlus;
+        case XK_KP_Divide:        return sf::Keyboard::ScanDivide;
+        case XK_KP_Multiply:      return sf::Keyboard::ScanMultiply;
+        case XK_KP_Subtract:      return sf::Keyboard::ScanMinus;
+        case XK_KP_Add:           return sf::Keyboard::ScanPlus;
 
         // These should have been detected in secondary keysym test above!
-        case XK_KP_Insert:      return sf::Keyboard::ScanNumpad0;
-        case XK_KP_End:         return sf::Keyboard::ScanNumpad1;
-        case XK_KP_Down:        return sf::Keyboard::ScanNumpad2;
-        case XK_KP_Page_Down:   return sf::Keyboard::ScanNumpad3;
-        case XK_KP_Left:        return sf::Keyboard::ScanNumpad4;
-        case XK_KP_Right:       return sf::Keyboard::ScanNumpad6;
-        case XK_KP_Home:        return sf::Keyboard::ScanNumpad7;
-        case XK_KP_Up:          return sf::Keyboard::ScanNumpad8;
-        case XK_KP_Page_Up:     return sf::Keyboard::ScanNumpad9;
-        case XK_KP_Delete:      return sf::Keyboard::ScanDecimal;
-        case XK_KP_Equal:       return sf::Keyboard::ScanPadEquals;
-        case XK_KP_Enter:       return sf::Keyboard::ScanReturn;
+        case XK_KP_Insert:        return sf::Keyboard::ScanNumpad0;
+        case XK_KP_End:           return sf::Keyboard::ScanNumpad1;
+        case XK_KP_Down:          return sf::Keyboard::ScanNumpad2;
+        case XK_KP_Page_Down:     return sf::Keyboard::ScanNumpad3;
+        case XK_KP_Left:          return sf::Keyboard::ScanNumpad4;
+        case XK_KP_Right:         return sf::Keyboard::ScanNumpad6;
+        case XK_KP_Home:          return sf::Keyboard::ScanNumpad7;
+        case XK_KP_Up:            return sf::Keyboard::ScanNumpad8;
+        case XK_KP_Page_Up:       return sf::Keyboard::ScanNumpad9;
+        case XK_KP_Delete:        return sf::Keyboard::ScanDecimal;
+        case XK_KP_Equal:         return sf::Keyboard::ScanPadEquals;
+        case XK_KP_Enter:         return sf::Keyboard::ScanReturn;
 
         // Last resort: Check for printable keys (should not happen if the XKB
         // extension is available). This will give a layout dependent mapping
         // (which is wrong, and we may miss some keys, especially on non-US
         // keyboards), but it's better than nothing...
-        case XK_a:              return sf::Keyboard::ScanA;
-        case XK_b:              return sf::Keyboard::ScanB;
-        case XK_c:              return sf::Keyboard::ScanC;
-        case XK_d:              return sf::Keyboard::ScanD;
-        case XK_e:              return sf::Keyboard::ScanE;
-        case XK_f:              return sf::Keyboard::ScanF;
-        case XK_g:              return sf::Keyboard::ScanG;
-        case XK_h:              return sf::Keyboard::ScanH;
-        case XK_i:              return sf::Keyboard::ScanI;
-        case XK_j:              return sf::Keyboard::ScanJ;
-        case XK_k:              return sf::Keyboard::ScanK;
-        case XK_l:              return sf::Keyboard::ScanL;
-        case XK_m:              return sf::Keyboard::ScanM;
-        case XK_n:              return sf::Keyboard::ScanN;
-        case XK_o:              return sf::Keyboard::ScanO;
-        case XK_p:              return sf::Keyboard::ScanP;
-        case XK_q:              return sf::Keyboard::ScanQ;
-        case XK_r:              return sf::Keyboard::ScanR;
-        case XK_s:              return sf::Keyboard::ScanS;
-        case XK_t:              return sf::Keyboard::ScanT;
-        case XK_u:              return sf::Keyboard::ScanU;
-        case XK_v:              return sf::Keyboard::ScanV;
-        case XK_w:              return sf::Keyboard::ScanW;
-        case XK_x:              return sf::Keyboard::ScanX;
-        case XK_y:              return sf::Keyboard::ScanY;
-        case XK_z:              return sf::Keyboard::ScanZ;
-        case XK_1:              return sf::Keyboard::ScanNum1;
-        case XK_2:              return sf::Keyboard::ScanNum2;
-        case XK_3:              return sf::Keyboard::ScanNum3;
-        case XK_4:              return sf::Keyboard::ScanNum4;
-        case XK_5:              return sf::Keyboard::ScanNum5;
-        case XK_6:              return sf::Keyboard::ScanNum6;
-        case XK_7:              return sf::Keyboard::ScanNum7;
-        case XK_8:              return sf::Keyboard::ScanNum8;
-        case XK_9:              return sf::Keyboard::ScanNum9;
-        case XK_0:              return sf::Keyboard::ScanNum0;
-        case XK_space:          return sf::Keyboard::ScanSpace;
-        case XK_minus:          return sf::Keyboard::ScanHyphen;
-        case XK_equal:          return sf::Keyboard::ScanEquals;
-        case XK_bracketleft:    return sf::Keyboard::ScanLBracket;
-        case XK_bracketright:   return sf::Keyboard::ScanRBracket;
-        case XK_backslash:      return sf::Keyboard::ScanBackslash;
-        case XK_semicolon:      return sf::Keyboard::ScanSemicolon;
-        case XK_apostrophe:     return sf::Keyboard::ScanQuote;
-        case XK_grave:          return sf::Keyboard::ScanGraveAccent;
-        case XK_comma:          return sf::Keyboard::ScanComma;
-        case XK_period:         return sf::Keyboard::ScanPeriod;
-        case XK_slash:          return sf::Keyboard::ScanForwardSlash;
-        // case XK_less:           return sf::Keyboard::ScanWorld1; // At least in some layouts...
-        default:                break;
+        case XK_a:                return sf::Keyboard::ScanA;
+        case XK_b:                return sf::Keyboard::ScanB;
+        case XK_c:                return sf::Keyboard::ScanC;
+        case XK_d:                return sf::Keyboard::ScanD;
+        case XK_e:                return sf::Keyboard::ScanE;
+        case XK_f:                return sf::Keyboard::ScanF;
+        case XK_g:                return sf::Keyboard::ScanG;
+        case XK_h:                return sf::Keyboard::ScanH;
+        case XK_i:                return sf::Keyboard::ScanI;
+        case XK_j:                return sf::Keyboard::ScanJ;
+        case XK_k:                return sf::Keyboard::ScanK;
+        case XK_l:                return sf::Keyboard::ScanL;
+        case XK_m:                return sf::Keyboard::ScanM;
+        case XK_n:                return sf::Keyboard::ScanN;
+        case XK_o:                return sf::Keyboard::ScanO;
+        case XK_p:                return sf::Keyboard::ScanP;
+        case XK_q:                return sf::Keyboard::ScanQ;
+        case XK_r:                return sf::Keyboard::ScanR;
+        case XK_s:                return sf::Keyboard::ScanS;
+        case XK_t:                return sf::Keyboard::ScanT;
+        case XK_u:                return sf::Keyboard::ScanU;
+        case XK_v:                return sf::Keyboard::ScanV;
+        case XK_w:                return sf::Keyboard::ScanW;
+        case XK_x:                return sf::Keyboard::ScanX;
+        case XK_y:                return sf::Keyboard::ScanY;
+        case XK_z:                return sf::Keyboard::ScanZ;
+        case XK_1:                return sf::Keyboard::ScanNum1;
+        case XK_2:                return sf::Keyboard::ScanNum2;
+        case XK_3:                return sf::Keyboard::ScanNum3;
+        case XK_4:                return sf::Keyboard::ScanNum4;
+        case XK_5:                return sf::Keyboard::ScanNum5;
+        case XK_6:                return sf::Keyboard::ScanNum6;
+        case XK_7:                return sf::Keyboard::ScanNum7;
+        case XK_8:                return sf::Keyboard::ScanNum8;
+        case XK_9:                return sf::Keyboard::ScanNum9;
+        case XK_0:                return sf::Keyboard::ScanNum0;
+        case XK_space:            return sf::Keyboard::ScanSpace;
+        case XK_minus:            return sf::Keyboard::ScanHyphen;
+        case XK_equal:            return sf::Keyboard::ScanEquals;
+        case XK_bracketleft:      return sf::Keyboard::ScanLBracket;
+        case XK_bracketright:     return sf::Keyboard::ScanRBracket;
+        case XK_backslash:        return sf::Keyboard::ScanBackslash;
+        case XK_semicolon:        return sf::Keyboard::ScanSemicolon;
+        case XK_apostrophe:       return sf::Keyboard::ScanQuote;
+        case XK_grave:            return sf::Keyboard::ScanGraveAccent;
+        case XK_comma:            return sf::Keyboard::ScanComma;
+        case XK_period:           return sf::Keyboard::ScanPeriod;
+        case XK_slash:            return sf::Keyboard::ScanForwardSlash;
+        case XK_less:             return sf::Keyboard::ScanReverseSolidus;
+        default:                  return sf::Keyboard::ScanUnknown;
     }
-
-    // No matching translation was found
-    return sf::Keyboard::ScanUnknown;
 }
 
+
+////////////////////////////////////////////////////////////
 void initMapping()
 {
+    for (int i = 0; i < 256; ++i)
+        scancodeToKeycode[i] = NullKeyCode;
+
+    for (int i = 0; i < sf::Keyboard::ScanCodeCount; ++i)
+        keycodeToScancode[i] = sf::Keyboard::ScanUnknown;
+
     Display* display = sf::priv::OpenDisplay();
 
     // Find the X11 key code -> SFML key code mapping
@@ -236,12 +235,13 @@ void initMapping()
     XkbGetNames(display, XkbKeyNamesMask, desc);
 
     sf::Keyboard::Scancode sc;
+
     for (int keycode = desc->min_key_code; keycode <= desc->max_key_code; ++keycode)
     {
         std::memcpy(name, desc->names->keys[keycode].name, XkbKeyNameLength);
         name[XkbKeyNameLength] = '\0';
 
-        if (strcmp(name, "TLDE") == 0)      sc = sf::Keyboard::ScanGraveAccent;
+        if      (strcmp(name, "TLDE") == 0) sc = sf::Keyboard::ScanGraveAccent;
         else if (strcmp(name, "AE01") == 0) sc = sf::Keyboard::ScanNum1;
         else if (strcmp(name, "AE02") == 0) sc = sf::Keyboard::ScanNum2;
         else if (strcmp(name, "AE03") == 0) sc = sf::Keyboard::ScanNum3;
@@ -254,7 +254,7 @@ void initMapping()
         else if (strcmp(name, "AE10") == 0) sc = sf::Keyboard::ScanNum0;
         else if (strcmp(name, "AE11") == 0) sc = sf::Keyboard::ScanDash;
         else if (strcmp(name, "AE12") == 0) sc = sf::Keyboard::ScanEquals;
-        else if (strcmp(name, "TAB") == 0)  sc = sf::Keyboard::ScanTab;
+        else if (strcmp(name, "TAB" ) == 0) sc = sf::Keyboard::ScanTab;
         else if (strcmp(name, "AD01") == 0) sc = sf::Keyboard::ScanQ;
         else if (strcmp(name, "AD02") == 0) sc = sf::Keyboard::ScanW;
         else if (strcmp(name, "AD03") == 0) sc = sf::Keyboard::ScanE;
@@ -289,7 +289,8 @@ void initMapping()
         else if (strcmp(name, "AB08") == 0) sc = sf::Keyboard::ScanComma;
         else if (strcmp(name, "AB09") == 0) sc = sf::Keyboard::ScanPeriod;
         else if (strcmp(name, "AB10") == 0) sc = sf::Keyboard::ScanForwardSlash;
-        else sc = sf::Keyboard::ScanUnknown;
+        else if (strcmp(name, "LSGT") == 0) sc = sf::Keyboard::ScanReverseSolidus;
+        else                                sc = sf::Keyboard::ScanUnknown;
 
         if (isValidKeycode(keycode))
         {
@@ -318,8 +319,9 @@ void initMapping()
     isMappingInitialized = true;
 }
 
+
 ////////////////////////////////////////////////////////////
-KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
+KeyCode scancodeToKeyCode(sf::Keyboard::Scancode code)
 {
     if (!isMappingInitialized)
         initMapping();
@@ -327,21 +329,25 @@ KeyCode SFScancodeToKeyCode(sf::Keyboard::Scancode code)
     return scancodeToKeycode[code];
 }
 
+
 ////////////////////////////////////////////////////////////
-sf::Keyboard::Scancode keyCodeToSFScancode(KeyCode code)
+sf::Keyboard::Scancode keyCodeToScancode(KeyCode code)
 {
     if (!isMappingInitialized)
         initMapping();
 
     if (isValidKeycode(code))
         return keycodeToScancode[code];
+
     return sf::Keyboard::ScanUnknown;
 }
 
+
 ////////////////////////////////////////////////////////////
-KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
+KeyCode keyToKeyCode(sf::Keyboard::Key key)
 {
-    KeySym keysym = sf::priv::SFKeyToKeySym(key);
+    KeySym keysym = sf::priv::keyToKeySym(key);
+
     if (keysym != NoSymbol)
     {
         Display* display = sf::priv::OpenDisplay();
@@ -349,20 +355,27 @@ KeyCode SFKeyToKeyCode(sf::Keyboard::Key key)
         sf::priv::CloseDisplay(display);
         return keycode;
     }
+
     return NullKeyCode;
 }
 
+
 ////////////////////////////////////////////////////////////
-KeySym SFScancodeToKeySym(sf::Keyboard::Scancode code)
+KeySym scancodeToKeySym(sf::Keyboard::Scancode code)
 {
     Display* display = sf::priv::OpenDisplay();
+
     KeySym keysym = NoSymbol;
-    KeyCode keycode = SFScancodeToKeyCode(code);
+    KeyCode keycode = scancodeToKeyCode(code);
+
     if (keycode != NullKeyCode) // ensure that this Scancode is mapped to keycode
         keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
+
     sf::priv::CloseDisplay(display);
+
     return keysym;
 }
+
 
 ////////////////////////////////////////////////////////////
 bool isKeyPressedImpl(KeyCode keycode)
@@ -380,6 +393,7 @@ bool isKeyPressedImpl(KeyCode keycode)
         // Check our keycode
         return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
     }
+
     return false;
 }
 
@@ -393,7 +407,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(Keyboard::Key key)
 {
-    KeyCode keycode = SFKeyToKeyCode(key);
+    KeyCode keycode = keyToKeyCode(key);
     return isKeyPressedImpl(keycode);
 }
 
@@ -401,7 +415,7 @@ bool KeyboardImpl::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(Keyboard::Scancode code)
 {
-    KeyCode keycode = SFScancodeToKeyCode(code);
+    KeyCode keycode = scancodeToKeyCode(code);
     return isKeyPressedImpl(keycode);
 }
 
@@ -409,17 +423,18 @@ bool KeyboardImpl::isKeyPressed(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode KeyboardImpl::unlocalize(Keyboard::Key key)
 {
-    KeyCode keycode = SFKeyToKeyCode(key);
-    return keyCodeToSFScancode(keycode);
+    KeyCode keycode = keyToKeyCode(key);
+    return keyCodeToScancode(keycode);
 }
 
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key KeyboardImpl::localize(Keyboard::Scancode code)
 {
-    KeySym keysym = SFScancodeToKeySym(code);
-    return keySymToSFKey(keysym);
+    KeySym keysym = scancodeToKeySym(code);
+    return keySymToKey(keysym);
 }
+
 
 ////////////////////////////////////////////////////////////
 String KeyboardImpl::getDescription(Keyboard::Scancode code)
@@ -428,7 +443,8 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
     // these scancodes actually correspond to keys with input
     // but we want to return their description, not their behaviour
-    if (code == Keyboard::ScanEnter     ||
+    if (code == Keyboard::ScanEscape    ||
+        code == Keyboard::ScanEnter     ||
         code == Keyboard::ScanReturn    ||
         code == Keyboard::ScanTab       ||
         code == Keyboard::ScanDelete    ||
@@ -440,7 +456,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
     if (checkInput)
     {
-        KeySym keysym = SFScancodeToKeySym(code);
+        KeySym keysym = scancodeToKeySym(code);
         Uint32 unicode = keysymToUnicode(keysym);
 
         if (unicode != 0)
@@ -471,6 +487,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanF13:         return "F13";
         case Keyboard::ScanF14:         return "F14";
         case Keyboard::ScanF15:         return "F15";
+        // TODO: add F16-F25 once they're added in Scancode enum
 
         case Keyboard::ScanCapsLock:    return "CapsLock";
         case Keyboard::ScanPrintScreen: return "PrintScreen";
@@ -495,7 +512,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanMinus:       return "Minux (Numpad)";
         case Keyboard::ScanPlus:        return "Plus (Numpad)";
         case Keyboard::ScanPadEquals:   return "Equals (Numpad)";
-        case Keyboard::ScanReturn:      return "Return (Numpad)";
+        case Keyboard::ScanReturn:      return "Enter (Numpad)";
         case Keyboard::ScanDecimal:     return "Decimal (Numpad)";
 
         case Keyboard::ScanNumpad0:     return "0 (Numpad)";
@@ -525,17 +542,16 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanVolumeUp:    return "Volume Up";
         case Keyboard::ScanVolumeDown:  return "Volume Down";
 
-        case Keyboard::ScanLControl:    return "Control (Left)";
-        case Keyboard::ScanLShift:      return "Shift (Left)";
-        case Keyboard::ScanLAlt:        return "Alt (Left)";
-        case Keyboard::ScanLSystem:     return "Meta (Left)";
-        case Keyboard::ScanRControl:    return "Control (Right)";
-        case Keyboard::ScanRShift:      return "Shift (Right)";
-        case Keyboard::ScanRAlt:        return "Alt (Right)";
-        case Keyboard::ScanRSystem:     return "Meta (Right)";
+        case Keyboard::ScanLControl:    return "Left Control";
+        case Keyboard::ScanLShift:      return "Left Shift";
+        case Keyboard::ScanLAlt:        return "Left Meta";
+        case Keyboard::ScanLSystem:     return "Left Super";
+        case Keyboard::ScanRControl:    return "Right Control";
+        case Keyboard::ScanRShift:      return "Right Shift";
+        case Keyboard::ScanRAlt:        return "Right Meta";
+        case Keyboard::ScanRSystem:     return "Right Super";
+        default:                        return "Unknown Scancode"; // no guess good enough possible.
     }
-
-    return "Unknown Scancode"; // no guess good enough possible.
 }
 
 
@@ -549,11 +565,12 @@ Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
     {
         // Get the SFML keyboard code from the keysym of the key that has been pressed
         KeySym keysym = XLookupKeysym(&event, i);
-        key = keySymToSFKey(keysym);
+        key = keySymToKey(keysym);
 
         if (key != Keyboard::Unknown)
             break;
     }
+
     return key;
 }
 
@@ -561,8 +578,9 @@ Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode KeyboardImpl::getScancodeFromEvent(XKeyEvent& event)
 {
-    return keyCodeToSFScancode(event.keycode);
+    return keyCodeToScancode(event.keycode);
 }
 
 } // namespace priv
+
 } // namespace sf
