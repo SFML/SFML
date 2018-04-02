@@ -527,12 +527,12 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
         case Keyboard::ScanLControl:    return "Control (Left)";
         case Keyboard::ScanLShift:      return "Shift (Left)";
-        case Keyboard::ScanLAlt:        return "Alt (Left)";
-        case Keyboard::ScanLSystem:     return "Meta (Left)";
+        case Keyboard::ScanLAlt:        return "Meta (Left)";
+        case Keyboard::ScanLSystem:     return "Super (Left)";
         case Keyboard::ScanRControl:    return "Control (Right)";
         case Keyboard::ScanRShift:      return "Shift (Right)";
-        case Keyboard::ScanRAlt:        return "Alt (Right)";
-        case Keyboard::ScanRSystem:     return "Meta (Right)";
+        case Keyboard::ScanRAlt:        return "Meta (Right)";
+        case Keyboard::ScanRSystem:     return "Super (Right)";
     }
 
     return "Unknown Scancode"; // no guess good enough possible.
