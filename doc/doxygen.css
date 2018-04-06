@@ -1445,3 +1445,6 @@ div.contents ul li {
     top: 50%;
     margin-top: -11px;
 }
+.arrow {
+    cursor: pointer;
+}
