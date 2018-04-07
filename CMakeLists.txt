@@ -366,6 +366,7 @@ else()
     add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                        ${PROJECT_SOURCE_DIR}/include/SFML/Config.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/OpenGL.hpp
+                       ${PROJECT_SOURCE_DIR}/include/SFML/GpuPreference.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/System.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/Main.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/System

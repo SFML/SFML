@@ -2,7 +2,6 @@
 //
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,31 +22,53 @@
 //
 ////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////
-// Windows specific: we define the WinMain entry point,
-// so that developers can use the standard main function
-// even in a Win32 Application project, and thus keep a
-// portable code
-////////////////////////////////////////////////////////////
+#ifndef SFML_GPUPREFERENCE_HPP
+#define SFML_GPUPREFERENCE_HPP
 
 
 ////////////////////////////////////////////////////////////
-// Headers
+/// Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#ifdef SFML_SYSTEM_WINDOWS
-
-#include <windows.h>
-
-extern int main(int argc, char* argv[]);
 
 ////////////////////////////////////////////////////////////
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
-{
-    return main(__argc, __argv);
-}
+/// \file
+///
+/// \brief File containing SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+///
+////////////////////////////////////////////////////////////
 
-#endif // SFML_SYSTEM_WINDOWS
 
+////////////////////////////////////////////////////////////
+/// \def SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+///
+/// \brief A macro to encourage usage of the discrete GPU
+///
+/// In order to inform the Nvidia/AMD driver that an SFML
+/// application could benefit from using the more powerful
+/// discrete GPU, special symbols have to be publicly
+/// exported from the final executable.
+///
+/// SFML defines a helper macro to easily do this.
+///
+/// Place SFML_DEFINE_DISCRETE_GPU_PREFERENCE in the
+/// global scope of a source file that will be linked into
+/// the final executable. Typically it is best to place it
+/// where the main function is also defined.
+///
+////////////////////////////////////////////////////////////
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #define SFML_DEFINE_DISCRETE_GPU_PREFERENCE \
+                extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1; \
+                extern "C" __declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
+
+#else
+
+    #define SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+
+#endif
+
+
+#endif // SFML_GPUPREFERENCE_HPP
