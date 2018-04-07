@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIR@
+OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -1121,7 +1121,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @DOXYGEN_OUTPUT_DIR@/header.html
+HTML_HEADER            = "@DOXYGEN_OUTPUT_DIR@/header.html"
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1131,7 +1131,7 @@ HTML_HEADER            = @DOXYGEN_OUTPUT_DIR@/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @DOXYGEN_INPUT_DIR@/doc/footer.html
+HTML_FOOTER            = "@DOXYGEN_INPUT_DIR@/doc/footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1143,7 +1143,7 @@ HTML_FOOTER            = @DOXYGEN_INPUT_DIR@/doc/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = @DOXYGEN_INPUT_DIR@/doc/doxygen.css
+HTML_STYLESHEET        = "@DOXYGEN_INPUT_DIR@/doc/doxygen.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1314,7 +1314,7 @@ CHM_FILE               = ../SFML.chm
 # The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-HHC_LOCATION           = @DOXYGEN_HHC_PROGRAM@
+HHC_LOCATION           = "@DOXYGEN_HHC_PROGRAM@"
 
 # The GENERATE_CHI flag controls if a separate .chi index file is generated
 # (YES) or that it should be included in the master .chm file (NO).
