@@ -457,7 +457,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
     // Fallback to our best guess for the keys that are known to be independent of the layout.
     switch (code)
     {
-        case Keyboard::ScanEnter:      return "Enter";
+        case Keyboard::ScanEnter:       return "Enter";
         case Keyboard::ScanEscape:      return "Escape";
         case Keyboard::ScanBackspace:   return "Backspace";
         case Keyboard::ScanTab:         return "Tab";
@@ -502,7 +502,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanMinus:       return "Minux (Numpad)";
         case Keyboard::ScanPlus:        return "Plus (Numpad)";
         case Keyboard::ScanPadEquals:   return "Equals (Numpad)";
-        case Keyboard::ScanReturn:       return "Enter (Numpad)";
+        case Keyboard::ScanReturn:      return "Enter (Numpad)";
         case Keyboard::ScanDecimal:     return "Decimal (Numpad)";
 
         case Keyboard::ScanNumpad0:     return "0 (Numpad)";
