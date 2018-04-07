@@ -85,6 +85,7 @@
 
         // FreeBSD
         #define SFML_SYSTEM_FREEBSD
+
     #elif defined(__OpenBSD__)
 
         // OpenBSD
