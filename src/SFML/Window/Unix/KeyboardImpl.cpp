@@ -75,7 +75,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
         case XK_KP_Separator:
         case XK_KP_Decimal:     return sf::Keyboard::ScanDecimal;
         case XK_KP_Equal:       return sf::Keyboard::ScanPadEquals;
-        case XK_KP_Enter:       return sf::Keyboard::ScanEnter;
+        case XK_KP_Enter:       return sf::Keyboard::ScanReturn;
         default:                break;
     }
 
@@ -107,7 +107,7 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
         case XK_Pause:          return sf::Keyboard::ScanPause;
         case XK_Delete:         return sf::Keyboard::ScanDelete;
         case XK_BackSpace:      return sf::Keyboard::ScanBackspace;
-        case XK_Return:         return sf::Keyboard::ScanReturn;
+        case XK_Return:         return sf::Keyboard::ScanEnter;
         case XK_Home:           return sf::Keyboard::ScanHome;
         case XK_End:            return sf::Keyboard::ScanEnd;
         case XK_Page_Up:        return sf::Keyboard::ScanPageUp;
@@ -457,7 +457,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
     // Fallback to our best guess for the keys that are known to be independent of the layout.
     switch (code)
     {
-        case Keyboard::ScanReturn:      return "Enter";
+        case Keyboard::ScanEnter:      return "Enter";
         case Keyboard::ScanEscape:      return "Escape";
         case Keyboard::ScanBackspace:   return "Backspace";
         case Keyboard::ScanTab:         return "Tab";
@@ -502,7 +502,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanMinus:       return "Minux (Numpad)";
         case Keyboard::ScanPlus:        return "Plus (Numpad)";
         case Keyboard::ScanPadEquals:   return "Equals (Numpad)";
-        case Keyboard::ScanEnter:       return "Enter (Numpad)";
+        case Keyboard::ScanReturn:       return "Enter (Numpad)";
         case Keyboard::ScanDecimal:     return "Decimal (Numpad)";
 
         case Keyboard::ScanNumpad0:     return "0 (Numpad)";
