@@ -56,6 +56,10 @@ namespace
 ////////////////////////////////////////////////////////////
 + (SFAppDelegate*)getInstance
 {
+    NSAssert(delegateInstance,
+             @"SFAppDelegate instance is nil, this means SFML was not properly initialized. "
+             "Make sure that the file defining your main() function includes <SFML/Main.hpp>");
+    
     return delegateInstance;
 }
 
