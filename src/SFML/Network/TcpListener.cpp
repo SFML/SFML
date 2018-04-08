@@ -63,6 +63,9 @@ unsigned short TcpListener::getLocalPort() const
 ////////////////////////////////////////////////////////////
 Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address)
 {
+    // Close the socket if it is already bound
+    close();
+
     // Create the internal socket if it doesn't exist
     create();
 

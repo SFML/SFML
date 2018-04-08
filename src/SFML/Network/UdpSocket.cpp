@@ -66,6 +66,9 @@ unsigned short UdpSocket::getLocalPort() const
 ////////////////////////////////////////////////////////////
 Socket::Status UdpSocket::bind(unsigned short port, const IpAddress& address)
 {
+    // Close the socket if it is already bound
+    close();
+
     // Create the internal socket if it doesn't exist
     create();
 
