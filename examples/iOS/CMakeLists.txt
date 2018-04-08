@@ -21,5 +21,5 @@ sfml_add_example(ios_demo GUI_APP
                          "-framework OpenGLES")
 
 # The app needs an identifier and signing to work correctly
-SET_XCODE_PROPERTY(ios_demo CODE_SIGN_IDENTITY "iPhone Developer")
+sfml_set_xcode_property(ios_demo CODE_SIGN_IDENTITY "iPhone Developer")
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.sfml.ios_demo")
