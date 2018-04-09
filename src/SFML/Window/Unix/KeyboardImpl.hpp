@@ -41,7 +41,6 @@ namespace priv
 ///
 /// This class implements keyboard handling functions
 /// to help sf::priv::InputImpl class.
-/// Its purpose is to help sf::priv::InputImpl class.
 ////////////////////////////////////////////////////////////
 class KeyboardImpl
 {
