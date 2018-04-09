@@ -1,5 +1,5 @@
 
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/ios)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/iOS)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
 # All source files
