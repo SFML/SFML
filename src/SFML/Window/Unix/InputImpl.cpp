@@ -32,8 +32,6 @@
 #include <SFML/System/Err.hpp>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <cstring>
-
 
 namespace sf
 {
