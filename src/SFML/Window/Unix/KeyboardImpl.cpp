@@ -487,6 +487,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanF13:         return "F13";
         case Keyboard::ScanF14:         return "F14";
         case Keyboard::ScanF15:         return "F15";
+        // TODO: add F16-F25 once they're added in Scancode enum
 
         case Keyboard::ScanCapsLock:    return "CapsLock";
         case Keyboard::ScanPrintScreen: return "PrintScreen";
@@ -541,14 +542,14 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::ScanVolumeUp:    return "Volume Up";
         case Keyboard::ScanVolumeDown:  return "Volume Down";
 
-        case Keyboard::ScanLControl:    return "Control (Left)";
-        case Keyboard::ScanLShift:      return "Shift (Left)";
-        case Keyboard::ScanLAlt:        return "Meta (Left)";
-        case Keyboard::ScanLSystem:     return "Super (Left)";
-        case Keyboard::ScanRControl:    return "Control (Right)";
-        case Keyboard::ScanRShift:      return "Shift (Right)";
-        case Keyboard::ScanRAlt:        return "Meta (Right)";
-        case Keyboard::ScanRSystem:     return "Super (Right)";
+        case Keyboard::ScanLControl:    return "Left Control";
+        case Keyboard::ScanLShift:      return "Left Shift";
+        case Keyboard::ScanLAlt:        return "Left Meta";
+        case Keyboard::ScanLSystem:     return "Left Super";
+        case Keyboard::ScanRControl:    return "Right Control";
+        case Keyboard::ScanRShift:      return "Right Shift";
+        case Keyboard::ScanRAlt:        return "Right Meta";
+        case Keyboard::ScanRSystem:     return "Right Super";
         default:                        return "Unknown Scancode"; // no guess good enough possible.
     }
 }
