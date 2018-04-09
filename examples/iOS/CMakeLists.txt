@@ -5,12 +5,11 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 # All source files
 set(SRC ${SRCROOT}/main.cpp)
 
-# Use the resources from the android example
 set(RESOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../android/assets/canary.wav
-    ${CMAKE_CURRENT_SOURCE_DIR}/../android/assets/image.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/../android/assets/orchestral.ogg
-    ${CMAKE_CURRENT_SOURCE_DIR}/../android/assets/sansation.ttf)
+    ${SRCROOT}/resources/canary.wav
+    ${SRCROOT}/resources/image.png
+    ${SRCROOT}/resources/orchestral.ogg
+    ${SRCROOT}/resources/sansation.ttf)
 
 set_source_files_properties( ${RESOURCES} PROPERTIES
                               MACOSX_PACKAGE_LOCATION Resources )
