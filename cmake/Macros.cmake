@@ -1,7 +1,7 @@
 include(CMakeParseArguments)
 
 # set the appropriate standard library on each platform for the given target
-# ex: sfml_set_stdlib(sfml-system)
+# example: sfml_set_stdlib(sfml-system)
 function(sfml_set_stdlib target)
     # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
     if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
@@ -23,9 +23,9 @@ function(sfml_set_stdlib target)
 endfunction()
 
 # add a new target which is a SFML library
-# ex: sfml_add_library(sfml-graphics
-#                      SOURCES sprite.cpp image.cpp ...
-#                      [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
+# example: sfml_add_library(sfml-graphics
+#                           SOURCES sprite.cpp image.cpp ...
+#                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
 macro(sfml_add_library target)
 
     # parse the arguments
@@ -178,11 +178,11 @@ macro(sfml_add_library target)
 endmacro()
 
 # add a new target which is a SFML example
-# ex: sfml_add_example(ftp
-#                      SOURCES ftp.cpp ...
-#                      BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
-#                      DEPENDS sfml-network
-#                      RESOURCES_DIR resources)             # A directory to install next to the executable and sources
+# example: sfml_add_example(ftp
+#                           SOURCES ftp.cpp ...
+#                           BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
+#                           DEPENDS sfml-network
+#                           RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
     # parse the arguments
