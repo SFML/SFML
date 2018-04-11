@@ -65,6 +65,16 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     return m_cursor != nil;
 }
 
+////////////////////////////////////////////////////////////
+bool loadFromSelector(SEL selector, NSCursorRef& cursor)
+{
+    if ([NSCursor respondsToSelector:selector])
+    {
+        cursor = [NSCursor performSelector:selector];
+        return true;
+    }
+    return false;
+}
 
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
@@ -80,6 +90,18 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::SizeVertical:    m_cursor = [NSCursor resizeUpDownCursor];        break;
         case Cursor::Cross:           m_cursor = [NSCursor crosshairCursor];           break;
         case Cursor::NotAllowed:      m_cursor = [NSCursor operationNotAllowedCursor]; break;
+            
+        // These cursor types are undocumented, may not be available on some platforms
+        case Cursor::SizeBottomLeftTopRight:
+            return loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor), m_cursor);
+        case Cursor::SizeTopLeftBottomRight:
+            return loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor), m_cursor);
+        case Cursor::SizeAll:
+            return loadFromSelector(@selector(_moveCursor), m_cursor);
+        case Cursor::Wait:
+            return loadFromSelector(@selector(_waitCursor), m_cursor);
+        case Cursor::Help:
+            return loadFromSelector(@selector(_helpCursor), m_cursor);
     }
 
     // Since we didn't allocate the cursor ourself, we have to retain it
