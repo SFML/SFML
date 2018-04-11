@@ -27,6 +27,23 @@ function(sfml_set_stdlib target)
     endif()
 endfunction()
 
+function(sfml_set_common_ios_properties target)
+    # enable automatic reference counting on iOS
+    sfml_set_xcode_property(${target} CLANG_ENABLE_OBJC_ARC YES)
+    sfml_set_xcode_property(${target} IPHONEOS_DEPLOYMENT_TARGET "${SFML_IOS_DEPLOYMENT_TARGET}")
+    sfml_set_xcode_property(${target} CODE_SIGN_IDENTITY "${SFML_CODE_SIGN_IDENTITY}")
+
+    get_target_property(target_type ${target} TYPE)
+    if (target_type STREQUAL "EXECUTABLE")
+        set_target_properties(${target} PROPERTIES
+            MACOSX_BUNDLE TRUE # Bare executables are not usable on iOS, only bundle applications
+            MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
+            MACOSX_BUNDLE_BUNDLE_NAME "${target}"
+            MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+        )
+    endif()
+endfunction()
+
 # add a new target which is a SFML library
 # example: sfml_add_library(sfml-graphics
 #                           SOURCES sprite.cpp image.cpp ...
@@ -140,9 +157,8 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # enable automatic reference counting on iOS
     if (SFML_OS_IOS)
-        set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
+        sfml_set_common_ios_properties(${target})
     endif()
 
     # sfml-activity library is our bootstrap activity and must not depend on stlport_shared
@@ -241,6 +257,10 @@ macro(sfml_add_example target)
                               INSTALL_RPATH "$ORIGIN/${rel_lib_dir}")
     endif()
 
+    if (SFML_OS_IOS)
+        sfml_set_common_ios_properties(${target})
+    endif()
+
     # add the install rule
     install(TARGETS ${target}
             RUNTIME DESTINATION ${target_install_dir} COMPONENT examples
@@ -266,12 +286,13 @@ macro(sfml_add_example target)
 endmacro()
 
 
-# Find the requested package and make an INTERFACE library from it
-# Usage: sfml_find_package(wanted_target_name
-#                          [INCLUDE "OPENGL_INCLUDE_DIR"]
-#                          [LINK "OPENGL_gl_LIBRARY"])
-function(sfml_find_package)
-    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+# Create an interface library for an external dependency. This virtual target can provide
+# link specifications and include directories to be used by dependees.
+# The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
+# Usage: sfml_add_external(target_name
+#                          [INCLUDE "extlibs/include"]
+#                          [LINK "extlibs/libfoo/libfoo.a"])
+function(sfml_add_external)
     list(GET ARGN 0 target)
     list(REMOVE_AT ARGN 0)
 
@@ -284,16 +305,10 @@ function(sfml_find_package)
         message(FATAL_ERROR "Unknown arguments when calling sfml_import_library: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
-    if (SFML_OS_IOS)
-        find_host_package(${target} REQUIRED)
-    else()
-        find_package(${target} REQUIRED)
-    endif()
-
     add_library(${target} INTERFACE)
 
     if (THIS_INCLUDE)
-        foreach(include_dir IN LISTS "${THIS_INCLUDE}")
+        foreach(include_dir IN LISTS THIS_INCLUDE)
             if (NOT include_dir)
                 message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
             endif()
@@ -302,14 +317,59 @@ function(sfml_find_package)
     endif()
 
     if (THIS_LINK)
-        foreach(link_item IN LISTS ${THIS_LINK})
+        foreach(link_item IN LISTS THIS_LINK)
             if (NOT link_item)
                 message(FATAL_ERROR "Missing item in ${THIS_LINK}")
             endif()
             target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${link_item}>")
         endforeach()
     endif()
+
     install(TARGETS ${target} EXPORT SFMLConfigExport)
+endfunction()
+
+# Find the requested package and make an INTERFACE library from it
+# The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
+# Usage: sfml_find_package(wanted_target_name
+#                          [INCLUDE "OPENGL_INCLUDE_DIR"]
+#                          [LINK "OPENGL_gl_LIBRARY"])
+function(sfml_find_package)
+    list(GET ARGN 0 target)
+    list(REMOVE_AT ARGN 0)
+
+    if (TARGET ${target})
+        message(FATAL_ERROR "Target '${target}' is already defined")
+    endif()
+
+    cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
+    if (THIS_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments when calling sfml_import_library: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
+
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+    if (SFML_OS_IOS)
+        find_host_package(${target} REQUIRED)
+    else()
+        find_package(${target} REQUIRED)
+    endif()
+
+    # Make sure to interpret the items in INCLUDE and LINK parameters. sfml_add_external()
+    # does not interpret given items in order to also accept parameters that must not be interpreted
+    set(LINK_LIST "")
+    if (THIS_LINK)
+        foreach(link_item IN LISTS THIS_LINK)
+            list(APPEND LINK_LIST "${${link_item}}")
+        endforeach()
+    endif()
+
+    set(INCLUDE_LIST "")
+    if (THIS_INCLUDE)
+        foreach(include_dir IN LISTS THIS_INCLUDE)
+            list(APPEND INCLUDE_LIST "${${include_dir}}")
+        endforeach()
+    endif()
+
+    sfml_add_external(${target} INCLUDE ${INCLUDE_LIST} LINK ${LINK_LIST})
 endfunction()
 
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered against

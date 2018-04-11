@@ -84,7 +84,7 @@ if(SFML_BUILD_WINDOW)
     sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 endif()
 
-# Mac OS X specific options
+# macOS specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
@@ -97,6 +97,14 @@ if(SFML_OS_MACOSX)
 else()
     # add an option to let the user specify a custom directory for external libraries installation
     sfml_set_option(SFML_DEPENDENCIES_INSTALL_PREFIX "." PATH "External libraries (FLAC, Freetype, Vorbis, ...) installation directory")
+endif()
+
+# iOS specific options
+if(SFML_OS_IOS)
+    # At the moment the minimal deployement target version is 10.2 only because the externals for iOS were built with that requirement.
+    sfml_set_option(SFML_IOS_DEPLOYMENT_TARGET "10.2" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 10.2.")
+
+    sfml_set_option(SFML_CODE_SIGN_IDENTITY "iPhone Developer" STRING "The code signing identity to use when building for a real device")
 endif()
 
 # Android options
@@ -489,7 +497,7 @@ elseif(SFML_OS_IOS)
         endif()
 
         if(SFML_BUILD_AUDIO)
-            install(FILES extlibs/libs-ios/libflac.a 
+            install(FILES extlibs/libs-ios/libflac.a
                           extlibs/libs-ios/libvorbis.a
                           extlibs/libs-ios/libogg.a
                           DESTINATION lib)
