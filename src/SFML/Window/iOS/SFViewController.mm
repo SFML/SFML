@@ -46,12 +46,4 @@
     return self.orientationCanChange;
 }
 
-
-////////////////////////////////////////////////////////////
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskAll;
-}
-
-
 @end
