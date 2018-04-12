@@ -173,7 +173,7 @@ namespace
 
     NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     if (!supportedOrientations)
-        return false;
+        return (1 << orientation) & [rootViewController supportedInterfaceOrientations];
 
     int appFlags = 0;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
