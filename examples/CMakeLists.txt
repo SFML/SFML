@@ -40,8 +40,3 @@ endif()
 if(SFML_BUILD_GRAPHICS AND SFML_BUILD_AUDIO)
     add_subdirectory(pong)
 endif()
-
-# Mobile specific examples
-if(SFML_OS_IOS)
-    add_subdirectory(iOS)
-endif()
