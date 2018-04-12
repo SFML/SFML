@@ -22,11 +22,13 @@ endif()
 
 if(SFML_BUILD_GRAPHICS)
     add_subdirectory(opengl)
+
     if (NOT SFML_OS_IOS)
         add_subdirectory(joystick)
         add_subdirectory(shader)
+        add_subdirectory(island)
     endif()
-    add_subdirectory(island)
+
     if(SFML_OS_WINDOWS)
         add_subdirectory(win32)
     elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)

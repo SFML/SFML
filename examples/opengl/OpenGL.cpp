@@ -18,6 +18,14 @@
 #define GL_SRGB8_ALPHA8 0x8C43
 #endif
 
+std::string resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources/";
+#endif
+}
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -44,13 +52,13 @@ int main()
         // Create a sprite for the background
         sf::Texture backgroundTexture;
         backgroundTexture.setSrgb(sRgb);
-        if (!backgroundTexture.loadFromFile("resources/background.jpg"))
+        if (!backgroundTexture.loadFromFile(resourcesDir() + "background.jpg"))
             return EXIT_FAILURE;
         sf::Sprite background(backgroundTexture);
 
         // Create some text to draw on top of our OpenGL object
         sf::Font font;
-        if (!font.loadFromFile("resources/sansation.ttf"))
+        if (!font.loadFromFile(resourcesDir() + "sansation.ttf"))
             return EXIT_FAILURE;
         sf::Text text("SFML / OpenGL demo", font);
         sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
@@ -64,7 +72,7 @@ int main()
 
         // Load a texture to apply to our 3D cube
         sf::Texture texture;
-        if (!texture.loadFromFile("resources/texture.jpg"))
+        if (!texture.loadFromFile(resourcesDir() + "texture.jpg"))
             return EXIT_FAILURE;
 
         // Attempt to generate a mipmap for our cube texture
@@ -189,7 +197,7 @@ int main()
                     if (mipmapEnabled)
                     {
                         // We simply reload the texture to disable mipmapping
-                        if (!texture.loadFromFile("resources/texture.jpg"))
+                        if (!texture.loadFromFile(resourcesDir() + "texture.jpg"))
                             return EXIT_FAILURE;
 
                         mipmapEnabled = false;
