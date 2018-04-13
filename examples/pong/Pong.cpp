@@ -111,7 +111,8 @@ int main()
             }
 
             // Space key pressed: play
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) ||
+                (event.type == sf::Event::TouchBegan))
             {
                 if (!isPlaying)
                 {
@@ -149,6 +150,12 @@ int main()
                (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);
+            }
+            
+            if (sf::Touch::isDown(0))
+            {
+                sf::Vector2i pos = sf::Touch::getPosition(0, window);
+                leftPaddle.setPosition(0.f, pos.y);
             }
 
             // Move the computer's paddle
