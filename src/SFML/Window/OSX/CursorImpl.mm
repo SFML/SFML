@@ -98,6 +98,10 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
             return loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor), m_cursor);
         case Cursor::SizeAll:
             return loadFromSelector(@selector(_moveCursor), m_cursor);
+        case Cursor::Wait:
+            return loadFromSelector(@selector(_waitCursor), m_cursor);
+        case Cursor::Help:
+            return loadFromSelector(@selector(_helpCursor), m_cursor);
     }
 
     // Since we didn't allocate the cursor ourself, we have to retain it
