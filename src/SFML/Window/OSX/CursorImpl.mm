@@ -32,6 +32,21 @@
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <AppKit/AppKit.h>
 
+namespace
+{
+
+////////////////////////////////////////////////////////////
+NSCursor* loadFromSelector(SEL selector)
+{
+    // The caller is responsible for retaining the cursor.
+    if ([NSCursor respondsToSelector:selector])
+        return [NSCursor performSelector:selector];
+    else
+        return nil;
+}
+
+}
+
 namespace sf
 {
 namespace priv
@@ -56,6 +71,8 @@ CursorImpl::~CursorImpl()
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
+    [m_cursor release];
+
     NSSize   nssize    = NSMakeSize(size.x, size.y);
     NSImage* image     = [NSImage imageWithRawData:pixels andSize:nssize];
     NSPoint  nshotspot = NSMakePoint(hotspot.x, hotspot.y);
@@ -66,19 +83,10 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 }
 
 ////////////////////////////////////////////////////////////
-bool loadFromSelector(SEL selector, NSCursorRef& cursor)
-{
-    if ([NSCursor respondsToSelector:selector])
-    {
-        cursor = [NSCursor performSelector:selector];
-        return true;
-    }
-    return false;
-}
-
-////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
+    [m_cursor release];
+
     switch (type)
     {
         default: return false;
@@ -92,24 +100,26 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::NotAllowed:      m_cursor = [NSCursor operationNotAllowedCursor]; break;
             
         // These cursor types are undocumented, may not be available on some platforms
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
         case Cursor::SizeBottomLeftTopRight:
-            return loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor), m_cursor);
+            m_cursor = loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor));
+            break;
+
         case Cursor::SizeTopLeftBottomRight:
-            return loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor), m_cursor);
-        case Cursor::SizeAll:
-            return loadFromSelector(@selector(_moveCursor), m_cursor);
-        case Cursor::Wait:
-            return loadFromSelector(@selector(_waitCursor), m_cursor);
+            m_cursor = loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor));
+            break;
+
         case Cursor::Help:
-            return loadFromSelector(@selector(_helpCursor), m_cursor);
+            m_cursor = loadFromSelector(@selector(_helpCursor));
+            break;
+#pragma clang diagnostic pop
     }
 
-    // Since we didn't allocate the cursor ourself, we have to retain it
-    // in order to not break the retain count.
-    [m_cursor retain];
+    if (m_cursor)
+        [m_cursor retain];
 
-    // For all non-default cases, it was a success.
-    return true;
+    return m_cursor != nil;
 }
 
 
