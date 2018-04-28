@@ -415,6 +415,10 @@ table.memberdecls {
     margin-left: 9px;
 }
 
+.memtitle {
+  display: none;
+}
+
 .memnav {
     background-color: #EBEFF6;
     border: 1px solid #A3B4D7;
