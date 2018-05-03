@@ -45,6 +45,7 @@
 #include <SFML/System/Err.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
+#include <cstring>
 
 
 extern int main(int argc, char *argv[]);
@@ -485,7 +486,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
-        memcpy(states->savedState, savedState, savedStateSize);
+        std::memcpy(states->savedState, savedState, savedStateSize);
     }
 
     states->mainOver = false;
