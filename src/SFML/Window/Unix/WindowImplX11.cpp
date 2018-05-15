@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+#include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
@@ -779,6 +780,9 @@ void WindowImplX11::processEvents()
         m_events.pop_front();
         processEvent(event);
     }
+
+    // Process clipboard window events
+    priv::ClipboardImpl::processEvents();
 }
 
 
