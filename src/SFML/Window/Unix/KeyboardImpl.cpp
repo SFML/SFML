@@ -40,15 +40,15 @@ namespace
 {
 
 const KeyCode NullKeyCode = 0;
-KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount];     ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[256]; ///< Mapping of X11 KeyCode to SFML scancode
+KeyCode scancodeToKeycode[sf::Keyboard::ScanCodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[256];          ///< Mapping of X11 KeyCode to SFML scancode
 bool isMappingInitialized = false;
 
 ////////////////////////////////////////////////////////////
 bool isValidKeycode(KeyCode keycode)
 {
     // Valid key code range is [8,255], according to the Xlib manual
-    return keycode >= 8 || keycode <= 255;
+    return (keycode >= 8) || (keycode <= 255);
 }
 
 
@@ -241,7 +241,7 @@ void initMapping()
         std::memcpy(name, desc->names->keys[keycode].name, XkbKeyNameLength);
         name[XkbKeyNameLength] = '\0';
 
-        if (strcmp(name, "TLDE") == 0)      sc = sf::Keyboard::ScanGraveAccent;
+        if      (strcmp(name, "TLDE") == 0) sc = sf::Keyboard::ScanGraveAccent;
         else if (strcmp(name, "AE01") == 0) sc = sf::Keyboard::ScanNum1;
         else if (strcmp(name, "AE02") == 0) sc = sf::Keyboard::ScanNum2;
         else if (strcmp(name, "AE03") == 0) sc = sf::Keyboard::ScanNum3;
@@ -254,7 +254,7 @@ void initMapping()
         else if (strcmp(name, "AE10") == 0) sc = sf::Keyboard::ScanNum0;
         else if (strcmp(name, "AE11") == 0) sc = sf::Keyboard::ScanDash;
         else if (strcmp(name, "AE12") == 0) sc = sf::Keyboard::ScanEquals;
-        else if (strcmp(name, "TAB") == 0)  sc = sf::Keyboard::ScanTab;
+        else if (strcmp(name, "TAB" ) == 0) sc = sf::Keyboard::ScanTab;
         else if (strcmp(name, "AD01") == 0) sc = sf::Keyboard::ScanQ;
         else if (strcmp(name, "AD02") == 0) sc = sf::Keyboard::ScanW;
         else if (strcmp(name, "AD03") == 0) sc = sf::Keyboard::ScanE;
