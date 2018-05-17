@@ -53,6 +53,23 @@ namespace
     // Mutex to protect both active and stale frame buffer sets
     sf::Mutex mutex;
 
+    // This function is called either when a RenderTextureImplFBO is
+    // destroyed or via contextDestroyCallback when context destruction
+    // might trigger deletion of its contained stale FBOs
+    void destroyStaleFBOs()
+    {
+        sf::Uint64 contextId = sf::Context::getActiveContextId();
+
+        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end(); ++iter)
+        {
+            if (iter->first == contextId)
+            {
+                GLuint frameBuffer = static_cast<GLuint>(iter->second);
+                glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
+            }
+        }
+    }
+
     // Callback that is called every time a context is destroyed
     void contextDestroyCallback(void* arg)
     {
@@ -79,14 +96,7 @@ namespace
         }
 
         // Destroy stale frame buffer objects
-        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end(); ++iter)
-        {
-            if (iter->first == contextId)
-            {
-                GLuint frameBuffer = static_cast<GLuint>(iter->second);
-                glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
-            }
-        }
+        destroyStaleFBOs();
     }
 }
 
@@ -150,7 +160,7 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
         staleFrameBuffers.insert(std::make_pair(iter->first, iter->second));
 
     // Clean up FBOs
-    contextDestroyCallback(0);
+    destroyStaleFBOs();
 
     // Delete the backup context if we had to create one
     delete m_context;
