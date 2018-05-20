@@ -115,6 +115,12 @@ int main()
     // Check whether the prerequisites are suppprted
     bool prerequisitesSupported = sf::VertexBuffer::isAvailable() && sf::Shader::isAvailable();
 
+    // Bind the shader to SFML's drawable interface
+    terrainShader.setPositionAttribute         ("positionAttribute")
+                 .setColorAttribute            ("colorAttribute")
+                 .setTextureCoordinateAttribute("texCoordAttribute")
+                 .setModelViewProjectionMatrix ("modelViewProjectionMatrix");
+
     // Set up our graphics resources and set the status text accordingly
     if (!prerequisitesSupported)
     {

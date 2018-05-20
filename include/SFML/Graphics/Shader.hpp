@@ -54,6 +54,17 @@ class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
 public:
 
     ////////////////////////////////////////////////////////////
+    /// \brief Vertex attribute indices
+    ///
+    ////////////////////////////////////////////////////////////
+    enum VertexAttributeIndices
+    {
+        PositionIndex          = 0, ///< Position attribute index
+        ColorIndex             = 1, ///< Color attribute index
+        TextureCoordinateIndex = 2  ///< Texture coordinate attribute index
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Types of shaders
     ///
     ////////////////////////////////////////////////////////////
@@ -286,6 +297,118 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromStream(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the position attribute in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the position attribute in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setColorAttribute, setTextureCoordinateAttribute, setModelViewMatrix,
+    ///      setProjectionMatrix, setModelViewProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setPositionAttribute(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the color attribute in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the color attribute in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setTextureCoordinateAttribute, setModelViewMatrix,
+    ///      setProjectionMatrix, setModelViewProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setColorAttribute(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the texture coordinate attribute in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the texture coordinate attribute in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setColorAttribute, setModelViewMatrix,
+    ///      setProjectionMatrix, setModelViewProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setTextureCoordinateAttribute(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the modelview matrix uniform in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the modelview matrix uniform in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setColorAttribute, setTextureCoordinateAttribute,
+    ///      setProjectionMatrix, setModelViewProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setModelViewMatrix(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the projection matrix uniform in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the projection matrix uniform in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setColorAttribute, setTextureCoordinateAttribute,
+    ///      setModelViewMatrix, setModelViewProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setProjectionMatrix(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the pre-multiplied modelview-projection matrix uniform in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the pre-multiplied modelview-projection matrix uniform in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setColorAttribute, setTextureCoordinateAttribute,
+    ///      setModelViewMatrix, setProjectionMatrix, setTextureMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setModelViewProjectionMatrix(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Specify the name of the texture matrix uniform in GLSL
+    ///
+    /// This function returns a reference to *this, so that calls
+    /// can be chained.
+    ///
+    /// \param name Name of the texture matrix uniform in GLSL
+    ///
+    /// \return Reference to *this
+    ///
+    /// \see setPositionAttribute, setColorAttribute, setTextureCoordinateAttribute,
+    ///      setModelViewMatrix, setProjectionMatrix, setModelViewProjectionMatrix
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader& setTextureMatrix(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p float uniform
@@ -693,6 +816,8 @@ public:
 
 private:
 
+    friend class RenderTarget;
+
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
@@ -737,6 +862,14 @@ private:
     struct UniformBinder;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Shader to Drawable interface specification
+    ///
+    /// Implementation is private in the .cpp file.
+    ///
+    ////////////////////////////////////////////////////////////
+    struct Interface;
+
+    ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
     typedef std::map<int, const Texture*> TextureTable;
@@ -745,10 +878,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;       ///< Parameters location cache
+    unsigned int m_shaderProgram;                  ///< OpenGL identifier for the program
+    int          m_currentTexture;                 ///< Location of the current texture in the shader
+    TextureTable m_textures;                       ///< Texture variables in the shader, mapped to their location
+    UniformTable m_uniforms;                       ///< Parameters location cache
+    int          m_modelViewMatrixIndex;           ///< Index of the modelview matrix
+    int          m_projectionMatrixIndex;          ///< Index of the projection matrix
+    int          m_modelViewProjectionMatrixIndex; ///< Index of the modelview-projection matrix
+    int          m_textureMatrixIndex;             ///< Index of the texture matrix
+    Interface*   m_interface;                      ///< Shader to drawable interface specification
 };
 
 } // namespace sf

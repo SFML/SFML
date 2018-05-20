@@ -28,8 +28,15 @@ public:
             return false;
         m_sprite.setTexture(m_texture);
 
+        // Bind the shader to SFML's drawable interface
+        m_shader.setPositionAttribute         ("positionAttribute")
+                .setColorAttribute            ("colorAttribute")
+                .setTextureCoordinateAttribute("texCoordAttribute")
+                .setModelViewProjectionMatrix ("modelViewProjectionMatrix")
+                .setTextureMatrix             ("textureMatrix");
+
         // Load the shader
-        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/pixelate.vert", "resources/pixelate.frag"))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
@@ -92,6 +99,13 @@ public:
         m_text.setCharacterSize(22);
         m_text.setPosition(30, 20);
 
+        // Bind the shader to SFML's drawable interface
+        m_shader.setPositionAttribute         ("positionAttribute")
+                .setColorAttribute            ("colorAttribute")
+                .setTextureCoordinateAttribute("texCoordAttribute")
+                .setModelViewProjectionMatrix ("modelViewProjectionMatrix")
+                .setTextureMatrix             ("textureMatrix");
+
         // Load the shader
         if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
             return false;
@@ -144,6 +158,12 @@ public:
             sf::Uint8 b = std::rand() % 255;
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
+
+        // Bind the shader to SFML's drawable interface
+        m_shader.setPositionAttribute("positionAttribute")
+                .setColorAttribute   ("colorAttribute")
+                .setModelViewMatrix  ("modelViewMatrix")
+                .setProjectionMatrix ("projectionMatrix");
 
         // Load the shader
         if (!m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
@@ -212,8 +232,15 @@ public:
             m_entities.push_back(entity);
         }
 
+        // Bind the shader to SFML's drawable interface
+        m_shader.setPositionAttribute         ("positionAttribute")
+                .setColorAttribute            ("colorAttribute")
+                .setTextureCoordinateAttribute("texCoordAttribute")
+                .setModelViewProjectionMatrix ("modelViewProjectionMatrix")
+                .setTextureMatrix             ("textureMatrix");
+
         // Load the shader
-        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/edge.vert", "resources/edge.frag"))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
@@ -289,6 +316,10 @@ public:
         // Load the texture
         if (!m_logoTexture.loadFromFile("resources/logo.png"))
             return false;
+
+        // Bind the shader to SFML's drawable interface
+        m_shader.setPositionAttribute        ("positionAttribute")
+                .setModelViewProjectionMatrix("modelViewProjectionMatrix");
 
         // Load the shader
         if (!m_shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))

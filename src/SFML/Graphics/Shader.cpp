@@ -219,11 +219,28 @@ struct Shader::UniformBinder : private NonCopyable
 
 
 ////////////////////////////////////////////////////////////
+struct Shader::Interface
+{
+    std::string positionAttribute;
+    std::string colorAttribute;
+    std::string texCoordAttribute;
+
+    std::string modelViewMatrix;
+    std::string projectionMatrix;
+    std::string modelViewProjectionMatrix;
+    std::string textureMatrix;
+};
+
+
+////////////////////////////////////////////////////////////
 Shader::Shader() :
-m_shaderProgram (0),
-m_currentTexture(-1),
-m_textures      (),
-m_uniforms      ()
+m_shaderProgram                 (0),
+m_currentTexture                (-1),
+m_modelViewMatrixIndex          (-1),
+m_projectionMatrixIndex         (-1),
+m_modelViewProjectionMatrixIndex(-1),
+m_textureMatrixIndex            (-1),
+m_interface                     (0)
 {
 }
 
@@ -231,6 +248,9 @@ m_uniforms      ()
 ////////////////////////////////////////////////////////////
 Shader::~Shader()
 {
+    // Destroy the interface specification if we created one
+    delete m_interface;
+
     TransientContextLock lock;
 
     // Destroy effect program
@@ -419,6 +439,90 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& geomet
 
     // Compile the shader program
     return compile(&vertexShader[0], &geometryShader[0], &fragmentShader[0]);
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setPositionAttribute(const std::string& positionAttribute)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->positionAttribute = positionAttribute;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setColorAttribute(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->colorAttribute = name;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setTextureCoordinateAttribute(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->texCoordAttribute = name;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setModelViewMatrix(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->modelViewMatrix = name;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setProjectionMatrix(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->projectionMatrix = name;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setModelViewProjectionMatrix(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->modelViewProjectionMatrix = name;
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::setTextureMatrix(const std::string& name)
+{
+    if (!m_interface)
+        m_interface = new Interface;
+
+    m_interface->textureMatrix = name;
+
+    return *this;
 }
 
 
@@ -855,6 +959,11 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     m_textures.clear();
     m_uniforms.clear();
 
+    m_modelViewMatrixIndex           = -1;
+    m_projectionMatrixIndex          = -1;
+    m_modelViewProjectionMatrixIndex = -1;
+    m_textureMatrixIndex             = -1;
+
     // Create the program
     GLEXT_GLhandle shaderProgram;
     glCheck(shaderProgram = GLEXT_glCreateProgramObject());
@@ -942,6 +1051,19 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         glCheck(GLEXT_glDeleteObject(fragmentShader));
     }
 
+    // Bind all user-specified attributes to our pre-defined indices
+    if (m_interface)
+    {
+        if (!m_interface->positionAttribute.empty())
+            glCheck(GLEXT_glBindAttribLocation(shaderProgram, PositionIndex, m_interface->positionAttribute.c_str()));
+
+        if (!m_interface->colorAttribute.empty())
+            glCheck(GLEXT_glBindAttribLocation(shaderProgram, ColorIndex, m_interface->colorAttribute.c_str()));
+
+        if (!m_interface->texCoordAttribute.empty())
+            glCheck(GLEXT_glBindAttribLocation(shaderProgram, TextureCoordinateIndex, m_interface->texCoordAttribute.c_str()));
+    }
+
     // Link the program
     glCheck(GLEXT_glLinkProgram(shaderProgram));
 
@@ -959,6 +1081,53 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     }
 
     m_shaderProgram = castFromGlHandle(shaderProgram);
+
+    if (m_interface)
+    {
+        // Check if attribute binding resulted in the attributes having the indices we expect
+        if (!m_interface->positionAttribute.empty())
+        {
+            int location = -1;
+
+            glCheck(location = GLEXT_glGetAttribLocation(shaderProgram, m_interface->positionAttribute.c_str()));
+
+            if (location != PositionIndex)
+                err() << "Failed to bind vertex position attribute to index 0" << std::endl;
+        }
+
+        if (!m_interface->colorAttribute.empty())
+        {
+            int location = -1;
+
+            glCheck(location = GLEXT_glGetAttribLocation(shaderProgram, m_interface->colorAttribute.c_str()));
+
+            if (location != ColorIndex)
+                err() << "Failed to bind vertex color attribute to index 1" << std::endl;
+        }
+
+        if (!m_interface->texCoordAttribute.empty())
+        {
+            int location = -1;
+
+            glCheck(location = GLEXT_glGetAttribLocation(shaderProgram, m_interface->texCoordAttribute.c_str()));
+
+            if (location != TextureCoordinateIndex)
+                err() << "Failed to bind vertex texture coordinate attribute to index 2" << std::endl;
+        }
+
+        // Populate the drawable interface uniform indices
+        if (!m_interface->modelViewMatrix.empty())
+            m_modelViewMatrixIndex = getUniformLocation(m_interface->modelViewMatrix);
+
+        if (!m_interface->projectionMatrix.empty())
+            m_projectionMatrixIndex = getUniformLocation(m_interface->projectionMatrix);
+
+        if (!m_interface->modelViewProjectionMatrix.empty())
+            m_modelViewProjectionMatrixIndex = getUniformLocation(m_interface->modelViewProjectionMatrix);
+
+        if (!m_interface->textureMatrix.empty())
+            m_textureMatrixIndex = getUniformLocation(m_interface->textureMatrix);
+    }
 
     // Force an OpenGL flush, so that the shader will appear updated
     // in all contexts immediately (solves problems in multi-threaded apps)

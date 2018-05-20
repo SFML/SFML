@@ -147,7 +147,19 @@ void RenderTarget::clear(const Color& color)
     if (isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
-        applyTexture(NULL);
+        {
+            // Bind no texture
+            glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+            // Reset the texture matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadIdentity());
+
+            // Go back to model-view mode
+            glCheck(glMatrixMode(GL_MODELVIEW));
+
+            m_cache.lastTextureId = 0;
+        }
 
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
@@ -283,9 +295,19 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         if (!m_cache.enable || (enableTexCoordsArray != m_cache.texCoordsArrayEnabled))
         {
             if (enableTexCoordsArray)
+            {
                 glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+                if (Shader::isAvailable())
+                    glCheck(GLEXT_glEnableVertexAttribArray(Shader::TextureCoordinateIndex));
+            }
             else
+            {
                 glCheck(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+
+                if (Shader::isAvailable())
+                    glCheck(GLEXT_glDisableVertexAttribArray(Shader::TextureCoordinateIndex));
+            }
         }
 
         // If we switch between non-cache and cache mode or enable texture
@@ -302,6 +324,15 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
             if (enableTexCoordsArray)
                 glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
+
+            if (Shader::isAvailable())
+            {
+                glCheck(GLEXT_glVertexAttribPointer(Shader::PositionIndex, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), data + 0));
+                glCheck(GLEXT_glVertexAttribPointer(Shader::ColorIndex, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), data + 8));
+
+                if (enableTexCoordsArray)
+                    glCheck(GLEXT_glVertexAttribPointer(Shader::TextureCoordinateIndex, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), data + 12));
+            }
         }
         else if (enableTexCoordsArray && !m_cache.texCoordsArrayEnabled)
         {
@@ -309,6 +340,9 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
             const char* data = reinterpret_cast<const char*>(m_cache.vertexCache);
 
             glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
+
+            if (Shader::isAvailable())
+                glCheck(GLEXT_glVertexAttribPointer(Shader::TextureCoordinateIndex, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), data + 12));
         }
 
         drawPrimitives(type, 0, vertexCount);
@@ -368,11 +402,23 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
 
         // Always enable texture coordinates
         if (!m_cache.enable || !m_cache.texCoordsArrayEnabled)
+        {
             glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+
+            if (Shader::isAvailable())
+                glCheck(GLEXT_glEnableVertexAttribArray(Shader::TextureCoordinateIndex));
+        }
 
         glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(0)));
         glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), reinterpret_cast<const void*>(8)));
         glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<const void*>(12)));
+
+        if (Shader::isAvailable())
+        {
+            glCheck(GLEXT_glVertexAttribPointer(Shader::PositionIndex, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(0)));
+            glCheck(GLEXT_glVertexAttribPointer(Shader::ColorIndex, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), reinterpret_cast<const void*>(8)));
+            glCheck(GLEXT_glVertexAttribPointer(Shader::TextureCoordinateIndex, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(12)));
+        }
 
         drawPrimitives(vertexBuffer.getPrimitiveType(), firstVertex, vertexCount);
 
@@ -519,9 +565,28 @@ void RenderTarget::resetGLStates()
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
-        applyTexture(NULL);
+
+        // Bind no texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+        // Reset the texture matrix
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glLoadIdentity());
+
+        // Go back to model-view mode
+        glCheck(glMatrixMode(GL_MODELVIEW));
+
+        m_cache.lastTextureId = 0;
+
         if (shaderAvailable)
+        {
             applyShader(NULL);
+
+            // Enable all available vertex attribute arrays
+            glCheck(GLEXT_glEnableVertexAttribArray(Shader::PositionIndex));
+            glCheck(GLEXT_glEnableVertexAttribArray(Shader::ColorIndex));
+            glCheck(GLEXT_glEnableVertexAttribArray(Shader::TextureCoordinateIndex));
+        }
 
         if (vertexBufferAvailable)
             glCheck(VertexBuffer::bind(NULL));
@@ -622,23 +687,16 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyTransform(const Transform& transform)
+void RenderTarget::applyTransform(const Transform&)
 {
-    // No need to call glMatrixMode(GL_MODELVIEW), it is always the
-    // current mode (for optimization purpose, since it's the most used)
-    if (transform == Transform::Identity)
-        glCheck(glLoadIdentity());
-    else
-        glCheck(glLoadMatrixf(transform.getMatrix()));
+    // Function kept for compatibility, no-op now
 }
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyTexture(const Texture* texture)
+void RenderTarget::applyTexture(const Texture*)
 {
-    Texture::bind(texture, Texture::Pixels);
-
-    m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
+    // Function kept for compatibility, no-op now
 }
 
 
@@ -652,19 +710,45 @@ void RenderTarget::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 {
+    static const GLfloat identityMatrix[] =
+    {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
     // First set the persistent OpenGL states if it's the very first call
     if (!m_cache.glStatesSet)
         resetGLStates();
 
+    const GLfloat* modelViewMatrix = identityMatrix;
+
     if (useVertexCache)
     {
         // Since vertices are transformed, we must use an identity transform to render them
-        if (!m_cache.enable || !m_cache.useVertexCache)
+        if (!m_cache.enable ||
+            !m_cache.useVertexCache ||
+            (states.shader && (states.shader->m_modelViewMatrixIndex >= 0)))
+        {
             glCheck(glLoadIdentity());
+            modelViewMatrix = identityMatrix;
+        }
     }
     else
     {
-        applyTransform(states.transform);
+        // No need to call glMatrixMode(GL_MODELVIEW), it is always the
+        // current mode (for optimization purpose, since it's the most used)
+        if (states.transform == Transform::Identity)
+        {
+            glCheck(glLoadIdentity());
+            modelViewMatrix = identityMatrix;
+        }
+        else
+        {
+            glCheck(glLoadMatrixf(states.transform.getMatrix()));
+            modelViewMatrix = states.transform.getMatrix();
+        }
     }
 
     // Apply the view
@@ -675,8 +759,12 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     if (!m_cache.enable || (states.blendMode != m_cache.lastBlendMode))
         applyBlendMode(states.blendMode);
 
+    bool applyStatesTexture = false;
+
     // Apply the texture
-    if (!m_cache.enable || (states.texture && states.texture->m_fboAttachment))
+    if (!m_cache.enable ||
+        (states.texture && states.texture->m_fboAttachment) ||
+        (states.shader && (states.shader->m_textureMatrixIndex >= 0)))
     {
         // If the texture is an FBO attachment, always rebind it
         // in order to inform the OpenGL driver that we want changes
@@ -684,18 +772,105 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
         // This saves us from having to call glFlush() in
         // RenderTextureImplFBO which can be quite costly
         // See: https://www.khronos.org/opengl/wiki/Memory_Model
-        applyTexture(states.texture);
+        applyStatesTexture = true;
     }
     else
     {
         Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
         if (textureId != m_cache.lastTextureId)
-            applyTexture(states.texture);
+            applyStatesTexture = true;
+    }
+
+    // Temporary matrix we use to store both the texture matrix
+    // and if required the pre-multiplied modelview-projection matrix
+    GLfloat tempMatrix[16] =
+    {
+        1.f, 0.f, 0.f, 0.f,
+        0.f, 1.f, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 1.f
+    };
+
+    const GLfloat* textureMatrix = identityMatrix;
+
+    if (applyStatesTexture)
+    {
+        if (states.texture && states.texture->m_texture)
+        {
+            // Bind the texture
+            glCheck(glBindTexture(GL_TEXTURE_2D, states.texture->m_texture));
+
+            // If non-normalized coordinates (= pixels) are requested, we need to
+            // setup scale factors that convert the range [0 .. size] to [0 .. 1]
+            tempMatrix[0] = 1.f / states.texture->m_actualSize.x;
+            tempMatrix[5] = 1.f / states.texture->m_actualSize.y;
+
+            // If pixels are flipped we must invert the Y axis
+            if (states.texture->m_pixelsFlipped)
+            {
+                tempMatrix[5] = -tempMatrix[5];
+                tempMatrix[13] = static_cast<float>(states.texture->m_size.y) / states.texture->m_actualSize.y;
+            }
+
+            // Load the matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadMatrixf(tempMatrix));
+            textureMatrix = tempMatrix;
+
+            // Go back to model-view mode
+            glCheck(glMatrixMode(GL_MODELVIEW));
+        }
+        else
+        {
+            // Bind no texture
+            glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+            // Reset the texture matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadIdentity());
+            textureMatrix = identityMatrix;
+
+            // Go back to model-view mode
+            glCheck(glMatrixMode(GL_MODELVIEW));
+        }
+
+        m_cache.lastTextureId = states.texture ? states.texture->m_cacheId : 0;
     }
 
     // Apply the shader
     if (states.shader)
+    {
         applyShader(states.shader);
+
+        // Set all available uniforms
+        if (states.shader->m_modelViewMatrixIndex >= 0)
+            glCheck(GLEXT_glUniformMatrix4fv(states.shader->m_modelViewMatrixIndex, 1, GL_FALSE, modelViewMatrix));
+
+        if (states.shader->m_projectionMatrixIndex >= 0)
+            glCheck(GLEXT_glUniformMatrix4fv(states.shader->m_projectionMatrixIndex, 1, GL_FALSE, m_view.getTransform().getMatrix()));
+
+        if (states.shader->m_textureMatrixIndex >= 0)
+            glCheck(GLEXT_glUniformMatrix4fv(states.shader->m_textureMatrixIndex, 1, GL_FALSE, textureMatrix));
+
+        if (states.shader->m_modelViewProjectionMatrixIndex >= 0)
+        {
+            const GLfloat* A = m_view.getTransform().getMatrix();
+            const GLfloat* B = modelViewMatrix;
+
+            for (int i = 0; i < 4 * 4; i += 4)
+            {
+                for (int j = 0; j < 4; ++j)
+                {
+                    tempMatrix[i + j] = A[4 * 0 + j] * B[i + 0] +
+                                        A[4 * 1 + j] * B[i + 1] +
+                                        A[4 * 2 + j] * B[i + 2] +
+                                        A[4 * 3 + j] * B[i + 3];
+                }
+            }
+
+            glCheck(GLEXT_glUniformMatrix4fv(states.shader->m_modelViewProjectionMatrixIndex, 1, GL_FALSE, tempMatrix));
+        }
+    }
 }
 
 
@@ -722,7 +897,19 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
     // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
     // This prevents a bug where some drivers do not clear RenderTextures properly.
     if (states.texture && states.texture->m_fboAttachment)
-        applyTexture(NULL);
+    {
+        // Bind no texture
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+
+        // Reset the texture matrix
+        glCheck(glMatrixMode(GL_TEXTURE));
+        glCheck(glLoadIdentity());
+
+        // Go back to model-view mode
+        glCheck(glMatrixMode(GL_MODELVIEW));
+
+        m_cache.lastTextureId = 0;
+    }
 
     // Re-enable the cache at the end of the draw if it was disabled
     m_cache.enable = true;

@@ -245,6 +245,11 @@
 
     // Core since 2.0 - ARB_vertex_shader
     #define GLEXT_vertex_shader                       sfogl_ext_ARB_vertex_shader
+    #define GLEXT_glVertexAttribPointer               glVertexAttribPointerARB
+    #define GLEXT_glEnableVertexAttribArray           glEnableVertexAttribArrayARB
+    #define GLEXT_glDisableVertexAttribArray          glDisableVertexAttribArrayARB
+    #define GLEXT_glBindAttribLocation                glBindAttribLocationARB
+    #define GLEXT_glGetAttribLocation                 glGetAttribLocationARB
     #define GLEXT_GL_VERTEX_SHADER                    GL_VERTEX_SHADER_ARB
     #define GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB
 
