@@ -81,7 +81,7 @@ bool RenderWindow::setActive(bool active)
 
     // If FBOs are available, make sure none are bound when we
     // try to draw to the default framebuffer of the RenderWindow
-    if (result && priv::RenderTextureImplFBO::isAvailable())
+    if (active && result && priv::RenderTextureImplFBO::isAvailable())
     {
         priv::RenderTextureImplFBO::unbind();
 
