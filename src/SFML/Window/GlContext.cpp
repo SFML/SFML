@@ -212,6 +212,55 @@ namespace
     // Supported OpenGL extensions
     std::vector<std::string> extensions;
 
+    // Load our extensions vector with the supported extensions
+    void loadExtensions()
+    {
+        extensions.clear();
+
+        // Check whether a >= 3.0 context is available
+        int majorVersion = 0;
+        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+
+        if (glGetError() == GL_INVALID_ENUM)
+        {
+            // Try to load the < 3.0 way
+            const char* extensionString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+
+            do
+            {
+                const char* extension = extensionString;
+
+                while (*extensionString && (*extensionString != ' '))
+                    extensionString++;
+
+                extensions.push_back(std::string(extension, extensionString));
+            }
+            while (*extensionString++);
+        }
+        else
+        {
+            // Try to load the >= 3.0 way
+            glGetStringiFuncType glGetStringiFunc = NULL;
+            glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
+
+            if (glGetStringiFunc)
+            {
+                int numExtensions = 0;
+                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+                if (numExtensions)
+                {
+                    for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
+                    {
+                        const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
+
+                        extensions.push_back(extensionString);
+                    }
+                }
+            }
+        }
+    }
+
     // Helper to parse OpenGL version strings
     bool parseVersionString(const char* version, const char* prefix, unsigned int &major, unsigned int &minor)
     {
@@ -260,50 +309,7 @@ void GlContext::initResource()
         sharedContext->initialize(ContextSettings());
 
         // Load our extensions vector
-        extensions.clear();
-
-        // Check whether a >= 3.0 context is available
-        int majorVersion = 0;
-        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-
-        if (glGetError() == GL_INVALID_ENUM)
-        {
-            // Try to load the < 3.0 way
-            const char* extensionString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-
-            do
-            {
-                const char* extension = extensionString;
-
-                while(*extensionString && (*extensionString != ' '))
-                    extensionString++;
-
-                extensions.push_back(std::string(extension, extensionString));
-            }
-            while (*extensionString++);
-        }
-        else
-        {
-            // Try to load the >= 3.0 way
-            glGetStringiFuncType glGetStringiFunc = NULL;
-            glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
-
-            if (glGetStringiFunc)
-            {
-                int numExtensions = 0;
-                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-
-                if (numExtensions)
-                {
-                    for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
-                    {
-                        const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
-
-                        extensions.push_back(extensionString);
-                    }
-                }
-            }
-        }
+        loadExtensions();
 
         // Deactivate the shared context so that others can activate it when necessary
         sharedContext->setActive(false);
@@ -417,6 +423,25 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 
     Lock lock(mutex);
 
+    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // Only in this situation we allow the user to indirectly re-create the shared context as a core context
+
+    // Check if we need to convert our shared context into a core context
+    if ((resourceCount == 1) &&
+        (settings.attributeFlags & ContextSettings::Core) &&
+        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+    {
+        // Re-create our shared context as a core context
+        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+
+        delete sharedContext;
+        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext->initialize(sharedSettings);
+
+        // Reload our extensions vector
+        loadExtensions();
+    }
+
     GlContext* context = NULL;
 
     // We don't use acquireTransientContext here since we have
@@ -445,6 +470,25 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     assert(sharedContext != NULL);
 
     Lock lock(mutex);
+
+    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // Only in this situation we allow the user to indirectly re-create the shared context as a core context
+
+    // Check if we need to convert our shared context into a core context
+    if ((resourceCount == 1) &&
+        (settings.attributeFlags & ContextSettings::Core) &&
+        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+    {
+        // Re-create our shared context as a core context
+        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+
+        delete sharedContext;
+        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext->initialize(sharedSettings);
+
+        // Reload our extensions vector
+        loadExtensions();
+    }
 
     GlContext* context = NULL;
 

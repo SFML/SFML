@@ -84,20 +84,16 @@ m_deviceContext(NULL),
 m_context      (NULL),
 m_ownsWindow   (false)
 {
+    // TODO: Delegate to the other constructor in C++11
+
     // Save the creation settings
     m_settings = ContextSettings();
-
-    // Make sure that extensions are initialized if this is not the shared context
-    // The shared context is the context used to initialize the extensions
-    if (shared && shared->m_deviceContext)
-        ensureExtensionsInit(shared->m_deviceContext);
 
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, 1, 1, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
-    if (m_deviceContext)
-        createContext(shared);
+    createContext(shared);
 }
 
 
@@ -112,17 +108,11 @@ m_ownsWindow   (false)
     // Save the creation settings
     m_settings = settings;
 
-    // Make sure that extensions are initialized if this is not the shared context
-    // The shared context is the context used to initialize the extensions
-    if (shared && shared->m_deviceContext)
-        ensureExtensionsInit(shared->m_deviceContext);
-
     // Create the rendering surface from the owner window
     createSurface(owner->getSystemHandle(), bitsPerPixel);
 
     // Create the context
-    if (m_deviceContext)
-        createContext(shared);
+    createContext(shared);
 }
 
 
@@ -137,17 +127,11 @@ m_ownsWindow   (false)
     // Save the creation settings
     m_settings = settings;
 
-    // Make sure that extensions are initialized if this is not the shared context
-    // The shared context is the context used to initialize the extensions
-    if (shared && shared->m_deviceContext)
-        ensureExtensionsInit(shared->m_deviceContext);
-
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, width, height, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
-    if (m_deviceContext)
-        createContext(shared);
+    createContext(shared);
 }
 
 
@@ -594,6 +578,10 @@ void WglContext::createSurface(HWND window, unsigned int bitsPerPixel)
 ////////////////////////////////////////////////////////////
 void WglContext::createContext(WglContext* shared)
 {
+    // We can't create an OpenGL context if we don't have a DC
+    if (!m_deviceContext)
+        return;
+
     // Get a working copy of the context settings
     ContextSettings settings = m_settings;
 
@@ -729,6 +717,15 @@ void WglContext::createContext(WglContext* shared)
             if (wglShareLists(sharedContext, m_context) == FALSE)
                 err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
         }
+    }
+
+    // If we are the shared context, initialize extensions now
+    // This enables us to re-create the shared context using extensions if we need to
+    if (!shared && m_context)
+    {
+        makeCurrent(true);
+        ensureExtensionsInit(m_deviceContext);
+        makeCurrent(false);
     }
 }
 
