@@ -60,12 +60,18 @@ namespace
     {
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
-        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end(); ++iter)
+        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
         {
             if (iter->first == contextId)
             {
                 GLuint frameBuffer = static_cast<GLuint>(iter->second);
                 glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
+
+                staleFrameBuffers.erase(iter++);
+            }
+            else
+            {
+                ++iter;
             }
         }
     }
