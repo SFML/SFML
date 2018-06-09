@@ -155,7 +155,11 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
     assert(m_stream);
 
     Uint64 count = 0;
-    while ((count < maxCount) && (static_cast<Uint64>(m_stream->tell()) < m_dataEnd))
+    Uint64 startPos = m_stream->tell();
+
+    // Tracking of m_dataEnd is important to prevent sf::Music from reading
+    // data until EOF, as WAV files may have metadata at the end.
+    while ((count < maxCount) && (startPos + count * m_bytesPerSample < m_dataEnd))
     {
         switch (m_bytesPerSample)
         {
