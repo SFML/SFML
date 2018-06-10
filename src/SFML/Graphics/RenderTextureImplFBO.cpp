@@ -572,6 +572,14 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
             if (frameBuffer && multiSampleFrameBuffer)
             {
+                // Scissor testing affects framebuffer blits as well
+                // Since we don't want scissor testing to interfere with our copying, we temporarily disable it for the blit if it is enabled
+                GLboolean scissorEnabled = GL_FALSE;
+                glCheck(glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled));
+
+                if (scissorEnabled == GL_TRUE)
+                    glCheck(glDisable(GL_SCISSOR_TEST));
+
                 // Set up the blit target (draw framebuffer) and blit (from the read framebuffer, our multisample FBO)
                 glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, frameBuffer->object));
                 glCheck(GLEXT_glBlitFramebuffer(0,
@@ -585,6 +593,10 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
                                                 GL_COLOR_BUFFER_BIT,
                                                 GL_NEAREST));
                 glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, multiSampleFrameBuffer->object));
+
+                // Re-enable scissor testing if it was previously enabled
+                if (scissorEnabled == GL_TRUE)
+                    glCheck(glEnable(GL_SCISSOR_TEST));
             }
         }
     }

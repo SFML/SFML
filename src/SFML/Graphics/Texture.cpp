@@ -582,6 +582,14 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
 
         if ((sourceStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE) && (destStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE))
         {
+            // Scissor testing affects framebuffer blits as well
+            // Since we don't want scissor testing to interfere with our copying, we temporarily disable it for the blit if it is enabled
+            GLboolean scissorEnabled = GL_FALSE;
+            glCheck(glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled));
+
+            if (scissorEnabled == GL_TRUE)
+                glCheck(glDisable(GL_SCISSOR_TEST));
+
             // Blit the texture contents from the source to the destination texture
             glCheck(GLEXT_glBlitFramebuffer(0,
                                             texture.m_pixelsFlipped ? static_cast<GLint>(texture.m_size.y) : 0,
@@ -593,6 +601,10 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
                                             static_cast<GLint>(dest.y + texture.m_size.y), // Destination rectangle
                                             GL_COLOR_BUFFER_BIT,
                                             GL_NEAREST));
+
+            // Re-enable scissor testing if it was previously enabled
+            if (scissorEnabled == GL_TRUE)
+                glCheck(glEnable(GL_SCISSOR_TEST));
         }
         else
         {

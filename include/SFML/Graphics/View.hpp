@@ -120,6 +120,30 @@ public:
     void setViewport(const FloatRect& viewport);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the target scissor rectangle
+    ///
+    /// The scissor rectangle, expressed as a factor (between 0 and 1) of
+    /// the RenderTarget, specifies the region of the RenderTarget whose
+    /// pixels are able to be modified by draw or clear operations.
+    /// Any pixels which lie outside of the scissor rectangle will
+    /// not be modified by draw or clear operations.
+    /// For example, a scissor rectangle which only allows modifications
+    /// to the right side of the target would be defined
+    /// with View.setScissor(sf::FloatRect({0.5f, 0.f}, {0.5f, 1.f})).
+    /// By default, a view has a scissor rectangle which allows
+    /// modifications to the entire target. This is equivalent to
+    /// disabling the scissor test entirely. Passing the default
+    /// scissor rectangle to this function will also disable
+    /// scissor testing.
+    ///
+    /// \param scissor New scissor rectangle
+    ///
+    /// \see getScissor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setScissor(const FloatRect& scissor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Reset the view to the given rectangle
     ///
     /// Note that this function resets the rotation angle to 0.
@@ -170,6 +194,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const FloatRect& getViewport() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the scissor rectangle of the view
+    ///
+    /// \return Scissor rectangle, expressed as a factor of the target size
+    ///
+    /// \see setScissor
+    ///
+    ////////////////////////////////////////////////////////////
+    const FloatRect& getScissor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position
@@ -240,6 +274,7 @@ private:
     Vector2f  m_size;                       //!< Size of the view, in scene coordinates
     Angle     m_rotation;                   //!< Angle of rotation of the view rectangle
     FloatRect m_viewport{{0, 0}, {1, 1}};   //!< Viewport rectangle, expressed as a factor of the render-target's size
+    FloatRect m_scissor{{0, 0}, {1, 1}};    //!< Scissor rectangle, expressed as a factor of the render-target's size
     mutable Transform m_transform;          //!< Precomputed projection transform corresponding to the view
     mutable Transform m_inverseTransform;   //!< Precomputed inverse projection transform corresponding to the view
     mutable bool      m_transformUpdated{}; //!< Internal state telling if the transform needs to be updated
@@ -269,6 +304,34 @@ private:
 /// rectangle doesn't have the same size as the viewport, its
 /// contents will be stretched to fit in.
 ///
+/// The scissor rectangle allows for specifying regions of the
+/// render target to which modifications can be made by draw
+/// and clear operations. Only pixels that are within the region
+/// will be able to be modified. Pixels outside of the region will
+/// not be modified by draw or clear operations.
+///
+/// Certain effects can be created by either using the viewport or
+/// scissor rectangle. While the results appear identical, there
+/// can be times where one method should be preferred over the other.
+/// Viewport transformations are applied during the vertex processing
+/// stage of the graphics pipeline, before the primitives are
+/// rasterized into fragments for fragment processing. Since
+/// viewport processing has to be performed and cannot be disabled,
+/// effects that are performed using the viewport transform are
+/// basically free performance-wise. Scissor testing is performed in
+/// the per-sample processing stage of the graphics pipeline, after
+/// fragment processing has been performed. Because per-sample
+/// processing is performed at the last stage of the pipeline,
+/// fragments that are discarded at this stage will cause the
+/// highest waste of GPU resources compared to any method that
+/// would have discarded vertices or fragments earlier in the
+/// pipeline. There are situations in which scissor testing has
+/// to be used to control whether fragments are discarded or not.
+/// An example of such a situation is when performing the viewport
+/// transform on vertices is necessary but a subset of the generated
+/// fragments should not have an effect on the stencil buffer or
+/// blend with the color buffer.
+//
 /// To apply a view, you have to assign it to the render target.
 /// Then, objects drawn in this render target will be
 /// affected by the view until you use another view.
