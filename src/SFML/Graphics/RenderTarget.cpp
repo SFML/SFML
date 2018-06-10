@@ -161,6 +161,10 @@ void RenderTarget::clear(const Color& color)
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr);
 
+        // Apply the view (scissor testing can affect clearing)
+        if (!m_cache.enable || m_cache.viewChanged)
+            applyCurrentView();
+
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
@@ -197,6 +201,17 @@ IntRect RenderTarget::getViewport(const View& view) const
 
     return IntRect(Rect<long>({std::lround(width * viewport.left), std::lround(height * viewport.top)},
                               {std::lround(width * viewport.width), std::lround(height * viewport.height)}));
+}
+
+
+////////////////////////////////////////////////////////////
+IntRect RenderTarget::getScissor(const View& view) const
+{
+    const auto [width, height] = Vector2f(getSize());
+    const FloatRect& scissor   = view.getScissor();
+
+    return IntRect(Rect<long>({std::lround(width * scissor.left), std::lround(height * scissor.top)},
+                              {std::lround(width * scissor.width), std::lround(height * scissor.height)}));
 }
 
 
@@ -506,6 +521,7 @@ void RenderTarget::resetGLStates()
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
         glCheck(glDisable(GL_ALPHA_TEST));
+        glCheck(glDisable(GL_SCISSOR_TEST));
         glCheck(glEnable(GL_TEXTURE_2D));
         glCheck(glEnable(GL_BLEND));
         glCheck(glMatrixMode(GL_MODELVIEW));
@@ -513,7 +529,8 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-        m_cache.glStatesSet = true;
+        m_cache.scissorEnabled = false;
+        m_cache.glStatesSet    = true;
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
@@ -556,9 +573,31 @@ void RenderTarget::initialize()
 void RenderTarget::applyCurrentView()
 {
     // Set the viewport
-    const IntRect viewport = getViewport(m_view);
-    const int     top      = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
-    glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
+    const IntRect viewport    = getViewport(m_view);
+    const int     viewportTop = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
+    glCheck(glViewport(viewport.left, viewportTop, viewport.width, viewport.height));
+
+    // Set the scissor rectangle and enable/disable scissor testing
+    if (m_view.getScissor() == FloatRect({0, 0}, {1, 1}))
+    {
+        if (m_cache.scissorEnabled)
+        {
+            glCheck(glDisable(GL_SCISSOR_TEST));
+            m_cache.scissorEnabled = false;
+        }
+    }
+    else
+    {
+        const IntRect pixelScissor = getScissor(m_view);
+        const int     scissorTop   = static_cast<int>(getSize().y) - (pixelScissor.top + pixelScissor.height);
+        glCheck(glScissor(pixelScissor.left, scissorTop, pixelScissor.width, pixelScissor.height));
+
+        if (!m_cache.scissorEnabled)
+        {
+            glCheck(glEnable(GL_SCISSOR_TEST));
+            m_cache.scissorEnabled = true;
+        }
+    }
 
     // Set the projection matrix
     glCheck(glMatrixMode(GL_PROJECTION));

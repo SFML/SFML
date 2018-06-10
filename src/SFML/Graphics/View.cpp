@@ -88,6 +88,20 @@ void View::setViewport(const FloatRect& viewport)
 
 
 ////////////////////////////////////////////////////////////
+void View::setScissor(const FloatRect& scissor)
+{
+    assert(scissor.left >= 0.0f && scissor.left <= 1.0f && "scissor.left must lie within [0, 1]");
+    assert(scissor.top >= 0.0f && scissor.top <= 1.0f && "scissor.top must lie within [0, 1]");
+    assert(scissor.width >= 0.0f && "scissor.width must lie within [0, 1]");
+    assert(scissor.height >= 0.0f && "scissor.height must lie within [0, 1]");
+    assert(scissor.left + scissor.width <= 1.0f && "scissor.left + scissor.width must lie within [0, 1]");
+    assert(scissor.top + scissor.height <= 1.0f && "scissor.top + scissor.height must lie within [0, 1]");
+
+    m_scissor = scissor;
+}
+
+
+////////////////////////////////////////////////////////////
 void View::reset(const FloatRect& rectangle)
 {
     m_center   = rectangle.getCenter();
@@ -124,6 +138,13 @@ Angle View::getRotation() const
 const FloatRect& View::getViewport() const
 {
     return m_viewport;
+}
+
+
+////////////////////////////////////////////////////////////
+const FloatRect& View::getScissor() const
+{
+    return m_scissor;
 }
 
 
