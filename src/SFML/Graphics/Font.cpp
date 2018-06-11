@@ -727,6 +727,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 // Make the texture 2 times bigger
                 Texture newTexture;
                 newTexture.create(textureWidth * 2, textureHeight * 2);
+                newTexture.setSmooth(true);
                 newTexture.update(page.texture);
                 page.texture.swap(newTexture);
             }
