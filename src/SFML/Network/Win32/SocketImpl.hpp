@@ -37,6 +37,7 @@
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #include <SFML/Network/Socket.hpp>
+#include <experimental/internet>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
@@ -45,6 +46,20 @@ namespace sf
 {
 namespace priv
 {
+////////////////////////////////////////////////////////////
+/// Types
+///
+////////////////////////////////////////////////////////////
+typedef struct
+{
+    std::size_t size;
+    union
+    {
+        sockaddr_in ipv4;
+        sockaddr_in6 ipv6;
+    } memory;
+} SocketAddress;
+
 ////////////////////////////////////////////////////////////
 /// \brief Helper class implementing all the non-portable
 ///        socket stuff; this is the Windows version
@@ -60,15 +75,15 @@ public:
     typedef int AddrLength;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create an internal sockaddr_in address
+    /// \brief Create an internal address
     ///
     /// \param address Target address
     /// \param port    Target port
     ///
-    /// \return sockaddr_in ready to be used by socket functions
+    /// \return SocketAddress ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(Uint32 address, unsigned short port);
+    static SocketAddress createAddress(const std::experimental::net::ip::address& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket

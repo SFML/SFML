@@ -30,6 +30,7 @@
 #include <SFML/Network/SocketImpl.hpp>
 #include <cstring>
 #include <utility>
+#include <iostream>
 
 
 namespace sf
@@ -39,37 +40,39 @@ const IpAddress IpAddress::None;
 const IpAddress IpAddress::Any(0, 0, 0, 0);
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
+const IpAddress IpAddress::Ipv6::Any("::");
+const IpAddress IpAddress::Ipv6::LocalHost("::1");
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress() :
-m_address(0),
 m_valid  (false)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const std::string& address) :
-m_address(0),
+IpAddress::IpAddress(const std::string& address, int ipv) :
 m_valid  (false)
 {
-    resolve(address);
+    resolve(address, ipv);
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const char* address) :
-m_address(0),
+IpAddress::IpAddress(const char* address, int ipv) :
 m_valid  (false)
 {
-    resolve(address);
+    resolve(address, ipv);
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)),
+m_address(std::experimental::net::ip::make_address_v4((byte0 << 24) |
+                                                      (byte1 << 16) |
+                                                      (byte2 << 8)  |
+                                                       byte3)),
 m_valid  (true)
 {
 }
@@ -77,7 +80,7 @@ m_valid  (true)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint32 address) :
-m_address(htonl(address)),
+m_address(std::experimental::net::ip::make_address_v4(address)),
 m_valid  (true)
 {
 }
@@ -86,17 +89,24 @@ m_valid  (true)
 ////////////////////////////////////////////////////////////
 std::string IpAddress::toString() const
 {
-    in_addr address;
-    address.s_addr = m_address;
-
-    return inet_ntoa(address);
+    return m_address.to_string();
 }
 
 
 ////////////////////////////////////////////////////////////
 Uint32 IpAddress::toInteger() const
 {
-    return ntohl(m_address);
+    if (m_address.is_v4())
+        return m_address.to_v4().to_uint();
+
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+std::experimental::net::ip::address IpAddress::toCppAddress() const
+{
+    return m_address;
 }
 
 
@@ -115,16 +125,17 @@ IpAddress IpAddress::getLocalAddress()
         return localAddress;
 
     // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
-    if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+    IpAddress loopback(htonl(INADDR_LOOPBACK));
+    priv::SocketAddress address = priv::SocketImpl::createAddress(loopback.toCppAddress(), 9);
+    if (connect(sock, reinterpret_cast<sockaddr*>(&address.memory), address.size) == -1)
     {
         priv::SocketImpl::close(sock);
         return localAddress;
     }
 
     // Get the local address of the socket connection
-    priv::SocketImpl::AddrLength size = sizeof(address);
-    if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
+    priv::SocketImpl::AddrLength size = sizeof(address.memory);
+    if (getsockname(sock, reinterpret_cast<sockaddr*>(&address.memory), &size) == -1)
     {
         priv::SocketImpl::close(sock);
         return localAddress;
@@ -134,7 +145,7 @@ IpAddress IpAddress::getLocalAddress()
     priv::SocketImpl::close(sock);
 
     // Finally build the IP address
-    localAddress = IpAddress(ntohl(address.sin_addr.s_addr));
+    localAddress = IpAddress(ntohl(address.memory.ipv4.sin_addr.s_addr));
 
     return localAddress;
 }
@@ -161,50 +172,55 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-void IpAddress::resolve(const std::string& address)
+void IpAddress::resolve(const std::string& address, int ipv)
 {
-    m_address = 0;
+    std::memset(&m_address, 0, sizeof(std::experimental::net::ip::address));
     m_valid = false;
+    std::error_code ec;
 
-    if (address == "255.255.255.255")
+    m_address = std::experimental::net::ip::make_address(address, ec);
+    if (!ec)
     {
-        // The broadcast address needs to be handled explicitly,
-        // because it is also the value returned by inet_addr on error
-        m_address = INADDR_BROADCAST;
         m_valid = true;
     }
-    else if (address == "0.0.0.0")
-    {
-        m_address = INADDR_ANY;
-        m_valid = true;
-    }
+    // resolve the address
     else
     {
-        // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-        Uint32 ip = inet_addr(address.c_str());
-        if (ip != INADDR_NONE)
+        std::experimental::net::io_context ctx;
+        std::experimental::net::ip::basic_resolver<std::experimental::
+                                                   net::ip::udp> resolver(ctx);
+
+        std::experimental::net::ip::basic_resolver_results<std::experimental::
+                                                           net::ip::udp> results;
+
+        std::experimental::net::ip::basic_resolver_results<std::experimental::
+                                                           net::ip::udp>::iterator iterator;
+
+        results = resolver.resolve(address, "", ec);
+        if(!ec)
         {
-            m_address = ip;
-            m_valid = true;
-        }
-        else
-        {
-            // Not a valid address, try to convert it as a host name
-            addrinfo hints;
-            std::memset(&hints, 0, sizeof(hints));
-            hints.ai_family = AF_INET;
-            addrinfo* result = NULL;
-            if (getaddrinfo(address.c_str(), NULL, &hints, &result) == 0)
+            for(iterator = results.begin(); iterator != results.end(); iterator++)
             {
-                if (result)
+                // Fore IP version
+                if (ipv == 4 && iterator->endpoint().size() != sizeof(sockaddr_in))
+                    continue;
+                else if (ipv == 6 && iterator->endpoint().size() != sizeof(sockaddr_in6))
+                    continue;
+
+                char buffer[251] = {0};
+                getnameinfo(iterator->endpoint().data(), iterator->endpoint().size(),
+                            buffer, 250,
+                            NULL, 0, NI_NUMERICHOST);
+                                                                                 
+                m_address = std::experimental::net::ip::make_address(buffer, ec);
+                if(!ec)
                 {
-                    ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
-                    freeaddrinfo(result);
-                    m_address = ip;
                     m_valid = true;
+                    break;
                 }
             }
         }
+
     }
 }
 

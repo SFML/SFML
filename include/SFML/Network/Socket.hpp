@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/SocketHandle.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <experimental/internet>
 #include <vector>
 
 
@@ -144,8 +145,9 @@ protected:
     ///
     /// This function can only be accessed by derived classes.
     ///
+    /// \param address C++ Networking TS ip address object
     ////////////////////////////////////////////////////////////
-    void create();
+    void create(const std::experimental::net::ip::address& address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the internal representation of the socket

@@ -76,12 +76,12 @@ SocketHandle Socket::getHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void Socket::create()
+void Socket::create(const std::experimental::net::ip::address& address)
 {
     // Don't create the socket if it already exists
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
-        SocketHandle handle = socket(PF_INET, m_type == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+        SocketHandle handle = socket(address.is_v4() ? AF_INET : AF_INET6, m_type == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
 
         if (handle == priv::SocketImpl::invalidSocket())
         {
