@@ -50,12 +50,13 @@ unsigned short UdpSocket::getLocalPort() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the local end of the socket
-        sockaddr_in address;
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        priv::SocketAddress address;
+        priv::SocketImpl::AddrLength size = sizeof(address.memory);
+        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            return ntohs(address.memory.ipv4.sin_port);
         }
+
     }
 
     // We failed to retrieve the port
@@ -70,15 +71,15 @@ Socket::Status UdpSocket::bind(unsigned short port, const IpAddress& address)
     close();
 
     // Create the internal socket if it doesn't exist
-    create();
+    create(address.toCppAddress());
 
     // Check if the address is valid
     if ((address == IpAddress::None) || (address == IpAddress::Broadcast))
         return Error;
 
     // Bind the socket
-    sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
-    if (::bind(getHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
+    priv::SocketAddress addr = priv::SocketImpl::createAddress(address.toCppAddress(), port);
+    if (::bind(getHandle(), reinterpret_cast<sockaddr*>(&addr.memory), addr.size) == -1)
     {
         err() << "Failed to bind socket to port " << port << std::endl;
         return Error;
@@ -100,7 +101,7 @@ void UdpSocket::unbind()
 Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort)
 {
     // Create the internal socket if it doesn't exist
-    create();
+    create(remoteAddress.toCppAddress());
 
     // Make sure that all the data will fit in one datagram
     if (size > MaxDatagramSize)
@@ -111,10 +112,10 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
     }
 
     // Build the target address
-    sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+    priv::SocketAddress address = priv::SocketImpl::createAddress(remoteAddress.toCppAddress(), remotePort);
 
     // Send the data (unlike TCP, all the data is always sent in one call)
-    int sent = sendto(getHandle(), static_cast<const char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    int sent = sendto(getHandle(), static_cast<const char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address.memory), address.size);
 
     // Check for errors
     if (sent < 0)
@@ -140,20 +141,23 @@ Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& rec
     }
 
     // Data that will be filled with the other computer's address
-    sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, 0);
+    priv::SocketAddress address;
+    std::memset(&address, 0, sizeof(priv::SocketAddress));
 
     // Receive a chunk of bytes
-    priv::SocketImpl::AddrLength addressSize = sizeof(address);
-    int sizeReceived = recvfrom(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize);
+    priv::SocketImpl::AddrLength addressSize = sizeof(address.memory);
+    int sizeReceived = recvfrom(getHandle(), static_cast<char*>(data), static_cast<int>(size), 0, reinterpret_cast<sockaddr*>(&address.memory), &addressSize);
 
     // Check for errors
     if (sizeReceived < 0)
         return priv::SocketImpl::getErrorStatus();
 
     // Fill the sender informations
-    received      = static_cast<std::size_t>(sizeReceived);
-    remoteAddress = IpAddress(ntohl(address.sin_addr.s_addr));
-    remotePort    = ntohs(address.sin_port);
+    received           = static_cast<std::size_t>(sizeReceived);
+    remotePort         = ntohs(address.memory.ipv4.sin_port);
+    char hostname[251] = {0};
+    getnameinfo(reinterpret_cast<sockaddr*>(&address.memory), address.size, hostname, 250, NULL, 0, NI_NUMERICHOST);
+    remoteAddress      = IpAddress(hostname);
 
     return Done;
 }

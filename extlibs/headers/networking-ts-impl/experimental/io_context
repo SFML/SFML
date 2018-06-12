@@ -1,0 +1,16 @@
+//
+// experimental/io_context
+// ~~~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+#ifndef NET_TS_IO_CONTEXT_INCLUDED
+#define NET_TS_IO_CONTEXT_INCLUDED
+
+#include <experimental/__net_ts/ts/io_context.hpp>
+
+#endif // NET_TS_IO_CONTEXT_INCLUDED

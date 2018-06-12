@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
 #include <istream>
+#include <experimental/internet>
 #include <ostream>
 #include <string>
 
@@ -38,7 +39,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Encapsulate an IPv4 network address
+/// \brief Encapsulate an IP network address
 ///
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API IpAddress
@@ -60,9 +61,10 @@ public:
     /// (ex: "192.168.1.56") or a network name (ex: "localhost").
     ///
     /// \param address IP address or network name
+    /// \param ipv IP version, -1 unspecified, 4 IPv4, 6 IPv6
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress(const std::string& address);
+    IpAddress(const std::string& address, int ipv = -1);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from a string
@@ -74,9 +76,10 @@ public:
     /// implicit conversions from literal strings to IpAddress work.
     ///
     /// \param address IP address or network name
+    /// \param ipv IP version, -1 unspecified, 4 IPv4, 6 IPv6
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress(const char* address);
+    IpAddress(const char* address, int ipv = -1);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from 4 bytes
@@ -139,7 +142,18 @@ public:
     Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the computer's local address
+    /// \brief Get the C++ Networking TS address representation
+    ///
+    /// The returned object is the address representation specified
+    /// by the C++ Networking Technical Specifications
+    ///
+    /// \return IP address
+    ///
+    ////////////////////////////////////////////////////////////
+    std::experimental::net::ip::address toCppAddress() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the computer's IPv4 local address
     ///
     /// The local address is the address of the computer from the
     /// LAN point of view, i.e. something like 192.168.1.56. It is
@@ -155,7 +169,7 @@ public:
     static IpAddress getLocalAddress();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the computer's public address
+    /// \brief Get the computer's IPv4 public address
     ///
     /// The public address is the address of the computer from the
     /// internet point of view, i.e. something like 89.54.1.169.
@@ -186,6 +200,37 @@ public:
     static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
 
+class SFML_NETWORK_API Ipv6
+{
+public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the computer's IPv6 local address
+    ///
+    /// This is not implemented yet
+    ///
+    /// \return Local IP address of the computer
+    ///
+    ////////////////////////////////////////////////////////////
+    static IpAddress getLocalAddress();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the computer's IPv6 public address
+    ///
+    /// This is not implemented yet
+    ///
+    /// \return Public IP address of the computer
+    ///
+    ////////////////////////////////////////////////////////////
+    static IpAddress getPublicAddress(Time timeout = Time::Zero);
+
+    
+    ////////////////////////////////////////////////////////////
+    /// Static member data
+    ////////////////////////////////////////////////////////////
+    static const IpAddress Any;       ///< Value representing any address (::)
+    static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
+};
+
 private:
 
     friend SFML_NETWORK_API bool operator <(const IpAddress& left, const IpAddress& right);
@@ -196,13 +241,13 @@ private:
     /// \param address Address string
     ///
     ////////////////////////////////////////////////////////////
-    void resolve(const std::string& address);
+    void resolve(const std::string& address, int ipv);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint32 m_address; ///< Address stored as an unsigned 32 bits integer
-    bool   m_valid;   ///< Is the address valid?
+    std::experimental::net::ip::address m_address; ///< Stored address
+    bool                                m_valid;   ///< Is the address valid?
 };
 
 ////////////////////////////////////////////////////////////
@@ -310,19 +355,18 @@ SFML_NETWORK_API std::ostream& operator <<(std::ostream& stream, const IpAddress
 ///
 /// Usage example:
 /// \code
-/// sf::IpAddress a0;                                     // an invalid address
-/// sf::IpAddress a1 = sf::IpAddress::None;               // an invalid address (same as a0)
-/// sf::IpAddress a2("127.0.0.1");                        // the local host address
-/// sf::IpAddress a3 = sf::IpAddress::Broadcast;          // the broadcast address
-/// sf::IpAddress a4(192, 168, 1, 56);                    // a local address
-/// sf::IpAddress a5("my_computer");                      // a local address created from a network name
-/// sf::IpAddress a6("89.54.1.169");                      // a distant address
-/// sf::IpAddress a7("www.google.com");                   // a distant address created from a network name
-/// sf::IpAddress a8 = sf::IpAddress::getLocalAddress();  // my address on the local network
-/// sf::IpAddress a9 = sf::IpAddress::getPublicAddress(); // my address on the internet
+/// sf::IpAddress a0;                                       // an invalid address
+/// sf::IpAddress a1 = sf::IpAddress::None;                 // an invalid address (same as a0)
+/// sf::IpAddress a2("127.0.0.1");                          // the IPv4 local host address
+/// sf::IpAddress a3 = sf::IpAddress::Broadcast;            // the IPv4 broadcast address
+/// sf::IpAddress a4(192, 168, 1, 56);                      // an IPv4 local address
+/// sf::IpAddress a5("my_computer");                        // a local address created from a network name
+/// sf::IpAddress a6("89.54.1.169");                        // an IPv4 distant address
+/// sf::IpAddress a7("www.google.com");                     // a distant address created from a network name
+/// sf::IpAddress a8 = sf::IpAddress::getLocalAddress();    // my IPv4 address on the local network
+/// sf::IpAddress a9 = sf::IpAddress::getPublicAddress();   // my IPv4 address on the internet
+/// sf::IpAddress a10 = sf::IpAddress("::1");               // the IPv6 local host address
+/// sf::IpAddress a11 = sf::IpAddress("www.google.com", 6); // an IPv6 distant address created from a network name
 /// \endcode
-///
-/// Note that sf::IpAddress currently doesn't support IPv6
-/// nor other types of network addresses.
 ///
 ////////////////////////////////////////////////////////////

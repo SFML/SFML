@@ -53,3 +53,6 @@ target_link_libraries(sfml-network PUBLIC sfml-system)
 if(SFML_OS_WINDOWS)
     target_link_libraries(sfml-network PRIVATE ws2_32)
 endif()
+
+# C++ Networking TS
+target_include_directories(sfml-network PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/networking-ts-impl")

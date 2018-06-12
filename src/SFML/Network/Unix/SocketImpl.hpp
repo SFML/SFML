@@ -34,6 +34,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <experimental/internet>
 #include <netdb.h>
 #include <unistd.h>
 
@@ -42,6 +43,20 @@ namespace sf
 {
 namespace priv
 {
+////////////////////////////////////////////////////////////
+/// Types
+///
+////////////////////////////////////////////////////////////
+typedef struct
+{
+    std::size_t size;
+    union
+    {
+        sockaddr_in ipv4;
+        sockaddr_in6 ipv6;
+    } memory;
+} SocketAddress;
+
 ////////////////////////////////////////////////////////////
 /// \brief Helper class implementing all the non-portable
 ///        socket stuff; this is the Unix version
@@ -57,15 +72,15 @@ public:
     typedef socklen_t AddrLength;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create an internal sockaddr_in address
+    /// \brief Create an internal address
     ///
     /// \param address Target address
     /// \param port    Target port
     ///
-    /// \return sockaddr_in ready to be used by socket functions
+    /// \return SocketAddress ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(Uint32 address, unsigned short port);
+    static SocketAddress createAddress(const std::experimental::net::ip::address& address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket

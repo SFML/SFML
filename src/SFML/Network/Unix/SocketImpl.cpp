@@ -37,17 +37,34 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-sockaddr_in SocketImpl::createAddress(Uint32 address, unsigned short port)
+SocketAddress SocketImpl::createAddress(const std::experimental::net::ip::address& address, unsigned short port)
 {
-    sockaddr_in addr;
+    SocketAddress addr;
     std::memset(&addr, 0, sizeof(addr));
-    addr.sin_addr.s_addr = htonl(address);
-    addr.sin_family      = AF_INET;
-    addr.sin_port        = htons(port);
+    if (address.is_v4())
+    {
+        addr.size                        = sizeof(sockaddr_in);
+        addr.memory.ipv4.sin_addr.s_addr = htonl(address.to_v4().to_uint());
+        addr.memory.ipv4.sin_family      = AF_INET;
+        addr.memory.ipv4.sin_port        = htons(port);
 
 #if defined(SFML_SYSTEM_MACOS)
-    addr.sin_len = sizeof(addr);
+        addr.memory.ipv4.sin_len = sizeof(sockaddr_in);
 #endif
+    }
+    else
+    {
+        std::experimental::net::ip::address_v6::bytes_type bytes = address.to_v6().to_bytes();
+        for(int i = 0; i < 16; i++)
+            addr.memory.ipv6.sin6_addr.s6_addr[i] = bytes[i];
+        addr.size                    = sizeof(sockaddr_in6);
+        addr.memory.ipv6.sin6_family = AF_INET6;
+        addr.memory.ipv6.sin6_port   = htons(port);
+
+#if defined(SFML_SYSTEM_MACOS)
+        addr.memory.ipv6.sin6_len = sizeof(sockaddr_in6);
+#endif
+    }
 
     return addr;
 }

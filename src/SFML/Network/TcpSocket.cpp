@@ -64,11 +64,11 @@ unsigned short TcpSocket::getLocalPort() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the local end of the socket
-        sockaddr_in address;
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        priv::SocketAddress address;
+        priv::SocketImpl::AddrLength size = sizeof(address.memory);
+        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            return ntohs(address.memory.ipv4.sin_port);
         }
     }
 
@@ -83,11 +83,13 @@ IpAddress TcpSocket::getRemoteAddress() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the remote end of the socket
-        sockaddr_in address;
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        priv::SocketAddress address;
+        priv::SocketImpl::AddrLength size = sizeof(address.memory);
+        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &size) != -1)
         {
-            return IpAddress(ntohl(address.sin_addr.s_addr));
+            char buffer[251] = {0};
+            getnameinfo(reinterpret_cast<sockaddr*>(&address.memory), size, buffer, 250, NULL, 0, NI_NUMERICHOST);
+            return IpAddress(buffer);
         }
     }
 
@@ -102,11 +104,11 @@ unsigned short TcpSocket::getRemotePort() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the remote end of the socket
-        sockaddr_in address;
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        priv::SocketAddress address;
+        priv::SocketImpl::AddrLength size = sizeof(address.memory);
+        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            return ntohs(address.memory.ipv4.sin_port);
         }
     }
 
@@ -122,17 +124,17 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
     disconnect();
 
     // Create the internal socket if it doesn't exist
-    create();
+    create(remoteAddress.toCppAddress());
 
     // Create the remote address
-    sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+    priv::SocketAddress address = priv::SocketImpl::createAddress(remoteAddress.toCppAddress(), remotePort);
 
     if (timeout <= Time::Zero)
     {
         // ----- We're not using a timeout: just try to connect -----
 
         // Connect the socket
-        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), address.size) == -1)
             return priv::SocketImpl::getErrorStatus();
 
         // Connection succeeded
@@ -150,7 +152,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             setBlocking(false);
 
         // Try to connect to the remote address
-        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) >= 0)
+        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), address.size) >= 0)
         {
             // We got instantly connected! (it may no happen a lot...)
             setBlocking(blocking);

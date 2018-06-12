@@ -47,11 +47,11 @@ unsigned short TcpListener::getLocalPort() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the local end of the socket
-        sockaddr_in address;
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        priv::SocketAddress address;
+        priv::SocketImpl::AddrLength size = sizeof(address.memory);
+        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            return ntohs(address.memory.ipv4.sin_port);
         }
     }
 
@@ -67,15 +67,15 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
     close();
 
     // Create the internal socket if it doesn't exist
-    create();
+    create(address.toCppAddress());
 
     // Check if the address is valid
     if ((address == IpAddress::None) || (address == IpAddress::Broadcast))
         return Error;
 
     // Bind the socket to the specified port
-    sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
-    if (bind(getHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
+    priv::SocketAddress addr = priv::SocketImpl::createAddress(address.toCppAddress(), port);
+    if (bind(getHandle(), reinterpret_cast<sockaddr*>(&addr.memory), addr.size) == -1)
     {
         // Not likely to happen, but...
         err() << "Failed to bind listener socket to port " << port << std::endl;
@@ -113,9 +113,9 @@ Socket::Status TcpListener::accept(TcpSocket& socket)
     }
 
     // Accept a new connection
-    sockaddr_in address;
-    priv::SocketImpl::AddrLength length = sizeof(address);
-    SocketHandle remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
+    priv::SocketAddress address;
+    priv::SocketImpl::AddrLength length = sizeof(address.memory);
+    SocketHandle remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address.memory), &length);
 
     // Check for errors
     if (remote == priv::SocketImpl::invalidSocket())
