@@ -129,6 +129,11 @@ bool Texture::create(unsigned int width, unsigned int height)
         return false;
     }
 
+    TransientContextLock lock;
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
+
     // Compute the internal texture dimensions depending on NPOT textures support
     Vector2u actualSize(getValidSize(width), getValidSize(height));
 
@@ -150,8 +155,6 @@ bool Texture::create(unsigned int width, unsigned int height)
     m_pixelsFlipped = false;
     m_fboAttachment = false;
 
-    TransientContextLock lock;
-
     // Create the OpenGL texture if it doesn't exist yet
     if (!m_texture)
     {
@@ -159,9 +162,6 @@ bool Texture::create(unsigned int width, unsigned int height)
         glCheck(glGenTextures(1, &texture));
         m_texture = static_cast<unsigned int>(texture);
     }
-
-    // Make sure that extensions are initialized
-    priv::ensureExtensionsInit();
 
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
@@ -851,11 +851,6 @@ unsigned int Texture::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getValidSize(unsigned int size)
 {
-    TransientContextLock lock;
-
-    // Make sure that extensions are initialized
-    priv::ensureExtensionsInit();
-
     if (GLEXT_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size
