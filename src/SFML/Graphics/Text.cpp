@@ -443,24 +443,16 @@ void Text::ensureGeometryUpdate() const
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
         Uint32 curChar = m_string[i];
+		
+		// Skip the /r char to avoid weird graphical issues
+		if (curChar == '\r')
+			continue;
 
         // Apply the kerning offset
         x += m_font->getKerning(prevChar, curChar, m_characterSize);
 
-		// If we use '\r\n' as a new line character skip this loop cycle now, without updating it's V space and it's bound, since this was taken care in the previous loop cycle
-		if (curChar == '\n' && prevChar == '\r')
-		{
-			prevChar = curChar;
-
-			continue;
-		}
-
         // If we're using the underlined style and there's a new line, draw a line
-<<<<<<< HEAD
-		if (underlined && ((curChar == L'\n' || curChar == L'\r') && prevChar != L'\n'))
-=======
-        if (isUnderlined && (curChar == L'\n'))
->>>>>>> upstream/master
+		if (isUnderlined && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
@@ -469,11 +461,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
-<<<<<<< HEAD
-		if (strikeThrough && ((curChar == L'\n' || curChar == L'\r') && prevChar != L'\n'))
-=======
-        if (isStrikeThrough && (curChar == L'\n'))
->>>>>>> upstream/master
+		if (isStrikeThrough && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
