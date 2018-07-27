@@ -464,7 +464,7 @@ static void onLowMemory(ANativeActivity* activity)
 
 
 ////////////////////////////////////////////////////////////
-void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
+JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
     sf::priv::ActivityStates* states = NULL;
