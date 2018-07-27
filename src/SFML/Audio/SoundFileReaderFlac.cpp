@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -107,10 +107,6 @@ namespace
     {
         sf::priv::SoundFileReaderFlac::ClientData* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-        // If there's no output buffer, it means that we are seeking
-        if (!data->buffer)
-            return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
-
         // Reserve memory if we're going to use the leftovers buffer
         unsigned int frameSamples = frame->header.blocksize * frame->header.channels;
         if (data->remaining < frameSamples)
@@ -142,15 +138,16 @@ namespace
                         break;
                 }
 
-                if (data->remaining > 0)
+                if (data->buffer && data->remaining > 0)
                 {
-                    // There's room in the output buffer, copy the sample there
+                    // If there's room in the output buffer, copy the sample there
                     *data->buffer++ = sample;
                     data->remaining--;
                 }
                 else
                 {
-                    // We have decoded all the requested samples, put the sample in a temporary buffer until next call
+                    // We are either seeking (null buffer) or have decoded all the requested samples during a
+                    // normal read (0 remaining), so we put the sample in a temporary buffer until next call
                     data->leftovers.push_back(sample);
                 }
             }
@@ -210,8 +207,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
 ////////////////////////////////////////////////////////////
 SoundFileReaderFlac::SoundFileReaderFlac() :
 m_decoder(NULL),
-m_clientData(),
-m_channelCount(0)
+m_clientData()
 {
 }
 
@@ -249,9 +245,6 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
     // Retrieve the sound properties
     info = m_clientData.info; // was filled in the "metadata" callback
 
-    // We must keep the channel count for the seek function
-    m_channelCount = info.channelCount;
-
     return true;
 }
 
@@ -267,7 +260,21 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
     m_clientData.leftovers.clear();
 
     // FLAC decoder expects absolute sample offset, so we take the channel count out
-    FLAC__stream_decoder_seek_absolute(m_decoder, sampleOffset / m_channelCount);
+    if (sampleOffset < m_clientData.info.sampleCount)
+    {
+        // The "write" callback will populate the leftovers buffer with the first batch of samples from the
+        // seek destination, and since we want that data in this typical case, we don't re-clear it afterward
+        FLAC__stream_decoder_seek_absolute(m_decoder, sampleOffset / m_clientData.info.channelCount);
+    }
+    else
+    {
+        // FLAC decoder can't skip straight to EOF, so we short-seek by one sample and skip the rest
+        FLAC__stream_decoder_seek_absolute(m_decoder, (m_clientData.info.sampleCount / m_clientData.info.channelCount) - 1);
+        FLAC__stream_decoder_skip_single_frame(m_decoder);
+
+        // This was re-populated during the seek, but we're skipping everything in this, so we need it emptied
+        m_clientData.leftovers.clear();
+    }
 }
 
 
@@ -277,14 +284,14 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
     assert(m_decoder);
 
     // If there are leftovers from previous call, use it first
-    Uint64 left = m_clientData.leftovers.size();
+    std::size_t left = m_clientData.leftovers.size();
     if (left > 0)
     {
         if (left > maxCount)
         {
             // There are more leftovers than needed
-            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.end(), samples);
-            std::vector<Int16> leftovers(m_clientData.leftovers.begin() + maxCount, m_clientData.leftovers.end());
+            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.begin() + static_cast<std::size_t>(maxCount), samples);
+            std::vector<Int16> leftovers(m_clientData.leftovers.begin() + static_cast<std::size_t>(maxCount), m_clientData.leftovers.end());
             m_clientData.leftovers.swap(leftovers);
             return maxCount;
         }

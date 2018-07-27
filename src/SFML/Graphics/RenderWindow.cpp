@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 
 
 namespace sf
@@ -71,7 +73,22 @@ Vector2u RenderWindow::getSize() const
 ////////////////////////////////////////////////////////////
 bool RenderWindow::setActive(bool active)
 {
-    return Window::setActive(active);
+    bool result = Window::setActive(active);
+
+    // Update RenderTarget tracking
+    if (result)
+        RenderTarget::setActive(active);
+
+    // If FBOs are available, make sure none are bound when we
+    // try to draw to the default framebuffer of the RenderWindow
+    if (active && result && priv::RenderTextureImplFBO::isAvailable())
+    {
+        priv::RenderTextureImplFBO::unbind();
+
+        return true;
+    }
+
+    return result;
 }
 
 

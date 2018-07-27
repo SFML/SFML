@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 // Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -40,14 +40,6 @@
 #ifdef SFML_SYSTEM_WINDOWS
 
 #include <windows.h>
-
-// Inform the Nvidia/AMD driver that this SFML application could
-// benefit from using the more powerful discrete GPU
-extern "C"
-{
-__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-}
 
 extern int main(int argc, char* argv[]);
 

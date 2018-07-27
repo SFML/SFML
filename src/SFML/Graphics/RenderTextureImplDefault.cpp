@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -55,14 +55,24 @@ RenderTextureImplDefault::~RenderTextureImplDefault()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, bool depthBuffer)
+unsigned int RenderTextureImplDefault::getMaximumAntialiasingLevel()
+{
+    // If the system is so old that it doesn't support FBOs, chances are it is
+    // also using either a software renderer or some CPU emulated support for AA
+    // In order to not cripple performance in this rare case, we just return 0 here
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, unsigned int, const ContextSettings& settings)
 {
     // Store the dimensions
     m_width = width;
     m_height = height;
 
     // Create the in-memory OpenGL context
-    m_context = new Context(ContextSettings(depthBuffer ? 32 : 0), width, height);
+    m_context = new Context(settings, width, height);
 
     return true;
 }

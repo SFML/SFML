@@ -4,8 +4,14 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 
 # all source files
 set(SRC
+    ${INCROOT}/Clipboard.hpp
+    ${SRCROOT}/Clipboard.cpp
+    ${SRCROOT}/ClipboardImpl.hpp
     ${SRCROOT}/Context.cpp
     ${INCROOT}/Context.hpp
+    ${SRCROOT}/Cursor.cpp
+    ${INCROOT}/Cursor.hpp
+    ${SRCROOT}/CursorImpl.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
@@ -51,6 +57,10 @@ source_group("" FILES ${SRC})
 # add platform specific sources
 if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
+        ${SRCROOT}/Win32/CursorImpl.hpp
+        ${SRCROOT}/Win32/CursorImpl.cpp
+        ${SRCROOT}/Win32/ClipboardImpl.hpp
+        ${SRCROOT}/Win32/ClipboardImpl.cpp
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/WglExtensions.cpp
@@ -69,8 +79,12 @@ if(SFML_OS_WINDOWS)
 
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE -D_UNICODE)
-elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
+elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
     set(PLATFORM_SRC
+        ${SRCROOT}/Unix/CursorImpl.hpp
+        ${SRCROOT}/Unix/CursorImpl.cpp
+        ${SRCROOT}/Unix/ClipboardImpl.hpp
+        ${SRCROOT}/Unix/ClipboardImpl.cpp
         ${SRCROOT}/Unix/Display.cpp
         ${SRCROOT}/Unix/Display.hpp
         ${SRCROOT}/Unix/InputImpl.cpp
@@ -102,6 +116,12 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
             ${SRCROOT}/FreeBSD/JoystickImpl.cpp
             ${SRCROOT}/FreeBSD/JoystickImpl.hpp
         )
+    elseif(SFML_OS_OPENBSD)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/OpenBSD/JoystickImpl.cpp
+            ${SRCROOT}/OpenBSD/JoystickImpl.hpp
+        )
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_MACOSX)
@@ -110,6 +130,10 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
         ${SRCROOT}/OSX/cg_sf_conversion.mm
+        ${SRCROOT}/OSX/CursorImpl.hpp
+        ${SRCROOT}/OSX/CursorImpl.mm
+        ${SRCROOT}/OSX/ClipboardImpl.hpp
+        ${SRCROOT}/OSX/ClipboardImpl.mm
         ${SRCROOT}/OSX/InputImpl.mm
         ${SRCROOT}/OSX/InputImpl.hpp
         ${SRCROOT}/OSX/HIDInputManager.hpp
@@ -155,6 +179,10 @@ elseif(SFML_OS_MACOSX)
     source_group("mac" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_IOS)
     set(PLATFORM_SRC
+        ${SRCROOT}/iOS/CursorImpl.hpp
+        ${SRCROOT}/iOS/CursorImpl.cpp
+        ${SRCROOT}/iOS/ClipboardImpl.mm
+        ${SRCROOT}/iOS/ClipboardImpl.hpp
         ${SRCROOT}/iOS/EaglContext.mm
         ${SRCROOT}/iOS/EaglContext.hpp
         ${SRCROOT}/iOS/InputImpl.mm
@@ -179,6 +207,10 @@ elseif(SFML_OS_IOS)
     source_group("ios" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
+        ${SRCROOT}/Android/CursorImpl.hpp
+        ${SRCROOT}/Android/CursorImpl.cpp
+        ${SRCROOT}/Android/ClipboardImpl.hpp
+        ${SRCROOT}/Android/ClipboardImpl.cpp
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
@@ -192,63 +224,53 @@ elseif(SFML_OS_ANDROID)
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
-# find external libraries
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-    find_package(X11 REQUIRED)
-    if(NOT X11_FOUND)
-        message(FATAL_ERROR "X11 library not found")
-    endif()
-    if(NOT X11_Xrandr_FOUND)
-        message(FATAL_ERROR "Xrandr library not found")
-    endif()
-    include_directories(${X11_INCLUDE_DIR})
-endif()
-if(NOT SFML_OPENGL_ES)
-    find_package(OpenGL REQUIRED)
-    include_directories(${OPENGL_INCLUDE_DIR})
-endif()
-if(SFML_OPENGL_ES AND SFML_OS_LINUX)
-    find_package(EGL REQUIRED)
-    find_package(GLES REQUIRED)
-    include_directories(${EGL_INCLUDE_DIR} ${GLES_INCLUDE_DIR})
-endif()
-if(SFML_OS_LINUX)
-    find_package(UDev REQUIRED)
-    if(NOT UDEV_FOUND)
-        message(FATAL_ERROR "udev library not found")
-    endif()
-    include_directories(${UDEV_INCLUDE_DIR})
-endif()
-
-
-# build the list of external libraries to link
-if(SFML_OS_WINDOWS)
-    list(APPEND WINDOW_EXT_LIBS winmm gdi32)
-elseif(SFML_OS_LINUX)
-    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} ${UDEV_LIBRARIES})
-elseif(SFML_OS_FREEBSD)
-    list(APPEND WINDOW_EXT_LIBS ${X11_X11_LIB} ${X11_Xrandr_LIB} usbhid)
-elseif(SFML_OS_MACOSX)
-    list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework AppKit -framework IOKit -framework Carbon")
-elseif(SFML_OS_IOS)
-    list(APPEND WINDOW_EXT_LIBS "-framework Foundation -framework UIKit -framework CoreGraphics -framework QuartzCore -framework CoreMotion")
-elseif(SFML_OS_ANDROID)
-    list(APPEND WINDOW_EXT_LIBS android)
-endif()
-if(SFML_OPENGL_ES)
-    if(SFML_OS_LINUX)
-        list(APPEND WINDOW_EXT_LIBS ${EGL_LIBRARY} ${GLES_LIBRARY})
-    elseif(SFML_OS_IOS)
-        list(APPEND WINDOW_EXT_LIBS "-framework OpenGLES")
-    elseif(SFML_OS_ANDROID)
-        list(APPEND WINDOW_EXT_LIBS EGL GLESv1_CM)
-    endif()
-else()
-    list(APPEND WINDOW_EXT_LIBS ${OPENGL_gl_LIBRARY})
-endif()
-
 # define the sfml-window target
 sfml_add_library(sfml-window
-                 SOURCES ${SRC} ${PLATFORM_SRC}
-                 DEPENDS sfml-system
-                 EXTERNAL_LIBS ${WINDOW_EXT_LIBS})
+                 SOURCES ${SRC} ${PLATFORM_SRC})
+target_link_libraries(sfml-window PUBLIC sfml-system)
+
+# find and setup usage for external libraries
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OPENBSD)
+    sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB")
+    target_link_libraries(sfml-window PRIVATE X11)
+endif()
+
+if(SFML_OPENGL_ES)
+    if(SFML_OS_IOS)
+        target_link_libraries(sfml-window PRIVATE "-framework OpenGLES")
+    elseif(SFML_OS_ANDROID)
+        target_link_libraries(sfml-window PRIVATE EGL GLESv1_CM)
+    endif()
+else()
+    sfml_find_package(OpenGL INCLUDE "OPENGL_INCLUDE_DIR" LINK "OPENGL_gl_LIBRARY")
+    target_link_libraries(sfml-window PRIVATE OpenGL)
+endif()
+
+if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
+    include(CheckIncludeFile)
+    check_include_file(dinput.h DINPUT_H_FOUND)
+    if(NOT DINPUT_H_FOUND)
+        target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/mingw")
+    endif()
+endif()
+
+if(SFML_OPENGL_ES AND SFML_OS_LINUX)
+    sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
+    sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
+    target_link_libraries(sfml-window PRIVATE EGL GLES)
+endif()
+
+if(SFML_OS_LINUX)
+    sfml_find_package(UDev INCLUDE "UDEV_INCLUDE_DIR" LINK "UDEV_LIBRARIES")
+    target_link_libraries(sfml-window PRIVATE UDev)
+elseif(SFML_OS_WINDOWS)
+    target_link_libraries(sfml-window PRIVATE winmm gdi32)
+elseif(SFML_OS_FREEBSD)
+    target_link_libraries(sfml-window PRIVATE usbhid)
+elseif(SFML_OS_MACOSX)
+    target_link_libraries(sfml-window PRIVATE "-framework Foundation" "-framework AppKit" "-framework IOKit" "-framework Carbon")
+elseif(SFML_OS_IOS)
+    target_link_libraries(sfml-window PRIVATE "-framework Foundation" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore" "-framework CoreMotion")
+elseif(SFML_OS_ANDROID)
+    target_link_libraries(sfml-window PRIVATE android)
+endif()

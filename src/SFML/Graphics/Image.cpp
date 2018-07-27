@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -41,23 +41,14 @@ namespace sf
 Image::Image() :
 m_size(0, 0)
 {
-    #ifdef SFML_SYSTEM_ANDROID
 
-    m_stream = NULL;
-
-    #endif
 }
 
 
 ////////////////////////////////////////////////////////////
 Image::~Image()
 {
-    #ifdef SFML_SYSTEM_ANDROID
 
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-
-    #endif
 }
 
 
@@ -66,16 +57,12 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
 {
     if (width && height)
     {
-        // Assign the new size
-        m_size.x = width;
-        m_size.y = height;
-
-        // Resize the pixel buffer
-        m_pixels.resize(width * height * 4);
-
+        // Create a new pixel buffer first for exception safety's sake
+        std::vector<Uint8> newPixels(width * height * 4);
+    
         // Fill it with the specified color
-        Uint8* ptr = &m_pixels[0];
-        Uint8* end = ptr + m_pixels.size();
+        Uint8* ptr = &newPixels[0];
+        Uint8* end = ptr + newPixels.size();
         while (ptr < end)
         {
             *ptr++ = color.r;
@@ -83,13 +70,22 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
             *ptr++ = color.b;
             *ptr++ = color.a;
         }
+    
+        // Commit the new pixel buffer
+        m_pixels.swap(newPixels);
+        
+        // Assign the new size
+        m_size.x = width;
+        m_size.y = height;
     }
     else
     {
-        // Create an empty image
+        // Dump the pixel buffer
+        std::vector<Uint8>().swap(m_pixels);
+        
+        // Assign the new size
         m_size.x = 0;
         m_size.y = 0;
-        m_pixels.clear();
     }
 }
 
@@ -99,21 +95,24 @@ void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 {
     if (pixels && width && height)
     {
+        // Create a new pixel buffer first for exception safety's sake
+        std::vector<Uint8> newPixels(pixels, pixels + width * height * 4);
+        
+        // Commit the new pixel buffer
+        m_pixels.swap(newPixels);
+        
         // Assign the new size
         m_size.x = width;
         m_size.y = height;
-
-        // Copy the pixels
-        std::size_t size = width * height * 4;
-        m_pixels.resize(size);
-        std::memcpy(&m_pixels[0], pixels, size); // faster than vector::assign
     }
     else
     {
-        // Create an empty image
+        // Dump the pixel buffer
+        std::vector<Uint8>().swap(m_pixels);
+        
+        // Assign the new size
         m_size.x = 0;
         m_size.y = 0;
-        m_pixels.clear();
     }
 }
 
@@ -127,11 +126,8 @@ bool Image::loadFromFile(const std::string& filename)
 
     #else
 
-        if (m_stream)
-            delete (priv::ResourceStream*)m_stream;
-
-        m_stream = new priv::ResourceStream(filename);
-        return loadFromStream(*(priv::ResourceStream*)m_stream);
+        priv::ResourceStream stream(filename);
+        return loadFromStream(stream);
 
     #endif
 }

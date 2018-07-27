@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -402,6 +402,35 @@ SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right
 ///
 ////////////////////////////////////////////////////////////
 SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& right);
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator == to compare two transforms
+///
+/// Performs an element-wise comparison of the elements of the
+/// left transform with the elements of the right transform.
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator ==(const Transform& left, const Transform& right);
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Transform
+/// \brief Overload of binary operator != to compare two transforms
+///
+/// This call is equivalent to !(left == right).
+///
+/// \param left Left operand (the first transform)
+/// \param right Right operand (the second transform)
+///
+/// \return true if the transforms are not equal, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_GRAPHICS_API bool operator !=(const Transform& left, const Transform& right);
 
 } // namespace sf
 

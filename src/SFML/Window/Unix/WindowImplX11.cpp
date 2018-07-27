@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+#include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
@@ -67,6 +67,8 @@ namespace
     sf::Mutex                             allWindowsMutex;
     sf::String                            windowManagerName;
 
+    sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
+
     static const unsigned long            eventMask = FocusChangeMask      | ButtonPressMask     |
                                                       ButtonReleaseMask    | ButtonMotionMask    |
                                                       PointerMotionMask    | KeyPressMask        |
@@ -75,6 +77,21 @@ namespace
                                                       VisibilityChangeMask | PropertyChangeMask;
 
     static const unsigned int             maxTrialsCount = 5;
+
+    // Predicate we use to find key repeat events in processEvent
+    struct KeyRepeatFinder
+    {
+        KeyRepeatFinder(unsigned int keycode, Time time) : keycode(keycode), time(time) {}
+
+        // Predicate operator that checks event type, keycode and timestamp
+        bool operator()(const XEvent& event)
+        {
+            return ((event.type == KeyPress) && (event.xkey.keycode == keycode) && (event.xkey.time - time < 2));
+        }
+
+        unsigned int keycode;
+        Time time;
+    };
 
     // Filter the events received by windows (only allow those matching a specific window)
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
@@ -261,6 +278,90 @@ namespace
         return true;
     }
 
+    // Get the parent window.
+    ::Window getParentWindow(::Display* disp, ::Window win)
+    {
+        ::Window root, parent;
+        ::Window* children = NULL;
+        unsigned int numChildren;
+
+        XQueryTree(disp, win, &root, &parent, &children, &numChildren);
+
+        // Children information is not used, so must be freed.
+        if (children != NULL)
+            XFree(children);
+
+        return parent;
+    }
+
+    // Get the Frame Extents from EWMH WMs that support it.
+    bool getEWMHFrameExtents(::Display* disp, ::Window win,
+        long& xFrameExtent, long& yFrameExtent)
+    {
+        if (!ewmhSupported())
+            return false;
+
+        Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
+
+        if (frameExtents == None)
+            return false;
+
+        bool gotFrameExtents = false;
+        Atom actualType;
+        int actualFormat;
+        unsigned long numItems;
+        unsigned long numBytesLeft;
+        unsigned char* data = NULL;
+
+        int result = XGetWindowProperty(disp,
+                                        win,
+                                        frameExtents,
+                                        0,
+                                        4,
+                                        False,
+                                        XA_CARDINAL,
+                                        &actualType,
+                                        &actualFormat,
+                                        &numItems,
+                                        &numBytesLeft,
+                                        &data);
+
+        if ((result == Success) && (actualType == XA_CARDINAL) &&
+            (actualFormat == 32) && (numItems == 4) && (numBytesLeft == 0) &&
+            (data != NULL))
+        {
+            gotFrameExtents = true;
+
+            long* extents = (long*) data;
+
+            xFrameExtent = extents[0]; // Left.
+            yFrameExtent = extents[2]; // Top.
+        }
+
+        // Always free data.
+        if (data != NULL)
+            XFree(data);
+
+        return gotFrameExtents;
+    }
+
+    // Check if the current WM is in the list of good WMs that provide
+    // a correct absolute position for the window when queried.
+    bool isWMAbsolutePositionGood()
+    {
+        // This can only work with EWMH, to get the name.
+        if (!ewmhSupported())
+            return false;
+
+        for (size_t i = 0; i < (sizeof(wmAbsPosGood) / sizeof(wmAbsPosGood[0])); i++)
+        {
+            if (wmAbsPosGood[i] == windowManagerName)
+                return true;
+        }
+
+        return false;
+    }
+
     sf::Keyboard::Key keysymToSF(KeySym symbol)
     {
         switch (symbol)
@@ -275,21 +376,21 @@ namespace
             case XK_Super_R:      return sf::Keyboard::RSystem;
             case XK_Menu:         return sf::Keyboard::Menu;
             case XK_Escape:       return sf::Keyboard::Escape;
-            case XK_semicolon:    return sf::Keyboard::SemiColon;
+            case XK_semicolon:    return sf::Keyboard::Semicolon;
             case XK_slash:        return sf::Keyboard::Slash;
             case XK_equal:        return sf::Keyboard::Equal;
-            case XK_minus:        return sf::Keyboard::Dash;
+            case XK_minus:        return sf::Keyboard::Hyphen;
             case XK_bracketleft:  return sf::Keyboard::LBracket;
             case XK_bracketright: return sf::Keyboard::RBracket;
             case XK_comma:        return sf::Keyboard::Comma;
             case XK_period:       return sf::Keyboard::Period;
             case XK_apostrophe:   return sf::Keyboard::Quote;
-            case XK_backslash:    return sf::Keyboard::BackSlash;
+            case XK_backslash:    return sf::Keyboard::Backslash;
             case XK_grave:        return sf::Keyboard::Tilde;
             case XK_space:        return sf::Keyboard::Space;
-            case XK_Return:       return sf::Keyboard::Return;
-            case XK_KP_Enter:     return sf::Keyboard::Return;
-            case XK_BackSpace:    return sf::Keyboard::BackSpace;
+            case XK_Return:       return sf::Keyboard::Enter;
+            case XK_KP_Enter:     return sf::Keyboard::Enter;
+            case XK_BackSpace:    return sf::Keyboard::Backspace;
             case XK_Tab:          return sf::Keyboard::Tab;
             case XK_Prior:        return sf::Keyboard::PageUp;
             case XK_Next:         return sf::Keyboard::PageDown;
@@ -387,6 +488,7 @@ m_inputContext   (NULL),
 m_isExternal     (true),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
+m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
@@ -434,6 +536,7 @@ m_inputContext   (NULL),
 m_isExternal     (false),
 m_oldVideoMode   (0),
 m_hiddenCursor   (0),
+m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
@@ -665,24 +768,88 @@ WindowHandle WindowImplX11::getSystemHandle() const
 void WindowImplX11::processEvents()
 {
     XEvent event;
+
+    // Pick out the events that are interesting for this window
     while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
+        m_events.push_back(event);
+
+    // Handle the events for this window that we just picked out
+    while (!m_events.empty())
     {
+        event = m_events.front();
+        m_events.pop_front();
         processEvent(event);
     }
+
+    // Process clipboard window events
+    priv::ClipboardImpl::processEvents();
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    ::Window root, child;
-    int localX, localY, x, y;
-    unsigned int width, height, border, depth;
+    // Get absolute position of our window relative to root window. This
+    // takes into account all information that X11 has, including X11
+    // border widths and any decorations. It corresponds to where the
+    // window actually is, but not necessarily to where we told it to
+    // go using setPosition() and XMoveWindow(). To have the two match
+    // as expected, we may have to subtract decorations and borders.
+    ::Window child;
+    int xAbsRelToRoot, yAbsRelToRoot;
 
-    XGetGeometry(m_display, m_window, &root, &localX, &localY, &width, &height, &border, &depth);
-    XTranslateCoordinates(m_display, m_window, root, localX, localY, &x, &y, &child);
+    XTranslateCoordinates(m_display, m_window, DefaultRootWindow(m_display),
+        0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
-    return Vector2i(x, y);
+    // CASE 1: some rare WMs actually put the window exactly where we tell
+    // it to, even with decorations and such, which get shifted back.
+    // In these rare cases, we can use the absolute value directly.
+    if (isWMAbsolutePositionGood())
+        return Vector2i(xAbsRelToRoot, yAbsRelToRoot);
+
+    // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
+    // with the exact frame size to subtract, so if present, we prefer it and
+    // query it first. According to spec, this already includes any borders.
+    long xFrameExtent, yFrameExtent;
+
+    if (getEWMHFrameExtents(m_display, m_window, xFrameExtent, yFrameExtent))
+    {
+        // Get final X/Y coordinates: subtract EWMH frame extents from
+        // absolute window position.
+        return Vector2i((xAbsRelToRoot - xFrameExtent), (yAbsRelToRoot - yFrameExtent));
+    }
+
+    // CASE 3: EWMH frame extents were not available, use geometry.
+    // We climb back up to the window before the root and use its
+    // geometry information to extract X/Y position. This because
+    // re-parenting WMs may re-parent the window multiple times, so
+    // we'd have to climb up to the furthest ancestor and sum the
+    // relative differences and borders anyway; and doing that to
+    // subtract those values from the absolute coordinates of the
+    // window is equivalent to going up the tree and asking the
+    // furthest ancestor what it's relative distance to the root is.
+    // So we use that approach because it's simpler.
+    // This approach assumes that any window between the root and
+    // our window is part of decorations/borders in some way. This
+    // seems to hold true for most reasonable WM implementations.
+    ::Window ancestor = m_window;
+    ::Window root = DefaultRootWindow(m_display);
+
+    while (getParentWindow(m_display, ancestor) != root)
+    {
+        // Next window up (parent window).
+        ancestor = getParentWindow(m_display, ancestor);
+    }
+
+    // Get final X/Y coordinates: take the relative position to
+    // the root of the furthest ancestor window.
+    int xRelToRoot, yRelToRoot;
+    unsigned int width, height, borderWidth, depth;
+
+    XGetGeometry(m_display, ancestor, &root, &xRelToRoot, &yRelToRoot,
+        &width, &height, &borderWidth, &depth);
+
+    return Vector2i(xRelToRoot, yRelToRoot);
 }
 
 
@@ -777,10 +944,10 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     Uint8* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        iconPixels[8 + i * 4 + 0] = pixels[i * 4 + 2];
-        iconPixels[8 + i * 4 + 1] = pixels[i * 4 + 1];
-        iconPixels[8 + i * 4 + 2] = pixels[i * 4 + 0];
-        iconPixels[8 + i * 4 + 3] = pixels[i * 4 + 3];
+        iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
+        iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
+        iconPixels[i * 4 + 2] = pixels[i * 4 + 0];
+        iconPixels[i * 4 + 3] = pixels[i * 4 + 3];
     }
 
     // Create the icon pixmap
@@ -835,17 +1002,19 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
-    std::vector<Uint8> icccmIconPixels(8 + width * height * 4, 0);
+    std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
+    unsigned long* ptr = &icccmIconPixels[0];
+
+    *ptr++ = width;
+    *ptr++ = height;
+
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        icccmIconPixels[8 + i * 4 + 0] = pixels[i * 4 + 2];
-        icccmIconPixels[8 + i * 4 + 1] = pixels[i * 4 + 1];
-        icccmIconPixels[8 + i * 4 + 2] = pixels[i * 4 + 0];
-        icccmIconPixels[8 + i * 4 + 3] = pixels[i * 4 + 3];
+        *ptr++ = (pixels[i * 4 + 2] << 0 ) |
+                 (pixels[i * 4 + 1] << 8 ) |
+                 (pixels[i * 4 + 0] << 16) |
+                 (pixels[i * 4 + 3] << 24);
     }
-
-    reinterpret_cast<Uint32*>(&icccmIconPixels[0])[0] = width;
-    reinterpret_cast<Uint32*>(&icccmIconPixels[0])[1] = height;
 
     Atom netWmIcon = getAtom("_NET_WM_ICON");
 
@@ -868,6 +1037,9 @@ void WindowImplX11::setVisible(bool visible)
     if (visible)
     {
         XMapWindow(m_display, m_window);
+
+        if(m_fullscreen)
+            switchToFullscreen();
 
         XFlush(m_display);
 
@@ -893,8 +1065,16 @@ void WindowImplX11::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
-    XDefineCursor(m_display, m_window, visible ? None : m_hiddenCursor);
+    XDefineCursor(m_display, m_window, visible ? m_lastCursor : m_hiddenCursor);
     XFlush(m_display);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
+{
+    m_lastCursor = cursor.m_cursor;
+    XDefineCursor(m_display, m_window, m_lastCursor);
 }
 
 
@@ -1147,7 +1327,7 @@ void WindowImplX11::switchToFullscreen()
 
         if (netWmBypassCompositor)
         {
-            static const Uint32 bypassCompositor = 1;
+            static const unsigned long bypassCompositor = 1;
 
             XChangeProperty(m_display,
                             m_window,
@@ -1226,7 +1406,7 @@ void WindowImplX11::setProtocols()
 
     if (netWmPing && netWmPid)
     {
-        uint32_t pid = getpid();
+        const long pid = getpid();
 
         XChangeProperty(m_display,
                         m_window,
@@ -1383,29 +1563,23 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
     // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
 
     // Detect repeated key events
-    // (code shamelessly taken from SDL)
     if (windowEvent.type == KeyRelease)
     {
-        // Check if there's a matching KeyPress event in the queue
-        XEvent nextEvent;
-        if (XPending(m_display))
-        {
-            // Grab it but don't remove it from the queue, it still needs to be processed :)
-            XPeekEvent(m_display, &nextEvent);
-            if (nextEvent.type == KeyPress)
-            {
-                // Check if it is a duplicated event (same timestamp as the KeyRelease event)
-                if ((nextEvent.xkey.keycode == windowEvent.xkey.keycode) &&
-                    (nextEvent.xkey.time - windowEvent.xkey.time < 2))
-                {
-                    // If we don't want repeated events, remove the next KeyPress from the queue
-                    if (!m_keyRepeat)
-                        XNextEvent(m_display, &nextEvent);
+        // Find the next KeyPress event with matching keycode and time
+        std::deque<XEvent>::iterator iter = std::find_if(
+            m_events.begin(),
+            m_events.end(),
+            KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time)
+        );
 
-                    // This KeyRelease is a repeated event and we don't want it
-                    return false;
-                }
-            }
+        if (iter != m_events.end())
+        {
+            // If we don't want repeated events, remove the next KeyPress from the queue
+            if (!m_keyRepeat)
+                m_events.erase(iter);
+
+            // This KeyRelease is a repeated event and we don't want it
+            return false;
         }
     }
 

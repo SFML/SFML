@@ -150,6 +150,9 @@ m_config  (NULL)
 ////////////////////////////////////////////////////////////
 EglContext::~EglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     // Deactivate the current context
     EGLContext currentContext = eglCheck(eglGetCurrentContext());
 
@@ -243,10 +246,10 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 {
     // Set our video settings constraint
     const EGLint attributes[] = {
-        EGL_BUFFER_SIZE, bitsPerPixel,
-        EGL_DEPTH_SIZE, settings.depthBits,
-        EGL_STENCIL_SIZE, settings.stencilBits,
-        EGL_SAMPLE_BUFFERS, settings.antialiasingLevel,
+        EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
+        EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
+        EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
+        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel),
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
         EGL_NONE

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -80,8 +80,9 @@ public:
     /// \brief Change the current read position to the given sample offset
     ///
     /// The sample offset takes the channels into account.
-    /// Offsets can be calculated like this:
-    /// `sampleNumber * sampleRate * channelCount`
+    /// If you have a time offset instead, you can easily find
+    /// the corresponding sample offset with the following formula:
+    /// `timeInSeconds * sampleRate * channelCount`
     /// If the given offset exceeds to total number of samples,
     /// this function must jump to the end of the file.
     ///

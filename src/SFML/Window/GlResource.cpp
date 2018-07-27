@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,17 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/Window/Context.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
-
-
-namespace
-{
-    // OpenGL resources counter and its mutex
-    unsigned int count = 0;
-    sf::Mutex mutex;
-}
 
 
 namespace sf
@@ -45,45 +34,27 @@ namespace sf
 ////////////////////////////////////////////////////////////
 GlResource::GlResource()
 {
-    // Protect from concurrent access
-    Lock lock(mutex);
-
-    // If this is the very first resource, trigger the global context initialization
-    if (count == 0)
-        priv::GlContext::globalInit();
-
-    // Increment the resources counter
-    count++;
+    priv::GlContext::initResource();
 }
 
 
 ////////////////////////////////////////////////////////////
 GlResource::~GlResource()
 {
-    // Protect from concurrent access
-    Lock lock(mutex);
-
-    // Decrement the resources counter
-    count--;
-
-    // If there's no more resource alive, we can trigger the global context cleanup
-    if (count == 0)
-        priv::GlContext::globalCleanup();
+    priv::GlContext::cleanupResource();
 }
 
 
 ////////////////////////////////////////////////////////////
-GlResource::TransientContextLock::TransientContextLock() :
-m_context(0)
+void GlResource::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
 {
-    Lock lock(mutex);
+    priv::GlContext::registerContextDestroyCallback(callback, arg);
+}
 
-    if (count == 0)
-    {
-        m_context = new Context;
-        return;
-    }
 
+////////////////////////////////////////////////////////////
+GlResource::TransientContextLock::TransientContextLock()
+{
     priv::GlContext::acquireTransientContext();
 }
 
@@ -91,12 +62,6 @@ m_context(0)
 ////////////////////////////////////////////////////////////
 GlResource::TransientContextLock::~TransientContextLock()
 {
-    if (m_context)
-    {
-        delete m_context;
-        return;
-    }
-
     priv::GlContext::releaseTransientContext();
 }
 

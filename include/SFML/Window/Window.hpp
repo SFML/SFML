@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,16 +28,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Export.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Export.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/System/Vector2.hpp>
 
 
 namespace sf
@@ -362,6 +363,25 @@ public:
     void setMouseCursorGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to a native system cursor
+    ///
+    /// Upon window creation, the arrow cursor is used by default.
+    ///
+    /// \warning The cursor must not be destroyed while in use by
+    ///          the window.
+    ///
+    /// \warning Features related to Cursor are not supported on
+    ///          iOS and Android.
+    ///
+    /// \param cursor Native system cursor type to display
+    ///
+    /// \see sf::Cursor::loadFromSystem
+    /// \see sf::Cursor::loadFromPixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursor(const Cursor& cursor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// If key repeat is enabled, you will receive repeated
@@ -560,6 +580,14 @@ private:
 /// OpenGL context attached to the window, with the sf::ContextSettings
 /// structure which is passed as an optional argument when creating the
 /// window.
+///
+/// On dual-graphics systems consisting of a low-power integrated GPU
+/// and a powerful discrete GPU, the driver picks which GPU will run an
+/// SFML application. In order to inform the driver that an SFML application
+/// can benefit from being run on the more powerful discrete GPU,
+/// #SFML_DEFINE_DISCRETE_GPU_PREFERENCE can be placed in a source file
+/// that is compiled and linked into the final application. The macro
+/// should be placed outside of any scopes in the global namespace.
 ///
 /// Usage example:
 /// \code

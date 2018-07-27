@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -40,7 +40,7 @@
 /// acceptsFirstResponder and canBecomeKeyWindow messages must
 /// return YES to grab fullscreen events.
 ///
-/// See http://stackoverflow.com/questions/999464/fullscreen-key-down-actions
+/// See https://stackoverflow.com/questions/999464/fullscreen-key-down-actions
 ///
 /// \return YES
 ///

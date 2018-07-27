@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,7 @@
 #include <SFML/Config.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -49,28 +50,38 @@ class GlContext : NonCopyable
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global initialization
+    /// \brief Perform resource initialization
     ///
-    /// This function is called once, before the very first OpenGL
-    /// resource is created. It makes sure that everything is ready
-    /// for contexts to work properly.
-    /// Note: this function doesn't need to be thread-safe, as it
-    /// can be called only once.
+    /// This function is called every time an OpenGL resource is
+    /// created. When the first resource is initialized, it makes
+    /// sure that everything is ready for contexts to work properly.
     ///
     ////////////////////////////////////////////////////////////
-    static void globalInit();
+    static void initResource();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global cleanup
+    /// \brief Perform resource cleanup
     ///
-    /// This function is called after the very last OpenGL resource
-    /// is destroyed. It makes sure that everything that was
-    /// created by initialize() is properly released.
-    /// Note: this function doesn't need to be thread-safe, as it
-    /// can be called only once.
+    /// This function is called every time an OpenGL resource is
+    /// destroyed. When the last resource is destroyed, it makes
+    /// sure that everything that was created by initResource()
+    /// is properly released.
     ///
     ////////////////////////////////////////////////////////////
-    static void globalCleanup();
+    static void cleanupResource();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Register a function to be called when a context is destroyed
+    ///
+    /// This is used for internal purposes in order to properly
+    /// clean up OpenGL resources that cannot be shared bwteen
+    /// contexts.
+    ///
+    /// \param callback Function to be called when a context is destroyed
+    /// \param arg      Argument to pass when calling the function
+    ///
+    ////////////////////////////////////////////////////////////
+    static void registerContextDestroyCallback(ContextDestroyCallback callback, void* arg);
 
     ////////////////////////////////////////////////////////////
     /// \brief Acquires a context for short-term use on the current thread
@@ -147,6 +158,17 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context's ID
+    ///
+    /// The context ID is used to identify contexts when
+    /// managing unshareable OpenGL resources.
+    ///
+    /// \return The active context's ID or 0 if no context is currently active
+    ///
+    ////////////////////////////////////////////////////////////
+    static Uint64 getActiveContextId();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -221,6 +243,12 @@ protected:
     virtual bool makeCurrent(bool current) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Notify unshared GlResources of context destruction
+    ///
+    ////////////////////////////////////////////////////////////
+    void cleanupUnsharedResources();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Evaluate a pixel format configuration
     ///
     /// This functions can be used by implementations that have
@@ -262,6 +290,11 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void checkSettings(const ContextSettings& requestedSettings);
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const Uint64 m_id; ///< Unique number that identifies the context
 };
 
 } // namespace priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // References:
 //
-// http://www.unicode.org/
-// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
-// http://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
-// http://people.w3.org/rishida/scripts/uniview/conversion
+// https://www.unicode.org/
+// https://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.c
+// https://www.unicode.org/Public/PROGRAMS/CVTUTF/ConvertUTF.h
+// https://people.w3.org/rishida/scripts/uniview/conversion
 //
 ////////////////////////////////////////////////////////////
 

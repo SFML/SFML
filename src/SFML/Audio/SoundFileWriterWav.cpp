@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -86,9 +86,7 @@ bool SoundFileWriterWav::check(const std::string& filename)
 
 ////////////////////////////////////////////////////////////
 SoundFileWriterWav::SoundFileWriterWav() :
-m_file        (),
-m_sampleCount (0),
-m_channelCount(0)
+m_file()
 {
 }
 
@@ -118,9 +116,6 @@ bool SoundFileWriterWav::open(const std::string& filename, unsigned int sampleRa
         return false;
     }
 
-    // Save the channel count
-    m_channelCount = channelCount;
-
     return true;
 }
 
@@ -129,8 +124,6 @@ bool SoundFileWriterWav::open(const std::string& filename, unsigned int sampleRa
 void SoundFileWriterWav::write(const Int16* samples, Uint64 count)
 {
     assert(m_file.good());
-
-    m_sampleCount += count;
 
     while (count--)
         encode(m_file, *samples++);
@@ -191,8 +184,9 @@ void SoundFileWriterWav::close()
         m_file.flush();
 
         // Update the main chunk size and data sub-chunk size
-        Uint32 dataChunkSize = static_cast<Uint32>(m_sampleCount * m_channelCount * 2);
-        Uint32 mainChunkSize = dataChunkSize + 36;
+        Uint32 fileSize = static_cast<Uint32>(m_file.tellp());
+        Uint32 mainChunkSize = fileSize - 8;  // 8 bytes RIFF header
+        Uint32 dataChunkSize = fileSize - 44; // 44 bytes RIFF + WAVE headers
         m_file.seekp(4);
         encode(m_file, mainChunkSize);
         m_file.seekp(40);

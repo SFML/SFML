@@ -36,11 +36,8 @@ elseif(SFML_OS_IOS)
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-ios/")
 elseif(SFML_OS_ANDROID)
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers")
-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-android/${ANDROID_ABI}")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-android/${CMAKE_ANDROID_ARCH_ABI}")
 endif()
-
-# add the SFML sources path
-include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # define the path of our additional CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
@@ -49,11 +46,31 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
 # add the modules subdirectories
+
+# sfml-system
 add_subdirectory(System)
+
+# sfml-main and sfml-activity
 if(SFML_OS_WINDOWS OR SFML_OS_ANDROID OR SFML_OS_IOS)
     add_subdirectory(Main)
 endif()
-add_subdirectory(Window)
-add_subdirectory(Network)
-add_subdirectory(Graphics)
-add_subdirectory(Audio)
+
+# sfml-window
+if(SFML_BUILD_WINDOW OR SFML_BUILD_GRAPHICS)
+    add_subdirectory(Window)
+endif()
+
+# sfml-network
+if(SFML_BUILD_NETWORK)
+    add_subdirectory(Network)
+endif()
+
+# sfml-graphics
+if(SFML_BUILD_GRAPHICS)
+    add_subdirectory(Graphics)
+endif()
+
+# sfml-audio
+if(SFML_BUILD_AUDIO)
+    add_subdirectory(Audio)
+endif()

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Win32/ClockImpl.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
 #include <windows.h>
 
 
@@ -37,6 +39,12 @@ namespace
         QueryPerformanceFrequency(&frequency);
         return frequency;
     }
+
+    bool isWindowsXpOrOlder()
+    {
+        // Windows XP was the last 5.x version of Windows
+        return static_cast<DWORD>(LOBYTE(LOWORD(GetVersion()))) < 6;
+    }
 }
 
 namespace sf
@@ -46,21 +54,30 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Time ClockImpl::getCurrentTime()
 {
-    // Force the following code to run on first core
-    // (see http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx)
-    HANDLE currentThread = GetCurrentThread();
-    DWORD_PTR previousMask = SetThreadAffinityMask(currentThread, 1);
-
     // Get the frequency of the performance counter
     // (it is constant across the program lifetime)
     static LARGE_INTEGER frequency = getFrequency();
 
-    // Get the current time
-    LARGE_INTEGER time;
-    QueryPerformanceCounter(&time);
+    // Detect if we are on Windows XP or older
+    static bool oldWindows = isWindowsXpOrOlder();
 
-    // Restore the thread affinity
-    SetThreadAffinityMask(currentThread, previousMask);
+    LARGE_INTEGER time;
+
+    if (oldWindows)
+    {
+        static sf::Mutex oldWindowsMutex;
+
+        // Acquire a lock (CRITICAL_SECTION) to prevent travelling back in time
+        Lock lock(oldWindowsMutex);
+
+        // Get the current time
+        QueryPerformanceCounter(&time);
+    }
+    else
+    {
+        // Get the current time
+        QueryPerformanceCounter(&time);
+    }
 
     // Return the current time as microseconds
     return sf::microseconds(1000000 * time.QuadPart / frequency.QuadPart);

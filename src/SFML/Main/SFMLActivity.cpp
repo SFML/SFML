@@ -28,7 +28,9 @@
 #include <dlfcn.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include <jni.h>
+#include <string>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 

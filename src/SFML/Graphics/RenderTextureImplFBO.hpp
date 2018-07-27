@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,7 @@
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <map>
 
 
 namespace sf
@@ -66,20 +67,42 @@ public:
     ////////////////////////////////////////////////////////////
     static bool isAvailable();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the maximum anti-aliasing level supported by the system
+    ///
+    /// \return The maximum anti-aliasing level supported by the system
+    ///
+    ////////////////////////////////////////////////////////////
+    static unsigned int getMaximumAntialiasingLevel();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Unbind the currently bound FBO
+    ///
+    ////////////////////////////////////////////////////////////
+    static void unbind();
+
 private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the render texture implementation
     ///
-    /// \param width       Width of the texture to render to
-    /// \param height      Height of the texture to render to
-    /// \param textureId   OpenGL identifier of the target texture
-    /// \param depthBuffer Is a depth buffer requested?
+    /// \param width      Width of the texture to render to
+    /// \param height     Height of the texture to render to
+    /// \param textureId  OpenGL identifier of the target texture
+    /// \param settings   Context settings to create render-texture with
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer);
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create an FBO in the current context
+    ///
+    /// \return True if creation has been successful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createFrameBuffer();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -102,9 +125,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     m_context;     ///< Needs a separate OpenGL context for not messing up the other ones
-    unsigned int m_frameBuffer; ///< OpenGL frame buffer object
-    unsigned int m_depthBuffer; ///< Optional depth buffer attached to the frame buffer
+    std::map<Uint64, unsigned int> m_frameBuffers;            ///< OpenGL frame buffer objects per context
+    std::map<Uint64, unsigned int> m_multisampleFrameBuffers; ///< Optional per-context OpenGL frame buffer objects with multisample attachments
+    unsigned int                   m_depthStencilBuffer;      ///< Optional depth/stencil buffer attached to the frame buffer
+    unsigned int                   m_colorBuffer;             ///< Optional multisample color buffer attached to the frame buffer
+    unsigned int                   m_width;                   ///< Width of the attachments
+    unsigned int                   m_height;                  ///< Height of the attachments
+    Context*                       m_context;                 ///< Backup OpenGL context, used when none already exist
+    unsigned int                   m_textureId;               ///< The ID of the texture to attach to the FBO
+    bool                           m_multisample;             ///< Whether we have to create a multisample frame buffer as well
+    bool                           m_stencil;                 ///< Whether we have stencil attachment
 };
 
 } // namespace priv

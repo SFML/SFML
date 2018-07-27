@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -43,6 +43,7 @@
 namespace sf
 {
 class Drawable;
+class VertexBuffer;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -248,6 +249,26 @@ public:
               PrimitiveType type, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by a vertex buffer
+    ///
+    /// \param vertexBuffer Vertex buffer
+    /// \param states       Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const VertexBuffer& vertexBuffer, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by a vertex buffer
+    ///
+    /// \param vertexBuffer Vertex buffer
+    /// \param firstVertex  Index of the first vertex to render
+    /// \param vertexCount  Number of vertices to render
+    /// \param states       Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex, std::size_t vertexCount, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the target
     ///
     /// \return Size in pixels
@@ -275,7 +296,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool setActive(bool active = true) = 0;
+    virtual bool setActive(bool active = true);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the current OpenGL render states and matrices
@@ -403,6 +424,33 @@ private:
     void applyShader(const Shader* shader);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Setup environment for drawing
+    ///
+    /// \param useVertexCache Are we going to use the vertex cache?
+    /// \param states         Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setupDraw(bool useVertexCache, const RenderStates& states);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw the primitives
+    ///
+    /// \param type        Type of primitives to draw
+    /// \param firstVertex Index of the first vertex to use when drawing
+    /// \param vertexCount Number of vertices to use when drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clean up environment after drawing
+    ///
+    /// \param states Render states used for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    void cleanupDraw(const RenderStates& states);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Render states cache
     ///
     ////////////////////////////////////////////////////////////
@@ -410,10 +458,12 @@ private:
     {
         enum {VertexCacheSize = 4};
 
+        bool      enable;         ///< Is the cache enabled?
         bool      glStatesSet;    ///< Are our internal GL states set yet?
         bool      viewChanged;    ///< Has the current view changed since last draw?
         BlendMode lastBlendMode;  ///< Cached blending mode
         Uint64    lastTextureId;  ///< Cached texture
+        bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
         bool      useVertexCache; ///< Did we previously use the vertex cache?
         Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
     };
@@ -424,6 +474,7 @@ private:
     View        m_defaultView; ///< Default view
     View        m_view;        ///< Current view
     StatesCache m_cache;       ///< Render states cache
+    Uint64      m_id;          ///< Unique number that identifies the RenderTarget
 };
 
 } // namespace sf

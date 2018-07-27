@@ -9,4 +9,4 @@ set(SRC ${SRCROOT}/Sockets.cpp
 # define the sockets target
 sfml_add_example(sockets
                  SOURCES ${SRC}
-                 DEPENDS sfml-network sfml-system)
+                 DEPENDS sfml-network)

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -42,7 +42,7 @@ namespace sf
     // Window handle is HWND (HWND__*) on Windows
     typedef HWND__* WindowHandle;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
     // Window handle is Window (unsigned long) on Unix - X11
     typedef unsigned long WindowHandle;
@@ -65,7 +65,7 @@ namespace sf
 #elif defined(SFML_DOXYGEN)
 
     // Define typedef symbol so that Doxygen can attach some documentation to it
-    typedef "platform–specific" WindowHandle;
+    typedef "platform-specific" WindowHandle;
 
 #endif
 

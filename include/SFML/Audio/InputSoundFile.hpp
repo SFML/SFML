@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -101,18 +101,6 @@ public:
     bool openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open the sound file from the disk for writing
-    ///
-    /// \param filename     Path of the sound file to write
-    /// \param channelCount Number of channels in the sound
-    /// \param sampleRate   Sample rate of the sound
-    ///
-    /// \return True if the file was successfully opened
-    ///
-    ////////////////////////////////////////////////////////////
-    bool openForWriting(const std::string& filename, unsigned int channelCount, unsigned int sampleRate);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
     ///
     /// \return Number of samples
@@ -171,8 +159,9 @@ public:
     /// other overload.
     ///
     /// The sample offset takes the channels into account.
-    /// Offsets can be calculated like this:
-    /// `sampleNumber * sampleRate * channelCount`
+    /// If you have a time offset instead, you can easily find
+    /// the corresponding sample offset with the following formula:
+    /// `timeInSeconds * sampleRate * channelCount`
     /// If the given offset exceeds to total number of samples,
     /// this function jumps to the end of the sound file.
     ///

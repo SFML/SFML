@@ -72,6 +72,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
+    ${SRCROOT}/VertexBuffer.cpp
+    ${INCROOT}/VertexBuffer.hpp
 )
 source_group("drawables" FILES ${DRAWABLES_SRC})
 
@@ -86,75 +88,60 @@ set(RENDER_TEXTURE_SRC
 )
 source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
 
+
+# define the sfml-graphics target
+sfml_add_library(sfml-graphics
+                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC} ${STB_SRC})
+
+# setup dependencies
+target_link_libraries(sfml-graphics PUBLIC sfml-window)
+
 # stb_image sources
-include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers/stb_image")
+target_include_directories(sfml-graphics PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/stb_image")
 
 # let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_MACOSX)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 elseif(SFML_OS_IOS)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 elseif(SFML_OS_ANDROID)
-    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/jpeg")
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
 endif()
 
 # find external libraries
-if(NOT SFML_OPENGL_ES)
-    find_package(OpenGL REQUIRED)
+if(SFML_OPENGL_ES)
     if(SFML_OS_LINUX)
-        find_package(X11 REQUIRED)
+        sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
+        sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
+        target_link_libraries(sfml-graphics PRIVATE EGL GLES)
+    elseif(SFML_OS_IOS)
+        target_link_libraries(sfml-graphics PRIVATE "-framework OpenGLES")
     endif()
-    include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-endif()
-if(SFML_OPENGL_ES AND SFML_OS_LINUX)
-    find_package(EGL REQUIRED)
-    find_package(GLES REQUIRED)
-    include_directories(${EGL_INCLUDE_DIR} ${GLES_INCLUDE_DIR})
-endif()
-if(SFML_OS_ANDROID)
-    find_host_package(JPEG REQUIRED)
-    find_host_package(Freetype REQUIRED)
 else()
-    find_package(JPEG REQUIRED)
-    find_package(Freetype REQUIRED)
-endif()
-include_directories(${FREETYPE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
+    # Target OpenGL already defined for Window component so no sfml_find_package() here
+    target_link_libraries(sfml-graphics PRIVATE OpenGL)
 
-# build the list of external libraries to link
-if(NOT SFML_OPENGL_ES)
-    list(APPEND GRAPHICS_EXT_LIBS ${OPENGL_gl_LIBRARY})
     if(SFML_OS_LINUX)
-        list(APPEND GRAPHICS_EXT_LIBS ${X11_LIBRARIES})
+        # Target X11 already defined for Window component so no sfml_find_package() here
+        target_link_libraries(sfml-graphics PRIVATE X11)
     endif()
 endif()
-if(SFML_OPENGL_ES AND SFML_OS_LINUX)
-    list(APPEND GRAPHICS_EXT_LIBS ${EGL_LIBRARY} ${GLES_LIBRARY})
+
+if(SFML_OS_ANDROID)
+    target_link_libraries(sfml-graphics PRIVATE z EGL GLESv1_CM)
 endif()
-if(SFML_OS_IOS)
-    list(APPEND GRAPHICS_EXT_LIBS "-framework OpenGLES")
-elseif(SFML_OS_ANDROID)
-    list(APPEND GRAPHICS_EXT_LIBS z)
-endif()
-list(APPEND GRAPHICS_EXT_LIBS ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+
+sfml_find_package(Freetype INCLUDE "FREETYPE_INCLUDE_DIRS" LINK "FREETYPE_LIBRARY")
+target_link_libraries(sfml-graphics PRIVATE Freetype)
 
 # add preprocessor symbols
-add_definitions(-DSTBI_FAILURE_USERMSG)
+target_compile_definitions(sfml-graphics PRIVATE "STBI_FAILURE_USERMSG")
 
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing
 # when gcc is used; otherwise saving PNGs may crash in stb_image_write
 if(SFML_COMPILER_GCC)
     set_source_files_properties(${SRCROOT}/ImageLoader.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 endif()
-
-# define the sfml-graphics target
-sfml_add_library(sfml-graphics
-                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC} ${STB_SRC}
-                 DEPENDS sfml-window sfml-system
-                 EXTERNAL_LIBS ${GRAPHICS_EXT_LIBS})

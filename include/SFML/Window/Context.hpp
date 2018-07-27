@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -112,10 +112,25 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context
     ///
+    /// This function will only return sf::Context objects.
+    /// Contexts created e.g. by RenderTargets or for internal
+    /// use will not be returned by this function.
+    ///
     /// \return The currently active context or NULL if none is active
     ///
     ////////////////////////////////////////////////////////////
     static const Context* getActiveContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context's ID
+    ///
+    /// The context ID is used to identify contexts when
+    /// managing unshareable OpenGL resources.
+    ///
+    /// \return The active context's ID or 0 if no context is currently active
+    ///
+    ////////////////////////////////////////////////////////////
+    static Uint64 getActiveContextId();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

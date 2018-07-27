@@ -186,6 +186,13 @@ void WindowImplAndroid::setMouseCursorGrabbed(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplAndroid::setMouseCursor(const CursorImpl& cursor)
+{
+    // Not applicable
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::setKeyRepeatEnabled(bool enabled)
 {
     // Not applicable
@@ -411,7 +418,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* stat
         if (key == AKEYCODE_UNKNOWN)
         {
             // This is a unique sequence, which is not yet exposed in the NDK
-            // http://code.google.com/p/android/issues/detail?id=33998
+            // https://code.google.com/p/android/issues/detail?id=33998
             return 0;
         }
         else if (int unicode = getUnicode(_event)) // This is a repeated sequence
@@ -612,15 +619,16 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_SYM:
         case AKEYCODE_EXPLORER:
         case AKEYCODE_ENVELOPE:           return Keyboard::Unknown;
-        case AKEYCODE_ENTER:              return Keyboard::Return;
-        case AKEYCODE_DEL:                return Keyboard::Delete;
+        case AKEYCODE_ENTER:              return Keyboard::Enter;
+        case AKEYCODE_DEL:                return Keyboard::Backspace;
+        case AKEYCODE_FORWARD_DEL:        return Keyboard::Delete;
         case AKEYCODE_GRAVE:              return Keyboard::Tilde;
         case AKEYCODE_MINUS:              return Keyboard::Subtract;
         case AKEYCODE_EQUALS:             return Keyboard::Equal;
         case AKEYCODE_LEFT_BRACKET:       return Keyboard::LBracket;
         case AKEYCODE_RIGHT_BRACKET:      return Keyboard::RBracket;
-        case AKEYCODE_BACKSLASH:          return Keyboard::BackSlash;
-        case AKEYCODE_SEMICOLON:          return Keyboard::SemiColon;
+        case AKEYCODE_BACKSLASH:          return Keyboard::Backslash;
+        case AKEYCODE_SEMICOLON:          return Keyboard::Semicolon;
         case AKEYCODE_APOSTROPHE:         return Keyboard::Quote;
         case AKEYCODE_SLASH:              return Keyboard::Slash;
         case AKEYCODE_AT:

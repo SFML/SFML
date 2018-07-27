@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -152,6 +152,7 @@ void HIDInputManager::initializeKeyboard()
     CFSetRef keyboards = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == NULL)
     {
+        sf::err() << "No keyboard detected by the HID manager!" << std::endl;
         freeUp();
         return;
     }
@@ -313,9 +314,11 @@ void HIDInputManager::freeUp()
 
     if (m_layoutData != 0)
         CFRelease(m_layoutData);
+    m_layoutData = 0;
     // Do not release m_layout! It is owned by m_layoutData.
     if (m_manager != 0)
         CFRelease(m_manager);
+    m_manager = 0;
 
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
     {
@@ -355,11 +358,8 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
 
 bool HIDInputManager::isPressed(IOHIDElements& elements)
 {
-    if (!m_isValid)
-    {
-        sf::err() << "HIDInputManager is invalid." << std::endl;
+    if (!m_isValid) 
         return false;
-    }
 
     // state = true if at least one corresponding HID button is pressed
     bool state = false;
@@ -694,7 +694,7 @@ Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
 ////////////////////////////////////////////////////////
 Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 {
-    // (Some) 0x code based on http://forums.macrumors.com/showthread.php?t=780577
+    // (Some) 0x code based on https://forums.macrumors.com/showthread.php?t=780577
     // Some sf::Keyboard::Key are present twice.
     switch (virtualKeycode)
     {
@@ -755,13 +755,13 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 
         case 0x21:                      return sf::Keyboard::LBracket;
         case 0x1e:                      return sf::Keyboard::RBracket;
-        case 0x29:                      return sf::Keyboard::SemiColon;
+        case 0x29:                      return sf::Keyboard::Semicolon;
         case 0x2b:                      return sf::Keyboard::Comma;
         case 0x41: /* keypad         */ return sf::Keyboard::Period;
         case 0x2f: /* keyboard       */ return sf::Keyboard::Period;
         case 0x27:                      return sf::Keyboard::Quote;
         case 0x2c:                      return sf::Keyboard::Slash;
-        case 0x2a:                      return sf::Keyboard::BackSlash;
+        case 0x2a:                      return sf::Keyboard::Backslash;
 
             // sf::Keyboard::Tilde might be in conflict with some other key.
             // 0x0a is for "Non-US Backslash" according to HID Calibrator,
@@ -770,11 +770,11 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 
         case 0x51: /* keypad         */ return sf::Keyboard::Equal;
         case 0x18: /* keyboard       */ return sf::Keyboard::Equal;
-        case 0x32:                      return sf::Keyboard::Dash;
+        case 0x32:                      return sf::Keyboard::Hyphen;
         case 0x31:                      return sf::Keyboard::Space;
-        case 0x4c: /* keypad         */ return sf::Keyboard::Return;
-        case 0x24: /* keyboard       */ return sf::Keyboard::Return;
-        case 0x33:                      return sf::Keyboard::BackSpace;
+        case 0x4c: /* keypad         */ return sf::Keyboard::Enter;
+        case 0x24: /* keyboard       */ return sf::Keyboard::Enter;
+        case 0x33:                      return sf::Keyboard::Backspace;
         case 0x30:                      return sf::Keyboard::Tab;
 
             // Duplicates (see next section).

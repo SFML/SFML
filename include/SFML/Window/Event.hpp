@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -257,7 +257,7 @@ public:
 /// filled; all other members will have undefined values and must not
 /// be read if the type of the event doesn't match. For example,
 /// if you received a KeyPressed event, then you must read the
-/// event.key member, all other members such as event.MouseMove
+/// event.key member, all other members such as event.mouseMove
 /// or event.text will have undefined values.
 ///
 /// Usage example:

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2018 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -71,6 +71,7 @@ namespace sf {
     sf::priv::WindowImplCocoa*    m_requester;      ///< View's requester
     BOOL                          m_useKeyRepeat;   ///< Key repeat setting
     BOOL                          m_mouseIsIn;      ///< Mouse positional state
+    NSCursor*                     m_cursor;         ///< Active cursor
     NSTrackingArea*               m_trackingArea;   ///< Mouse tracking area
     BOOL                          m_fullscreen;     ///< Indicate whether the window is fullscreen or not
     CGFloat                       m_scaleFactor;    ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
@@ -153,6 +154,12 @@ namespace sf {
 @end
 
 @interface SFOpenGLView (mouse)
+
+////////////////////////////////////////////////////////////
+/// \brief Set the system cursor for the window area
+///
+////////////////////////////////////////////////////////////
+-(void)setCursor:(NSCursor*)cursor;
 
 ////////////////////////////////////////////////////////////
 /// \brief Compute the position of the cursor

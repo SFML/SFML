@@ -7,6 +7,7 @@ EXT_blend_minmax
 EXT_blend_subtract
 ARB_multitexture
 EXT_blend_func_separate
+ARB_vertex_buffer_object
 ARB_shading_language_100
 ARB_shader_objects
 ARB_vertex_shader
@@ -15,4 +16,8 @@ ARB_texture_non_power_of_two
 EXT_blend_equation_separate
 EXT_texture_sRGB
 EXT_framebuffer_object
+EXT_packed_depth_stencil
+EXT_framebuffer_blit
+EXT_framebuffer_multisample
+ARB_copy_buffer
 ARB_geometry_shader4
