@@ -708,7 +708,7 @@ void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, s
     GLenum mode = modes[type];
 
     // Draw the primitives
-    glCheck(glDrawArrays(mode, firstVertex, static_cast<GLsizei>(vertexCount)));
+    glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertexCount)));
 }
 
 
