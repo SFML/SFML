@@ -444,7 +444,7 @@ void Text::ensureGeometryUpdate() const
     {
         Uint32 curChar = m_string[i];
         
-        // Skip the /r char to avoid weird graphical issues
+        // Skip the \r char to avoid weird graphical issues
         if (curChar == '\r')
             continue;
 
