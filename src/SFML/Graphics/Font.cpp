@@ -71,10 +71,10 @@ namespace
         return output;
     }
 
-    // Combine outline thickness, boldness and codepoint into a single 64-bit key
-    sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 codePoint)
+    // Combine outline thickness, boldness and font glyph index into a single 64-bit key
+    sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 index)
     {
-        return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) | (static_cast<sf::Uint64>(bold) << 31) | codePoint;
+        return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) | (static_cast<sf::Uint64>(bold) << 31) | index;
     }
 }
 
@@ -346,8 +346,8 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     // Get the page corresponding to the character size
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
-    // Build the key by combining the code point, bold flag, and outline thickness
-    Uint64 key = combine(outlineThickness, bold, codePoint);
+    // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
+    Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint));
 
     // Search the glyph into the cache
     GlyphTable::const_iterator it = glyphs.find(key);
