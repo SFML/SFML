@@ -32,9 +32,6 @@ endif()
 if(NOT CMAKE_OSX_ARCHITECTURES)
     set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "macOS architecture to build; 64-bit is expected" FORCE)
 endif()
-if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING "macOS deployement target; 10.7+ is expected" FORCE)
-endif()
 if(NOT CMAKE_OSX_SYSROOT)
     # query the path to the default SDK, will fail on non-macOS, but it's okay.
     execute_process(COMMAND xcodebuild -sdk macosx -version Path
@@ -258,11 +255,6 @@ if(SFML_OS_MACOSX)
     # only the default architecture (i.e. 64-bit) is supported
     if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         message(FATAL_ERROR "Only 64-bit architecture is supported")
-    endif()
-
-    # Ensure macOS 10.7+ is used
-    if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.7")
-        message(FATAL_ERROR "macOS 10.7 or greater is required for the deployment target.")
     endif()
 
     # configure Xcode templates
