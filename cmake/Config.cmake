@@ -69,17 +69,12 @@ else()
     return()
 endif()
 
-# check if OS or package system supports pkg-config
+# set pkgconfig install directory
 # this could be e.g. macports on mac or msys2 on windows etc.
-find_package(PkgConfig QUIET)
-if(PKG_CONFIG_EXECUTABLE)
-    if(EXISTS "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig")
-        set(SFML_OS_SUPPORTS_PKGCONFIG ON)
-        set(SFML_OS_PKGCONFIG_DIR "/lib${LIB_SUFFIX}/pkgconfig")
-    elseif(EXISTS "${CMAKE_INSTALL_PREFIX}/libdata/pkgconfig")
-        set(SFML_OS_SUPPORTS_PKGCONFIG ON)
-        set(SFML_OS_PKGCONFIG_DIR "/libdata/pkgconfig")
-    endif()
+set(SFML_PKGCONFIG_DIR "/lib${LIB_SUFFIX}/pkgconfig")
+
+if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
+    set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
 endif()
 
 # detect the compiler and its version

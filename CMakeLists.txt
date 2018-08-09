@@ -269,30 +269,6 @@ if(SFML_OS_MACOSX)
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
 
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
-    set(PKGCONFIG_DIR lib${LIB_SUFFIX}/pkgconfig)
-    if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
-        set(PKGCONFIG_DIR libdata/pkgconfig)
-    endif()
-    if(BUILD_SHARED_LIBS)
-        sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
-        if(SFML_INSTALL_PKGCONFIG_FILES)
-            foreach(sfml_module IN ITEMS all system window graphics audio network)
-                CONFIGURE_FILE(
-                    "tools/pkg-config/sfml-${sfml_module}.pc.in"
-                    "tools/pkg-config/sfml-${sfml_module}.pc"
-                    @ONLY)
-                INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-                    DESTINATION "${CMAKE_INSTALL_PREFIX}/${PKGCONFIG_DIR}")
-            endforeach()
-        endif()
-    else()
-        if(SFML_INSTALL_PKGCONFIG_FILES)
-            message(WARNING "No pkg-config files are provided for the static SFML libraries (SFML_INSTALL_PKGCONFIG_FILES will be ignored).")
-        endif()
-    endif()
-endif()
-
 # enable project folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
@@ -306,16 +282,25 @@ if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 
-sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES FALSE BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+# on Linux and BSD-like OS, install pkg-config files by default
+set(SFML_INSTALL_PKGCONFIG_DEFAULT FALSE)
 
-if(SFML_OS_SUPPORTS_PKGCONFIG OR SFML_INSTALL_PKGCONFIG_FILES)
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
+    set(SFML_INSTALL_PKGCONFIG_DEFAULT TRUE)
+endif()
+
+sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES ${SFML_INSTALL_PKGCONFIG_DEFAULT} BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+
+if(SFML_INSTALL_PKGCONFIG_FILES)
+    sfml_set_option(SFML_PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
+
     foreach(sfml_module IN ITEMS all system window graphics audio network)
         CONFIGURE_FILE(
             "tools/pkg-config/sfml-${sfml_module}.pc.in"
             "tools/pkg-config/sfml-${sfml_module}.pc"
             @ONLY)
         INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-            DESTINATION "${CMAKE_INSTALL_PREFIX}/${SFML_OS_PKGCONFIG_DIR}")
+            DESTINATION "${SFML_PKGCONFIG_INSTALL_PREFIX}")
     endforeach()
 endif()
 
