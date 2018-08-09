@@ -89,7 +89,15 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     }
 
     // Fill our bitmap with the cursor color data
-    std::memcpy(bitmapData, pixels, size.x * size.y * 4);
+    // We'll have to swap the red and blue channels here
+    Uint8* bitmapOffset = bitmapData;
+    for (std::size_t remaining = size.x * size.y; remaining; --remaining, pixels += 4)
+    {
+        *bitmapOffset++ = pixels[2]; // Blue
+        *bitmapOffset++ = pixels[1]; // Green
+        *bitmapOffset++ = pixels[0]; // Red
+        *bitmapOffset++ = pixels[3]; // Alpha
+    }
 
     // Create a dummy mask bitmap (it won't be used)
     HBITMAP mask = CreateBitmap(size.x, size.y, 1, 1, NULL);
