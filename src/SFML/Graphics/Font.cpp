@@ -777,17 +777,22 @@ bool Font::setCurrentSize(unsigned int characterSize) const
                 err() << "Failed to set bitmap font size to " << characterSize << std::endl;
                 err() << "Available sizes are: ";
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
-                    err() << face->available_sizes[i].height << " ";
+                {
+                    const unsigned int size = (face->available_sizes[i].y_ppem + 32) >> 6;
+                    err() << size << " ";
+                }
                 err() << std::endl;
+            }
+            else
+            {
+                err() << "Failed to set font size to " << characterSize << std::endl;
             }
         }
 
         return result == FT_Err_Ok;
     }
-    else
-    {
-        return true;
-    }
+
+     return true;
 }
 
 
