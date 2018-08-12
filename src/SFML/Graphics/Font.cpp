@@ -779,6 +779,22 @@ bool Font::setCurrentSize(unsigned int characterSize) const
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
                     err() << face->available_sizes[i].width << "x" << face->available_sizes[i].height << " ";
                 err() << std::endl;
+				
+				// Look for an available size with a matching height
+				bool sizeFound = false;
+				for (int i = 0; i < face->num_fixed_sizes && !sizeFound; ++i)
+				{
+					if (face->available_sizes[i].height == characterSize)
+					{
+						result = FT_Set_Pixel_Sizes(face, , characterSize);
+						sizeFound = true;
+					}
+				}
+				
+				if (result == FT_Err_Invalid_Pixel_Size || !sizeFound)
+				{
+					err() << "Failed to fallback on an available size." << std::endl;
+				}
             }
         }
 
