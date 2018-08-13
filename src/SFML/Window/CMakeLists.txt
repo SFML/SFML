@@ -235,6 +235,13 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OPENBSD)
     target_link_libraries(sfml-window PRIVATE X11)
 endif()
 
+# CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability
+# (unless the OpenGL_GL_PREFERENCE was explicitly set)
+# See CMP0072 for more details (cmake --help-policy CMP0072)
+if ((NOT ${CMAKE_VERSION} VERSION_LESS 3.11) AND (NOT OpenGL_GL_PREFERENCE))
+    set(OpenGL_GL_PREFERENCE "LEGACY")
+endif()
+
 if(SFML_OPENGL_ES)
     if(SFML_OS_IOS)
         target_link_libraries(sfml-window PRIVATE "-framework OpenGLES")
@@ -242,7 +249,7 @@ if(SFML_OPENGL_ES)
         target_link_libraries(sfml-window PRIVATE EGL GLESv1_CM)
     endif()
 else()
-    sfml_find_package(OpenGL INCLUDE "OPENGL_INCLUDE_DIR" LINK "OPENGL_gl_LIBRARY")
+    sfml_find_package(OpenGL INCLUDE "OPENGL_INCLUDE_DIR" LINK "OPENGL_LIBRARIES")
     target_link_libraries(sfml-window PRIVATE OpenGL)
 endif()
 
