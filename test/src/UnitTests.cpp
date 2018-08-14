@@ -5,7 +5,6 @@
 #include <SFML/Graphics/Color.hpp>
 #include <sstream>
 
-
 // String conversions for Catch framework
 namespace Catch
 {
