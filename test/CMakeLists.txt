@@ -2,6 +2,7 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
 SET(SRC
     "${SRCROOT}/Main.cpp"
+    "${SRCROOT}/UnitTests.hpp"
     "${SRCROOT}/UnitTests.cpp"
     "${SRCROOT}/Vector2.cpp"
     "${SRCROOT}/Rect.cpp"
