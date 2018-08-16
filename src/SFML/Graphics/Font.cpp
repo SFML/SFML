@@ -786,7 +786,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
                 {
                     if (face->available_sizes[i].height == characterSize)
                     {
-                        result = FT_Set_Pixel_Sizes(face, , characterSize);
+                        result = FT_Set_Pixel_Sizes(face, face->available_sizes[i].width, characterSize);
                         sizeFound = true;
                     }
                 }
