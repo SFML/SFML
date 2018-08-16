@@ -775,13 +775,11 @@ bool Font::setCurrentSize(unsigned int characterSize) const
             if (!FT_IS_SCALABLE(face))
             {
                 // Look for an available size with a matching height
-                bool sizeFound = false;
-                for (int i = 0; i < face->num_fixed_sizes && !sizeFound; ++i)
+                for (int i = 0; i < face->num_fixed_sizes && result != FT_Err_Invalid_Pixel_Size; ++i)
                 {
                     if (face->available_sizes[i].height == characterSize)
                     {
                         result = FT_Set_Pixel_Sizes(face, face->available_sizes[i].width, characterSize);
-                        sizeFound = true;
                     }
                 }
             }
