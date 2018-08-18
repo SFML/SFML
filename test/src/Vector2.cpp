@@ -1,5 +1,5 @@
 #include <SFML/System/Vector2.hpp>
-#include "UnitTests.hpp"
+#include "TestUtilities/System.hpp"
 
 // Use sf::Vector2i for tests. Test coverage is given, as there are no template specializations.
 
