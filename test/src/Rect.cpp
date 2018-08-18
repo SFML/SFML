@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "UnitTests.hpp"
+#include "TestUtilities/Graphics.hpp"
 
 TEST_CASE("sf::Rect class template", "[graphics]")
 {
