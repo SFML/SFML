@@ -230,14 +230,25 @@ macro(sfml_add_example target)
         target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
     endif()
 
+    set(target_install_dir ${SFML_MISC_INSTALL_PREFIX}/examples/${target})
+
+    if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
+        file(RELATIVE_PATH rel_lib_dir
+             ${CMAKE_INSTALL_PREFIX}/${target_install_dir}
+             ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
+
+        set_target_properties(${target} PROPERTIES
+                              INSTALL_RPATH "$ORIGIN/${rel_lib_dir}")
+    endif()
+
     # add the install rule
     install(TARGETS ${target}
-            RUNTIME DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target} COMPONENT examples
-            BUNDLE DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target} COMPONENT examples)
+            RUNTIME DESTINATION ${target_install_dir} COMPONENT examples
+            BUNDLE DESTINATION ${target_install_dir} COMPONENT examples)
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}
-            DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target}
+            DESTINATION ${target_install_dir}
             COMPONENT examples)
 
     if (THIS_RESOURCES_DIR)
@@ -248,7 +259,7 @@ macro(sfml_add_example target)
             message(FATAL_ERROR "Given resources directory to install does not exist: ${THIS_RESOURCES_DIR}")
         endif()
         install(DIRECTORY ${THIS_RESOURCES_DIR}
-                DESTINATION ${SFML_MISC_INSTALL_PREFIX}/examples/${target}
+                DESTINATION ${target_install_dir}
                 COMPONENT examples)
     endif()
 
