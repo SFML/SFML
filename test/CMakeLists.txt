@@ -6,6 +6,7 @@ include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers")
 # System is always built
 SET(SYSTEM_SRC
     "${SRCROOT}/Vector2.cpp"
+    "${SRCROOT}/Vector3.cpp"
     "${SRCROOT}/TestUtilities/System.hpp"
     "${SRCROOT}/TestUtilities/System.cpp"
 )
