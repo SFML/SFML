@@ -277,6 +277,7 @@ if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 if(SFML_BUILD_TEST_SUITE)
+    enable_testing()
     add_subdirectory(test)
 endif()
 

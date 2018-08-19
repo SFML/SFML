@@ -1,3 +1,5 @@
+#define CATCH_CONFIG_MAIN
+
 #include <SFML/System/Vector2.hpp>
 #include "TestUtilities/System.hpp"
 
