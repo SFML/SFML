@@ -232,7 +232,7 @@ macro(sfml_add_example target)
 
     set(target_install_dir ${SFML_MISC_INSTALL_PREFIX}/examples/${target})
 
-    if(SFML_OS_LINUX OR SFML_OS_FREEBSD)
+    if(BUILD_SHARED_LIBS AND (SFML_OS_LINUX OR SFML_OS_FREEBSD))
         file(RELATIVE_PATH rel_lib_dir
              ${CMAKE_INSTALL_PREFIX}/${target_install_dir}
              ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
