@@ -1,3 +1,6 @@
+# Include the extra catch cmake functions
+include("${CMAKE_SOURCE_DIR}/cmake/Catch.cmake")
+
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
@@ -10,14 +13,19 @@ SET(SYSTEM_SRC
     "${SRCROOT}/TestUtilities/System.hpp"
     "${SRCROOT}/TestUtilities/System.cpp"
 )
-SET(SYSTEM_LIB "sfml-system")
+add_executable(systemtest ${SYSTEM_SRC})
+target_link_libraries(systemtest sfml-system)
+catch_discover_tests(systemtest)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
+        "${SRCROOT}/Window.cpp"
         "${SRCROOT}/TestUtilities/Window.hpp"
         "${SRCROOT}/TestUtilities/Window.cpp"
     )
-    SET(WINDOW_LIB "sfml-window")
+    add_executable(windowtest ${WINDOW_SRC})
+    target_link_libraries(windowtest sfml-window)
+    catch_discover_tests(windowtest)
 endif()
 
 if(SFML_BUILD_GRAPHICS)
@@ -26,26 +34,17 @@ if(SFML_BUILD_GRAPHICS)
         "${SRCROOT}/TestUtilities/Graphics.hpp"
         "${SRCROOT}/TestUtilities/Graphics.cpp"
     )
-    SET(WINDOW_LIB "sfml-graphics")
+    add_executable(graphicstest ${GRAPHICS_SRC})
+    target_link_libraries(graphicstest sfml-graphics)
+    catch_discover_tests(graphicstest)
 endif()
 
-SET(SRC
-    "${SRCROOT}/Main.cpp"
-    "${SYSTEM_SRC}"
-    "${WINDOW_SRC}"
-    "${GRAPHICS_SRC}"
-    "${AUDIO_SRC}"
-    "${NETWORK_SRC}"
+# Automatically run the tests at the end of the build
+add_custom_target( runtests ALL
+                   DEPENDS systemtest windowtest graphicstest
 )
-
-# Using sfmltest instead of test because the latter is reserved.
-add_executable(sfmltest ${SRC})
-
-target_link_libraries(sfmltest ${GRAPHICS_LIB} ${WINDOW_LIB} ${AUDIO_LIB} ${NETWORK_LIB} ${SYSTEM_LIB})
-
-add_custom_target(runtests ALL
-    DEPENDS sfmltest
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/test"
-    COMMAND ${CMAKE_COMMAND} -E echo "Running test suite..."
-    COMMAND sfmltest
+add_custom_command(TARGET runtests
+                   COMMENT "Run tests"
+                   POST_BUILD COMMAND ctest ARGS --output-on-failure
+                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
