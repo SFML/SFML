@@ -1,6 +1,3 @@
-# Include the extra catch cmake functions
-include("${CMAKE_SOURCE_DIR}/cmake/Catch.cmake")
-
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
@@ -17,7 +14,7 @@ SET(SYSTEM_SRC
 )
 add_executable(systemtest ${SYSTEM_SRC})
 target_link_libraries(systemtest sfml-system)
-catch_discover_tests(systemtest)
+add_test(System-module-tests systemtest)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
@@ -27,7 +24,7 @@ if(SFML_BUILD_WINDOW)
     )
     add_executable(windowtest ${WINDOW_SRC})
     target_link_libraries(windowtest sfml-window)
-    catch_discover_tests(windowtest)
+    add_test(Window-module-tests windowtest)
 endif()
 
 if(SFML_BUILD_GRAPHICS)
@@ -39,7 +36,7 @@ if(SFML_BUILD_GRAPHICS)
     )
     add_executable(graphicstest ${GRAPHICS_SRC})
     target_link_libraries(graphicstest sfml-graphics)
-    catch_discover_tests(graphicstest)
+    add_test(Graphics-module-tests graphicstest)
 endif()
 
 # Automatically run the tests at the end of the build
