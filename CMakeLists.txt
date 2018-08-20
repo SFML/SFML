@@ -85,7 +85,7 @@ if(SFML_BUILD_WINDOW)
 endif()
 
 # add an option for building the test suite
-sfml_set_option(SFML_BUILD_TEST_SUITE TRUE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
+sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
 
 # Mac OS X specific options
 if(SFML_OS_MACOSX)
