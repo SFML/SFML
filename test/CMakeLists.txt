@@ -40,8 +40,8 @@ if(SFML_BUILD_GRAPHICS)
 endif()
 
 # Automatically run the tests at the end of the build
-add_custom_target( runtests ALL
-                   DEPENDS systemtest windowtest graphicstest
+add_custom_target(runtests ALL
+                  DEPENDS systemtest windowtest graphicstest
 )
 add_custom_command(TARGET runtests
                    COMMENT "Run tests"
