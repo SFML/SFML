@@ -5,13 +5,15 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/extlibs/headers")
+include_directories("${SRCROOT}/TestUtilities")
 
 # System is always built
 SET(SYSTEM_SRC
-    "${SRCROOT}/Vector2.cpp"
-    "${SRCROOT}/Vector3.cpp"
-    "${SRCROOT}/TestUtilities/System.hpp"
-    "${SRCROOT}/TestUtilities/System.cpp"
+    "${SRCROOT}/CatchMain.cpp"
+    "${SRCROOT}/System/Vector2.cpp"
+    "${SRCROOT}/System/Vector3.cpp"
+    "${SRCROOT}/TestUtilities/SystemUtil.hpp"
+    "${SRCROOT}/TestUtilities/SystemUtil.cpp"
 )
 add_executable(systemtest ${SYSTEM_SRC})
 target_link_libraries(systemtest sfml-system)
@@ -19,9 +21,9 @@ catch_discover_tests(systemtest)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
-        "${SRCROOT}/Window.cpp"
-        "${SRCROOT}/TestUtilities/Window.hpp"
-        "${SRCROOT}/TestUtilities/Window.cpp"
+        "${SRCROOT}/CatchMain.cpp"
+        "${SRCROOT}/TestUtilities/WindowUtil.hpp"
+        "${SRCROOT}/TestUtilities/WindowUtil.cpp"
     )
     add_executable(windowtest ${WINDOW_SRC})
     target_link_libraries(windowtest sfml-window)
@@ -30,9 +32,10 @@ endif()
 
 if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
-        "${SRCROOT}/Rect.cpp"
-        "${SRCROOT}/TestUtilities/Graphics.hpp"
-        "${SRCROOT}/TestUtilities/Graphics.cpp"
+        "${SRCROOT}/CatchMain.cpp"
+        "${SRCROOT}/Graphics/Rect.cpp"
+        "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
+        "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
     )
     add_executable(graphicstest ${GRAPHICS_SRC})
     target_link_libraries(graphicstest sfml-graphics)

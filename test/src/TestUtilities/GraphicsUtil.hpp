@@ -6,7 +6,7 @@
 #ifndef SFML_TESTUTILITIES_GRAPHICS_HPP
 #define SFML_TESTUTILITIES_GRAPHICS_HPP
 
-#include "Window.hpp"
+#include "WindowUtil.hpp"
 
 // Forward declarations for non-template types
 namespace sf

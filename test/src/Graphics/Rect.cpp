@@ -1,8 +1,6 @@
-#define CATCH_CONFIG_MAIN
-
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "TestUtilities/Graphics.hpp"
+#include "GraphicsUtil.hpp"
 
 TEST_CASE("sf::Rect class template", "[graphics]")
 {
