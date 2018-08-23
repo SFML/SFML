@@ -185,6 +185,7 @@ bool EaglContext::makeCurrent(bool current)
 ////////////////////////////////////////////////////////////
 void EaglContext::display()
 {
+    glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_framebuffer);
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, m_colorbuffer);
     [m_context presentRenderbuffer:GL_RENDERBUFFER_OES];
 
