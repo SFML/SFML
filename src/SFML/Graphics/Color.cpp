@@ -84,6 +84,41 @@ Uint32 Color::toInteger() const
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
+////////////////////////////////////////////////////////////
+Color Color::fromHSVA(Uint16 hue, double sat, double val, Uint8 alpha)
+{
+    hue %= 360;
+    while (hue < 0)
+        hue += 360;
+
+    if (sat < 0)
+        sat = 0;
+    else if (sat > 1)
+        sat = 1;
+
+    if (val < 0)
+        val = 0;
+    else if (val > 1)
+        val = 1;
+
+    int h = hue / 60;
+    double f = float(hue) / 60 - h;
+    double p = val * (1 - sat);
+    double q = val * (1 - sat * f);
+    double t = val * (1 - (1 - f) * sat);
+
+    switch (h)
+    {
+        default:
+        case 0: return sf::Color(val * 255, t * 255, p * 255, alpha);
+        case 1: return sf::Color(q * 255, val * 255, p * 255, alpha);
+        case 2: return sf::Color(p * 255, val * 255, t * 255, alpha);
+        case 3: return sf::Color(p * 255, q * 255, val * 255, alpha);
+        case 4: return sf::Color(t * 255, p * 255, val * 255, alpha);
+        case 5: return sf::Color(val * 255, p * 255, q * 255, alpha);
+    }
+}
+
 
 ////////////////////////////////////////////////////////////
 bool operator ==(const Color& left, const Color& right)
