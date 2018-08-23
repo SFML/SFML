@@ -88,8 +88,6 @@ Uint32 Color::toInteger() const
 Color Color::fromHSVA(Uint16 hue, double sat, double val, Uint8 alpha)
 {
     hue %= 360;
-    while (hue < 0)
-        hue += 360;
 
     if (sat < 0)
         sat = 0;
