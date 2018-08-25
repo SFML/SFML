@@ -88,7 +88,7 @@ public:
     /// \return An sf:Color with the equivalent RGBA components
     ///
     ////////////////////////////////////////////////////////////
-    static Color fromHSVA(Uint16 hue, double sat, double val, Uint8 alpha = 255);
+    static Color fromHSVA(Uint16 hue, float sat, float val, Uint8 alpha = 255);
 
     ////////////////////////////////////////////////////////////
     // Static member data

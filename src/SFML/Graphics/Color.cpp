@@ -85,7 +85,7 @@ Uint32 Color::toInteger() const
 }
 
 ////////////////////////////////////////////////////////////
-Color Color::fromHSVA(Uint16 hue, double sat, double val, Uint8 alpha)
+Color Color::fromHSVA(Uint16 hue, float sat, float val, Uint8 alpha)
 {
     hue %= 360;
 
@@ -100,10 +100,10 @@ Color Color::fromHSVA(Uint16 hue, double sat, double val, Uint8 alpha)
         val = 1;
 
     int h = hue / 60;
-    double f = float(hue) / 60 - h;
-    double p = val * (1 - sat);
-    double q = val * (1 - sat * f);
-    double t = val * (1 - (1 - f) * sat);
+    float f = float(hue) / 60 - h;
+    float p = val * (1 - sat);
+    float q = val * (1 - sat * f);
+    float t = val * (1 - (1 - f) * sat);
 
     switch (h)
     {
