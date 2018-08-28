@@ -78,6 +78,19 @@ public:
     Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create a new sf::Color from 4 HSVA components
+    ///
+    /// \param hue   Hue component (in the range [0, 360])
+    /// \param sat   Saturation component (in the range [0, 1])
+    /// \param val   Value component (in the range [0, 1])
+    /// \param alpha Alpha (opacity) component (in the range [0, 255])
+    ///
+    /// \return An sf:Color with the equivalent RGBA components
+    ///
+    ////////////////////////////////////////////////////////////
+    static Color fromHSVA(Uint16 hue, float sat, float val, Uint8 alpha = 255);
+
+    ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const Color Black;       ///< Black predefined color
