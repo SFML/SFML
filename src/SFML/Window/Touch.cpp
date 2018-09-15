@@ -46,7 +46,7 @@ Vector2i Touch::getPosition(unsigned int finger)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Touch::getPosition(unsigned int finger, const Window& relativeTo)
+Vector2i Touch::getPosition(unsigned int finger, const WindowBase& relativeTo)
 {
     return priv::InputImpl::getTouchPosition(finger, relativeTo);
 }

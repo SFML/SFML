@@ -55,7 +55,7 @@ namespace priv
 /// \return nil if something went wrong or a SFOpenGLView*.
 ///
 ////////////////////////////////////////////////////////////
-SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const Window& window)
+SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
 {
     id nsHandle = (id)window.getSystemHandle();
 
@@ -158,7 +158,7 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
     SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
 
@@ -193,7 +193,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     SFOpenGLView* view = getSFOpenGLViewFromSFMLWindow(relativeTo);
 
@@ -226,7 +226,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
     return Vector2i();

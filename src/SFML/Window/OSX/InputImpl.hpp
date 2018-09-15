@@ -96,7 +96,7 @@ public:
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i getMousePosition(const Window& relativeTo);
+    static Vector2i getMousePosition(const WindowBase& relativeTo);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in desktop coordinates
@@ -121,7 +121,7 @@ public:
     /// \param relativeTo Reference window
     ///
     ////////////////////////////////////////////////////////////
-    static void setMousePosition(const Vector2i& position, const Window& relativeTo);
+    static void setMousePosition(const Vector2i& position, const WindowBase& relativeTo);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a touch event is currently down
@@ -158,7 +158,7 @@ public:
     /// \return Current position of \a finger, or undefined if it's not down
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i getTouchPosition(unsigned int finger, const Window& relativeTo);
+    static Vector2i getTouchPosition(unsigned int finger, const WindowBase& relativeTo);
 };
 
 } // namespace priv

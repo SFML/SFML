@@ -240,7 +240,7 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
     WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
@@ -284,7 +284,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
     Display* display = OpenDisplay();
@@ -318,7 +318,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
     return Vector2i();

@@ -46,7 +46,7 @@ RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, co
 m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(mode, title, style, settings);
+    Window::create(mode, title, style, settings);
 }
 
 
@@ -55,7 +55,7 @@ RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(handle, settings);
+    Window::create(handle, settings);
 }
 
 

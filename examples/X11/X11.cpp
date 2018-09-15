@@ -210,6 +210,13 @@ int main()
         sfmlView2.display();
     }
 
+    // Close our SFML views before destroying the underlying window
+    sfmlView1.close();
+    sfmlView2.close();
+
+    // Destroy the window
+    XDestroyWindow(display, window);
+
     // Close the display
     XCloseDisplay(display);
 

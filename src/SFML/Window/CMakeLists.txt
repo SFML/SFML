@@ -41,6 +41,8 @@ set(SRC
     ${SRCROOT}/VideoModeImpl.hpp
     ${SRCROOT}/Window.cpp
     ${INCROOT}/Window.hpp
+    ${SRCROOT}/WindowBase.cpp
+    ${INCROOT}/WindowBase.hpp
     ${INCROOT}/WindowHandle.hpp
     ${SRCROOT}/WindowImpl.cpp
     ${SRCROOT}/WindowImpl.hpp
