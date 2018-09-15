@@ -43,6 +43,8 @@ set(SRC
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
     ${SRCROOT}/VideoModeImpl.hpp
+    ${SRCROOT}/Vulkan.cpp
+    ${INCROOT}/Vulkan.hpp
     ${SRCROOT}/Window.cpp
     ${INCROOT}/Window.hpp
     ${SRCROOT}/WindowBase.cpp
@@ -70,6 +72,8 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/SensorImpl.hpp
         ${SRCROOT}/Win32/SensorImpl.cpp
         ${SRCROOT}/Win32/VideoModeImpl.cpp
+        ${SRCROOT}/Win32/VulkanImplWin32.cpp
+        ${SRCROOT}/Win32/VulkanImplWin32.hpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
@@ -90,6 +94,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
         ${SRCROOT}/Unix/SensorImpl.cpp
         ${SRCROOT}/Unix/SensorImpl.hpp
         ${SRCROOT}/Unix/VideoModeImpl.cpp
+        ${SRCROOT}/Unix/VulkanImplX11.cpp
+        ${SRCROOT}/Unix/VulkanImplX11.hpp
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
@@ -232,6 +238,9 @@ target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/he
 if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
     target_link_libraries(sfml-window PRIVATE -ObjC)
 endif()
+
+# Vulkan headers
+target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
 
 # find and setup usage for external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OPENBSD)

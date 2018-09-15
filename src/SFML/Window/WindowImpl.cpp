@@ -38,25 +38,37 @@
     #include <SFML/Window/Win32/WindowImplWin32.hpp>
     typedef sf::priv::WindowImplWin32 WindowImplType;
 
+    #include <SFML/Window/Win32/VulkanImplWin32.hpp>
+    typedef sf::priv::VulkanImplWin32 VulkanImplType;
+
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
     #include <SFML/Window/Unix/WindowImplX11.hpp>
     typedef sf::priv::WindowImplX11 WindowImplType;
+
+    #include <SFML/Window/Unix/VulkanImplX11.hpp>
+    typedef sf::priv::VulkanImplX11 VulkanImplType;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Window/OSX/WindowImplCocoa.hpp>
     typedef sf::priv::WindowImplCocoa WindowImplType;
 
+    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+
 #elif defined(SFML_SYSTEM_IOS)
 
     #include <SFML/Window/iOS/WindowImplUIKit.hpp>
     typedef sf::priv::WindowImplUIKit WindowImplType;
 
+    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+
 #elif defined(SFML_SYSTEM_ANDROID)
 
     #include <SFML/Window/Android/WindowImplAndroid.hpp>
     typedef sf::priv::WindowImplAndroid WindowImplType;
+
+    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #endif
 
@@ -259,6 +271,21 @@ void WindowImpl::processSensorEvents()
             }
         }
     }
+}
+
+
+////////////////////////////////////////////////////////////
+bool WindowImpl::createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator)
+{
+#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
+
+    return false;
+
+#else
+
+    return VulkanImplType::createVulkanSurface(instance, getSystemHandle(), surface, allocator);
+
+#endif
 }
 
 } // namespace priv
