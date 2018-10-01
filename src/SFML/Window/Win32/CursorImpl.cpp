@@ -69,7 +69,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     bitmapHeader.bV5BlueMask    = 0x000000ff;
     bitmapHeader.bV5AlphaMask   = 0xff000000;
 
-    Uint8* bitmapData = NULL;
+    Uint32* bitmapData = NULL;
 
     HDC screenDC = GetDC(NULL);
     HBITMAP color = CreateDIBSection(
@@ -90,13 +90,10 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 
     // Fill our bitmap with the cursor color data
     // We'll have to swap the red and blue channels here
-    Uint8* bitmapOffset = bitmapData;
-    for (std::size_t remaining = size.x * size.y; remaining; --remaining, pixels += 4)
+    Uint32* bitmapOffset = bitmapData;
+    for (std::size_t remaining = size.x * size.y; remaining > 0; --remaining, pixels += 4)
     {
-        *bitmapOffset++ = pixels[2]; // Blue
-        *bitmapOffset++ = pixels[1]; // Green
-        *bitmapOffset++ = pixels[0]; // Red
-        *bitmapOffset++ = pixels[3]; // Alpha
+        *bitmapOffset++ = (pixels[3] << 24) | (pixels[0] << 16) | (pixels[1] << 8) | pixels[2];
     }
 
     // Create a dummy mask bitmap (it won't be used)
