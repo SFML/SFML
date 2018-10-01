@@ -774,11 +774,29 @@ bool Font::setCurrentSize(unsigned int characterSize) const
             // fail if the requested size is not available
             if (!FT_IS_SCALABLE(face))
             {
-                err() << "Failed to set bitmap font size to " << characterSize << std::endl;
-                err() << "Available sizes are: ";
-                for (int i = 0; i < face->num_fixed_sizes; ++i)
-                    err() << face->available_sizes[i].height << " ";
-                err() << std::endl;
+                // Look for an available size with a matching height
+                for (int i = 0; i < face->num_fixed_sizes && result != FT_Err_Ok; ++i)
+                {
+                    if (face->available_sizes[i].height == characterSize)
+                    {
+                        result = FT_Set_Pixel_Sizes(face, face->available_sizes[i].width, characterSize);
+                    }
+                }
+
+                // Check if we found a way to fallback to a valid size. If we couldn't, log the error
+                if (result == FT_Err_Invalid_Pixel_Size)
+                {
+                    err() << "Failed to set bitmap font size to " << characterSize << std::endl;
+                    err() << "Available sizes are: ";
+                    for (int i = 0; i < face->num_fixed_sizes; ++i)
+                        err() << face->available_sizes[i].width << "x" << face->available_sizes[i].height << " ";
+                    err() << std::endl;
+                }
+            }
+            // If the font is scalable but we had an error
+            else 
+            {
+                err() << "Failed to set font size to " << characterSize << std::endl;
             }
         }
 
