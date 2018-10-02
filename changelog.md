@@ -1,5 +1,53 @@
 # Changelog
 
+## SFML 2.5.1
+
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.5.1
+
+### General
+
+  * Various CMake fixes (#1414, #1416, #1436, #1439, #1467, #1470)
+  * Fixed the installation of pkg-config files (#1466)
+  * Fixed two conversion warnings (#1454)
+  * [Android] Fixes all symbols in sfml-main are hidden (#1457, #1460)
+  * [Android] Fixed some `#define` flag problem (#1458)
+  * [Android] Fix deadlock in main cleanup (#1265)
+  * [iOS] Modernized toolchain file (#1411)
+  * [iOS] Check that `<SFML/Main.hpp>` is used (#1412)
+  * [macOS] Add `-ObjC` flag to fix static linking on macOS (#1485)
+
+### Window
+
+**Bugfixes**
+
+  * [iOS] Use default supported rotations when none are specified (#1417)
+  * [iOS] Fixed autocomplete window overlaps keyboard (#1473, #1482)
+  * [Linux] Fixed dual monitor issue (#1226, #1238)
+  * [Linux] Fixed issue where fullscreen window didn't go over task bars on top and left on in Ubuntu (#1224)
+  * [Linux] Fixed the Unix clipboard implementation causing an abort due to internal data races in Xlib (#1437)
+  * [macOS] Added additional system cursors (#1401, #1413, #1425)
+  * [Windows] Fixed swapped colors for custom cursors (#1464, #1465, #1491)
+
+### Graphics
+
+**Bugfixes**
+
+  * Fixed a bug in which a `sf::RenderTexture` would not be re-activated after being re-created (#1438)
+  * Fixed `sf::RenderTextureImplFBO`'s destructor incorrectly triggering deletion of other `sf::RenderTextureImplFBO`'s active FBOs (#1440)
+  * Fix `sf::RenderWindow::setActive` incorrectly trying to unbind an FBO during deactivation (#1442)
+  * Fixed `sf::RenderTexture::display()` dereferencing a NULL pointer when being called before `sf::RenderTexture::create()` (#1446)
+  * Fixed bug in `sf::Text` when applying an outline color/thickness (#1176)
+  * Squash duplicated `sf::Font` glyphs to single chars (#1461)
+  * Fixed two issues with glyph sub-pixel positioning (#1452)
+  * Reduced context locking & unlocking while creating textures (#1459)
+  * Fixed the error message when the wrong bitmap font size is selected (#1456, #1474, #1492)
+
+### Audio
+
+**Bugfixes**
+
+  * Fixed performance issue with reading WAV files (#1450)
+
 ## SFML 2.5.0
 
 Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.5.0
