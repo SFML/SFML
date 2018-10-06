@@ -263,10 +263,12 @@ void GlContext::initResource()
         extensions.clear();
 
         // Check whether a >= 3.0 context is available
+		glGetStringiFuncType glGetStringiFunc = NULL;
+		glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
         int majorVersion = 0;
         glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
-        if (glGetError() == GL_INVALID_ENUM)
+        if (glGetError() == GL_INVALID_ENUM || !glGetStringiFunc)
         {
             // Try to load the < 3.0 way
             const char* extensionString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
@@ -285,22 +287,16 @@ void GlContext::initResource()
         else
         {
             // Try to load the >= 3.0 way
-            glGetStringiFuncType glGetStringiFunc = NULL;
-            glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
+            int numExtensions = 0;
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
-            if (glGetStringiFunc)
+            if (numExtensions)
             {
-                int numExtensions = 0;
-                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-
-                if (numExtensions)
+                for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
                 {
-                    for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
-                    {
-                        const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
+                    const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
 
-                        extensions.push_back(extensionString);
-                    }
+                    extensions.push_back(extensionString);
                 }
             }
         }
