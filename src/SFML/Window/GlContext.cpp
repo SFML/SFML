@@ -263,8 +263,8 @@ void GlContext::initResource()
         extensions.clear();
 
         // Check whether a >= 3.0 context is available
-		glGetStringiFuncType glGetStringiFunc = NULL;
-		glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
+        glGetStringiFuncType glGetStringiFunc = NULL;
+        glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
         int majorVersion = 0;
         glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
