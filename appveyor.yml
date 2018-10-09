@@ -1,0 +1,12 @@
+image:
+- Visual Studio 2017
+build_script:
+- ps: >-
+
+    md -Name build
+
+    cd build
+
+    cmake .. -DSFML_BUILD_EXAMPLES=TRUE
+
+    cmake --build . --target install
