@@ -6,7 +6,8 @@
 
 // Do we want to showcase direct JNI/NDK interaction?
 // Undefine this to get real cross-platform code.
-#define USE_JNI
+// Uncomment this to try JNI access; this seems to be broken in latest NDKs
+//#define USE_JNI
 
 #if defined(USE_JNI)
 // These headers are only needed for direct NDK/JDK interaction
