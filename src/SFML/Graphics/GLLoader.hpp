@@ -173,6 +173,7 @@ extern "C" {
 extern int sfogl_ext_SGIS_texture_edge_clamp;
 extern int sfogl_ext_EXT_texture_edge_clamp;
 extern int sfogl_ext_EXT_blend_minmax;
+extern int sfogl_ext_EXT_blend_color;
 extern int sfogl_ext_EXT_blend_subtract;
 extern int sfogl_ext_ARB_multitexture;
 extern int sfogl_ext_EXT_blend_func_separate;
@@ -199,6 +200,12 @@ extern int sfogl_ext_ARB_geometry_shader4;
 #define GL_FUNC_ADD_EXT 0x8006
 #define GL_MAX_EXT 0x8008
 #define GL_MIN_EXT 0x8007
+
+#define GL_CONSTANT_COLOR_EXT             0x8001
+#define GL_ONE_MINUS_CONSTANT_COLOR_EXT   0x8002
+#define GL_CONSTANT_ALPHA_EXT             0x8003
+#define GL_ONE_MINUS_CONSTANT_ALPHA_EXT   0x8004
+#define GL_BLEND_COLOR_EXT                0x8005
 
 #define GL_FUNC_REVERSE_SUBTRACT_EXT 0x800B
 #define GL_FUNC_SUBTRACT_EXT 0x800A
@@ -990,6 +997,12 @@ extern int sfogl_ext_ARB_geometry_shader4;
 extern void (GL_FUNCPTR *sf_ptrc_glBlendEquationEXT)(GLenum);
 #define glBlendEquationEXT sf_ptrc_glBlendEquationEXT
 #endif // GL_EXT_blend_minmax
+
+#ifndef GL_EXT_blend_color
+#define GL_EXT_blend_color 1
+extern void (GL_FUNCPTR *sf_ptrc_glBlendColorEXT) (GLfloat, GLfloat, GLfloat, GLfloat);
+#define glBlendColorEXT sf_ptrc_glBlendColorEXT
+#endif /* GL_EXT_blend_color */
 
 
 #ifndef GL_ARB_multitexture

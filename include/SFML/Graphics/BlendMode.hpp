@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-
+#include <SFML/Graphics/Color.hpp>
 
 namespace sf
 {
@@ -57,7 +57,11 @@ struct SFML_GRAPHICS_API BlendMode
         SrcAlpha,         ///< (src.a, src.a, src.a, src.a)
         OneMinusSrcAlpha, ///< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
         DstAlpha,         ///< (dst.a, dst.a, dst.a, dst.a)
-        OneMinusDstAlpha  ///< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
+        OneMinusDstAlpha,  ///< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
+        ConstColor,       ///< (Rc, Gc, Bc, Ac) 
+        OneMinusConstColor, ///< (1, 1, 1, 1) - (Rc, Gc, Bc, Ac)
+        ConstAlpha,       ///< (Ac, Ac, Ac, Ac)
+        OneMinusConstAlpha ///< (1, 1, 1, 1) - (Ac, Ac, Ac, Ac)
     };
 
     ////////////////////////////////////////////////////////
@@ -90,9 +94,10 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param sourceFactor      Specifies how to compute the source factor for the color and alpha channels.
     /// \param destinationFactor Specifies how to compute the destination factor for the color and alpha channels.
     /// \param blendEquation     Specifies how to combine the source and destination colors and alpha.
+    /// \param color             Specifies the color that should be used for the constant color blend mode
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
+    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add, sf::Color color = sf::Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
@@ -103,11 +108,13 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param alphaSourceFactor      Specifies how to compute the source factor.
     /// \param alphaDestinationFactor Specifies how to compute the destination factor.
     /// \param alphaBlendEquation     Specifies how to combine the source and destination alphas.
+    /// \param color                  Specifies the color that should be used for the constant color blend mode
     ///
     ////////////////////////////////////////////////////////////
     BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
               Equation colorBlendEquation, Factor alphaSourceFactor,
-              Factor alphaDestinationFactor, Equation alphaBlendEquation);
+              Factor alphaDestinationFactor, Equation alphaBlendEquation,
+              sf::Color color = sf::Color::Black);
 
     ////////////////////////////////////////////////////////////
     // Member Data
@@ -118,6 +125,7 @@ struct SFML_GRAPHICS_API BlendMode
     Factor   alphaSrcFactor; ///< Source blending factor for the alpha channel
     Factor   alphaDstFactor; ///< Destination blending factor for the alpha channel
     Equation alphaEquation;  ///< Blending equation for the alpha channel
+    sf::Color constantColor; ///< Color value for constant color blending mode
 };
 
 ////////////////////////////////////////////////////////////

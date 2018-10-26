@@ -48,20 +48,22 @@ colorDstFactor(BlendMode::OneMinusSrcAlpha),
 colorEquation (BlendMode::Add),
 alphaSrcFactor(BlendMode::One),
 alphaDstFactor(BlendMode::OneMinusSrcAlpha),
-alphaEquation (BlendMode::Add)
+alphaEquation (BlendMode::Add),
+constantColor (sf::Color::Black)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-BlendMode::BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation) :
+BlendMode::BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation, sf::Color color) :
 colorSrcFactor(sourceFactor),
 colorDstFactor(destinationFactor),
 colorEquation (blendEquation),
 alphaSrcFactor(sourceFactor),
 alphaDstFactor(destinationFactor),
-alphaEquation (blendEquation)
+alphaEquation (blendEquation),
+constantColor (color)
 {
 
 }
@@ -70,13 +72,15 @@ alphaEquation (blendEquation)
 ////////////////////////////////////////////////////////////
 BlendMode::BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
                      Equation colorBlendEquation, Factor alphaSourceFactor,
-                     Factor alphaDestinationFactor, Equation alphaBlendEquation) :
+                     Factor alphaDestinationFactor, Equation alphaBlendEquation,
+                     sf::Color color) :
 colorSrcFactor(colorSourceFactor),
 colorDstFactor(colorDestinationFactor),
 colorEquation (colorBlendEquation),
 alphaSrcFactor(alphaSourceFactor),
 alphaDstFactor(alphaDestinationFactor),
-alphaEquation (alphaBlendEquation)
+alphaEquation (alphaBlendEquation),
+constantColor (color)
 {
 
 }
@@ -90,7 +94,8 @@ bool operator ==(const BlendMode& left, const BlendMode& right)
            (left.colorEquation  == right.colorEquation)  &&
            (left.alphaSrcFactor == right.alphaSrcFactor) &&
            (left.alphaDstFactor == right.alphaDstFactor) &&
-           (left.alphaEquation  == right.alphaEquation);
+           (left.alphaEquation  == right.alphaEquation) &&
+           (left.constantColor  == right.constantColor);
 }
 
 

@@ -175,6 +175,14 @@
     #define GLEXT_glBlendEquation                     glBlendEquationEXT
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_EXT
 
+    // Core since 1.? - EXT_blend_color
+    #define GLEXT_blend_color                         sfogl_ext_EXT_blend_color
+    #define GLEXT_glBlendColor                        glBlendColorEXT
+    #define GLEXT_GL_CONSTANT_COLOR                   GL_CONSTANT_COLOR_EXT
+    #define GLEXT_GL_ONE_MINUS_CONSTANT_COLOR         GL_ONE_MINUS_CONSTANT_COLOR_EXT
+    #define GLEXT_GL_CONSTANT_ALPHA                   GL_CONSTANT_ALPHA_EXT
+    #define GLEXT_GL_ONE_MINUS_CONSTANT_ALPHA         GL_ONE_MINUS_CONSTANT_ALPHA_EXT
+
     // Core since 1.2 - EXT_blend_subtract
     #define GLEXT_blend_subtract                      sfogl_ext_EXT_blend_subtract
     #define GLEXT_GL_FUNC_SUBTRACT                    GL_FUNC_SUBTRACT_EXT

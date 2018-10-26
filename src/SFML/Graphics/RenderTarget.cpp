@@ -87,16 +87,20 @@ namespace
     {
         switch (blendFactor)
         {
-            case sf::BlendMode::Zero:             return GL_ZERO;
-            case sf::BlendMode::One:              return GL_ONE;
-            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            case sf::BlendMode::Zero:               return GL_ZERO;
+            case sf::BlendMode::One:                return GL_ONE;
+            case sf::BlendMode::SrcColor:           return GL_SRC_COLOR;
+            case sf::BlendMode::OneMinusSrcColor:   return GL_ONE_MINUS_SRC_COLOR;
+            case sf::BlendMode::DstColor:           return GL_DST_COLOR;
+            case sf::BlendMode::OneMinusDstColor:   return GL_ONE_MINUS_DST_COLOR;
+            case sf::BlendMode::SrcAlpha:           return GL_SRC_ALPHA;
+            case sf::BlendMode::OneMinusSrcAlpha:   return GL_ONE_MINUS_SRC_ALPHA;
+            case sf::BlendMode::DstAlpha:           return GL_DST_ALPHA;
+            case sf::BlendMode::OneMinusDstAlpha:   return GL_ONE_MINUS_DST_ALPHA;
+            case sf::BlendMode::ConstColor:         return GLEXT_GL_CONSTANT_COLOR;
+            case sf::BlendMode::OneMinusConstColor: return GLEXT_GL_ONE_MINUS_CONSTANT_COLOR;
+            case sf::BlendMode::ConstAlpha:         return GLEXT_GL_CONSTANT_ALPHA;
+            case sf::BlendMode::OneMinusConstAlpha: return GLEXT_GL_ONE_MINUS_CONSTANT_ALPHA;
         }
 
         sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
@@ -576,6 +580,12 @@ void RenderTarget::applyCurrentView()
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
+    // Set the blending color for constant color and alpha operation
+    if (GLEXT_blend_color)
+    {
+        glCheck(GLEXT_glBlendColor((float)mode.constantColor.r/255., (float)mode.constantColor.g / 255.,
+            (float)mode.constantColor.b / 255., (float)mode.constantColor.a / 255.));
+    }
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEXT_blend_func_separate)
     {

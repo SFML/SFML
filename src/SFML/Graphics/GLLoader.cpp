@@ -36,6 +36,7 @@ static sf::GlFunctionPointer glLoaderGetProcAddress(const char* name)
 int sfogl_ext_SGIS_texture_edge_clamp = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_texture_edge_clamp = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_minmax = sfogl_LOAD_FAILED;
+int sfogl_ext_EXT_blend_color = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_subtract = sfogl_LOAD_FAILED;
 int sfogl_ext_ARB_multitexture = sfogl_LOAD_FAILED;
 int sfogl_ext_EXT_blend_func_separate = sfogl_LOAD_FAILED;
@@ -62,6 +63,19 @@ static int Load_EXT_blend_minmax()
 
     sf_ptrc_glBlendEquationEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLenum)>(glLoaderGetProcAddress("glBlendEquationEXT"));
     if (!sf_ptrc_glBlendEquationEXT)
+        numFailed++;
+
+    return numFailed;
+}
+
+void (GL_FUNCPTR *sf_ptrc_glBlendColorEXT) (GLfloat, GLfloat, GLfloat, GLfloat) = NULL;
+
+static int Load_EXT_blend_color()
+{
+    int numFailed = 0;
+
+    sf_ptrc_glBlendColorEXT = reinterpret_cast<void (GL_FUNCPTR *) (GLfloat, GLfloat, GLfloat, GLfloat)>(glLoaderGetProcAddress("glBlendColorEXT"));
+    if (!sf_ptrc_glBlendColorEXT)
         numFailed++;
 
     return numFailed;
@@ -943,10 +957,11 @@ typedef struct sfogl_StrToExtMap_s
     PFN_LOADFUNCPOINTERS LoadExtension;
 } sfogl_StrToExtMap;
 
-static sfogl_StrToExtMap ExtensionMap[20] = {
+static sfogl_StrToExtMap ExtensionMap[21] = {
     {"GL_SGIS_texture_edge_clamp", &sfogl_ext_SGIS_texture_edge_clamp, NULL},
     {"GL_EXT_texture_edge_clamp", &sfogl_ext_EXT_texture_edge_clamp, NULL},
     {"GL_EXT_blend_minmax", &sfogl_ext_EXT_blend_minmax, Load_EXT_blend_minmax},
+    {"GL_EXT_blend_color", &sfogl_ext_EXT_blend_color, Load_EXT_blend_color},
     {"GL_EXT_blend_subtract", &sfogl_ext_EXT_blend_subtract, NULL},
     {"GL_ARB_multitexture", &sfogl_ext_ARB_multitexture, Load_ARB_multitexture},
     {"GL_EXT_blend_func_separate", &sfogl_ext_EXT_blend_func_separate, Load_EXT_blend_func_separate},
