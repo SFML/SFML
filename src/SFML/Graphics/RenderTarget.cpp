@@ -123,6 +123,13 @@ namespace
         assert(false);
         return GLEXT_GL_FUNC_ADD;
     }
+
+    // Checks if GLEXT_blend_color is required for the desired BlendMode
+    bool blendColorRequired(sf::BlendMode::Factor blendFactor)
+    {
+        return (blendFactor == sf::BlendMode::ConstColor) || (blendFactor == sf::BlendMode::OneMinusConstColor) ||
+            (blendFactor == sf::BlendMode::ConstAlpha) || (blendFactor == sf::BlendMode::OneMinusConstAlpha);
+    }
 }
 
 
@@ -581,23 +588,45 @@ void RenderTarget::applyCurrentView()
 void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
     // Set the blending color for constant color and alpha operation
+    bool requireBlendColor = blendColorRequired(mode.colorSrcFactor) || blendColorRequired(mode.colorDstFactor) ||
+        blendColorRequired(mode.alphaSrcFactor) || blendColorRequired(mode.alphaDstFactor);
+    
     if (GLEXT_blend_color)
     {
-        glCheck(GLEXT_glBlendColor((float)mode.constantColor.r/255., (float)mode.constantColor.g / 255.,
-            (float)mode.constantColor.b / 255., (float)mode.constantColor.a / 255.));
+        if (requireBlendColor)
+        {
+            glCheck(GLEXT_glBlendColor((float)mode.constantColor.r / 255., (float)mode.constantColor.g / 255.,
+                (float)mode.constantColor.b / 255., (float)mode.constantColor.a / 255.));
+        }
     }
+    else if (requireBlendColor)
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "OpenGL extension EXT_blend_color not available" << std::endl;
+            err() << "Selecting a constant color blending mode not possible" << std::endl;
+
+            warned = true;
+        }
+    }
+
+    //Fall back to no blending when GLEXT_blend_color is required but not available
+    const BlendMode& appliedMode = (requireBlendColor && GLEXT_blend_color) ? mode : BlendNone;
+
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEXT_blend_func_separate)
     {
         glCheck(GLEXT_glBlendFuncSeparate(
-            factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor),
-            factorToGlConstant(mode.alphaSrcFactor), factorToGlConstant(mode.alphaDstFactor)));
+            factorToGlConstant(appliedMode.colorSrcFactor), factorToGlConstant(appliedMode.colorDstFactor),
+            factorToGlConstant(appliedMode.alphaSrcFactor), factorToGlConstant(appliedMode.alphaDstFactor)));
     }
     else
     {
         glCheck(glBlendFunc(
-            factorToGlConstant(mode.colorSrcFactor),
-            factorToGlConstant(mode.colorDstFactor)));
+            factorToGlConstant(appliedMode.colorSrcFactor),
+            factorToGlConstant(appliedMode.colorDstFactor)));
     }
 
     if (GLEXT_blend_minmax && GLEXT_blend_subtract)
@@ -605,15 +634,15 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
         if (GLEXT_blend_equation_separate)
         {
             glCheck(GLEXT_glBlendEquationSeparate(
-                equationToGlConstant(mode.colorEquation),
-                equationToGlConstant(mode.alphaEquation)));
+                equationToGlConstant(appliedMode.colorEquation),
+                equationToGlConstant(appliedMode.alphaEquation)));
         }
         else
         {
-            glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
+            glCheck(GLEXT_glBlendEquation(equationToGlConstant(appliedMode.colorEquation)));
         }
     }
-    else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
+    else if ((appliedMode.colorEquation != BlendMode::Add) || (appliedMode.alphaEquation != BlendMode::Add))
     {
         static bool warned = false;
 
@@ -627,7 +656,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
         }
     }
 
-    m_cache.lastBlendMode = mode;
+    m_cache.lastBlendMode = appliedMode;
 }
 
 

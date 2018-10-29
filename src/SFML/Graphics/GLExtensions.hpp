@@ -47,11 +47,17 @@
     #define GLEXT_texture_edge_clamp                  true
     #define GLEXT_EXT_texture_edge_clamp              true
     #define GLEXT_blend_minmax                        true
+    #define GLEXT_blend_color                         true
     #define GLEXT_glClientActiveTexture               glClientActiveTexture
     #define GLEXT_glActiveTexture                     glActiveTexture
     #define GLEXT_GL_TEXTURE0                         GL_TEXTURE0
     #define GLEXT_GL_CLAMP                            GL_CLAMP_TO_EDGE
     #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE
+    #define GLEXT_glBlendColor                        glBlendColor
+    #define GLEXT_GL_CONSTANT_COLOR                   GL_CONSTANT_COLOR
+    #define GLEXT_GL_ONE_MINUS_CONSTANT_COLOR         GL_ONE_MINUS_CONSTANT_COLOR
+    #define GLEXT_GL_CONSTANT_ALPHA                   GL_CONSTANT_ALPHA
+    #define GLEXT_GL_ONE_MINUS_CONSTANT_ALPHA         GL_ONE_MINUS_CONSTANT_ALPHA
 
     // Core since 1.1
     // 1.1 does not support GL_STREAM_DRAW so we just define it to GL_DYNAMIC_DRAW
@@ -175,7 +181,7 @@
     #define GLEXT_glBlendEquation                     glBlendEquationEXT
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_EXT
 
-    // Core since 1.? - EXT_blend_color
+    // Core since 1.2 - EXT_blend_color
     #define GLEXT_blend_color                         sfogl_ext_EXT_blend_color
     #define GLEXT_glBlendColor                        glBlendColorEXT
     #define GLEXT_GL_CONSTANT_COLOR                   GL_CONSTANT_COLOR_EXT
