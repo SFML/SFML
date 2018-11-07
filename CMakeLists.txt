@@ -115,7 +115,7 @@ if(SFML_OS_ANDROID)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_ANDROID_NDK}/sources/third_party/sfml)
 
     # we install libs in a subdirectory named after the ABI (lib/mips/*.so)
-    set(LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
+    set(DEFAULT_LIB_SUFFIX "/${CMAKE_ANDROID_ARCH_ABI}")
 
     # pass shared STL configuration (if any)
     if (CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
@@ -150,6 +150,8 @@ endif()
 # add an option to let the user specify a custom directory for doc, examples, licence, readme and other miscellaneous files
 sfml_set_option(SFML_MISC_INSTALL_PREFIX "${DEFAULT_INSTALL_MISC_DIR}" PATH "Prefix installation path for miscellaneous files")
 
+# optional directory suffix for libraries
+sfml_set_option(SFML_LIB_SUFFIX "${DEFAULT_LIB_SUFFIX}" STRING "Optional directory suffix for libraries (e.g. armeabi-v7a)")
 
 # force building sfml-window, if sfml-graphics module is built
 if(SFML_BUILD_GRAPHICS AND NOT SFML_BUILD_WINDOW)
@@ -479,7 +481,7 @@ elseif(SFML_OS_MACOSX)
 elseif(SFML_OS_IOS)
 
     # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${LIB_SUFFIX})
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION lib${SFML_LIB_SUFFIX})
 
     if(NOT SFML_USE_SYSTEM_DEPS)
         # since the iOS libraries are built as static, we must install the SFML dependencies

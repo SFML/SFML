@@ -1,6 +1,6 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib@LIB_SUFFIX@
+libdir=${exec_prefix}/lib@SFML_LIB_SUFFIX@
 includedir=${prefix}/include
 
 Name: SFML-network

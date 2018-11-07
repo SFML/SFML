@@ -160,8 +160,8 @@ macro(sfml_add_library target)
     # add the install rule
     install(TARGETS ${target} EXPORT SFMLConfigExport
             RUNTIME DESTINATION bin COMPONENT bin
-            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
-            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
+            LIBRARY DESTINATION lib${SFML_LIB_SUFFIX} COMPONENT bin
+            ARCHIVE DESTINATION lib${SFML_LIB_SUFFIX} COMPONENT devel
             FRAMEWORK DESTINATION "." COMPONENT bin)
 
     # add <project>/include as public include directory
@@ -325,7 +325,7 @@ function(sfml_export_targets)
     if (SFML_BUILD_FRAMEWORKS)
         set(config_package_location "SFML.framework/Resources/CMake")
     else()
-        set(config_package_location lib${LIB_SUFFIX}/cmake/SFML)
+        set(config_package_location lib${SFML_LIB_SUFFIX}/cmake/SFML)
     endif()
     configure_package_config_file("${CURRENT_DIR}/SFMLConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
         INSTALL_DESTINATION "${config_package_location}")
