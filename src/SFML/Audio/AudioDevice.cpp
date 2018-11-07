@@ -107,7 +107,7 @@ bool AudioDevice::isExtensionSupported(const std::string& extension)
     // This device will not be used in this function and merely
     // makes sure there is a valid OpenAL device for extension
     // queries if none has been created yet.
-    std::auto_ptr<AudioDevice> device;
+    std::unique_ptr<AudioDevice> device;
     if (!audioDevice)
         device.reset(new AudioDevice);
 
@@ -125,7 +125,7 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
     // This device will not be used in this function and merely
     // makes sure there is a valid OpenAL device for format
     // queries if none has been created yet.
-    std::auto_ptr<AudioDevice> device;
+    std::unique_ptr<AudioDevice> device;
     if (!audioDevice)
         device.reset(new AudioDevice);
 
