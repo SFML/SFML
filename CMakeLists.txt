@@ -15,9 +15,6 @@ endmacro()
 
 # these options have to be set before CMake detects/configures the toolchain
 
-# determine whether to create a debug or release build
-sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
-
 # Suppress Cygwin legacy warning
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
