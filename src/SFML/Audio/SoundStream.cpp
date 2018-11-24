@@ -41,17 +41,18 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundStream::SoundStream() :
-m_thread          (&SoundStream::streamData, this),
-m_threadMutex     (),
-m_threadStartState(Stopped),
-m_isStreaming     (false),
-m_buffers         (),
-m_channelCount    (0),
-m_sampleRate      (0),
-m_format          (0),
-m_loop            (false),
-m_samplesProcessed(0),
-m_bufferSeeks     ()
+m_thread            (&SoundStream::streamData, this),
+m_threadMutex       (),
+m_threadStartState  (Stopped),
+m_isStreaming       (false),
+m_buffers           (),
+m_channelCount      (0),
+m_sampleRate        (0),
+m_format            (0),
+m_loop              (false),
+m_samplesProcessed  (0),
+m_bufferSeeks       (),
+m_processingInterval(milliseconds(10))
 {
 
 }
@@ -266,6 +267,13 @@ Int64 SoundStream::onLoop()
 
 
 ////////////////////////////////////////////////////////////
+void SoundStream::setProcessingInterval(Time interval)
+{
+    m_processingInterval = interval;
+}
+
+
+////////////////////////////////////////////////////////////
 void SoundStream::streamData()
 {
     bool requestStop = false;
@@ -384,7 +392,7 @@ void SoundStream::streamData()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::getStatus() != Stopped)
-            sleep(milliseconds(10));
+            sleep(m_processingInterval);
     }
 
     // Stop the playback

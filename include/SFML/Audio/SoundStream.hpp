@@ -251,6 +251,24 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual Int64 onLoop();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the processing interval
+    ///
+    /// The processing interval controls the period
+    /// between calls to the fillAndPushBuffer function. You may
+    /// want to use a small interval if you want to process the
+    /// captured data in real time, for example.
+    ///
+    /// Note: this is only a hint, the actual period may vary.
+    /// So don't rely on this parameter to implement precise timing.
+    ///
+    /// The default processing interval is 10 ms.
+    ///
+    /// \param interval Processing interval
+    ///
+    ////////////////////////////////////////////////////////////
+    void setProcessingInterval(Time interval);
+
 private:
 
     ////////////////////////////////////////////////////////////
@@ -317,6 +335,7 @@ private:
     bool          m_loop;                     ///< Loop flag (true to loop, false to play once)
     Uint64        m_samplesProcessed;         ///< Number of buffers processed since beginning of the stream
     Int64         m_bufferSeeks[BufferCount]; ///< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    Time          m_processingInterval;       ///< Time period between calls to fillAndPushBuffer
 };
 
 } // namespace sf
