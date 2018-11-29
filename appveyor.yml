@@ -7,6 +7,6 @@ build_script:
 
     cd build
 
-    cmake .. -DSFML_BUILD_EXAMPLES=TRUE
+    cmake .. -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE
 
     cmake --build . --target install

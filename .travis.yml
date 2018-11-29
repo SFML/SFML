@@ -16,7 +16,7 @@ addons:
 
 before_script:
 - mkdir build && cd build
-- cmake .. -G"$GENERATOR" $CMAKE_FLAGS
+- cmake .. -G"$GENERATOR" $CMAKE_FLAGS -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_BUILD_EXAMPLES=TRUE
 
 script:
 - sudo cmake --build . --target install
@@ -29,28 +29,28 @@ matrix:
     compiler: gcc
     env:
     - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS="-DSFML_BUILD_EXAMPLES=TRUE"
+    - CMAKE_FLAGS=""
 
   # Linux - clang
   - os: linux
     compiler: clang
     env:
     - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS="-DSFML_BUILD_EXAMPLES=TRUE"
+    - CMAKE_FLAGS=""
 
   # macOS - Xcode 10
   - os: osx
     osx_image: xcode10
     env:
     - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DSFML_BUILD_FRAMEWORKS=TRUE -DSFML_BUILD_EXAMPLES=TRUE"
+    - CMAKE_FLAGS="-DSFML_BUILD_FRAMEWORKS=TRUE"
 
   # iOS - Xcode 9
   - os: osx
     osx_image: xcode10
     env:
     - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DSFML_BUILD_EXAMPLES=TRUE -DIOS_PLATFORM=SIMULATOR"
+    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
 
 notifications:
   email: false
