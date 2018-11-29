@@ -220,13 +220,24 @@ int main()
                 // Adjust the viewport when the window is resized
                 if (event.type == sf::Event::Resized)
                 {
+                    sf::Vector2u textureSize = backgroundTexture.getSize();
+                    
                     // Make the window the active window for OpenGL calls
                     window.setActive(true);
 
                     glViewport(0, 0, event.size.width, event.size.height);
+                    glMatrixMode(GL_PROJECTION);
+                    glLoadIdentity();
+                    GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
+                    glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
 
                     // Make the window no longer the active window for OpenGL calls
                     window.setActive(false);
+                    
+                    sf::View view;
+                    view.setSize(textureSize.x, textureSize.y);
+                    view.setCenter(textureSize.x/2.f, textureSize.y/2.f);
+                    window.setView(view);
                 }
             }
 
@@ -242,8 +253,15 @@ int main()
             glClear(GL_DEPTH_BUFFER_BIT);
 
             // We get the position of the mouse cursor, so that we can move the box accordingly
+            
+            #ifdef SFML_SYSTEM_IOS
+            sf::Vector2i pos = sf::Touch::getPosition(0);
+            float x =  pos.x * 200.f / window.getSize().x - 100.f;
+            float y = -pos.y * 200.f / window.getSize().y + 100.f;
+            #else
             float x =  sf::Mouse::getPosition(window).x * 200.f / window.getSize().x - 100.f;
             float y = -sf::Mouse::getPosition(window).y * 200.f / window.getSize().y + 100.f;
+            #endif
 
             // Apply some transformations
             glMatrixMode(GL_MODELVIEW);
