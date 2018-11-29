@@ -205,7 +205,17 @@ unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
 ////////////////////////////////////////////////////////////
 void RenderTextureImplFBO::unbind()
 {
-    glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, 0));
+    GLint drawFboId = 0, readFboId = 0;
+    glGetIntegerv(GLEXT_GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+    glGetIntegerv(GLEXT_GL_READ_FRAMEBUFFER_BINDING, &readFboId);
+
+    if (drawFboId != 0) {
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, 0));
+    }
+
+    if (readFboId != 0) {
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_READ_FRAMEBUFFER, 0));
+    }
 }
 
 
