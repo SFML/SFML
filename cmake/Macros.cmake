@@ -297,6 +297,42 @@ macro(sfml_add_example target)
 
 endmacro()
 
+# add a new target which is a SFML test
+# example: sfml_add_test(sfml-test
+#                           ftp.cpp ...
+#                           sfml-network)
+function(sfml_add_test target SOURCES DEPENDS)
+
+    # set a source group for the source files
+    source_group("" FILES ${SOURCES})
+
+    # check whether resources must be added in target
+    set(target_input ${SOURCES})
+
+    # create the target
+    add_executable(${target} ${target_input})
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Tests")
+
+    # link the target to its SFML dependencies
+    if(DEPENDS)
+        target_link_libraries(${target} PRIVATE ${DEPENDS})
+    endif()
+    
+    # Add the test
+    add_test(${target} ${target})
+
+    # If building shared libs on windows we must copy the dependencies into the folder
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        foreach (DEPENDENCY ${DEPENDS})
+            add_custom_command(TARGET ${target} PRE_BUILD
+                                COMMAND ${CMAKE_COMMAND} -E copy
+                                $<TARGET_FILE:${DEPENDENCY}>
+                                $<TARGET_FILE_DIR:${target}>)
+        endforeach()
+    endif()
+endfunction()
 
 # Create an interface library for an external dependency. This virtual target can provide
 # link specifications and include directories to be used by dependees.
