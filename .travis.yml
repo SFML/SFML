@@ -14,7 +14,7 @@ addons:
 
 before_script:
 - mkdir build && cd build
-- cmake .. $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE
+- cmake .. $CMAKE_FLAGS -DSFML_BUILD_TEST_SUITE=TRUE -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE
 
 script:
 - cmake --build . --target install
