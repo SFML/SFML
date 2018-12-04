@@ -1,10 +1,7 @@
-sudo: false
-dist: trusty
-language: c++
+language: cpp
 
 addons:
-  apt:
-    packages:
+  apt_packages:
     - cmake
     - libxrandr-dev
     - libudev-dev
@@ -13,44 +10,42 @@ addons:
     - libvorbis-dev
     - g++
     - clang
+    - libgl1-mesa-dev
 
 before_script:
 - mkdir build && cd build
-- cmake .. -G"$GENERATOR" $CMAKE_FLAGS
+- cmake .. $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE
 
 script:
-- sudo cmake --build . --target install
+- cmake --build . --target install
 
 matrix:
   include:
 
   # Linux - gcc
   - os: linux
+    dist: xenial
     compiler: gcc
-    env:
-    - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS="-DSFML_BUILD_EXAMPLES=TRUE"
 
   # Linux - clang
   - os: linux
+    dist: xenial
     compiler: clang
-    env:
-    - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS="-DSFML_BUILD_EXAMPLES=TRUE"
 
   # macOS - Xcode 10
   - os: osx
     osx_image: xcode10
     env:
-    - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DSFML_BUILD_FRAMEWORKS=TRUE -DSFML_BUILD_EXAMPLES=TRUE"
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install"
 
-  # iOS - Xcode 9
+  # iOS - Xcode 10
   - os: osx
     osx_image: xcode10
     env:
-    - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DSFML_BUILD_EXAMPLES=TRUE -DIOS_PLATFORM=SIMULATOR"
+     - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+
+  # Windows - vs2017
+  - os: windows
 
 notifications:
   email: false
