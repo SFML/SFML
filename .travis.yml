@@ -22,30 +22,61 @@ script:
 matrix:
   include:
 
-  # Linux - gcc
-  - os: linux
+  - name: "Linux gcc Dynamic"
+    os: linux
     dist: xenial
     compiler: gcc
+  
+  - name: "Linux gcc Static"
+    os: linux
+    dist: xenial
+    compiler: gcc
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
 
-  # Linux - clang
-  - os: linux
+  - name: "Linux clang Dynamic"
+    os: linux
     dist: xenial
     compiler: clang
 
-  # macOS - Xcode 10
-  - os: osx
+  - name: "Linux clang Static"
+    os: linux
+    dist: xenial
+    compiler: clang
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "macOS Xcode 10 Dynamic"
+    os: osx
     osx_image: xcode10
     env:
      - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install"
 
-  # iOS - Xcode 10
-  - os: osx
+  - name: "macOS Xcode 10 Frameworks"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install -DSFML_BUILD_FRAMEWORKS=TRUE"
+
+  - name: "macOS Xcode 10 Static"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install -DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "iOS Xcode 10"
+    os: osx
     osx_image: xcode10
     env:
      - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
 
-  # Windows - vs2017
-  - os: windows
+  - name: "Visual studio 15 2017 Dynamic"
+    os: windows
+
+  - name: "Visual studio 15 2017 Static"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
 
 notifications:
   email: false
