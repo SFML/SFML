@@ -46,6 +46,13 @@ GlResource::~GlResource()
 
 
 ////////////////////////////////////////////////////////////
+void GlResource::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
+{
+    priv::GlContext::registerContextDestroyCallback(callback, arg);
+}
+
+
+////////////////////////////////////////////////////////////
 GlResource::TransientContextLock::TransientContextLock()
 {
     priv::GlContext::acquireTransientContext();

@@ -33,6 +33,9 @@
 
 namespace sf
 {
+
+struct ContextSettings;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -52,15 +55,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create the render texture implementation
     ///
-    /// \param width       Width of the texture to render to
-    /// \param height      Height of the texture to render to
-    /// \param textureId   OpenGL identifier of the target texture
-    /// \param depthBuffer Is a depth buffer requested?
+    /// \param width      Width of the texture to render to
+    /// \param height     Height of the texture to render to
+    /// \param textureId  OpenGL identifier of the target texture
+    /// \param settings   Context settings to create render-texture with
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, bool depthBuffer) = 0;
+    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering

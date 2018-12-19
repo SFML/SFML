@@ -475,16 +475,20 @@ public:
     /// remote path is relative to the current directory of the
     /// FTP server.
     ///
+    /// The append parameter controls whether the remote file is
+    /// appended to or overwritten if it already exists.
+    ///
     /// \param localFile  Path of the local file to upload
     /// \param remotePath The directory in which to put the file on the server
     /// \param mode       Transfer mode
+    /// \param append     Pass true to append to or false to overwrite the remote file if it already exists
     ///
     /// \return Server response to the request
     ///
     /// \see download
     ///
     ////////////////////////////////////////////////////////////
-    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary);
+    Response upload(const std::string& localFile, const std::string& remotePath, TransferMode mode = Binary, bool append = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a command to the FTP server

@@ -118,6 +118,9 @@ unsigned short TcpSocket::getRemotePort() const
 ////////////////////////////////////////////////////////////
 Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout)
 {
+    // Disconnect the socket if it is already connected
+    disconnect();
+
     // Create the internal socket if it doesn't exist
     create();
 
@@ -243,7 +246,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     for (sent = 0; sent < size; sent += result)
     {
         // Send a chunk of data
-        result = ::send(getHandle(), static_cast<const char*>(data) + sent, size - sent, flags);
+        result = ::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<int>(size - sent), flags);
 
         // Check for errors
         if (result < 0)

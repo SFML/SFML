@@ -61,6 +61,21 @@ namespace
     void close(FT_Stream)
     {
     }
+
+    // Helper to intepret memory as a specific type
+    template <typename T, typename U>
+    inline T reinterpret(const U& input)
+    {
+        T output;
+        std::memcpy(&output, &input, sizeof(U));
+        return output;
+    }
+
+    // Combine outline thickness, boldness and font glyph index into a single 64-bit key
+    sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 index)
+    {
+        return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) | (static_cast<sf::Uint64>(bold) << 31) | index;
+    }
 }
 
 
@@ -331,10 +346,8 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     // Get the page corresponding to the character size
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
-    // Build the key by combining the code point, bold flag, and outline thickness
-    Uint64 key = (static_cast<Uint64>(*reinterpret_cast<Uint32*>(&outlineThickness)) << 32)
-               | (static_cast<Uint64>(bold ? 1 : 0) << 31)
-               |  static_cast<Uint64>(codePoint);
+    // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
+    Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint));
 
     // Search the glyph into the cache
     GlyphTable::const_iterator it = glyphs.find(key);
@@ -714,6 +727,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 // Make the texture 2 times bigger
                 Texture newTexture;
                 newTexture.create(textureWidth * 2, textureHeight * 2);
+                newTexture.setSmooth(true);
                 newTexture.update(page.texture);
                 page.texture.swap(newTexture);
             }
@@ -763,17 +777,22 @@ bool Font::setCurrentSize(unsigned int characterSize) const
                 err() << "Failed to set bitmap font size to " << characterSize << std::endl;
                 err() << "Available sizes are: ";
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
-                    err() << face->available_sizes[i].height << " ";
+                {
+                    const unsigned int size = (face->available_sizes[i].y_ppem + 32) >> 6;
+                    err() << size << " ";
+                }
                 err() << std::endl;
+            }
+            else
+            {
+                err() << "Failed to set font size to " << characterSize << std::endl;
             }
         }
 
         return result == FT_Err_Ok;
     }
-    else
-    {
-        return true;
-    }
+
+     return true;
 }
 
 

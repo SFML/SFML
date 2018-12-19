@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/FileInputStream.hpp>
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
@@ -44,7 +44,7 @@ FileInputStream::FileInputStream()
 ////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     if (m_file)
         delete m_file;
 #else
@@ -57,7 +57,7 @@ FileInputStream::~FileInputStream()
 ////////////////////////////////////////////////////////////
 bool FileInputStream::open(const std::string& filename)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     if (m_file)
         delete m_file;
     m_file = new priv::ResourceStream(filename);
@@ -76,7 +76,7 @@ bool FileInputStream::open(const std::string& filename)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::read(void* data, Int64 size)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->read(data, size);
 #else
     if (m_file)
@@ -90,7 +90,7 @@ Int64 FileInputStream::read(void* data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::seek(Int64 position)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->seek(position);
 #else
     if (m_file)
@@ -111,7 +111,7 @@ Int64 FileInputStream::seek(Int64 position)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::tell()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->tell();
 #else
     if (m_file)
@@ -125,7 +125,7 @@ Int64 FileInputStream::tell()
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::getSize()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->getSize();
 #else
     if (m_file)

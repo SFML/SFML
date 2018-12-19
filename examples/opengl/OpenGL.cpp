@@ -175,7 +175,7 @@ int main()
                 }
 
                 // Return key: toggle mipmapping
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return))
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Enter))
                 {
                     if (mipmapEnabled)
                     {

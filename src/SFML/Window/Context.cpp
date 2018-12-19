@@ -81,6 +81,13 @@ const Context* Context::getActiveContext()
 
 
 ////////////////////////////////////////////////////////////
+Uint64 Context::getActiveContextId()
+{
+    return priv::GlContext::getActiveContextId();
+}
+
+
+////////////////////////////////////////////////////////////
 bool Context::isExtensionAvailable(const char* name)
 {
     return priv::GlContext::isExtensionAvailable(name);

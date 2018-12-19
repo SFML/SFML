@@ -1,5 +1,171 @@
 # Changelog
 
+## SFML 2.5.1
+
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.5.1
+
+### General
+
+  * Various CMake fixes (#1414, #1416, #1436, #1439, #1467, #1470)
+  * Fixed the installation of pkg-config files (#1466)
+  * Fixed two conversion warnings (#1454)
+  * [Android] Fixes all symbols in sfml-main are hidden (#1457, #1460)
+  * [Android] Fixed some `#define` flag problem (#1458)
+  * [Android] Fix deadlock in main cleanup (#1265)
+  * [iOS] Modernized toolchain file (#1411)
+  * [iOS] Check that `<SFML/Main.hpp>` is used (#1412)
+  * [macOS] Add `-ObjC` flag to fix static linking on macOS (#1485)
+
+### Window
+
+**Bugfixes**
+
+  * [iOS] Use default supported rotations when none are specified (#1417)
+  * [iOS] Fixed autocomplete window overlaps keyboard (#1473, #1482)
+  * [Linux] Fixed dual monitor issue (#1226, #1238)
+  * [Linux] Fixed issue where fullscreen window didn't go over task bars on top and left on in Ubuntu (#1224)
+  * [Linux] Fixed the Unix clipboard implementation causing an abort due to internal data races in Xlib (#1437)
+  * [macOS] Added additional system cursors (#1401, #1413, #1425)
+  * [Windows] Fixed swapped colors for custom cursors (#1464, #1465, #1491)
+
+### Graphics
+
+**Bugfixes**
+
+  * Fixed a bug in which a `sf::RenderTexture` would not be re-activated after being re-created (#1438)
+  * Fixed `sf::RenderTextureImplFBO`'s destructor incorrectly triggering deletion of other `sf::RenderTextureImplFBO`'s active FBOs (#1440)
+  * Fix `sf::RenderWindow::setActive` incorrectly trying to unbind an FBO during deactivation (#1442)
+  * Fixed `sf::RenderTexture::display()` dereferencing a NULL pointer when being called before `sf::RenderTexture::create()` (#1446)
+  * Fixed bug in `sf::Text` when applying an outline color/thickness (#1176)
+  * Squash duplicated `sf::Font` glyphs to single chars (#1461)
+  * Fixed two issues with glyph sub-pixel positioning (#1452)
+  * Reduced context locking & unlocking while creating textures (#1459)
+  * Fixed the error message when the wrong bitmap font size is selected (#1456, #1474, #1492)
+
+### Audio
+
+**Bugfixes**
+
+  * Fixed performance issue with reading WAV files (#1450)
+
+## SFML 2.5.0
+
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.5.0
+
+### General
+
+  * Replaced FindSFML.cmake with SFMLConfig.cmake (#1335)
+  * Markdown'd and updated readme, changelog, contributing and license files (#1196, #1368, #1317)
+  * Improve packaging support (#1173)
+  * Added Tagfile generation and search (#1327)
+  * Added CMake variables to select the modules to be built (#798, #800)
+  * Do not install extlibs if `SFML_USE_SYSTEM_DEPS` is true (#1236, #1237)
+  * Fixed various type conversion/comparison warnings (#1325)
+  * [Android] Increased minimum API version to 14 (#1362)
+  * [Android] Removed custom toolchain and added support for the newest NDK version and Gradle (#1350, #1393)
+  * [iOS] Updated the binary libs from exlibs/libs-ios (#1207, #1209)
+  * [iOS] Use a CMake toolchain file for iOS build (#1268, #1269)
+  * [iOS] Install extlibs if needed (#1348)
+  * [iOS] Drop 32 bit support (#1374)
+  * [iOS] Force correct iOS architecture for cmake (#1373, #1377)
+  * [iOS] Added iOS example (#1378)
+  * [macOS] Fixed launch of cocoa examples (#1334)
+  * [macOS] Improved application signing process (#1020, #1036, #1194)
+  * [macOS] Improved CMake script (#1215, #1371)
+  * [macOS] Use `-stdlib=libc++` (#1361)
+  * [OpenBSD] Added support for OpenBSD (#1330)
+
+### System
+
+**Bugfixes**
+
+  * Added protected destructor to `sf::NonCopyable` to prevent possible resource leaks (#1125, #1161)
+  * Fixed crash when `sf::Clock` is constructed in a global scope (#1258)
+
+### Window
+
+**Features**
+
+  * Implemented Cursor API (#269, #784, #827)
+  * Implemented Clipboard API (#715, #1204, #1221)
+  * Renamed a few key codes (#1395)
+  * Added joystick example (#1363)
+  * [Windows] Added support for interfacing with joysticks via DirectInput when it is available (#1251, #1326)
+  * [Windows] Fix discrete GPU preference symbols being exported from the wrong place (#1192, #1406)
+
+**Bugfixes**
+
+  * [Android] Return correct key code for delete/backspace (#1309, #1362)
+  * [iOS] Don't need to find vorbisfile or vorbisenc (#1347)
+  * [Linux] Fixed `sf::Window::getPosition()` returning incorrect position because of differences in window managers (#1228, #1266)
+  * [Linux] Fix X11 key repeat handling not filtering out events from other windows (#1223, #1230, #1291)
+  * [Linux] Restore fullscreen of a non-visible window (#1339)
+  * [macOS] Fixed window menu not working (#1091, #1180, #1193)
+  * [macOS] Fixed crash with application messing hardware detection e.g. TeamViewer (#1323)
+  * [macOS] Added support for (some) Hat/POV axis (#1248)
+  * [Windows] Prevent uninitialized read by zeroing memory (#1264)
+  * [Windows] Fixed modifier keys handling (#1357)
+
+### Graphics
+
+**Features**
+
+  * Implemented additional line spacing and letter spacing in `sf::Text` (#928, #1366)
+  * Added `sf::VertexBuffer` class (#1308)
+  * Added GPU local texture copying support, allowing performance optimizations and texture swapping (#1119, #1319, #1320)
+  * Optimize performance by skipping `glTexCoordPointer()` call if not needed (#1015)
+  * Generate shape outline vertices only if necessary (#925, #1356)
+  * Removed dependency to libjpeg, stb_image_write now supports writing JPEG files (#1278, #1279)
+  * Enable comparing `sf::Transform` and optimize resetting OpenGL back to the identity matrix (#1298)
+  * Added missing `setActive()` virtual method to `sf::RenderTarget` (#1157)
+  * Updated stb_image to v2.16 and stb_image_write to v1.07 (#1270)
+  * Added `sf::RenderTexture` stencil and multisampling support (#1274, #1285)
+  * Added example demonstrating `sf::VertexBuffer`, `sf::Shader` and `sf::Thread` usage (#1352)
+  * Optimized `sf::RenderTexture` performance (#1379)
+
+**Bugfixes**
+
+  * Properly free memory in `sf::Font::cleanup()` (#1119)
+  * Fixed memory leak in `sf::Font` (#1216)
+  * Fix OpenGL texture coordinate pointer not being updated correctly under certain conditions (#1297)
+  * Fix for broken text when the font is reloaded (#1345)
+  * Fix memory leak in `sf::Text` (#1233, #1360)
+  * Fixed strict aliasing punning warning when generating the key of a glyph in Font.cpp (#1187, #1396)
+  * Fixed OpenGL version string being parsed incorrectly on some platforms (#1249, #1390)
+  * [macOS] Worked around render target bug (#1132, #1342)
+  * [Windows] Replaced time-based joystick poll with a hardware event handler (#1179, #1195, #1198, #1199, #1421)
+
+### Audio
+
+**Features**
+
+  * Added loop point support to `sf::Music` (#177, #629)
+  * Added support for the extensible PCM wave file format (#1296)
+  * [iOS] Enable audio module (#1338)
+
+**Bugfixes**
+
+  * Fixed inconsistent seek behavior in `sf::SoundStream` (#1118)
+  * Fixed stack overflow in `sf::SoundStream::fillAndPushBuffer()` (#1154)
+  * Fixed seeking quirks in the FLAC reader (#966, #1162)
+  * Allow polymorphism with `sf::SoundSource` (#1185)
+  * Fixed WAV file writer writing wrong header values (#1280, #1281)
+  * Small bugfix to argument of `alcCaptureOpenDevice()` (#1304, #1305)
+  * [iOS] Find OpenAL correctly (#1263, #1376)
+  * [Windows] Updated OpenAL Soft to 1.18.1 fixing crashes (#1247, #1260)
+
+### Network
+
+**Features**
+
+  * Add append/overwrite parameter to Ftp::upload (#1072, #1399)
+
+**Bugfixes**
+
+  * Fixed wrong condition for building network support (#1253)
+  * Changed TCP listen backlog from 0 to SOMAXCONN (#1369, #1407)
+  * Fixed socket reuse not conforming to documentation (#1346, #1408)
+
 ## SFML 2.4.2
 
 Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.2
@@ -16,7 +182,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.2
 
   * Fixed bug where TransientContextLock would hang (#1165, #1172)
   * [Linux] Fixed GLX extensions being loaded too late (#1183)
-  * [Linux] Fix wrong types passed to XChangeProperty (#1168 #1171)
+  * [Linux] Fix wrong types passed to XChangeProperty (#1168, #1171)
   * [Windows] Make context disabling via wglMakeCurrent more tolerant of broken drivers (#1186)
 
 ### Graphics
@@ -47,7 +213,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.1
   * [Linux] Fixed an issue where GNOME flags window unresponsive (#1089, #1138)
   * [Linux] Fixed leak of XVisualInfo objects during GlxContext creation (#1135)
   * [Linux] Fixed possible hang when setting visibility if external window sources (#1136)
-  * [OS X] Fixed inconsistency between doc and impl on OS X for the grab feature (#1133, #1148, #1150)
+  * [macOS] Fixed inconsistency between doc and impl on macOS for the grab feature (#1133, #1148, #1150)
   * [Windows] Fixed context memory leaks (#1143, #1002)
 
 ### Graphics
@@ -77,7 +243,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.0
   * Updated/fixed string comparisons in Config.cmake (#1102)
   * Added the missing -s postfix for the RelWithDebInfo config (#1014)
   * [Android] Fixed current Android compilation issues (#1116, #1111, #1079)
-  * [OS X] Update Xcode template material (#976, #968)
+  * [macOS] Update Xcode template material (#976, #968)
   * [Windows] Added support for VS 2015 (#972)
   * [Windows] Create and install PDB debug symbols alongside binaries (#1037)
 
@@ -119,10 +285,10 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.0
   * [Android] Accept touch events from "multiple" devices (#954, #953)
   * [Android] Copy the selected EGL context's settings to SFML (#1039)
   * [Linux] Fixed modifiers causing sf::Keyboard::Unknown being returned (#1022, #1012)
-  * [OS X] Improved memory management on OS X (#962, #790)
-  * [OS X] Fixed crash when resizing a window to a zero-height/width size (#986, #984)
-  * [OS X] Use the mouse button constant instead of 0 to avoid a compiler error on OSX (#1035)
-  * [OS X] OS X improvement: warnings + bugfix + refactoring, the lot! (#1042)
+  * [macOS] Improved memory management on macOS (#962, #790)
+  * [macOS] Fixed crash when resizing a window to a zero-height/width size (#986, #984)
+  * [macOS] Use the mouse button constant instead of 0 to avoid a compiler error on macOS (#1035)
+  * [macOS] macOS improvement: warnings + bugfix + refactoring, the lot! (#1042)
 
 ### Graphics
 
@@ -150,7 +316,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.4.0
 **Bugfixes**
 
   * Added an assignment operator to SoundSource (#864)
-  * [OS X] Updates OpenAL-soft for OS X to version 1.17.2 (#1057, #900, #1000)
+  * [macOS] Updates OpenAL-soft for macOS to version 1.17.2 (#1057, #900, #1000)
   * Fixed a bug where vorbis can't handle large buffers (#1067)
   * Added support for 24-bit .wav files (#958, #955)
   * Fixed threading issue in sf::SoundRecorder (#1011)
@@ -241,7 +407,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3
   * Added missing includes in the general headers (#851)
   * [Android] Updated toolchain file and dependencies (#791)
   * [Linux] Fixed missing pthread dependency (#794)
-  * [OS X] Relaxed CMake installation rules regarding framework dependencies (#767)
+  * [macOS] Relaxed CMake installation rules regarding framework dependencies (#767)
 
 ### Deprecated API
 
@@ -264,8 +430,8 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3
   * [iOS] Fixed inconsistency between sf::Touch::getPosition and touch events (#875)
   * [Linux] Fixed Alt+F4 not getting triggered in window mode (#274)
   * [Linux] Fixed Unix joystick stuff (#838)
-  * [OS X] Fixed typo in JoystickImpl.cpp to prevent a crash (#762, #765)
-  * [OS X] Fixed an issue in InputImpl::getSFOpenGLViewFromSFMLWindow (#782, #792)
+  * [macOS] Fixed typo in JoystickImpl.cpp to prevent a crash (#762, #765)
+  * [macOS] Fixed an issue in InputImpl::getSFOpenGLViewFromSFMLWindow (#782, #792)
 
 ### Graphics
 
@@ -293,7 +459,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.3
 **Bugfixes**
 
   * Fixed access violation error in the destructor of sf::AudioDevice (#30, #602)
-  * [OS X] Fixed threading issue with sf::SoundStream and OpenAL (#541, #831)
+  * [macOS] Fixed threading issue with sf::SoundStream and OpenAL (#541, #831)
 
 ### Network
 
@@ -319,15 +485,15 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.2
   * Slight adjustments to the examples (#737)
   * [FreeBSD] Various configuration fixes (#577, #578)
   * [Linux] Updated FindSFML.cmake to add UDev to SFML's dependencies (#728, #729, #734, #736)
-  * [OS X] Fixed incorrect symlink in freetype.framework (#519)
-  * [OS X] CMake module for correct dependencies (#548)
-  * [OS X] Fixed SFML target for Xcode (#595, #596)
-  * [OS X] Updated implementation, mainly reverting to non-ARC (#601)
-  * [OS X] Fixed memory leaks and dead store (#615)
-  * [OS X] Improved event handling and performance (#617)
-  * [OS X] Reduced memory usage (#672, #698)
-  * [OS X] OS X 10.10 support (#691, #699)
-  * [OS X] Improve flexibility of dependencies' locations (#713)
+  * [macOS] Fixed incorrect symlink in freetype.framework (#519)
+  * [macOS] CMake module for correct dependencies (#548)
+  * [macOS] Fixed SFML target for Xcode (#595, #596)
+  * [macOS] Updated implementation, mainly reverting to non-ARC (#601)
+  * [macOS] Fixed memory leaks and dead store (#615)
+  * [macOS] Improved event handling and performance (#617)
+  * [macOS] Reduced memory usage (#672, #698)
+  * [macOS] macOS 10.10 support (#691, #699)
+  * [macOS] Improve flexibility of dependencies' locations (#713)
   * [Windows] Removed the hack that copied external libraries into SFML static libraries (dbf01a7)
 
 ### System
@@ -352,10 +518,10 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.2
   * Added window methods to request and to check focus (#518, #525, #613, #723, #735)
   * Provide name, manufacturer ID and product ID via sf::Joystick (#152, #528)
   * [FreeBSD] Joystick support (#477)
-  * [OS X] Improved integration with menus and dock actions (#11)
-  * [OS X] Support for OpenGL 3.2 (#84)
-  * [OS X] Improved fullscreen support (#343)
-  * [OS X] Added support for retina displays (#353, #388)
+  * [macOS] Improved integration with menus and dock actions (#11)
+  * [macOS] Support for OpenGL 3.2 (#84)
+  * [macOS] Improved fullscreen support (#343)
+  * [macOS] Added support for retina displays (#353, #388)
   * [Windows] Removed support for Windows 9x (#469)
   * [Windows] Fixed typo in Windows keyboard implementation (#516)
 
@@ -368,14 +534,14 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.2
   * [Linux] Output error message when XOpenDisplay() fails (#508, #616)
   * [Linux] Resize window with setSize when sf::Style::Resize is set (#466)
   * [Linux] Fixed broken key repeat on window recreation (#564, #567)
-  * [OS X] Fixed KeyReleased not being fired in fullscreen mode (#465)
-  * [OS X] Fixed an issue where disconnecting the keyboard would cause a crash (#467)
-  * [OS X] Fixed unexpected resizing behavior (#468)
-  * [OS X] Improved resizing windows (#474)
-  * [OS X] Fixed memory leak with sf::Window::create() (#484)
-  * [OS X] Fixed menu shortcuts in fullscreen on OS X (#527)
-  * [OS X] Improved cursor hiding (#703)
-  * [OS X] Fixed right click not detected with trackpads (#716, #730)
+  * [macOS] Fixed KeyReleased not being fired in fullscreen mode (#465)
+  * [macOS] Fixed an issue where disconnecting the keyboard would cause a crash (#467)
+  * [macOS] Fixed unexpected resizing behavior (#468)
+  * [macOS] Improved resizing windows (#474)
+  * [macOS] Fixed memory leak with sf::Window::create() (#484)
+  * [macOS] Fixed menu shortcuts in fullscreen on macOS (#527)
+  * [macOS] Improved cursor hiding (#703)
+  * [macOS] Fixed right click not detected with trackpads (#716, #730)
   * [Windows] Fixed joystick POV values (ef1d29b)
   * [Windows] Fixed Unicode inconsistency (#635)
   * [Windows] Fixed Alt+F4 and mouse clicks issues (#437, #457)
@@ -462,12 +628,12 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.1
 **Features**
 
   * Now using inotify on Linux to avoid constantly polling joystick connections (#96)
-  * Add keypad return, equal and period keys support for OS X
-  * Improved mouse events on OS X regarding fullscreen mode
-  * Improved mouse events on OS X (#213, #277)
-  * Improved reactivity of setMousePosition on OS X (#290)
-  * Added support for right control key on OS X
-  * Improved TextEntered for OS X (#377)
+  * Add keypad return, equal and period keys support for macOS
+  * Improved mouse events on macOS regarding fullscreen mode
+  * Improved mouse events on macOS (#213, #277)
+  * Improved reactivity of setMousePosition on macOS (#290)
+  * Added support for right control key on macOS
+  * Improved TextEntered for macOS (#377)
   * Improved the performances of Window::getSize() (the size is now cached)
   * Added the WM_CLASS property to SFML windows on Linux
   * Fake resize events are no longer sent when the window is moved, on Linux
@@ -480,7 +646,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.1
   * Fixed ContextSettings ignored on Linux when creating a window (#35)
   * Fixed windows bigger than the desktop not appearing on Windows (#215)
   * Fixed KeyRelease events sometimes not reported on Linux (#404)
-  * Fixed mouse moved event on OS X when dragging the cursor (#277)
+  * Fixed mouse moved event on macOS when dragging the cursor (#277)
   * Fixed KeyRelease event with CMD key pressed (#381)
   * Fixed taskbar bugs on Windows (#328, #69)
   * Fixed Window::getPosition() on Linux (#346)
@@ -509,7 +675,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.1
 
 **Bugfixes**
 
-  * Added a workaround for a bug in the OS X implementation of OpenAL (unsupported channel count no properly detected) (#201)
+  * Added a workaround for a bug in the macOS implementation of OpenAL (unsupported channel count no properly detected) (#201)
   * Fixed SoundBuffer::loadFromStream reading past the end of the stream (#214)
 
 ### Network

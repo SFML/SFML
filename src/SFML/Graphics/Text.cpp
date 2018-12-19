@@ -50,15 +50,17 @@ namespace
     // Add a glyph quad to the vertex array
     void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear, float outlineThickness = 0)
     {
-        float left   = glyph.bounds.left;
-        float top    = glyph.bounds.top;
-        float right  = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top  + glyph.bounds.height;
+        float padding = 1.0;
 
-        float u1 = static_cast<float>(glyph.textureRect.left);
-        float v1 = static_cast<float>(glyph.textureRect.top);
-        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
-        float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height);
+        float left   = glyph.bounds.left - padding;
+        float top    = glyph.bounds.top - padding;
+        float right  = glyph.bounds.left + glyph.bounds.width + padding;
+        float bottom = glyph.bounds.top  + glyph.bounds.height + padding;
+
+        float u1 = static_cast<float>(glyph.textureRect.left) - padding;
+        float v1 = static_cast<float>(glyph.textureRect.top) - padding;
+        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
+        float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height) + padding;
 
         vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * top    - outlineThickness, position.y + top    - outlineThickness), color, sf::Vector2f(u1, v1)));
         vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * top    - outlineThickness, position.y + top    - outlineThickness), color, sf::Vector2f(u2, v1)));
@@ -444,12 +446,15 @@ void Text::ensureGeometryUpdate() const
     {
         Uint32 curChar = m_string[i];
 
+        // Skip the \r char to avoid weird graphical issues
+        if (curChar == '\r')
+            continue;
+
         // Apply the kerning offset
         x += m_font->getKerning(prevChar, curChar, m_characterSize);
-        prevChar = curChar;
 
         // If we're using the underlined style and there's a new line, draw a line
-        if (isUnderlined && (curChar == L'\n'))
+        if (isUnderlined && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
@@ -458,13 +463,15 @@ void Text::ensureGeometryUpdate() const
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
-        if (isStrikeThrough && (curChar == L'\n'))
+        if (isStrikeThrough && (curChar == L'\n' && prevChar != L'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
                 addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
         }
+
+        prevChar = curChar;
 
         // Handle special characters
         if ((curChar == L' ') || (curChar == L'\n') || (curChar == L'\t'))

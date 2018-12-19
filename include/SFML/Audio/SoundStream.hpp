@@ -387,7 +387,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     virtual void onSeek(Uint32 timeOffset)
+///     virtual void onSeek(sf::Time timeOffset)
 ///     {
 ///         // Change the current position in the stream source
 ///         ...

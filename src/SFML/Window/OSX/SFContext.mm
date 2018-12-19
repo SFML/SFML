@@ -103,6 +103,9 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     [m_context clearDrawable];
 
     if (m_context == [NSOpenGLContext currentContext])

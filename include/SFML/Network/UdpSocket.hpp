@@ -82,6 +82,11 @@ public:
     /// system to automatically pick an available port, and then
     /// call getLocalPort to retrieve the chosen port.
     ///
+    /// Since the socket can only be bound to a single port at
+    /// any given moment, if it is already bound when this
+    /// function is called, it will be unbound from the previous
+    /// port before being bound to the new one.
+    ///
     /// \param port    Port to bind the socket to
     /// \param address Address of the interface to bind to
     ///

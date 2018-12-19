@@ -42,7 +42,7 @@ namespace sf
     // Window handle is HWND (HWND__*) on Windows
     typedef HWND__* WindowHandle;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
     // Window handle is Window (unsigned long) on Unix - X11
     typedef unsigned long WindowHandle;

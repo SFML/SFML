@@ -27,7 +27,6 @@ Features
  * You can choose between command line tool or bundle application, the latter will contains all
    SFML dependencies so you can run your app on another computer without manually installing SFML.
  * You can choose between using SFML libraries as dylibs or frameworks.
- * You can choose your compiler and C++ standard library / dialect.
  * You can choose with SFML module you want to use into your project.
  * You automatically get a basic example to test SFML right away.
 
@@ -38,13 +37,10 @@ Prerequisites
 
 Before installing the template, make sure you have installed:
 
- - Xcode 4 or greater, up to date
- - the Command Line Tools
- - SFML 2, either as frameworks or dylibs
+ - Xcode 4 or greater, up to date;
+ - the Command Line Tools;
+ - SFML 2, either as frameworks or dylibs, as described in the official tutorials.
 
-There is one constraint on the installation of SFML: the frameworks needs to be installed in
-/Library/Frameworks and the dylibs into /usr/local/lib. You don't need both but make sure they are
-in the correct folder.
 
 You should also be familiar with Xcode. If needed checkout this document:
 http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/000-About_Xcode/about.html
@@ -144,10 +140,10 @@ FAQ
 
   * I get strange linker error about std::string and other STL types. What should I do?
 
-    This probably means you're compiling your project against a different implementation of the STL
-    than SFML. When you created the project, you might have chosen the wrong C++ compiler & standard
-    library. You can update your project's build settings; more specifically the Compiler for
-    C/C++/Objective-C, the C++ language Dialect and the C++ Standard Library. You can find more
-    information in the getting started tutorial for Mac OS X on the official web site.
+    This probably means you're compiling your project against a different
+    implementation of the STL than the one used by SFML. You can update your
+    project build settings to match the settings used to compile SFML; more
+    specifically the Compiler for C/C++/Objective-C, the C++ language Dialect
+    and the C++ Standard Library.
 
 

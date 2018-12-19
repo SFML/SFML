@@ -146,7 +146,8 @@ subject to the following restrictions:
 # If you're using static libraries (which is not recommended) you should remove this script from your project.
 
 # SETTINGS
-CMAKE_INSTALL_FRAMEWORK_PREFIX="@CMAKE_INSTALL_FRAMEWORK_PREFIX@"
+SFML_DEPENDENCIES_INSTALL_PREFIX="@SFML_DEPENDENCIES_INSTALL_PREFIX@"
+CMAKE_INSTALL_FRAMEWORK_PREFIX="@CMAKE_INSTALL_PREFIX@"
 CMAKE_INSTALL_LIB_PREFIX="@CMAKE_INSTALL_PREFIX@/lib"
 FRAMEWORKS_FULL_PATH="$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/"
 
@@ -231,11 +232,11 @@ require () # $1 is a SFML module like 'system' or 'audio'
             # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL" frameworks too
             for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL"
             do
-                copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/$f.framework" "$dest/$f.framework"
+                copy "$SFML_DEPENDENCIES_INSTALL_PREFIX/$f.framework" "$dest/$f.framework"
             done
         elif [ "$1" = "graphics" ]
         then
-            copy "$CMAKE_INSTALL_FRAMEWORK_PREFIX/freetype.framework" "$dest/freetype.framework"
+            copy "$SFML_DEPENDENCIES_INSTALL_PREFIX/freetype.framework" "$dest/freetype.framework"
         fi
     fi
 }
