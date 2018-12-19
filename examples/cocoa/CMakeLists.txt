@@ -20,7 +20,7 @@ function(compile_xib)
     endif()
 
     # Default args taken from Xcode 9 when it generates a nib from a xib
-    set(DEFAULT_ARGS --errors --warnings --notices --module cocoa --auto-activate-custom-fonts --target-device mac --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --output-format human-readable-text)
+    set(DEFAULT_ARGS --errors --warnings --notices --module cocoa --auto-activate-custom-fonts --target-device mac --output-format human-readable-text)
 
     add_custom_command(OUTPUT "${THIS_OUTPUT}"
         COMMAND "${IBTOOL}" ${DEFAULT_ARGS} "${THIS_INPUT}" --compile "${THIS_OUTPUT}"
@@ -58,4 +58,4 @@ sfml_add_example(cocoa
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE TRUE
                       MACOSX_BUNDLE_INFO_PLIST ${SRCROOT}/resources/Cocoa-Info.plist)
-target_link_libraries(cocoa "-framework Cocoa -framework Foundation")
+target_link_libraries(cocoa PRIVATE "-framework Cocoa" "-framework Foundation" sfml-graphics)

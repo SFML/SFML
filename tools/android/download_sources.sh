@@ -34,12 +34,6 @@ then
     tar -C build -xf src/$OGG.tar.gz
 fi
 
-wget -nc -P src http://www.mega-nerd.com/libsndfile/files/$SNDFILE.tar.gz
-if [ ! -d "$PWD/tmp/$SNDFILE" ]
-then
-    tar -C build -xf src/$SNDFILE.tar.gz
-fi
-
 wget -nc -P src http://download.savannah.gnu.org/releases/freetype/$FREETYPE.tar.gz
 if [ ! -d "$PWD/tmp/$FREETYPE" ]
 then

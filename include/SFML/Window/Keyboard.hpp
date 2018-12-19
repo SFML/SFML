@@ -96,18 +96,18 @@ public:
         Menu,         ///< The Menu key
         LBracket,     ///< The [ key
         RBracket,     ///< The ] key
-        SemiColon,    ///< The ; key
+        Semicolon,    ///< The ; key
         Comma,        ///< The , key
         Period,       ///< The . key
         Quote,        ///< The ' key
         Slash,        ///< The / key
-        BackSlash,    ///< The \ key
+        Backslash,    ///< The \ key
         Tilde,        ///< The ~ key
         Equal,        ///< The = key
-        Dash,         ///< The - key
+        Hyphen,       ///< The - key (hyphen)
         Space,        ///< The Space key
-        Return,       ///< The Return key
-        BackSpace,    ///< The Backspace key
+        Enter,        ///< The Enter/Return keys
+        Backspace,    ///< The Backspace key
         Tab,          ///< The Tabulation key
         PageUp,       ///< The Page up key
         PageDown,     ///< The Page down key
@@ -116,7 +116,7 @@ public:
         Insert,       ///< The Insert key
         Delete,       ///< The Delete key
         Add,          ///< The + key
-        Subtract,     ///< The - key
+        Subtract,     ///< The - key (minus, usually from numpad)
         Multiply,     ///< The * key
         Divide,       ///< The / key
         Left,         ///< Left arrow
@@ -150,7 +150,15 @@ public:
         F15,          ///< The F15 key
         Pause,        ///< The Pause key
 
-        KeyCount      ///< Keep last -- the total number of keyboard keys
+        KeyCount,     ///< Keep last -- the total number of keyboard keys
+
+        // Deprecated values:
+
+        Dash      = Hyphen,       ///< \deprecated Use Hyphen instead
+        BackSpace = Backspace,    ///< \deprecated Use Backspace instead
+        BackSlash = Backslash,    ///< \deprecated Use Backslash instead
+        SemiColon = Semicolon,    ///< \deprecated Use Semicolon instead
+        Return    = Enter         ///< \deprecated Use Enter instead
     };
 
     ////////////////////////////////////////////////////////////

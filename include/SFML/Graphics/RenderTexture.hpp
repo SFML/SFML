@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 
 
 namespace sf
@@ -82,8 +83,38 @@ public:
     ///
     /// \return True if creation has been successful
     ///
+    /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
+    ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, bool depthBuffer = false);
+    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the render-texture
+    ///
+    /// Before calling this function, the render-texture is in
+    /// an invalid state, thus it is mandatory to call it before
+    /// doing anything with the render-texture.
+    /// The last parameter, \a settings, is useful if you want to enable
+    /// multi-sampling or use the render-texture for OpenGL rendering that
+    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
+    /// you should leave this parameter at its default value.
+    ///
+    /// \param width    Width of the render-texture
+    /// \param height   Height of the render-texture
+    /// \param settings Additional settings for the underlying OpenGL texture and context
+    ///
+    /// \return True if creation has been successful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the maximum anti-aliasing level supported by the system
+    ///
+    /// \return The maximum anti-aliasing level supported by the system
+    ///
+    ////////////////////////////////////////////////////////////
+    static unsigned int getMaximumAntialiasingLevel();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable texture smoothing

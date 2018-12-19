@@ -9,4 +9,4 @@ set(SRC ${SRCROOT}/VoIP.cpp
 # define the voip target
 sfml_add_example(voip
                  SOURCES ${SRC}
-                 DEPENDS sfml-audio sfml-network sfml-system)
+                 DEPENDS sfml-audio sfml-network)

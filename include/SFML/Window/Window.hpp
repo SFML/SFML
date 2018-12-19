@@ -581,6 +581,14 @@ private:
 /// structure which is passed as an optional argument when creating the
 /// window.
 ///
+/// On dual-graphics systems consisting of a low-power integrated GPU
+/// and a powerful discrete GPU, the driver picks which GPU will run an
+/// SFML application. In order to inform the driver that an SFML application
+/// can benefit from being run on the more powerful discrete GPU,
+/// #SFML_DEFINE_DISCRETE_GPU_PREFERENCE can be placed in a source file
+/// that is compiled and linked into the final application. The macro
+/// should be placed outside of any scopes in the global namespace.
+///
 /// Usage example:
 /// \code
 /// // Declare and create a new window

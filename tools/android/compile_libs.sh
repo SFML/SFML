@@ -48,9 +48,6 @@ rm $DESTDIR/$1/usr/lib/libFLAC*.so*
 cd  $LOCALDIR/build/libvorbis-* && sed -i 's/-version-info/-avoid-version/g' lib/Makefile.in lib/Makefile.am && ./configure $HOST $PREFIX --enable-shared=no && make && make install
 rm $DESTDIR/$1/usr/lib/libvorbis*.so*
 
-# Compile libsndfile (important: --disable-sqlite)
-cd  $LOCALDIR/build/libsndfile-* && sed -i 's/-version-info/-avoid-version/g' src/Makefile.in src/Makefile.am && ./configure $HOST $PREFIX --disable-sqlite && make && make install
-
 # Compile freetype
 cd  $LOCALDIR/build/freetype-* && sed -i 's/-version-info/-avoid-version/g' builds/unix/unix-cc.in && ./configure $HOST $PREFIX && make && make install
 

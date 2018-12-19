@@ -97,7 +97,8 @@ public:
     /// In blocking mode, this function may take a while, especially
     /// if the remote peer is not reachable. The last parameter allows
     /// you to stop trying to connect after a given timeout.
-    /// If the socket was previously connected, it is first disconnected.
+    /// If the socket is already connected, the connection is
+    /// forcibly disconnected before attempting to connect again.
     ///
     /// \param remoteAddress Address of the remote peer
     /// \param remotePort    Port of the remote peer

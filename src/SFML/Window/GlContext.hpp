@@ -31,6 +31,7 @@
 #include <SFML/Config.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -68,6 +69,19 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static void cleanupResource();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Register a function to be called when a context is destroyed
+    ///
+    /// This is used for internal purposes in order to properly
+    /// clean up OpenGL resources that cannot be shared bwteen
+    /// contexts.
+    ///
+    /// \param callback Function to be called when a context is destroyed
+    /// \param arg      Argument to pass when calling the function
+    ///
+    ////////////////////////////////////////////////////////////
+    static void registerContextDestroyCallback(ContextDestroyCallback callback, void* arg);
 
     ////////////////////////////////////////////////////////////
     /// \brief Acquires a context for short-term use on the current thread
@@ -144,6 +158,17 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context's ID
+    ///
+    /// The context ID is used to identify contexts when
+    /// managing unshareable OpenGL resources.
+    ///
+    /// \return The active context's ID or 0 if no context is currently active
+    ///
+    ////////////////////////////////////////////////////////////
+    static Uint64 getActiveContextId();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -218,6 +243,12 @@ protected:
     virtual bool makeCurrent(bool current) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Notify unshared GlResources of context destruction
+    ///
+    ////////////////////////////////////////////////////////////
+    void cleanupUnsharedResources();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Evaluate a pixel format configuration
     ///
     /// This functions can be used by implementations that have
@@ -259,6 +290,11 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void checkSettings(const ContextSettings& requestedSettings);
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const Uint64 m_id; ///< Unique number that identifies the context
 };
 
 } // namespace priv

@@ -63,6 +63,9 @@ unsigned short TcpListener::getLocalPort() const
 ////////////////////////////////////////////////////////////
 Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address)
 {
+    // Close the socket if it is already bound
+    close();
+
     // Create the internal socket if it doesn't exist
     create();
 
@@ -80,7 +83,7 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
     }
 
     // Listen to the bound port
-    if (::listen(getHandle(), 0) == -1)
+    if (::listen(getHandle(), SOMAXCONN) == -1)
     {
         // Oops, socket is deaf
         err() << "Failed to listen to port " << port << std::endl;

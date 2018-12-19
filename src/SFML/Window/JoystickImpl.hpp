@@ -90,6 +90,10 @@ struct JoystickState
 
     #include <SFML/Window/FreeBSD/JoystickImpl.hpp>
 
+#elif defined(SFML_SYSTEM_OPENBSD)
+
+    #include <SFML/Window/OpenBSD/JoystickImpl.hpp>
+
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Window/OSX/JoystickImpl.hpp>

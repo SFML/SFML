@@ -619,16 +619,16 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_SYM:
         case AKEYCODE_EXPLORER:
         case AKEYCODE_ENVELOPE:           return Keyboard::Unknown;
-        case AKEYCODE_ENTER:              return Keyboard::Return;
-        case AKEYCODE_DEL:                return Keyboard::BackSpace;
+        case AKEYCODE_ENTER:              return Keyboard::Enter;
+        case AKEYCODE_DEL:                return Keyboard::Backspace;
         case AKEYCODE_FORWARD_DEL:        return Keyboard::Delete;
         case AKEYCODE_GRAVE:              return Keyboard::Tilde;
         case AKEYCODE_MINUS:              return Keyboard::Subtract;
         case AKEYCODE_EQUALS:             return Keyboard::Equal;
         case AKEYCODE_LEFT_BRACKET:       return Keyboard::LBracket;
         case AKEYCODE_RIGHT_BRACKET:      return Keyboard::RBracket;
-        case AKEYCODE_BACKSLASH:          return Keyboard::BackSlash;
-        case AKEYCODE_SEMICOLON:          return Keyboard::SemiColon;
+        case AKEYCODE_BACKSLASH:          return Keyboard::Backslash;
+        case AKEYCODE_SEMICOLON:          return Keyboard::Semicolon;
         case AKEYCODE_APOSTROPHE:         return Keyboard::Quote;
         case AKEYCODE_SLASH:              return Keyboard::Slash;
         case AKEYCODE_AT:

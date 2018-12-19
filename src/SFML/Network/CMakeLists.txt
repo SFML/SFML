@@ -44,14 +44,12 @@ endif()
 
 source_group("" FILES ${SRC})
 
-# build the list of external libraries to link
-set(NETWORK_EXT_LIBS)
-if(SFML_OS_WINDOWS)
-    set(NETWORK_EXT_LIBS ${NETWORK_EXT_LIBS} ws2_32)
-endif()
-
 # define the sfml-network target
 sfml_add_library(sfml-network
-                 SOURCES ${SRC}
-                 DEPENDS sfml-system
-                 EXTERNAL_LIBS ${NETWORK_EXT_LIBS})
+                 SOURCES ${SRC})
+
+# setup dependencies
+target_link_libraries(sfml-network PUBLIC sfml-system)
+if(SFML_OS_WINDOWS)
+    target_link_libraries(sfml-network PRIVATE ws2_32)
+endif()

@@ -45,7 +45,7 @@
 
     #include <GL/gl.h>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
     #if defined(SFML_OPENGL_ES)
         #include <GLES/gl.h>

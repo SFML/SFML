@@ -32,7 +32,7 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
     #include <SFML/Window/Win32/ClipboardImpl.hpp>
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
     #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #elif defined(SFML_SYSTEM_MACOS)
     #include <SFML/Window/OSX/ClipboardImpl.hpp>
