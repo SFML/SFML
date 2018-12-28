@@ -113,6 +113,16 @@ public:
     virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Update the contents of the window
+    ///
+    /// This function updates the window with what
+    /// has been drawn so far. Calling this
+    /// function is mandatory at the end of rendering.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void display() override;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the window as the current target
     ///        for OpenGL rendering
     ///
