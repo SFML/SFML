@@ -204,7 +204,7 @@ public:
     /// it may leave the texture in an undefined state.
     ///
     ////////////////////////////////////////////////////////////
-    void display();
+    virtual void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the texture

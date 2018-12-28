@@ -93,6 +93,13 @@ bool RenderWindow::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
+void RenderWindow::display()
+{
+    Window::display();
+}
+
+
+////////////////////////////////////////////////////////////
 Image RenderWindow::capture() const
 {
     Vector2u windowSize = getSize();

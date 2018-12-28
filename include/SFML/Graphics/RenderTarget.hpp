@@ -269,6 +269,17 @@ public:
     void draw(const VertexBuffer& vertexBuffer, std::size_t firstVertex, std::size_t vertexCount, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Update the contents of the target texture
+    ///
+    /// This function updates the target texture with what
+    /// has been drawn so far. Like for windows, calling this
+    /// function is mandatory at the end of rendering. Not calling
+    /// it may leave the texture in an undefined state.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void display() = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the target
     ///
     /// \return Size in pixels
