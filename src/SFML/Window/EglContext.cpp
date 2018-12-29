@@ -233,11 +233,11 @@ void EglContext::createSurface(EGLNativeWindowType window)
 ////////////////////////////////////////////////////////////
 void EglContext::destroySurface()
 {
+    // Ensure that this context is no longer active since our surface is going to be destroyed
+    setActive(false);
+
     eglCheck(eglDestroySurface(m_display, m_surface));
     m_surface = EGL_NO_SURFACE;
-
-    // Ensure that this context is no longer active since our surface is now destroyed
-    setActive(false);
 }
 
 
