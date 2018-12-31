@@ -249,7 +249,8 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
         EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
         EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
-        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel),
+        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel ? 1 : 0),
+        EGL_SAMPLES, static_cast<EGLint>(settings.antialiasingLevel),
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
         EGL_NONE
