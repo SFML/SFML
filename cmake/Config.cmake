@@ -31,6 +31,10 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "^k?FreeBSD$")
     set(SFML_OS_FREEBSD 1)
     # don't use the OpenGL ES implementation on FreeBSD
     set(OPENGL_ES 0)
+elseif(CMAKE_SYSTEM_NAME MATCHES "^NetBSD$")
+    set(SFML_OS_NETBSD 1)
+    # don't use the OpenGL ES implementation on NetBSD
+    set(OPENGL_ES 0)
 elseif(CMAKE_SYSTEM_NAME MATCHES "^OpenBSD$")
     set(SFML_OS_OPENBSD 1)
     # don't use the OpenGL ES implementation on OpenBSD
