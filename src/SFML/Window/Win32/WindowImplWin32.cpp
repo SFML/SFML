@@ -127,7 +127,7 @@ namespace
     DWORD translateStyle(sf::Uint32 style)
     {
         // Choose the window style according to the Style parameter
-        DWORD win32Style = WS_VISIBLE;
+        DWORD win32Style = 0;
         if (style == sf::Style::None)
         {
             win32Style |= WS_POPUP;
@@ -592,7 +592,6 @@ void WindowImplWin32::switchToWindowed()
     int height = rectangle.bottom - rectangle.top;
 
     SetWindowPos(m_handle, HWND_TOP, left, top, width, height, SWP_FRAMECHANGED);
-
 
     fullscreenWindow = NULL;
 }

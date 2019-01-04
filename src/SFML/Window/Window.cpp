@@ -379,7 +379,7 @@ void Window::setState(State state)
         if (state == State::Windowed)
         {
             if (this == fullscreenWindow)
-                fullscreenWindow == NULL;
+                fullscreenWindow = NULL;
         }
 
         if (state == State::Fullscreen)
