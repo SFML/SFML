@@ -152,8 +152,7 @@ void goToFullscreenMode(ANativeActivity* activity)
     // Hide the status bar
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN,
         AWINDOW_FLAG_FULLSCREEN);
-
-    // Hide the navigation bar
+    
     JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
@@ -178,6 +177,11 @@ void goToFullscreenMode(ANativeActivity* activity)
         jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
         jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
         flags |= SYSTEM_UI_FLAG_LOW_PROFILE;
+
+        // Hide the navigation bar
+        jfieldID FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_HIDE_NAVIGATION", "I");
+        jint SYSTEM_UI_FLAG_HIDE_NAVIGATION = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        flags |= SYSTEM_UI_FLAG_HIDE_NAVIGATION;
     }
 
     // API Level 16
