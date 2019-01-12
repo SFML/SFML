@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,7 +34,7 @@
 
 namespace sf
 {
-class Window;
+class WindowBase;
 
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time state of the mouse
@@ -101,7 +101,7 @@ public:
     /// \return Current position of the mouse
     ///
     ////////////////////////////////////////////////////////////
-    static Vector2i getPosition(const Window& relativeTo);
+    static Vector2i getPosition(const WindowBase& relativeTo);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current position of the mouse in desktop coordinates
@@ -124,7 +124,7 @@ public:
     /// \param relativeTo Reference window
     ///
     ////////////////////////////////////////////////////////////
-    static void setPosition(const Vector2i& position, const Window& relativeTo);
+    static void setPosition(const Vector2i& position, const WindowBase& relativeTo);
 };
 
 } // namespace sf

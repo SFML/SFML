@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -46,7 +46,7 @@ RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, co
 m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(mode, title, style, settings);
+    Window::create(mode, title, style, settings);
 }
 
 
@@ -55,7 +55,7 @@ RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(handle, settings);
+    Window::create(handle, settings);
 }
 
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,16 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/Cursor.hpp>
-#include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowStyle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/WindowBase.hpp>
 
 
 namespace sf
@@ -46,7 +38,6 @@ namespace sf
 namespace priv
 {
     class GlContext;
-    class WindowImpl;
 }
 
 class Event;
@@ -55,7 +46,7 @@ class Event;
 /// \brief Window that serves as a target for OpenGL rendering
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Window : GlResource, NonCopyable
+class SFML_WINDOW_API Window : public WindowBase, GlResource
 {
 public:
 
@@ -120,6 +111,20 @@ public:
     /// If \a style contains Style::Fullscreen, then \a mode
     /// must be a valid video mode.
     ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(VideoMode mode, const String& title, Uint32 style = Style::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window
+    ///
+    /// If the window was already created, it closes it first.
+    /// If \a style contains Style::Fullscreen, then \a mode
+    /// must be a valid video mode.
+    ///
     /// The fourth parameter is an optional structure specifying
     /// advanced OpenGL context settings such as antialiasing,
     /// depth-buffer bits, etc.
@@ -130,7 +135,19 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    void create(VideoMode mode, const String& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
+    virtual void create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window from an existing control
+    ///
+    /// Use this function if you want to create an OpenGL
+    /// rendering area into an already existing control.
+    /// If the window was already created, it closes it first.
+    ///
+    /// \param handle   Platform-specific handle of the control
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -147,7 +164,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    void create(WindowHandle handle, const ContextSettings& settings = ContextSettings());
+    virtual void create(WindowHandle handle, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the window and destroy all the attached resources
@@ -159,19 +176,7 @@ public:
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
-    void close();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Tell whether or not the window is open
-    ///
-    /// This function returns whether or not the window exists.
-    /// Note that a hidden window (setVisible(false)) is open
-    /// (therefore this function would return true).
-    ///
-    /// \return True if the window is open, false if it has been closed
-    ///
-    ////////////////////////////////////////////////////////////
-    bool isOpen() const;
+    virtual void close();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the OpenGL context of the window
@@ -185,144 +190,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const ContextSettings& getSettings() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Pop the event on top of the event queue, if any, and return it
-    ///
-    /// This function is not blocking: if there's no pending event then
-    /// it will return false and leave \a event unmodified.
-    /// Note that more than one event may be present in the event queue,
-    /// thus you should always call this function in a loop
-    /// to make sure that you process every pending event.
-    /// \code
-    /// sf::Event event;
-    /// while (window.pollEvent(event))
-    /// {
-    ///    // process event...
-    /// }
-    /// \endcode
-    ///
-    /// \param event Event to be returned
-    ///
-    /// \return True if an event was returned, or false if the event queue was empty
-    ///
-    /// \see waitEvent
-    ///
-    ////////////////////////////////////////////////////////////
-    bool pollEvent(Event& event);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Wait for an event and return it
-    ///
-    /// This function is blocking: if there's no pending event then
-    /// it will wait until an event is received.
-    /// After this function returns (and no error occurred),
-    /// the \a event object is always valid and filled properly.
-    /// This function is typically used when you have a thread that
-    /// is dedicated to events handling: you want to make this thread
-    /// sleep as long as no new event is received.
-    /// \code
-    /// sf::Event event;
-    /// if (window.waitEvent(event))
-    /// {
-    ///    // process event...
-    /// }
-    /// \endcode
-    ///
-    /// \param event Event to be returned
-    ///
-    /// \return False if any error occurred
-    ///
-    /// \see pollEvent
-    ///
-    ////////////////////////////////////////////////////////////
-    bool waitEvent(Event& event);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the position of the window
-    ///
-    /// \return Position of the window, in pixels
-    ///
-    /// \see setPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2i getPosition() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change the position of the window on screen
-    ///
-    /// This function only works for top-level windows
-    /// (i.e. it will be ignored for windows created from
-    /// the handle of a child window/control).
-    ///
-    /// \param position New position, in pixels
-    ///
-    /// \see getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2i& position);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the rendering region of the window
-    ///
-    /// The size doesn't include the titlebar and borders
-    /// of the window.
-    ///
-    /// \return Size in pixels
-    ///
-    /// \see setSize
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2u getSize() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change the size of the rendering region of the window
-    ///
-    /// \param size New size, in pixels
-    ///
-    /// \see getSize
-    ///
-    ////////////////////////////////////////////////////////////
-    void setSize(const Vector2u& size);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change the title of the window
-    ///
-    /// \param title New title
-    ///
-    /// \see setIcon
-    ///
-    ////////////////////////////////////////////////////////////
-    void setTitle(const String& title);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change the window's icon
-    ///
-    /// \a pixels must be an array of \a width x \a height pixels
-    /// in 32-bits RGBA format.
-    ///
-    /// The OS default icon is used by default.
-    ///
-    /// \param width  Icon's width, in pixels
-    /// \param height Icon's height, in pixels
-    /// \param pixels Pointer to the array of pixels in memory. The
-    ///               pixels are copied, so you need not keep the
-    ///               source alive after calling this function.
-    ///
-    /// \see setTitle
-    ///
-    ////////////////////////////////////////////////////////////
-    void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the window
-    ///
-    /// The window is shown by default.
-    ///
-    /// \param visible True to show the window, false to hide it
-    ///
-    ////////////////////////////////////////////////////////////
-    void setVisible(bool visible);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -340,62 +207,6 @@ public:
     void setVerticalSyncEnabled(bool enabled);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the mouse cursor
-    ///
-    /// The mouse cursor is visible by default.
-    ///
-    /// \param visible True to show the mouse cursor, false to hide it
-    ///
-    ////////////////////////////////////////////////////////////
-    void setMouseCursorVisible(bool visible);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Grab or release the mouse cursor
-    ///
-    /// If set, grabs the mouse cursor inside this window's client
-    /// area so it may no longer be moved outside its bounds.
-    /// Note that grabbing is only active while the window has
-    /// focus.
-    ///
-    /// \param grabbed True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    void setMouseCursorGrabbed(bool grabbed);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the displayed cursor to a native system cursor
-    ///
-    /// Upon window creation, the arrow cursor is used by default.
-    ///
-    /// \warning The cursor must not be destroyed while in use by
-    ///          the window.
-    ///
-    /// \warning Features related to Cursor are not supported on
-    ///          iOS and Android.
-    ///
-    /// \param cursor Native system cursor type to display
-    ///
-    /// \see sf::Cursor::loadFromSystem
-    /// \see sf::Cursor::loadFromPixels
-    ///
-    ////////////////////////////////////////////////////////////
-    void setMouseCursor(const Cursor& cursor);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable automatic key-repeat
-    ///
-    /// If key repeat is enabled, you will receive repeated
-    /// KeyPressed events while keeping a key pressed. If it is disabled,
-    /// you will only get a single event when the key is pressed.
-    ///
-    /// Key repeat is enabled by default.
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    void setKeyRepeatEnabled(bool enabled);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Limit the framerate to a maximum fixed frequency
     ///
     /// If a limit is set, the window will use a small delay after
@@ -411,19 +222,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setFramerateLimit(unsigned int limit);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change the joystick threshold
-    ///
-    /// The joystick threshold is the value below which
-    /// no JoystickMoved event will be generated.
-    ///
-    /// The threshold value is 0.1 by default.
-    ///
-    /// \param threshold New threshold, in the range [0, 100]
-    ///
-    ////////////////////////////////////////////////////////////
-    void setJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the window as the current target
@@ -444,35 +242,6 @@ public:
     bool setActive(bool active = true) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Request the current window to be made the active
-    ///        foreground window
-    ///
-    /// At any given time, only one window may have the input focus
-    /// to receive input events such as keystrokes or mouse events.
-    /// If a window requests focus, it only hints to the operating
-    /// system, that it would like to be focused. The operating system
-    /// is free to deny the request.
-    /// This is not to be confused with setActive().
-    ///
-    /// \see hasFocus
-    ///
-    ////////////////////////////////////////////////////////////
-    void requestFocus();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check whether the window has the input focus
-    ///
-    /// At any given time, only one window may have the input focus
-    /// to receive input events such as keystrokes or most mouse
-    /// events.
-    ///
-    /// \return True if window has focus, false otherwise
-    /// \see requestFocus
-    ///
-    ////////////////////////////////////////////////////////////
-    bool hasFocus() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
     ///
     /// This function is typically called after all OpenGL rendering
@@ -481,41 +250,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void display();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the OS-specific handle of the window
-    ///
-    /// The type of the returned handle is sf::WindowHandle,
-    /// which is a typedef to the handle type defined by the OS.
-    /// You shouldn't need to use this function, unless you have
-    /// very specific stuff to implement that SFML doesn't support,
-    /// or implement a temporary workaround until a bug is fixed.
-    ///
-    /// \return System handle of the window
-    ///
-    ////////////////////////////////////////////////////////////
-    WindowHandle getSystemHandle() const;
-
-protected:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Function called after the window has been created
-    ///
-    /// This function is called so that derived classes can
-    /// perform their own specific initialization as soon as
-    /// the window is created.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void onCreate();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Function called after the window has been resized
-    ///
-    /// This function is called so that derived classes can
-    /// perform custom actions when the size of the window changes.
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void onResize();
 
 private:
 
@@ -542,11 +276,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* m_impl;           ///< Platform-specific implementation of the window
     priv::GlContext*  m_context;        ///< Platform-specific implementation of the OpenGL context
     Clock             m_clock;          ///< Clock for measuring the elapsed time between frames
     Time              m_frameTimeLimit; ///< Current framerate limit
-    Vector2u          m_size;           ///< Current size of the window
 };
 
 } // namespace sf

@@ -122,6 +122,10 @@ int main()
         }
     }
 
+    // Close our SFML views before destroying the underlying window
+    SFMLView1.close();
+    SFMLView2.close();
+
     // Destroy the main window (all its child controls will be destroyed)
     DestroyWindow(window);
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -572,12 +572,28 @@ m_lastInputTime  (0)
     int width  = mode.width;
     int height = mode.height;
 
-    // Choose the visual according to the context settings
-    XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+    Visual* visual = NULL;
+    int depth = 0;
+
+    // Check if the user chose to not create an OpenGL context (settings.attributeFlags will be 0xFFFFFFFF)
+    if (settings.attributeFlags == 0xFFFFFFFF)
+    {
+        // Choose default visual since the user is going to use their own rendering API
+        visual = DefaultVisual(m_display, m_screen);
+        depth = DefaultDepth(m_display, m_screen);
+    }
+    else
+    {
+        // Choose the visual according to the context settings
+        XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+
+        visual = visualInfo.visual;
+        depth = visualInfo.depth;
+    }
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.colormap = XCreateColormap(m_display, DefaultRootWindow(m_display), visualInfo.visual, AllocNone);
+    attributes.colormap = XCreateColormap(m_display, DefaultRootWindow(m_display), visual, AllocNone);
     attributes.event_mask = eventMask;
     attributes.override_redirect = (m_fullscreen && !ewmhSupported()) ? True : False;
 
@@ -586,9 +602,9 @@ m_lastInputTime  (0)
                              windowPosition.x, windowPosition.y,
                              width, height,
                              0,
-                             visualInfo.depth,
+                             depth,
                              InputOutput,
-                             visualInfo.visual,
+                             visual,
                              CWEventMask | CWOverrideRedirect | CWColormap,
                              &attributes);
 
