@@ -183,13 +183,11 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     loadLibrary("sfml-window", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-graphics", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-audio", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("sfml-network", lJNIEnv, ObjectActivityInfo);
 #else
     loadLibrary("sfml-system-d", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-window-d", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-graphics-d", lJNIEnv, ObjectActivityInfo);
     loadLibrary("sfml-audio-d", lJNIEnv, ObjectActivityInfo);
-    loadLibrary("sfml-network-d", lJNIEnv, ObjectActivityInfo);
 #endif
 
     void* handle = loadLibrary(getLibraryName(lJNIEnv, ObjectActivityInfo), lJNIEnv, ObjectActivityInfo);
