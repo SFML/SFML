@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "org.sfmldev.android"
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
