@@ -223,7 +223,18 @@ macro(sfml_add_example target)
         add_executable(${target} WIN32 ${target_input})
         target_link_libraries(${target} PRIVATE sfml-main)
     elseif(THIS_GUI_APP AND SFML_OS_IOS)
-        add_executable(${target} MACOSX_BUNDLE ${target_input})
+
+        # For iOS apps we need the launch screen storyboard,
+        # and a custom info.plist to use it
+        SET(LAUNCH_SCREEN "${CMAKE_SOURCE_DIR}/examples/assets/LaunchScreen.storyboard")
+        SET(LOGO "${CMAKE_SOURCE_DIR}/examples/assets/logo.png")
+        SET(INFO_PLIST "${CMAKE_SOURCE_DIR}/examples/assets/info.plist")
+        SET(ICONS "${CMAKE_SOURCE_DIR}/examples/assets/icon.icns")
+        add_executable(${target} MACOSX_BUNDLE ${target_input} ${LAUNCH_SCREEN} ${LOGO} ${ICONS})
+        set(RESOURCES ${LAUNCH_SCREEN} ${LOGO} ${ICONS})
+        set_target_properties(${target} PROPERTIES RESOURCE "${RESOURCES}"
+                                                   MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
+                                                   MACOSX_BUNDLE_ICON_FILE icon.icns)
         target_link_libraries(${target} PRIVATE sfml-main)
     else()
         add_executable(${target} ${target_input})
@@ -264,7 +275,8 @@ macro(sfml_add_example target)
     # add the install rule
     install(TARGETS ${target}
             RUNTIME DESTINATION ${target_install_dir} COMPONENT examples
-            BUNDLE DESTINATION ${target_install_dir} COMPONENT examples)
+            BUNDLE DESTINATION ${target_install_dir} COMPONENT examples
+			RESOURCE DESTINATION ${target_install_dir} COMPONENT examples)
 
     # install the example's source code
     install(FILES ${THIS_SOURCES}
