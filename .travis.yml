@@ -86,19 +86,20 @@ matrix:
         - platform-tools
         - build-tools-26.0.1
     env:
-      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK=/usr/local/android-sdk/ndk-bundle -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
+      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK=$TRAVIS_BUILD_DIR/android-ndk-r18b -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
     
     install: &androidInstall
-      - echo y | sdkmanager "ndk-bundle" 
       - echo y | sdkmanager "cmake;3.10.2.4988404" 
       - echo y | sdkmanager "lldb;3.1"
       - sudo ln -sf /usr/local/android-sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
+      - wget https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
+      - unzip -qq android-ndk-r18b-linux-x86_64.zip
 
   - name: "Android x86"
     language: android
     android: *androidComponents
     env:
-      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK=/usr/local/android-sdk/ndk-bundle -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
+      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_NDK=$TRAVIS_BUILD_DIR/android-ndk-r18b -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
     install: *androidInstall
 
 notifications:
