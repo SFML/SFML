@@ -252,16 +252,17 @@ int main()
             // Clear the depth buffer
             glClear(GL_DEPTH_BUFFER_BIT);
 
-            // We get the position of the mouse cursor, so that we can move the box accordingly
+            // We get the position of the mouse cursor (or touch), so that we can move the box accordingly
+            sf::Vector2i pos;
             
             #ifdef SFML_SYSTEM_IOS
-            sf::Vector2i pos = sf::Touch::getPosition(0);
-            float x =  pos.x * 200.f / window.getSize().x - 100.f;
-            float y = -pos.y * 200.f / window.getSize().y + 100.f;
+            pos = sf::Touch::getPosition(0);
             #else
-            float x =  sf::Mouse::getPosition(window).x * 200.f / window.getSize().x - 100.f;
-            float y = -sf::Mouse::getPosition(window).y * 200.f / window.getSize().y + 100.f;
+            pos = sf::Mouse::getPosition();
             #endif
+            
+            float x = pos.x * 200.f / window.getSize().x - 100.f;
+            float y = -pos.y * 200.f / window.getSize().y + 100.f;
 
             // Apply some transformations
             glMatrixMode(GL_MODELVIEW);

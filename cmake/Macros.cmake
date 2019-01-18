@@ -226,7 +226,7 @@ macro(sfml_add_example target)
 
         # For iOS apps we need the launch screen storyboard,
         # and a custom info.plist to use it
-        SET(LAUNCH_SCREEN "${CMAKE_SOURCE_DIR}/examples/assets/Launch Screen.storyboard")
+        SET(LAUNCH_SCREEN "${CMAKE_SOURCE_DIR}/examples/assets/LaunchScreen.storyboard")
         SET(LOGO "${CMAKE_SOURCE_DIR}/examples/assets/logo.png")
         SET(INFO_PLIST "${CMAKE_SOURCE_DIR}/examples/assets/info.plist")
         SET(ICONS "${CMAKE_SOURCE_DIR}/examples/assets/icon.icns")
