@@ -1,0 +1,83 @@
+Hello,i need help with sfml audio to finish my project 
+Need to add something to this code.how to make several sounds(1 or 3) to be recorded, saved and stopped,if you  pressed this key again
+
+
+
+
+
+
+
+#include<SFML/Audio.hpp> 
+#include<SFML/Graphics.hpp> 
+#include<iostream> 
+#include<conio.h> 
+int main() 
+{ 
+
+
+sf::SoundBufferRecorder recorder; 
+sf::SoundBuffer buffer; 
+sf::SoundBuffer buffer2; 
+sf::Sound sound; 
+
+
+
+char ans; 
+while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) 
+{ 
+
+if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(1))) 
+{ 
+sf::Clock clock; 
+clock.restart(); 
+recorder.start(); 
+while (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(1))) 
+{ 
+std::cout « clock.getElapsedTime().asMilliseconds() « std::endl; 
+} 
+recorder.stop(); 
+} 
+if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(0))) 
+{ 
+sf::Clock clock; 
+clock.restart(); 
+recorder.start(); 
+while (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(0))) 
+{ 
+std::cout « clock.getElapsedTime().asMilliseconds() « std::endl; 
+} 
+recorder.stop(); 
+} 
+if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
+{ 
+sf::Clock clock; 
+clock.restart(); 
+recorder.start(); 
+while (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
+{ 
+std::cout « clock.getElapsedTime().asMilliseconds() « std::endl; 
+} 
+recorder.stop(); 
+} 
+
+} 
+
+
+buffer = recorder.getBuffer(); 
+sound.setBuffer(buffer); 
+
+sound.play(); 
+if (sound.getStatus() == (sf::Sound::Status::Playing)) 
+{ 
+sound.setLoop(true); 
+} 
+
+
+while (sound.getStatus() == sf::Sound::Status::Playing) {} 
+if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) 
+{ 
+sound.getLoop(); 
+} 
+system("pause"); 
+return 0; 
+}
