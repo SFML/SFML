@@ -175,7 +175,7 @@ void goToFullscreenMode(ANativeActivity* activity)
     // API Level 14
     if (apiLevel >= 14)
     {
-        jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_LOW_PROFILE", "I");
+        jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_HIDE_NAVIGATION", "I");
         jint SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
         flags |= SYSTEM_UI_FLAG_LOW_PROFILE;
     }
