@@ -12,7 +12,7 @@ SET(SYSTEM_SRC
     "${SRCROOT}/TestUtilities/SystemUtil.hpp"
     "${SRCROOT}/TestUtilities/SystemUtil.cpp"
 )
-sfml_add_test(systemtest "${SYSTEM_SRC}"  sfml-system)
+sfml_add_test(test-sfml-system "${SYSTEM_SRC}"  sfml-system)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
@@ -20,7 +20,7 @@ if(SFML_BUILD_WINDOW)
         "${SRCROOT}/TestUtilities/WindowUtil.hpp"
         "${SRCROOT}/TestUtilities/WindowUtil.cpp"
     )
-    sfml_add_test(windowtest "${WINDOW_SRC}" sfml-window)
+    sfml_add_test(test-sfml-window "${WINDOW_SRC}" sfml-window)
 endif()
 
 if(SFML_BUILD_GRAPHICS)
@@ -30,12 +30,12 @@ if(SFML_BUILD_GRAPHICS)
         "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
     )
-    sfml_add_test(graphicstest "${GRAPHICS_SRC}" sfml-graphics)
+    sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" sfml-graphics)
 endif()
 
 # Automatically run the tests at the end of the build
 add_custom_target(runtests ALL
-                  DEPENDS systemtest windowtest graphicstest
+                  DEPENDS test-sfml-system test-sfml-window test-sfml-graphics
 )
 
 add_custom_command(TARGET runtests
