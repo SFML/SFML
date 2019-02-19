@@ -77,7 +77,7 @@ matrix:
   - name: "Visual studio 15 2017 Dynamic"
     os: windows
     env:
-      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=TRUE"
+      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=FALSE"
 
   - name: "Visual studio 15 2017 Static"
     os: windows
