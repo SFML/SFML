@@ -212,7 +212,8 @@ void Text::setFillColor(const Color& color)
                 if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
                     m_verticesBuffer.create(m_vertices.getVertexCount());
 
-                m_verticesBuffer.update(&m_vertices[0]);
+                if (m_vertices.getVertexCount() > 0)
+                    m_verticesBuffer.update(&m_vertices[0]);
             }
         }
     }
@@ -238,7 +239,8 @@ void Text::setOutlineColor(const Color& color)
                 if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
                     m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
 
-                m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+                if (m_outlineVertices.getVertexCount() > 0)
+                    m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
             }
         }
     }
@@ -617,12 +619,14 @@ void Text::ensureGeometryUpdate() const
         if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
             m_verticesBuffer.create(m_vertices.getVertexCount());
 
-        m_verticesBuffer.update(&m_vertices[0]);
+        if (m_vertices.getVertexCount() > 0)
+            m_verticesBuffer.update(&m_vertices[0]);
 
         if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
             m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
 
-        m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+        if (m_outlineVertices.getVertexCount() > 0)
+            m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
     }
 }
 
