@@ -50,7 +50,7 @@ namespace
     // Add a glyph quad to the vertex array
     void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear, float outlineThickness = 0)
     {
-        float padding = 1.0;
+        float padding = 0.5;
 
         float left   = glyph.bounds.left - padding;
         float top    = glyph.bounds.top - padding;
