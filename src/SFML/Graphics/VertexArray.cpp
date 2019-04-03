@@ -32,7 +32,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray() : m_vertices(), m_primitiveType(Points)
+VertexArray::VertexArray() : m_vertices(), m_primitiveType(PrimitiveType::Points)
 {
 }
 
