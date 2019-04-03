@@ -140,7 +140,7 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     {
         states.transform *= getTransform();
         states.texture = m_texture;
-        target.draw(m_vertices, 4, TriangleStrip, states);
+        target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, states);
     }
 }
 

@@ -56,7 +56,7 @@ namespace sf
 VertexBuffer::VertexBuffer() :
 m_buffer       (0),
 m_size         (0),
-m_primitiveType(Points),
+m_primitiveType(PrimitiveType::Points),
 m_usage        (Stream)
 {
 }
@@ -76,7 +76,7 @@ m_usage        (Stream)
 VertexBuffer::VertexBuffer(VertexBuffer::Usage usage) :
 m_buffer       (0),
 m_size         (0),
-m_primitiveType(Points),
+m_primitiveType(PrimitiveType::Points),
 m_usage        (usage)
 {
 }
