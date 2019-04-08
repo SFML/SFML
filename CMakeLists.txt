@@ -106,6 +106,9 @@ endif()
 
 # Android options
 if(SFML_OS_ANDROID)
+    # avoid missing libraries when building SFML for Android with NDK r19c and later
+    set(CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR};${CMAKE_FIND_ROOT_PATH}")
+
     # make sure there's the android library available
     if (CMAKE_ANDROID_API LESS 14)
         message(FATAL_ERROR "Android API level (${CMAKE_ANDROID_API}) must be equal or greater than 14.")
