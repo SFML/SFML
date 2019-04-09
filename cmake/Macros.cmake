@@ -175,9 +175,9 @@ macro(sfml_add_library target)
 
     # add the install rule
     install(TARGETS ${target} EXPORT SFMLConfigExport
-            RUNTIME DESTINATION bin COMPONENT bin
-            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
-            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
             FRAMEWORK DESTINATION "." COMPONENT bin)
 
     # add <project>/include as public include directory
@@ -257,42 +257,8 @@ macro(sfml_add_example target)
         target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
     endif()
 
-    set(target_install_dir ${SFML_MISC_INSTALL_PREFIX}/examples/${target})
-
-    if(BUILD_SHARED_LIBS AND (SFML_OS_LINUX OR SFML_OS_FREEBSD))
-        file(RELATIVE_PATH rel_lib_dir
-             ${CMAKE_INSTALL_PREFIX}/${target_install_dir}
-             ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
-
-        set_target_properties(${target} PROPERTIES
-                              INSTALL_RPATH "$ORIGIN/${rel_lib_dir}")
-    endif()
-
     if (SFML_OS_IOS)
         sfml_set_common_ios_properties(${target})
-    endif()
-
-    # add the install rule
-    install(TARGETS ${target}
-            RUNTIME DESTINATION ${target_install_dir} COMPONENT examples
-            BUNDLE DESTINATION ${target_install_dir} COMPONENT examples
-			RESOURCE DESTINATION ${target_install_dir} COMPONENT examples)
-
-    # install the example's source code
-    install(FILES ${THIS_SOURCES}
-            DESTINATION ${target_install_dir}
-            COMPONENT examples)
-
-    if (THIS_RESOURCES_DIR)
-        # install the example's resources as well
-        get_filename_component(THIS_RESOURCES_DIR "${THIS_RESOURCES_DIR}" ABSOLUTE)
-
-        if(NOT EXISTS "${THIS_RESOURCES_DIR}")
-            message(FATAL_ERROR "Given resources directory to install does not exist: ${THIS_RESOURCES_DIR}")
-        endif()
-        install(DIRECTORY ${THIS_RESOURCES_DIR}
-                DESTINATION ${target_install_dir}
-                COMPONENT examples)
     endif()
 
 endmacro()
@@ -441,7 +407,7 @@ function(sfml_export_targets)
     if (SFML_BUILD_FRAMEWORKS)
         set(config_package_location "SFML.framework/Resources/CMake")
     else()
-        set(config_package_location lib${LIB_SUFFIX}/cmake/SFML)
+        set(config_package_location ${CMAKE_INSTALL_LIBDIR}/cmake/SFML)
     endif()
     configure_package_config_file("${CURRENT_DIR}/SFMLConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
         INSTALL_DESTINATION "${config_package_location}")
