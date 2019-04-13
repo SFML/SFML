@@ -7,4 +7,4 @@ set(SRC ${SRCROOT}/Window.cpp)
 # define the window target
 sfml_add_example(window GUI_APP
                  SOURCES ${SRC}
-                 DEPENDS sfml-window OpenGL)
+                 DEPENDS sfml-window)

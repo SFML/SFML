@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/Window/Win32/WglExtensions.hpp>
+#include <glad/wgl.h>
 
 
 namespace sf

@@ -1,5 +1,3 @@
-
-
 # CLI based examples
 if (NOT SFML_OS_IOS)
     if(SFML_BUILD_NETWORK)

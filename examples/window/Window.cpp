@@ -2,15 +2,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
-#include <SFML/OpenGL.hpp>
+
+#define GLAD_GL_IMPLEMENTATION
+#include "gl.h"
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
-#endif
-
-#ifdef SFML_OPENGL_ES
-#define glClearDepth glClearDepthf
-#define glFrustum glFrustumf
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -31,8 +28,19 @@ int main()
     // Make it the active window for OpenGL calls
     window.setActive();
 
+    // Load OpenGL or OpenGL ES entry points using glad
+#ifdef SFML_OPENGL_ES
+    gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#else
+    gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#endif
+
     // Set the color and depth clear values
+#ifdef SFML_OPENGL_ES
+    glClearDepthf(1.f);
+#else
     glClearDepth(1.f);
+#endif
     glClearColor(0.f, 0.f, 0.f, 1.f);
 
     // Enable Z-buffer read and write
@@ -50,7 +58,11 @@ int main()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
+#ifdef SFML_OPENGL_ES
+    glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#else
     glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#endif
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
     GLfloat cube[] =
@@ -134,7 +146,11 @@ int main()
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
+#ifdef SFML_OPENGL_ES
+                glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#else
                 glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#endif
             }
         }
 
