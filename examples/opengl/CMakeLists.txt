@@ -12,9 +12,15 @@ if (SFML_OS_IOS)
     set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 endif()
 
+if(SFML_OPENGL_ES)
+    set(DEPENDENCY GLES) 
+else()
+    set(DEPENDENCY OpenGL) 
+endif()
+
 # define the opengl target
 sfml_add_example(opengl GUI_APP
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS sfml-graphics OpenGL
+                 DEPENDS sfml-graphics ${DEPENDENCY}
                  RESOURCES_DIR resources)

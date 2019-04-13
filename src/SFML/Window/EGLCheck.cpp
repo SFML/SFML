@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/System/Err.hpp>
+#include <EGL/egl.h>
 
 
 namespace sf
