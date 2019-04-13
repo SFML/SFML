@@ -12,6 +12,10 @@ set(SRC
     ${SRCROOT}/Cursor.cpp
     ${INCROOT}/Cursor.hpp
     ${SRCROOT}/CursorImpl.hpp
+    ${SRCROOT}/EGLCheck.cpp
+    ${SRCROOT}/EGLCheck.hpp
+    ${SRCROOT}/EglContext.cpp
+    ${SRCROOT}/EglContext.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
@@ -48,12 +52,6 @@ set(SRC
     ${SRCROOT}/WindowImpl.hpp
     ${INCROOT}/WindowStyle.hpp
 )
-if(SFML_OPENGL_ES AND NOT SFML_OS_IOS)
-    list(APPEND SRC ${SRCROOT}/EGLCheck.cpp)
-    list(APPEND SRC ${SRCROOT}/EGLCheck.hpp)
-    list(APPEND SRC ${SRCROOT}/EglContext.cpp)
-    list(APPEND SRC ${SRCROOT}/EglContext.hpp)
-endif()
 source_group("" FILES ${SRC})
 
 # add platform specific sources
@@ -65,8 +63,6 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/ClipboardImpl.cpp
         ${SRCROOT}/Win32/WglContext.cpp
         ${SRCROOT}/Win32/WglContext.hpp
-        ${SRCROOT}/Win32/WglExtensions.cpp
-        ${SRCROOT}/Win32/WglExtensions.hpp
         ${SRCROOT}/Win32/InputImpl.cpp
         ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
@@ -97,13 +93,11 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
         ${SRCROOT}/Unix/WindowImplX11.cpp
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
-    if(NOT SFML_OPENGL_ES)
+    if(NOT SFML_OS_ANDROID)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
             ${SRCROOT}/Unix/GlxContext.cpp
             ${SRCROOT}/Unix/GlxContext.hpp
-            ${SRCROOT}/Unix/GlxExtensions.cpp
-            ${SRCROOT}/Unix/GlxExtensions.hpp
         )
     endif()
     if(SFML_OS_LINUX)
@@ -231,6 +225,9 @@ sfml_add_library(sfml-window
                  SOURCES ${SRC} ${PLATFORM_SRC})
 target_link_libraries(sfml-window PUBLIC sfml-system)
 
+# glad sources
+target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+
 # When static linking on macOS, we need to add this flag for objective C to work
 if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
     target_link_libraries(sfml-window PRIVATE -ObjC)
@@ -249,16 +246,20 @@ if ((NOT ${CMAKE_VERSION} VERSION_LESS 3.11) AND (NOT OpenGL_GL_PREFERENCE))
     set(OpenGL_GL_PREFERENCE "LEGACY")
 endif()
 
-if(SFML_OPENGL_ES)
-    if(SFML_OS_IOS)
-        sfml_add_external(OpenGL LINK "-framework OpenGLES")
-    elseif(SFML_OS_ANDROID)
-        sfml_add_external(OpenGL LINK "EGL" "GLESv1_CM")
-    endif()
+if(SFML_OS_IOS)
+    sfml_add_external(GLES LINK "-framework OpenGLES")
+
+    target_link_libraries(sfml-window PRIVATE GLES)
+elseif(SFML_OS_ANDROID)
+    sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
+    
+    sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
+    target_link_libraries(sfml-window PRIVATE EGL)
+    target_link_libraries(sfml-window PRIVATE GLES)
 else()
     sfml_find_package(OpenGL INCLUDE "OPENGL_INCLUDE_DIR" LINK "OPENGL_gl_LIBRARY")
+    target_link_libraries(sfml-window PRIVATE OpenGL)
 endif()
-target_link_libraries(sfml-window PRIVATE OpenGL)
 
 if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
     include(CheckIncludeFile)
@@ -268,15 +269,9 @@ if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
     endif()
 endif()
 
-if(SFML_OPENGL_ES AND SFML_OS_LINUX)
-    sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
-    sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
-    target_link_libraries(sfml-window PRIVATE EGL GLES)
-endif()
-
 if(SFML_OS_LINUX)
     sfml_find_package(UDev INCLUDE "UDEV_INCLUDE_DIR" LINK "UDEV_LIBRARIES")
-    target_link_libraries(sfml-window PRIVATE UDev)
+    target_link_libraries(sfml-window PRIVATE UDev dl)
 elseif(SFML_OS_WINDOWS)
     target_link_libraries(sfml-window PRIVATE winmm gdi32)
 elseif(SFML_OS_FREEBSD)

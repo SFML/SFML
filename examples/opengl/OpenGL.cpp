@@ -3,15 +3,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
+
+#define GLAD_GL_IMPLEMENTATION
+#include "gl.h"
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
-#endif
-
-#ifdef SFML_OPENGL_ES
-#define glClearDepth glClearDepthf
-#define glFrustum glFrustumf
 #endif
 
 #ifndef GL_SRGB8_ALPHA8
@@ -83,10 +80,21 @@ int main()
         // Make the window the active window for OpenGL calls
         window.setActive(true);
 
+        // Load OpenGL or OpenGL ES entry points using glad
+#ifdef SFML_OPENGL_ES
+        gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#else
+        gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#endif
+
         // Enable Z-buffer read and write
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
+#ifdef SFML_OPENGL_ES
+        glClearDepthf(1.f);
+#else
         glClearDepth(1.f);
+#endif
 
         // Disable lighting
         glDisable(GL_LIGHTING);
@@ -98,7 +106,11 @@ int main()
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
+#ifdef SFML_OPENGL_ES
+        glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#else
         glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#endif
 
         // Bind the texture
         glEnable(GL_TEXTURE_2D);
@@ -221,7 +233,7 @@ int main()
                 if (event.type == sf::Event::Resized)
                 {
                     sf::Vector2u textureSize = backgroundTexture.getSize();
-                    
+
                     // Make the window the active window for OpenGL calls
                     window.setActive(true);
 
@@ -229,11 +241,15 @@ int main()
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
                     GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
+#ifdef SFML_OPENGL_ES
+                    glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#else
                     glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#endif
 
                     // Make the window no longer the active window for OpenGL calls
                     window.setActive(false);
-                    
+
                     sf::View view;
                     view.setSize(textureSize.x, textureSize.y);
                     view.setCenter(textureSize.x/2.f, textureSize.y/2.f);
@@ -254,13 +270,13 @@ int main()
 
             // We get the position of the mouse cursor (or touch), so that we can move the box accordingly
             sf::Vector2i pos;
-            
+
             #ifdef SFML_SYSTEM_IOS
             pos = sf::Touch::getPosition(0);
             #else
             pos = sf::Mouse::getPosition();
             #endif
-            
+
             float x = pos.x * 200.f / window.getSize().x - 100.f;
             float y = -pos.y * 200.f / window.getSize().y + 100.f;
 

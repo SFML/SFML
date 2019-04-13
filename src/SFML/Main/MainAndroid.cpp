@@ -47,6 +47,9 @@
 #include <android/native_activity.h>
 #include <cstring>
 
+#define SF_GLAD_EGL_IMPLEMENTATION
+#include <glad/egl.h>
+
 
 extern int main(int argc, char *argv[]);
 
