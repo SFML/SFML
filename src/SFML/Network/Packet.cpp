@@ -247,7 +247,7 @@ Packet& Packet::operator >>(float& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const float*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -260,7 +260,7 @@ Packet& Packet::operator >>(double& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const double*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
