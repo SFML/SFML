@@ -233,7 +233,7 @@ target_link_libraries(sfml-window PUBLIC sfml-system)
 
 # When static linking on macOS, we need to add this flag for objective C to work
 if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
-    target_link_libraries(sfml-window PRIVATE -ObjC)
+    target_compile_options(sfml-window PRIVATE -ObjC)
 endif()
 
 # find and setup usage for external libraries
