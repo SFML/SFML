@@ -33,7 +33,6 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/VertexBuffer.hpp>
 
 
 namespace sf
@@ -216,10 +215,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vertex         m_vertices[4];    ///< Vertices defining the sprite's geometry
-    VertexBuffer   m_verticesBuffer; ///< Vertex buffer containing the sprite's geometry
-    const Texture* m_texture;        ///< Texture of the sprite
-    IntRect        m_textureRect;    ///< Rectangle defining the area of the source texture to display
+    Vertex         m_vertices[4]; ///< Vertices defining the sprite's geometry
+    const Texture* m_texture;     ///< Texture of the sprite
+    IntRect        m_textureRect; ///< Rectangle defining the area of the source texture to display
 };
 
 } // namespace sf
