@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/OpenGL/GL1/TextureImplDefault.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <cmath>
 
@@ -395,12 +397,19 @@ void Text::ensureGeometryUpdate() const
     if (!m_font)
         return;
 
-    // Do nothing, if geometry has not changed and the font texture has not changed
-    if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).m_cacheId == m_fontTextureId)
-        return;
+    Uint64 cacheId = 0;
+
+    if ((sf::getRenderer() == sf::Renderer::Default) || (sf::getRenderer() == sf::Renderer::OpenGL1))
+    {
+        cacheId = static_cast<const priv::TextureImplDefault*>(m_font->getTexture(m_characterSize).m_impl)->m_cacheId;
+
+        // Do nothing, if geometry has not changed and the font texture has not changed
+        if (!m_geometryNeedUpdate && (cacheId == m_fontTextureId))
+            return;
+    }
 
     // Save the current fonts texture id
-    m_fontTextureId = m_font->getTexture(m_characterSize).m_cacheId;
+    m_fontTextureId = cacheId;
 
     // Mark geometry as updated
     m_geometryNeedUpdate = false;

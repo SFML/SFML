@@ -26,8 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/RenderTextureImplFBO.hpp>
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
+#include <SFML/Graphics/OpenGL/GL1/RenderTextureImplFBO.hpp>
+#include <SFML/Graphics/OpenGL/GL1/RenderTextureImplDefault.hpp>
+#include <SFML/Graphics/OpenGL/GL1/TextureImplDefault.hpp>
+#include <SFML/Graphics/Renderer.hpp>
 #include <SFML/System/Err.hpp>
 
 
@@ -65,28 +67,33 @@ bool RenderTexture::create(unsigned int width, unsigned int height, const Contex
         return false;
     }
 
-    // We disable smoothing by default for render textures
-    setSmooth(false);
-
-    // Create the implementation
-    delete m_impl;
-    if (priv::RenderTextureImplFBO::isAvailable())
+    if ((sf::getRenderer() == sf::Renderer::Default) || (sf::getRenderer() == sf::Renderer::OpenGL1))
     {
-        // Use frame-buffer object (FBO)
-        m_impl = new priv::RenderTextureImplFBO;
+        priv::TextureImplDefault& texture = *static_cast<priv::TextureImplDefault*>(m_texture.m_impl);
 
-        // Mark the texture as being a framebuffer object attachment
-        m_texture.m_fboAttachment = true;
-    }
-    else
-    {
-        // Use default implementation
-        m_impl = new priv::RenderTextureImplDefault;
-    }
+        // We disable smoothing by default for render textures
+        setSmooth(false);
 
-    // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, settings))
-        return false;
+        // Create the implementation
+        delete m_impl;
+        if (priv::RenderTextureImplFBO::isAvailable())
+        {
+            // Use frame-buffer object (FBO)
+            m_impl = new priv::RenderTextureImplFBO;
+
+            // Mark the texture as being a framebuffer object attachment
+            texture.m_fboAttachment = true;
+        }
+        else
+        {
+            // Use default implementation
+            m_impl = new priv::RenderTextureImplDefault;
+        }
+
+        // Initialize the render texture
+        if (!m_impl->create(width, height, texture.m_texture, settings))
+            return false;
+    }
 
     // We can now initialize the render target part
     RenderTarget::initialize();
@@ -161,11 +168,16 @@ bool RenderTexture::setActive(bool active)
 void RenderTexture::display()
 {
     // Update the target texture
-    if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
+    if ((sf::getRenderer() == sf::Renderer::Default) || (sf::getRenderer() == sf::Renderer::OpenGL1))
     {
-        m_impl->updateTexture(m_texture.m_texture);
-        m_texture.m_pixelsFlipped = true;
-        m_texture.invalidateMipmap();
+        if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
+        {
+            priv::TextureImplDefault& texture = *static_cast<priv::TextureImplDefault*>(m_texture.m_impl);
+
+            m_impl->updateTexture(texture.m_texture);
+            texture.m_pixelsFlipped = true;
+            texture.invalidateMipmap();
+        }
     }
 }
 

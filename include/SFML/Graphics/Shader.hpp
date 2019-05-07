@@ -45,11 +45,16 @@ class InputStream;
 class Texture;
 class Transform;
 
+namespace priv
+{
+    class ShaderImpl;
+}
+
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex, geometry and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
+class SFML_GRAPHICS_API Shader : NonCopyable
 {
 public:
 
@@ -694,61 +699,9 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Compile the shader(s) and create the program
-    ///
-    /// If one of the arguments is NULL, the corresponding shader
-    /// is not created.
-    ///
-    /// \param vertexShaderCode   Source code of the vertex shader
-    /// \param geometryShaderCode Source code of the geometry shader
-    /// \param fragmentShaderCode Source code of the fragment shader
-    ///
-    /// \return True on success, false if any error happened
-    ///
-    ////////////////////////////////////////////////////////////
-    bool compile(const char* vertexShaderCode, const char* geometryShaderCode, const char* fragmentShaderCode);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Bind all the textures used by the shader
-    ///
-    /// This function each texture to a different unit, and
-    /// updates the corresponding variables in the shader accordingly.
-    ///
-    ////////////////////////////////////////////////////////////
-    void bindTextures() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the location ID of a shader uniform
-    ///
-    /// \param name Name of the uniform variable to search
-    ///
-    /// \return Location ID of the uniform, or -1 if not found
-    ///
-    ////////////////////////////////////////////////////////////
-    int getUniformLocation(const std::string& name);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief RAII object to save and restore the program
-    ///        binding while uniforms are being set
-    ///
-    /// Implementation is private in the .cpp file.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct UniformBinder;
-
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    typedef std::map<int, const Texture*> TextureTable;
-    typedef std::map<std::string, int> UniformTable;
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;       ///< Parameters location cache
+    priv::ShaderImpl* m_impl;  ///< Platform/hardware specific implementation
 };
 
 } // namespace sf

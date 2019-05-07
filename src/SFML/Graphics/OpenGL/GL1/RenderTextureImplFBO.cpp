@@ -25,9 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplFBO.hpp>
+#include <SFML/Graphics/OpenGL/GL1/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/OpenGL/GLCheck.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
@@ -206,6 +206,22 @@ unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
 void RenderTextureImplFBO::unbind()
 {
     glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, 0));
+}
+
+////////////////////////////////////////////////////////////
+unsigned int RenderTextureImplFBO::getFramebuffer()
+{
+    unsigned int frameBuffer = 0;
+
+    glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint*>(&frameBuffer)));
+
+    return frameBuffer;
+}
+
+////////////////////////////////////////////////////////////
+void RenderTextureImplFBO::bindFramebuffer(unsigned int frameBuffer)
+{
+    glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
 }
 
 
