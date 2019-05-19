@@ -731,6 +731,37 @@ void Shader::setParameter(const std::string& name, CurrentTextureType)
 
 
 ////////////////////////////////////////////////////////////
+void Shader::setAttribLocation(const std::string& name, int location)
+{
+    m_attribBindings[name] = location;
+}
+
+
+////////////////////////////////////////////////////////////
+int Shader::getAttribLocation(const std::string& name)
+{
+    // Check the cache
+    AttribTable::const_iterator it = m_attribs.find(name);
+    if (it != m_attribs.end())
+    {
+        // Already in cache, return it
+        return it->second;
+    }
+    else
+    {
+        // Not in cache, request the location from OpenGL
+        int location = GLEXT_glGetAttribLocation(castToGlHandle(m_shaderProgram), name.c_str());
+        m_attribs.insert(std::make_pair(name, location));
+
+        if (location == -1)
+            err() << "Attribute \"" << name << "\" not found in shader" << std::endl;
+
+        return location;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 unsigned int Shader::getNativeHandle() const
 {
     return m_shaderProgram;
@@ -941,6 +972,15 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         glCheck(GLEXT_glAttachObject(shaderProgram, fragmentShader));
         glCheck(GLEXT_glDeleteObject(fragmentShader));
     }
+
+    // Bind attribute locations
+    AttribTable::const_iterator it = m_attribBindings.begin();
+    for (; it != m_attribBindings.end(); ++it)
+    {
+        GLEXT_glBindAttribLocation(shaderProgram, it->second, it->first.c_str());
+    }
+    // Clear attribute location cache
+    m_attribs.clear();
 
     // Link the program
     glCheck(GLEXT_glLinkProgram(shaderProgram));
