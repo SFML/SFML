@@ -42,6 +42,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/Window/Sensor.hpp>
 
 #include <android/native_activity.h>
 #include <android/window.h>
@@ -124,6 +125,7 @@ static void terminateMain(ActivityStates* states)
 
     // The main thread has finished, we must explicitly ask the activity to finish
     states->mainOver = true;
+    Sensor::cleanUp();
     ANativeActivity_finish(states->activity);
 }
 
