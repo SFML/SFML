@@ -63,14 +63,11 @@ std::size_t RectangleShape::getPointCount() const
 ////////////////////////////////////////////////////////////
 Vector2f RectangleShape::getPoint(std::size_t index) const
 {
-    switch (index)
-    {
-        default:
-        case 0: return Vector2f(0, 0);
-        case 1: return Vector2f(m_size.x, 0);
-        case 2: return Vector2f(m_size.x, m_size.y);
-        case 3: return Vector2f(0, m_size.y);
-    }
+    std::size_t firstBit = index & 1;
+    std::size_t secondBit = index >> 1;
+    firstBit = firstBit^secondBit;
+
+    return sf::Vector2f(m_size.x * firstBit, m_size.y * secondBit);
 }
 
 } // namespace sf
