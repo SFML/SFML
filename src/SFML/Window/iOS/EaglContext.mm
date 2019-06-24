@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -91,6 +91,9 @@ m_clock       ()
 ////////////////////////////////////////////////////////////
 EaglContext::~EaglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     if (m_context)
     {
         // Activate the context, so that we can destroy the buffers
@@ -107,6 +110,9 @@ EaglContext::~EaglContext()
 
         // Restore the previous context
         [EAGLContext setCurrentContext:previousContext];
+
+        if (m_context == [EAGLContext currentContext])
+            [EAGLContext setCurrentContext:nil];
     }
 }
 
@@ -167,9 +173,12 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
 
 
 ////////////////////////////////////////////////////////////
-bool EaglContext::makeCurrent()
+bool EaglContext::makeCurrent(bool current)
 {
-    return [EAGLContext setCurrentContext:m_context];
+    if (current)
+        return [EAGLContext setCurrentContext:m_context];
+
+    return [EAGLContext setCurrentContext:nil];
 }
 
 
@@ -215,12 +224,18 @@ void EaglContext::createContext(EaglContext* shared,
 
     // Create the context
     if (shared)
+    {
+        [EAGLContext setCurrentContext:nil];
+
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1 sharegroup:[shared->m_context sharegroup]];
+    }
     else
+    {
         m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+    }
 
     // Activate it
-    makeCurrent();
+    makeCurrent(true);
 
     // Create the framebuffer (this is the only allowed drawable on iOS)
     glGenFramebuffersOES(1, &m_framebuffer);
@@ -230,6 +245,9 @@ void EaglContext::createContext(EaglContext* shared,
 
     // Attach the context to the GL view for future updates
     window->getGlView().context = this;
+
+    // Deactivate it
+    makeCurrent(false);
 }
 
 } // namespace priv

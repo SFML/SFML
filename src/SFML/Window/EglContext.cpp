@@ -150,6 +150,9 @@ m_config  (NULL)
 ////////////////////////////////////////////////////////////
 EglContext::~EglContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     // Deactivate the current context
     EGLContext currentContext = eglCheck(eglGetCurrentContext());
 
@@ -173,9 +176,12 @@ EglContext::~EglContext()
 
 
 ////////////////////////////////////////////////////////////
-bool EglContext::makeCurrent()
+bool EglContext::makeCurrent(bool current)
 {
-    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
+    if (current)
+        return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
+
+    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 }
 
 
@@ -209,6 +215,9 @@ void EglContext::createContext(EglContext* shared)
     else
         toShared = EGL_NO_CONTEXT;
 
+    if (toShared != EGL_NO_CONTEXT)
+        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
     // Create EGL context
     m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
 }
@@ -224,11 +233,11 @@ void EglContext::createSurface(EGLNativeWindowType window)
 ////////////////////////////////////////////////////////////
 void EglContext::destroySurface()
 {
+    // Ensure that this context is no longer active since our surface is going to be destroyed
+    setActive(false);
+
     eglCheck(eglDestroySurface(m_display, m_surface));
     m_surface = EGL_NO_SURFACE;
-
-    // Ensure that this context is no longer active since our surface is now destroyed
-    setActive(false);
 }
 
 
@@ -237,10 +246,11 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 {
     // Set our video settings constraint
     const EGLint attributes[] = {
-        EGL_BUFFER_SIZE, bitsPerPixel,
-        EGL_DEPTH_SIZE, settings.depthBits,
-        EGL_STENCIL_SIZE, settings.stencilBits,
-        EGL_SAMPLE_BUFFERS, settings.antialiasingLevel,
+        EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
+        EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
+        EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
+        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel ? 1 : 0),
+        EGL_SAMPLES, static_cast<EGLint>(settings.antialiasingLevel),
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
         EGL_NONE

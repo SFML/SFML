@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -51,6 +51,13 @@ RenderTexture::~RenderTexture()
 ////////////////////////////////////////////////////////////
 bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
 {
+    return create(width, height, ContextSettings(depthBuffer ? 32 : 0));
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
+{
     // Create the texture
     if (!m_texture.create(width, height))
     {
@@ -78,13 +85,27 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
     }
 
     // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, depthBuffer))
+    if (!m_impl->create(width, height, m_texture.m_texture, settings))
         return false;
 
     // We can now initialize the render target part
     RenderTarget::initialize();
 
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+unsigned int RenderTexture::getMaximumAntialiasingLevel()
+{
+    if (priv::RenderTextureImplFBO::isAvailable())
+    {
+        return priv::RenderTextureImplFBO::getMaximumAntialiasingLevel();
+    }
+    else
+    {
+        return priv::RenderTextureImplDefault::getMaximumAntialiasingLevel();
+    }
 }
 
 
@@ -126,7 +147,13 @@ bool RenderTexture::generateMipmap()
 ////////////////////////////////////////////////////////////
 bool RenderTexture::setActive(bool active)
 {
-    return m_impl && m_impl->activate(active);
+    bool result = m_impl && m_impl->activate(active);
+
+    // Update RenderTarget tracking
+    if (result)
+        RenderTarget::setActive(active);
+
+    return result;
 }
 
 
@@ -134,7 +161,7 @@ bool RenderTexture::setActive(bool active)
 void RenderTexture::display()
 {
     // Update the target texture
-    if (setActive(true))
+    if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
     {
         m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;
@@ -154,13 +181,6 @@ Vector2u RenderTexture::getSize() const
 const Texture& RenderTexture::getTexture() const
 {
     return m_texture;
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderTexture::activate(bool active)
-{
-    return setActive(active);
 }
 
 } // namespace sf

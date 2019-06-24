@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -39,6 +39,25 @@
 ////////////////////////////////////////////////////////////
 
 @implementation SFOpenGLView (mouse)
+
+////////////////////////////////////////////////////////
+-(void)setCursor:(NSCursor*)cursor
+{
+    m_cursor = cursor;
+
+    // indirect call to resetCursorRects to set the cursor
+    [self.window invalidateCursorRectsForView:self]; 
+}
+
+
+////////////////////////////////////////////////////////
+-(void)resetCursorRects
+{
+    // addCursorRect:cursor: has to be called from within this function!
+    [self addCursorRect:[self frame] cursor:m_cursor];
+    [m_cursor setOnMouseEntered:YES];
+}
+
 
 ////////////////////////////////////////////////////////
 -(BOOL)isMouseInside
@@ -230,7 +249,7 @@
 ////////////////////////////////////////////////////////
 -(BOOL)isCursorCurrentlyGrabbed
 {
-    return [[self window] isKeyWindow] && (m_cursorGrabbed || m_fullscreen);
+    return [[self window] isKeyWindow] && m_cursorGrabbed;
 }
 
 

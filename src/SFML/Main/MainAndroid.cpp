@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -45,6 +45,7 @@
 #include <SFML/System/Err.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
+#include <cstring>
 
 
 extern int main(int argc, char *argv[]);
@@ -91,6 +92,13 @@ static void initializeMain(ActivityStates* states)
     // Prepare and share the looper to be read later
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
     states->looper = looper;
+
+    /**
+     * Acquire increments a reference counter on the looper. This keeps android 
+     * from collecting it before the activity thread has a chance to detach its 
+     * input queue.
+     */
+    ALooper_acquire(states->looper);
 
     // Get the default configuration
     states->config = AConfiguration_new();
@@ -337,7 +345,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
-    while(!states->updated)
+    while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -362,7 +370,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
-    while(!states->updated)
+    while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -409,8 +417,10 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
     {
         sf::Lock lock(states->mutex);
 
-        states->inputQueue = NULL;
         AInputQueue_detachLooper(queue);
+        states->inputQueue = NULL;
+
+        ALooper_release(states->looper);
     }
 }
 
@@ -463,7 +473,7 @@ static void onLowMemory(ANativeActivity* activity)
 
 
 ////////////////////////////////////////////////////////////
-void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
+JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
     sf::priv::ActivityStates* states = NULL;
@@ -485,7 +495,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
-        memcpy(states->savedState, savedState, savedStateSize);
+        std::memcpy(states->savedState, savedState, savedStateSize);
     }
 
     states->mainOver = false;
@@ -541,7 +551,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Wait for the main thread to be initialized
     states->mutex.lock();
 
-    while (!states->initialized)
+    while (!(states->initialized | states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(20));

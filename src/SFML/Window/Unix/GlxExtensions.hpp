@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,11 +25,12 @@
 #ifndef SF_POINTER_C_GENERATED_HEADER_GLXWIN_HPP
 #define SF_POINTER_C_GENERATED_HEADER_GLXWIN_HPP
 
-#ifdef __glxext_h_
+#if defined(__glxext_h_) || defined(__glx_glxext_h_)
 #error Attempt to include glx_exts after including glxext.h
 #endif
 
 #define __glxext_h_
+#define __glx_glxext_h_
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

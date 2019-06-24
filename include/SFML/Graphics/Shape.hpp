@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
@@ -305,15 +306,17 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Texture* m_texture;          ///< Texture of the shape
-    IntRect        m_textureRect;      ///< Rectangle defining the area of the source texture to display
-    Color          m_fillColor;        ///< Fill color
-    Color          m_outlineColor;     ///< Outline color
-    float          m_outlineThickness; ///< Thickness of the shape's outline
-    VertexArray    m_vertices;         ///< Vertex array containing the fill geometry
-    VertexArray    m_outlineVertices;  ///< Vertex array containing the outline geometry
-    FloatRect      m_insideBounds;     ///< Bounding rectangle of the inside (fill)
-    FloatRect      m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
+    const Texture* m_texture;               ///< Texture of the shape
+    IntRect        m_textureRect;           ///< Rectangle defining the area of the source texture to display
+    Color          m_fillColor;             ///< Fill color
+    Color          m_outlineColor;          ///< Outline color
+    float          m_outlineThickness;      ///< Thickness of the shape's outline
+    VertexArray    m_vertices;              ///< Vertex array containing the fill geometry
+    VertexArray    m_outlineVertices;       ///< Vertex array containing the outline geometry
+    VertexBuffer   m_verticesBuffer;        ///< Vertex buffer containing the fill geometry
+    VertexBuffer   m_outlineVerticesBuffer; ///< Vertex buffer containing the outline geometry
+    FloatRect      m_insideBounds;          ///< Bounding rectangle of the inside (fill)
+    FloatRect      m_bounds;                ///< Bounding rectangle of the whole shape (outline + fill)
 };
 
 } // namespace sf

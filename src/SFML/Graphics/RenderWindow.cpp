@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,30 +27,35 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow()
+RenderWindow::RenderWindow() :
+m_defaultFrameBuffer(0)
 {
     // Nothing to do
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
+m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(mode, title, style, settings);
+    Window::create(mode, title, style, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
+RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings) :
+m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    create(handle, settings);
+    Window::create(handle, settings);
 }
 
 
@@ -62,16 +67,31 @@ RenderWindow::~RenderWindow()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderWindow::activate(bool active)
+Vector2u RenderWindow::getSize() const
 {
-    return setActive(active);
+    return Window::getSize();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2u RenderWindow::getSize() const
+bool RenderWindow::setActive(bool active)
 {
-    return Window::getSize();
+    bool result = Window::setActive(active);
+
+    // Update RenderTarget tracking
+    if (result)
+        RenderTarget::setActive(active);
+
+    // If FBOs are available, make sure none are bound when we
+    // try to draw to the default framebuffer of the RenderWindow
+    if (active && result && priv::RenderTextureImplFBO::isAvailable())
+    {
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, m_defaultFrameBuffer));
+
+        return true;
+    }
+
+    return result;
 }
 
 
@@ -91,6 +111,13 @@ Image RenderWindow::capture() const
 ////////////////////////////////////////////////////////////
 void RenderWindow::onCreate()
 {
+    if (priv::RenderTextureImplFBO::isAvailable())
+    {
+        // Retrieve the framebuffer ID we have to bind when targeting the window for rendering
+        // We assume that this window's context is still active at this point
+        glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint*>(&m_defaultFrameBuffer)));
+    }
+
     // Just initialize the render target part
     RenderTarget::initialize();
 }

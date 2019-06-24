@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,14 +26,21 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
+#include <SFML/Window/Context.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/OpenGL.hpp>
+#include <algorithm>
+#include <vector>
+#include <string>
 #include <set>
+#include <utility>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
+#include <cassert>
 
 #if !defined(SFML_OPENGL_ES)
 
@@ -42,7 +49,7 @@
         #include <SFML/Window/Win32/WglContext.hpp>
         typedef sf::priv::WglContext ContextType;
 
-    #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
+    #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
 
         #include <SFML/Window/Unix/GlxContext.hpp>
         typedef sf::priv::GlxContext ContextType;
@@ -126,7 +133,13 @@ namespace
     // AMD drivers have issues with internal synchronization
     // We need to make sure that no operating system context
     // or pixel format operations are performed simultaneously
+    // This mutex is also used to protect the shared context
+    // from being locked on multiple threads and for managing
+    // the resource count
     sf::Mutex mutex;
+
+    // OpenGL resources counter
+    unsigned int resourceCount = 0;
 
     // This per-thread variable holds the current context for each thread
     sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
@@ -134,34 +147,134 @@ namespace
     // The hidden, inactive context that will be shared with all other contexts
     ContextType* sharedContext = NULL;
 
-    // Internal contexts
-    sf::ThreadLocalPtr<sf::Context> internalContext(NULL);
-    std::set<sf::Context*> internalContexts;
-    sf::Mutex internalContextsMutex;
+    // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
+    sf::Uint64 id = 1; // start at 1, zero is "no context"
 
-    // Check if the internal context of the current thread is valid
-    bool hasInternalContext()
+    // Set containing callback functions to be called whenever a
+    // context is going to be destroyed
+    // Unshareable OpenGL resources rely on this to clean up properly
+    // whenever a context containing them is destroyed
+    typedef std::set<std::pair<sf::ContextDestroyCallback, void*> > ContextDestroyCallbacks;
+    ContextDestroyCallbacks contextDestroyCallbacks;
+
+    // This structure contains all the state necessary to
+    // track TransientContext usage
+    struct TransientContext : private sf::NonCopyable
     {
-        // The internal context can be null...
-        if (!internalContext)
-            return false;
-
-        // ... or non-null but deleted from the list of internal contexts
-        sf::Lock lock(internalContextsMutex);
-        return internalContexts.find(internalContext) != internalContexts.end();
-    }
-
-    // Retrieve the internal context for the current thread
-    sf::Context* getInternalContext()
-    {
-        if (!hasInternalContext())
+        ////////////////////////////////////////////////////////////
+        /// \brief Constructor
+        ///
+        ////////////////////////////////////////////////////////////
+        TransientContext() :
+        referenceCount   (0),
+        context          (0),
+        sharedContextLock(0),
+        useSharedContext (false)
         {
-            internalContext = new sf::Context;
-            sf::Lock lock(internalContextsMutex);
-            internalContexts.insert(internalContext);
+            if (resourceCount == 0)
+            {
+                context = new sf::Context;
+            }
+            else if (!currentContext)
+            {
+                sharedContextLock = new sf::Lock(mutex);
+                useSharedContext = true;
+                sharedContext->setActive(true);
+            }
         }
 
-        return internalContext;
+        ////////////////////////////////////////////////////////////
+        /// \brief Destructor
+        ///
+        ////////////////////////////////////////////////////////////
+        ~TransientContext()
+        {
+            if (useSharedContext)
+                sharedContext->setActive(false);
+
+            delete sharedContextLock;
+            delete context;
+        }
+
+        ///////////////////////////////////////////////////////////
+        // Member data
+        ////////////////////////////////////////////////////////////
+        unsigned int referenceCount;
+        sf::Context* context;
+        sf::Lock*    sharedContextLock;
+        bool         useSharedContext;
+    };
+
+    // This per-thread variable tracks if and how a transient
+    // context is currently being used on the current thread
+    sf::ThreadLocalPtr<TransientContext> transientContext(NULL);
+
+    // Supported OpenGL extensions
+    std::vector<std::string> extensions;
+
+    // Load our extensions vector with the supported extensions
+    void loadExtensions()
+    {
+        extensions.clear();
+
+        // Check whether a >= 3.0 context is available
+        glGetStringiFuncType glGetStringiFunc = NULL;
+        glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
+        int majorVersion = 0;
+        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+
+        if (glGetError() == GL_INVALID_ENUM || !glGetStringiFunc)
+        {
+            // Try to load the < 3.0 way
+            const char* extensionString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+
+            do
+            {
+                const char* extension = extensionString;
+
+                while (*extensionString && (*extensionString != ' '))
+                    extensionString++;
+
+                extensions.push_back(std::string(extension, extensionString));
+            }
+            while (*extensionString++);
+        }
+        else
+        {
+            // Try to load the >= 3.0 way
+            int numExtensions = 0;
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+            if (numExtensions)
+            {
+                for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
+                {
+                    const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
+
+                    extensions.push_back(extensionString);
+                }
+            }
+        }
+    }
+
+    // Helper to parse OpenGL version strings
+    bool parseVersionString(const char* version, const char* prefix, unsigned int &major, unsigned int &minor)
+    {
+        std::size_t prefixLength = std::strlen(prefix);
+
+        if ((std::strlen(version) >= (prefixLength + 3)) &&
+            (std::strncmp(version, prefix, prefixLength) == 0) &&
+            std::isdigit(version[prefixLength]) &&
+            (version[prefixLength + 1] == '.') &&
+            std::isdigit(version[prefixLength + 2]))
+        {
+            major = version[prefixLength] - '0';
+            minor = version[prefixLength + 2] - '0';
+
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -171,60 +284,127 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void GlContext::globalInit()
+void GlContext::initResource()
 {
+    // Protect from concurrent access
     Lock lock(mutex);
 
-    if (sharedContext)
-        return;
+    // If this is the very first resource, trigger the global context initialization
+    if (resourceCount == 0)
+    {
+        if (sharedContext)
+        {
+            // Increment the resources counter
+            resourceCount++;
 
-    // Create the shared context
-    sharedContext = new ContextType(NULL);
-    sharedContext->initialize(ContextSettings());
+            return;
+        }
 
-    // This call makes sure that:
-    // - the shared context is inactive (it must never be)
-    // - another valid context is activated in the current thread
-    sharedContext->setActive(false);
+        // Create the shared context
+        sharedContext = new ContextType(NULL);
+        sharedContext->initialize(ContextSettings());
+
+        // Load our extensions vector
+        loadExtensions();
+
+        // Deactivate the shared context so that others can activate it when necessary
+        sharedContext->setActive(false);
+    }
+
+    // Increment the resources counter
+    resourceCount++;
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::globalCleanup()
+void GlContext::cleanupResource()
 {
+    // Protect from concurrent access
     Lock lock(mutex);
 
-    if (!sharedContext)
-        return;
+    // Decrement the resources counter
+    resourceCount--;
 
-    // Destroy the shared context
-    delete sharedContext;
-    sharedContext = NULL;
+    // If there's no more resource alive, we can trigger the global context cleanup
+    if (resourceCount == 0)
+    {
+        if (!sharedContext)
+            return;
 
-    // Destroy the internal contexts
-    Lock internalContextsLock(internalContextsMutex);
-    for (std::set<Context*>::iterator it = internalContexts.begin(); it != internalContexts.end(); ++it)
-        delete *it;
-    internalContexts.clear();
+        // Destroy the shared context
+        delete sharedContext;
+        sharedContext = NULL;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::ensureContext()
+void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
 {
-    // If there's no active context on the current thread, activate an internal one
-    if (!currentContext)
-        getInternalContext()->setActive(true);
+    contextDestroyCallbacks.insert(std::make_pair(callback, arg));
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::acquireTransientContext()
+{
+    // Protect from concurrent access
+    Lock lock(mutex);
+
+    // If this is the first TransientContextLock on this thread
+    // construct the state object
+    if (!transientContext)
+        transientContext = new TransientContext;
+
+    // Increase the reference count
+    transientContext->referenceCount++;
+}
+
+
+////////////////////////////////////////////////////////////
+void GlContext::releaseTransientContext()
+{
+    // Protect from concurrent access
+    Lock lock(mutex);
+
+    // Make sure a matching acquireTransientContext() was called
+    assert(transientContext);
+
+    // Decrease the reference count
+    transientContext->referenceCount--;
+
+    // If this is the last TransientContextLock that is released
+    // destroy the state object
+    if (transientContext->referenceCount == 0)
+    {
+        delete transientContext;
+        transientContext = NULL;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 GlContext* GlContext::create()
 {
+    // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
+    assert(sharedContext != NULL);
+
     Lock lock(mutex);
 
-    // Create the context
-    GlContext* context = new ContextType(sharedContext);
+    GlContext* context = NULL;
+
+    // We don't use acquireTransientContext here since we have
+    // to ensure we have exclusive access to the shared context
+    // in order to make sure it is not active during context creation
+    {
+        sharedContext->setActive(true);
+
+        // Create the context
+        context = new ContextType(sharedContext);
+
+        sharedContext->setActive(false);
+    }
+
     context->initialize(ContextSettings());
 
     return context;
@@ -235,12 +415,43 @@ GlContext* GlContext::create()
 GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    ensureContext();
+    assert(sharedContext != NULL);
 
     Lock lock(mutex);
 
-    // Create the context
-    GlContext* context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
+    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // Only in this situation we allow the user to indirectly re-create the shared context as a core context
+
+    // Check if we need to convert our shared context into a core context
+    if ((resourceCount == 1) &&
+        (settings.attributeFlags & ContextSettings::Core) &&
+        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+    {
+        // Re-create our shared context as a core context
+        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+
+        delete sharedContext;
+        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext->initialize(sharedSettings);
+
+        // Reload our extensions vector
+        loadExtensions();
+    }
+
+    GlContext* context = NULL;
+
+    // We don't use acquireTransientContext here since we have
+    // to ensure we have exclusive access to the shared context
+    // in order to make sure it is not active during context creation
+    {
+        sharedContext->setActive(true);
+
+        // Create the context
+        context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
+
+        sharedContext->setActive(false);
+    }
+
     context->initialize(settings);
     context->checkSettings(settings);
 
@@ -252,16 +463,54 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 GlContext* GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    ensureContext();
+    assert(sharedContext != NULL);
 
     Lock lock(mutex);
 
-    // Create the context
-    GlContext* context = new ContextType(sharedContext, settings, width, height);
+    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // Only in this situation we allow the user to indirectly re-create the shared context as a core context
+
+    // Check if we need to convert our shared context into a core context
+    if ((resourceCount == 1) &&
+        (settings.attributeFlags & ContextSettings::Core) &&
+        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+    {
+        // Re-create our shared context as a core context
+        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+
+        delete sharedContext;
+        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext->initialize(sharedSettings);
+
+        // Reload our extensions vector
+        loadExtensions();
+    }
+
+    GlContext* context = NULL;
+
+    // We don't use acquireTransientContext here since we have
+    // to ensure we have exclusive access to the shared context
+    // in order to make sure it is not active during context creation
+    {
+        sharedContext->setActive(true);
+
+        // Create the context
+        context = new ContextType(sharedContext, settings, width, height);
+
+        sharedContext->setActive(false);
+    }
+
     context->initialize(settings);
     context->checkSettings(settings);
 
     return context;
+}
+
+
+////////////////////////////////////////////////////////////
+bool GlContext::isExtensionAvailable(const char* name)
+{
+    return std::find(extensions.begin(), extensions.end(), name) != extensions.end();
 }
 
 
@@ -283,11 +532,21 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
+Uint64 GlContext::getActiveContextId()
+{
+    return currentContext ? currentContext->m_id : 0;
+}
+
+
+////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()
     if (sharedContext)
-        setActive(false);
+    {
+        if (this == currentContext)
+            currentContext = NULL;
+    }
 }
 
 
@@ -308,7 +567,7 @@ bool GlContext::setActive(bool active)
             Lock lock(mutex);
 
             // Activate the context
-            if (makeCurrent())
+            if (makeCurrent(true))
             {
                 // Set it as the new current context for this thread
                 currentContext = this;
@@ -329,9 +588,18 @@ bool GlContext::setActive(bool active)
     {
         if (this == currentContext)
         {
-            // To deactivate the context, we actually activate another one so that we make
-            // sure that there is always an active context for subsequent graphics operations
-            return getInternalContext()->setActive(true);
+            Lock lock(mutex);
+
+            // Deactivate the context
+            if (makeCurrent(false))
+            {
+                currentContext = NULL;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
@@ -343,7 +611,8 @@ bool GlContext::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-GlContext::GlContext()
+GlContext::GlContext() :
+m_id(id++)
 {
     // Nothing to do
 }
@@ -379,6 +648,29 @@ int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& 
 
 
 ////////////////////////////////////////////////////////////
+void GlContext::cleanupUnsharedResources()
+{
+    // Save the current context so we can restore it later
+    GlContext* contextToRestore = currentContext;
+
+    // If this context is already active there is no need to save it
+    if (contextToRestore == this)
+        contextToRestore = NULL;
+
+    // Make this context active so resources can be freed
+    setActive(true);
+
+    // Call the registered destruction callbacks
+    for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter)
+        iter->first(iter->second);
+
+    // Make the originally active context active again
+    if (contextToRestore)
+        contextToRestore->setActive(true);
+}
+
+
+////////////////////////////////////////////////////////////
 void GlContext::initialize(const ContextSettings& requestedSettings)
 {
     // Activate the context
@@ -400,18 +692,30 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     else
     {
         // Try the old way
-        const GLubyte* version = glGetString(GL_VERSION);
+
+        // If we can't get the version number, assume 1.1
+        m_settings.majorVersion = 1;
+        m_settings.minorVersion = 1;
+
+        const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
         if (version)
         {
-            // The beginning of the returned string is "major.minor" (this is standard)
-            m_settings.majorVersion = version[0] - '0';
-            m_settings.minorVersion = version[2] - '0';
+            // OpenGL ES Common Lite profile: The beginning of the returned string is "OpenGL ES-CL major.minor"
+            // OpenGL ES Common profile:      The beginning of the returned string is "OpenGL ES-CM major.minor"
+            // OpenGL ES Full profile:        The beginning of the returned string is "OpenGL ES major.minor"
+            // Desktop OpenGL:                The beginning of the returned string is "major.minor"
+
+            if (!parseVersionString(version, "OpenGL ES-CL ", m_settings.majorVersion, m_settings.minorVersion) &&
+                !parseVersionString(version, "OpenGL ES-CM ", m_settings.majorVersion, m_settings.minorVersion) &&
+                !parseVersionString(version, "OpenGL ES ",    m_settings.majorVersion, m_settings.minorVersion) &&
+                !parseVersionString(version, "",              m_settings.majorVersion, m_settings.minorVersion))
+            {
+                err() << "Unable to parse OpenGL version string: \"" << version << "\", defaulting to 1.1" << std::endl;
+            }
         }
         else
         {
-            // Can't get the version number, assume 1.1
-            m_settings.majorVersion = 1;
-            m_settings.minorVersion = 1;
+            err() << "Unable to retrieve OpenGL version string, defaulting to 1.1" << std::endl;
         }
     }
 

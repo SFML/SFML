@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -103,7 +103,14 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
+    // Notify unshared OpenGL resources of context destruction
+    cleanupUnsharedResources();
+
     [m_context clearDrawable];
+
+    if (m_context == [NSOpenGLContext currentContext])
+        [NSOpenGLContext clearCurrentContext];
+
     [m_context release];
 
     [m_view release]; // Might be nil but we don't care.
@@ -124,10 +131,18 @@ GlFunctionPointer SFContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-bool SFContext::makeCurrent()
+bool SFContext::makeCurrent(bool current)
 {
-    [m_context makeCurrentContext];
-    return m_context == [NSOpenGLContext currentContext]; // Should be true.
+    if (current)
+    {
+        [m_context makeCurrentContext];
+        return m_context == [NSOpenGLContext currentContext]; // Should be true.
+    }
+    else
+    {
+        [NSOpenGLContext clearCurrentContext];
+        return m_context != [NSOpenGLContext currentContext]; // Should be true.
+    }
 }
 
 
@@ -256,6 +271,17 @@ void SFContext::createContext(SFContext* shared,
 
     // Use the shared context if one is given.
     NSOpenGLContext* sharedContext = shared != NULL ? shared->m_context : nil;
+
+    if (sharedContext != nil)
+    {
+        [NSOpenGLContext clearCurrentContext];
+
+        if (sharedContext == [NSOpenGLContext currentContext])
+        {
+            sf::err() << "Failed to deactivate shared context before sharing" << std::endl;
+            return;
+        }
+    }
 
     // Create the context.
     m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt

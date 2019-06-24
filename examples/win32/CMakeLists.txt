@@ -7,4 +7,5 @@ set(SRC ${SRCROOT}/Win32.cpp)
 # define the win32 target
 sfml_add_example(win32 GUI_APP
                  SOURCES ${SRC}
-                 DEPENDS sfml-graphics sfml-window sfml-system)
+                 DEPENDS sfml-graphics
+                 RESOURCES_DIR resources)

@@ -8,6 +8,18 @@
 #include <ctime>
 #include <cstdlib>
 
+#ifdef SFML_SYSTEM_IOS
+#include <SFML/Main.hpp>
+#endif
+
+std::string resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources/";
+#endif
+}
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -33,7 +45,7 @@ int main()
 
     // Load the sounds used in the game
     sf::SoundBuffer ballSoundBuffer;
-    if (!ballSoundBuffer.loadFromFile("resources/ball.wav"))
+    if (!ballSoundBuffer.loadFromFile(resourcesDir() + "ball.wav"))
         return EXIT_FAILURE;
     sf::Sound ballSound(ballSoundBuffer);
 
@@ -63,7 +75,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile(resourcesDir() + "sansation.ttf"))
         return EXIT_FAILURE;
 
     // Initialize the pause message
@@ -72,7 +84,12 @@ int main()
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition(170.f, 150.f);
     pauseMessage.setFillColor(sf::Color::White);
+    
+    #ifdef SFML_SYSTEM_IOS
+    pauseMessage.setString("Welcome to SFML pong!\nTouch the screen to start the game");
+    #else
     pauseMessage.setString("Welcome to SFML pong!\nPress space to start the game");
+    #endif
 
     // Define the paddles properties
     sf::Clock AITimer;
@@ -99,7 +116,8 @@ int main()
             }
 
             // Space key pressed: play
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) ||
+                (event.type == sf::Event::TouchBegan))
             {
                 if (!isPlaying)
                 {
@@ -121,6 +139,15 @@ int main()
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }
             }
+            
+            // Window size changed, adjust view appropriately
+            if (event.type == sf::Event::Resized)
+            {
+                sf::View view;
+                view.setSize(gameWidth, gameHeight);
+                view.setCenter(gameWidth/2.f, gameHeight/2.f);
+                window.setView(view);
+            }
         }
 
         if (isPlaying)
@@ -137,6 +164,13 @@ int main()
                (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);
+            }
+            
+            if (sf::Touch::isDown(0))
+            {
+                sf::Vector2i pos = sf::Touch::getPosition(0);
+                sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
+                leftPaddle.setPosition(leftPaddle.getPosition().x, mappedPos.y);
             }
 
             // Move the computer's paddle
@@ -162,16 +196,22 @@ int main()
             float factor = ballSpeed * deltaTime;
             ball.move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
 
+            #ifdef SFML_SYSTEM_IOS
+            const std::string inputString = "Touch the screen to restart";
+            #else
+            const std::string inputString = "Press space to restart or\nescape to exit";
+            #endif
+            
             // Check collisions between the ball and the screen
             if (ball.getPosition().x - ballRadius < 0.f)
             {
                 isPlaying = false;
-                pauseMessage.setString("You lost!\nPress space to restart or\nescape to exit");
+                pauseMessage.setString("You Lost!\n" + inputString);
             }
             if (ball.getPosition().x + ballRadius > gameWidth)
             {
                 isPlaying = false;
-                pauseMessage.setString("You won!\nPress space to restart or\nescape to exit");
+                pauseMessage.setString("You Won!\n" + inputString);
             }
             if (ball.getPosition().y - ballRadius < 0.f)
             {

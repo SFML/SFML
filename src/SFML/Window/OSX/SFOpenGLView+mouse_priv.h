@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -70,8 +70,7 @@
 /// \brief Check whether the cursor is grabbed or not
 ///
 /// The cursor is grabbed if the window is active (key) and
-/// either it is in fullscreen mode or the user wants to
-/// grab it.
+/// the user wants to grab it.
 ///
 ////////////////////////////////////////////////////////////
 -(BOOL)isCursorCurrentlyGrabbed;

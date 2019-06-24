@@ -7,4 +7,4 @@ set(SRC ${SRCROOT}/SoundCapture.cpp)
 # define the sound-capture target
 sfml_add_example(sound-capture
                  SOURCES ${SRC}
-                 DEPENDS sfml-audio sfml-system)
+                 DEPENDS sfml-audio)

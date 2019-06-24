@@ -1,0 +1,112 @@
+language: cpp
+
+addons:
+  apt_packages:
+    - cmake
+    - libxrandr-dev
+    - libudev-dev
+    - libopenal-dev
+    - libflac-dev
+    - libvorbis-dev
+    - g++
+    - clang
+    - libgl1-mesa-dev
+
+before_script:
+- mkdir build && cd build
+- cmake .. $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE
+
+script:
+- cmake --build . --target install
+
+matrix:
+  include:
+
+  - name: "Linux gcc Dynamic"
+    os: linux
+    dist: xenial
+    compiler: gcc
+    env:
+      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=TRUE"
+  
+  - name: "Linux gcc Static"
+    os: linux
+    dist: xenial
+    compiler: gcc
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE -DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "Linux clang Dynamic"
+    os: linux
+    dist: xenial
+    compiler: clang
+    env:
+      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "Linux clang Static"
+    os: linux
+    dist: xenial
+    compiler: clang
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE -DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "macOS Xcode 10 Dynamic"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install -DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "macOS Xcode 10 Frameworks"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_BUILD_FRAMEWORKS=TRUE"
+
+  - name: "macOS Xcode 10 Static"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DSFML_DEPENDENCIES_INSTALL_PREFIX=../install -DSFML_BUILD_TEST_SUITE=TRUE -DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "iOS Xcode 10"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-GXcode -DSFML_BUILD_TEST_SUITE=TRUE -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+
+  - name: "Visual studio 15 2017 Dynamic"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=FALSE"
+
+  - name: "Visual studio 15 2017 Static"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE -DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "Android armeabi-v7a"
+    language: android
+    android: &androidComponents
+      components:
+        - tools
+        - platform-tools
+        - build-tools-26.0.1
+    env:
+      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$TRAVIS_BUILD_DIR/android-ndk-r18b -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
+    
+    install: &androidInstall
+      - echo y | sdkmanager "cmake;3.10.2.4988404" 
+      - echo y | sdkmanager "lldb;3.1"
+      - sudo ln -sf /usr/local/android-sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
+      - wget https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
+      - unzip -qq android-ndk-r18b-linux-x86_64.zip
+
+  - name: "Android x86"
+    language: android
+    android: *androidComponents
+    env:
+      - CMAKE_FLAGS="-DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$TRAVIS_BUILD_DIR/android-ndk-r18b -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26"
+    install: *androidInstall
+
+notifications:
+  email: false

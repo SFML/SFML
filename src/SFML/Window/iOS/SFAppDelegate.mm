@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -56,6 +56,10 @@ namespace
 ////////////////////////////////////////////////////////////
 + (SFAppDelegate*)getInstance
 {
+    NSAssert(delegateInstance,
+             @"SFAppDelegate instance is nil, this means SFML was not properly initialized. "
+             "Make sure that the file defining your main() function includes <SFML/Main.hpp>");
+    
     return delegateInstance;
 }
 
@@ -173,7 +177,7 @@ namespace
 
     NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     if (!supportedOrientations)
-        return false;
+        return (1 << orientation) & [rootViewController supportedInterfaceOrientations];
 
     int appFlags = 0;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
@@ -214,8 +218,8 @@ namespace
             // Send a Resized event to the current window
             sf::Event event;
             event.type = sf::Event::Resized;
-            event.size.width = size.x * backingScaleFactor;
-            event.size.height = size.y * backingScaleFactor;
+            event.size.width = size.x;
+            event.size.height = size.y;
             sfWindow->forwardEvent(event);
         }
     }

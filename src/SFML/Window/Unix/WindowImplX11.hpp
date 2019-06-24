@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,9 +31,10 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/String.hpp>
-#include <X11/Xlib-xcb.h>
-#include <xcb/randr.h>
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <X11/Xlib.h>
 #include <deque>
+#include <X11/extensions/Xrandr.h>
 
 
 namespace sf
@@ -156,6 +157,14 @@ public:
     virtual void setMouseCursorGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to a native system cursor
+    ///
+    /// \param cursor Native system cursor type to display
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(const CursorImpl& cursor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
@@ -187,33 +196,6 @@ protected:
     virtual void processEvents();
 
 private:
-
-    struct WMHints
-    {
-        int32_t      flags;
-        uint32_t     input;
-        int32_t      initial_state;
-        xcb_pixmap_t icon_pixmap;
-        xcb_window_t icon_window;
-        int32_t      icon_x;
-        int32_t      icon_y;
-        xcb_pixmap_t icon_mask;
-        xcb_window_t window_group;
-    };
-
-    struct WMSizeHints
-    {
-        uint32_t flags;
-        int32_t  x, y;
-        int32_t  width, height;
-        int32_t  min_width, min_height;
-        int32_t  max_width, max_height;
-        int32_t  width_inc, height_inc;
-        int32_t  min_aspect_num, min_aspect_den;
-        int32_t  max_aspect_num, max_aspect_den;
-        int32_t  base_width, base_height;
-        uint32_t win_gravity;
-    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Request the WM to make the current window active
@@ -248,40 +230,12 @@ private:
     void setProtocols();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set Motif WM hints
+    /// \brief Update the last time we received user input
+    ///
+    /// \param time Last time we received user input
     ///
     ////////////////////////////////////////////////////////////
-    void setMotifHints(unsigned long style);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set WM hints
-    ///
-    /// \param hints Hints
-    ///
-    ////////////////////////////////////////////////////////////
-    void setWMHints(const WMHints& hints);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set WM size hints
-    ///
-    /// \param hints Size hints
-    ///
-    ////////////////////////////////////////////////////////////
-    void setWMSizeHints(const WMSizeHints& hints);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a XCB window property
-    ///
-    /// \param property Property to change
-    /// \param type     Type of the property
-    /// \param format   Format of the property
-    /// \param length   Length of the new value
-    /// \param data     The new value of the property
-    ///
-    /// \return True if successful, false if unsuccessful
-    ///
-    ////////////////////////////////////////////////////////////
-    bool changeWindowProperty(xcb_atom_t property, xcb_atom_t type, uint8_t format, uint32_t length, const void* data);
+    void updateLastInputTime(::Time time);
 
     ////////////////////////////////////////////////////////////
     /// \brief Do some common initializations after the window has been created
@@ -312,23 +266,60 @@ private:
     bool processEvent(XEvent& windowEvent);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if a valid version of XRandR extension is present 
+    ///
+    /// \param xRandRMajor XRandR major version
+    /// \param xRandRMinor XRandR minor version
+    ///
+    /// \return True if a valid XRandR version found, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool checkXRandR(int& xRandRMajor, int& xRandRMinor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the RROutput of the primary monitor
+    ///
+    /// \param rootWindow the root window
+    /// \param res screen resources
+    /// \param xRandRMajor XRandR major version
+    /// \param xRandRMinor XRandR minor version
+    ///
+    /// \return RROutput of the primary monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    RROutput getOutputPrimary(::Window& rootWindow, XRRScreenResources* res, int xRandRMajor, int xRandRMinor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get coordinates of the primary monitor
+    ///
+    /// \return Position of the primary monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i getPrimaryMonitorPosition();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    xcb_window_t                      m_window;          ///< xcb identifier defining our window
-    ::Display*                        m_display;         ///< Pointer to the display
-    xcb_connection_t*                 m_connection;      ///< Pointer to the xcb connection
-    xcb_screen_t*                     m_screen;          ///< Screen identifier
-    XIM                               m_inputMethod;     ///< Input method linked to the X display
-    XIC                               m_inputContext;    ///< Input context used to get unicode input in our window
-    bool                              m_isExternal;      ///< Tell whether the window has been created externally or by SFML
-    xcb_randr_get_screen_info_reply_t m_oldVideoMode;    ///< Video mode in use before we switch to fullscreen
-    Cursor                            m_hiddenCursor;    ///< As X11 doesn't provide cursor hidding, we must create a transparent one
-    bool                              m_keyRepeat;       ///< Is the KeyRepeat feature enabled?
-    Vector2i                          m_previousSize;    ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
-    bool                              m_useSizeHints;    ///< Is the size of the window fixed with size hints?
-    bool                              m_fullscreen;      ///< Is the window in fullscreen?
-    bool                              m_cursorGrabbed;   ///< Is the mouse cursor trapped?
-    bool                              m_windowMapped;    ///< Has the window been mapped by the window manager?
+    ::Window           m_window;         ///< X identifier defining our window
+    ::Display*         m_display;        ///< Pointer to the display
+    int                m_screen;         ///< Screen identifier
+    XIM                m_inputMethod;    ///< Input method linked to the X display
+    XIC                m_inputContext;   ///< Input context used to get unicode input in our window
+    std::deque<XEvent> m_events;         ///< Queue we use to store pending events for this window
+    bool               m_isExternal;     ///< Tell whether the window has been created externally or by SFML
+    int                m_oldVideoMode;   ///< Video mode in use before we switch to fullscreen
+    RRCrtc             m_oldRRCrtc;      ///< RRCrtc in use before we switch to fullscreen
+    ::Cursor           m_hiddenCursor;   ///< As X11 doesn't provide cursor hiding, we must create a transparent one
+    ::Cursor           m_lastCursor;     ///< Last cursor used -- this data is not owned by the window and is required to be always valid
+    bool               m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
+    Vector2i           m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    bool               m_useSizeHints;   ///< Is the size of the window fixed with size hints?
+    bool               m_fullscreen;     ///< Is the window in fullscreen?
+    bool               m_cursorGrabbed;  ///< Is the mouse cursor trapped?
+    bool               m_windowMapped;   ///< Has the window been mapped by the window manager?
+    Pixmap             m_iconPixmap;     ///< The current icon pixmap if in use
+    Pixmap             m_iconMaskPixmap; ///< The current icon mask pixmap if in use
+    ::Time             m_lastInputTime;  ///< Last time we received user input
 };
 
 } // namespace priv

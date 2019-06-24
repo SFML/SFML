@@ -27,21 +27,17 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # don't use the OpenGL ES implementation on Linux
         set(OPENGL_ES 0)
     endif()
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+elseif(CMAKE_SYSTEM_NAME MATCHES "^k?FreeBSD$")
     set(SFML_OS_FREEBSD 1)
     # don't use the OpenGL ES implementation on FreeBSD
+    set(OPENGL_ES 0)
+elseif(CMAKE_SYSTEM_NAME MATCHES "^OpenBSD$")
+    set(SFML_OS_OPENBSD 1)
+    # don't use the OpenGL ES implementation on OpenBSD
     set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     if(IOS)
         set(SFML_OS_IOS 1)
-
-        # set the target framework and platforms
-        set(CMAKE_OSX_SYSROOT "iphoneos")
-        set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;i386")
-        set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")
-
-        # help the compiler detection script below
-        set(CMAKE_COMPILER_IS_GNUCXX 1)
 
         # use the OpenGL ES implementation on iOS
         set(OPENGL_ES 1)
@@ -64,15 +60,27 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
 
     # use the OpenGL ES implementation on Android
     set(OPENGL_ES 1)
+# comparing CMAKE_SYSTEM_NAME with "CYGWIN" generates a false warning depending on the CMake version
+# let's avoid it so the actual error is more visible
+elseif(${CYGWIN})
+    message(FATAL_ERROR "Unfortunately SFML doesn't support Cygwin's 'hybrid' status between both Windows and Linux derivatives.\nIf you insist on using the GCC, please use a standalone build of MinGW without the Cygwin environment instead.")
 else()
     message(FATAL_ERROR "Unsupported operating system or environment")
     return()
 endif()
 
+# set pkgconfig install directory
+# this could be e.g. macports on mac or msys2 on windows etc.
+set(SFML_PKGCONFIG_DIR "/lib${LIB_SUFFIX}/pkgconfig")
+
+if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
+    set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
+endif()
+
 # detect the compiler and its version
 # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true
 # even when CLANG is used, therefore the Clang test is done first
-if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_CXX_COMPILER MATCHES "clang[+][+]" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
    # CMAKE_CXX_COMPILER_ID is an internal CMake variable subject to change,
    # but there is no other way to detect CLang at the moment
    set(SFML_COMPILER_CLANG 1)
@@ -107,13 +115,4 @@ elseif(MSVC)
 else()
     message(FATAL_ERROR "Unsupported compiler")
     return()
-endif()
-
-# define the install directory for miscellaneous files
-if(SFML_OS_WINDOWS OR SFML_OS_IOS)
-    set(INSTALL_MISC_DIR .)
-elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
-    set(INSTALL_MISC_DIR share/SFML)
-elseif(SFML_OS_ANDROID)
-    set(INSTALL_MISC_DIR ${ANDROID_NDK}/sources/sfml)
 endif()

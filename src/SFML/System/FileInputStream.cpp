@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/FileInputStream.hpp>
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
@@ -44,7 +44,7 @@ FileInputStream::FileInputStream()
 ////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     if (m_file)
         delete m_file;
 #else
@@ -57,7 +57,7 @@ FileInputStream::~FileInputStream()
 ////////////////////////////////////////////////////////////
 bool FileInputStream::open(const std::string& filename)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     if (m_file)
         delete m_file;
     m_file = new priv::ResourceStream(filename);
@@ -76,7 +76,7 @@ bool FileInputStream::open(const std::string& filename)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::read(void* data, Int64 size)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->read(data, size);
 #else
     if (m_file)
@@ -90,12 +90,12 @@ Int64 FileInputStream::read(void* data, Int64 size)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::seek(Int64 position)
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->seek(position);
 #else
     if (m_file)
     {
-        if (std::fseek(m_file, static_cast<std::size_t>(position), SEEK_SET))
+        if (std::fseek(m_file, static_cast<long>(position), SEEK_SET))
             return -1;
 
         return tell();
@@ -111,7 +111,7 @@ Int64 FileInputStream::seek(Int64 position)
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::tell()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->tell();
 #else
     if (m_file)
@@ -125,7 +125,7 @@ Int64 FileInputStream::tell()
 ////////////////////////////////////////////////////////////
 Int64 FileInputStream::getSize()
 {
-#ifdef ANDROID
+#ifdef SFML_SYSTEM_ANDROID
     return m_file->getSize();
 #else
     if (m_file)

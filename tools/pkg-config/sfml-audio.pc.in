@@ -8,5 +8,8 @@ Description: The Simple and Fast Multimedia Library, audio module.
 URL: http://www.sfml-dev.org
 Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
 Requires: sfml-system
+Requires.private: openal, vorbisenc, vorbisfile, vorbis, ogg, flac
 Libs: -L${libdir} -lsfml-audio
+# openal may be a system framework
+Libs.private: @OPENAL_LIBRARY@
 Cflags: -I${includedir}

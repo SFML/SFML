@@ -16,5 +16,7 @@
     <string>????</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array><string>MacOSX</string></array>
 </dict>
 </plist>

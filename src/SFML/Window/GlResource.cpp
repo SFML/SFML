@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,16 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
-
-
-namespace
-{
-    // OpenGL resources counter and its mutex
-    unsigned int count = 0;
-    sf::Mutex mutex;
-}
 
 
 namespace sf
@@ -44,42 +34,35 @@ namespace sf
 ////////////////////////////////////////////////////////////
 GlResource::GlResource()
 {
-    {
-        // Protect from concurrent access
-        Lock lock(mutex);
-
-        // If this is the very first resource, trigger the global context initialization
-        if (count == 0)
-            priv::GlContext::globalInit();
-
-        // Increment the resources counter
-        count++;
-    }
-
-    // Now make sure that there is an active OpenGL context in the current thread
-    priv::GlContext::ensureContext();
+    priv::GlContext::initResource();
 }
 
 
 ////////////////////////////////////////////////////////////
 GlResource::~GlResource()
 {
-    // Protect from concurrent access
-    Lock lock(mutex);
-
-    // Decrement the resources counter
-    count--;
-
-    // If there's no more resource alive, we can trigger the global context cleanup
-    if (count == 0)
-        priv::GlContext::globalCleanup();
+    priv::GlContext::cleanupResource();
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlResource::ensureGlContext()
+void GlResource::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
 {
-    priv::GlContext::ensureContext();
+    priv::GlContext::registerContextDestroyCallback(callback, arg);
+}
+
+
+////////////////////////////////////////////////////////////
+GlResource::TransientContextLock::TransientContextLock()
+{
+    priv::GlContext::acquireTransientContext();
+}
+
+
+////////////////////////////////////////////////////////////
+GlResource::TransientContextLock::~TransientContextLock()
+{
+    priv::GlContext::releaseTransientContext();
 }
 
 } // namespace sf

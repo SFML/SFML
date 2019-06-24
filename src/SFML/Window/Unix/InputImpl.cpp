@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,9 +28,8 @@
 #include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/ScopedXcbPtr.hpp>
 #include <SFML/System/Err.hpp>
-#include <xcb/xcb.h>
+#include <X11/Xlib.h>
 #include <X11/keysym.h>
 
 
@@ -55,20 +54,20 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::RSystem:    keysym = XK_Super_R;      break;
         case Keyboard::Menu:       keysym = XK_Menu;         break;
         case Keyboard::Escape:     keysym = XK_Escape;       break;
-        case Keyboard::SemiColon:  keysym = XK_semicolon;    break;
+        case Keyboard::Semicolon:  keysym = XK_semicolon;    break;
         case Keyboard::Slash:      keysym = XK_slash;        break;
         case Keyboard::Equal:      keysym = XK_equal;        break;
-        case Keyboard::Dash:       keysym = XK_minus;        break;
+        case Keyboard::Hyphen:     keysym = XK_minus;        break;
         case Keyboard::LBracket:   keysym = XK_bracketleft;  break;
         case Keyboard::RBracket:   keysym = XK_bracketright; break;
         case Keyboard::Comma:      keysym = XK_comma;        break;
         case Keyboard::Period:     keysym = XK_period;       break;
         case Keyboard::Quote:      keysym = XK_apostrophe;   break;
-        case Keyboard::BackSlash:  keysym = XK_backslash;    break;
+        case Keyboard::Backslash:  keysym = XK_backslash;    break;
         case Keyboard::Tilde:      keysym = XK_grave;        break;
         case Keyboard::Space:      keysym = XK_space;        break;
-        case Keyboard::Return:     keysym = XK_Return;       break;
-        case Keyboard::BackSpace:  keysym = XK_BackSpace;    break;
+        case Keyboard::Enter:      keysym = XK_Return;       break;
+        case Keyboard::Backspace:  keysym = XK_BackSpace;    break;
         case Keyboard::Tab:        keysym = XK_Tab;          break;
         case Keyboard::PageUp:     keysym = XK_Prior;        break;
         case Keyboard::PageDown:   keysym = XK_Next;         break;
@@ -157,36 +156,26 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     Display* display = OpenDisplay();
 
     // Convert to keycode
-    xcb_keycode_t keycode = XKeysymToKeycode(display, keysym);
-
-    CloseDisplay(display);
-
-    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
-
-    // Open a connection with the X server
-    xcb_connection_t* connection = OpenConnection();
-
-    // Get the whole keyboard state
-    ScopedXcbPtr<xcb_query_keymap_reply_t> keymap(
-        xcb_query_keymap_reply(
-            connection,
-            xcb_query_keymap(connection),
-            &error
-        )
-    );
-
-    // Close the connection with the X server
-    CloseConnection(connection);
-
-    if (error)
+    KeyCode keycode = XKeysymToKeycode(display, keysym);
+    if (keycode != 0)
     {
-        err() << "Failed to query keymap" << std::endl;
+        // Get the whole keyboard state
+        char keys[32];
+        XQueryKeymap(display, keys);
+
+        // Close the connection with the X server
+        CloseDisplay(display);
+
+        // Check our keycode
+        return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
+    }
+    else
+    {
+        // Close the connection with the X server
+        CloseDisplay(display);
 
         return false;
     }
-
-    // Check our keycode
-    return (keymap->keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
 
@@ -201,43 +190,30 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
-    xcb_connection_t* connection = OpenConnection();
+    Display* display = OpenDisplay();
 
-    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+    // we don't care about these but they are required
+    ::Window root, child;
+    int wx, wy;
+    int gx, gy;
 
-    // Get pointer mask
-    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
-        xcb_query_pointer_reply(
-            connection,
-            xcb_query_pointer(
-                connection,
-                XCBDefaultRootWindow(connection)
-            ),
-            &error
-        )
-    );
+    unsigned int buttons = 0;
+    XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &wx, &wy, &buttons);
 
     // Close the connection with the X server
-    CloseConnection(connection);
-
-    if (error)
-    {
-        err() << "Failed to query pointer" << std::endl;
-
-        return false;
-    }
-
-    uint16_t buttons = pointer->mask;
+    CloseDisplay(display);
 
     switch (button)
     {
-        case Mouse::Left:     return buttons & XCB_BUTTON_MASK_1;
-        case Mouse::Right:    return buttons & XCB_BUTTON_MASK_3;
-        case Mouse::Middle:   return buttons & XCB_BUTTON_MASK_2;
+        case Mouse::Left:     return buttons & Button1Mask;
+        case Mouse::Right:    return buttons & Button3Mask;
+        case Mouse::Middle:   return buttons & Button2Mask;
         case Mouse::XButton1: return false; // not supported by X
         case Mouse::XButton2: return false; // not supported by X
         default:              return false;
     }
+
+    return false;
 }
 
 
@@ -245,68 +221,46 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 Vector2i InputImpl::getMousePosition()
 {
     // Open a connection with the X server
-    xcb_connection_t* connection = OpenConnection();
+    Display* display = OpenDisplay();
 
-    ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+    // we don't care about these but they are required
+    ::Window root, child;
+    int x, y;
+    unsigned int buttons;
 
-    ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
-        xcb_query_pointer_reply(
-            connection,
-            xcb_query_pointer(
-                connection,
-                XCBDefaultRootWindow(connection)
-            ),
-            &error
-        )
-    );
+    int gx = 0;
+    int gy = 0;
+    XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &x, &y, &buttons);
 
     // Close the connection with the X server
-    CloseConnection(connection);
+    CloseDisplay(display);
 
-    if (error)
-    {
-        err() << "Failed to query pointer" << std::endl;
-
-        return Vector2i(0, 0);
-    }
-
-    return Vector2i(pointer->root_x, pointer->root_y);
+    return Vector2i(gx, gy);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const Window& relativeTo)
+Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
     WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
         // Open a connection with the X server
-        xcb_connection_t* connection = OpenConnection();
+        Display* display = OpenDisplay();
 
-        ScopedXcbPtr<xcb_generic_error_t> error(NULL);
+        // we don't care about these but they are required
+        ::Window root, child;
+        int gx, gy;
+        unsigned int buttons;
 
-        ScopedXcbPtr<xcb_query_pointer_reply_t> pointer(
-            xcb_query_pointer_reply(
-                connection,
-                xcb_query_pointer(
-                    connection,
-                    handle
-                ),
-                &error
-            )
-        );
+        int x = 0;
+        int y = 0;
+        XQueryPointer(display, handle, &root, &child, &gx, &gy, &x, &y, &buttons);
 
         // Close the connection with the X server
-        CloseConnection(connection);
+        CloseDisplay(display);
 
-        if (error)
-        {
-            err() << "Failed to query pointer" << std::endl;
-
-            return Vector2i(0, 0);
-        }
-
-        return Vector2i(pointer->win_x, pointer->win_y);
+        return Vector2i(x, y);
     }
     else
     {
@@ -319,59 +273,31 @@ Vector2i InputImpl::getMousePosition(const Window& relativeTo)
 void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
-    xcb_connection_t* connection = OpenConnection();
+    Display* display = OpenDisplay();
 
-    ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
-        connection,
-        xcb_warp_pointer(
-            connection,
-            None,                             // Source window
-            XCBDefaultRootWindow(connection), // Destination window
-            0, 0,                             // Source position
-            0, 0,                             // Source size
-            position.x, position.y            // Destination position
-        )
-    ));
-
-    if (error)
-        err() << "Failed to set mouse position" << std::endl;
-
-    xcb_flush(connection);
+    XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, position.x, position.y);
+    XFlush(display);
 
     // Close the connection with the X server
-    CloseConnection(connection);
+    CloseDisplay(display);
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const Window& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
-    xcb_connection_t* connection = OpenConnection();
+    Display* display = OpenDisplay();
 
     WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
     {
-        ScopedXcbPtr<xcb_generic_error_t> error(xcb_request_check(
-            connection,
-            xcb_warp_pointer(
-                connection,
-                None,                  // Source window
-                handle,                // Destination window
-                0, 0,                  // Source position
-                0, 0,                  // Source size
-                position.x, position.y // Destination position
-            )
-        ));
-
-        if (error)
-            err() << "Failed to set mouse position" << std::endl;
-
-        xcb_flush(connection);
+        XWarpPointer(display, None, handle, 0, 0, 0, 0, position.x, position.y);
+        XFlush(display);
     }
 
     // Close the connection with the X server
-    CloseConnection(connection);
+    CloseDisplay(display);
 }
 
 
@@ -392,7 +318,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const Window& /*relativeTo*/)
+Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
     return Vector2i();

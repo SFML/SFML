@@ -155,6 +155,14 @@ public:
     virtual void setMouseCursorGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the displayed cursor to a native system cursor
+    ///
+    /// \param cursor Native system cursor type to display
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMouseCursor(const CursorImpl& cursor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
     /// \param enabled True to enable, false to disable
