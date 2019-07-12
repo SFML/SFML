@@ -228,6 +228,14 @@ void Window::display()
 
 
 ////////////////////////////////////////////////////////////
+void Window::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+    if (m_impl)
+        m_impl->setUnresponsiveEraseColor(red, green, blue);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::initialize()
 {
     // Setup default behaviors (to get a consistent behavior across different implementations)

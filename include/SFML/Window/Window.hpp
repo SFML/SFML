@@ -251,6 +251,17 @@ public:
     ////////////////////////////////////////////////////////////
     void display();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set color to erase the window with while it is being moved or
+    ///        resized, or when a popup window is active.
+    ///
+    /// \param red   Red component (in the range [0, 255])
+    /// \param green Green component (in the range [0, 255])
+    /// \param blue  Blue component (in the range [0, 255])
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue);
+
 private:
 
     ////////////////////////////////////////////////////////////

@@ -142,7 +142,8 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
 m_fullscreen      (false),
-m_cursorGrabbed   (false)
+m_cursorGrabbed   (false),
+m_eraseEnabled    (false)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -175,7 +176,8 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
 m_fullscreen      ((style & Style::Fullscreen) != 0),
-m_cursorGrabbed   (m_fullscreen)
+m_cursorGrabbed   (m_fullscreen),
+m_eraseEnabled    (false)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -462,10 +464,20 @@ bool WindowImplWin32::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+    WindowImpl::setUnresponsiveEraseColor(red, green, blue);
+
+    m_eraseEnabled = true;
+    m_eraseColor = RGB(red, green, blue);
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
-    windowClass.style         = 0;
+    windowClass.style         = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
@@ -682,6 +694,31 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
+            break;
+        }
+
+        case WM_PAINT:
+        {
+            if (m_eraseEnabled && (m_resizing || GetActiveWindow() != NULL && GetActiveWindow() != m_handle))
+            {
+                // Either moving/resizing is in progress or an owned window is active
+
+                // Validate the update rectangle without drawing
+                PAINTSTRUCT ps;
+                BeginPaint(m_handle, &ps);
+                EndPaint(m_handle, &ps);
+
+                if (ps.fErase)
+                {
+                    // Erase the entire client area
+                    HDC deviceContext = GetDC(m_handle);
+                    RECT rc;
+                    GetClientRect(m_handle, &rc);
+                    SetBkColor(deviceContext, m_eraseColor);
+                    ExtTextOutW(deviceContext, 0, 0, ETO_OPAQUE, &rc, L"", 0, NULL);
+                    ReleaseDC(m_handle, deviceContext);
+                }
+            }
             break;
         }
 
@@ -1154,6 +1191,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 
     return DefWindowProcW(handle, message, wParam, lParam);
 }
+
 
 } // namespace priv
 

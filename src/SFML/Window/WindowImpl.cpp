@@ -261,6 +261,12 @@ void WindowImpl::processSensorEvents()
     }
 }
 
+
+////////////////////////////////////////////////////////////
+void WindowImpl::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+}
+
 } // namespace priv
 
 } // namespace sf
