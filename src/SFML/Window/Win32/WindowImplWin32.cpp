@@ -45,6 +45,7 @@
 #include <dbt.h>
 #include <vector>
 #include <cstring>
+#include <cmath>
 
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
@@ -123,6 +124,18 @@ namespace
             FreeLibrary(user32Dll);
         }
     }
+
+    sf::Uint8 sRgbFromLinear(sf::Uint8 c)
+    {
+        if (c > 0)
+        {
+            double cl = c / 255.;
+            double cs = 1.055 * pow(cl, 0.41666) - 0.055;
+            return static_cast<sf::Uint8>(cs * 255.);
+        }
+        else
+            return 0;
+    }
 }
 
 namespace sf
@@ -133,6 +146,7 @@ namespace priv
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
+m_sRgbCapable     (false), // might not be accurate
 m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
@@ -164,9 +178,10 @@ m_eraseEnabled    (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
 m_handle          (NULL),
 m_callback        (0),
+m_sRgbCapable     (settings.sRgbCapable),
 m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
@@ -469,7 +484,14 @@ void WindowImplWin32::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 bl
     WindowImpl::setUnresponsiveEraseColor(red, green, blue);
 
     m_eraseEnabled = true;
-    m_eraseColor = RGB(red, green, blue);
+    if (m_sRgbCapable)
+    {
+        m_eraseColor = RGB(sRgbFromLinear(red), sRgbFromLinear(green), sRgbFromLinear(blue));
+    }
+    else
+    {
+        m_eraseColor = RGB(red, green, blue);
+    }
 }
 
 
@@ -697,6 +719,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        // Paint event
         case WM_PAINT:
         {
             if (m_eraseEnabled && (m_resizing || GetActiveWindow() != NULL && GetActiveWindow() != m_handle))

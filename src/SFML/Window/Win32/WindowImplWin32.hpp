@@ -281,6 +281,7 @@ private:
     ////////////////////////////////////////////////////////////
     HWND     m_handle;           ///< Win32 handle of the window
     LONG_PTR m_callback;         ///< Stores the original event callback function of the control
+    bool     m_sRgbCapable;      ///< Whether the context framebuffer is sRGB capable
     bool     m_cursorVisible;    ///< Is the cursor visible or hidden?
     HCURSOR  m_lastCursor;       ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     HICON    m_icon;             ///< Custom icon assigned to the window
