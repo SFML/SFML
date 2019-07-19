@@ -228,6 +228,16 @@ void Window::display()
 
 
 ////////////////////////////////////////////////////////////
+void Window::setWindowCallbacks(WindowCallbacks* windowCallbacks)
+{
+    if (m_impl)
+    {
+        m_impl->setWindowCallbacks(this, windowCallbacks);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::initialize()
 {
     // Setup default behaviors (to get a consistent behavior across different implementations)

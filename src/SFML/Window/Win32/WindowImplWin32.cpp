@@ -465,7 +465,7 @@ bool WindowImplWin32::hasFocus() const
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
-    windowClass.style         = 0;
+    windowClass.style         = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
@@ -632,7 +632,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             m_resizing = false;
 
             // Ignore cases where the window has only been moved
-            if(m_lastSize != getSize())
+            if (m_lastSize != getSize())
             {
                 // Update the last handled size
                 m_lastSize = getSize();
@@ -682,6 +682,37 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
+            break;
+        }
+
+        // Paint event
+        case WM_PAINT:
+        {
+            WindowCallbacks *windowCallbacks = getWindowCallbacks();
+            if (windowCallbacks && (m_resizing || GetActiveWindow() != NULL && GetActiveWindow() != m_handle))
+            {
+                // Either moving/resizing is in progress or an owned window is active
+
+                if (m_resizing && m_lastSize != getSize())
+                {
+                    // Update the last handled size
+                    m_lastSize = getSize();
+
+                    // Notify the Window class
+                    asyncSetSize(m_lastSize);
+
+                    Event event;
+                    event.type        = Event::Resized;
+                    event.size.width  = m_lastSize.x;
+                    event.size.height = m_lastSize.y;
+
+                    windowCallbacks->asyncRender(&event);
+                }
+                else
+                {
+                    windowCallbacks->asyncRender(NULL);
+                }
+            }
             break;
         }
 

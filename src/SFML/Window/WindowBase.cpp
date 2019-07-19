@@ -323,6 +323,17 @@ void WindowBase::onResize()
 
 
 ////////////////////////////////////////////////////////////
+void WindowBase::asyncSetSize(const Vector2u& size)
+{
+    // Cache the new size
+    m_size = size;
+
+    // Notify the derived class
+    onResize();
+}
+
+
+////////////////////////////////////////////////////////////
 bool WindowBase::filterEvent(const Event& event)
 {
     // Notify resize events to the derived class

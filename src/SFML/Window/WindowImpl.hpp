@@ -227,6 +227,12 @@ public:
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const = 0;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief TODO
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWindowCallbacks(Resizeable* resizeable, WindowCallbacks* windowCallbacks);
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -253,6 +259,18 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void processEvents() = 0;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief TODO
+    ///
+    ////////////////////////////////////////////////////////////
+    void asyncSetSize(const Vector2u& size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief TODO
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowCallbacks* getWindowCallbacks();
+
 private:
 
     ////////////////////////////////////////////////////////////
@@ -275,6 +293,8 @@ private:
     Vector3f          m_sensorValue[Sensor::Count];                          ///< Previous value of the sensors
     float             m_joystickThreshold;                                   ///< Joystick threshold (minimum motion for "move" event to be generated)
     float             m_previousAxes[Joystick::Count][Joystick::AxisCount];  ///< Position of each axis last time a move event triggered, in range [-100, 100]
+    Resizeable*       m_resizeable;                                          ///< Optional interface for notifying the Window of resizing
+    WindowCallbacks*  m_windowCallbacks;                                     ///< Optional interface for asynchronous handling of events
 };
 
 } // namespace priv
