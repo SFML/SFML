@@ -92,10 +92,6 @@ m_cacheId      (getUniqueId())
         if (create(copy.getSize().x, copy.getSize().y))
         {
             update(copy);
-
-            // Force an OpenGL flush, so that the texture will appear updated
-            // in all contexts immediately (solves problems in multi-threaded apps)
-            glCheck(glFlush());
         }
         else
         {
