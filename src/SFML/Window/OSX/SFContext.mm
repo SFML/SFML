@@ -42,6 +42,7 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared) :
+m_context(0),
 m_view(0),
 m_window(0)
 {
@@ -58,6 +59,7 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      const WindowImpl* owner, unsigned int bitsPerPixel) :
+m_context(0),
 m_view(0),
 m_window(0)
 {
@@ -76,6 +78,7 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
                      unsigned int width, unsigned int height) :
+m_context(0),
 m_view(0),
 m_window(0)
 {
