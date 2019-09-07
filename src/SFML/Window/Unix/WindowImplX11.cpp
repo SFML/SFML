@@ -48,6 +48,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cmath>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -472,6 +473,18 @@ namespace
 
         return sf::Keyboard::Unknown;
     }
+
+    sf::Uint8 sRgbFromLinear(sf::Uint8 c)
+    {
+        if (c > 0)
+        {
+            double cl = c / 255.;
+            double cs = 1.055 * pow(cl, 0.41666) - 0.055;
+            return static_cast<sf::Uint8>(cs * 255.);
+        }
+        else
+            return 0;
+    }
 }
 
 
@@ -483,6 +496,7 @@ namespace priv
 WindowImplX11::WindowImplX11(WindowHandle handle) :
 m_window         (0),
 m_screen         (0),
+m_sRgbCapable    (false), // might not be accurate
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
 m_isExternal     (true),
@@ -498,7 +512,8 @@ m_cursorGrabbed  (false),
 m_windowMapped   (false),
 m_iconPixmap     (0),
 m_iconMaskPixmap (0),
-m_lastInputTime  (0)
+m_lastInputTime  (0),
+m_backgroundSet  (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -532,6 +547,7 @@ m_lastInputTime  (0)
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
 m_window         (0),
 m_screen         (0),
+m_sRgbCapable    (settings.sRgbCapable),
 m_inputMethod    (NULL),
 m_inputContext   (NULL),
 m_isExternal     (false),
@@ -547,7 +563,8 @@ m_cursorGrabbed  (m_fullscreen),
 m_windowMapped   (false),
 m_iconPixmap     (0),
 m_iconMaskPixmap (0),
-m_lastInputTime  (0)
+m_lastInputTime  (0),
+m_backgroundSet  (false)
 {
     // Open a connection with the X server
     m_display = OpenDisplay();
@@ -773,6 +790,16 @@ WindowImplX11::~WindowImplX11()
     // Destroy the input context
     if (m_inputContext)
         XDestroyIC(m_inputContext);
+
+    // Destroy the background color
+    if (m_backgroundSet)
+    {
+        XWindowAttributes attributes;
+        XGetWindowAttributes(m_display, m_window, &attributes);
+        Colormap colormap = (attributes.colormap != None) ? attributes.colormap : DefaultColormap(m_display, m_screen);
+
+        XFreeColors(m_display, colormap, &m_backgroundColor.pixel, 1, 0);
+    }
 
     // Destroy the window
     if (m_window && !m_isExternal)
@@ -1217,6 +1244,40 @@ bool WindowImplX11::hasFocus() const
     XGetInputFocus(m_display, &focusedWindow, &revertToReturn);
 
     return (m_window == focusedWindow);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+    if (m_sRgbCapable)
+    {
+        red = sRgbFromLinear(red);
+        green = sRgbFromLinear(green);
+        blue = sRgbFromLinear(blue);
+    }
+
+    if (!m_backgroundSet || ((red << 8) != m_backgroundColor.red) ||
+        ((green << 8) != m_backgroundColor.green) || ((blue << 8) != m_backgroundColor.blue))
+    {
+        XWindowAttributes attributes;
+        XGetWindowAttributes(m_display, m_window, &attributes);
+        Colormap colormap = (attributes.colormap != None) ? attributes.colormap : DefaultColormap(m_display, m_screen);
+
+        // Create the background color
+        if (m_backgroundSet)
+            XFreeColors(m_display, colormap, &m_backgroundColor.pixel, 1, 0);
+        m_backgroundColor.red = red << 8;
+        m_backgroundColor.green = green << 8;
+        m_backgroundColor.blue = blue << 8;
+        m_backgroundSet = XAllocColor(m_display, colormap, &m_backgroundColor) != 0;
+
+        if (m_backgroundSet)
+        {
+            XSetWindowBackground(m_display, m_window, m_backgroundColor.pixel);
+            XFlush(m_display);
+        }
+    }
 }
 
 

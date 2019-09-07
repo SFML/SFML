@@ -481,8 +481,6 @@ bool WindowImplWin32::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
 {
-    WindowImpl::setUnresponsiveEraseColor(red, green, blue);
-
     m_eraseEnabled = true;
     if (m_sRgbCapable)
     {

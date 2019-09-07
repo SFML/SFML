@@ -187,6 +187,13 @@ public:
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set color to erase the contents of the window with while it
+    ///        is being moved or resized, or when a popup window is active.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue);
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -303,6 +310,7 @@ private:
     ::Window           m_window;         ///< X identifier defining our window
     ::Display*         m_display;        ///< Pointer to the display
     int                m_screen;         ///< Screen identifier
+    bool               m_sRgbCapable;    ///< Whether the context framebuffer is sRGB capable
     XIM                m_inputMethod;    ///< Input method linked to the X display
     XIC                m_inputContext;   ///< Input context used to get unicode input in our window
     std::deque<XEvent> m_events;         ///< Queue we use to store pending events for this window
@@ -320,6 +328,8 @@ private:
     Pixmap             m_iconPixmap;     ///< The current icon pixmap if in use
     Pixmap             m_iconMaskPixmap; ///< The current icon mask pixmap if in use
     ::Time             m_lastInputTime;  ///< Last time we received user input
+    bool               m_backgroundSet;  ///< Is background color set?
+    XColor             m_backgroundColor;///< Background color
 };
 
 } // namespace priv
