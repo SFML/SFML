@@ -85,7 +85,7 @@ public:
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Text(const String& string, const Font& font, unsigned int characterSize = 30);
+    Text(const String& string, Font& font, unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's string
@@ -123,7 +123,7 @@ public:
     /// \see getFont
     ///
     ////////////////////////////////////////////////////////////
-    void setFont(const Font& font);
+    void setFont(Font& font);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the character size
@@ -436,7 +436,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     String              m_string;              ///< String to display
-    const Font*         m_font;                ///< Font used to display the string
+    Font*               m_font;                ///< Font used to display the string
     unsigned int        m_characterSize;       ///< Base size of characters, in pixels
     float               m_letterSpacingFactor; ///< Spacing factor between letters
     float               m_lineSpacingFactor;   ///< Spacing factor between lines

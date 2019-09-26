@@ -96,7 +96,7 @@ m_fontTextureId      (0)
 
 
 ////////////////////////////////////////////////////////////
-Text::Text(const String& string, const Font& font, unsigned int characterSize) :
+Text::Text(const String& string, Font& font, unsigned int characterSize) :
 m_string             (string),
 m_font               (&font),
 m_characterSize      (characterSize),
@@ -128,7 +128,7 @@ void Text::setString(const String& string)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setFont(const Font& font)
+void Text::setFont(Font& font)
 {
     if (m_font != &font)
     {
