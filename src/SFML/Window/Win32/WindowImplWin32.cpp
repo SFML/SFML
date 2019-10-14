@@ -44,6 +44,7 @@
 #include <dbt.h>
 #include <vector>
 #include <cstring>
+#include <cmath>
 
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
@@ -122,6 +123,18 @@ namespace
             FreeLibrary(user32Dll);
         }
     }
+
+    sf::Uint8 sRgbFromLinear(sf::Uint8 c)
+    {
+        if (c > 0)
+        {
+            double cl = c / 255.;
+            double cs = 1.055 * pow(cl, 0.41666) - 0.055;
+            return static_cast<sf::Uint8>(cs * 255.);
+        }
+        else
+            return 0;
+    }
 }
 
 namespace sf
@@ -132,6 +145,7 @@ namespace priv
 WindowImplWin32::WindowImplWin32(WindowHandle handle) :
 m_handle          (handle),
 m_callback        (0),
+m_sRgbCapable     (false), // might not be accurate
 m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
@@ -141,7 +155,8 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
 m_fullscreen      (false),
-m_cursorGrabbed   (false)
+m_cursorGrabbed   (false),
+m_eraseEnabled    (false)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -162,9 +177,10 @@ m_cursorGrabbed   (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
 m_handle          (NULL),
 m_callback        (0),
+m_sRgbCapable     (settings.sRgbCapable),
 m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(NULL, IDC_ARROW)),
 m_icon            (NULL),
@@ -174,7 +190,8 @@ m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
 m_fullscreen      ((style & Style::Fullscreen) != 0),
-m_cursorGrabbed   (m_fullscreen)
+m_cursorGrabbed   (m_fullscreen),
+m_eraseEnabled    (false)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -461,10 +478,25 @@ bool WindowImplWin32::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+    m_eraseEnabled = true;
+    if (m_sRgbCapable)
+    {
+        m_eraseColor = RGB(sRgbFromLinear(red), sRgbFromLinear(green), sRgbFromLinear(blue));
+    }
+    else
+    {
+        m_eraseColor = RGB(red, green, blue);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
-    windowClass.style         = 0;
+    windowClass.style         = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc   = &WindowImplWin32::globalOnEvent;
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
@@ -681,6 +713,32 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
             event.type = Event::LostFocus;
             pushEvent(event);
+            break;
+        }
+
+        // Paint event
+        case WM_PAINT:
+        {
+            if (m_eraseEnabled && (m_resizing || GetActiveWindow() != NULL && GetActiveWindow() != m_handle))
+            {
+                // Either moving/resizing is in progress or an owned window is active
+
+                // Validate the update rectangle without drawing
+                PAINTSTRUCT ps;
+                BeginPaint(m_handle, &ps);
+                EndPaint(m_handle, &ps);
+
+                if (ps.fErase)
+                {
+                    // Erase the entire client area
+                    HDC deviceContext = GetDC(m_handle);
+                    RECT rc;
+                    GetClientRect(m_handle, &rc);
+                    SetBkColor(deviceContext, m_eraseColor);
+                    ExtTextOutW(deviceContext, 0, 0, ETO_OPAQUE, &rc, L"", 0, NULL);
+                    ReleaseDC(m_handle, deviceContext);
+                }
+            }
             break;
         }
 
@@ -1153,6 +1211,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 
     return DefWindowProcW(handle, message, wParam, lParam);
 }
+
 
 } // namespace priv
 

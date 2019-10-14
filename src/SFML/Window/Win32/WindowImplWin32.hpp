@@ -184,6 +184,13 @@ public:
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set color to erase the contents of the window with while it
+    ///        is being moved or resized, or when a popup window is active.
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setUnresponsiveEraseColor(Uint8 red, Uint8 green, Uint8 blue);
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -274,6 +281,7 @@ private:
     ////////////////////////////////////////////////////////////
     HWND     m_handle;           ///< Win32 handle of the window
     LONG_PTR m_callback;         ///< Stores the original event callback function of the control
+    bool     m_sRgbCapable;      ///< Whether the context framebuffer is sRGB capable
     bool     m_cursorVisible;    ///< Is the cursor visible or hidden?
     HCURSOR  m_lastCursor;       ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     HICON    m_icon;             ///< Custom icon assigned to the window
@@ -284,6 +292,8 @@ private:
     bool     m_mouseInside;      ///< Mouse is inside the window?
     bool     m_fullscreen;       ///< Is the window fullscreen?
     bool     m_cursorGrabbed;    ///< Is the mouse cursor trapped?
+    bool     m_eraseEnabled;     ///< Should we erase window when it cannot process event?
+    COLORREF m_eraseColor;       ///< Color to erase the window with
 };
 
 } // namespace priv
