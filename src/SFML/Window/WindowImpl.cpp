@@ -81,7 +81,9 @@ WindowImpl* WindowImpl::create(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImpl::WindowImpl() :
-m_joystickThreshold(0.1f)
+m_joystickThreshold(0.1f),
+m_resizeable       (NULL),
+m_windowCallbacks  (NULL)
 {
     // Get the initial joystick states
     JoystickManager::getInstance().update();
@@ -155,6 +157,20 @@ bool WindowImpl::popEvent(Event& event, bool block)
 void WindowImpl::pushEvent(const Event& event)
 {
     m_events.push(event);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::asyncSetSize(const Vector2u& size)
+{
+    m_resizeable->asyncSetSize(size);
+}
+
+
+////////////////////////////////////////////////////////////
+WindowCallbacks* WindowImpl::getWindowCallbacks()
+{
+    return m_windowCallbacks;
 }
 
 
@@ -259,6 +275,14 @@ void WindowImpl::processSensorEvents()
             }
         }
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::setWindowCallbacks(Resizeable* resizeable, WindowCallbacks* windowCallbacks)
+{
+    m_resizeable = resizeable;
+    m_windowCallbacks = windowCallbacks;
 }
 
 } // namespace priv
