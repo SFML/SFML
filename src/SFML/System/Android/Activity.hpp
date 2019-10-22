@@ -33,7 +33,6 @@
 #include <SFML/System/Mutex.hpp>
 #include <android/native_activity.h>
 #include <android/configuration.h>
-#include <EGL/egl.h>
 #include <vector>
 #include <map>
 #include <string>

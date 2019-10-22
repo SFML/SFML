@@ -32,7 +32,7 @@
 #include <SFML/Window/iOS/ObjCType.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Clock.hpp>
-#include <OpenGLES/ES1/gl.h>
+#include <glad/gl.h>
 
 
 SFML_DECLARE_OBJC_CLASS(EAGLContext);
@@ -89,6 +89,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~EaglContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Recreate the render buffers of the context

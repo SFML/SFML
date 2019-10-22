@@ -32,8 +32,11 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/OpenGL.hpp>
-
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <glad/egl.h>
+#ifdef SFML_SYSTEM_LINUX
+    #include <X11/Xlib.h>
+#endif
 
 namespace sf
 {
@@ -78,6 +81,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~EglContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -168,7 +181,7 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to copy the picked EGL configuration 
+    /// \brief Helper to copy the picked EGL configuration
     ////////////////////////////////////////////////////////////
     void updateSettings();
 

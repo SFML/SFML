@@ -16,5 +16,5 @@ endif()
 sfml_add_example(opengl GUI_APP
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS sfml-graphics OpenGL
+                 DEPENDS sfml-graphics
                  RESOURCES_DIR resources)

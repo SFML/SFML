@@ -227,6 +227,18 @@ public:
     ////////////////////////////////////////////////////////////
     virtual bool hasFocus() const = 0;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a Vulkan rendering surface
+    ///
+    /// \param instance  Vulkan instance
+    /// \param surface   Created surface
+    /// \param allocator Allocator to use
+    ///
+    /// \return True if surface creation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator);
+
 protected:
 
     ////////////////////////////////////////////////////////////

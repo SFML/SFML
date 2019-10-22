@@ -29,10 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <glad/gl.h>
 
 #ifdef SFML_OPENGL_ES
-
-    #include <SFML/OpenGL.hpp>
 
     // SFML requires at a bare minimum OpenGL ES 1.0 capability
     // Some extensions only incorporated by 2.0 are also required
@@ -73,7 +72,7 @@
     // The following extensions are required.
 
     // Core since 2.0 - OES_blend_subtract
-    #define GLEXT_blend_subtract                      GL_OES_blend_subtract
+    #define GLEXT_blend_subtract                      SF_GLAD_GL_OES_blend_subtract
     #define GLEXT_glBlendEquation                     glBlendEquationOES
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_OES
     #define GLEXT_GL_FUNC_SUBTRACT                    GL_FUNC_SUBTRACT_OES
@@ -82,28 +81,18 @@
     // The following extensions are optional.
 
     // Core since 2.0 - OES_blend_func_separate
-    #ifdef SFML_SYSTEM_ANDROID
-        // Hack to make transparency working on some Android devices
-        #define GLEXT_blend_func_separate                 false
-    #else
-        #define GLEXT_blend_func_separate                 GL_OES_blend_func_separate
-    #endif
+    #define GLEXT_blend_func_separate                 SF_GLAD_GL_OES_blend_func_separate
     #define GLEXT_glBlendFuncSeparate                 glBlendFuncSeparateOES
 
     // Core since 2.0 - OES_blend_equation_separate
-    #ifdef SFML_SYSTEM_ANDROID
-        // Hack to make transparency working on some Android devices
-        #define GLEXT_blend_equation_separate             false
-    #else
-        #define GLEXT_blend_equation_separate             GL_OES_blend_equation_separate
-    #endif
+    #define GLEXT_blend_equation_separate             SF_GLAD_GL_OES_blend_equation_separate
     #define GLEXT_glBlendEquationSeparate             glBlendEquationSeparateOES
 
     // Core since 2.0 - OES_texture_npot
     #define GLEXT_texture_non_power_of_two            false
 
     // Core since 2.0 - OES_framebuffer_object
-    #define GLEXT_framebuffer_object                  GL_OES_framebuffer_object
+    #define GLEXT_framebuffer_object                  SF_GLAD_GL_OES_framebuffer_object
     #define GLEXT_glBindRenderbuffer                  glBindRenderbufferOES
     #define GLEXT_glDeleteRenderbuffers               glDeleteRenderbuffersOES
     #define GLEXT_glGenRenderbuffers                  glGenRenderbuffersOES
@@ -125,29 +114,33 @@
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION    GL_INVALID_FRAMEBUFFER_OPERATION_OES
 
     // Core since 3.0
-    #define GLEXT_packed_depth_stencil                false
+    #define GLEXT_packed_depth_stencil                SF_GLAD_GL_OES_packed_depth_stencil
+    #define GLEXT_GL_DEPTH24_STENCIL8                 GL_DEPTH24_STENCIL8_OES
 
     // Core since 3.0
     #define GLEXT_framebuffer_blit                    false
+    #define GLEXT_glBlitFramebuffer                   glBlitFramebufferEXT // Placeholder to satisfy the compiler, entry point is not loaded in GLES
+    #define GLEXT_GL_READ_FRAMEBUFFER                 0
+    #define GLEXT_GL_DRAW_FRAMEBUFFER                 0
+    #define GLEXT_GL_DRAW_FRAMEBUFFER_BINDING         0
+    #define GLEXT_GL_READ_FRAMEBUFFER_BINDING         0
 
     // Core since 3.0
     #define GLEXT_framebuffer_multisample             false
+    #define GLEXT_glRenderbufferStorageMultisample    glRenderbufferStorageMultisampleEXT // Placeholder to satisfy the compiler, entry point is not loaded in GLES
+    #define GLEXT_GL_MAX_SAMPLES                      0
 
     // Core since 3.0 - NV_copy_buffer
     #define GLEXT_copy_buffer                         false
+    #define GLEXT_GL_COPY_READ_BUFFER                 0
+    #define GLEXT_GL_COPY_WRITE_BUFFER                0
+    #define GLEXT_glCopyBufferSubData                 glCopyBufferSubData // Placeholder to satisfy the compiler, entry point is not loaded in GLES
 
     // Core since 3.0 - EXT_sRGB
-    #ifdef GL_EXT_sRGB
-        #define GLEXT_texture_sRGB                        GL_EXT_sRGB
-        #define GLEXT_GL_SRGB8_ALPHA8                     GL_SRGB8_ALPHA8_EXT
-    #else
-        #define GLEXT_texture_sRGB                        false
-        #define GLEXT_GL_SRGB8_ALPHA8                     0
-    #endif
+    #define GLEXT_texture_sRGB                        false
+    #define GLEXT_GL_SRGB8_ALPHA8                     0
 
 #else
-
-    #include <SFML/Graphics/GLLoader.hpp>
 
     // SFML requires at a bare minimum OpenGL 1.1 capability
     // All functionality beyond that is optional
@@ -163,35 +156,32 @@
 
     // The following extensions are optional.
 
-    // Core since 1.2 - SGIS_texture_edge_clamp
-    #define GLEXT_texture_edge_clamp                  sfogl_ext_SGIS_texture_edge_clamp
+    // Core since 1.2 - SGIS_texture_edge_clamp / EXT_texture_edge_clamp
+    #define GLEXT_texture_edge_clamp                  SF_GLAD_GL_SGIS_texture_edge_clamp
     #define GLEXT_GL_CLAMP_TO_EDGE                    GL_CLAMP_TO_EDGE_SGIS
 
-    // Core since 1.2 - EXT_texture_edge_clamp
-    #define GLEXT_EXT_texture_edge_clamp              sfogl_ext_EXT_texture_edge_clamp
-
     // Core since 1.2 - EXT_blend_minmax
-    #define GLEXT_blend_minmax                        sfogl_ext_EXT_blend_minmax
+    #define GLEXT_blend_minmax                        SF_GLAD_GL_EXT_blend_minmax
     #define GLEXT_glBlendEquation                     glBlendEquationEXT
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_EXT
 
     // Core since 1.2 - EXT_blend_subtract
-    #define GLEXT_blend_subtract                      sfogl_ext_EXT_blend_subtract
+    #define GLEXT_blend_subtract                      SF_GLAD_GL_EXT_blend_subtract
     #define GLEXT_GL_FUNC_SUBTRACT                    GL_FUNC_SUBTRACT_EXT
     #define GLEXT_GL_FUNC_REVERSE_SUBTRACT            GL_FUNC_REVERSE_SUBTRACT_EXT
 
     // Core since 1.3 - ARB_multitexture
-    #define GLEXT_multitexture                        sfogl_ext_ARB_multitexture
+    #define GLEXT_multitexture                        SF_GLAD_GL_ARB_multitexture
     #define GLEXT_glClientActiveTexture               glClientActiveTextureARB
     #define GLEXT_glActiveTexture                     glActiveTextureARB
     #define GLEXT_GL_TEXTURE0                         GL_TEXTURE0_ARB
 
     // Core since 1.4 - EXT_blend_func_separate
-    #define GLEXT_blend_func_separate                 sfogl_ext_EXT_blend_func_separate
+    #define GLEXT_blend_func_separate                 SF_GLAD_GL_EXT_blend_func_separate
     #define GLEXT_glBlendFuncSeparate                 glBlendFuncSeparateEXT
 
     // Core since 1.5 - ARB_vertex_buffer_object
-    #define GLEXT_vertex_buffer_object                sfogl_ext_ARB_vertex_buffer_object
+    #define GLEXT_vertex_buffer_object                SF_GLAD_GL_ARB_vertex_buffer_object
     #define GLEXT_GL_ARRAY_BUFFER                     GL_ARRAY_BUFFER_ARB
     #define GLEXT_GL_DYNAMIC_DRAW                     GL_DYNAMIC_DRAW_ARB
     #define GLEXT_GL_READ_ONLY                        GL_READ_ONLY_ARB
@@ -207,10 +197,10 @@
     #define GLEXT_glUnmapBuffer                       glUnmapBufferARB
 
     // Core since 2.0 - ARB_shading_language_100
-    #define GLEXT_shading_language_100                sfogl_ext_ARB_shading_language_100
+    #define GLEXT_shading_language_100                SF_GLAD_GL_ARB_shading_language_100
 
     // Core since 2.0 - ARB_shader_objects
-    #define GLEXT_shader_objects                      sfogl_ext_ARB_shader_objects
+    #define GLEXT_shader_objects                      SF_GLAD_GL_ARB_shader_objects
     #define GLEXT_glDeleteObject                      glDeleteObjectARB
     #define GLEXT_glGetHandle                         glGetHandleARB
     #define GLEXT_glCreateShaderObject                glCreateShaderObjectARB
@@ -244,27 +234,27 @@
     #define GLEXT_GLhandle                            GLhandleARB
 
     // Core since 2.0 - ARB_vertex_shader
-    #define GLEXT_vertex_shader                       sfogl_ext_ARB_vertex_shader
+    #define GLEXT_vertex_shader                       SF_GLAD_GL_ARB_vertex_shader
     #define GLEXT_GL_VERTEX_SHADER                    GL_VERTEX_SHADER_ARB
     #define GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB
 
     // Core since 2.0 - ARB_fragment_shader
-    #define GLEXT_fragment_shader                     sfogl_ext_ARB_fragment_shader
+    #define GLEXT_fragment_shader                     SF_GLAD_GL_ARB_fragment_shader
     #define GLEXT_GL_FRAGMENT_SHADER                  GL_FRAGMENT_SHADER_ARB
 
     // Core since 2.0 - ARB_texture_non_power_of_two
-    #define GLEXT_texture_non_power_of_two            sfogl_ext_ARB_texture_non_power_of_two
+    #define GLEXT_texture_non_power_of_two            SF_GLAD_GL_ARB_texture_non_power_of_two
 
     // Core since 2.0 - EXT_blend_equation_separate
-    #define GLEXT_blend_equation_separate             sfogl_ext_EXT_blend_equation_separate
+    #define GLEXT_blend_equation_separate             SF_GLAD_GL_EXT_blend_equation_separate
     #define GLEXT_glBlendEquationSeparate             glBlendEquationSeparateEXT
 
     // Core since 2.1 - EXT_texture_sRGB
-    #define GLEXT_texture_sRGB                        sfogl_ext_EXT_texture_sRGB
+    #define GLEXT_texture_sRGB                        SF_GLAD_GL_EXT_texture_sRGB
     #define GLEXT_GL_SRGB8_ALPHA8                     GL_SRGB8_ALPHA8_EXT
 
     // Core since 3.0 - EXT_framebuffer_object
-    #define GLEXT_framebuffer_object                  sfogl_ext_EXT_framebuffer_object
+    #define GLEXT_framebuffer_object                  SF_GLAD_GL_EXT_framebuffer_object
     #define GLEXT_glBindRenderbuffer                  glBindRenderbufferEXT
     #define GLEXT_glDeleteRenderbuffers               glDeleteRenderbuffersEXT
     #define GLEXT_glGenRenderbuffers                  glGenRenderbuffersEXT
@@ -286,11 +276,11 @@
     #define GLEXT_GL_STENCIL_ATTACHMENT               GL_STENCIL_ATTACHMENT_EXT
 
     // Core since 3.0 - EXT_packed_depth_stencil
-    #define GLEXT_packed_depth_stencil                sfogl_ext_EXT_packed_depth_stencil
+    #define GLEXT_packed_depth_stencil                SF_GLAD_GL_EXT_packed_depth_stencil
     #define GLEXT_GL_DEPTH24_STENCIL8                 GL_DEPTH24_STENCIL8_EXT
 
     // Core since 3.0 - EXT_framebuffer_blit
-    #define GLEXT_framebuffer_blit                    sfogl_ext_EXT_framebuffer_blit
+    #define GLEXT_framebuffer_blit                    SF_GLAD_GL_EXT_framebuffer_blit
     #define GLEXT_glBlitFramebuffer                   glBlitFramebufferEXT
     #define GLEXT_GL_READ_FRAMEBUFFER                 GL_READ_FRAMEBUFFER_EXT
     #define GLEXT_GL_DRAW_FRAMEBUFFER                 GL_DRAW_FRAMEBUFFER_EXT
@@ -298,18 +288,18 @@
     #define GLEXT_GL_READ_FRAMEBUFFER_BINDING         GL_READ_FRAMEBUFFER_BINDING_EXT
 
     // Core since 3.0 - EXT_framebuffer_multisample
-    #define GLEXT_framebuffer_multisample             sfogl_ext_EXT_framebuffer_multisample
+    #define GLEXT_framebuffer_multisample             SF_GLAD_GL_EXT_framebuffer_multisample
     #define GLEXT_glRenderbufferStorageMultisample    glRenderbufferStorageMultisampleEXT
     #define GLEXT_GL_MAX_SAMPLES                      GL_MAX_SAMPLES_EXT
 
     // Core since 3.1 - ARB_copy_buffer
-    #define GLEXT_copy_buffer                         sfogl_ext_ARB_copy_buffer
+    #define GLEXT_copy_buffer                         SF_GLAD_GL_ARB_copy_buffer
     #define GLEXT_GL_COPY_READ_BUFFER                 GL_COPY_READ_BUFFER
     #define GLEXT_GL_COPY_WRITE_BUFFER                GL_COPY_WRITE_BUFFER
     #define GLEXT_glCopyBufferSubData                 glCopyBufferSubData
 
     // Core since 3.2 - ARB_geometry_shader4
-    #define GLEXT_geometry_shader4                    sfogl_ext_ARB_geometry_shader4
+    #define GLEXT_geometry_shader4                    SF_GLAD_GL_ARB_geometry_shader4
     #define GLEXT_GL_GEOMETRY_SHADER                  GL_GEOMETRY_SHADER_ARB
 
 #endif

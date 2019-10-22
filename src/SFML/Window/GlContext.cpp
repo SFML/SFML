@@ -27,11 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/Context.hpp>
+#include <SFML/Window/EglContext.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/OpenGL.hpp>
+#include <glad/gl.h>
 #include <algorithm>
 #include <vector>
 #include <string>
@@ -42,48 +43,66 @@
 #include <cctype>
 #include <cassert>
 
-#if !defined(SFML_OPENGL_ES)
 
-    #if defined(SFML_SYSTEM_WINDOWS)
+#if defined(SFML_SYSTEM_WINDOWS)
+
+    #if defined(SFML_OPENGL_ES)
+
+        typedef sf::priv::EglContext ContextType;
+
+    #else
 
         #include <SFML/Window/Win32/WglContext.hpp>
         typedef sf::priv::WglContext ContextType;
 
-    #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
+    #endif
+
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
+
+    #if defined(SFML_OPENGL_ES)
+
+        typedef sf::priv::EglContext ContextType;
+
+    #else
 
         #include <SFML/Window/Unix/GlxContext.hpp>
         typedef sf::priv::GlxContext ContextType;
 
-    #elif defined(SFML_SYSTEM_MACOS)
-
-        #include <SFML/Window/OSX/SFContext.hpp>
-        typedef sf::priv::SFContext ContextType;
-
     #endif
 
-#else
+#elif defined(SFML_SYSTEM_MACOS)
 
-    #if defined(SFML_SYSTEM_IOS)
+    #include <SFML/Window/OSX/SFContext.hpp>
+    typedef sf::priv::SFContext ContextType;
 
-        #include <SFML/Window/iOS/EaglContext.hpp>
-        typedef sf::priv::EaglContext ContextType;
+#elif defined(SFML_SYSTEM_IOS)
 
-    #else
+    #include <SFML/Window/iOS/EaglContext.hpp>
+    typedef sf::priv::EaglContext ContextType;
 
-        #include <SFML/Window/EglContext.hpp>
-        typedef sf::priv::EglContext ContextType;
+#elif defined(SFML_SYSTEM_ANDROID)
 
-    #endif
+    typedef sf::priv::EglContext ContextType;
 
 #endif
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
+    typedef void (APIENTRY *glEnableFuncType)(GLenum);
+    typedef GLenum (APIENTRY *glGetErrorFuncType)();
+    typedef void (APIENTRY *glGetIntegervFuncType)(GLenum, GLint*);
+    typedef const GLubyte* (APIENTRY *glGetStringFuncType)(GLenum);
     typedef const GLubyte* (APIENTRY *glGetStringiFuncType)(GLenum, GLuint);
+    typedef GLboolean (APIENTRY *glIsEnabledFuncType)(GLenum);
 
 #else
 
+    typedef void (*glEnableFuncType)(GLenum);
+    typedef GLenum (*glGetErrorFuncType)();
+    typedef void (*glGetIntegervFuncType)(GLenum, GLint*);
+    typedef const GLubyte* (*glGetStringFuncType)(GLenum);
     typedef const GLubyte* (*glGetStringiFuncType)(GLenum, GLuint);
+    typedef GLboolean (*glIsEnabledFuncType)(GLenum);
 
 #endif
 
@@ -217,16 +236,23 @@ namespace
     {
         extensions.clear();
 
-        // Check whether a >= 3.0 context is available
-        glGetStringiFuncType glGetStringiFunc = NULL;
-        glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
-        int majorVersion = 0;
-        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+        glGetErrorFuncType glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(sf::priv::GlContext::getFunction("glGetError"));
+        glGetIntegervFuncType glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(sf::priv::GlContext::getFunction("glGetIntegerv"));
+        glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::priv::GlContext::getFunction("glGetString"));
 
-        if (glGetError() == GL_INVALID_ENUM || !glGetStringiFunc)
+        if (!glGetErrorFunc || !glGetIntegervFunc || !glGetStringFunc)
+            return;
+
+        // Check whether a >= 3.0 context is available
+        int majorVersion = 0;
+        glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
+
+        glGetStringiFuncType glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
+
+        if (glGetErrorFunc() == GL_INVALID_ENUM || !glGetStringiFunc)
         {
             // Try to load the < 3.0 way
-            const char* extensionString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+            const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS));
 
             do
             {
@@ -243,7 +269,7 @@ namespace
         {
             // Try to load the >= 3.0 way
             int numExtensions = 0;
-            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+            glGetIntegervFunc(GL_NUM_EXTENSIONS, &numExtensions);
 
             if (numExtensions)
             {
@@ -517,17 +543,9 @@ bool GlContext::isExtensionAvailable(const char* name)
 ////////////////////////////////////////////////////////////
 GlFunctionPointer GlContext::getFunction(const char* name)
 {
-#if !defined(SFML_OPENGL_ES)
-
     Lock lock(mutex);
 
     return ContextType::getFunction(name);
-
-#else
-
-    return 0;
-
-#endif
 }
 
 
@@ -681,10 +699,22 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     int minorVersion = 0;
 
     // Try the new way first
-    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+    glGetIntegervFuncType glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(getFunction("glGetIntegerv"));
+    glGetErrorFuncType glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(getFunction("glGetError"));
+    glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
+    glEnableFuncType glEnableFunc = reinterpret_cast<glEnableFuncType>(getFunction("glEnable"));
+    glIsEnabledFuncType glIsEnabledFunc = reinterpret_cast<glIsEnabledFuncType>(getFunction("glIsEnabled"));
 
-    if (glGetError() != GL_INVALID_ENUM)
+    if (!glGetIntegervFunc || !glGetErrorFunc || !glGetStringFunc || !glEnableFunc || !glIsEnabledFunc)
+    {
+        err() << "Could not load necessary function to initialize OpenGL context" << std::endl;
+        return;
+    }
+
+    glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
+    glGetIntegervFunc(GL_MINOR_VERSION, &minorVersion);
+
+    if (glGetErrorFunc() != GL_INVALID_ENUM)
     {
         m_settings.majorVersion = static_cast<unsigned int>(majorVersion);
         m_settings.minorVersion = static_cast<unsigned int>(minorVersion);
@@ -697,7 +727,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         m_settings.majorVersion = 1;
         m_settings.minorVersion = 1;
 
-        const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+        const char* version = reinterpret_cast<const char*>(glGetStringFunc(GL_VERSION));
         if (version)
         {
             // OpenGL ES Common Lite profile: The beginning of the returned string is "OpenGL ES-CL major.minor"
@@ -741,7 +771,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     {
         // Retrieve the context flags
         int flags = 0;
-        glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+        glGetIntegervFunc(GL_CONTEXT_FLAGS, &flags);
 
         if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
             m_settings.attributeFlags |= ContextSettings::Debug;
@@ -755,7 +785,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
             if (glGetStringiFunc)
             {
                 int numExtensions = 0;
-                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+                glGetIntegervFunc(GL_NUM_EXTENSIONS, &numExtensions);
 
                 for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
                 {
@@ -773,7 +803,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         {
             // Retrieve the context profile
             int profile = 0;
-            glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+            glGetIntegervFunc(GL_CONTEXT_PROFILE_MASK, &profile);
 
             if (profile & GL_CONTEXT_CORE_PROFILE_BIT)
                 m_settings.attributeFlags |= ContextSettings::Core;
@@ -783,7 +813,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     // Enable anti-aliasing if requested by the user and supported
     if ((requestedSettings.antialiasingLevel > 0) && (m_settings.antialiasingLevel > 0))
     {
-        glEnable(GL_MULTISAMPLE);
+        glEnableFunc(GL_MULTISAMPLE);
     }
     else
     {
@@ -793,10 +823,10 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     // Enable sRGB if requested by the user and supported
     if (requestedSettings.sRgbCapable && m_settings.sRgbCapable)
     {
-        glEnable(GL_FRAMEBUFFER_SRGB);
+        glEnableFunc(GL_FRAMEBUFFER_SRGB);
 
         // Check to see if the enable was successful
-        if (glIsEnabled(GL_FRAMEBUFFER_SRGB) == GL_FALSE)
+        if (glIsEnabledFunc(GL_FRAMEBUFFER_SRGB) == GL_FALSE)
         {
             err() << "Warning: Failed to enable GL_FRAMEBUFFER_SRGB" << std::endl;
             m_settings.sRgbCapable = false;
@@ -814,9 +844,18 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
 
+    glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
+
+    if (!glGetStringFunc)
+    {
+        err() << "Could not load glGetString function" << std::endl;
+
+        return;
+    }
+
     // Detect any known non-accelerated implementations and warn
-    const char* vendorName = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-    const char* rendererName = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    const char* vendorName = reinterpret_cast<const char*>(glGetStringFunc(GL_VENDOR));
+    const char* rendererName = reinterpret_cast<const char*>(glGetStringFunc(GL_RENDERER));
 
     if (vendorName && rendererName)
     {

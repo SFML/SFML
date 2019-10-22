@@ -89,6 +89,11 @@ endif()
 sfml_add_library(sfml-system
                  SOURCES ${SRC} ${PLATFORM_SRC})
 
+if(SFML_OS_ANDROID)
+    # glad sources
+    target_include_directories(sfml-system PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+endif()
+
 # setup dependencies
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
     target_link_libraries(sfml-system PRIVATE pthread)

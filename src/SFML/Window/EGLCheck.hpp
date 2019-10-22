@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <EGL/egl.h>
 #include <string>
 
 
@@ -42,8 +41,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
-    //// In debug mode, perform a test on every EGL call
-    #define eglCheck(x) x; sf::priv::eglCheckError(__FILE__, __LINE__);
+    // In debug mode, perform a test on every EGL call
+    // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
+    #define eglCheck(expr) do { expr; sf::priv::eglCheckError(__FILE__, __LINE__, #expr); } while (false)
 
 #else
 
@@ -57,9 +57,10 @@ namespace priv
 ///
 /// \param file Source file where the call is located
 /// \param line Line number of the source file where the call is located
+/// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void eglCheckError(const char* file, unsigned int line);
+void eglCheckError(const char* file, unsigned int line, const char* expression);
 
 } // namespace priv
 } // namespace sf

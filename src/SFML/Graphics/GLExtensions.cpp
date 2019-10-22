@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#define SF_GLAD_GL_IMPLEMENTATION
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
@@ -45,13 +46,16 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
-#if !defined(SFML_OPENGL_ES)
     static bool initialized = false;
     if (!initialized)
     {
         initialized = true;
 
-        sfogl_LoadFunctions();
+#ifdef SFML_OPENGL_ES
+        gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#else
+        gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#endif
 
         // Retrieve the context version number
         int majorVersion = 0;
@@ -85,7 +89,6 @@ void ensureExtensionsInit()
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
     }
-#endif
 }
 
 } // namespace priv

@@ -71,7 +71,7 @@ endif()
 
 # set pkgconfig install directory
 # this could be e.g. macports on mac or msys2 on windows etc.
-set(SFML_PKGCONFIG_DIR "/lib${LIB_SUFFIX}/pkgconfig")
+set(SFML_PKGCONFIG_DIR "/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
 if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
     set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")

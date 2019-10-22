@@ -43,11 +43,11 @@
 
 
 // GL_QUADS is unavailable on OpenGL ES, thus we need to define GL_QUADS ourselves
-#ifdef SFML_OPENGL_ES
+#ifndef GL_QUADS
 
     #define GL_QUADS 0
 
-#endif // SFML_OPENGL_ES
+#endif // GL_QUADS
 
 
 namespace

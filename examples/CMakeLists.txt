@@ -1,5 +1,3 @@
-
-
 # CLI based examples
 if (NOT SFML_OS_IOS)
     if(SFML_BUILD_NETWORK)
@@ -27,6 +25,7 @@ if(SFML_BUILD_GRAPHICS)
         add_subdirectory(joystick)
         add_subdirectory(shader)
         add_subdirectory(island)
+        add_subdirectory(vulkan)
     endif()
 
     if(SFML_OS_WINDOWS)
