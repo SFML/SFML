@@ -601,7 +601,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     {
         // Leave a small padding around characters, so that filtering doesn't
         // pollute them with pixels from neighbors
-        const unsigned int padding = 1;
+        const unsigned int padding = 2;
 
         width += 2 * padding;
         height += 2 * padding;
