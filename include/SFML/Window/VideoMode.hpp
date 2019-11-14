@@ -99,9 +99,9 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int width;        ///< Video mode width, in pixels
-    unsigned int height;       ///< Video mode height, in pixels
-    unsigned int bitsPerPixel; ///< Video mode pixel depth, in bits per pixels
+    unsigned int width;        //!< Video mode width, in pixels
+    unsigned int height;       //!< Video mode height, in pixels
+    unsigned int bitsPerPixel; //!< Video mode pixel depth, in bits per pixels
 };
 
 ////////////////////////////////////////////////////////////

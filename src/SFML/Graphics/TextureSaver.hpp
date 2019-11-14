@@ -64,7 +64,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    GLint m_textureBinding; ///< Texture binding to restore
+    GLint m_textureBinding; //!< Texture binding to restore
 };
 
 } // namespace priv

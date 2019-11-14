@@ -76,7 +76,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    DWORD m_index; ///< Index of our thread-local storage slot
+    DWORD m_index; //!< Index of our thread-local storage slot
 };
 
 } // namespace priv

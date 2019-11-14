@@ -186,8 +186,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ThreadImpl* m_impl;       ///< OS-specific implementation of the thread
-    priv::ThreadFunc* m_entryPoint; ///< Abstraction of the function to run
+    priv::ThreadImpl* m_impl;       //!< OS-specific implementation of the thread
+    priv::ThreadFunc* m_entryPoint; //!< Abstraction of the function to run
 };
 
 #include <SFML/System/Thread.inl>

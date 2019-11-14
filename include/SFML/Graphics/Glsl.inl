@@ -81,7 +81,7 @@ struct Matrix
         copyMatrix(transform, *this);
     }
 
-    float array[Columns * Rows]; ///< Array holding matrix data
+    float array[Columns * Rows]; //!< Array holding matrix data
 };
 
 ////////////////////////////////////////////////////////////
@@ -148,8 +148,8 @@ struct Vector4
         copyVector(color, *this);
     }
 
-    T x; ///< 1st component (X) of the 4D vector
-    T y; ///< 2nd component (Y) of the 4D vector
-    T z; ///< 3rd component (Z) of the 4D vector
-    T w; ///< 4th component (W) of the 4D vector
+    T x; //!< 1st component (X) of the 4D vector
+    T y; //!< 2nd component (Y) of the 4D vector
+    T z; //!< 3rd component (Z) of the 4D vector
+    T w; //!< 4th component (W) of the 4D vector
 };

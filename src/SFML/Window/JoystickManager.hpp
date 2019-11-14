@@ -109,16 +109,16 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl             joystick;       ///< Joystick implementation
-        JoystickState            state;          ///< The current joystick state
-        JoystickCaps             capabilities;   ///< The joystick capabilities
-        Joystick::Identification identification; ///< The joystick identification
+        JoystickImpl             joystick;       //!< Joystick implementation
+        JoystickState            state;          //!< The current joystick state
+        JoystickCaps             capabilities;   //!< The joystick capabilities
+        Joystick::Identification identification; //!< The joystick identification
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Item m_joysticks[Joystick::Count]; ///< Joysticks information and state
+    Item m_joysticks[Joystick::Count]; //!< Joysticks information and state
 };
 
 } // namespace priv

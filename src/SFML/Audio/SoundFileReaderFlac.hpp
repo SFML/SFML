@@ -132,8 +132,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamDecoder* m_decoder;    ///< FLAC decoder
-    ClientData           m_clientData; ///< Structure passed to the decoder callbacks
+    FLAC__StreamDecoder* m_decoder;    //!< FLAC decoder
+    ClientData           m_clientData; //!< Structure passed to the decoder callbacks
 };
 
 } // namespace priv

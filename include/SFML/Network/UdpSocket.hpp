@@ -51,7 +51,7 @@ public:
     ////////////////////////////////////////////////////////////
     enum
     {
-        MaxDatagramSize = 65507 ///< The maximum number of bytes that can be sent in a single UDP datagram
+        MaxDatagramSize = 65507 //!< The maximum number of bytes that can be sent in a single UDP datagram
     };
 
     ////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_buffer; ///< Temporary buffer holding the received data in Receive(Packet)
+    std::vector<char> m_buffer; //!< Temporary buffer holding the received data in Receive(Packet)
 };
 
 } // namespace sf

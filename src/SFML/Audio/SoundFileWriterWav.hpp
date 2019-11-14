@@ -112,7 +112,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::ofstream m_file;         ///< File stream to write to
+    std::ofstream m_file;         //!< File stream to write to
 };
 
 } // namespace priv

@@ -93,7 +93,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileWriter* m_writer; ///< Writer that handles I/O on the file's format
+    SoundFileWriter* m_writer; //!< Writer that handles I/O on the file's format
 };
 
 } // namespace sf

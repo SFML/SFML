@@ -211,10 +211,10 @@ struct Shader::UniformBinder : private NonCopyable
             glCheck(GLEXT_glUseProgramObject(savedProgram));
     }
 
-    TransientContextLock lock;           ///< Lock to keep context active while uniform is bound
-    GLEXT_GLhandle       savedProgram;   ///< Handle to the previously active program object
-    GLEXT_GLhandle       currentProgram; ///< Handle to the program object of the modified sf::Shader instance
-    GLint                location;       ///< Uniform location, used by the surrounding sf::Shader code
+    TransientContextLock lock;           //!< Lock to keep context active while uniform is bound
+    GLEXT_GLhandle       savedProgram;   //!< Handle to the previously active program object
+    GLEXT_GLhandle       currentProgram; //!< Handle to the program object of the modified sf::Shader instance
+    GLint                location;       //!< Uniform location, used by the surrounding sf::Shader code
 };
 
 

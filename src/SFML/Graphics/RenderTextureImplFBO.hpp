@@ -125,16 +125,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::map<Uint64, unsigned int> m_frameBuffers;            ///< OpenGL frame buffer objects per context
-    std::map<Uint64, unsigned int> m_multisampleFrameBuffers; ///< Optional per-context OpenGL frame buffer objects with multisample attachments
-    unsigned int                   m_depthStencilBuffer;      ///< Optional depth/stencil buffer attached to the frame buffer
-    unsigned int                   m_colorBuffer;             ///< Optional multisample color buffer attached to the frame buffer
-    unsigned int                   m_width;                   ///< Width of the attachments
-    unsigned int                   m_height;                  ///< Height of the attachments
-    Context*                       m_context;                 ///< Backup OpenGL context, used when none already exist
-    unsigned int                   m_textureId;               ///< The ID of the texture to attach to the FBO
-    bool                           m_multisample;             ///< Whether we have to create a multisample frame buffer as well
-    bool                           m_stencil;                 ///< Whether we have stencil attachment
+    std::map<Uint64, unsigned int> m_frameBuffers;            //!< OpenGL frame buffer objects per context
+    std::map<Uint64, unsigned int> m_multisampleFrameBuffers; //!< Optional per-context OpenGL frame buffer objects with multisample attachments
+    unsigned int                   m_depthStencilBuffer;      //!< Optional depth/stencil buffer attached to the frame buffer
+    unsigned int                   m_colorBuffer;             //!< Optional multisample color buffer attached to the frame buffer
+    unsigned int                   m_width;                   //!< Width of the attachments
+    unsigned int                   m_height;                  //!< Height of the attachments
+    Context*                       m_context;                 //!< Backup OpenGL context, used when none already exist
+    unsigned int                   m_textureId;               //!< The ID of the texture to attach to the FBO
+    bool                           m_multisample;             //!< Whether we have to create a multisample frame buffer as well
+    bool                           m_stencil;                 //!< Whether we have stencil attachment
 };
 
 } // namespace priv

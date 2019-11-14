@@ -50,9 +50,9 @@ public:
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        Uint64       sampleCount;  ///< Total number of samples in the file
-        unsigned int channelCount; ///< Number of channels of the sound
-        unsigned int sampleRate;   ///< Samples rate of the sound, in samples per second
+        Uint64       sampleCount;  //!< Total number of samples in the file
+        unsigned int channelCount; //!< Number of channels of the sound
+        unsigned int sampleRate;   //!< Samples rate of the sound, in samples per second
     };
 
     ////////////////////////////////////////////////////////////

@@ -273,7 +273,7 @@ protected:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ContextSettings m_settings; ///< Creation settings of the context
+    ContextSettings m_settings; //!< Creation settings of the context
 
 private:
 
@@ -294,7 +294,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Uint64 m_id; ///< Unique number that identifies the context
+    const Uint64 m_id; //!< Unique number that identifies the context
 };
 
 } // namespace priv

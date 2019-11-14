@@ -104,9 +104,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const char* m_data;   ///< Pointer to the data in memory
-    Int64       m_size;   ///< Total size of the data
-    Int64       m_offset; ///< Current reading position
+    const char* m_data;   //!< Pointer to the data in memory
+    Int64       m_size;   //!< Total size of the data
+    Int64       m_offset; //!< Current reading position
 };
 
 } // namespace sf

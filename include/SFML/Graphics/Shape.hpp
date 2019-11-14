@@ -305,15 +305,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Texture* m_texture;          ///< Texture of the shape
-    IntRect        m_textureRect;      ///< Rectangle defining the area of the source texture to display
-    Color          m_fillColor;        ///< Fill color
-    Color          m_outlineColor;     ///< Outline color
-    float          m_outlineThickness; ///< Thickness of the shape's outline
-    VertexArray    m_vertices;         ///< Vertex array containing the fill geometry
-    VertexArray    m_outlineVertices;  ///< Vertex array containing the outline geometry
-    FloatRect      m_insideBounds;     ///< Bounding rectangle of the inside (fill)
-    FloatRect      m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
+    const Texture* m_texture;          //!< Texture of the shape
+    IntRect        m_textureRect;      //!< Rectangle defining the area of the source texture to display
+    Color          m_fillColor;        //!< Fill color
+    Color          m_outlineColor;     //!< Outline color
+    float          m_outlineThickness; //!< Thickness of the shape's outline
+    VertexArray    m_vertices;         //!< Vertex array containing the fill geometry
+    VertexArray    m_outlineVertices;  //!< Vertex array containing the outline geometry
+    FloatRect      m_insideBounds;     //!< Bounding rectangle of the inside (fill)
+    FloatRect      m_bounds;           //!< Bounding rectangle of the whole shape (outline + fill)
 };
 
 } // namespace sf

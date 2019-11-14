@@ -50,8 +50,8 @@ struct JoystickCaps
         std::fill(axes, axes + Joystick::AxisCount, false);
     }
 
-    unsigned int buttonCount;               ///< Number of buttons supported by the joystick
-    bool         axes[Joystick::AxisCount]; ///< Support for each axis
+    unsigned int buttonCount;               //!< Number of buttons supported by the joystick
+    bool         axes[Joystick::AxisCount]; //!< Support for each axis
 };
 
 
@@ -68,9 +68,9 @@ struct JoystickState
         std::fill(buttons, buttons + Joystick::ButtonCount, false);
     }
 
-    bool  connected;                      ///< Is the joystick currently connected?
-    float axes[Joystick::AxisCount];      ///< Position of each axis, in range [-100, 100]
-    bool  buttons[Joystick::ButtonCount]; ///< Status of each button (true = pressed)
+    bool  connected;                      //!< Is the joystick currently connected?
+    float axes[Joystick::AxisCount];      //!< Position of each axis, in range [-100, 100]
+    bool  buttons[Joystick::ButtonCount]; //!< Status of each button (true = pressed)
 };
 
 } // namespace priv

@@ -267,15 +267,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::set<Sound*> SoundList; ///< Set of unique sound instances
+    typedef std::set<Sound*> SoundList; //!< Set of unique sound instances
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       m_buffer;   ///< OpenAL buffer identifier
-    std::vector<Int16> m_samples;  ///< Samples buffer
-    Time               m_duration; ///< Sound duration
-    mutable SoundList  m_sounds;   ///< List of sounds that are using this buffer
+    unsigned int       m_buffer;   //!< OpenAL buffer identifier
+    std::vector<Int16> m_samples;  //!< Samples buffer
+    Time               m_duration; //!< Sound duration
+    mutable SoundList  m_sounds;   //!< List of sounds that are using this buffer
 };
 
 } // namespace sf

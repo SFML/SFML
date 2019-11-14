@@ -96,8 +96,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Int16> m_samples; ///< Temporary sample buffer to hold the recorded data
-    SoundBuffer        m_buffer;  ///< Sound buffer that will contain the recorded data
+    std::vector<Int16> m_samples; //!< Temporary sample buffer to hold the recorded data
+    SoundBuffer        m_buffer;  //!< Sound buffer that will contain the recorded data
 };
 
 } // namespace sf

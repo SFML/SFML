@@ -160,8 +160,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static ReaderFactoryArray s_readers; ///< List of all registered readers
-    static WriterFactoryArray s_writers; ///< List of all registered writers
+    static ReaderFactoryArray s_readers; //!< List of all registered readers
+    static WriterFactoryArray s_writers; //!< List of all registered writers
 };
 
 } // namespace sf

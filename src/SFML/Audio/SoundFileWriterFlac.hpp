@@ -101,9 +101,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamEncoder* m_encoder;      ///< FLAC stream encoder
-    unsigned int         m_channelCount; ///< Number of channels
-    std::vector<Int32>   m_samples32;    ///< Conversion buffer
+    FLAC__StreamEncoder* m_encoder;      //!< FLAC stream encoder
+    unsigned int         m_channelCount; //!< Number of channels
+    std::vector<Int32>   m_samples32;    //!< Conversion buffer
 };
 
 } // namespace priv

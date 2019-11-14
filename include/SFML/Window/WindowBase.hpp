@@ -470,8 +470,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* m_impl;           ///< Platform-specific implementation of the window
-    Vector2u          m_size;           ///< Current size of the window
+    priv::WindowImpl* m_impl;           //!< Platform-specific implementation of the window
+    Vector2u          m_size;           //!< Current size of the window
 };
 
 } // namespace sf

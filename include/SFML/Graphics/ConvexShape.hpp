@@ -112,7 +112,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Vector2f> m_points; ///< Points composing the convex polygon
+    std::vector<Vector2f> m_points; //!< Points composing the convex polygon
 };
 
 } // namespace sf

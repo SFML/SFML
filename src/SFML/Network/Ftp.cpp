@@ -60,8 +60,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Ftp&      m_ftp;        ///< Reference to the owner Ftp instance
-    TcpSocket m_dataSocket; ///< Socket used for data transfers
+    Ftp&      m_ftp;        //!< Reference to the owner Ftp instance
+    TcpSocket m_dataSocket; //!< Socket used for data transfers
 };
 
 
