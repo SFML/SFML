@@ -77,7 +77,7 @@ set(FIND_SFML_PATHS
     /opt)
 
 find_path(SFML_DOC_DIR SFML.tag
-          PATH_SUFFIXES SFML/doc share/SFML/doc
+          PATH_SUFFIXES SFML/doc share/doc/SFML
           PATHS ${FIND_SFML_PATHS})
 
 
