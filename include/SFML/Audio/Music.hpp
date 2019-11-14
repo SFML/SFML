@@ -79,8 +79,8 @@ public:
 
         }
 
-        T offset; ///< The beginning offset of the time range
-        T length; ///< The length of the time range
+        T offset; //!< The beginning offset of the time range
+        T length; //!< The length of the time range
     };
 
     // Define the relevant Span types
@@ -276,10 +276,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile     m_file;     ///< The streamed music file
-    std::vector<Int16> m_samples;  ///< Temporary buffer of samples
-    Mutex              m_mutex;    ///< Mutex protecting the data
-    Span<Uint64>       m_loopSpan; ///< Loop Range Specifier
+    InputSoundFile     m_file;     //!< The streamed music file
+    std::vector<Int16> m_samples;  //!< Temporary buffer of samples
+    Mutex              m_mutex;    //!< Mutex protecting the data
+    Span<Uint64>       m_loopSpan; //!< Loop Range Specifier
 };
 
 } // namespace sf

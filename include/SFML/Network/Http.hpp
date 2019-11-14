@@ -61,11 +61,11 @@ public:
         ////////////////////////////////////////////////////////////
         enum Method
         {
-            Get,   ///< Request in get mode, standard method to retrieve a page
-            Post,  ///< Request in post mode, usually to send data to a page
-            Head,  ///< Request a page's header only
-            Put,   ///< Request in put mode, useful for a REST API
-            Delete ///< Request in delete mode, useful for a REST API
+            Get,   //!< Request in get mode, standard method to retrieve a page
+            Post,  //!< Request in post mode, usually to send data to a page
+            Head,  //!< Request a page's header only
+            Put,   //!< Request in put mode, useful for a REST API
+            Delete //!< Request in delete mode, useful for a REST API
         };
 
         ////////////////////////////////////////////////////////////
@@ -178,12 +178,12 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   m_fields;       ///< Fields of the header associated to their value
-        Method       m_method;       ///< Method to use for the request
-        std::string  m_uri;          ///< Target URI of the request
-        unsigned int m_majorVersion; ///< Major HTTP version
-        unsigned int m_minorVersion; ///< Minor HTTP version
-        std::string  m_body;         ///< Body of the request
+        FieldTable   m_fields;       //!< Fields of the header associated to their value
+        Method       m_method;       //!< Method to use for the request
+        std::string  m_uri;          //!< Target URI of the request
+        unsigned int m_majorVersion; //!< Major HTTP version
+        unsigned int m_minorVersion; //!< Minor HTTP version
+        std::string  m_body;         //!< Body of the request
     };
 
     ////////////////////////////////////////////////////////////
@@ -201,37 +201,37 @@ public:
         enum Status
         {
             // 2xx: success
-            Ok             = 200, ///< Most common code returned when operation was successful
-            Created        = 201, ///< The resource has successfully been created
-            Accepted       = 202, ///< The request has been accepted, but will be processed later by the server
-            NoContent      = 204, ///< The server didn't send any data in return
-            ResetContent   = 205, ///< The server informs the client that it should clear the view (form) that caused the request to be sent
-            PartialContent = 206, ///< The server has sent a part of the resource, as a response to a partial GET request
+            Ok             = 200, //!< Most common code returned when operation was successful
+            Created        = 201, //!< The resource has successfully been created
+            Accepted       = 202, //!< The request has been accepted, but will be processed later by the server
+            NoContent      = 204, //!< The server didn't send any data in return
+            ResetContent   = 205, //!< The server informs the client that it should clear the view (form) that caused the request to be sent
+            PartialContent = 206, //!< The server has sent a part of the resource, as a response to a partial GET request
 
             // 3xx: redirection
-            MultipleChoices  = 300, ///< The requested page can be accessed from several locations
-            MovedPermanently = 301, ///< The requested page has permanently moved to a new location
-            MovedTemporarily = 302, ///< The requested page has temporarily moved to a new location
-            NotModified      = 304, ///< For conditional requests, means the requested page hasn't changed and doesn't need to be refreshed
+            MultipleChoices  = 300, //!< The requested page can be accessed from several locations
+            MovedPermanently = 301, //!< The requested page has permanently moved to a new location
+            MovedTemporarily = 302, //!< The requested page has temporarily moved to a new location
+            NotModified      = 304, //!< For conditional requests, means the requested page hasn't changed and doesn't need to be refreshed
 
             // 4xx: client error
-            BadRequest          = 400, ///< The server couldn't understand the request (syntax error)
-            Unauthorized        = 401, ///< The requested page needs an authentication to be accessed
-            Forbidden           = 403, ///< The requested page cannot be accessed at all, even with authentication
-            NotFound            = 404, ///< The requested page doesn't exist
-            RangeNotSatisfiable = 407, ///< The server can't satisfy the partial GET request (with a "Range" header field)
+            BadRequest          = 400, //!< The server couldn't understand the request (syntax error)
+            Unauthorized        = 401, //!< The requested page needs an authentication to be accessed
+            Forbidden           = 403, //!< The requested page cannot be accessed at all, even with authentication
+            NotFound            = 404, //!< The requested page doesn't exist
+            RangeNotSatisfiable = 407, //!< The server can't satisfy the partial GET request (with a "Range" header field)
 
             // 5xx: server error
-            InternalServerError = 500, ///< The server encountered an unexpected error
-            NotImplemented      = 501, ///< The server doesn't implement a requested feature
-            BadGateway          = 502, ///< The gateway server has received an error from the source server
-            ServiceNotAvailable = 503, ///< The server is temporarily unavailable (overloaded, in maintenance, ...)
-            GatewayTimeout      = 504, ///< The gateway server couldn't receive a response from the source server
-            VersionNotSupported = 505, ///< The server doesn't support the requested HTTP version
+            InternalServerError = 500, //!< The server encountered an unexpected error
+            NotImplemented      = 501, //!< The server doesn't implement a requested feature
+            BadGateway          = 502, //!< The gateway server has received an error from the source server
+            ServiceNotAvailable = 503, //!< The server is temporarily unavailable (overloaded, in maintenance, ...)
+            GatewayTimeout      = 504, //!< The gateway server couldn't receive a response from the source server
+            VersionNotSupported = 505, //!< The server doesn't support the requested HTTP version
 
             // 10xx: SFML custom codes
-            InvalidResponse  = 1000, ///< Response is not a valid HTTP one
-            ConnectionFailed = 1001  ///< Connection with server failed
+            InvalidResponse  = 1000, //!< Response is not a valid HTTP one
+            ConnectionFailed = 1001  //!< Connection with server failed
         };
 
         ////////////////////////////////////////////////////////////
@@ -338,11 +338,11 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   m_fields;       ///< Fields of the header
-        Status       m_status;       ///< Status code
-        unsigned int m_majorVersion; ///< Major HTTP version
-        unsigned int m_minorVersion; ///< Minor HTTP version
-        std::string  m_body;         ///< Body of the response
+        FieldTable   m_fields;       //!< Fields of the header
+        Status       m_status;       //!< Status code
+        unsigned int m_majorVersion; //!< Major HTTP version
+        unsigned int m_minorVersion; //!< Minor HTTP version
+        std::string  m_body;         //!< Body of the response
     };
 
     ////////////////////////////////////////////////////////////
@@ -409,10 +409,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket      m_connection; ///< Connection to the host
-    IpAddress      m_host;       ///< Web host address
-    std::string    m_hostName;   ///< Web host name
-    unsigned short m_port;       ///< Port used for connection with host
+    TcpSocket      m_connection; //!< Connection to the host
+    IpAddress      m_host;       //!< Web host address
+    std::string    m_hostName;   //!< Web host name
+    unsigned short m_port;       //!< Port used for connection with host
 };
 
 } // namespace sf

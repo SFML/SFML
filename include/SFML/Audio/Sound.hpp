@@ -217,7 +217,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const SoundBuffer* m_buffer; ///< Sound buffer bound to the source
+    const SoundBuffer* m_buffer; //!< Sound buffer bound to the source
 };
 
 } // namespace sf

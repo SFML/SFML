@@ -125,7 +125,7 @@ private:
 #ifdef SFML_SYSTEM_ANDROID
     priv::ResourceStream* m_file;
 #else
-    std::FILE* m_file; ///< stdio file stream
+    std::FILE* m_file; //!< stdio file stream
 #endif
 };
 

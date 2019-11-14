@@ -49,9 +49,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum Status
     {
-        Stopped, ///< Sound is not playing
-        Paused,  ///< Sound is paused
-        Playing  ///< Sound is playing
+        Stopped, //!< Sound is not playing
+        Paused,  //!< Sound is paused
+        Playing  //!< Sound is playing
     };
 
     ////////////////////////////////////////////////////////////
@@ -306,7 +306,7 @@ protected:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_source; ///< OpenAL source identifier
+    unsigned int m_source; //!< OpenAL source identifier
 };
 
 } // namespace sf

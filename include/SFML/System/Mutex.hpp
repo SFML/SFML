@@ -85,7 +85,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::MutexImpl* m_mutexImpl; ///< OS-specific implementation
+    priv::MutexImpl* m_mutexImpl; //!< OS-specific implementation
 };
 
 } // namespace sf

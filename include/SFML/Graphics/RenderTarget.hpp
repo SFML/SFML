@@ -458,23 +458,23 @@ private:
     {
         enum {VertexCacheSize = 4};
 
-        bool      enable;         ///< Is the cache enabled?
-        bool      glStatesSet;    ///< Are our internal GL states set yet?
-        bool      viewChanged;    ///< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  ///< Cached blending mode
-        Uint64    lastTextureId;  ///< Cached texture
-        bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool      useVertexCache; ///< Did we previously use the vertex cache?
-        Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+        bool      enable;         //!< Is the cache enabled?
+        bool      glStatesSet;    //!< Are our internal GL states set yet?
+        bool      viewChanged;    //!< Has the current view changed since last draw?
+        BlendMode lastBlendMode;  //!< Cached blending mode
+        Uint64    lastTextureId;  //!< Cached texture
+        bool      texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool      useVertexCache; //!< Did we previously use the vertex cache?
+        Vertex    vertexCache[VertexCacheSize]; //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View        m_defaultView; ///< Default view
-    View        m_view;        ///< Current view
-    StatesCache m_cache;       ///< Render states cache
-    Uint64      m_id;          ///< Unique number that identifies the RenderTarget
+    View        m_defaultView; //!< Default view
+    View        m_view;        //!< Current view
+    StatesCache m_cache;       //!< Render states cache
+    Uint64      m_id;          //!< Unique number that identifies the RenderTarget
 };
 
 } // namespace sf

@@ -72,7 +72,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    CRITICAL_SECTION m_mutex; ///< Win32 handle of the mutex
+    CRITICAL_SECTION m_mutex; //!< Win32 handle of the mutex
 };
 
 } // namespace priv

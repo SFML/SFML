@@ -80,23 +80,23 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const Color Black;       ///< Black predefined color
-    static const Color White;       ///< White predefined color
-    static const Color Red;         ///< Red predefined color
-    static const Color Green;       ///< Green predefined color
-    static const Color Blue;        ///< Blue predefined color
-    static const Color Yellow;      ///< Yellow predefined color
-    static const Color Magenta;     ///< Magenta predefined color
-    static const Color Cyan;        ///< Cyan predefined color
-    static const Color Transparent; ///< Transparent (black) predefined color
+    static const Color Black;       //!< Black predefined color
+    static const Color White;       //!< White predefined color
+    static const Color Red;         //!< Red predefined color
+    static const Color Green;       //!< Green predefined color
+    static const Color Blue;        //!< Blue predefined color
+    static const Color Yellow;      //!< Yellow predefined color
+    static const Color Magenta;     //!< Magenta predefined color
+    static const Color Cyan;        //!< Cyan predefined color
+    static const Color Transparent; //!< Transparent (black) predefined color
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint8 r; ///< Red component
-    Uint8 g; ///< Green component
-    Uint8 b; ///< Blue component
-    Uint8 a; ///< Alpha (opacity) component
+    Uint8 r; //!< Red component
+    Uint8 g; //!< Green component
+    Uint8 b; //!< Blue component
+    Uint8 a; //!< Alpha (opacity) component
 };
 
 ////////////////////////////////////////////////////////////

@@ -187,8 +187,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Vertex> m_vertices;      ///< Vertices contained in the array
-    PrimitiveType       m_primitiveType; ///< Type of primitives to draw
+    std::vector<Vertex> m_vertices;      //!< Vertices contained in the array
+    PrimitiveType       m_primitiveType; //!< Type of primitives to draw
 };
 
 } // namespace sf

@@ -48,16 +48,16 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum Factor
     {
-        Zero,             ///< (0, 0, 0, 0)
-        One,              ///< (1, 1, 1, 1)
-        SrcColor,         ///< (src.r, src.g, src.b, src.a)
-        OneMinusSrcColor, ///< (1, 1, 1, 1) - (src.r, src.g, src.b, src.a)
-        DstColor,         ///< (dst.r, dst.g, dst.b, dst.a)
-        OneMinusDstColor, ///< (1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)
-        SrcAlpha,         ///< (src.a, src.a, src.a, src.a)
-        OneMinusSrcAlpha, ///< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
-        DstAlpha,         ///< (dst.a, dst.a, dst.a, dst.a)
-        OneMinusDstAlpha  ///< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
+        Zero,             //!< (0, 0, 0, 0)
+        One,              //!< (1, 1, 1, 1)
+        SrcColor,         //!< (src.r, src.g, src.b, src.a)
+        OneMinusSrcColor, //!< (1, 1, 1, 1) - (src.r, src.g, src.b, src.a)
+        DstColor,         //!< (dst.r, dst.g, dst.b, dst.a)
+        OneMinusDstColor, //!< (1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)
+        SrcAlpha,         //!< (src.a, src.a, src.a, src.a)
+        OneMinusSrcAlpha, //!< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
+        DstAlpha,         //!< (dst.a, dst.a, dst.a, dst.a)
+        OneMinusDstAlpha  //!< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
     };
 
     ////////////////////////////////////////////////////////
@@ -68,9 +68,9 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum Equation
     {
-        Add,            ///< Pixel = Src * SrcFactor + Dst * DstFactor
-        Subtract,       ///< Pixel = Src * SrcFactor - Dst * DstFactor
-        ReverseSubtract ///< Pixel = Dst * DstFactor - Src * SrcFactor
+        Add,            //!< Pixel = Src * SrcFactor + Dst * DstFactor
+        Subtract,       //!< Pixel = Src * SrcFactor - Dst * DstFactor
+        ReverseSubtract //!< Pixel = Dst * DstFactor - Src * SrcFactor
     };
 
     ////////////////////////////////////////////////////////////
@@ -112,12 +112,12 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////////
     // Member Data
     ////////////////////////////////////////////////////////////
-    Factor   colorSrcFactor; ///< Source blending factor for the color channels
-    Factor   colorDstFactor; ///< Destination blending factor for the color channels
-    Equation colorEquation;  ///< Blending equation for the color channels
-    Factor   alphaSrcFactor; ///< Source blending factor for the alpha channel
-    Factor   alphaDstFactor; ///< Destination blending factor for the alpha channel
-    Equation alphaEquation;  ///< Blending equation for the alpha channel
+    Factor   colorSrcFactor; //!< Source blending factor for the color channels
+    Factor   colorDstFactor; //!< Destination blending factor for the color channels
+    Equation colorEquation;  //!< Blending equation for the color channels
+    Factor   alphaSrcFactor; //!< Source blending factor for the alpha channel
+    Factor   alphaDstFactor; //!< Destination blending factor for the alpha channel
+    Equation alphaEquation;  //!< Blending equation for the alpha channel
 };
 
 ////////////////////////////////////////////////////////////
@@ -147,10 +147,10 @@ SFML_GRAPHICS_API bool operator !=(const BlendMode& left, const BlendMode& right
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    ///< Blend source and dest according to dest alpha
-SFML_GRAPHICS_API extern const BlendMode BlendAdd;      ///< Add source to dest
-SFML_GRAPHICS_API extern const BlendMode BlendMultiply; ///< Multiply source and dest
-SFML_GRAPHICS_API extern const BlendMode BlendNone;     ///< Overwrite dest with source
+SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    //!< Blend source and dest according to dest alpha
+SFML_GRAPHICS_API extern const BlendMode BlendAdd;      //!< Add source to dest
+SFML_GRAPHICS_API extern const BlendMode BlendMultiply; //!< Multiply source and dest
+SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with source
 
 } // namespace sf
 

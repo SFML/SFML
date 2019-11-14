@@ -238,8 +238,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::RenderTextureImpl* m_impl;    ///< Platform/hardware specific implementation
-    Texture                  m_texture; ///< Target texture to draw on
+    priv::RenderTextureImpl* m_impl;    //!< Platform/hardware specific implementation
+    Texture                  m_texture; //!< Target texture to draw on
 };
 
 } // namespace sf

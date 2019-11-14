@@ -285,13 +285,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread             m_thread;             ///< Thread running the background recording task
-    std::vector<Int16> m_samples;            ///< Buffer to store captured samples
-    unsigned int       m_sampleRate;         ///< Sample rate
-    Time               m_processingInterval; ///< Time period between calls to onProcessSamples
-    bool               m_isCapturing;        ///< Capturing state
-    std::string        m_deviceName;         ///< Name of the audio capture device
-    unsigned int       m_channelCount;       ///< Number of recording channels
+    Thread             m_thread;             //!< Thread running the background recording task
+    std::vector<Int16> m_samples;            //!< Buffer to store captured samples
+    unsigned int       m_sampleRate;         //!< Sample rate
+    Time               m_processingInterval; //!< Time period between calls to onProcessSamples
+    bool               m_isCapturing;        //!< Capturing state
+    std::string        m_deviceName;         //!< Name of the audio capture device
+    unsigned int       m_channelCount;       //!< Number of recording channels
 };
 
 } // namespace sf

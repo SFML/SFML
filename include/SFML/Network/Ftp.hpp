@@ -54,9 +54,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum TransferMode
     {
-        Binary, ///< Binary mode (file is transfered as a sequence of bytes)
-        Ascii,  ///< Text mode using ASCII encoding
-        Ebcdic  ///< Text mode using EBCDIC encoding
+        Binary, //!< Binary mode (file is transfered as a sequence of bytes)
+        Ascii,  //!< Text mode using ASCII encoding
+        Ebcdic  //!< Text mode using EBCDIC encoding
     };
 
     ////////////////////////////////////////////////////////////
@@ -75,62 +75,62 @@ public:
         {
             // 1xx: the requested action is being initiated,
             // expect another reply before proceeding with a new command
-            RestartMarkerReply          = 110, ///< Restart marker reply
-            ServiceReadySoon            = 120, ///< Service ready in N minutes
-            DataConnectionAlreadyOpened = 125, ///< Data connection already opened, transfer starting
-            OpeningDataConnection       = 150, ///< File status ok, about to open data connection
+            RestartMarkerReply          = 110, //!< Restart marker reply
+            ServiceReadySoon            = 120, //!< Service ready in N minutes
+            DataConnectionAlreadyOpened = 125, //!< Data connection already opened, transfer starting
+            OpeningDataConnection       = 150, //!< File status ok, about to open data connection
 
             // 2xx: the requested action has been successfully completed
-            Ok                    = 200, ///< Command ok
-            PointlessCommand      = 202, ///< Command not implemented
-            SystemStatus          = 211, ///< System status, or system help reply
-            DirectoryStatus       = 212, ///< Directory status
-            FileStatus            = 213, ///< File status
-            HelpMessage           = 214, ///< Help message
-            SystemType            = 215, ///< NAME system type, where NAME is an official system name from the list in the Assigned Numbers document
-            ServiceReady          = 220, ///< Service ready for new user
-            ClosingConnection     = 221, ///< Service closing control connection
-            DataConnectionOpened  = 225, ///< Data connection open, no transfer in progress
-            ClosingDataConnection = 226, ///< Closing data connection, requested file action successful
-            EnteringPassiveMode   = 227, ///< Entering passive mode
-            LoggedIn              = 230, ///< User logged in, proceed. Logged out if appropriate
-            FileActionOk          = 250, ///< Requested file action ok
-            DirectoryOk           = 257, ///< PATHNAME created
+            Ok                    = 200, //!< Command ok
+            PointlessCommand      = 202, //!< Command not implemented
+            SystemStatus          = 211, //!< System status, or system help reply
+            DirectoryStatus       = 212, //!< Directory status
+            FileStatus            = 213, //!< File status
+            HelpMessage           = 214, //!< Help message
+            SystemType            = 215, //!< NAME system type, where NAME is an official system name from the list in the Assigned Numbers document
+            ServiceReady          = 220, //!< Service ready for new user
+            ClosingConnection     = 221, //!< Service closing control connection
+            DataConnectionOpened  = 225, //!< Data connection open, no transfer in progress
+            ClosingDataConnection = 226, //!< Closing data connection, requested file action successful
+            EnteringPassiveMode   = 227, //!< Entering passive mode
+            LoggedIn              = 230, //!< User logged in, proceed. Logged out if appropriate
+            FileActionOk          = 250, //!< Requested file action ok
+            DirectoryOk           = 257, //!< PATHNAME created
 
             // 3xx: the command has been accepted, but the requested action
             // is dormant, pending receipt of further information
-            NeedPassword       = 331, ///< User name ok, need password
-            NeedAccountToLogIn = 332, ///< Need account for login
-            NeedInformation    = 350, ///< Requested file action pending further information
+            NeedPassword       = 331, //!< User name ok, need password
+            NeedAccountToLogIn = 332, //!< Need account for login
+            NeedInformation    = 350, //!< Requested file action pending further information
 
             // 4xx: the command was not accepted and the requested action did not take place,
             // but the error condition is temporary and the action may be requested again
-            ServiceUnavailable        = 421, ///< Service not available, closing control connection
-            DataConnectionUnavailable = 425, ///< Can't open data connection
-            TransferAborted           = 426, ///< Connection closed, transfer aborted
-            FileActionAborted         = 450, ///< Requested file action not taken
-            LocalError                = 451, ///< Requested action aborted, local error in processing
-            InsufficientStorageSpace  = 452, ///< Requested action not taken; insufficient storage space in system, file unavailable
+            ServiceUnavailable        = 421, //!< Service not available, closing control connection
+            DataConnectionUnavailable = 425, //!< Can't open data connection
+            TransferAborted           = 426, //!< Connection closed, transfer aborted
+            FileActionAborted         = 450, //!< Requested file action not taken
+            LocalError                = 451, //!< Requested action aborted, local error in processing
+            InsufficientStorageSpace  = 452, //!< Requested action not taken; insufficient storage space in system, file unavailable
 
             // 5xx: the command was not accepted and
             // the requested action did not take place
-            CommandUnknown          = 500, ///< Syntax error, command unrecognized
-            ParametersUnknown       = 501, ///< Syntax error in parameters or arguments
-            CommandNotImplemented   = 502, ///< Command not implemented
-            BadCommandSequence      = 503, ///< Bad sequence of commands
-            ParameterNotImplemented = 504, ///< Command not implemented for that parameter
-            NotLoggedIn             = 530, ///< Not logged in
-            NeedAccountToStore      = 532, ///< Need account for storing files
-            FileUnavailable         = 550, ///< Requested action not taken, file unavailable
-            PageTypeUnknown         = 551, ///< Requested action aborted, page type unknown
-            NotEnoughMemory         = 552, ///< Requested file action aborted, exceeded storage allocation
-            FilenameNotAllowed      = 553, ///< Requested action not taken, file name not allowed
+            CommandUnknown          = 500, //!< Syntax error, command unrecognized
+            ParametersUnknown       = 501, //!< Syntax error in parameters or arguments
+            CommandNotImplemented   = 502, //!< Command not implemented
+            BadCommandSequence      = 503, //!< Bad sequence of commands
+            ParameterNotImplemented = 504, //!< Command not implemented for that parameter
+            NotLoggedIn             = 530, //!< Not logged in
+            NeedAccountToStore      = 532, //!< Need account for storing files
+            FileUnavailable         = 550, //!< Requested action not taken, file unavailable
+            PageTypeUnknown         = 551, //!< Requested action aborted, page type unknown
+            NotEnoughMemory         = 552, //!< Requested file action aborted, exceeded storage allocation
+            FilenameNotAllowed      = 553, //!< Requested action not taken, file name not allowed
 
             // 10xx: SFML custom codes
-            InvalidResponse  = 1000, ///< Not part of the FTP standard, generated by SFML when a received response cannot be parsed
-            ConnectionFailed = 1001, ///< Not part of the FTP standard, generated by SFML when the low-level socket connection with the server fails
-            ConnectionClosed = 1002, ///< Not part of the FTP standard, generated by SFML when the low-level socket connection is unexpectedly closed
-            InvalidFile      = 1003  ///< Not part of the FTP standard, generated by SFML when a local file cannot be read or written
+            InvalidResponse  = 1000, //!< Not part of the FTP standard, generated by SFML when a received response cannot be parsed
+            ConnectionFailed = 1001, //!< Not part of the FTP standard, generated by SFML when the low-level socket connection with the server fails
+            ConnectionClosed = 1002, //!< Not part of the FTP standard, generated by SFML when the low-level socket connection is unexpectedly closed
+            InvalidFile      = 1003  //!< Not part of the FTP standard, generated by SFML when a local file cannot be read or written
         };
 
         ////////////////////////////////////////////////////////////
@@ -177,8 +177,8 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        Status      m_status;  ///< Status code returned from the server
-        std::string m_message; ///< Last message received from the server
+        Status      m_status;  //!< Status code returned from the server
+        std::string m_message; //!< Last message received from the server
     };
 
     ////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        std::string m_directory; ///< Directory extracted from the response message
+        std::string m_directory; //!< Directory extracted from the response message
     };
 
 
@@ -244,7 +244,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        std::vector<std::string> m_listing; ///< Directory/file names extracted from the data
+        std::vector<std::string> m_listing; //!< Directory/file names extracted from the data
     };
 
 
@@ -533,8 +533,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket   m_commandSocket; ///< Socket holding the control connection with the server
-    std::string m_receiveBuffer; ///< Received command data that is yet to be processed
+    TcpSocket   m_commandSocket; //!< Socket holding the control connection with the server
+    std::string m_receiveBuffer; //!< Received command data that is yet to be processed
 };
 
 } // namespace sf

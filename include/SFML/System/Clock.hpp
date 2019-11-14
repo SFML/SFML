@@ -78,7 +78,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Time m_startTime; ///< Time of last reset, in microseconds
+    Time m_startTime; //!< Time of last reset, in microseconds
 };
 
 } // namespace sf

@@ -52,11 +52,11 @@ public:
     ////////////////////////////////////////////////////////////
     enum Status
     {
-        Done,         ///< The socket has sent / received the data
-        NotReady,     ///< The socket is not ready to send / receive data yet
-        Partial,      ///< The socket sent a part of the data
-        Disconnected, ///< The TCP socket has been disconnected
-        Error         ///< An unexpected error happened
+        Done,         //!< The socket has sent / received the data
+        NotReady,     //!< The socket is not ready to send / receive data yet
+        Partial,      //!< The socket sent a part of the data
+        Disconnected, //!< The TCP socket has been disconnected
+        Error         //!< An unexpected error happened
     };
 
     ////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
     ////////////////////////////////////////////////////////////
     enum
     {
-        AnyPort = 0 ///< Special value that tells the system to pick any available port
+        AnyPort = 0 //!< Special value that tells the system to pick any available port
     };
 
 public:
@@ -113,8 +113,8 @@ protected:
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Tcp, ///< TCP protocol
-        Udp  ///< UDP protocol
+        Tcp, //!< TCP protocol
+        Udp  //!< UDP protocol
     };
 
     ////////////////////////////////////////////////////////////
@@ -173,9 +173,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Type         m_type;       ///< Type of the socket (TCP or UDP)
-    SocketHandle m_socket;     ///< Socket descriptor
-    bool         m_isBlocking; ///< Current blocking mode of the socket
+    Type         m_type;       //!< Type of the socket (TCP or UDP)
+    SocketHandle m_socket;     //!< Socket descriptor
+    bool         m_isBlocking; //!< Current blocking mode of the socket
 };
 
 } // namespace sf

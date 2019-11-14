@@ -150,7 +150,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::GlContext* m_context; ///< Internal OpenGL context
+    priv::GlContext* m_context; //!< Internal OpenGL context
 };
 
 } // namespace sf
