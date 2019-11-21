@@ -141,6 +141,27 @@ public:
     void setViewport(const FloatRect& viewport);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the target scissor rectangle
+    ///
+    /// The scissor rectangle, expressed as a factor (between 0 and 1) of
+    /// the RenderTarget, specifies the region of the RenderTarget whose
+    /// pixels are able to be modified by draw or clear operations.
+    /// Any pixels which lie outside of the scissor rectangle will
+    /// not be modified by draw or clear operations.
+    /// For example, a scissor rectangle which only allows modifications
+    /// to the right side of the target would be defined
+    /// with View.setScissor(sf::FloatRect(0.5, 0, 0.5, 1)).
+    /// By default, a view has a scissor rectangle which allows
+    /// modifications to the entire target.
+    ///
+    /// \param scissor New scissor rectangle
+    ///
+    /// \see getScissor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setScissor(const FloatRect& scissor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Reset the view to the given rectangle
     ///
     /// Note that this function resets the rotation angle to 0.
@@ -191,6 +212,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const FloatRect& getViewport() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the scissor rectangle of the view
+    ///
+    /// \return Scissor rectangle, expressed as a factor of the target size
+    ///
+    /// \see setScissor
+    ///
+    ////////////////////////////////////////////////////////////
+    const FloatRect& getScissor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position
@@ -273,6 +304,7 @@ private:
     Vector2f          m_size;                ///< Size of the view, in scene coordinates
     float             m_rotation;            ///< Angle of rotation of the view rectangle, in degrees
     FloatRect         m_viewport;            ///< Viewport rectangle, expressed as a factor of the render-target's size
+    FloatRect         m_scissor;             ///< Scissor rectangle, expressed as a factor of the render-target's size
     mutable Transform m_transform;           ///< Precomputed projection transform corresponding to the view
     mutable Transform m_inverseTransform;    ///< Precomputed inverse projection transform corresponding to the view
     mutable bool      m_transformUpdated;    ///< Internal state telling if the transform needs to be updated
@@ -304,6 +336,12 @@ private:
 /// or for displaying a minimap, for example. If the source
 /// rectangle doesn't have the same size as the viewport, its
 /// contents will be stretched to fit in.
+///
+/// The scissor rectangle allows for specifying regions of the
+/// render target to which modifications can be made by draw
+/// and clear operations. Only pixels that are within the region
+/// will be able to be modified. Pixels outside of the region will
+/// not be modified by draw or clear operations.
 ///
 /// To apply a view, you have to assign it to the render target.
 /// Then, objects drawn in this render target will be

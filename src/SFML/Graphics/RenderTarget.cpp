@@ -149,6 +149,10 @@ void RenderTarget::clear(const Color& color)
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(NULL);
 
+        // Apply the view (scissor testing can affect clearing)
+        if (!m_cache.enable || m_cache.viewChanged)
+            applyCurrentView();
+
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
     }
@@ -188,6 +192,20 @@ IntRect RenderTarget::getViewport(const View& view) const
                    static_cast<int>(0.5f + height * viewport.top),
                    static_cast<int>(0.5f + width  * viewport.width),
                    static_cast<int>(0.5f + height * viewport.height));
+}
+
+
+////////////////////////////////////////////////////////////
+IntRect RenderTarget::getScissor(const View& view) const
+{
+    float width  = static_cast<float>(getSize().x);
+    float height = static_cast<float>(getSize().y);
+    const FloatRect& scissor = view.getScissor();
+
+    return IntRect(static_cast<int>(0.5f + width  * scissor.left),
+                   static_cast<int>(0.5f + height * scissor.top),
+                   static_cast<int>(0.5f + width  * scissor.width),
+                   static_cast<int>(0.5f + height * scissor.height));
 }
 
 
@@ -508,6 +526,7 @@ void RenderTarget::resetGLStates()
         glCheck(glDisable(GL_LIGHTING));
         glCheck(glDisable(GL_DEPTH_TEST));
         glCheck(glDisable(GL_ALPHA_TEST));
+        glCheck(glDisable(GL_SCISSOR_TEST));
         glCheck(glEnable(GL_TEXTURE_2D));
         glCheck(glEnable(GL_BLEND));
         glCheck(glMatrixMode(GL_MODELVIEW));
@@ -515,6 +534,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        m_cache.scissorEnabled = false;
         m_cache.glStatesSet = true;
 
         // Apply the default SFML states
@@ -561,6 +581,45 @@ void RenderTarget::applyCurrentView()
     IntRect viewport = getViewport(m_view);
     int top = getSize().y - (viewport.top + viewport.height);
     glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
+
+    FloatRect scissor = m_view.getScissor();
+
+    if (m_cache.scissorEnabled)
+    {
+        if ((scissor.left   != 0) ||
+            (scissor.top    != 0) ||
+            (scissor.width  != 1) ||
+            (scissor.height != 1))
+        {
+            // Set the scissor rectangle
+            IntRect pixelScissor = getScissor(m_view);
+            top = getSize().y - (pixelScissor.top + pixelScissor.height);
+            glCheck(glScissor(pixelScissor.left, top, pixelScissor.width, pixelScissor.height));
+        }
+        else
+        {
+            glCheck(glDisable(GL_SCISSOR_TEST));
+
+            m_cache.scissorEnabled = false;
+        }
+    }
+    else
+    {
+        if ((scissor.left   != 0) ||
+            (scissor.top    != 0) ||
+            (scissor.width  != 1) ||
+            (scissor.height != 1))
+        {
+            // Set the scissor rectangle
+            IntRect pixelScissor = getScissor(m_view);
+            top = getSize().y - (pixelScissor.top + pixelScissor.height);
+            glCheck(glScissor(pixelScissor.left, top, pixelScissor.width, pixelScissor.height));
+
+            glCheck(glEnable(GL_SCISSOR_TEST));
+
+            m_cache.scissorEnabled = true;
+        }
+    }
 
     // Set the projection matrix
     glCheck(glMatrixMode(GL_PROJECTION));

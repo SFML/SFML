@@ -37,6 +37,7 @@ m_center             (),
 m_size               (),
 m_rotation           (0),
 m_viewport           (0, 0, 1, 1),
+m_scissor            (0, 0, 1, 1),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
@@ -50,6 +51,7 @@ m_center             (),
 m_size               (),
 m_rotation           (0),
 m_viewport           (0, 0, 1, 1),
+m_scissor            (0, 0, 1, 1),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
@@ -63,6 +65,7 @@ m_center             (center),
 m_size               (size),
 m_rotation           (0),
 m_viewport           (0, 0, 1, 1),
+m_scissor            (0, 0, 1, 1),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
@@ -125,6 +128,13 @@ void View::setViewport(const FloatRect& viewport)
 
 
 ////////////////////////////////////////////////////////////
+void View::setScissor(const FloatRect& scissor)
+{
+    m_scissor = scissor;
+}
+
+
+////////////////////////////////////////////////////////////
 void View::reset(const FloatRect& rectangle)
 {
     m_center.x = rectangle.left + rectangle.width / 2.f;
@@ -163,6 +173,13 @@ float View::getRotation() const
 const FloatRect& View::getViewport() const
 {
     return m_viewport;
+}
+
+
+////////////////////////////////////////////////////////////
+const FloatRect& View::getScissor() const
+{
+    return m_scissor;
 }
 
 

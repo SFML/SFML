@@ -130,6 +130,21 @@ public:
     IntRect getViewport(const View& view) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the scissor rectangle of a view, applied to this render target
+    ///
+    /// The scissor rectangle is defined in the view as a ratio, this
+    /// function simply applies this ratio to the current dimensions
+    /// of the render target to calculate the pixels rectangle
+    /// that the scissor rectangle actually covers in the target.
+    ///
+    /// \param view The view for which we want to compute the scissor rectangle
+    ///
+    /// \return Scissor rectangle, expressed in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    IntRect getScissor(const View& view) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert a point from target coordinates to world
     ///        coordinates, using the current view
     ///
@@ -461,6 +476,7 @@ private:
         bool      enable;         ///< Is the cache enabled?
         bool      glStatesSet;    ///< Are our internal GL states set yet?
         bool      viewChanged;    ///< Has the current view changed since last draw?
+        bool      scissorEnabled; ///< Is scissor testing enabled?
         BlendMode lastBlendMode;  ///< Cached blending mode
         Uint64    lastTextureId;  ///< Cached texture
         bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
