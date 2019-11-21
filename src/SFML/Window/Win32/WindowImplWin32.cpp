@@ -122,6 +122,17 @@ namespace
             FreeLibrary(user32Dll);
         }
     }
+
+    // Register a RAWINPUTDEVICE representing the mouse to receive raw
+    // mouse deltas using WM_INPUT
+    void initRawMouse()
+    {
+        RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL };
+        bool enabled = RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == TRUE;
+
+        if (!enabled)
+                sf::err() << "Failed to initialize raw mouse input" << std::endl;
+    }
 }
 
 namespace sf
@@ -150,7 +161,11 @@ m_cursorGrabbed   (false)
     {
         // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
 
@@ -224,7 +239,11 @@ m_cursorGrabbed   (m_fullscreen)
     if (m_handle)
     {
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+
+            initRawMouse();
+        }
 
         ++handleCount;
     }
@@ -979,6 +998,31 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             pushEvent(event);
             break;
         }
+
+        // Mouse move raw event
+        case WM_INPUT:
+        {
+            HRAWINPUT hRawInput = (HRAWINPUT)lParam;
+            RAWINPUT input;
+            UINT size = sizeof(input);
+
+            GetRawInputData(hRawInput, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
+
+            if (input.header.dwType == RIM_TYPEMOUSE)
+            {
+                RAWMOUSE* rawMouse = &input.data.mouse;
+                if ((rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
+                {
+                    Event event;
+                    event.type = Event::MouseMovedRaw;
+                    event.mouseMoveRaw.deltaX = rawMouse->lLastX;
+                    event.mouseMoveRaw.deltaY = rawMouse->lLastY;
+                    pushEvent(event);
+                }
+            }
+            break;
+        }
+
         case WM_DEVICECHANGE:
         {
             // Some sort of device change has happened, update joystick connections

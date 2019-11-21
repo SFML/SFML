@@ -88,6 +88,16 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Mouse move raw event parameter (MouseMovedRaw)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct MouseMoveRawEvent
+    {
+        int deltaX; ///< X delta movement of the mouse since the last event
+        int deltaY; ///< Y delta movement of the mouse since the last event
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Mouse buttons events parameters
     ///        (MouseButtonPressed, MouseButtonReleased)
     ///
@@ -198,6 +208,7 @@ public:
         MouseButtonPressed,     ///< A mouse button was pressed (data in event.mouseButton)
         MouseButtonReleased,    ///< A mouse button was released (data in event.mouseButton)
         MouseMoved,             ///< The mouse cursor moved (data in event.mouseMove)
+        MouseMovedRaw,          ///< The mouse moved (raw data in event.mouseMoveRaw)
         MouseEntered,           ///< The mouse cursor entered the area of the window (no data)
         MouseLeft,              ///< The mouse cursor left the area of the window (no data)
         JoystickButtonPressed,  ///< A joystick button was pressed (data in event.joystickButton)
@@ -224,6 +235,7 @@ public:
         KeyEvent              key;               ///< Key event parameters (Event::KeyPressed, Event::KeyReleased)
         TextEvent             text;              ///< Text event parameters (Event::TextEntered)
         MouseMoveEvent        mouseMove;         ///< Mouse move event parameters (Event::MouseMoved)
+        MouseMoveRawEvent     mouseMoveRaw;      ///< Mouse move raw event parameters (Event::MouseMovedRaw)
         MouseButtonEvent      mouseButton;       ///< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
         MouseWheelEvent       mouseWheel;        ///< Mouse wheel event parameters (Event::MouseWheelMoved) (deprecated)
         MouseWheelScrollEvent mouseWheelScroll;  ///< Mouse wheel event parameters (Event::MouseWheelScrolled)

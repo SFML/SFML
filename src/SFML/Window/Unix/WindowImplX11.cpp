@@ -39,6 +39,7 @@
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/XInput2.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -97,7 +98,8 @@ namespace
     Bool checkEvent(::Display*, XEvent* event, XPointer userData)
     {
         // Just check if the event matches the window
-        return event->xany.window == reinterpret_cast< ::Window >(userData);
+        return event->xany.window == reinterpret_cast< ::Window >(userData)
+                || event->type == GenericEvent;
     }
 
     // Find the name of the current executable
@@ -360,6 +362,33 @@ namespace
         }
 
         return false;
+    }
+
+    void initRawMouse(::Display* disp)
+    {
+        bool enabled = false;
+        int opcode, event, error;
+
+        if (XQueryExtension(disp, "XInputExtension", &opcode, &event, &error))
+        {
+            int major = 2, minor = 0;
+            if (XIQueryVersion(disp, &major, &minor) != BadRequest)
+            {
+                XIEventMask eventMask;
+                unsigned char mask[XIMaskLen(XI_LASTEVENT)];
+                std::memset(mask, 0, sizeof(mask));
+                eventMask.deviceid = XIAllMasterDevices;
+                eventMask.mask_len = sizeof(mask);
+                eventMask.mask = mask;
+
+                XISetMask(mask, XI_RawMotion);
+
+                enabled = XISelectEvents(disp, DefaultRootWindow(disp), &eventMask, 1) == Success;
+            }
+        }
+
+        if (!enabled)
+            sf::err() << "Failed to initialize raw mouse input" << std::endl;
     }
 
     sf::Keyboard::Key keysymToSF(KeySym symbol)
@@ -1597,6 +1626,10 @@ void WindowImplX11::initialize()
                         1);
     }
 
+    // Enable raw input in first window
+    if (allWindows.empty())
+        initRawMouse(m_display);
+
     // Show the window
     setVisible(true);
 
@@ -2085,6 +2118,45 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (!m_lastInputTime)
                 m_lastInputTime = windowEvent.xproperty.time;
 
+            break;
+        }
+
+        // Mouse moved raw
+        case GenericEvent:
+        {
+            if (XGetEventData(m_display, &windowEvent.xcookie)
+                    && windowEvent.xcookie.evtype == XI_RawMotion)
+            {
+                const XIRawEvent* rawEv;
+                rawEv = static_cast<const XIRawEvent*>(windowEvent.xcookie.data);
+
+                const int mouseAxis = 2;
+                int relativeValues[2] = { 0, 0 };
+                int limit = rawEv->valuators.mask_len;
+
+                if (limit > mouseAxis)
+                    limit = mouseAxis;
+                limit *= 8;
+
+                // Get relative input values
+                const double* inputValues = rawEv->raw_values;
+                for (int i = 0; i < limit; ++i)
+                {
+                    if (XIMaskIsSet(rawEv->valuators.mask, i))
+                    {
+                        relativeValues[i] = static_cast<int>(*inputValues);
+                        ++inputValues;
+                    }
+                }
+
+                Event event;
+                event.type = Event::MouseMovedRaw;
+                event.mouseMoveRaw.deltaX = relativeValues[0];
+                event.mouseMoveRaw.deltaY = relativeValues[1];
+                pushEvent(event);
+            }
+
+            XFreeEventData(m_display, &windowEvent.xcookie);
             break;
         }
     }

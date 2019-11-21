@@ -244,7 +244,7 @@ target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/he
 
 # find and setup usage for external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OPENBSD)
-    sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB")
+    sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB" "X11_Xinput_LIB")
     target_link_libraries(sfml-window PRIVATE X11)
 endif()
 
