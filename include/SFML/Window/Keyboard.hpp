@@ -99,6 +99,7 @@ public:
         Semicolon,    ///< The ; key
         Comma,        ///< The , key
         Period,       ///< The . key
+        Exclamation,  ///< The Exclamation mark / Paragraph key
         Quote,        ///< The ' key
         Slash,        ///< The / key
         Backslash,    ///< The \ key
