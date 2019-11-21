@@ -104,7 +104,6 @@ namespace
         return GL_ZERO;
     }
 
-
     // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
     sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
     {
@@ -118,6 +117,44 @@ namespace
         sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
         assert(false);
         return GLEXT_GL_FUNC_ADD;
+    }
+
+    // Convert an UpdateOperation constant to the corresponding OpenGL constant.
+    sf::Uint32 stencilOperationToGlConstant(sf::StencilMode::UpdateOperation operation)
+    {
+        switch (operation)
+        {
+            case sf::StencilMode::Keep:      return GL_KEEP;
+            case sf::StencilMode::Zero:      return GL_ZERO;
+            case sf::StencilMode::Replace:   return GL_REPLACE;
+            case sf::StencilMode::Increment: return GL_INCR;
+            case sf::StencilMode::Decrement: return GL_INCR;
+            case sf::StencilMode::Invert:    return GL_INVERT;
+        }
+
+        sf::err() << "Invalid value for sf::StencilMode::UpdateOperation! Fallback to sf::StencilMode::Keep." << std::endl;
+        assert(false);
+        return GL_KEEP;
+    }
+
+    // Convert a Comparison constant to the corresponding OpenGL constant.
+    sf::Uint32 stencilFunctionToGlConstant(sf::StencilMode::Comparison comparison)
+    {
+        switch (comparison)
+        {
+            case sf::StencilMode::Never:        return GL_NEVER;
+            case sf::StencilMode::Less:         return GL_EQUAL;
+            case sf::StencilMode::LessEqual:    return GL_LEQUAL;
+            case sf::StencilMode::Greater:      return GL_GREATER;
+            case sf::StencilMode::GreaterEqual: return GL_GEQUAL;
+            case sf::StencilMode::Equal:        return GL_EQUAL;
+            case sf::StencilMode::NotEqual:     return GL_NOTEQUAL;
+            case sf::StencilMode::Always:       return GL_ALWAYS;
+        }
+
+        sf::err() << "Invalid value for sf::StencilMode::Comparison! Fallback to sf::StencilMode::Always." << std::endl;
+        assert(false);
+        return GL_ALWAYS;
     }
 }
 
@@ -151,6 +188,35 @@ void RenderTarget::clear(const Color& color)
 
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::clear(unsigned int value)
+{
+    if (isActive(m_id) || setActive(true))
+    {
+        // Unbind texture to fix RenderTexture preventing clear
+        applyTexture(NULL);
+
+        glCheck(glClearStencil(value));
+        glCheck(glClear(GL_STENCIL_BUFFER_BIT));
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::clear(const Color& color, unsigned int value)
+{
+    if (isActive(m_id) || setActive(true))
+    {
+        // Unbind texture to fix RenderTexture preventing clear
+        applyTexture(NULL);
+
+        glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
+        glCheck(glClearStencil(value));
+        glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
     }
 }
 
@@ -506,6 +572,7 @@ void RenderTarget::resetGLStates()
         // Define the default OpenGL states
         glCheck(glDisable(GL_CULL_FACE));
         glCheck(glDisable(GL_LIGHTING));
+        glCheck(glDisable(GL_STENCIL_TEST));
         glCheck(glDisable(GL_DEPTH_TEST));
         glCheck(glDisable(GL_ALPHA_TEST));
         glCheck(glEnable(GL_TEXTURE_2D));
@@ -515,10 +582,13 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+        m_cache.stencilEnabled = false;
         m_cache.glStatesSet = true;
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
+        applyStencilMode(StencilMode());
         applyTexture(NULL);
         if (shaderAvailable)
             applyShader(NULL);
@@ -622,6 +692,36 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 
 
 ////////////////////////////////////////////////////////////
+void RenderTarget::applyStencilMode(const StencilMode& mode)
+{
+    // Fast path if we have a default (disabled) stencil mode
+    if (mode == StencilMode())
+    {
+        if (m_cache.stencilEnabled)
+        {
+            glCheck(glDisable(GL_STENCIL_TEST));
+            glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+
+            m_cache.stencilEnabled = false;
+        }
+    }
+    else
+    {
+        // Apply the stencil mode
+        if (!m_cache.stencilEnabled)
+            glCheck(glEnable(GL_STENCIL_TEST));
+
+        glCheck(glStencilOp(GL_KEEP, stencilOperationToGlConstant(mode.stencilUpdateOperation), stencilOperationToGlConstant(mode.stencilUpdateOperation)));
+        glCheck(glStencilFunc(stencilFunctionToGlConstant(mode.stencilComparison), mode.stencilReference, mode.stencilMask));
+
+        m_cache.stencilEnabled = true;
+    }
+
+    m_cache.lastStencilMode = mode;
+}
+
+
+////////////////////////////////////////////////////////////
 void RenderTarget::applyTransform(const Transform& transform)
 {
     // No need to call glMatrixMode(GL_MODELVIEW), it is always the
@@ -675,6 +775,14 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     if (!m_cache.enable || (states.blendMode != m_cache.lastBlendMode))
         applyBlendMode(states.blendMode);
 
+    // Apply the stencil mode
+    if (!m_cache.enable || (states.stencilMode != m_cache.lastStencilMode))
+        applyStencilMode(states.stencilMode);
+
+    // Mask the color buffer off if necessary
+    if (states.stencilMode.stencilOnly)
+        glCheck(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
+
     // Apply the texture
     if (!m_cache.enable || (states.texture && states.texture->m_fboAttachment))
     {
@@ -723,6 +831,10 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
     // This prevents a bug where some drivers do not clear RenderTextures properly.
     if (states.texture && states.texture->m_fboAttachment)
         applyTexture(NULL);
+
+    // Mask the color buffer back on if necessary
+    if (states.stencilMode.stencilOnly)
+        glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 
     // Re-enable the cache at the end of the draw if it was disabled
     m_cache.enable = true;

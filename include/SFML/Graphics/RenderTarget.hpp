@@ -38,6 +38,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/StencilMode.hpp>
 
 
 namespace sf
@@ -69,6 +70,29 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void clear(const Color& color = Color(0, 0, 0, 255));
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clear the stencil buffer to a specific value
+    ///
+    /// The specified value is truncated to the bit width of
+    /// the current stencil buffer.
+    ///
+    /// \param value Stencil value to clear to
+    ///
+    ////////////////////////////////////////////////////////////
+    void clear(unsigned int value);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Clear the entire target with a single color and stencil value
+    ///
+    /// The specified stencil value is truncated to the bit
+    /// width of the current stencil buffer.
+    ///
+    /// \param color Fill color to use to clear the render target
+    /// \param value Stencil value to clear to
+    ///
+    ////////////////////////////////////////////////////////////
+    void clear(const Color& color, unsigned int value);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view
@@ -400,6 +424,14 @@ private:
     void applyBlendMode(const BlendMode& mode);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Apply a new stencil mode
+    ///
+    /// \param mode Stencil mode to apply
+    ///
+    ////////////////////////////////////////////////////////////
+    void applyStencilMode(const StencilMode& mode);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Apply a new transform
     ///
     /// \param transform Transform to apply
@@ -458,14 +490,16 @@ private:
     {
         enum {VertexCacheSize = 4};
 
-        bool      enable;         ///< Is the cache enabled?
-        bool      glStatesSet;    ///< Are our internal GL states set yet?
-        bool      viewChanged;    ///< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  ///< Cached blending mode
-        Uint64    lastTextureId;  ///< Cached texture
-        bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool      useVertexCache; ///< Did we previously use the vertex cache?
-        Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
+        bool        enable;                       ///< Is the cache enabled?
+        bool        glStatesSet;                  ///< Are our internal GL states set yet?
+        bool        viewChanged;                  ///< Has the current view changed since last draw?
+        bool        stencilEnabled;               ///< Is stencil testing enabled?
+        BlendMode   lastBlendMode;                ///< Cached blending mode
+        StencilMode lastStencilMode;              ///< Cached stencil
+        Uint64      lastTextureId;                ///< Cached texture
+        bool        texCoordsArrayEnabled;        ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool        useVertexCache;               ///< Did we previously use the vertex cache?
+        Vertex      vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////

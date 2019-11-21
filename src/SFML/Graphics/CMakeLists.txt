@@ -36,6 +36,8 @@ set(SRC
     ${INCROOT}/RenderWindow.hpp
     ${SRCROOT}/Shader.cpp
     ${INCROOT}/Shader.hpp
+    ${SRCROOT}/StencilMode.cpp
+    ${INCROOT}/StencilMode.hpp
     ${SRCROOT}/Texture.cpp
     ${INCROOT}/Texture.hpp
     ${SRCROOT}/TextureSaver.cpp
