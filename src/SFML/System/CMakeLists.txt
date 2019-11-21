@@ -4,6 +4,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/System)
 
 # all source files
 set(SRC
+    ${SRCROOT}/Angle.cpp
+    ${INCROOT}/Angle.hpp
     ${SRCROOT}/Clock.cpp
     ${INCROOT}/Clock.hpp
     ${SRCROOT}/Err.cpp

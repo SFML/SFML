@@ -177,11 +177,10 @@ Transform& Transform::translate(const Vector2f& offset)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle)
+Transform& Transform::rotate(Angle angle)
 {
-    float rad = angle * 3.141592654f / 180.f;
-    float cos = std::cos(rad);
-    float sin = std::sin(rad);
+    float cos = std::cos(angle.asRadians());
+    float sin = std::sin(angle.asRadians());
 
     Transform rotation(cos, -sin, 0,
                        sin,  cos, 0,
@@ -192,11 +191,10 @@ Transform& Transform::rotate(float angle)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle, float centerX, float centerY)
+Transform& Transform::rotate(Angle angle, float centerX, float centerY)
 {
-    float rad = angle * 3.141592654f / 180.f;
-    float cos = std::cos(rad);
-    float sin = std::sin(rad);
+    float cos = std::cos(angle.asRadians());
+    float sin = std::sin(angle.asRadians());
 
     Transform rotation(cos, -sin, centerX * (1 - cos) + centerY * sin,
                        sin,  cos, centerY * (1 - cos) - centerX * sin,
@@ -207,7 +205,7 @@ Transform& Transform::rotate(float angle, float centerX, float centerY)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle, const Vector2f& center)
+Transform& Transform::rotate(Angle angle, const Vector2f& center)
 {
     return rotate(angle, center.x, center.y);
 }
