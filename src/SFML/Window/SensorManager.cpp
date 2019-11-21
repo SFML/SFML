@@ -33,11 +33,22 @@ namespace sf
 {
 namespace priv
 {
+SensorManager* SensorManager::singleInstance = NULL;
+
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
 {
-    static SensorManager instance;
-    return instance;
+    if(singleInstance == NULL)
+        singleInstance = new SensorManager();
+    return *singleInstance;
+}
+
+
+////////////////////////////////////////////////////////////
+void SensorManager::destroyInstance()
+{
+    delete singleInstance;
+    singleInstance = NULL;
 }
 
 

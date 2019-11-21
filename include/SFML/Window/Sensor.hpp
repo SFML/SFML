@@ -93,6 +93,19 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static Vector3f getValue(Type sensor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Cleans up all resources associated with sensors
+    ///
+    /// Some platforms (e.g. Android) require that when the window
+    /// (Activity) is recreated, the sensor's resources are
+    /// recreated too.
+    /// You do not need to call this function manually, SFML
+    /// will automatically do so when the window is destroyed.
+    /// For more information, see <a href="https://stackoverflow.com/a/3999709/3738870">this answer</a>.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void cleanUp();
 };
 
 } // namespace sf

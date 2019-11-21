@@ -48,10 +48,19 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the global unique instance of the manager
     ///
+    /// If needed, this function will recreate the manager's
+    /// instance.
+    ///
     /// \return Unique instance of the sensor manager
     ///
     ////////////////////////////////////////////////////////////
     static SensorManager& getInstance();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Destroys the global unique instance of the manager
+    ///
+    ////////////////////////////////////////////////////////////
+    static void destroyInstance();
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a sensor is available on the underlying platform
@@ -128,6 +137,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     Item m_sensors[Sensor::Count]; ///< Sensors information and state
+    static SensorManager* singleInstance; ///< The single instance of the manager
 };
 
 } // namespace priv
