@@ -100,6 +100,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
     ///
+    /// These two statements are equivalent:
+    /// \code
+    /// sf::Vector2f transformedPoint = matrix.transformPoint(x, y);
+    /// sf::Vector2f transformedPoint = matrix * sf::Vector2f(x, y);
+    /// \endcode
+    ///
     /// \param x X coordinate of the point to transform
     /// \param y Y coordinate of the point to transform
     ///
@@ -110,6 +116,12 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
+    ///
+    /// These two statements are equivalent:
+    /// \code
+    /// sf::Vector2f transformedPoint = matrix.transformPoint(point);
+    /// sf::Vector2f transformedPoint = matrix * point;
+    /// \endcode
     ///
     /// \param point Point to transform
     ///
@@ -138,8 +150,14 @@ public:
     /// \brief Combine the current transform with another one
     ///
     /// The result is a transform that is equivalent to applying
-    /// *this followed by \a transform. Mathematically, it is
-    /// equivalent to a matrix multiplication.
+    /// \a transform followed by *this. Mathematically, it is
+    /// equivalent to a matrix multiplication (*this) * transform.
+    ///
+    /// These two statements are equivalent:
+    /// \code
+    /// left.combine(right);
+    /// left *= right;
+    /// \endcode
     ///
     /// \param transform Transform to combine with this transform
     ///
