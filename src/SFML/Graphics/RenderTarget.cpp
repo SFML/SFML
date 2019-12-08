@@ -405,6 +405,7 @@ bool RenderTarget::setActive(bool active)
             {
                 contextRenderTargetMap[contextId] = m_id;
 
+                m_cache.glStatesSet = false;
                 m_cache.enable = false;
             }
             else if (iter->second != m_id)
