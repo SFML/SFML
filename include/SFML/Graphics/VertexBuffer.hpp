@@ -31,7 +31,6 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Window/GlResource.hpp>
 
 
 namespace sf
@@ -39,11 +38,16 @@ namespace sf
 class RenderTarget;
 class Vertex;
 
+namespace priv
+{
+    class VertexBufferImpl;
+}
+
 ////////////////////////////////////////////////////////////
 /// \brief Vertex buffer storage for one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API VertexBuffer : public Drawable, private GlResource
+class SFML_GRAPHICS_API VertexBuffer : public Drawable
 {
 public:
 
@@ -334,10 +338,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_buffer;        ///< Internal buffer identifier
-    std::size_t   m_size;          ///< Size in Vertexes of the currently allocated buffer
-    PrimitiveType m_primitiveType; ///< Type of primitives to draw
-    Usage         m_usage;         ///< How this vertex buffer is to be used
+    priv::VertexBufferImpl* m_impl; ///< Platform/hardware specific implementation
+    PrimitiveType m_primitiveType;  ///< Type of primitives to draw
 };
 
 } // namespace sf

@@ -25,11 +25,30 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/RenderTextureImplDefault.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/Graphics/TextureSaver.hpp>
+#include <SFML/Graphics/OpenGL/GL1/RenderTextureImplDefault.hpp>
+#include <SFML/Graphics/OpenGL/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+
+
+namespace
+{
+    // Automatic wrapper for saving and restoring the current texture binding
+    struct TextureSaver
+    {
+        TextureSaver()
+        {
+            glCheck(glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureBinding));
+        }
+
+        ~TextureSaver()
+        {
+            glCheck(glBindTexture(GL_TEXTURE_2D, textureBinding));
+        }
+
+        GLint textureBinding;
+    };
+}
 
 
 namespace sf
@@ -89,7 +108,7 @@ bool RenderTextureImplDefault::activate(bool active)
 void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    TextureSaver save;
 
     // Copy the rendered pixels to the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, textureId));

@@ -30,13 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Transform.hpp>
-#include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
 
@@ -44,6 +39,13 @@ namespace sf
 {
 class Drawable;
 class VertexBuffer;
+class View;
+class Vertex;
+
+namespace priv
+{
+    class RenderTargetImpl;
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -386,95 +388,9 @@ protected:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Apply the current view
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyCurrentView();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Apply a new blending mode
-    ///
-    /// \param mode Blending mode to apply
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyBlendMode(const BlendMode& mode);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Apply a new transform
-    ///
-    /// \param transform Transform to apply
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyTransform(const Transform& transform);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Apply a new texture
-    ///
-    /// \param texture Texture to apply
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyTexture(const Texture* texture);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Apply a new shader
-    ///
-    /// \param shader Shader to apply
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyShader(const Shader* shader);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Setup environment for drawing
-    ///
-    /// \param useVertexCache Are we going to use the vertex cache?
-    /// \param states         Render states to use for drawing
-    ///
-    ////////////////////////////////////////////////////////////
-    void setupDraw(bool useVertexCache, const RenderStates& states);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Draw the primitives
-    ///
-    /// \param type        Type of primitives to draw
-    /// \param firstVertex Index of the first vertex to use when drawing
-    /// \param vertexCount Number of vertices to use when drawing
-    ///
-    ////////////////////////////////////////////////////////////
-    void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Clean up environment after drawing
-    ///
-    /// \param states Render states used for drawing
-    ///
-    ////////////////////////////////////////////////////////////
-    void cleanupDraw(const RenderStates& states);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Render states cache
-    ///
-    ////////////////////////////////////////////////////////////
-    struct StatesCache
-    {
-        enum {VertexCacheSize = 4};
-
-        bool      enable;         ///< Is the cache enabled?
-        bool      glStatesSet;    ///< Are our internal GL states set yet?
-        bool      viewChanged;    ///< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  ///< Cached blending mode
-        Uint64    lastTextureId;  ///< Cached texture
-        bool      texCoordsArrayEnabled; ///< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool      useVertexCache; ///< Did we previously use the vertex cache?
-        Vertex    vertexCache[VertexCacheSize]; ///< Pre-transformed vertices cache
-    };
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View        m_defaultView; ///< Default view
-    View        m_view;        ///< Current view
-    StatesCache m_cache;       ///< Render states cache
-    Uint64      m_id;          ///< Unique number that identifies the RenderTarget
+    priv::RenderTargetImpl* m_impl; ///< Platform/hardware specific implementation
 };
 
 } // namespace sf

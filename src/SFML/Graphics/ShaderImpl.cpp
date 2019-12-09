@@ -22,14 +22,10 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLCHECK_HPP
-#define SFML_GLCHECK_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/GLExtensions.hpp>
+#include <SFML/Graphics/ShaderImpl.hpp>
 
 
 namespace sf
@@ -37,34 +33,11 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL API call
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-    // In debug mode, perform a test on every OpenGL call
-    // The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
-    #define glCheck(expr) do { expr; sf::priv::glCheckError(__FILE__, __LINE__, #expr); } while (false)
-
-#else
-
-    // Else, we don't add any overhead
-    #define glCheck(expr) (expr)
-
-#endif
-
-////////////////////////////////////////////////////////////
-/// \brief Check the last OpenGL error
-///
-/// \param file Source file where the call is located
-/// \param line Line number of the source file where the call is located
-/// \param expression The evaluated expression as a string
-///
-////////////////////////////////////////////////////////////
-void glCheckError(const char* file, unsigned int line, const char* expression);
+ShaderImpl::~ShaderImpl()
+{
+    // Nothing to do
+}
 
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_GLCHECK_HPP
