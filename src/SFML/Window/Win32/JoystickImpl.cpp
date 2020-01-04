@@ -80,6 +80,17 @@ namespace
 
     typedef std::vector<JoystickRecord> JoystickList;
     JoystickList joystickList;
+
+    struct JoystickBlacklistEntry
+    {
+        unsigned int vendorId;
+        unsigned int productId;
+    };
+
+    typedef std::vector<JoystickBlacklistEntry> JoystickBlacklist;
+    JoystickBlacklist joystickBlacklist;
+
+    const DWORD directInputEventBufferSize = 32;
 }
 
 
@@ -330,7 +341,16 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     if (directInput)
-        return updateDInput();
+    {
+        if (m_buffered)
+        {
+            return updateDInputBuffered();
+        }
+        else
+        {
+            return updateDInputPolled();
+        }
+    }
 
     JoystickState state;
 
@@ -391,7 +411,7 @@ void JoystickImpl::initializeDInput()
             // Try to acquire a DirectInput 8.x interface
             HRESULT result = directInput8Create(GetModuleHandleW(NULL), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), NULL);
 
-            if (result)
+            if (FAILED(result))
             {
                 // De-initialize everything
                 directInput = NULL;
@@ -460,7 +480,7 @@ void JoystickImpl::updateConnectionsDInput()
             ++i;
     }
 
-    if (result)
+    if (FAILED(result))
     {
         err() << "Failed to enumerate DirectInput devices: " << result << std::endl;
 
@@ -499,6 +519,8 @@ bool JoystickImpl::openDInput(unsigned int index)
 
     std::memset(&m_deviceCaps, 0, sizeof(DIDEVCAPS));
     m_deviceCaps.dwSize = sizeof(DIDEVCAPS);
+    m_state = JoystickState();
+    m_buffered = false;
 
     // Search for a joystick with the given index in the connected list
     for (std::vector<JoystickRecord>::iterator i = joystickList.begin(); i != joystickList.end(); ++i)
@@ -508,12 +530,53 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Create device
             HRESULT result = directInput->CreateDevice(i->guid, &m_device, NULL);
 
-            if (result)
+            if (FAILED(result))
             {
                 err() << "Failed to create DirectInput device: " << result << std::endl;
 
                 return false;
             }
+
+            // Get vendor and product id of the device
+            DIPROPDWORD property;
+            std::memset(&property, 0, sizeof(property));
+            property.diph.dwSize = sizeof(property);
+            property.diph.dwHeaderSize = sizeof(property.diph);
+            property.diph.dwHow = DIPH_DEVICE;
+
+            if (SUCCEEDED(m_device->GetProperty(DIPROP_VIDPID, &property.diph)))
+            {
+                m_identification.productId = HIWORD(property.dwData);
+                m_identification.vendorId = LOWORD(property.dwData);
+
+                // Check if device is already blacklisted
+                if (m_identification.productId && m_identification.vendorId)
+                {
+                    for (JoystickBlacklist::const_iterator iter = joystickBlacklist.begin(); iter != joystickBlacklist.end(); ++iter)
+                    {
+                        if ((m_identification.productId == iter->productId) &&
+                            (m_identification.vendorId  == iter->vendorId))
+                        {
+                            // Device is blacklisted
+                            m_device->Release();
+                            m_device = NULL;
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            // Get friendly product name of the device
+            DIPROPSTRING stringProperty;
+            std::memset(&stringProperty, 0, sizeof(stringProperty));
+            stringProperty.diph.dwSize = sizeof(stringProperty);
+            stringProperty.diph.dwHeaderSize = sizeof(stringProperty.diph);
+            stringProperty.diph.dwHow = DIPH_DEVICE;
+            stringProperty.diph.dwObj = 0;
+
+            if (SUCCEEDED(m_device->GetProperty(DIPROP_PRODUCTNAME, &stringProperty.diph)))
+                m_identification.name = stringProperty.wsz;
 
             static bool formatInitialized = false;
             static DIDATAFORMAT format;
@@ -524,59 +587,80 @@ bool JoystickImpl::openDInput(unsigned int index)
                 const DWORD povType    = DIDFT_POV    | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
                 const DWORD buttonType = DIDFT_BUTTON | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
 
-                static DIOBJECTDATAFORMAT data[8 + 4 + sf::Joystick::ButtonCount];
+                static DIOBJECTDATAFORMAT data[8 * 4 + 4 + sf::Joystick::ButtonCount];
 
-                data[0].pguid = &guids::GUID_XAxis;
-                data[0].dwOfs = DIJOFS_X;
+                for (int i = 0; i < 4; ++i)
+                {
+                    data[8 * i + 0].pguid = &guids::GUID_XAxis;
+                    data[8 * i + 1].pguid = &guids::GUID_YAxis;
+                    data[8 * i + 2].pguid = &guids::GUID_ZAxis;
+                    data[8 * i + 3].pguid = &guids::GUID_RxAxis;
+                    data[8 * i + 4].pguid = &guids::GUID_RyAxis;
+                    data[8 * i + 5].pguid = &guids::GUID_RzAxis;
+                    data[8 * i + 6].pguid = &guids::GUID_Slider;
+                    data[8 * i + 7].pguid = &guids::GUID_Slider;
+                }
 
-                data[1].pguid = &guids::GUID_YAxis;
-                data[1].dwOfs = DIJOFS_Y;
+                data[ 0].dwOfs = DIJOFS_X;
+                data[ 1].dwOfs = DIJOFS_Y;
+                data[ 2].dwOfs = DIJOFS_Z;
+                data[ 3].dwOfs = DIJOFS_RX;
+                data[ 4].dwOfs = DIJOFS_RY;
+                data[ 5].dwOfs = DIJOFS_RZ;
+                data[ 6].dwOfs = DIJOFS_SLIDER(0);
+                data[ 7].dwOfs = DIJOFS_SLIDER(1);
+                data[ 8].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVX);
+                data[ 9].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVY);
+                data[10].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVZ);
+                data[11].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVRx);
+                data[12].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVRy);
+                data[13].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVRz);
+                data[14].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglVSlider[0]);
+                data[15].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglVSlider[1]);
+                data[16].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lAX);
+                data[17].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lAY);
+                data[18].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lAZ);
+                data[19].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lARx);
+                data[20].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lARy);
+                data[21].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lARz);
+                data[22].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglASlider[0]);
+                data[23].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglASlider[1]);
+                data[24].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFX);
+                data[25].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFY);
+                data[26].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFZ);
+                data[27].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFRx);
+                data[28].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFRy);
+                data[29].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lFRz);
+                data[30].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglFSlider[0]);
+                data[31].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglFSlider[1]);
 
-                data[2].pguid = &guids::GUID_ZAxis;
-                data[2].dwOfs = DIJOFS_Z;
-
-                data[3].pguid = &guids::GUID_RxAxis;
-                data[3].dwOfs = DIJOFS_RX;
-
-                data[4].pguid = &guids::GUID_RyAxis;
-                data[4].dwOfs = DIJOFS_RY;
-
-                data[5].pguid = &guids::GUID_RzAxis;
-                data[5].dwOfs = DIJOFS_RZ;
-
-                data[6].pguid = &guids::GUID_Slider;
-                data[6].dwOfs = DIJOFS_SLIDER(0);
-
-                data[7].pguid = &guids::GUID_Slider;
-                data[7].dwOfs = DIJOFS_SLIDER(1);
-
-                for (int i = 0; i < 8; ++i)
+                for (int i = 0; i < 8 * 4; ++i)
                 {
                     data[i].dwType = axisType;
-                    data[i].dwFlags = DIDOI_ASPECTPOSITION;
+                    data[i].dwFlags = 0;
                 }
 
                 for (int i = 0; i < 4; ++i)
                 {
-                    data[8 + i].pguid = &guids::GUID_POV;
-                    data[8 + i].dwOfs = static_cast<DWORD>(DIJOFS_POV(i));
-                    data[8 + i].dwType = povType;
-                    data[8 + i].dwFlags = 0;
+                    data[8 * 4 + i].pguid = &guids::GUID_POV;
+                    data[8 * 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_POV(i));
+                    data[8 * 4 + i].dwType = povType;
+                    data[8 * 4 + i].dwFlags = 0;
                 }
 
                 for (int i = 0; i < sf::Joystick::ButtonCount; ++i)
                 {
-                    data[8 + 4 + i].pguid = NULL;
-                    data[8 + 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_BUTTON(i));
-                    data[8 + 4 + i].dwType = buttonType;
-                    data[8 + 4 + i].dwFlags = 0;
+                    data[8 * 4 + 4 + i].pguid = NULL;
+                    data[8 * 4 + 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_BUTTON(i));
+                    data[8 * 4 + 4 + i].dwType = buttonType;
+                    data[8 * 4 + 4 + i].dwFlags = 0;
                 }
 
                 format.dwSize = sizeof(DIDATAFORMAT);
                 format.dwObjSize = sizeof(DIOBJECTDATAFORMAT);
                 format.dwFlags = DIDFT_ABSAXIS;
-                format.dwDataSize = sizeof(DIJOYSTATE);
-                format.dwNumObjs = 8 + 4 + sf::Joystick::ButtonCount;
+                format.dwDataSize = sizeof(DIJOYSTATE2);
+                format.dwNumObjs = 8 * 4 + 4 + sf::Joystick::ButtonCount;
                 format.rgodf = data;
 
                 formatInitialized = true;
@@ -585,7 +669,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Set device data format
             result = m_device->SetDataFormat(&format);
 
-            if (result)
+            if (FAILED(result))
             {
                 err() << "Failed to set DirectInput device data format: " << result << std::endl;
 
@@ -598,29 +682,9 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Get device capabilities
             result = m_device->GetCapabilities(&m_deviceCaps);
 
-            if (result)
+            if (FAILED(result))
             {
                 err() << "Failed to get DirectInput device capabilities: " << result << std::endl;
-
-                m_device->Release();
-                m_device = NULL;
-
-                return false;
-            }
-
-            // Set axis mode to absolute
-            DIPROPDWORD property;
-            std::memset(&property, 0, sizeof(property));
-            property.diph.dwSize = sizeof(property);
-            property.diph.dwHeaderSize = sizeof(property.diph);
-            property.diph.dwHow = DIPH_DEVICE;
-            property.dwData = DIPROPAXISMODE_ABS;
-
-            result = m_device->SetProperty(DIPROP_AXISMODE, &property.diph);
-
-            if (result)
-            {
-                err() << "Failed to set DirectInput device axis mode: " << result << std::endl;
 
                 m_device->Release();
                 m_device = NULL;
@@ -631,7 +695,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Enumerate device objects (axes/povs/buttons)
             result = m_device->EnumObjects(&JoystickImpl::deviceObjectEnumerationCallback, this, DIDFT_AXIS | DIDFT_BUTTON | DIDFT_POV);
 
-            if (result)
+            if (FAILED(result))
             {
                 err() << "Failed to enumerate DirectInput device objects: " << result << std::endl;
 
@@ -641,29 +705,116 @@ bool JoystickImpl::openDInput(unsigned int index)
                 return false;
             }
 
-            // Get friendly product name of the device
-            DIPROPSTRING stringProperty;
-            std::memset(&stringProperty, 0, sizeof(stringProperty));
-            stringProperty.diph.dwSize = sizeof(stringProperty);
-            stringProperty.diph.dwHeaderSize = sizeof(stringProperty.diph);
-            stringProperty.diph.dwHow = DIPH_DEVICE;
-            stringProperty.diph.dwObj = 0;
-
-            if (!m_device->GetProperty(DIPROP_PRODUCTNAME, &stringProperty.diph))
+            // Set device's axis mode to absolute if the device reports having at least one axis
+            for (int i = 0; i < Joystick::AxisCount; ++i)
             {
-                m_identification.name = stringProperty.wsz;
+                if (m_axes[i] != -1)
+                {
+                    std::memset(&property, 0, sizeof(property));
+                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwHeaderSize = sizeof(property.diph);
+                    property.diph.dwHow = DIPH_DEVICE;
+                    property.diph.dwObj = 0;
+
+                    result = m_device->GetProperty(DIPROP_AXISMODE, &property.diph);
+
+                    if (FAILED(result))
+                    {
+                        err() << "Failed to get DirectInput device axis mode for device \""
+                              << m_identification.name.toAnsiString() << "\": " << result << std::endl;
+
+                        m_device->Release();
+                        m_device = NULL;
+
+                        return false;
+                    }
+
+                    // If the axis mode is already set to absolute we don't need to set it again ourselves
+                    if (property.dwData == DIPROPAXISMODE_ABS)
+                        break;
+
+                    std::memset(&property, 0, sizeof(property));
+                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwHeaderSize = sizeof(property.diph);
+                    property.diph.dwHow = DIPH_DEVICE;
+                    property.dwData = DIPROPAXISMODE_ABS;
+
+                    m_device->SetProperty(DIPROP_AXISMODE, &property.diph);
+
+                    // Check if the axis mode has been set to absolute
+                    std::memset(&property, 0, sizeof(property));
+                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwHeaderSize = sizeof(property.diph);
+                    property.diph.dwHow = DIPH_DEVICE;
+                    property.diph.dwObj = 0;
+
+                    result = m_device->GetProperty(DIPROP_AXISMODE, &property.diph);
+
+                    if (FAILED(result))
+                    {
+                        err() << "Failed to verify DirectInput device axis mode for device \""
+                            << m_identification.name.toAnsiString() << "\": " << result << std::endl;
+
+                        m_device->Release();
+                        m_device = NULL;
+
+                        return false;
+                    }
+
+                    // If the axis mode hasn't been set to absolute fail here and blacklist the device
+                    if (property.dwData != DIPROPAXISMODE_ABS)
+                    {
+                        if (m_identification.vendorId && m_identification.productId)
+                        {
+                            JoystickBlacklistEntry entry;
+
+                            entry.vendorId = m_identification.vendorId;
+                            entry.productId = m_identification.productId;
+
+                            joystickBlacklist.push_back(entry);
+
+                            // Pre-C++11 shrink_to_fit()
+                            JoystickBlacklist(joystickBlacklist.begin(), joystickBlacklist.end()).swap(joystickBlacklist);
+                        }
+
+                        m_device->Release();
+                        m_device = NULL;
+
+                        return false;
+                    }
+
+                    break;
+                }
             }
 
-            // Get vendor and produce id of the device
+            // Try to enable buffering by setting the buffer size
             std::memset(&property, 0, sizeof(property));
             property.diph.dwSize = sizeof(property);
             property.diph.dwHeaderSize = sizeof(property.diph);
             property.diph.dwHow = DIPH_DEVICE;
+            property.dwData = directInputEventBufferSize;
 
-            if (!m_device->GetProperty(DIPROP_VIDPID, &property.diph))
+            result = m_device->SetProperty(DIPROP_BUFFERSIZE, &property.diph);
+
+            if (result == DI_OK)
             {
-                m_identification.productId = HIWORD(property.dwData);
-                m_identification.vendorId  = LOWORD(property.dwData);
+                // Buffering supported
+                m_buffered = true;
+            }
+            else if (result == DI_POLLEDDEVICE)
+            {
+                // Only polling supported
+                m_buffered = false;
+            }
+            else
+            {
+                err() << "Failed to set DirectInput device buffer size for device \""
+                      << m_identification.name.toAnsiString() << "\": " << result << std::endl;
+
+                m_device->Release();
+                m_device = NULL;
+
+                return false;
             }
 
             return true;
@@ -709,7 +860,113 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
 
 
 ////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::updateDInput()
+JoystickState JoystickImpl::updateDInputBuffered()
+{
+    // If we don't make it to the end of this function, mark the device as disconnected
+    m_state.connected = false;
+
+    if (!m_device)
+        return m_state;
+
+    DIDEVICEOBJECTDATA events[directInputEventBufferSize];
+    DWORD eventCount = directInputEventBufferSize;
+
+    // Try to get the device data
+    HRESULT result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events, &eventCount, 0);
+
+    // If we have not acquired or have lost the device, attempt to (re-)acquire it and get the device data again
+    if ((result == DIERR_NOTACQUIRED) || (result == DIERR_INPUTLOST))
+    {
+        m_device->Acquire();
+        result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events, &eventCount, 0);
+    }
+
+    // If we still can't get the device data, assume it has been disconnected
+    if ((result == DIERR_NOTACQUIRED) || (result == DIERR_INPUTLOST))
+    {
+        m_device->Release();
+        m_device = NULL;
+
+        return m_state;
+    }
+
+    if (FAILED(result))
+    {
+        err() << "Failed to get DirectInput device data: " << result << std::endl;
+
+        return m_state;
+    }
+
+    // Iterate through all buffered events
+    for (DWORD i = 0; i < eventCount; ++i)
+    {
+        bool eventHandled = false;
+
+        // Get the current state of each axis
+        for (int j = 0; j < Joystick::AxisCount; ++j)
+        {
+            if (m_axes[j] == events[i].dwOfs)
+            {
+                if (j == Joystick::PovX)
+                {
+                    unsigned short value = LOWORD(events[i].dwData);
+
+                    if (value != 0xFFFF)
+                    {
+                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+
+                        m_state.axes[j] = std::sin(angle) * 100.f;
+                    }
+                    else
+                    {
+                        m_state.axes[j] = 0;
+                    }
+                }
+                else if (j == Joystick::PovY)
+                {
+                    unsigned short value = LOWORD(events[i].dwData);
+
+                    if (value != 0xFFFF)
+                    {
+                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+
+                        m_state.axes[j] = std::cos(angle) * 100.f;
+                    }
+                    else
+                    {
+                        m_state.axes[j] = 0.f;
+                    }
+                }
+                else
+                {
+                    m_state.axes[j] = (static_cast<float>(static_cast<short>(events[i].dwData)) + 0.5f) * 100.f / 32767.5f;
+                }
+
+                eventHandled = true;
+
+                break;
+            }
+        }
+
+        if (eventHandled)
+            continue;
+
+        // Get the current state of each button
+        for (int j = 0; j < Joystick::ButtonCount; ++j)
+        {
+            if (m_buttons[j] == events[i].dwOfs)
+                m_state.buttons[j] = (events[i].dwData != 0);
+        }
+    }
+
+    m_state.connected = true;
+
+    return m_state;
+}
+
+
+////////////////////////////////////////////////////////////
+JoystickState JoystickImpl::updateDInputPolled()
 {
     JoystickState state;
 
@@ -718,7 +975,7 @@ JoystickState JoystickImpl::updateDInput()
         // Poll the device
         m_device->Poll();
 
-        DIJOYSTATE joystate;
+        DIJOYSTATE2 joystate;
 
         // Try to get the device state
         HRESULT result = m_device->GetDeviceState(sizeof(joystate), &joystate);
@@ -740,7 +997,7 @@ JoystickState JoystickImpl::updateDInput()
             return state;
         }
 
-        if (result)
+        if (FAILED(result))
         {
             err() << "Failed to get DirectInput device state: " << result << std::endl;
 
@@ -878,7 +1135,7 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
 
         HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
 
-        if (result)
+        if (result != DI_OK)
             err() << "Failed to set DirectInput device axis property range: " << result << std::endl;
 
         return DIENUM_CONTINUE;
