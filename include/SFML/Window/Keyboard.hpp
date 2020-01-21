@@ -29,11 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/String.hpp>
 
 
 namespace sf
 {
+class String;
+
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time state of the keyboard
 ///
@@ -169,14 +170,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Scancodes
     ///
-    /// The enumerators are bound to a physical key and do *not* depend
-    /// on the keyboard layout used by the operating system. Usually, the AT-101
+    /// The enumerators are bound to a physical key and do not depend on
+    /// the keyboard layout used by the operating system. Usually, the AT-101
     /// keyboard can be used as reference for the physical position of the keys.
     ///
     /// The scancodes are based on a subset of Table 12: Keyboard/Keypad Page
     /// of Universal Serial Bus (USB): HID Usage Tables, v1.12.
     ///
-    /// \todo When porting this for SFML 3, remove the `s` prefix and use
+    /// \todo When porting this for SFML 3, remove the `Scan` prefix and use
     ///       enum class.
     ///
     ////////////////////////////////////////////////////////////
@@ -219,10 +220,9 @@ public:
         ScanNum8,              ///< Keyboard 8 and * key
         ScanNum9,              ///< Keyboard 9 and ) key
         ScanNum0,              ///< Keyboard 0 and ) key
-        ScanEnter,             ///< Keyboard Return (ENTER) key
+        ScanEnter,             ///< Keyboard Enter/Return key
         ScanEscape,            ///< Keyboard Escape key
         ScanBackspace,         ///< Keyboard Backspace key
-        // TODO above it's BackSpace, but is it correct? What do we use here?
         ScanTab,               ///< Keyboard Tab key
         ScanSpace,             ///< Keyboard Space key
         ScanHyphen,            ///< Keyboard - and _ key
@@ -230,15 +230,14 @@ public:
         ScanLBracket,          ///< Keyboard [ and { key
         ScanRBracket,          ///< Keyboard ] and } key
         ScanBackslash,         ///< Keyboard \ and | key
-        // TODO capitalisation
         ScanDash,              ///< Keyboard Non-US # and ~
+        // TODO hyphen vs minus vs dash
         ScanSemicolon,         ///< Keyboard ; and : key
-        // TODO capitalisation
         ScanQuote,             ///< Keyboard ' and " key
         ScanGraveAccent,       ///< Keyboard ` and ~ key
         ScanComma,             ///< Keyboard , and < key
         ScanPeriod,            ///< Keyboard . and > key
-        ScanForwardSlash,      ///< Keyboard / and ? key
+        ScanSlash,             ///< Keyboard / and ? key
         ScanF1,                ///< Keyboard F1 key
         ScanF2,                ///< Keyboard F2 key
         ScanF3,                ///< Keyboard F3 key
@@ -273,8 +272,8 @@ public:
         ScanMultiply,          ///< Keypad * key
         ScanMinus,             ///< Keypad - key
         ScanPlus,              ///< Keypad + key
-        ScanPadEquals,         ///< keypad = key, probably Mac only
-        ScanReturn,            ///< Keypad Enter (return) key
+        ScanNumpadEquals,      ///< keypad = key, probably Mac only
+        ScanNumpadEnter,       ///< Keypad Enter/Return key
         ScanDecimal,           ///< Keypad . and Delete key
         ScanNumpad1,           ///< Keypad 1 and End key
         ScanNumpad2,           ///< Keypad 2 and Down Arrow key
@@ -381,7 +380,7 @@ public:
     ///          "Left Command" on macOS.
     ///
     /// The current keyboard layout set by the operating system is used to
-    /// interpret the scancode: for example, sf::Keyboard::SemiColon is
+    /// interpret the scancode: for example, sf::Keyboard::Semicolon is
     /// mapped to ";" for layout and to "é" for others.
     ///
     /// \return The localized description of the code
