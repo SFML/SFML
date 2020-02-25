@@ -53,10 +53,10 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float          advance;     ///< Offset to move horizontally to the next character
-    FloatRect      bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
-    const Texture* texture;     ///< Font's texture containing the glyph
-    IntRect        textureRect; ///< Texture coordinates of the glyph inside the font's texture
+    float          advance;     //!< Offset to move horizontally to the next character
+    FloatRect      bounds;      //!< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    const Texture* texture;     //!< Font's texture containing the glyph
+    IntRect        textureRect; //!< Texture coordinates of the glyph inside the font's texture
 };
 
 } // namespace sf

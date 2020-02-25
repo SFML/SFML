@@ -318,7 +318,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::list<Page> PageList; ///< List of pages, where each page corresponds to a texture
+    typedef std::list<Page> PageList; //!< List of pages, where each page corresponds to a texture
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the internal resources
@@ -364,19 +364,19 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<unsigned int, PageList> PageListTable; ///< Table mapping a character size to its list of pages (textures)
+    typedef std::map<unsigned int, PageList> PageListTable; //!< Table mapping a character size to its list of pages (textures)
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void*                      m_library;     ///< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
-    void*                      m_face;        ///< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
-    void*                      m_streamRec;   ///< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
-    void*                      m_stroker;     ///< Pointer to the stroker (it is typeless to avoid exposing implementation details)
-    int*                       m_refCount;    ///< Reference counter used by implicit sharing
-    Info                       m_info;        ///< Information about the font
-    mutable PageListTable      m_pageLists;   ///< Table containing the glyphs page lists by character size
-    mutable std::vector<Uint8> m_pixelBuffer; ///< Pixel buffer holding a glyph's pixels before being written to the texture
+    void*                      m_library;     //!< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
+    void*                      m_face;        //!< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
+    void*                      m_streamRec;   //!< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
+    void*                      m_stroker;     //!< Pointer to the stroker (it is typeless to avoid exposing implementation details)
+    int*                       m_refCount;    //!< Reference counter used by implicit sharing
+    Info                       m_info;        //!< Information about the font
+    mutable PageListTable      m_pageLists;   //!< Table containing the glyphs page lists by character size
+    mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
     #ifdef SFML_SYSTEM_ANDROID
     void*                      m_stream; //!< Asset file streamer (if loaded from file)
     #endif
