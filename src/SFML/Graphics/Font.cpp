@@ -366,6 +366,13 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 
 
 ////////////////////////////////////////////////////////////
+bool Font::hasGlyph(Uint32 codePoint) const
+{
+    return FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint) != 0;
+}
+
+
+////////////////////////////////////////////////////////////
 float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const
 {
     // Special case where first or second is 0 (null character)

@@ -166,6 +166,10 @@ public:
     /// might be available. If the glyph is not available at the
     /// requested size, an empty glyph is returned.
     ///
+    /// You may want to use \ref hasGlyph to determine if the
+    /// glyph exists before requesting it. If the glyph does not
+    /// exist, a font specific default is returned.
+    ///
     /// Be aware that using a negative value for the outline
     /// thickness will cause distorted rendering.
     ///
@@ -178,6 +182,24 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Determine if this font has a glyph representing the requested code point
+    ///
+    /// Most fonts only include a very limited selection of glyphs from
+    /// specific Unicode subsets, like Latin, Cyrillic, or Asian characters.
+    ///
+    /// While code points without representation will return a font specific
+    /// default character, it might be useful to verify whether specific
+    /// code points are included to determine whether a font is suited
+    /// to display text in a specific language.
+    ///
+    /// \param codePoint Unicode code point to check
+    ///
+    /// \return True if the codepoint has a glyph representation, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool hasGlyph(Uint32 codePoint) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
