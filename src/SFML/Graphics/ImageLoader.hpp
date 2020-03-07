@@ -105,6 +105,27 @@ public:
     ////////////////////////////////////////////////////////////
     bool saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Save an array of pixels as an encoded image buffer
+    ///
+<<<<<<< HEAD
+<<<<<<< HEAD
+    /// \param format   Must be "bmp", "png", "tga" or "jpg"/"jpeg".
+=======
+    /// \param format   Encoding format to use
+>>>>>>> c5551a35... Fixed buffer construction.
+=======
+    /// \param format   Must be "bmp", "png", "tga" or "jpg"/"jpeg".
+>>>>>>> 050f3c42... Adjusted comments and parameter order.
+    /// \param output   Buffer to fill with encoded data
+    /// \param pixels   Array of pixels to save to image
+    /// \param size     Size of image to save, in pixels
+    ///
+    /// \return True if saving was successful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size);
+
 private:
 
     ////////////////////////////////////////////////////////////

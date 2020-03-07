@@ -202,6 +202,18 @@ void Text::setFillColor(const Color& color)
         {
             for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
                 m_vertices[i].color = m_fillColor;
+<<<<<<< HEAD
+=======
+
+            if (VertexBuffer::isAvailable())
+            {
+                if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
+                    m_verticesBuffer.create(m_vertices.getVertexCount());
+
+                if (m_vertices.getVertexCount() > 0)
+                    m_verticesBuffer.update(&m_vertices[0]);
+            }
+>>>>>>> d1670924... Implemented saveToMemory and saveImageToMemory.
         }
     }
 }
@@ -220,6 +232,18 @@ void Text::setOutlineColor(const Color& color)
         {
             for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
                 m_outlineVertices[i].color = m_outlineColor;
+<<<<<<< HEAD
+=======
+
+            if (VertexBuffer::isAvailable())
+            {
+                if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
+                    m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
+
+                if (m_outlineVertices.getVertexCount() > 0)
+                    m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+            }
+>>>>>>> d1670924... Implemented saveToMemory and saveImageToMemory.
         }
     }
 }
@@ -562,6 +586,25 @@ void Text::ensureGeometryUpdate() const
     m_bounds.top = minY;
     m_bounds.width = maxX - minX;
     m_bounds.height = maxY - minY;
+<<<<<<< HEAD
+=======
+
+    // Update the vertex buffer if it is being used
+    if (VertexBuffer::isAvailable())
+    {
+        if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
+            m_verticesBuffer.create(m_vertices.getVertexCount());
+
+        if (m_vertices.getVertexCount() > 0)
+            m_verticesBuffer.update(&m_vertices[0]);
+
+        if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
+            m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
+
+        if (m_outlineVertices.getVertexCount() > 0)
+            m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+    }
+>>>>>>> d1670924... Implemented saveToMemory and saveImageToMemory.
 }
 
 } // namespace sf
