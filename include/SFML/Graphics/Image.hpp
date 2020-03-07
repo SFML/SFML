@@ -156,6 +156,24 @@ public:
     bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Save the image to a buffer in memory
+    ///
+    /// The format of the image must be specified.
+    /// The supported image formats are bmp, png, tga and jpg.
+    /// This function fails if the image is empty, or if
+    /// the format was invalid.
+    ///
+    /// \param output Buffer to fill with encoded data
+    /// \param format Encoding format to use
+    ///
+    /// \return True if saving was successful
+    ///
+    /// \see create, loadFromFile, loadFromMemory, saveToFile
+    ///
+    ////////////////////////////////////////////////////////////
+    bool saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image
     ///
     /// \return Size of the image, in pixels
