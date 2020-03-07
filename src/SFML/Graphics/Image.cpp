@@ -153,6 +153,12 @@ bool Image::saveToFile(const std::string& filename) const
     return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_size);
 }
 
+////////////////////////////////////////////////////////////
+bool Image::saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const
+{
+    return priv::ImageLoader::getInstance().saveImageToMemory(format, output, m_pixels, m_size);
+}
+
 
 ////////////////////////////////////////////////////////////
 Vector2u Image::getSize() const

@@ -33,6 +33,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 #include <cctype>
+#include <iterator>
 
 
 namespace
@@ -60,6 +61,14 @@ namespace
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(user);
         return stream->tell() >= stream->getSize();
+    }
+
+    // stb_image callback for constructing a buffer
+    void bufferFromCallback(void* context, void* data, int size)
+    {
+        sf::Uint8* source = static_cast<sf::Uint8*>(data);
+        std::vector<sf::Uint8>* dest = static_cast<std::vector<sf::Uint8>*>(context);
+        std::copy(source, source + size, std::back_inserter(*dest));
     }
 }
 
@@ -269,6 +278,46 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
     }
 
     err() << "Failed to save image \"" << filename << "\"" << std::endl;
+    return false;
+}
+
+////////////////////////////////////////////////////////////
+bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size)
+{
+    // Make sure the image is not empty
+    if (!pixels.empty() && (size.x > 0) && (size.y > 0))
+    {
+        // Choose function based on format
+
+        std::string specified = toLower(format);
+
+        if (specified == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp_to_func(&bufferFromCallback, &output, size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (specified == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga_to_func(&bufferFromCallback, &output, size.x, size.y, 4, &pixels[0]))
+                return true;
+        }
+        else if (specified == "png")
+        {
+            // PNG format
+            if (stbi_write_png_to_func(&bufferFromCallback, &output, size.x, size.y, 4, &pixels[0], 0))
+                return true;
+        }
+        else if (specified == "jpg" || specified == "jpeg")
+        {
+            // JPG format
+            if (stbi_write_jpg_to_func(&bufferFromCallback, &output, size.x, size.y, 4, &pixels[0], 90))
+                return true;
+        }
+    }
+
+    err() << "Failed to save image with format \"" << format << "\"" << std::endl;
     return false;
 }
 
