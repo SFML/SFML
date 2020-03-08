@@ -384,7 +384,7 @@ float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) 
 
     FT_Face face = static_cast<FT_Face>(m_face);
 
-    if (face && FT_HAS_KERNING(face) && setCurrentSize(characterSize))
+    if (face && setCurrentSize(characterSize))
     {
         // Convert the characters to indices
         FT_UInt index1 = FT_Get_Char_Index(face, first);
@@ -396,7 +396,8 @@ float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) 
 
         // Get the kerning vector
         FT_Vector kerning;
-        FT_Get_Kerning(face, index1, index2, FT_KERNING_UNFITTED, &kerning);
+        if( FT_HAS_KERNING(face))
+            FT_Get_Kerning(face, index1, index2, FT_KERNING_UNFITTED, &kerning);
 
         // X advance is already in pixels for bitmap fonts
         if (!FT_IS_SCALABLE(face))
