@@ -76,6 +76,11 @@ public:
     T x; //!< X coordinate of the vector
     T y; //!< Y coordinate of the vector
     T z; //!< Z coordinate of the vector
+
+    ////////////////////////////////////////////////////////////
+    // Static member data
+    ////////////////////////////////////////////////////////////
+    static const Vector3<T> Zero; //!< The zero (0, 0) coordinate of the vector
 };
 
 ////////////////////////////////////////////////////////////
@@ -283,6 +288,11 @@ typedef Vector3<float> Vector3f;
 /// can be accessed directly (there are no accessors like setX(), getX()) and it
 /// contains no mathematical function like dot product, cross product, length, etc.
 ///
+/// The sf::Vector3 class also has a nifty little static member named Zero.
+/// It is the "zero-position" of the vector (i.e. sf::Vector3(0, 0, 0)). This is 
+/// quite useful for any situation where you would otherwise have to construct a 
+/// zero-ed vector.
+///
 /// Usage example:
 /// \code
 /// sf::Vector3f v1(16.5f, 24.f, -8.2f);
@@ -295,6 +305,9 @@ typedef Vector3<float> Vector3f;
 /// v3 = v1 + v2;
 ///
 /// bool different = (v2 != v3);
+///
+/// sf::Vector3f v4(0, 0);
+/// bool is_zero = (v4 == sf::Vector3f::Zero);
 /// \endcode
 ///
 /// Note: for 2-dimensional vectors, see sf::Vector2.

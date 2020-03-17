@@ -158,4 +158,22 @@ TEST_CASE("sf::Vector3 class template", "[system]")
             CHECK_FALSE(firstEqualVector != secondEqualVector);
         }
     }
+
+    SECTION("Zero comparisons (non-zero vector, zero vector, internal Zero member)")
+    {
+        sf::Vector3i ZeroVector(0, 0, 0);
+        sf::Vector3i NonZeroVector(1, 1, 1);
+
+        SECTION("vector == Zero")
+        {
+            CHECK(ZeroVector == sf::Vector3i::Zero);
+            CHECK_FALSE(NonZeroVector == sf::Vector3i::Zero);
+        }
+
+        SECTION("vector != Zero")
+        {
+            CHECK(NonZeroVector != sf::Vector3i::Zero);
+            CHECK_FALSE(ZeroVector != sf::Vector3i::Zero);
+        }
+    }
 }
