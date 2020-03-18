@@ -53,7 +53,7 @@ y(static_cast<T>(vector.y))
 // Templatized Static Member Instantiation
 ////////////////////////////////////////////////////////////
 template <typename T>
-const Vector2<T> Vector2<T>::Zero = Vector2<T>{};
+const Vector2<T> Vector2<T>::Zero = Vector2<T>();
 
 ////////////////////////////////////////////////////////////
 // Templatized Operators

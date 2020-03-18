@@ -56,7 +56,7 @@ z(static_cast<T>(vector.z))
 // Templatized Static Member Instantiation
 ////////////////////////////////////////////////////////////
 template <typename T>
-const Vector3<T> Vector3<T>::Zero = Vector3<T>{};
+const Vector3<T> Vector3<T>::Zero = Vector3<T>();
 
 ////////////////////////////////////////////////////////////
 // Templatized Operators
