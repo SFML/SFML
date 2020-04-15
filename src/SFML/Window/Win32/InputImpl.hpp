@@ -43,12 +43,6 @@ class InputImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    InputImpl();
-
-    ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
@@ -67,10 +61,10 @@ public:
     static Keyboard::Key localize(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::unlocalize
+    /// \copydoc sf::Keyboard::delocalize
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode unlocalize(Keyboard::Key key);
+    static Keyboard::Scancode delocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::getDescription
@@ -184,16 +178,16 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// Regenerate the mappings from/to Key and Scancode.
+    /// Ensure the mappings are generated from/to Key and Scancode.
     ///
     ////////////////////////////////////////////////////////////
-    void buildMappings();
+    static void ensureMappings();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
-    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScanCodeCount]; ///< Mapping from Scancode to Key
+    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
 };
 
 } // namespace priv

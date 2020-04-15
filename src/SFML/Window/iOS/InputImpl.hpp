@@ -63,13 +63,13 @@ public:
     static Keyboard::Key localize(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::unlocalize
+    /// \copydoc sf::Keyboard::delocalize
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode unlocalize(Keyboard::Key key);
+    static Keyboard::Scancode delocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::localizedRepresentation
+    /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
     static String getDescription(Keyboard::Scancode code);
