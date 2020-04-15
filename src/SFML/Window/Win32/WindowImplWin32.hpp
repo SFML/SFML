@@ -277,7 +277,7 @@ private:
     /// \return SFML scancode corresponding to the key
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode toScancode(LPARAM flags);
+    static Keyboard::Scancode toScancode(WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
     // Member data
