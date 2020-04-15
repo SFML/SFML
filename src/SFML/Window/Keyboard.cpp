@@ -51,9 +51,9 @@ Keyboard::Key Keyboard::localize(Scancode code)
 }
 
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode Keyboard::unlocalize(Key key)
+Keyboard::Scancode Keyboard::delocalize(Key key)
 {
-    return priv::InputImpl::unlocalize(key);
+    return priv::InputImpl::delocalize(key);
 }
 
 ////////////////////////////////////////////////////////////
