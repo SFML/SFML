@@ -43,6 +43,30 @@ bool InputImpl::isKeyPressed(Keyboard::Key /* key */)
     return false;
 }
 
+bool InputImpl::isKeyPressed(Keyboard::Scancode /* codes */)
+{
+    // Not applicable
+    return false;
+}
+
+Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
+{
+    // Not applicable
+    return Keyboard::Unknown;
+}
+
+Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
+{
+    // Not applicable
+    return Keyboard::ScanUnknown;
+}
+
+String InputImpl::getDescription(Keyboard::Scancode /* code */)
+{
+    // Not applicable
+    return "";
+}
+
 ////////////////////////////////////////////////////////////
 void InputImpl::setVirtualKeyboardVisible(bool visible)
 {

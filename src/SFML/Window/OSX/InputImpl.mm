@@ -144,16 +144,16 @@ Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::unlocalize(Keyboard::Key key)
+Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
 {
-    return HIDInputManager::getInstance().unlocalize(key);
+    return HIDInputManager::getInstance().delocalize(key);
 }
 
 
 ////////////////////////////////////////////////////////////
 String InputImpl::getDescription(Keyboard::Scancode code)
 {
-    return HIDInputManager::getInstance().localizedRepresentation(code);
+    return HIDInputManager::getInstance().getDescription(code);
 }
 
 

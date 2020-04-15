@@ -141,17 +141,25 @@ public:
     Keyboard::Key localize(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::unlocalize
+    /// \copydoc sf::Keyboard::delocalize
     ///
     ////////////////////////////////////////////////////////////
-    Keyboard::Scancode unlocalize(Keyboard::Key key);
+    Keyboard::Scancode delocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::localizedRepresentation
+    /// \copydoc sf::Keyboard::getDescription
     ///
     ////////////////////////////////////////////////////////////
-    String localizedRepresentation(Keyboard::Scancode code);
+    String getDescription(Keyboard::Scancode code);
 
+    ////////////////////////////////////////////////////////////
+    /// Regenerate the mappings from/to Key and Scancode.
+    ///
+    /// This function is public to allow regular update calls
+    /// from the manager in case there's a keyboard layout change.
+    ///
+    ////////////////////////////////////////////////////////////
+    void buildMappings();
 private:
 
     ////////////////////////////////////////////////////////////
@@ -206,17 +214,6 @@ private:
     void loadKey(IOHIDElementRef key);
 
     ////////////////////////////////////////////////////////////
-    /// Regenerate the mappings from/to Key and Scancode.
-    ///
-    /// It is public to allow regular callback to forward the
-    /// information to the manager.
-    ///
-    ////////////////////////////////////////////////////////////
-public:
-    void buildMappings();
-private:
-
-    ////////////////////////////////////////////////////////////
     /// \brief Release all resources
     ///
     /// Close all connections to any devices.
@@ -233,7 +230,7 @@ private:
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
-    /// \return a retained, non-emtpy CFSetRef of IOHIDDeviceRef or NULL
+    /// \return a retained, non-empty CFSetRef of IOHIDDeviceRef or NULL
     ///
     ////////////////////////////////////////////////////////////
     CFSetRef copyDevices(UInt32 page, UInt32 usage);
@@ -254,8 +251,8 @@ private:
     /// \brief Convert a HID key usage to its corresponding scancode
     ///
     /// \param usage Any kHIDUsage_Keyboard* usage
-    /// \return the scancode associate with the given HID key usage
-    ///         or sUnknown if it is associate with no scancode.
+    /// \return the scancode associated with the given HID key usage
+    ///         or ScanUnknown if it is associated with no scancode.
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Scancode usageToScancode(UInt32 usage);
@@ -267,7 +264,7 @@ private:
     static UInt8 scanToVirtualCode(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
-    /// Fallback convertion for key that aren't expected to be impacted
+    /// Fallback convertion for keys which aren't expected to be impacted
     /// by the layout. Can return Unknown.
     ///
     ////////////////////////////////////////////////////////////
@@ -279,9 +276,9 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     IOHIDManagerRef    m_manager;                                       ///< Underlying HID Manager
-    IOHIDElements      m_keys[Keyboard::ScanCodeCount];                 ///< All the keys on any connected keyboard
+    IOHIDElements      m_keys[Keyboard::ScancodeCount];                 ///< All the keys on any connected keyboard
     Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
-    Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScanCodeCount]; ///< Mapping from Scancode to Key
+    Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Scancode enum.
