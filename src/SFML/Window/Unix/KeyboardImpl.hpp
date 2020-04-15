@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -62,10 +62,10 @@ public:
     /// \copydoc sf::Keyboard::localize
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode unlocalize(Keyboard::Key key);
+    static Keyboard::Scancode delocalize(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// \copydoc sf::Keyboard::unlocalize
+    /// \copydoc sf::Keyboard::delocalize
     ///
     ////////////////////////////////////////////////////////////
     static Keyboard::Key localize(Keyboard::Scancode code);
