@@ -74,6 +74,10 @@ public:
     /// function is called, it will stop listening on the old
     /// port before starting to listen on the new port.
     ///
+    /// When providing sf::Socket::AnyPort as port, the listener
+    /// will request an available port from the system.
+    /// The chosen port can be retrieved by calling getLocalPort().
+    ///
     /// \param port    Port to listen on for incoming connection attempts
     /// \param address Address of the interface to listen on
     ///
