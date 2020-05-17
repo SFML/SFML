@@ -96,7 +96,6 @@ matrix:
     
     install: &androidInstall
       - echo y | sdkmanager "cmake;3.10.2.4988404" 
-      - echo y | sdkmanager "lldb;3.1"
       - sudo ln -sf /usr/local/android-sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
       - wget https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
       - unzip -qq android-ndk-r18b-linux-x86_64.zip
