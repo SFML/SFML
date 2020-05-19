@@ -343,11 +343,19 @@ const Font::Info& Font::getInfo() const
 ////////////////////////////////////////////////////////////
 const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
+    // Get the glyph index based on the code point
+    return getGlyphId(FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint), characterSize, bold, outlineThickness);
+}
+
+
+////////////////////////////////////////////////////////////
+const Glyph& Font::getGlyphId(Uint32 glyphId, unsigned int characterSize, bool bold, float outlineThickness) const
+{
     // Get the page corresponding to the character size
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
-    // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
-    Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint));
+    // Build the key by combining the glyph index, bold flag, and outline thickness
+    Uint64 key = combine(outlineThickness, bold, glyphId);
 
     // Search the glyph into the cache
     GlyphTable::const_iterator it = glyphs.find(key);
@@ -359,7 +367,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     else
     {
         // Not found: we have to load it
-        Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
+        Glyph glyph = loadGlyph(glyphId, characterSize, bold, outlineThickness);
         return glyphs.insert(std::make_pair(key, glyph)).first->second;
     }
 }
@@ -529,7 +537,7 @@ void Font::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+Glyph Font::loadGlyph(Uint32 glyphId, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // The glyph to return
     Glyph glyph;
@@ -547,7 +555,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
     if (outlineThickness != 0)
         flags |= FT_LOAD_NO_BITMAP;
-    if (FT_Load_Char(face, codePoint, flags) != 0)
+    if (FT_Load_Glyph(face, glyphId, flags) != 0)
         return glyph;
 
     // Retrieve the glyph
