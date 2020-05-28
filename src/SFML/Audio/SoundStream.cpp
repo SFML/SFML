@@ -51,7 +51,8 @@ m_sampleRate      (0),
 m_format          (0),
 m_loop            (false),
 m_samplesProcessed(0),
-m_bufferSeeks     ()
+m_bufferSeeks     (),
+m_processingInterval(milliseconds(10))
 {
 
 }
@@ -264,6 +265,11 @@ Int64 SoundStream::onLoop()
     return 0;
 }
 
+////////////////////////////////////////////////////////////
+void SoundStream::setProcessingInterval(Time interval)
+{
+    m_processingInterval = interval;
+}
 
 ////////////////////////////////////////////////////////////
 void SoundStream::streamData()
@@ -384,7 +390,7 @@ void SoundStream::streamData()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::getStatus() != Stopped)
-            sleep(milliseconds(10));
+            sleep(m_processingInterval);
     }
 
     // Stop the playback
