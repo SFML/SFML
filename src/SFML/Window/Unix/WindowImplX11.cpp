@@ -377,7 +377,7 @@ namespace
                 XIEventMask eventMask;
                 unsigned char mask[XIMaskLen(XI_LASTEVENT)];
                 std::memset(mask, 0, sizeof(mask));
-                eventMask.deviceid = XIAllMasterDevices;
+                eventMask.deviceid = XIAllDevices;
                 eventMask.mask_len = sizeof(mask);
                 eventMask.mask = mask;
 
