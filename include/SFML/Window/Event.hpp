@@ -88,7 +88,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse move raw event parameter (MouseMovedRaw)
+    /// \brief Mouse move raw event parameters (MouseMovedRaw)
     ///
     ////////////////////////////////////////////////////////////
     struct MouseMoveRawEvent
