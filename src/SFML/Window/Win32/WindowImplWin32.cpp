@@ -1008,7 +1008,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse move raw event
         case WM_INPUT:
         {
-            HRAWINPUT hRawInput = (HRAWINPUT)lParam;
+            HRAWINPUT hRawInput = static_cast<HRAWINPUT>(lParam);
             RAWINPUT input;
             UINT size = sizeof(input);
 
