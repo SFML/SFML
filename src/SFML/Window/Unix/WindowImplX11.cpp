@@ -2118,16 +2118,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
                 if (limit > mouseAxis)
                     limit = mouseAxis;
-                limit *= 8;
 
                 // Get relative input values
-                const double* inputValues = rawEv->raw_values;
                 for (int i = 0; i < limit; ++i)
                 {
                     if (XIMaskIsSet(rawEv->valuators.mask, i))
                     {
-                        relativeValues[i] = static_cast<int>(*inputValues);
-                        ++inputValues;
+                        relativeValues[i] = static_cast<int>(rawEv->raw_values[i]);
                     }
                 }
 
