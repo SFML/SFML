@@ -370,7 +370,8 @@ namespace
 
         if (XQueryExtension(disp, "XInputExtension", &opcode, &event, &error))
         {
-            int major = 2, minor = 0;
+            int major = 2;
+            int minor = 0;
             if (XIQueryVersion(disp, &major, &minor) != BadRequest)
             {
                 XIEventMask eventMask;
