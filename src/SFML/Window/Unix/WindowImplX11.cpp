@@ -2110,8 +2110,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         {
             if (XGetEventData(m_display, &windowEvent.xcookie) && windowEvent.xcookie.evtype == XI_RawMotion)
             {
-                const XIRawEvent* rawEv;
-                rawEv = static_cast<const XIRawEvent*>(windowEvent.xcookie.data);
+                const XIRawEvent* rawEv = static_cast<const XIRawEvent*>(windowEvent.xcookie.data);
 
                 const int mouseAxis = 2;
                 int relativeValues[mouseAxis] = { 0, 0 };
