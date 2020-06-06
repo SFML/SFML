@@ -2114,7 +2114,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 rawEv = static_cast<const XIRawEvent*>(windowEvent.xcookie.data);
 
                 const int mouseAxis = 2;
-                int relativeValues[2] = { 0, 0 };
+                int relativeValues[mouseAxis] = { 0, 0 };
                 int limit = rawEv->valuators.mask_len;
 
                 if (limit > mouseAxis)
