@@ -2137,9 +2137,9 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 event.mouseMoveRaw.deltaX = relativeValues[0];
                 event.mouseMoveRaw.deltaY = relativeValues[1];
                 pushEvent(event);
+                XFreeEventData(m_display, &windowEvent.xcookie);
             }
 
-            XFreeEventData(m_display, &windowEvent.xcookie);
             break;
         }
     }
