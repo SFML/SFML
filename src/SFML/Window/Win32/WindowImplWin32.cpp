@@ -132,7 +132,7 @@ namespace
         bool enabled = RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == TRUE;
 
         if (!enabled)
-                sf::err() << "Failed to initialize raw mouse input" << std::endl;
+            sf::err() << "Failed to initialize raw mouse input" << std::endl;
     }
 }
 
