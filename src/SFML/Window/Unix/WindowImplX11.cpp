@@ -2108,8 +2108,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse moved raw
         case GenericEvent:
         {
-            if (XGetEventData(m_display, &windowEvent.xcookie)
-                    && windowEvent.xcookie.evtype == XI_RawMotion)
+            if (XGetEventData(m_display, &windowEvent.xcookie) && windowEvent.xcookie.evtype == XI_RawMotion)
             {
                 const XIRawEvent* rawEv;
                 rawEv = static_cast<const XIRawEvent*>(windowEvent.xcookie.data);
