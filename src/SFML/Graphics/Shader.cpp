@@ -37,6 +37,7 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
+#include <utility>
 #include <vector>
 
 
@@ -229,6 +230,14 @@ m_uniforms      ()
 
 
 ////////////////////////////////////////////////////////////
+Shader::Shader(Shader&& other) :
+Shader()
+{
+    *this = std::move(other);
+}
+
+
+////////////////////////////////////////////////////////////
 Shader::~Shader()
 {
     TransientContextLock lock;
@@ -236,6 +245,22 @@ Shader::~Shader()
     // Destroy effect program
     if (m_shaderProgram)
         glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
+}
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::operator=(Shader&& other)
+{
+    if (this != &other)
+    {
+        using std::swap;
+        swap(m_shaderProgram, other.m_shaderProgram);
+        swap(m_currentTexture, other.m_currentTexture);
+        swap(m_textures, other.m_textures);
+        swap(m_uniforms, other.m_uniforms);
+    }
+
+    return *this;
 }
 
 
