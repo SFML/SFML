@@ -97,9 +97,11 @@ public:
     explicit Window(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
-    /// \brief Move constructor.
+    /// \brief Move constructor
     ///
-    /// \param other Existing window instance.
+    /// This constructor takes ownership of the given window instance.
+    ///
+    /// \param other Existing window instance
     ///
     ////////////////////////////////////////////////////////////
     Window(Window&& other);
@@ -113,9 +115,12 @@ public:
     virtual ~Window();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Move assignment operator.
+    /// \brief Move assignment operator
     ///
-    /// \param other Existing window instance.
+    /// This operator will close the current window and take ownership
+    /// of the given window instance.
+    ///
+    /// \param other Existing window instance
     ///
     ////////////////////////////////////////////////////////////
     Window& operator =(Window&& other);
