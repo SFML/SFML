@@ -41,8 +41,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase() :
-m_impl          (NULL),
-m_size          (0, 0)
+m_impl(NULL),
+m_size(0, 0)
 {
 
 }
@@ -50,8 +50,8 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase(VideoMode mode, const String& title, Uint32 style) :
-m_impl          (NULL),
-m_size          (0, 0)
+m_impl(NULL),
+m_size(0, 0)
 {
     WindowBase::create(mode, title, style);
 }
@@ -59,10 +59,19 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase(WindowHandle handle) :
-m_impl          (NULL),
-m_size          (0, 0)
+m_impl(NULL),
+m_size(0, 0)
 {
     WindowBase::create(handle);
+}
+
+
+////////////////////////////////////////////////////////////
+WindowBase::WindowBase(WindowBase&& other) :
+m_impl(NULL),
+m_size(0, 0)
+{
+    *this = std::move(other);
 }
 
 
@@ -70,6 +79,21 @@ m_size          (0, 0)
 WindowBase::~WindowBase()
 {
     close();
+}
+
+
+////////////////////////////////////////////////////////////
+WindowBase& WindowBase::operator =(WindowBase&& other)
+{
+    close();
+
+    m_impl = other.m_impl;
+    other.m_impl = NULL;
+
+    m_size = other.m_size;
+    other.m_size = sf::Vector2u(0, 0);
+
+    return *this;
 }
 
 
