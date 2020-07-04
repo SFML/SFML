@@ -85,13 +85,16 @@ WindowBase::~WindowBase()
 ////////////////////////////////////////////////////////////
 WindowBase& WindowBase::operator =(WindowBase&& other)
 {
-    close();
+    if (this != &other)
+    {
+        close();
 
-    m_impl = other.m_impl;
-    other.m_impl = NULL;
+        m_impl = other.m_impl;
+        other.m_impl = NULL;
 
-    m_size = other.m_size;
-    other.m_size = sf::Vector2u(0, 0);
+        m_size = other.m_size;
+        other.m_size = sf::Vector2u(0, 0);
+    }
 
     return *this;
 }

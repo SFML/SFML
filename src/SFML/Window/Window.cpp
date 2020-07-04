@@ -80,16 +80,19 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 Window& Window::operator =(Window&& other)
 {
-    WindowBase::operator=(std::move(other));
+    if (this != &other)
+    {
+        WindowBase::operator=(std::move(other));
 
-    m_context = other.m_context;
-    other.m_context = NULL;
+        m_context = other.m_context;
+        other.m_context = NULL;
 
-    m_clock = other.m_clock;
-    other.m_clock.restart();
+        m_clock = other.m_clock;
+        other.m_clock.restart();
 
-    m_frameTimeLimit = other.m_frameTimeLimit;
-    other.m_frameTimeLimit = Time::Zero;
+        m_frameTimeLimit = other.m_frameTimeLimit;
+        other.m_frameTimeLimit = Time::Zero;
+    }
 
     return *this;
 }
