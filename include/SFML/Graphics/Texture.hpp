@@ -518,14 +518,25 @@ public:
     bool generateMipmap();
     
     ////////////////////////////////////////////////////////////
-    /// \brief Combined copy/move assignment operator
+    /// \brief Copy assignment operator
     ///
-    /// \param right Instance to assign (copied or moved)
+    /// \param copied Instance to assign
     ///
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    Texture& operator =(Texture right);
+    Texture& operator =(const Texture& copied);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment operator
+    ///
+    /// \param moved instance to move from. Behaves like a
+    ///              default-constructed object after the move.
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture& operator =(Texture&& moved);
 
     ////////////////////////////////////////////////////////////
     /// \brief Swap the contents of this texture with those of another

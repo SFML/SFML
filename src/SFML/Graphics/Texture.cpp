@@ -817,9 +817,20 @@ unsigned int Texture::getMaximumSize()
 
 
 ////////////////////////////////////////////////////////////
-Texture& Texture::operator =(Texture right)
+Texture& Texture::operator =(const Texture& copied)
 {
-    swap(right);
+    Texture temp(copied);
+    swap(temp);
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Texture& Texture::operator =(Texture&& moved)
+{
+    Texture temp(std::move(moved));
+    swap(temp);
 
     return *this;
 }
