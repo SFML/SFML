@@ -102,6 +102,14 @@ m_cacheId      (getUniqueId())
 
 
 ////////////////////////////////////////////////////////////
+Texture::Texture(Texture&& moved) noexcept :
+Texture()
+{
+    swap(moved);
+}
+
+
+////////////////////////////////////////////////////////////
 Texture::~Texture()
 {
     // Destroy the OpenGL texture
@@ -809,11 +817,9 @@ unsigned int Texture::getMaximumSize()
 
 
 ////////////////////////////////////////////////////////////
-Texture& Texture::operator =(const Texture& right)
+Texture& Texture::operator =(Texture right)
 {
-    Texture temp(right);
-
-    swap(temp);
+    swap(right);
 
     return *this;
 }

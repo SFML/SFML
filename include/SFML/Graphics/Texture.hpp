@@ -72,10 +72,19 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
-    /// \param copy instance to copy
+    /// \param copied instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    Texture(const Texture& copy);
+    Texture(const Texture& copied);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    /// \param moved instance to move from. Behaves like a
+    ///              default-constructed object after the move.
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture(Texture&& moved) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -507,16 +516,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool generateMipmap();
-
+    
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of assignment operator
+    /// \brief Combined copy/move assignment operator
     ///
-    /// \param right Instance to assign
+    /// \param right Instance to assign (copied or moved)
     ///
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    Texture& operator =(const Texture& right);
+    Texture& operator =(Texture right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Swap the contents of this texture with those of another
