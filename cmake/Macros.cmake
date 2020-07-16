@@ -218,6 +218,11 @@ macro(sfml_add_example target)
         set(target_input ${target_input} ${THIS_BUNDLE_RESOURCES})
     endif()
 
+    # copy resource folder to binary output location when needed
+    if(THIS_RESOURCES_DIR)
+        file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${THIS_RESOURCES_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+
     # create the target
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${target_input})
