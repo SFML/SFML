@@ -41,23 +41,6 @@ m_pointCount(pointCount)
 
 
 ////////////////////////////////////////////////////////////
-CircleShape::CircleShape(const CircleShape& copied) :
-m_radius(copied.m_radius),
-m_pointCount(copied.m_pointCount)
-{
-    update();
-}
-
-
-////////////////////////////////////////////////////////////
-CircleShape::CircleShape(CircleShape&& moved) : CircleShape()
-{
-    swap(moved);
-    update();
-}
-
-
-////////////////////////////////////////////////////////////
 void CircleShape::setRadius(float radius)
 {
     m_radius = radius;
@@ -79,7 +62,6 @@ void CircleShape::setPointCount(std::size_t count)
     update();
 }
 
-
 ////////////////////////////////////////////////////////////
 std::size_t CircleShape::getPointCount() const
 {
@@ -97,31 +79,6 @@ Vector2f CircleShape::getPoint(std::size_t index) const
     float y = std::sin(angle) * m_radius;
 
     return Vector2f(m_radius + x, m_radius + y);
-}
-
-
-////////////////////////////////////////////////////////////
-CircleShape& CircleShape::operator =(const CircleShape& copied)
-{
-    CircleShape temp(copied);
-    swap(temp);
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-CircleShape& CircleShape::operator =(CircleShape&& moved)
-{
-    CircleShape temp(std::move(moved));
-    swap(temp);
-    return *this;
-}
-
-////////////////////////////////////////////////////////////
-void CircleShape::swap(CircleShape& right)
-{
-    std::swap(m_radius, right.m_radius);
-    std::swap(m_pointCount, right.m_pointCount);
 }
 
 } // namespace sf

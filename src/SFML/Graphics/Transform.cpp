@@ -59,6 +59,42 @@ Transform::Transform(float a00, float a01, float a02,
 
 
 ////////////////////////////////////////////////////////////
+Transform::Transform(const Transform& copied)
+{
+    m_matrix[0] = copied.m_matrix[0]; m_matrix[8]  = copied.m_matrix[8];
+    m_matrix[1] = copied.m_matrix[1]; m_matrix[9]  = copied.m_matrix[9];
+    m_matrix[2] = copied.m_matrix[2]; m_matrix[10] = copied.m_matrix[10];
+    m_matrix[3] = copied.m_matrix[3]; m_matrix[11] = copied.m_matrix[11];
+    m_matrix[4] = copied.m_matrix[4]; m_matrix[12] = copied.m_matrix[12];
+    m_matrix[5] = copied.m_matrix[5]; m_matrix[13] = copied.m_matrix[13];
+    m_matrix[6] = copied.m_matrix[6]; m_matrix[14] = copied.m_matrix[14];
+    m_matrix[7] = copied.m_matrix[7]; m_matrix[15] = copied.m_matrix[15];
+}
+
+
+////////////////////////////////////////////////////////////
+Transform::Transform(Transform&& moved)
+{
+    m_matrix[0]  = moved.m_matrix[0];  moved.m_matrix[0] = 1.f;
+    m_matrix[1]  = moved.m_matrix[1];  moved.m_matrix[1] = 0;
+    m_matrix[2]  = moved.m_matrix[2];  moved.m_matrix[2] = 0;
+    m_matrix[3]  = moved.m_matrix[3];  moved.m_matrix[3] = 0;
+    m_matrix[4]  = moved.m_matrix[4];  moved.m_matrix[4] = 0;
+    m_matrix[5]  = moved.m_matrix[5];  moved.m_matrix[5] = 1.f;
+    m_matrix[6]  = moved.m_matrix[6];  moved.m_matrix[6] = 0;
+    m_matrix[7]  = moved.m_matrix[7];  moved.m_matrix[7] = 0;
+    m_matrix[8]  = moved.m_matrix[8];  moved.m_matrix[8] = 0;
+    m_matrix[9]  = moved.m_matrix[9];  moved.m_matrix[9] = 0;
+    m_matrix[10] = moved.m_matrix[10]; moved.m_matrix[10] = 1.f;
+    m_matrix[11] = moved.m_matrix[11]; moved.m_matrix[11] = 0;
+    m_matrix[12] = moved.m_matrix[12]; moved.m_matrix[12] = 0;
+    m_matrix[13] = moved.m_matrix[13]; moved.m_matrix[13] = 0;
+    m_matrix[14] = moved.m_matrix[14]; moved.m_matrix[14] = 0;
+    m_matrix[15] = moved.m_matrix[15]; moved.m_matrix[15] = 1.f;
+}
+
+
+////////////////////////////////////////////////////////////
 const float* Transform::getMatrix() const
 {
     return m_matrix;
@@ -246,6 +282,44 @@ Transform& Transform::scale(const Vector2f& factors)
 Transform& Transform::scale(const Vector2f& factors, const Vector2f& center)
 {
     return scale(factors.x, factors.y, center.x, center.y);
+}
+
+
+////////////////////////////////////////////////////////////
+Transform& Transform::operator =(const Transform& copied)
+{
+    m_matrix[0] = copied.m_matrix[0]; m_matrix[8]  = copied.m_matrix[8];
+    m_matrix[1] = copied.m_matrix[1]; m_matrix[9]  = copied.m_matrix[9];
+    m_matrix[2] = copied.m_matrix[2]; m_matrix[10] = copied.m_matrix[10];
+    m_matrix[3] = copied.m_matrix[3]; m_matrix[11] = copied.m_matrix[11];
+    m_matrix[4] = copied.m_matrix[4]; m_matrix[12] = copied.m_matrix[12];
+    m_matrix[5] = copied.m_matrix[5]; m_matrix[13] = copied.m_matrix[13];
+    m_matrix[6] = copied.m_matrix[6]; m_matrix[14] = copied.m_matrix[14];
+    m_matrix[7] = copied.m_matrix[7]; m_matrix[15] = copied.m_matrix[15];
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+Transform& Transform::operator =(Transform&& moved)
+{
+    m_matrix[0]  = moved.m_matrix[0];  moved.m_matrix[0] = 1.f;
+    m_matrix[1]  = moved.m_matrix[1];  moved.m_matrix[1] = 0;
+    m_matrix[2]  = moved.m_matrix[2];  moved.m_matrix[2] = 0;
+    m_matrix[3]  = moved.m_matrix[3];  moved.m_matrix[3] = 0;
+    m_matrix[4]  = moved.m_matrix[4];  moved.m_matrix[4] = 0;
+    m_matrix[5]  = moved.m_matrix[5];  moved.m_matrix[5] = 1.f;
+    m_matrix[6]  = moved.m_matrix[6];  moved.m_matrix[6] = 0;
+    m_matrix[7]  = moved.m_matrix[7];  moved.m_matrix[7] = 0;
+    m_matrix[8]  = moved.m_matrix[8];  moved.m_matrix[8] = 0;
+    m_matrix[9]  = moved.m_matrix[9];  moved.m_matrix[9] = 0;
+    m_matrix[10] = moved.m_matrix[10]; moved.m_matrix[10] = 1.f;
+    m_matrix[11] = moved.m_matrix[11]; moved.m_matrix[11] = 0;
+    m_matrix[12] = moved.m_matrix[12]; moved.m_matrix[12] = 0;
+    m_matrix[13] = moved.m_matrix[13]; moved.m_matrix[13] = 0;
+    m_matrix[14] = moved.m_matrix[14]; moved.m_matrix[14] = 0;
+    m_matrix[15] = moved.m_matrix[15]; moved.m_matrix[15] = 1.f;
+    return *this;
 }
 
 

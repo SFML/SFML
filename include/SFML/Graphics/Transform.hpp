@@ -32,7 +32,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -68,6 +67,22 @@ public:
     Transform(float a00, float a01, float a02,
               float a10, float a11, float a12,
               float a20, float a21, float a22);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy constructor
+    ///
+    /// \param copied Instance to copy
+    ///
+    ////////////////////////////////////////////////////////////
+    Transform(const Transform& copied);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor.
+    ///
+    /// \param moved Instance to move from
+    ///
+    ////////////////////////////////////////////////////////////
+    Transform(Transform&& moved);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the transform as a 4x4 matrix
@@ -371,6 +386,25 @@ public:
     ////////////////////////////////////////////////////////////
     static const Transform Identity; //!< The identity transform (does nothing)
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy assignment operator
+    /// 
+    /// \param copied Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    Transform& operator =(const Transform& copied);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment operator
+    /// 
+    /// \param moved Instnce to move from
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    Transform& operator =(Transform&& moved);
 private:
 
     ////////////////////////////////////////////////////////////
