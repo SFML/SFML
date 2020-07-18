@@ -91,6 +91,15 @@ public:
     explicit WindowBase(WindowHandle handle);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    /// \param moved instance to move from. Behaves like a
+    ///              default-constructed object after the move.
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(WindowBase&& moved) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     /// Closes the window and frees all the resources attached to it.
@@ -379,6 +388,25 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool hasFocus() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment operator
+    ///
+    /// \param moved instance to move from. Behaves like a
+    ///              default-constructed object after the move.
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase& operator =(WindowBase&& moved);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Swap the contents of this window with those of another
+    ///
+    /// \param right Instance to swap with
+    ///
+    ////////////////////////////////////////////////////////////
+    void swap(WindowBase& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window

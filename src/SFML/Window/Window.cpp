@@ -62,6 +62,14 @@ m_frameTimeLimit(Time::Zero)
 
 
 ////////////////////////////////////////////////////////////
+Window::Window(Window&& moved) noexcept :
+Window()
+{
+    swap(moved);
+}
+
+
+////////////////////////////////////////////////////////////
 Window::~Window()
 {
     close();
@@ -224,6 +232,27 @@ void Window::display()
         sleep(m_frameTimeLimit - m_clock.getElapsedTime());
         m_clock.restart();
     }
+}
+
+
+////////////////////////////////////////////////////////////
+Window& Window::operator =(Window&& moved)
+{
+    Window temp(std::move(moved));
+    swap(temp);
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::swap(Window& right)
+{
+    WindowBase::swap(right);
+
+    std::swap(m_context,        right.m_context);
+    std::swap(m_clock,          right.m_clock);
+    std::swap(m_frameTimeLimit, right.m_frameTimeLimit);
 }
 
 

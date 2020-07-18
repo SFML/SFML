@@ -30,7 +30,6 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Err.hpp>
 
-
 namespace
 {
     const sf::WindowBase* fullscreenWindow = NULL;
@@ -63,6 +62,13 @@ m_impl          (NULL),
 m_size          (0, 0)
 {
     WindowBase::create(handle);
+}
+
+////////////////////////////////////////////////////////////
+WindowBase::WindowBase(WindowBase&& moved) noexcept :
+WindowBase()
+{
+    swap(moved);
 }
 
 
@@ -298,6 +304,24 @@ void WindowBase::requestFocus()
 bool WindowBase::hasFocus() const
 {
     return m_impl && m_impl->hasFocus();
+}
+
+
+////////////////////////////////////////////////////////////
+WindowBase& WindowBase::operator =(WindowBase&& moved)
+{
+    WindowBase temp(std::move(moved));
+    swap(temp);
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::swap(WindowBase& right)
+{
+    std::swap(m_impl, right.m_impl);
+    std::swap(m_size, right.m_size);
 }
 
 
