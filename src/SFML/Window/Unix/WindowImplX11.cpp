@@ -1112,6 +1112,7 @@ void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 {
     m_lastCursor = cursor.m_cursor;
     XDefineCursor(m_display, m_window, m_lastCursor);
+    XFlush(m_display);
 }
 
 
