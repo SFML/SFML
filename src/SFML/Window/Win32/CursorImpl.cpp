@@ -152,6 +152,14 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::SizeVertical:           shape = IDC_SIZENS;      break;
         case Cursor::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
         case Cursor::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
+        case Cursor::SizeLeft:               shape = IDC_SIZEWE;      break;
+        case Cursor::SizeRight:              shape = IDC_SIZEWE;      break;
+        case Cursor::SizeTop:                shape = IDC_SIZENS;      break;
+        case Cursor::SizeBottom:             shape = IDC_SIZENS;      break;
+        case Cursor::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
+        case Cursor::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
+        case Cursor::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
+        case Cursor::SizeTopRight:           shape = IDC_SIZENESW;    break;
         case Cursor::SizeAll:                shape = IDC_SIZEALL;     break;
         case Cursor::Cross:                  shape = IDC_CROSS;       break;
         case Cursor::Help:                   shape = IDC_HELP;        break;

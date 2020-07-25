@@ -64,6 +64,14 @@ public:
     ///  sf::Cursor::SizeVertical           |  yes  |    yes   |   yes    |
     ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    yes*  |   yes    |
     ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    yes*  |   yes    |
+    ///  sf::Cursor::SizeLeft               |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeRight              |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTop                |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottom             |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTopLeft            |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTopRight           |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomLeft         |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomRight        |  yes  |    yes** |   yes**  |
     ///  sf::Cursor::SizeAll                |  yes  |    no    |   yes    |
     ///  sf::Cursor::Cross                  |  yes  |    yes   |   yes    |
     ///  sf::Cursor::Help                   |  yes  |    yes*  |   yes    |
@@ -71,6 +79,8 @@ public:
     ///
     ///  * These cursor types are undocumented so may not
     ///    be available on all versions, but have been tested on 10.13
+    ///
+    ///  ** On Windows and macOS, double-headed arrows are used
     ///
     ////////////////////////////////////////////////////////////
     enum Type
@@ -84,6 +94,14 @@ public:
         SizeVertical,           //!< Vertical double arrow cursor
         SizeTopLeftBottomRight, //!< Double arrow cursor going from top-left to bottom-right
         SizeBottomLeftTopRight, //!< Double arrow cursor going from bottom-left to top-right
+        SizeLeft,               //!< Left arrow cursor on Linux, same as SizeHorizontal on other platforms
+        SizeRight,              //!< Right arrow cursor on Linux, same as SizeHorizontal on other platforms
+        SizeTop,                //!< Up arrow cursor on Linux, same as SizeVertical on other platforms
+        SizeBottom,             //!< Down arrow cursor on Linux, same as SizeVertical on other platforms
+        SizeTopLeft,            //!< Top-left arrow cursor on Linux, same as SizeTopLeftBottomRight on other platforms
+        SizeBottomRight,        //!< Bottom-right arrow cursor on Linux, same as SizeTopLeftBottomRight on other platforms
+        SizeBottomLeft,         //!< Bottom-left arrow cursor on Linux, same as SizeBottomLeftTopRight on other platforms
+        SizeTopRight,           //!< Top-right arrow cursor on Linux, same as SizeBottomLeftTopRight on other platforms
         SizeAll,                //!< Combination of SizeHorizontal and SizeVertical
         Cross,                  //!< Crosshair cursor
         Help,                   //!< Help cursor

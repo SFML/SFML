@@ -165,16 +165,24 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     {
         default: return false;
 
-        case Cursor::Arrow:          shape = XC_arrow;              break;
-        case Cursor::Wait:           shape = XC_watch;              break;
-        case Cursor::Text:           shape = XC_xterm;              break;
-        case Cursor::Hand:           shape = XC_hand1;              break;
-        case Cursor::SizeHorizontal: shape = XC_sb_h_double_arrow;  break;
-        case Cursor::SizeVertical:   shape = XC_sb_v_double_arrow;  break;
-        case Cursor::SizeAll:        shape = XC_fleur;              break;
-        case Cursor::Cross:          shape = XC_crosshair;          break;
-        case Cursor::Help:           shape = XC_question_arrow;     break;
-        case Cursor::NotAllowed:     shape = XC_X_cursor;           break;
+        case Cursor::Arrow:           shape = XC_arrow;               break;
+        case Cursor::Wait:            shape = XC_watch;               break;
+        case Cursor::Text:            shape = XC_xterm;               break;
+        case Cursor::Hand:            shape = XC_hand1;               break;
+        case Cursor::SizeHorizontal:  shape = XC_sb_h_double_arrow;   break;
+        case Cursor::SizeVertical:    shape = XC_sb_v_double_arrow;   break;
+        case Cursor::SizeLeft:        shape = XC_left_side;           break;
+        case Cursor::SizeRight:       shape = XC_right_side;          break;
+        case Cursor::SizeTop:         shape = XC_top_side;            break;
+        case Cursor::SizeBottom:      shape = XC_bottom_side;         break;
+        case Cursor::SizeTopLeft:     shape = XC_top_left_corner;     break;
+        case Cursor::SizeBottomRight: shape = XC_bottom_right_corner; break;
+        case Cursor::SizeBottomLeft:  shape = XC_bottom_left_corner;  break;
+        case Cursor::SizeTopRight:    shape = XC_top_right_corner;    break;
+        case Cursor::SizeAll:         shape = XC_fleur;               break;
+        case Cursor::Cross:           shape = XC_crosshair;           break;
+        case Cursor::Help:            shape = XC_question_arrow;      break;
+        case Cursor::NotAllowed:      shape = XC_X_cursor;            break;
     }
 
     m_cursor = XCreateFontCursor(m_display, shape);
