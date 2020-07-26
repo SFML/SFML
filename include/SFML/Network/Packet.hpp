@@ -413,10 +413,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_data;    //!< Data stored in the packet
-    std::size_t       m_readPos; //!< Current reading position in the packet
-    std::size_t       m_sendPos; //!< Current send position in the packet (for handling partial sends)
-    bool              m_isValid; //!< Reading state of the packet
+    std::vector<char> m_data;        //!< Data stored in the packet
+    std::size_t       m_readPos;     //!< Current reading position in the packet
+    std::size_t       m_sendPos;     //!< Current send position in the packet (for handling partial sends)
+    std::size_t       m_boolReadPos; //!< Current reading bit position (for sending booleans)
+    std::size_t       m_boolSendPos; //!< Current send bit position (for sending booleans)
+    bool              m_isValid;     //!< Reading state of the packet
 };
 
 } // namespace sf

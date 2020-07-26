@@ -38,6 +38,8 @@ namespace sf
 Packet::Packet() :
 m_readPos(0),
 m_sendPos(0),
+m_boolReadPos(0),
+m_boolSendPos(0),
 m_isValid(true)
 {
 
@@ -59,6 +61,8 @@ void Packet::append(const void* data, std::size_t sizeInBytes)
         std::size_t start = m_data.size();
         m_data.resize(start + sizeInBytes);
         std::memcpy(&m_data[start], data, sizeInBytes);
+
+        m_boolSendPos = 0;
     }
 }
 
@@ -75,6 +79,8 @@ void Packet::clear()
 {
     m_data.clear();
     m_readPos = 0;
+    m_boolReadPos = 0;
+    m_boolSendPos = 0;
     m_isValid = true;
 }
 
@@ -110,9 +116,19 @@ Packet::operator BoolType() const
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator >>(bool& data)
 {
-    Uint8 value;
-    if (*this >> value)
-        data = (value != 0);
+    if (m_boolReadPos == 0)
+    {
+        // Only check data size for the first bit
+        if (!checkSize(sizeof(data))) return *this;
+
+        m_readPos += 1;
+    }
+
+    Uint8 byte = *reinterpret_cast<const Uint8*>(&m_data[m_readPos - 1]);
+
+    data = (1 << m_boolReadPos) & byte;
+
+    m_boolReadPos = (m_boolReadPos + 1) % 8;
 
     return *this;
 }
@@ -125,6 +141,7 @@ Packet& Packet::operator >>(Int8& data)
     {
         data = *reinterpret_cast<const Int8*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -138,6 +155,7 @@ Packet& Packet::operator >>(Uint8& data)
     {
         data = *reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -151,6 +169,7 @@ Packet& Packet::operator >>(Int16& data)
     {
         data = ntohs(*reinterpret_cast<const Int16*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -164,6 +183,7 @@ Packet& Packet::operator >>(Uint16& data)
     {
         data = ntohs(*reinterpret_cast<const Uint16*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -177,6 +197,7 @@ Packet& Packet::operator >>(Int32& data)
     {
         data = ntohl(*reinterpret_cast<const Int32*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -190,6 +211,7 @@ Packet& Packet::operator >>(Uint32& data)
     {
         data = ntohl(*reinterpret_cast<const Uint32*>(&m_data[m_readPos]));
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -213,6 +235,7 @@ Packet& Packet::operator >>(Int64& data)
                (static_cast<Int64>(bytes[6]) <<  8) |
                (static_cast<Int64>(bytes[7])      );
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -236,6 +259,7 @@ Packet& Packet::operator >>(Uint64& data)
                (static_cast<Uint64>(bytes[6]) <<  8) |
                (static_cast<Uint64>(bytes[7])      );
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -249,6 +273,7 @@ Packet& Packet::operator >>(float& data)
     {
         data = *reinterpret_cast<const float*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -262,6 +287,7 @@ Packet& Packet::operator >>(double& data)
     {
         data = *reinterpret_cast<const double*>(&m_data[m_readPos]);
         m_readPos += sizeof(data);
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -283,6 +309,7 @@ Packet& Packet::operator >>(char* data)
 
         // Update reading position
         m_readPos += length;
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -304,6 +331,7 @@ Packet& Packet::operator >>(std::string& data)
 
         // Update reading position
         m_readPos += length;
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -327,6 +355,7 @@ Packet& Packet::operator >>(wchar_t* data)
             data[i] = static_cast<wchar_t>(character);
         }
         data[length] = L'\0';
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -350,6 +379,7 @@ Packet& Packet::operator >>(std::wstring& data)
             *this >> character;
             data += static_cast<wchar_t>(character);
         }
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -373,6 +403,7 @@ Packet& Packet::operator >>(String& data)
             *this >> character;
             data += character;
         }
+        m_boolReadPos = 0;
     }
 
     return *this;
@@ -382,7 +413,21 @@ Packet& Packet::operator >>(String& data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator <<(bool data)
 {
-    *this << static_cast<Uint8>(data);
+    if (m_boolSendPos == 0)
+    {
+        m_data.resize(m_data.size() + 1, '\0');
+    }
+
+    if (data)
+    {
+        Uint8 byte = *reinterpret_cast<const Uint8*>(&m_data.back());
+        byte |= (1 << m_boolSendPos);
+
+        m_data.back() = *reinterpret_cast<char*>(&byte);
+    }
+
+    m_boolSendPos = (m_boolSendPos + 1) % 8;
+
     return *this;
 }
 
@@ -537,6 +582,8 @@ Packet& Packet::operator <<(const wchar_t* data)
     for (const wchar_t* c = data; *c != L'\0'; ++c)
         *this << static_cast<Uint32>(*c);
 
+    m_boolSendPos = 0;
+
     return *this;
 }
 
@@ -553,6 +600,8 @@ Packet& Packet::operator <<(const std::wstring& data)
     {
         for (std::wstring::const_iterator c = data.begin(); c != data.end(); ++c)
             *this << static_cast<Uint32>(*c);
+
+        m_boolSendPos = 0;
     }
 
     return *this;
@@ -571,6 +620,8 @@ Packet& Packet::operator <<(const String& data)
     {
         for (String::ConstIterator c = data.begin(); c != data.end(); ++c)
             *this << *c;
+
+        m_boolSendPos = 0;
     }
 
     return *this;
