@@ -29,6 +29,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/cursorfont.h>
 #include <X11/Xutil.h>
+#include <X11/Xcursor/Xcursor.h>
 #include <cassert>
 #include <cstdlib>
 #include <vector>
@@ -61,6 +62,45 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 {
     release();
 
+    if (isColorCursorSupported())
+    {
+        return loadFromPixelsARGB(pixels, size, hotspot);
+    }
+    else
+    {
+        return loadFromPixelsMonochrome(pixels, size, hotspot);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u hotspot)
+{
+    // Create cursor image, convert from RGBA to ARGB.
+    XcursorImage* cursorImage = XcursorImageCreate(size.x, size.y);
+    cursorImage->xhot = hotspot.x;
+    cursorImage->yhot = hotspot.y;
+
+    const std::size_t numPixels = size.x * size.y;
+    for (std::size_t i = 0; i < numPixels; ++i)
+    {
+        cursorImage->pixels[i] = pixels[4*i+2] + (pixels[4*i+1] << 8) + (pixels[4*i+0] << 16) + (pixels[4*i+3] << 24);
+    }
+
+    // Create the cursor.
+    m_cursor = XcursorImageLoadCursor(m_display, cursorImage);
+
+    // Free the resources
+    XcursorImageDestroy(cursorImage);
+
+    // We assume everything went fine...
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Vector2u hotspot)
+{
     // Convert the image into a bitmap (monochrome!).
     std::size_t bytes = (size.x + 7) / 8 * size.y;
     std::vector<Uint8> mask(bytes, 0); // Defines which pixel is transparent.
@@ -136,6 +176,13 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 
     m_cursor = XCreateFontCursor(m_display, shape);
     return true;
+}
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::isColorCursorSupported()
+{
+    return XcursorSupportsARGB(m_display);
 }
 
 
