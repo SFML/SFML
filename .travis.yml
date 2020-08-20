@@ -4,6 +4,7 @@ addons:
   apt_packages:
     - cmake
     - libxrandr-dev
+    - libxcursor-dev
     - libudev-dev
     - libopenal-dev
     - libflac-dev
