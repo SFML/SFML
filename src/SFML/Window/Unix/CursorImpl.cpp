@@ -123,9 +123,9 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
 
             // Choose between black/background & white/foreground color for each pixel,
             // based on the pixel color intensity: on average, if a channel is "active"
-            // at 25%, the bit is white.
-            int intensity = pixels[pixelIndex * 4 + 0] + pixels[pixelIndex * 4 + 1] + pixels[pixelIndex * 4 + 2];
-            Uint8 bit = intensity > 64 ? 1 : 0;
+            // at 50%, the bit is white.
+            int intensity = (pixels[pixelIndex * 4 + 0] + pixels[pixelIndex * 4 + 1] + pixels[pixelIndex * 4 + 2]) / 3;
+            Uint8 bit = intensity > 128 ? 1 : 0;
             data[byteIndex] |= bit << bitIndex;
         }
     }
