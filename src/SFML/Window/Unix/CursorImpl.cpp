@@ -107,7 +107,7 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
     std::size_t packedWidth = (size.x + 7) / 8;
     std::size_t bytes = packedWidth * size.y;
     std::vector<Uint8> mask(bytes, 0); // Defines which pixel is opaque (1) or transparent (0).
-    std::vector<Uint8> data(bytes, 1); // Defines which pixel is white (1) or black (0).
+    std::vector<Uint8> data(bytes, 0); // Defines which pixel is white (1) or black (0).
 
     for (std::size_t j = 0; j < size.y; ++j)
     {
