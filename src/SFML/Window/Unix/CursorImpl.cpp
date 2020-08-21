@@ -63,13 +63,9 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     release();
 
     if (isColorCursorSupported())
-    {
         return loadFromPixelsARGB(pixels, size, hotspot);
-    }
     else
-    {
         return loadFromPixelsMonochrome(pixels, size, hotspot);
-    }
 }
 
 
@@ -82,9 +78,12 @@ bool CursorImpl::loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u
     cursorImage->yhot = hotspot.y;
 
     const std::size_t numPixels = size.x * size.y;
-    for (std::size_t i = 0; i < numPixels; ++i)
+    for (std::size_t pixelIndex = 0; pixelIndex < numPixels; ++pixelIndex)
     {
-        cursorImage->pixels[i] = pixels[4*i+2] + (pixels[4*i+1] << 8) + (pixels[4*i+0] << 16) + (pixels[4*i+3] << 24);
+        cursorImage->pixels[pixelIndex] = pixels[pixelIndex * 4 + 2] +
+                                         (pixels[pixelIndex * 4 + 1] << 8) +
+                                         (pixels[pixelIndex * 4 + 0] << 16) +
+                                         (pixels[pixelIndex * 4 + 3] << 24);
     }
 
     // Create the cursor.
