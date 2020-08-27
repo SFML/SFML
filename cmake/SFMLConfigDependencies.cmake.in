@@ -47,6 +47,7 @@ if(SFML_STATIC_LIBRARIES)
         if(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD)
             sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "X11" SEARCH_NAMES "X11")
             sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "Xrandr" SEARCH_NAMES "Xrandr")
+            sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "Xcursor" SEARCH_NAMES "Xcursor")
         endif()
 
         if(FIND_SFML_OS_LINUX)
