@@ -14,7 +14,7 @@ addons:
 
 before_script:
 - mkdir build && cd build
-- cmake .. $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE
+- cmake .. $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=../install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON
 
 script:
 - cmake --build . --target install
@@ -74,15 +74,37 @@ matrix:
     env:
      - CMAKE_FLAGS="-GXcode -DSFML_BUILD_TEST_SUITE=TRUE -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
 
-  - name: "Visual studio 15 2017 Dynamic"
+  - name: "Visual Studio 15 2017 Dynamic"
     os: windows
     env:
       - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=FALSE"
 
-  - name: "Visual studio 15 2017 Static"
+  - name: "Visual Studio 15 2017 Static"
     os: windows
     env:
       - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE -DSFML_BUILD_TEST_SUITE=TRUE"
+
+  - name: "Visual Studio 16 2019 Dynamic"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DSFML_BUILD_TEST_SUITE=FALSE"
+      - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
+      - VS160COMNTOOLS="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools"
+      - PATH=$MSBUILD_PATH:$PATH
+    install:
+      - choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+      - choco install visualstudio2019-workload-nativedesktop
+
+  - name: "Visual Studio 16 2019 Static"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE -DSFML_BUILD_TEST_SUITE=TRUE"
+      - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
+      - VS160COMNTOOLS="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools"
+      - PATH=$MSBUILD_PATH:$PATH
+    install:
+      - choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+      - choco install visualstudio2019-workload-nativedesktop
 
   - name: "Android armeabi-v7a"
     language: android
