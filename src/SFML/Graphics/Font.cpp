@@ -88,6 +88,7 @@ m_face     (NULL),
 m_streamRec(NULL),
 m_stroker  (NULL),
 m_refCount (NULL),
+m_isSmooth (true),
 m_info     ()
 {
     #ifdef SFML_SYSTEM_ANDROID
@@ -105,7 +106,8 @@ m_stroker    (copy.m_stroker),
 m_refCount   (copy.m_refCount),
 m_info       (copy.m_info),
 m_pages      (copy.m_pages),
-m_pixelBuffer(copy.m_pixelBuffer)
+m_pixelBuffer(copy.m_pixelBuffer),
+m_isSmooth   (copy.m_isSmooth)
 {
     #ifdef SFML_SYSTEM_ANDROID
         m_stream = NULL;
@@ -468,6 +470,26 @@ const Texture& Font::getTexture(unsigned int characterSize) const
     return m_pages[characterSize].texture;
 }
 
+////////////////////////////////////////////////////////////
+void Font::setSmooth(bool smooth)
+{
+    if (smooth != m_isSmooth)
+    {
+        m_isSmooth = smooth;
+
+        for (sf::Font::PageTable::iterator page = m_pages.begin(); page != m_pages.end(); ++page)
+        {
+            page->second.texture.setSmooth(m_isSmooth);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////
+bool Font::isSmooth() const
+{
+    return m_isSmooth;
+}
+
 
 ////////////////////////////////////////////////////////////
 Font& Font::operator =(const Font& right)
@@ -482,6 +504,7 @@ Font& Font::operator =(const Font& right)
     std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
+    std::swap(m_isSmooth,    temp.m_isSmooth);
 
     #ifdef SFML_SYSTEM_ANDROID
         std::swap(m_stream, temp.m_stream);
@@ -734,7 +757,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 // Make the texture 2 times bigger
                 Texture newTexture;
                 newTexture.create(textureWidth * 2, textureHeight * 2);
-                newTexture.setSmooth(true);
+                newTexture.setSmooth(m_isSmooth);
                 newTexture.update(page.texture);
                 page.texture.swap(newTexture);
             }
