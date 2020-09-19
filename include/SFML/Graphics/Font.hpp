@@ -276,6 +276,32 @@ public:
     const Texture& getTexture(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable the smooth filter
+    ///
+    /// When the filter is activated, the font appears smoother
+    /// so that pixels are less noticeable. However if you want
+    /// the font to look exactly the same as its source file,
+    /// you should disable it.
+    /// The smooth filter is enabled by default.
+    ///
+    /// \param smooth True to enable smoothing, false to disable it
+    ///
+    /// \see isSmooth
+    ///
+    ////////////////////////////////////////////////////////////
+    void setSmooth(bool smooth);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the smooth filter is enabled or not
+    ///
+    /// \return True if smoothing is enabled, false if it is disabled
+    ///
+    /// \see setSmooth
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSmooth() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
     ///
     /// \param right Instance to assign
@@ -373,6 +399,7 @@ private:
     void*                      m_streamRec;   //!< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     void*                      m_stroker;     //!< Pointer to the stroker (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    //!< Reference counter used by implicit sharing
+    bool                       m_isSmooth;    //!< Status of the smooth filter
     Info                       m_info;        //!< Information about the font
     mutable PageTable          m_pages;       //!< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
