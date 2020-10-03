@@ -5,6 +5,7 @@
 #include <SFML/Audio/AlResource.hpp>
 
 #include <set>
+#include <cstdint>
 
 namespace sf
 {
