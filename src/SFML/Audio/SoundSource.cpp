@@ -238,11 +238,11 @@ void SoundSource::setEffect(const SoundEffect* effect)
     if (m_effect)
     {
         m_effect->attachSoundSource(this);
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, m_effect->m_effectSlot, 0, NULL));
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, m_effect->m_effectSlot, 0, 0));
     }
     else
     {
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL));
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, 0));
     }
 }
 
@@ -259,7 +259,7 @@ void SoundSource::resetEffect()
     // Detach the effect
     if (m_effect)
     {
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL));
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, 0));
         m_effect->detachSoundSource(this);
         m_effect = NULL;
     }
