@@ -9,7 +9,7 @@
 #include <AL/efx.h>
 #include <AL/alext.h>
 
-#include <unordered_map>
+#include <map>
 
 namespace
 {
@@ -20,7 +20,7 @@ namespace
         std::uint32_t handle = 0;
         std::uint32_t count = 0;
     };
-    std::unordered_map<sf::SoundEffect::Type, CountedEffect> effects;
+    std::map<sf::SoundEffect::Type, CountedEffect> effects;
 }
 
 namespace sf
