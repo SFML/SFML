@@ -35,6 +35,8 @@
 
 namespace sf
 {
+class SoundEffect;
+
 ////////////////////////////////////////////////////////////
 /// \brief Base class defining a sound's properties
 ///
@@ -277,6 +279,21 @@ public:
     ////////////////////////////////////////////////////////////
     virtual Status getStatus() const;
 
+    void setEffect(const SoundEffect* effect);
+
+    const SoundEffect* getEffect() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset the internal effect of the sound
+    ///
+    /// This function is for internal use only, you don't have
+    /// to use it. It is called by the sf::SoundEffect that
+    /// this sound uses, when it is destroyed in order to prevent
+    /// the sound from using a dead effect.
+    ///
+    ////////////////////////////////////////////////////////////
+    void resetEffect();
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -291,6 +308,8 @@ protected:
     // Member data
     ////////////////////////////////////////////////////////////
     unsigned int m_source; //!< OpenAL source identifier
+
+    SoundEffect* m_effect;
 };
 
 } // namespace sf

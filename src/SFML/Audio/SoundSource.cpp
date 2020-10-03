@@ -27,6 +27,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/SoundEffect.hpp>
+
+#define AL_ALEXT_PROTOTYPES
+#include <AL/efx.h>
+#include <AL/alext.h>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
@@ -40,6 +45,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource()
+    : m_effect(nullptr)
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
@@ -48,6 +54,7 @@ SoundSource::SoundSource()
 
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource(const SoundSource& copy)
+    : m_effect(nullptr)
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
@@ -58,6 +65,11 @@ SoundSource::SoundSource(const SoundSource& copy)
     setRelativeToListener(copy.isRelativeToListener());
     setMinDistance(copy.getMinDistance());
     setAttenuation(copy.getAttenuation());
+
+    if (copy.m_effect)
+    {
+        setEffect(copy.m_effect);
+    }
 }
 
 
@@ -66,6 +78,11 @@ SoundSource::~SoundSource()
 {
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
     alCheck(alDeleteSources(1, &m_source));
+
+    if (m_effect)
+    {
+        m_effect->detachSoundSource(this);
+    }
 }
 
 
@@ -184,6 +201,7 @@ SoundSource& SoundSource::operator =(const SoundSource& right)
     setRelativeToListener(right.isRelativeToListener());
     setMinDistance(right.getMinDistance());
     setAttenuation(right.getAttenuation());
+    setEffect(right.getEffect());
 
     return *this;
 }
@@ -204,6 +222,47 @@ SoundSource::Status SoundSource::getStatus() const
     }
 
     return Stopped;
+}
+
+void SoundSource::setEffect(const SoundEffect* effect)
+{
+    // First detach from the previous effect
+    if (m_effect)
+    {
+        stop();
+        m_effect->detachSoundSource(this);
+    }
+
+    // Assign and use the new effect
+    m_effect = const_cast<SoundEffect*>(effect);
+    if (m_effect)
+    {
+        m_effect->attachSoundSource(this);
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, m_effect->m_effectSlot, 0, NULL));
+    }
+    else
+    {
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL));
+    }
+}
+
+const SoundEffect* SoundSource::getEffect() const
+{
+    return m_effect;
+}
+
+void SoundSource::resetEffect()
+{
+    // First stop the sound in case it is playing
+    stop();
+
+    // Detach the effect
+    if (m_effect)
+    {
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL));
+        m_effect->detachSoundSource(this);
+        m_effect = NULL;
+    }
 }
 
 } // namespace sf
