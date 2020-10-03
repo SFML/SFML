@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SFML_REVERB_EFFECT_HPP
+#define SFML_REVERB_EFFECT_HPP
 
 #include <SFML/Audio/SoundEffect.hpp>
 
@@ -65,3 +66,4 @@ namespace sf
         void applyParameterNames();
     };
 }
+#endif //SFML_REVERB_EFFECT_HPP

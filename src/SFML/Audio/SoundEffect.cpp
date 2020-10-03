@@ -3,19 +3,28 @@
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Err.hpp>
 
+#include "ALCheck.hpp"
+
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
 
-#include "ALCheck.hpp"
-
-using namespace sf;
+#include <unordered_map>
 
 namespace
 {
-
+    //reference counted effects object handle.
+    //this is to enables sharing of objects between effects slots
+    struct CountedEffect
+    {
+        std::uint32_t handle = 0;
+        std::uint32_t count = 0;
+    };
+    std::unordered_map<sf::SoundEffect::Type, CountedEffect> effects;
 }
 
+namespace sf
+{
 SoundEffect::SoundEffect()
     : m_effectSlot  (0),
     m_effect        (0),
@@ -23,7 +32,6 @@ SoundEffect::SoundEffect()
     m_volume        (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
-    alCheck(alGenEffects(1, &m_effect));
 }
 
 SoundEffect::SoundEffect(const SoundEffect& copy)
@@ -33,7 +41,6 @@ SoundEffect::SoundEffect(const SoundEffect& copy)
     m_volume        (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
-    alCheck(alGenEffects(1, &m_effect));
 
     //copy properties from copy
     setVolume(copy.getVolume());
@@ -51,7 +58,14 @@ SoundEffect::~SoundEffect()
 
     alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL));
     alCheck(alDeleteAuxiliaryEffectSlots(1, &m_effectSlot));
-    alCheck(alDeleteEffects(1, &m_effect));
+
+    auto& effect = effects.at(m_type);
+    effect.count--;
+
+    if (effect.count == 0)
+    {
+        alCheck(alDeleteEffects(1, &effect.handle));
+    }
 }
 
 //public
@@ -86,6 +100,8 @@ std::uint32_t SoundEffect::setType(SoundEffect::Type type)
         err() << type << ": not a known effect type." << std::endl;
         return 0;
     case Reverb:
+        ensureEffect(type);
+
         //check if EAX reverb is  available
         if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0)
         {
@@ -97,6 +113,7 @@ std::uint32_t SoundEffect::setType(SoundEffect::Type type)
         }
         break;
     case Chorus:
+        ensureEffect(type);
         alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_CHORUS));
         break;
     }
@@ -121,3 +138,20 @@ void SoundEffect::detachSoundSource(SoundSource* sound) const
 {
     m_soundlist.erase(sound);
 }
+
+void SoundEffect::ensureEffect(Type type)
+{
+    if (effects.count(type) == 0)
+    {
+        effects.insert(std::make_pair(type, CountedEffect()));
+
+        auto& effect = effects.at(type);
+        alCheck(alGenEffects(1, &effect.handle));
+    }
+
+    auto& effect = effects.at(type);
+    effect.count++;
+
+    m_effect = effect.handle;
+}
+} // namespace sf

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SFML_SOUNDEFFECT_HPP
+#define SFML_SOUNDEFFECT_HPP
 
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
@@ -36,7 +37,7 @@ namespace sf
         //specific interfaces for updating properties. Returns the effect handle
         std::uint32_t setType(Type type);
 
-        //reapplies the effect on this slot after the paramters were changed
+        //reapplies the effect on this slot after the parameters were changed
         void applyEffect();
 
         SoundEffect();
@@ -58,5 +59,8 @@ namespace sf
         float m_volume;
 
         mutable std::set<SoundSource*> m_soundlist;
+        void ensureEffect(Type);
     };
 }
+
+#endif // SFML_SOUNDEFFECT_HPP
