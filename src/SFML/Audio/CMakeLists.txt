@@ -31,6 +31,10 @@ set(SRC
     ${INCROOT}/SoundSource.hpp
     ${SRCROOT}/SoundStream.cpp
     ${INCROOT}/SoundStream.hpp
+    ${SRCROOT}/SoundEffect.cpp
+    ${INCROOT}/SoundEffect.hpp
+    ${SRCROOT}/ReverbEffect.cpp
+    ${INCROOT}/ReverbEffect.hpp
 )
 source_group("" FILES ${SRC})
 

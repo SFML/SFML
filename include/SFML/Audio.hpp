@@ -43,7 +43,7 @@
 #include <SFML/Audio/SoundRecorder.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/Audio/SoundStream.hpp>
-
+#include <SFML/Audio/ReverbEffect.hpp>
 
 #endif // SFML_AUDIO_HPP
 

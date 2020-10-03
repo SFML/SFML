@@ -26,17 +26,28 @@ void playSound()
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
-    sound.play();
+    sf::ReverbEffect effect;
 
-    // Loop while the sound is playing
-    while (sound.getStatus() == sf::Sound::Playing)
+    sound.setEffect(&effect);
+    effect.setDecayTime(20.f);
+    effect.setDensity(0.f);
+
+    for (auto i = 0; i < 2; ++i)
     {
-        // Leave some CPU time for other processes
-        sf::sleep(sf::milliseconds(100));
+        sound.play();
 
-        // Display the playing position
-        std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
-        std::cout << std::flush;
+
+        // Loop while the sound is playing
+        while (sound.getStatus() == sf::Sound::Playing)
+        {
+            // Leave some CPU time for other processes
+            sf::sleep(sf::milliseconds(100));
+
+            // Display the playing position
+            std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
+            std::cout << std::flush;
+        }
+        sound.setEffect(nullptr);
     }
     std::cout << std::endl << std::endl;
 }
@@ -72,6 +83,7 @@ void playMusic(const std::string& filename)
         std::cout << "\rPlaying... " << music.getPlayingOffset().asSeconds() << " sec        ";
         std::cout << std::flush;
     }
+
     std::cout << std::endl << std::endl;
 }
 
