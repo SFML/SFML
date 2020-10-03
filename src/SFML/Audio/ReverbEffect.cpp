@@ -1,17 +1,17 @@
 #include <SFML/Audio/ReverbEffect.hpp>
 
+#include "ALCheck.hpp"
+
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
 
-#include "ALCheck.hpp"
-
 #include <cassert>
-
-using namespace sf;
 
 namespace
 {
+    //these are defined so that they can be shared between EAX/non-EAX
+    //versions of the reverb effect. See applyParamterNames()
     std::uint32_t REVERB_DENSITY              = 0;
     std::uint32_t REVERB_DIFFUSION            = 0;
     std::uint32_t REVERB_GAIN                 = 0;
@@ -23,9 +23,11 @@ namespace
     std::uint32_t REVERB_ROOM_ROLLOFF_FACTOR  = 0;
 }
 
+namespace sf
+{
 //values are initialised according to OpenAL extension guide p.66
 ReverbEffect::ReverbEffect()
-    : SoundEffect       (),
+    : SoundEffect        (),
     m_density           (1.f),
     m_diffusion         (1.f),
     m_gain              (0.32f),
@@ -211,26 +213,27 @@ void ReverbEffect::applyParameterNames()
     //is an EAX reverb or not
     if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0)
     {
-        REVERB_DENSITY             = AL_EAXREVERB_DENSITY;
-        REVERB_DIFFUSION           = AL_EAXREVERB_DIFFUSION;
-        REVERB_GAIN                = AL_EAXREVERB_GAIN;
-        REVERB_DECAY_TIME          = AL_EAXREVERB_DECAY_TIME;
-        REVERB_REFLECTIONS_GAIN    = AL_EAXREVERB_REFLECTIONS_GAIN;
-        REVERB_REFLECTIONS_DELAY   = AL_EAXREVERB_REFLECTIONS_DELAY;
-        REVERB_LATE_REVERB_GAIN    = AL_EAXREVERB_LATE_REVERB_GAIN;
-        REVERB_LATE_REVERB_DELAY   = AL_EAXREVERB_LATE_REVERB_DELAY;
+        REVERB_DENSITY = AL_EAXREVERB_DENSITY;
+        REVERB_DIFFUSION = AL_EAXREVERB_DIFFUSION;
+        REVERB_GAIN = AL_EAXREVERB_GAIN;
+        REVERB_DECAY_TIME = AL_EAXREVERB_DECAY_TIME;
+        REVERB_REFLECTIONS_GAIN = AL_EAXREVERB_REFLECTIONS_GAIN;
+        REVERB_REFLECTIONS_DELAY = AL_EAXREVERB_REFLECTIONS_DELAY;
+        REVERB_LATE_REVERB_GAIN = AL_EAXREVERB_LATE_REVERB_GAIN;
+        REVERB_LATE_REVERB_DELAY = AL_EAXREVERB_LATE_REVERB_DELAY;
         REVERB_ROOM_ROLLOFF_FACTOR = AL_EAXREVERB_ROOM_ROLLOFF_FACTOR;
     }
     else
     {
-        REVERB_DENSITY             = AL_REVERB_DENSITY;
-        REVERB_DIFFUSION           = AL_REVERB_DIFFUSION;
-        REVERB_GAIN                = AL_REVERB_GAIN;
-        REVERB_DECAY_TIME          = AL_REVERB_DECAY_TIME;
-        REVERB_REFLECTIONS_GAIN    = AL_REVERB_REFLECTIONS_GAIN;
-        REVERB_REFLECTIONS_DELAY   = AL_REVERB_REFLECTIONS_DELAY;
-        REVERB_LATE_REVERB_GAIN    = AL_REVERB_LATE_REVERB_GAIN;
-        REVERB_LATE_REVERB_DELAY   = AL_REVERB_LATE_REVERB_DELAY;
+        REVERB_DENSITY = AL_REVERB_DENSITY;
+        REVERB_DIFFUSION = AL_REVERB_DIFFUSION;
+        REVERB_GAIN = AL_REVERB_GAIN;
+        REVERB_DECAY_TIME = AL_REVERB_DECAY_TIME;
+        REVERB_REFLECTIONS_GAIN = AL_REVERB_REFLECTIONS_GAIN;
+        REVERB_REFLECTIONS_DELAY = AL_REVERB_REFLECTIONS_DELAY;
+        REVERB_LATE_REVERB_GAIN = AL_REVERB_LATE_REVERB_GAIN;
+        REVERB_LATE_REVERB_DELAY = AL_REVERB_LATE_REVERB_DELAY;
         REVERB_ROOM_ROLLOFF_FACTOR = AL_REVERB_ROOM_ROLLOFF_FACTOR;
     }
 }
+} // namespace sf

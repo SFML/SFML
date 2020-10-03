@@ -279,8 +279,21 @@ public:
     ////////////////////////////////////////////////////////////
     virtual Status getStatus() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set an effect to be applied to the sound source
+    ///
+    /// \param effect Pointer to a SoundEffect object, or nullptr.
+    /// \see SoundEffect
+    ///
+    ////////////////////////////////////////////////////////////
     void setEffect(const SoundEffect* effect);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns a pointer to the active SoundEffect.
+    ///
+    /// \return If a SoundEffect object has been assigned to this SoundSource
+    /// then a pointer to that object is returned, else returns nullptr
+    ////////////////////////////////////////////////////////////
     const SoundEffect* getEffect() const;
 
     ////////////////////////////////////////////////////////////

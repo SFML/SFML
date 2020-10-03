@@ -28,10 +28,6 @@ void playSound()
     sf::Sound sound(buffer);
     sf::ReverbEffect effect;
 
-    sound.setEffect(&effect);
-    effect.setDecayTime(20.f);
-    effect.setDensity(0.f);
-
     for (auto i = 0; i < 2; ++i)
     {
         sound.play();
@@ -47,7 +43,10 @@ void playSound()
             std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
             std::cout << std::flush;
         }
-        sound.setEffect(nullptr);
+
+        sound.setEffect(&effect);
+        effect.setDecayTime(20.f);
+        effect.setDensity(0.f);
     }
     std::cout << std::endl << std::endl;
 }
