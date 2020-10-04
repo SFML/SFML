@@ -15,6 +15,7 @@ namespace
 {
     //reference counted effects object handle.
     //this is to enables sharing of objects between effects slots
+    //see ensureEffect()
     struct CountedEffect
     {
         std::uint32_t handle = 0;
@@ -51,20 +52,21 @@ SoundEffect::~SoundEffect()
     std::set<SoundSource*> sounds;
     m_soundlist.swap(sounds);
 
-    for (auto* sound : sounds)
+    for (std::set<SoundSource*>::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
     {
-        sound->resetEffect();
+        (*it)->resetEffect();
     }
 
     alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL));
     alCheck(alDeleteAuxiliaryEffectSlots(1, &m_effectSlot));
 
-    auto& effect = effects.at(m_type);
+    CountedEffect& effect = effects.at(m_type);
     effect.count--;
 
     if (effect.count == 0)
     {
         alCheck(alDeleteEffects(1, &effect.handle));
+        effects.erase(m_type);
     }
 }
 
@@ -145,11 +147,11 @@ void SoundEffect::ensureEffect(Type type)
     {
         effects.insert(std::make_pair(type, CountedEffect()));
 
-        auto& effect = effects.at(type);
+        CountedEffect& effect = effects.at(type);
         alCheck(alGenEffects(1, &effect.handle));
     }
 
-    auto& effect = effects.at(type);
+    CountedEffect& effect = effects.at(type);
     effect.count++;
 
     m_effect = effect.handle;
