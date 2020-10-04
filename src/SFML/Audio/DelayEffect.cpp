@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/ChorusEffect.hpp>
+#include <SFML/Audio/DelayEffect.hpp>
 
 #include "ALCheck.hpp"
 
@@ -37,152 +37,131 @@
 
 namespace sf
 {
-//defaults are set as p67 of the effect extension guide
+//default values as p108 of OpenAL extensions guide
 ////////////////////////////////////////////////////////////
-ChorusEffect::ChorusEffect()
+DelayEffect::DelayEffect()
     : SoundEffect   (),
-    m_waveform      (Triangle),
-    m_phase         (90),
-    m_rate          (1.1f),
-    m_depth         (0.1f),
-    m_feedback      (0.25f),
-    m_delay         (0.016f),
+    m_delay         (0.1f),
+    m_LRDelay       (0.1f),
+    m_damping       (0.5f),
+    m_feedback      (0.5f),
+    m_spread        (-1.f),
     m_effect        (0)
 {
-    m_effect = setType(Chorus);
+    m_effect = setType(Delay);
 }
 
 
 ////////////////////////////////////////////////////////////
-ChorusEffect::ChorusEffect(const ChorusEffect& copy)
+DelayEffect::DelayEffect(const DelayEffect& copy)
     : SoundEffect   (copy),
-    m_waveform      (Triangle),
-    m_phase         (90),
-    m_rate          (1.1f),
-    m_depth         (0.1f),
-    m_feedback      (0.25f),
-    m_delay         (0.016f),
+    m_delay         (0.1f),
+    m_LRDelay       (0.1f),
+    m_damping       (0.5f),
+    m_feedback      (0.5f),
+    m_spread        (-1.f),
     m_effect        (0)
 {
-    m_effect = setType(Chorus);
+    m_effect = setType(Delay);
 
-    setWaveform(copy.getWaveform());
-    setPhase(copy.getPhase());
-    setRate(copy.getRate());
-    setDepth(copy.getDepth());
-    setFeedback(copy.getFeedback());
     setDelay(copy.getDelay());
+    setLRDelay(copy.getLRDelay());
+    setDamping(copy.getDamping());
+    setFeedback(copy.getFeedback());
+    setSpread(copy.getSpread());
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setWaveform(Waveform waveform)
+void DelayEffect::setDelay(float delay)
 {
     assert(m_effect != 0);
 
-    m_waveform = waveform;
-    alCheck(alEffecti(m_effect, AL_CHORUS_WAVEFORM, waveform == Triangle ? AL_CHORUS_WAVEFORM_TRIANGLE : AL_CHORUS_WAVEFORM_SINUSOID));
+    m_delay = std::min(0.27f, std::max(0.f, delay));
+    alCheck(alEffectf(m_effect, AL_ECHO_DELAY, m_delay));
 
     applyEffect();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setPhase(sf::Int32 phase)
+void DelayEffect::setLRDelay(float delay)
 {
     assert(m_effect != 0);
 
-    m_phase = std::min(180, std::max(-180, phase));
-    alCheck(alEffecti(m_effect, AL_CHORUS_PHASE, m_phase));
+    m_LRDelay = std::min(0.404f, std::max(0.f, delay));
+    alCheck(alEffectf(m_effect, AL_ECHO_LRDELAY, m_LRDelay));
 
     applyEffect();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setRate(float rate)
+void DelayEffect::setDamping(float damping)
 {
     assert(m_effect != 0);
 
-    m_rate = std::min(10.f, std::max(0.f, rate));
-    alCheck(alEffectf(m_effect, AL_CHORUS_RATE, m_rate));
+    m_damping = std::min(0.99f, std::max(0.f, damping));
+    alCheck(alEffectf(m_effect, AL_ECHO_DAMPING, m_damping));
 
     applyEffect();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setDepth(float depth)
+void DelayEffect::setFeedback(float feedback)
 {
     assert(m_effect != 0);
 
-    m_depth = std::min(1.f, std::max(0.f, depth));
-    alCheck(alEffectf(m_effect, AL_CHORUS_DEPTH, m_depth));
+    m_feedback = std::min(1.f, std::max(0.f, feedback));
+    alCheck(alEffectf(m_effect, AL_ECHO_FEEDBACK, m_feedback));
 
     applyEffect();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setFeedback(float feedback)
+void DelayEffect::setSpread(float spread)
 {
     assert(m_effect != 0);
 
-    m_feedback = std::min(1.f, std::max(-1.f, feedback));
-    alCheck(alEffectf(m_effect, AL_CHORUS_FEEDBACK, m_feedback));
+    m_spread = std::min(1.f, std::max(-1.f, spread));
+    alCheck(alEffectf(m_effect, AL_ECHO_SPREAD, m_spread));
 
     applyEffect();
 }
 
 
 ////////////////////////////////////////////////////////////
-void ChorusEffect::setDelay(float delay)
+float DelayEffect::getDelay() const
 {
-    assert(m_effect != 0);
-
-    m_delay = std::min(0.016f, std::max(0.f, delay));
-    alCheck(alEffectf(m_effect, AL_CHORUS_DELAY, m_delay));
-
-    applyEffect();
+    return m_delay;
 }
 
 
 ////////////////////////////////////////////////////////////
-ChorusEffect::Waveform ChorusEffect::getWaveform() const
+float DelayEffect::getLRDelay() const
 {
-    return m_waveform;
+    return m_LRDelay;
 }
 
 
 ////////////////////////////////////////////////////////////
-sf::Int32 ChorusEffect::getPhase() const
+float DelayEffect::getDamping() const
 {
-    return m_phase;
-}
-
-float ChorusEffect::getRate() const
-{
-    return m_rate;
+    return m_damping;
 }
 
 
 ////////////////////////////////////////////////////////////
-float ChorusEffect::getDepth() const
-{
-    return m_depth;
-}
-
-
-////////////////////////////////////////////////////////////
-float ChorusEffect::getFeedback() const
+float DelayEffect::getFeedback() const
 {
     return m_feedback;
 }
 
-
 ////////////////////////////////////////////////////////////
-float ChorusEffect::getDelay() const
+float DelayEffect::getSpread() const
 {
-    return m_delay;
+    return m_spread;
 }
 }

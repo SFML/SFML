@@ -159,6 +159,10 @@ std::uint32_t SoundEffect::setType(SoundEffect::Type type)
         ensureEffect(type);
         alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_CHORUS));
         break;
+    case Delay:
+        ensureEffect(type);
+        alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_ECHO));
+        break;
     }
 
     m_type = type;

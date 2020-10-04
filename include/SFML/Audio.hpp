@@ -45,6 +45,7 @@
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/ReverbEffect.hpp>
 #include <SFML/Audio/ChorusEffect.hpp>
+#include <SFML/Audio/DelayEffect.hpp>
 
 #endif // SFML_AUDIO_HPP
 

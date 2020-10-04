@@ -62,7 +62,8 @@ public:
     {
         Null,
         Reverb,
-        Chorus
+        Chorus,
+        Delay
     };
 
     ////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Sets the type of effect this will be
     ///
-    /// When implemwnting a specific effect type this sould be called on effect
+    /// When implementing a specific effect type this sould be called on effect
     /// creation so that the underlying effects object is properly configured
     ///
     /// \returns A handle to the OpenAL effects object. This can be used by

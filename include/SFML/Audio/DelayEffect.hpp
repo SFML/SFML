@@ -25,18 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifndef SFML_CHORUS_EFFECT_HPP
-#define SFML_CHORUS_EFFECT_HPP
+
+#ifndef SFML_DELAY_EFFECT_HPP
+#define SFML_DELAY_EFFECT_HPP
 
 #include <SFML/Audio/SoundEffect.hpp>
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Implements a chorus sound effect
+/// \brief Implements a delay sound effect
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API ChorusEffect : public SoundEffect
+class SFML_AUDIO_API DelayEffect : public SoundEffect
 {
 public:
 
@@ -44,7 +45,7 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    ChorusEffect();
+    DelayEffect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -52,110 +53,86 @@ public:
     /// \param copy Instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    ChorusEffect(const ChorusEffect& copy);
-
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Waveform enum
-    ///
-    /// \see setWaveform()
-    ////////////////////////////////////////////////////////////
-    enum Waveform
-    {
-        Sine,
-        Triangle
-    };
-
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current waveform value
-    ///
-    /// This property sets the waveform shape of the LFO that controls
-    /// the delay time of the delayed signals.
-    /// 
-    /// \param waveform new Waveform to set. Defaults to Waveform::Triangle
-    ////////////////////////////////////////////////////////////
-    void setWaveform(Waveform waveform);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current phase value
-    ///
-    /// This property controls the phase difference between the left and
-    /// right LFOs. At zero degrees the two LFOs are synchronized. Use
-    /// this parameter to create the illusion of an expanded stereo field
-    /// of the output signal.
-    /// 
-    /// \param angle The angle of phase to set, between -180 and 180. Defaults to 90
-    ////////////////////////////////////////////////////////////
-    void setPhase(sf::Int32 angle);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current rate value
-    ///
-    /// This property sets the modulation rate of the LFO that controls
-    /// the delay time of the delayed signals.
-    /// 
-    /// \param rate new rate to set in hz, between 0.f and 10.f. Defaults to 1.1f
-    ////////////////////////////////////////////////////////////
-    void setRate(float rate);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current depth value
-    ///
-    /// This property controls the amount by which the delay time is modulated by the LFO
-    /// 
-    /// \param depth new depth to set, between 0.f and 1.f. Defaults to 0.1f
-    ////////////////////////////////////////////////////////////
-    void setDepth(float depth);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current feedback value
-    ///
-    /// This property controls the amount of processed signal that is fed back to the
-    /// input of the chorus effect. Negative values will reverse the phase of the feedback
-    /// signal. At full magnitude the identical sample will repeat endlessly. At lower
-    /// magnitudes the sample will repeat and fade out over time. Use this parameter to
-    /// create a "cascading" chorus effect.
-    /// 
-    /// \param amount new feedback amount to set, between -1.f and 1.f. Defaults to 0.25f
-    ////////////////////////////////////////////////////////////
-    void setFeedback(float amount);
+    DelayEffect(const DelayEffect& copy);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the current delay value
     ///
-    /// This property controls the average amount of time the sample is delayed before
-    /// it is played back, and with feedback, the amount of time between iterations of
-    /// the sample.Larger values lower the pitch. Smaller values make the chorus sound
-    /// like a flanger, but with different frequency characteristics.
+    /// This property controls the delay between the original sound
+    /// and the first 'tap', or echo instance. Subsequently, the
+    /// value for Delay is used to determine the time delay
+    /// between each 'second tap' and the next 'first tap'.
     /// 
-    /// \param delay new delay to set in second, between 0.f and 0.016f. Defaults to 0.016f
+    /// \param delay The delay in seconds to set, between 0.f and 0.207f, Defaults to 0.1
     ////////////////////////////////////////////////////////////
     void setDelay(float delay);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns the current waveform value
-    /// \see setWaveform()
+    /// \brief Set the current LR delay value
+    ///
+    /// This property controls the delay between the first 'tap' and
+    /// the second 'tap'. Subsequently, the value for Echo LR Delay
+    /// is used to determine the time delay between each 'first tap'
+    /// and the next 'second tap'.
+    /// 
+    /// \param delay The LR delay in seconds to set, between 0.f and 0.404f, Defaults to 0.1
     ////////////////////////////////////////////////////////////
-    Waveform getWaveform() const;
+    void setLRDelay(float delay);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns the current phase value
-    /// \see setPhase()
+    /// \brief Set the current damping value
+    ///
+    /// This property controls the amount of high frequency damping
+    /// applied to each echo. As the sound is subsequently fed back
+    /// for further echoes, damping results in an echo which progressively
+    /// gets softer in tone as well as intensity.
+    /// 
+    /// \param damping The damping value to set, between 0.f and 0.99f, Defaults to 0.5
     ////////////////////////////////////////////////////////////
-    sf::Int32 getPhase() const;
+    void setDamping(float damping);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns the current rate value
-    /// \see setRate()
+    /// \brief Set the current feedback value
+    ///
+    /// This property controls the amount of feedback the output signal
+    /// fed back into the input. Use this parameter to create "cascading"
+    /// echoes. At full magnitude, the identical sample will repeat endlessly.
+    /// Below full magnitude, the sample will repeat and fade.
+    /// 
+    /// \param feedback The feedback value to set, between 0.f and 1.f, Defaults to 0.5
     ////////////////////////////////////////////////////////////
-    float getRate() const;
+    void setFeedback(float feedback);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns the current depth value
-    /// \see setDepth()
+    /// \brief Set the current spread value
+    ///
+    /// This property controls how hard panned the individual echoes are.
+    /// With a value of 1.0, the first 'tap' will be panned hard left, and
+    /// the second tap hard right. A value of –1.0 gives the opposite result.
+    /// Settings nearer to 0.0 result in less emphasized panning.
+    /// 
+    /// \param spread The spread value to set, between -1.f and 1.f, Defaults to -1.0
     ////////////////////////////////////////////////////////////
-    float getDepth() const;
+    void setSpread(float spread);
+
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns the current delay value
+    /// \see setDelay()
+    ////////////////////////////////////////////////////////////
+    float getDelay() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns the current LRDelay value
+    /// \see setLRDelay()
+    ////////////////////////////////////////////////////////////
+    float getLRDelay() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns the current damping value
+    /// \see setDamping()
+    ////////////////////////////////////////////////////////////
+    float getDamping() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns the current feedback value
@@ -164,29 +141,28 @@ public:
     float getFeedback() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Returns the current delay value
-    /// \see setDelay()
+    /// \brief Returns the current spread value
+    /// \see setSpread()
     ////////////////////////////////////////////////////////////
-    float getDelay() const;
+    float getSpread() const;
 
 private:
 
-    Waveform m_waveform;
-    sf::Int32 m_phase;
-    float m_rate;
-    float m_depth;
-    float m_feedback;
     float m_delay;
+    float m_LRDelay;
+    float m_damping;
+    float m_feedback;
+    float m_spread;
 
-    //handle to OpenAL effect returned by setType();
+    //OpenAL handle returned by setType()
     std::uint32_t m_effect;
 };
 }
 
-#endif //SFML_CHORUS_EFFECT_HPP
+#endif //SFML_DELAY_EFFECT_HPP
 
 ////////////////////////////////////////////////////////////
-/// \class sf::ChorusEffect
+/// \class sf::DelayEffect
 /// \ingroup audio
 ///
 /// Sound effect objects are applied to any SoundSource by
@@ -200,22 +176,24 @@ private:
 /// an sf::Sound, an effect must be kept alive for at least as
 /// long as the SoundSource using it.
 ///
-/// This class implements a chorus effect which is used to create
-/// 'thicker' sounds by doubling the input via a small delay.
+/// This class implements a delay effect which generates discrete,
+/// delayed instances of the input signal. The amount of delay and
+/// feedback is controllable. The delay is 'two tap' – you can control
+/// the interaction between two separate instances of echoes.
 ///
 /// Usage example:
 /// \code
 /// //create an effect
-/// sf::ChorusEffect chorus;
-/// chorus.setPhase(120);
-/// chorus.setFeedback(0.2f);
+/// sf::DelayEffect delay;
+/// delay.setDelay(0.2f);
+/// delay.setFeedback(0.2f);
 ///
 /// //load some music
 /// sf::Music music;
 /// if(music.loadFromFile("sound.ogg"))
 /// {
 ///     //apply the effect to the music
-///     music.setEffect(&chorus);
+///     music.setEffect(&delay);
 ///     music.play();
 /// }
 /// \endcode
