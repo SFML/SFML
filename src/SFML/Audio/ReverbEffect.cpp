@@ -1,3 +1,30 @@
+////////////////////////////////////////////////////////////
+//
+// SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <SFML/Audio/ReverbEffect.hpp>
 
 #include "ALCheck.hpp"
@@ -11,7 +38,7 @@
 namespace
 {
     //these are defined so that they can be shared between EAX/non-EAX
-    //versions of the reverb effect. See applyParamterNames()
+    //versions of the reverb effect. See applyParameterNames()
     std::uint32_t REVERB_DENSITY              = 0;
     std::uint32_t REVERB_DIFFUSION            = 0;
     std::uint32_t REVERB_GAIN                 = 0;
@@ -26,6 +53,7 @@ namespace
 namespace sf
 {
 //values are initialised according to OpenAL extension guide p.66
+////////////////////////////////////////////////////////////
 ReverbEffect::ReverbEffect()
     : SoundEffect        (),
     m_density           (1.f),
@@ -43,6 +71,8 @@ ReverbEffect::ReverbEffect()
     applyParameterNames();
 }
 
+
+////////////////////////////////////////////////////////////
 ReverbEffect::ReverbEffect(const ReverbEffect& copy)
     : SoundEffect       (copy),
     m_density           (1.f),
@@ -70,7 +100,8 @@ ReverbEffect::ReverbEffect(const ReverbEffect& copy)
     setRoomRolloff(copy.getRoomRolloff());
 }
 
-//public
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setDensity(float density)
 {
     assert(m_effect != 0);
@@ -81,6 +112,8 @@ void ReverbEffect::setDensity(float density)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setDiffusion(float diffusion)
 {
     assert(m_effect != 0);
@@ -91,6 +124,8 @@ void ReverbEffect::setDiffusion(float diffusion)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setGain(float gain)
 {
     assert(m_effect != 0);
@@ -101,6 +136,8 @@ void ReverbEffect::setGain(float gain)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setDecayTime(float decayTime)
 {
     assert(m_effect != 0);
@@ -111,6 +148,8 @@ void ReverbEffect::setDecayTime(float decayTime)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setReflectionGain(float gain)
 {
     assert(m_effect != 0);
@@ -121,6 +160,8 @@ void ReverbEffect::setReflectionGain(float gain)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setReflectionDelay(float delay)
 {
     assert(m_effect != 0);
@@ -131,16 +172,20 @@ void ReverbEffect::setReflectionDelay(float delay)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setLateReverbGain(float gain)
 {
     assert(m_effect != 0);
 
-    m_lateReverbGain = std::min(1.f, std::max(0.f, gain));
+    m_lateReverbGain = std::min(10.f, std::max(0.f, gain));
     alCheck(alEffectf(m_effect, REVERB_LATE_REVERB_GAIN, m_lateReverbGain));
 
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setLateReverbDelay(float delay)
 {
     assert(m_effect != 0);
@@ -151,6 +196,8 @@ void ReverbEffect::setLateReverbDelay(float delay)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::setRoomRolloff(float rolloff)
 {
     assert(m_effect != 0);
@@ -161,52 +208,71 @@ void ReverbEffect::setRoomRolloff(float rolloff)
     applyEffect();
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getDensity() const
 {
     return m_density;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getDiffusion() const
 {
     return m_diffusion;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getGain() const
 {
     return m_gain;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getDecayTime() const
 {
     return m_decayTime;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getReflectionGain() const
 {
     return m_reflectionGain;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getReflectionDelay() const
 {
     return m_reflectionDelay;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getLateReverbGain() const
 {
     return m_lateReverbGain;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getLateReverbDelay() const
 {
     return m_lateReverbDelay;
 }
 
+
+////////////////////////////////////////////////////////////
 float ReverbEffect::getRoomRolloff() const
 {
     return m_roomRolloff;
 }
 
-//private
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::applyParameterNames()
 {
     //sets the correct values depending on if this
