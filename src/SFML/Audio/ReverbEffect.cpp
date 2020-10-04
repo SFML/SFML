@@ -55,7 +55,7 @@ namespace sf
 //values are initialised according to OpenAL extension guide p.66
 ////////////////////////////////////////////////////////////
 ReverbEffect::ReverbEffect()
-    : SoundEffect        (),
+    : SoundEffect       (),
     m_density           (1.f),
     m_diffusion         (1.f),
     m_gain              (0.32f),

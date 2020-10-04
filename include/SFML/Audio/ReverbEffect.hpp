@@ -37,7 +37,7 @@ namespace sf
 /// \brief Implements a reverb sound effect
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API ReverbEffect final : public SoundEffect
+class SFML_AUDIO_API ReverbEffect : public SoundEffect
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -278,13 +278,13 @@ private:
 /// creating an instance of that effect and then using
 /// sf::SoundSource::setEffect() to attach it. An effect
 /// may be applied to multiple SourceSources at the same time
-/// and of different types such as sf::Sound or sf::Music.
+/// and to different types such as sf::Sound or sf::Music.
 /// However a SoundSource may be only attached to a single effect
 /// at any one time.
 /// Much like an sf::SoundBuffer which supplies audio data to
-/// an sf::Sound, an effect must be kept alived for at least as
+/// an sf::Sound, an effect must be kept alive for at least as
 /// long as the SoundSource using it. Potentially reverb (and
-/// other delay effects) will need to be kept alive longer
+/// other delay type effects) will need to be kept alive longer
 /// else the trailing audio effect (the audible 'echo') will be
 /// cut short once an effect object is destroyed.
 ///
@@ -307,6 +307,8 @@ private:
 ///     music.setEffect(&reverb);
 ///     music.play();
 /// }
+///
+/// \endcode
 /// 
 /// \see sf::SoundSource, sf::SoundEffect
 ///

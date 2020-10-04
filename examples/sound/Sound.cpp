@@ -27,9 +27,9 @@ void playSound()
     sf::Sound sound(buffer);
 
     // Create a reverb effect to assign to the sound
-    sf::ReverbEffect effect;
+    sf::ChorusEffect effect;
 
-    for (auto i = 0; i < 2; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         sound.play();
 
@@ -46,8 +46,12 @@ void playSound()
 
         //apply the reverb effect
         sound.setEffect(&effect);
-        effect.setDecayTime(20.f);
-        effect.setDensity(0.f);
+        effect.setPhase(80);
+        effect.setRate(5.f);
+        effect.setFeedback(-0.5f);
+        effect.setDelay(0.01f);
+       // effect.setDecayTime(20.f);
+        //effect.setDensity(0.f);
     }
     std::cout << std::endl << std::endl;
 }
