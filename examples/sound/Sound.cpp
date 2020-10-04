@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 
-
 ////////////////////////////////////////////////////////////
 /// Play a sound
 ///
@@ -26,12 +25,13 @@ void playSound()
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
+
+    // Create a reverb effect to assign to the sound
     sf::ReverbEffect effect;
 
     for (auto i = 0; i < 2; ++i)
     {
         sound.play();
-
 
         // Loop while the sound is playing
         while (sound.getStatus() == sf::Sound::Playing)
@@ -44,6 +44,7 @@ void playSound()
             std::cout << std::flush;
         }
 
+        //apply the reverb effect
         sound.setEffect(&effect);
         effect.setDecayTime(20.f);
         effect.setDensity(0.f);
