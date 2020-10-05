@@ -38,6 +38,7 @@
 #include <AL/alext.h>
 
 #include <map>
+#include <algorithm>
 
 namespace
 {
