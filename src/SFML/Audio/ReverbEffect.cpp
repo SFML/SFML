@@ -34,6 +34,7 @@
 #include <AL/alext.h>
 
 #include <cassert>
+#include <algorithm>
 
 namespace
 {
