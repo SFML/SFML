@@ -185,4 +185,18 @@ float ChorusEffect::getDelay() const
 {
     return m_delay;
 }
+
+
+////////////////////////////////////////////////////////////
+ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
+{
+    setWaveform(right.getWaveform());
+    setPhase(right.getPhase());
+    setRate(right.getRate());
+    setDepth(right.getDepth());
+    setFeedback(right.getFeedback());
+    setDelay(right.getDelay());
+
+    return *this;
 }
+} //namespace sf

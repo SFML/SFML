@@ -46,8 +46,10 @@ namespace
     //see ensureEffect()
     struct CountedEffect
     {
-        std::uint32_t handle = 0;
-        std::uint32_t count = 0;
+        CountedEffect() : handle(0), count(0) {}
+
+        std::uint32_t handle;
+        std::uint32_t count;
     };
     std::map<sf::SoundEffect::Type, CountedEffect> effects;
 }

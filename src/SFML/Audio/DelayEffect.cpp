@@ -164,4 +164,18 @@ float DelayEffect::getSpread() const
 {
     return m_spread;
 }
+
+
+////////////////////////////////////////////////////////////
+DelayEffect& DelayEffect::operator= (const DelayEffect& right)
+{
+    setDelay(right.getDelay());
+    setLRDelay(right.getLRDelay());
+    setDamping(right.getDamping());
+    setFeedback(right.getFeedback());
+    setSpread(right.getSpread());
+
+    return *this;
 }
+
+} //naemspace sf
