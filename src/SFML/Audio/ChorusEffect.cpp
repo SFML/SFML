@@ -199,4 +199,4 @@ ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
 
     return *this;
 }
-} //namespace sf
+} // namespace sf

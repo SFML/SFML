@@ -37,7 +37,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource()
-    : m_effect(nullptr)
+    : m_effect(NULL)
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
@@ -46,7 +46,7 @@ SoundSource::SoundSource()
 
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource(const SoundSource& copy)
-    : m_effect(nullptr)
+    : m_effect(NULL)
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));

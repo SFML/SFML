@@ -189,7 +189,7 @@ private:
     float m_delay;
 
     //handle to OpenAL effect returned by setType();
-    std::uint32_t m_effect;
+    sf::Uint32 m_effect;
 };
 }
 

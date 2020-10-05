@@ -39,15 +39,15 @@ namespace
 {
     //these are defined so that they can be shared between EAX/non-EAX
     //versions of the reverb effect. See applyParameterNames()
-    std::uint32_t REVERB_DENSITY              = 0;
-    std::uint32_t REVERB_DIFFUSION            = 0;
-    std::uint32_t REVERB_GAIN                 = 0;
-    std::uint32_t REVERB_DECAY_TIME           = 0;
-    std::uint32_t REVERB_REFLECTIONS_GAIN     = 0;
-    std::uint32_t REVERB_REFLECTIONS_DELAY    = 0;
-    std::uint32_t REVERB_LATE_REVERB_GAIN     = 0;
-    std::uint32_t REVERB_LATE_REVERB_DELAY    = 0;
-    std::uint32_t REVERB_ROOM_ROLLOFF_FACTOR  = 0;
+    sf::Uint32 REVERB_DENSITY              = 0;
+    sf::Uint32 REVERB_DIFFUSION            = 0;
+    sf::Uint32 REVERB_GAIN                 = 0;
+    sf::Uint32 REVERB_DECAY_TIME           = 0;
+    sf::Uint32 REVERB_REFLECTIONS_GAIN     = 0;
+    sf::Uint32 REVERB_REFLECTIONS_DELAY    = 0;
+    sf::Uint32 REVERB_LATE_REVERB_GAIN     = 0;
+    sf::Uint32 REVERB_LATE_REVERB_DELAY    = 0;
+    sf::Uint32 REVERB_ROOM_ROLLOFF_FACTOR  = 0;
 }
 
 namespace sf
