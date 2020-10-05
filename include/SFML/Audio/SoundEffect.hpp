@@ -137,6 +137,16 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual ~SoundEffect();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundEffect& operator =(const SoundEffect& right);
+
 private:
     friend class SoundSource;
 

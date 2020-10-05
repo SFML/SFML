@@ -170,6 +170,8 @@ float DelayEffect::getSpread() const
 ////////////////////////////////////////////////////////////
 DelayEffect& DelayEffect::operator= (const DelayEffect& right)
 {
+    SoundEffect::operator=(right);
+
     setDelay(right.getDelay());
     setLRDelay(right.getLRDelay());
     setDamping(right.getDamping());

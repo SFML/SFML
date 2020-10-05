@@ -276,6 +276,8 @@ float ReverbEffect::getRoomRolloff() const
 ////////////////////////////////////////////////////////////
 ReverbEffect& ReverbEffect::operator= (const ReverbEffect& right)
 {
+    SoundEffect::operator=(right);
+
     setDensity(right.getDensity());
     setDiffusion(right.getDiffusion());
     setGain(right.getGain());
