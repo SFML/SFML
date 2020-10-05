@@ -272,8 +272,8 @@ private:
     std::uint32_t m_effect; 
 
     ////////////////////////////////////////////////////////////
-    /// \brief Used to apply the correct paramter names depending
-    /// on whether the currnt system supports EAX or regular reverb
+    /// \brief Used to apply the correct parameter names depending
+    /// on whether the current system supports EAX or regular reverb
     ////////////////////////////////////////////////////////////
     void applyParameterNames();
 };
