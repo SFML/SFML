@@ -39,6 +39,7 @@
 
 #include <map>
 #include <algorithm>
+#include <memory>
 
 namespace
 {
@@ -134,6 +135,16 @@ void SoundEffect::setVolume(float vol)
 float SoundEffect::getVolume() const
 {
     return m_volume;
+}
+
+
+////////////////////////////////////////////////////////////
+SoundEffect& SoundEffect::operator=(const SoundEffect& right)
+{
+    SoundEffect temp(right);
+    std::swap(m_soundlist, temp.m_soundlist);
+
+    return *this;
 }
 
 

@@ -283,6 +283,7 @@ public:
     /// \brief Set an effect to be applied to the sound source
     ///
     /// \param effect Pointer to a SoundEffect object, or nullptr.
+    /// Setting this to nullptr will remove any currently assigned effects.
     /// \see SoundEffect
     ///
     ////////////////////////////////////////////////////////////
@@ -322,7 +323,7 @@ protected:
     ////////////////////////////////////////////////////////////
     unsigned int m_source; //!< OpenAL source identifier
 
-    SoundEffect* m_effect;
+    const SoundEffect* m_effect;
 };
 
 } // namespace sf

@@ -191,6 +191,8 @@ float ChorusEffect::getDelay() const
 ////////////////////////////////////////////////////////////
 ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
 {
+    SoundEffect::operator=(right);
+
     setWaveform(right.getWaveform());
     setPhase(right.getPhase());
     setRate(right.getRate());

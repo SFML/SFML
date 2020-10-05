@@ -234,7 +234,7 @@ void SoundSource::setEffect(const SoundEffect* effect)
     }
 
     // Assign and use the new effect
-    m_effect = const_cast<SoundEffect*>(effect);
+    m_effect = effect;
     if (m_effect)
     {
         m_effect->attachSoundSource(this);
