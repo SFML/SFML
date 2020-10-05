@@ -273,6 +273,23 @@ float ReverbEffect::getRoomRolloff() const
 
 
 ////////////////////////////////////////////////////////////
+ReverbEffect& ReverbEffect::operator= (const ReverbEffect& right)
+{
+    setDensity(right.getDensity());
+    setDiffusion(right.getDiffusion());
+    setGain(right.getGain());
+    setDecayTime(right.getDecayTime());
+    setReflectionGain(right.getReflectionGain());
+    setReflectionDelay(right.getReflectionDelay());
+    setLateReverbGain(right.getLateReverbGain());
+    setLateReverbDelay(right.getLateReverbDelay());
+    setRoomRolloff(right.getRoomRolloff());
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
 void ReverbEffect::applyParameterNames()
 {
     //sets the correct values depending on if this

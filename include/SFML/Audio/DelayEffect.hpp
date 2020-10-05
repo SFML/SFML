@@ -109,7 +109,7 @@ public:
     /// This property controls how hard panned the individual echoes are.
     /// With a value of 1.0, the first 'tap' will be panned hard left, and
     /// the second tap hard right. A value of –1.0 gives the opposite result.
-    /// Settings nearer to 0.0 result in less emphasized panning.
+    /// Settings nearer to 0.0 result in less emphasised panning.
     /// 
     /// \param spread The spread value to set, between -1.f and 1.f, Defaults to -1.0
     ////////////////////////////////////////////////////////////
@@ -145,6 +145,16 @@ public:
     /// \see setSpread()
     ////////////////////////////////////////////////////////////
     float getSpread() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    DelayEffect& operator =(const DelayEffect& right);
 
 private:
 

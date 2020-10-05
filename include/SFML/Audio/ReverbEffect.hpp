@@ -247,6 +247,16 @@ public:
     ////////////////////////////////////////////////////////////
     float getRoomRolloff() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    ReverbEffect& operator =(const ReverbEffect& right);
+
 private:
     float m_density;
     float m_diffusion;

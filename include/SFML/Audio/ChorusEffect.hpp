@@ -169,6 +169,16 @@ public:
     ////////////////////////////////////////////////////////////
     float getDelay() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    ChorusEffect& operator =(const ChorusEffect& right);
+
 private:
 
     Waveform m_waveform;

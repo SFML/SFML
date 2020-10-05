@@ -10,7 +10,7 @@
 /// Play a sound
 ///
 ////////////////////////////////////////////////////////////
-void playSound()
+void playSound(sf::ReverbEffect& effect)
 {
     // Load a sound buffer from a wav file
     sf::SoundBuffer buffer;
@@ -25,9 +25,6 @@ void playSound()
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
-
-    // Create a reverb effect to assign to the sound
-    sf::DelayEffect effect;
 
     for (int i = 0; i < 2; ++i)
     {
@@ -44,10 +41,10 @@ void playSound()
             std::cout << std::flush;
         }
 
-        //apply the reverb effect
+        // apply the reverb effect
         sound.setEffect(&effect);
-        //effect.setDecayTime(20.f);
-        //effect.setDensity(0.f);
+        effect.setDecayTime(20.f);
+        effect.setDensity(0.f);
     }
     std::cout << std::endl << std::endl;
 }
@@ -96,8 +93,11 @@ void playMusic(const std::string& filename)
 ////////////////////////////////////////////////////////////
 int main()
 {
+    // Create a reverb effect to assign to the sound
+    sf::ReverbEffect effect;
+
     // Play a sound
-    playSound();
+    playSound(effect);
 
     // Play music from an ogg file
     playMusic("doodle_pop.ogg");
