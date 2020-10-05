@@ -48,8 +48,8 @@ namespace
     {
         CountedEffect() : handle(0), count(0) {}
 
-        std::uint32_t handle;
-        std::uint32_t count;
+        sf::Uint32 handle;
+        sf::Uint32 count;
     };
     std::map<sf::SoundEffect::Type, CountedEffect> effects;
 }
@@ -137,7 +137,7 @@ float SoundEffect::getVolume() const
 
 
 ////////////////////////////////////////////////////////////
-std::uint32_t SoundEffect::setType(SoundEffect::Type type)
+sf::Uint32 SoundEffect::setType(SoundEffect::Type type)
 {
     switch (type)
     {

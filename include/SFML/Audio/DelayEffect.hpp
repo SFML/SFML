@@ -165,7 +165,7 @@ private:
     float m_spread;
 
     //OpenAL handle returned by setType()
-    std::uint32_t m_effect;
+    sf::Uint32 m_effect;
 };
 }
 

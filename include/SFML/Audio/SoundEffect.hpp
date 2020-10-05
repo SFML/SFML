@@ -31,7 +31,6 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
 #include <set>
-#include <cstdint>
 
 namespace sf
 {
@@ -102,7 +101,7 @@ protected:
     /// effects classes to modify specific effects properties.
     ///
     ////////////////////////////////////////////////////////////
-    std::uint32_t setType(Type type);
+    sf::Uint32 setType(Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Reapplies any effects parameters.
@@ -157,8 +156,8 @@ private:
     ////////////////////////////////////////////////////////////
     void detachSoundSource(SoundSource* source) const;
 
-    std::uint32_t m_effectSlot; //!< OpenAL Effects slot handle
-    std::uint32_t m_effect;     //!< OpenAL Effect handle assigned to this slot
+    sf::Uint32 m_effectSlot;    //!< OpenAL Effects slot handle
+    sf::Uint32 m_effect;        //!< OpenAL Effect handle assigned to this slot
 
     Type m_type;                //!< Type of effect assigned to this slot
     float m_volume;             //!< Current volume of this slot

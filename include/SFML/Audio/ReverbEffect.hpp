@@ -269,7 +269,7 @@ private:
     float m_roomRolloff;
 
     //OpenAL handle if setType() is successful
-    std::uint32_t m_effect; 
+    sf::Uint32 m_effect; 
 
     ////////////////////////////////////////////////////////////
     /// \brief Used to apply the correct parameter names depending
