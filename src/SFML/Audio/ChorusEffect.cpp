@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ChorusEffect.hpp>
 
-#include "ALCheck.hpp"
-
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
@@ -41,16 +39,15 @@ namespace sf
 //defaults are set as p67 of the effect extension guide
 ////////////////////////////////////////////////////////////
 ChorusEffect::ChorusEffect()
-    : SoundEffect   (),
+    : SoundEffect   (AL_EFFECT_CHORUS),
     m_waveform      (Triangle),
     m_phase         (90),
     m_rate          (1.1f),
     m_depth         (0.1f),
     m_feedback      (0.25f),
-    m_delay         (0.016f),
-    m_effect        (0)
+    m_delay         (0.016f)
 {
-    m_effect = setType(Chorus);
+
 }
 
 
@@ -62,11 +59,8 @@ ChorusEffect::ChorusEffect(const ChorusEffect& copy)
     m_rate          (1.1f),
     m_depth         (0.1f),
     m_feedback      (0.25f),
-    m_delay         (0.016f),
-    m_effect        (0)
+    m_delay         (0.016f)
 {
-    m_effect = setType(Chorus);
-
     setWaveform(copy.getWaveform());
     setPhase(copy.getPhase());
     setRate(copy.getRate());
@@ -79,72 +73,48 @@ ChorusEffect::ChorusEffect(const ChorusEffect& copy)
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setWaveform(Waveform waveform)
 {
-    assert(m_effect != 0);
-
     m_waveform = waveform;
-    alCheck(alEffecti(m_effect, AL_CHORUS_WAVEFORM, waveform == Triangle ? AL_CHORUS_WAVEFORM_TRIANGLE : AL_CHORUS_WAVEFORM_SINUSOID));
-
-    applyEffect();
+    setParameter(AL_CHORUS_WAVEFORM, waveform == Triangle ? AL_CHORUS_WAVEFORM_TRIANGLE : AL_CHORUS_WAVEFORM_SINUSOID);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setPhase(sf::Int32 phase)
 {
-    assert(m_effect != 0);
-
     m_phase = std::min(180, std::max(-180, phase));
-    alCheck(alEffecti(m_effect, AL_CHORUS_PHASE, m_phase));
-
-    applyEffect();
+    setParameter(AL_CHORUS_PHASE, m_phase);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setRate(float rate)
 {
-    assert(m_effect != 0);
-
     m_rate = std::min(10.f, std::max(0.f, rate));
-    alCheck(alEffectf(m_effect, AL_CHORUS_RATE, m_rate));
-
-    applyEffect();
+    setParameter(AL_CHORUS_RATE, m_rate);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setDepth(float depth)
 {
-    assert(m_effect != 0);
-
     m_depth = std::min(1.f, std::max(0.f, depth));
-    alCheck(alEffectf(m_effect, AL_CHORUS_DEPTH, m_depth));
-
-    applyEffect();
+    setParameter(AL_CHORUS_DEPTH, m_depth);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setFeedback(float feedback)
 {
-    assert(m_effect != 0);
-
     m_feedback = std::min(1.f, std::max(-1.f, feedback));
-    alCheck(alEffectf(m_effect, AL_CHORUS_FEEDBACK, m_feedback));
-
-    applyEffect();
+    setParameter(AL_CHORUS_FEEDBACK, m_feedback);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ChorusEffect::setDelay(float delay)
 {
-    assert(m_effect != 0);
-
     m_delay = std::min(0.016f, std::max(0.f, delay));
-    alCheck(alEffectf(m_effect, AL_CHORUS_DELAY, m_delay));
-
-    applyEffect();
+    setParameter(AL_CHORUS_DELAY, m_delay);
 }
 
 

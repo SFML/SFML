@@ -114,7 +114,7 @@ int main()
 
     // Play music from a flac file
     reverbEffect.setDecayTime(5.f);
-    reverbEffect.setDensity(0.1f);
+    reverbEffect.setDiffusion(0.1f);
     playMusic("ding.flac", reverbEffect);
 
     // Play music from a mp3 file

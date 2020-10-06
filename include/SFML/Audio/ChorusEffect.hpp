@@ -187,9 +187,6 @@ private:
     float m_depth;
     float m_feedback;
     float m_delay;
-
-    //handle to OpenAL effect returned by setType();
-    sf::Uint32 m_effect;
 };
 }
 

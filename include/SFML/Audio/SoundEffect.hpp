@@ -51,27 +51,6 @@ public:
     static bool isAvailable();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Used to determine which type of effect has been implemented
-    ///
-    /// Generally not useful for classes outside of those which implement
-    /// a specific type of effect.
-    /// 
-    ////////////////////////////////////////////////////////////
-    enum Type
-    {
-        Null,
-        Reverb,
-        Chorus,
-        Delay
-    };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Returns the type of effect implemented
-    ///
-    ////////////////////////////////////////////////////////////
-    Type getType() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Sets the volume for this effect
     ///
     /// The volume is in the range 0 - 1, multiplying the output volume
@@ -92,34 +71,15 @@ public:
 protected:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the type of effect this will be
-    ///
-    /// When implementing a specific effect type this sould be called on effect
-    /// creation so that the underlying effects object is properly configured
-    ///
-    /// \returns A handle to the OpenAL effects object. This can be used by
-    /// effects classes to modify specific effects properties.
-    ///
-    ////////////////////////////////////////////////////////////
-    sf::Uint32 setType(Type type);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Reapplies any effects parameters.
-    ///
-    /// When a derived class updates any effects parameters this must be called
-    /// so that the new paramter values take effect.
-    ///
-    ////////////////////////////////////////////////////////////
-    void applyEffect();
-
-
-    ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// Protected so that it may only be called by derived classes
     ///
+    /// \param alEffectType AL_EFFECT_X enum type to declare which effect
+    /// should be used.
+    ///
     ////////////////////////////////////////////////////////////
-    SoundEffect();
+    explicit SoundEffect(int alEffectType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -136,6 +96,28 @@ protected:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~SoundEffect();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sets an effect parameter
+    ///
+    /// \param parameter AL_EFFECTNAME_PARAM enum declaraing
+    /// parameter name to be set
+    ///
+    /// \param value Value to set the parameter to
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(int parameter, float value);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sets an effect parameter
+    ///
+    /// \param parameter AL_EFFECTNAME_PARAM enum declaraing
+    /// parameter name to be set
+    ///
+    /// \param value Value to set the parameter to
+    ///
+    ////////////////////////////////////////////////////////////
+    void setParameter(int parameter, int value);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -168,12 +150,12 @@ private:
 
     sf::Uint32 m_effectSlot;    //!< OpenAL Effects slot handle
     sf::Uint32 m_effect;        //!< OpenAL Effect handle assigned to this slot
+    int m_type;                 //!< OpenAL Effect type used to track reference counting
 
-    Type m_type;                //!< Type of effect assigned to this slot
     float m_volume;             //!< Current volume of this slot
 
     mutable std::set<SoundSource*> m_soundlist; //!< List of SoundSources using this effect
-    void ensureEffect(Type);    //!< Used to ensure that there is only one instance of OpenAL effect object for each type
+    void ensureEffect(int);    //!< Used to ensure that there is only one instance of OpenAL effect object for each type
 };
 }
 
@@ -185,17 +167,10 @@ private:
 ///
 /// Base class for creating OpenAL sound effects. This class is
 /// used to wrap an OpenAL EffectsSlot and assign an Effect object
-/// to it. It is up to derived classes to implemented specific
-/// effect types, the interface for adjusting paramters for that
-/// effect, and making sure that this class knows which effect is
-/// being implemented.
+/// to it. It is up to derived classes to implemented the interface
+/// for adjusting parameters a specific effect type.
 ///
-/// This is done by the derived class calling setType() with a
-/// given type defined in the SoundEffect::Type enumeration. This
-/// class will then return a handle to an effect object of that type
-/// if it is successful, else 0 if the type requested was invalid
-/// or could not be created for some reason.
 /// 
-/// \see sf::ReverbEffect
+/// \see sf::ReverbEffect, sf::ChorusEffect, sf::DelayEffect
 ///
 ////////////////////////////////////////////////////////////

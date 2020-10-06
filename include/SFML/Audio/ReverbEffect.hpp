@@ -268,8 +268,6 @@ private:
     float m_lateReverbDelay;
     float m_roomRolloff;
 
-    //OpenAL handle if setType() is successful
-    sf::Uint32 m_effect; 
 
     ////////////////////////////////////////////////////////////
     /// \brief Used to apply the correct parameter names depending
