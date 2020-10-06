@@ -53,19 +53,23 @@ namespace
         sf::Uint32 handle;
         sf::Uint32 count;
     };
-    std::map<sf::SoundEffect::Type, CountedEffect> effects;
+    std::map<int, CountedEffect> effects;
 }
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundEffect::SoundEffect()
+SoundEffect::SoundEffect(int effectType)
     : m_effectSlot  (0),
     m_effect        (0),
-    m_type          (Null),
+    m_type          (effectType),
     m_volume        (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
+
+    ensureEffect(effectType);
+    alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, effectType));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
 }
 
 
@@ -73,10 +77,14 @@ SoundEffect::SoundEffect()
 SoundEffect::SoundEffect(const SoundEffect& copy)
     : m_effectSlot  (0),
     m_effect        (0),
-    m_type          (Null),
+    m_type          (copy.m_type),
     m_volume        (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
+
+    //make sure we properly reference count our handle
+    ensureEffect(m_type);
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
 
     //copy properties from copy
     setVolume(copy.getVolume());
@@ -116,13 +124,6 @@ bool SoundEffect::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-SoundEffect::Type SoundEffect::getType() const
-{
-    return m_type;
-}
-
-
-////////////////////////////////////////////////////////////
 void SoundEffect::setVolume(float vol)
 {
     m_volume = std::min(1.f, std::max(0.f, vol));
@@ -139,56 +140,27 @@ float SoundEffect::getVolume() const
 
 
 ////////////////////////////////////////////////////////////
+void SoundEffect::setParameter(int parameter, float value)
+{
+    alCheck(alEffectf(m_effect, parameter, value));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::setParameter(int parameter, int value)
+{
+    alCheck(alEffecti(m_effect, parameter, value));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+}
+
+////////////////////////////////////////////////////////////
 SoundEffect& SoundEffect::operator=(const SoundEffect& right)
 {
     SoundEffect temp(right);
     std::swap(m_soundlist, temp.m_soundlist);
 
     return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-sf::Uint32 SoundEffect::setType(SoundEffect::Type type)
-{
-    switch (type)
-    {
-    default:
-        err() << type << ": not a known effect type." << std::endl;
-        return 0;
-    case Reverb:
-        ensureEffect(type);
-
-        //check if EAX reverb is  available
-        if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0)
-        {
-            alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB));
-        }
-        else
-        {
-            alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_REVERB));
-        }
-        break;
-    case Chorus:
-        ensureEffect(type);
-        alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_CHORUS));
-        break;
-    case Delay:
-        ensureEffect(type);
-        alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, AL_EFFECT_ECHO));
-        break;
-    }
-
-    m_type = type;
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
-    return m_effect;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundEffect::applyEffect()
-{
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
 }
 
 
@@ -207,7 +179,7 @@ void SoundEffect::detachSoundSource(SoundSource* sound) const
 
 
 ////////////////////////////////////////////////////////////
-void SoundEffect::ensureEffect(Type type)
+void SoundEffect::ensureEffect(int type)
 {
     if (effects.count(type) == 0)
     {

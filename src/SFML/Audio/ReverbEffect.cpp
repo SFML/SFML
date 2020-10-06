@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ReverbEffect.hpp>
 
-#include "ALCheck.hpp"
-
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
@@ -56,7 +54,7 @@ namespace sf
 //values are initialised according to OpenAL extension guide p.66
 ////////////////////////////////////////////////////////////
 ReverbEffect::ReverbEffect()
-    : SoundEffect       (),
+    : SoundEffect       (alGetEnumValue("AL_EFFECT_EAXREVERB") == 0 ? AL_EFFECT_REVERB : AL_EFFECT_EAXREVERB),
     m_density           (1.f),
     m_diffusion         (1.f),
     m_gain              (0.32f),
@@ -65,10 +63,8 @@ ReverbEffect::ReverbEffect()
     m_reflectionDelay   (0.007f),
     m_lateReverbGain    (1.26f),
     m_lateReverbDelay   (0.011f),
-    m_roomRolloff       (0.f),
-    m_effect            (0)
+    m_roomRolloff       (0.f)
 {
-    m_effect = setType(SoundEffect::Reverb);
     applyParameterNames();
 }
 
@@ -84,10 +80,8 @@ ReverbEffect::ReverbEffect(const ReverbEffect& copy)
     m_reflectionDelay   (0.007f),
     m_lateReverbGain    (1.26f),
     m_lateReverbDelay   (0.011f),
-    m_roomRolloff       (0.f),
-    m_effect            (0)
+    m_roomRolloff       (0.f)
 {
-    m_effect = setType(SoundEffect::Reverb);
     applyParameterNames();
 
     setDensity(copy.getDensity());
@@ -105,108 +99,72 @@ ReverbEffect::ReverbEffect(const ReverbEffect& copy)
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setDensity(float density)
 {
-    assert(m_effect != 0);
-
     m_density = std::min(1.f, std::max(0.f, density));
-    alCheck(alEffectf(m_effect, REVERB_DENSITY, m_density));
-
-    applyEffect();
+    setParameter(REVERB_DENSITY, m_density);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setDiffusion(float diffusion)
 {
-    assert(m_effect != 0);
-
     m_diffusion = std::min(1.f, std::max(0.f, diffusion));
-    alCheck(alEffectf(m_effect, REVERB_DIFFUSION, m_density));
-
-    applyEffect();
+    setParameter(REVERB_DIFFUSION, m_density);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setGain(float gain)
 {
-    assert(m_effect != 0);
-
     m_gain = std::min(1.f, std::max(0.f, gain));
-    alCheck(alEffectf(m_effect, REVERB_GAIN, m_gain));
-
-    applyEffect();
+    setParameter(REVERB_GAIN, m_gain);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setDecayTime(float decayTime)
 {
-    assert(m_effect != 0);
-
     m_decayTime = std::min(20.f, std::max(0.1f, decayTime));
-    alCheck(alEffectf(m_effect, REVERB_DECAY_TIME, m_decayTime));
-
-    applyEffect();
+    setParameter(REVERB_DECAY_TIME, m_decayTime);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setReflectionGain(float gain)
 {
-    assert(m_effect != 0);
-
     m_reflectionGain = std::min(1.f, std::max(0.f, gain));
-    alCheck(alEffectf(m_effect, REVERB_REFLECTIONS_GAIN, m_reflectionGain));
-
-    applyEffect();
+    setParameter(REVERB_REFLECTIONS_GAIN, m_reflectionGain);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setReflectionDelay(float delay)
 {
-    assert(m_effect != 0);
-
     m_reflectionDelay = std::min(0.3f, std::max(0.f, delay));
-    alCheck(alEffectf(m_effect, REVERB_REFLECTIONS_DELAY, m_reflectionDelay));
-
-    applyEffect();
+    setParameter(REVERB_REFLECTIONS_DELAY, m_reflectionDelay);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setLateReverbGain(float gain)
 {
-    assert(m_effect != 0);
-
     m_lateReverbGain = std::min(10.f, std::max(0.f, gain));
-    alCheck(alEffectf(m_effect, REVERB_LATE_REVERB_GAIN, m_lateReverbGain));
-
-    applyEffect();
+    setParameter(REVERB_LATE_REVERB_GAIN, m_lateReverbGain);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setLateReverbDelay(float delay)
 {
-    assert(m_effect != 0);
-
     m_lateReverbDelay = std::min(0.1f, std::max(0.f, delay));
-    alCheck(alEffectf(m_effect, REVERB_LATE_REVERB_DELAY, m_lateReverbDelay));
-
-    applyEffect();
+    setParameter(REVERB_LATE_REVERB_DELAY, m_lateReverbDelay);
 }
 
 
 ////////////////////////////////////////////////////////////
 void ReverbEffect::setRoomRolloff(float rolloff)
 {
-    assert(m_effect != 0);
-
     m_roomRolloff = std::min(10.f, std::max(0.f, rolloff));
-    alCheck(alEffectf(m_effect, REVERB_ROOM_ROLLOFF_FACTOR, m_roomRolloff));
-
-    applyEffect();
+    setParameter(REVERB_ROOM_ROLLOFF_FACTOR, m_roomRolloff);
 }
 
 

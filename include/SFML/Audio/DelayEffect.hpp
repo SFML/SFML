@@ -163,9 +163,6 @@ private:
     float m_damping;
     float m_feedback;
     float m_spread;
-
-    //OpenAL handle returned by setType()
-    sf::Uint32 m_effect;
 };
 }
 
