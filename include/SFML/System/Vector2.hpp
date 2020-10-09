@@ -285,7 +285,7 @@ typedef Vector2<float>        Vector2f;
 ///
 /// Usage example:
 /// \code
-/// sf::Vector2f v1(16.5f, 24.f);
+/// sf::Vector2f v1 = { 16.2f, 2.0f}
 /// v1.x = 18.2f;
 /// float y = v1.y;
 ///
