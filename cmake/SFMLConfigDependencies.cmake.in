@@ -62,6 +62,7 @@ if(SFML_STATIC_LIBRARIES)
     if(FIND_SFML_AUDIO_COMPONENT_INDEX GREATER -1)
         find_package(Vorbis)
         find_package(FLAC)
+        find_package(Opus)
     endif()
 
     if(FIND_SFML_DEPENDENCIES_NOTFOUND)

@@ -96,7 +96,7 @@ target_compile_definitions(sfml-audio PRIVATE MA_NO_MP3 MA_NO_FLAC MA_NO_ENCODIN
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
-                      PRIVATE Vorbis::vorbis FLAC::FLAC)
+                      PRIVATE Vorbis::vorbis FLAC::FLAC Opus::opus)
 if(SFML_OS_IOS)
     target_link_libraries(sfml-audio PRIVATE "-framework Foundation" "-framework CoreFoundation" "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation")
 else()
