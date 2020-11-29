@@ -89,7 +89,10 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 
     switch (type)
     {
-        default: return false;
+        default:
+            if (m_cursor)
+                [m_cursor retain];
+            return false;
 
         case Cursor::Arrow:           m_cursor = [NSCursor arrowCursor];               break;
         case Cursor::Text:            m_cursor = [NSCursor IBeamCursor];               break;
