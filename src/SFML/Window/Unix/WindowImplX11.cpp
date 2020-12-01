@@ -1145,7 +1145,9 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
     }
     else
     {
+        // Release the cursor from the window and disable cursor grabbing
         XUngrabPointer(m_display, CurrentTime);
+        m_cursorGrabbed = false;
     }
 }
 
