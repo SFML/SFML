@@ -91,6 +91,11 @@
         // OpenBSD
         #define SFML_SYSTEM_OPENBSD
 
+    #elif defined(__NetBSD__)
+
+        // NetBSD
+        #define SFML_SYSTEM_NETBSD
+
     #else
 
         // Unsupported UNIX system
