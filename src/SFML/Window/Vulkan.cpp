@@ -32,7 +32,7 @@
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
 typedef sf::priv::VulkanImplWin32 VulkanImplType;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
 #include <SFML/Window/Unix/VulkanImplX11.hpp>
 typedef sf::priv::VulkanImplX11 VulkanImplType;
