@@ -46,7 +46,7 @@ Sprite::Sprite(const Texture& texture) :
 m_texture    (NULL),
 m_textureRect()
 {
-    setTexture(texture);
+    setTexture(texture, true);
 }
 
 
@@ -55,8 +55,8 @@ Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
 m_texture    (NULL),
 m_textureRect()
 {
-    setTexture(texture);
     setTextureRect(rectangle);
+    setTexture(texture, false);
 }
 
 
