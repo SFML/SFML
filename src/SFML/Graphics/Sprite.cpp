@@ -55,7 +55,9 @@ Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
 m_texture    (NULL),
 m_textureRect()
 {
+    // Compute the texture area
     setTextureRect(rectangle);
+    // Assign texture
     setTexture(texture, false);
 }
 
@@ -65,7 +67,10 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
     // Recompute the texture area if requested, or if there was no valid texture & rect before
     if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
-        setTextureRect(IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+    {
+        Vector2u size = texture.getSize();
+        setTextureRect(IntRect(0, 0, size.x, size.y));
+    }
 
     // Assign the new texture
     m_texture = &texture;
