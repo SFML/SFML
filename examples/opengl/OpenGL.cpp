@@ -55,7 +55,7 @@ int main()
 
         // Create some text to draw on top of our OpenGL object
         sf::Font font;
-        if (!font.loadFromFile(resourcesDir() + "sansation.ttf"))
+        if (!font.loadFromFile(resourcesDir() + "tuffy.ttf"))
             return EXIT_FAILURE;
         sf::Text text("SFML / OpenGL demo", font);
         sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
@@ -63,13 +63,13 @@ int main()
         text.setFillColor(sf::Color(255, 255, 255, 170));
         sRgbInstructions.setFillColor(sf::Color(255, 255, 255, 170));
         mipmapInstructions.setFillColor(sf::Color(255, 255, 255, 170));
-        text.setPosition(250.f, 450.f);
-        sRgbInstructions.setPosition(150.f, 500.f);
-        mipmapInstructions.setPosition(180.f, 550.f);
+        text.setPosition(280.f, 450.f);
+        sRgbInstructions.setPosition(175.f, 500.f);
+        mipmapInstructions.setPosition(200.f, 550.f);
 
         // Load a texture to apply to our 3D cube
         sf::Texture texture;
-        if (!texture.loadFromFile(resourcesDir() + "texture.jpg"))
+        if (!texture.loadFromFile(resourcesDir() + "logo.png"))
             return EXIT_FAILURE;
 
         // Attempt to generate a mipmap for our cube texture
@@ -209,7 +209,7 @@ int main()
                     if (mipmapEnabled)
                     {
                         // We simply reload the texture to disable mipmapping
-                        if (!texture.loadFromFile(resourcesDir() + "texture.jpg"))
+                        if (!texture.loadFromFile(resourcesDir() + "logo.png"))
                             return EXIT_FAILURE;
 
                         mipmapEnabled = false;
@@ -274,7 +274,7 @@ int main()
             #ifdef SFML_SYSTEM_IOS
             pos = sf::Touch::getPosition(0);
             #else
-            pos = sf::Mouse::getPosition();
+            pos = sf::Mouse::getPosition(window);
             #endif
 
             float x = pos.x * 200.f / window.getSize().x - 100.f;

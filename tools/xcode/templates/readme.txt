@@ -13,13 +13,14 @@ You can find more resources and information on the official web site: http://www
 
 
 
-Author & License
+Authors & Licenses
 ----------------
 
 The templates were written by Marco Antognini <antognini.marco@gmail.com> and are provided under
 the terms of the zlib/png license: http://opensource.org/licenses/zlib-license.php
 
-
+The assets including doodle_pop.ogg and background.jpg are public domain. More information
+can be found in the examples/ folder.
 
 Features
 --------
