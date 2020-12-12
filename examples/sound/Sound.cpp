@@ -15,11 +15,11 @@ void playSound()
 {
     // Load a sound buffer from a wav file
     sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile("resources/canary.wav"))
+    if (!buffer.loadFromFile("resources/killdeer.wav"))
         return;
 
     // Display sound informations
-    std::cout << "canary.wav:" << std::endl;
+    std::cout << "killdeer.wav:" << std::endl;
     std::cout << " " << buffer.getDuration().asSeconds() << " seconds"       << std::endl;
     std::cout << " " << buffer.getSampleRate()           << " samples / sec" << std::endl;
     std::cout << " " << buffer.getChannelCount()         << " channels"      << std::endl;
@@ -88,7 +88,7 @@ int main()
     playSound();
 
     // Play music from an ogg file
-    playMusic("orchestral.ogg");
+    playMusic("doodle_pop.ogg");
 
     // Play music from a flac file
     playMusic("ding.flac");

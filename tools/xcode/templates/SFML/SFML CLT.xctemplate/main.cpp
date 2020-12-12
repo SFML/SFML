@@ -5,7 +5,7 @@
 //
 // This code will work only if you selected window, graphics and audio.
 //
-// In order to load the resources like cute_image.png, you have to set up
+// In order to load the resources like background.png, you have to set up
 // your target scheme:
 //
 // - Select "Edit Scheme…" in the "Product" menu;
@@ -32,14 +32,14 @@ int main(int argc, char const** argv)
 
     // Load a sprite to display
     sf::Texture texture;
-    if (!texture.loadFromFile("cute_image.jpg")) {
+    if (!texture.loadFromFile("background.jpg")) {
         return EXIT_FAILURE;
     }
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
     sf::Font font;
-    if (!font.loadFromFile("sansation.ttf")) {
+    if (!font.loadFromFile("tuffy.ttf")) {
         return EXIT_FAILURE;
     }
     sf::Text text("Hello SFML", font, 50);
@@ -47,7 +47,7 @@ int main(int argc, char const** argv)
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile("nice_music.ogg")) {
+    if (!music.openFromFile("doodle_pop.ogg")) {
         return EXIT_FAILURE;
     }
 

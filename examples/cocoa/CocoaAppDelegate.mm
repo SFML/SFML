@@ -54,7 +54,7 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/sansation.ttf"))
+        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
             NSLog(@"Couldn't load the font");
 
         text.setFillColor(sf::Color::White);
