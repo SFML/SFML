@@ -22,115 +22,104 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_IMAGELOADER_HPP
-#define SFML_IMAGELOADER_HPP
+#ifndef SFML_JOYSTICKIMPLNETBSD_HPP
+#define SFML_JOYSTICKIMPLNETBSD_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <string>
+#include <dev/usb/usb.h>
+#include <dev/usb/usbhid.h>
+#include <usbhid.h>
 #include <vector>
-
 
 namespace sf
 {
-class InputStream;
-
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Load/save image files
+/// \brief FreeBSD implementation of joysticks
 ///
+/// This code has been tested on FreeBSD 9.1 only.
 ////////////////////////////////////////////////////////////
-class ImageLoader : NonCopyable
+class JoystickImpl
 {
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the unique instance of the class
-    ///
-    /// \return Reference to the ImageLoader instance
+    /// \brief Perform the global initialization of the joystick module
     ///
     ////////////////////////////////////////////////////////////
-    static ImageLoader& getInstance();
+    static void initialize();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load an image from a file on disk
-    ///
-    /// \param filename Path of image file to load
-    /// \param pixels   Array of pixels to fill with loaded image
-    /// \param size     Size of loaded image, in pixels
-    ///
-    /// \return True if loading was successful
+    /// \brief Perform the global cleanup of the joystick module
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, Vector2u& size);
+    static void cleanup();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load an image from a file in memory
+    /// \brief Check if a joystick is currently connected
     ///
-    /// \param data     Pointer to the file data in memory
-    /// \param dataSize Size of the data to load, in bytes
-    /// \param pixels   Array of pixels to fill with loaded image
-    /// \param size     Size of loaded image, in pixels
+    /// \param index Index of the joystick to check
     ///
-    /// \return True if loading was successful
+    /// \return True if the joystick is connected, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<Uint8>& pixels, Vector2u& size);
+    static bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load an image from a custom stream
+    /// \brief Open the joystick
     ///
-    /// \param stream Source stream to read from
-    /// \param pixels Array of pixels to fill with loaded image
-    /// \param size   Size of loaded image, in pixels
+    /// \param index Index assigned to the joystick
     ///
-    /// \return True if loading was successful
+    /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size);
+    bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Save an array of pixels as an image file
-    ///
-    /// \param filename Path of image file to save
-    /// \param pixels   Array of pixels to save to image
-    /// \param size     Size of image to save, in pixels
-    ///
-    /// \return True if saving was successful
+    /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size);
+    void close();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Save an array of pixels as an encoded image buffer
+    /// \brief Get the joystick capabilities
     ///
-    /// \param format   Must be "bmp", "png", "tga" or "jpg"/"jpeg".
-    /// \param output   Buffer to fill with encoded data
-    /// \param pixels   Array of pixels to save to image
-    /// \param size     Size of image to save, in pixels
-    ///
-    /// \return True if saving was successful
+    /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size);
+    JoystickCaps getCapabilities() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the joystick identification
+    ///
+    /// \return Joystick identification
+    ///
+    ////////////////////////////////////////////////////////////
+    Joystick::Identification getIdentification() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Update the joystick and get its new state
+    ///
+    /// \return Joystick state
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickState update();
 
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
+    // Member data
     ////////////////////////////////////////////////////////////
-    ImageLoader();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~ImageLoader();
+    int                      m_file;           ///< File descriptor of the joystick
+    report_desc_t            m_desc;           ///< USB report descriptor
+    int                      m_id;             ///< USB id
+    std::vector<char>        m_buffer;         ///< USB HID buffer
+    int                      m_length;         ///< Buffer length
+    Joystick::Identification m_identification; ///< Joystick identification
+    JoystickState            m_state;          ///< Current state of the joystick
 };
 
 } // namespace priv
@@ -138,4 +127,4 @@ private:
 } // namespace sf
 
 
-#endif // SFML_IMAGELOADER_HPP
+#endif // SFML_JOYSTICKIMPLNETBSD_HPP

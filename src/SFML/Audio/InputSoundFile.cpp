@@ -225,11 +225,11 @@ Uint64 InputSoundFile::getSampleOffset() const
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Uint64 sampleOffset)
 {
-    if (m_reader)
+    if (m_reader && m_channelCount != 0)
     {
         // The reader handles an overrun gracefully, but we
         // pre-check to keep our known position consistent
-        m_sampleOffset = std::min(sampleOffset, m_sampleCount);
+        m_sampleOffset = std::min(sampleOffset / m_channelCount * m_channelCount, m_sampleCount);
         m_reader->seek(m_sampleOffset);
     }
 }
@@ -238,7 +238,7 @@ void InputSoundFile::seek(Uint64 sampleOffset)
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Time timeOffset)
 {
-    seek(static_cast<Uint64>(timeOffset.asSeconds() * m_sampleRate * m_channelCount));
+    seek(static_cast<Uint64>(timeOffset.asSeconds() * m_sampleRate) * m_channelCount);
 }
 
 

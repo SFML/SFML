@@ -35,6 +35,10 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "^OpenBSD$")
     set(SFML_OS_OPENBSD 1)
     # don't use the OpenGL ES implementation on OpenBSD
     set(OPENGL_ES 0)
+elseif(CMAKE_SYSTEM_NAME MATCHES "^NetBSD$")
+    set(SFML_OS_NETBSD 1)
+    # don't use the OpenGL ES implementation on NetBSD
+    set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     if(IOS)
         set(SFML_OS_IOS 1)
@@ -73,7 +77,7 @@ endif()
 # this could be e.g. macports on mac or msys2 on windows etc.
 set(SFML_PKGCONFIG_DIR "/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD)
+if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
 endif()
 
