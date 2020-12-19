@@ -93,6 +93,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     HCURSOR m_cursor;
+    bool m_systemCursor;
 };
 
 } // namespace priv
