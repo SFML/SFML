@@ -181,7 +181,6 @@ void WindowImpl::processJoystickEvents()
         // Copy the previous state of the joystick and get the new one
         JoystickState previousState = m_joystickStates[i];
         m_joystickStates[i] = JoystickManager::getInstance().getState(i);
-        JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
 
         // Connection state
         bool connected = m_joystickStates[i].connected;
@@ -199,6 +198,8 @@ void WindowImpl::processJoystickEvents()
 
         if (connected)
         {
+            JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
+
             // Axes
             for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
             {
