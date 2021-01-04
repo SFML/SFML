@@ -366,7 +366,7 @@ Ftp::Response Ftp::sendCommand(const std::string& command, const std::string& pa
 {
     // Build the command string
     std::string commandStr;
-    if (parameter != "")
+    if (!parameter.empty())
         commandStr = command + " " + parameter + "\r\n";
     else
         commandStr = command + "\r\n";
