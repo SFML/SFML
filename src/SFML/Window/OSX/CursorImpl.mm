@@ -71,7 +71,11 @@ CursorImpl::~CursorImpl()
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
-    [m_cursor release];
+    if (m_cursor)
+    {
+        [m_cursor release];
+        m_cursor = nil;
+    }
 
     NSSize   nssize    = NSMakeSize(size.x, size.y);
     NSImage* image     = [NSImage imageWithRawData:pixels andSize:nssize];
@@ -85,7 +89,11 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
-    [m_cursor release];
+    if (m_cursor)
+    {
+        [m_cursor release];
+        m_cursor = nil;
+    }
 
     switch (type)
     {
