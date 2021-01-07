@@ -47,8 +47,8 @@ set(SRC
     ${INCROOT}/Transformable.hpp
     ${SRCROOT}/View.cpp
     ${INCROOT}/View.hpp
-    ${SRCROOT}/Vertex.cpp
     ${INCROOT}/Vertex.hpp
+    ${INCROOT}/Vertex.inl
 )
 source_group("" FILES ${SRC})
 
