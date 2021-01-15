@@ -164,7 +164,7 @@ void RenderTexture::display()
     if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
     {
         m_impl->updateTexture(m_texture.m_texture);
-        m_texture.m_pixelsFlipped = true;
+        m_texture.m_pixelsFlipped = false;
         m_texture.invalidateMipmap();
     }
 }
