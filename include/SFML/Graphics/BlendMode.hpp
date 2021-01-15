@@ -79,7 +79,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// Constructs a blending mode that does alpha blending.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode();
+    constexpr BlendMode();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
@@ -92,7 +92,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param blendEquation     Specifies how to combine the source and destination colors and alpha.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
+    constexpr BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
@@ -105,9 +105,9 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param alphaBlendEquation     Specifies how to combine the source and destination alphas.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
-              Equation colorBlendEquation, Factor alphaSourceFactor,
-              Factor alphaDestinationFactor, Equation alphaBlendEquation);
+    constexpr BlendMode(Factor colorSourceFactor, Factor colorDestinationFactor,
+                        Equation colorBlendEquation, Factor alphaSourceFactor,
+                        Factor alphaDestinationFactor, Equation alphaBlendEquation);
 
     ////////////////////////////////////////////////////////////
     // Member Data
@@ -130,7 +130,7 @@ struct SFML_GRAPHICS_API BlendMode
 /// \return True if blending modes are equal, false if they are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API bool operator ==(const BlendMode& left, const BlendMode& right);
+SFML_GRAPHICS_API constexpr bool operator ==(const BlendMode& left, const BlendMode& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates BlendMode
@@ -142,7 +142,7 @@ SFML_GRAPHICS_API bool operator ==(const BlendMode& left, const BlendMode& right
 /// \return True if blending modes are different, false if they are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API bool operator !=(const BlendMode& left, const BlendMode& right);
+SFML_GRAPHICS_API constexpr bool operator !=(const BlendMode& left, const BlendMode& right);
 
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
@@ -151,6 +151,8 @@ SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    //!< Blend source and de
 SFML_GRAPHICS_API extern const BlendMode BlendAdd;      //!< Add source to dest
 SFML_GRAPHICS_API extern const BlendMode BlendMultiply; //!< Multiply source and dest
 SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with source
+
+#include <SFML/Graphics/BlendMode.inl>
 
 } // namespace sf
 
