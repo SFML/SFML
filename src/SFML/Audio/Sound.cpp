@@ -160,6 +160,10 @@ Sound& Sound::operator =(const Sound& right)
     // the list of sound instances contained in the buffers and unnecessarily
     // destroy/create OpenAL sound sources
 
+    // Handle self-assignment here, as no copy-and-swap idiom is being used
+    if (this == &right)
+        return *this;
+
     // Delegate to base class, which copies all the sound attributes
     SoundSource::operator=(right);
 
