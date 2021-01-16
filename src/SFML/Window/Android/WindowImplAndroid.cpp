@@ -664,7 +664,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_BUTTON_THUMBR:
         case AKEYCODE_BUTTON_START:
         case AKEYCODE_BUTTON_SELECT:
-        case AKEYCODE_BUTTON_MODE:        return Keyboard::Unknown;
+        case AKEYCODE_BUTTON_MODE:
+        default:                          return Keyboard::Unknown;
     }
 }
 
