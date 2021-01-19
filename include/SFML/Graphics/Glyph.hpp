@@ -54,6 +54,7 @@ public:
     float     advance;     ///< Offset to move horizontally to the next character
     FloatRect bounds;      ///< Bounding rectangle of the glyph, in coordinates relative to the baseline
     IntRect   textureRect; ///< Texture coordinates of the glyph inside the font's texture
+    float lsb_delta, rsb_delta; ///< The difference between hinted and unhinted left/right side bearing while auto-hinting is active. Zero otherwise.
 };
 
 } // namespace sf

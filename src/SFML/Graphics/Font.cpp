@@ -544,7 +544,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         return glyph;
 
     // Load the glyph corresponding to the code point
-    FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
+    FT_Int32 flags = FT_LOAD_TARGET_NORMAL| FT_LOAD_FORCE_AUTOHINT;
     if (outlineThickness != 0)
         flags |= FT_LOAD_NO_BITMAP;
     if (FT_Load_Char(face, codePoint, flags) != 0)
@@ -593,6 +593,9 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     glyph.advance = static_cast<float>(face->glyph->metrics.horiAdvance) / static_cast<float>(1 << 6);
     if (bold)
         glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
+
+    glyph.lsb_delta = face->glyph->lsb_delta / static_cast<float>(1 << 6);
+    glyph.rsb_delta = face->glyph->rsb_delta / static_cast<float>(1 << 6);
 
     int width  = bitmap.width;
     int height = bitmap.rows;

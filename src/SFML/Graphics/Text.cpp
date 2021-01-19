@@ -349,6 +349,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     // Compute the position
     Vector2f position;
     Uint32 prevChar = 0;
+    float prev_rsb_delta = 0;
     for (std::size_t i = 0; i < index; ++i)
     {
         Uint32 curChar = m_string[i];
@@ -366,7 +367,15 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
+        const Glyph & glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
+        position.x += glyph.advance + letterSpacing;
+        float delta = prev_rsb_delta - glyph.lsb_delta;
+        if (delta > 0.5f)
+            position.x -= 1;
+        else if (delta < -0.5f)
+            position.x += 1;
+
+        prev_rsb_delta = glyph.rsb_delta;
     }
 
     // Transform the position to global coordinates
@@ -492,6 +501,8 @@ void Text::ensureGeometryUpdate() const
     float maxX = 0.f;
     float maxY = 0.f;
     Uint32 prevChar = 0;
+    float prev_rsb_delta = 0; // right side bearing of previous glyph
+
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
         Uint32 curChar = m_string[i];
@@ -567,6 +578,14 @@ void Text::ensureGeometryUpdate() const
 
         // Extract the current glyph's description
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
+
+        float delta = prev_rsb_delta - glyph.lsb_delta;
+        if (delta > 0.5f)
+            x -= 1;
+        else if (delta < -0.5f)
+            x += 1;
+
+        prev_rsb_delta = glyph.rsb_delta;
 
         // Add the glyph to the vertices
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
