@@ -544,7 +544,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         return glyph;
 
     // Load the glyph corresponding to the code point
-    FT_Int32 flags = FT_LOAD_TARGET_NORMAL| FT_LOAD_FORCE_AUTOHINT;
+    FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
     if (outlineThickness != 0)
         flags |= FT_LOAD_NO_BITMAP;
     if (FT_Load_Char(face, codePoint, flags) != 0)
