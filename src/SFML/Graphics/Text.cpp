@@ -332,7 +332,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         Uint32 curChar = m_string[i];
 
         // Apply the kerning offset
-        position.x += m_font->getKerning(prevChar, curChar, m_characterSize);
+        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
         prevChar = curChar;
 
         // Handle special characters
@@ -451,7 +451,7 @@ void Text::ensureGeometryUpdate() const
             continue;
 
         // Apply the kerning offset
-        x += m_font->getKerning(prevChar, curChar, m_characterSize);
+        x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
 
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == L'\n' && prevChar != L'\n'))
