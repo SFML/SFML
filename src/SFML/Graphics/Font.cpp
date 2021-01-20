@@ -396,6 +396,7 @@ float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize) 
 
         // Get the kerning vector
         FT_Vector kerning;
+        kerning.x = kerning.y = 0;
         if( FT_HAS_KERNING(face))
             FT_Get_Kerning(face, index1, index2, FT_KERNING_UNFITTED, &kerning);
 
