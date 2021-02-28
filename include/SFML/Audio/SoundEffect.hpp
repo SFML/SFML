@@ -148,14 +148,14 @@ private:
     ////////////////////////////////////////////////////////////
     void detachSoundSource(SoundSource* source) const;
 
-    sf::Uint32 m_effectSlot;    //!< OpenAL Effects slot handle
-    sf::Uint32 m_effect;        //!< OpenAL Effect handle assigned to this slot
-    int m_type;                 //!< OpenAL Effect type used to track reference counting
+    sf::Uint32 m_effectSlot;                    //!< OpenAL Effects slot handle
+    sf::Uint32 m_effect;                        //!< OpenAL Effect handle assigned to this slot
+    int m_type;                                 //!< OpenAL Effect type used to track reference counting
 
-    float m_volume;             //!< Current volume of this slot
+    float m_volume;                             //!< Current volume of this slot
 
     mutable std::set<SoundSource*> m_soundlist; //!< List of SoundSources using this effect
-    void ensureEffect(int);    //!< Used to ensure that there is only one instance of OpenAL effect object for each type
+    void ensureEffect(int type);                //!< Used to ensure that there is only one instance of OpenAL effect object for each type
 };
 }
 
