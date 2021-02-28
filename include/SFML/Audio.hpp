@@ -30,10 +30,13 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/System.hpp>
+#include <SFML/Audio/ChorusEffect.hpp>
+#include <SFML/Audio/DelayEffect.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/OutputSoundFile.hpp>
+#include <SFML/Audio/ReverbEffect.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundBufferRecorder.hpp>
@@ -43,9 +46,6 @@
 #include <SFML/Audio/SoundRecorder.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/Audio/SoundStream.hpp>
-#include <SFML/Audio/ReverbEffect.hpp>
-#include <SFML/Audio/ChorusEffect.hpp>
-#include <SFML/Audio/DelayEffect.hpp>
 
 #endif // SFML_AUDIO_HPP
 

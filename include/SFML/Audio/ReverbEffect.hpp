@@ -295,10 +295,14 @@ private:
 /// other delay type effects) will need to be kept alive longer
 /// else the trailing audio effect (the audible 'echo') will be
 /// cut short once an effect object is destroyed.
-///
+/// 
 /// This class implements a reverb effect which is used to create
 /// echo-like sounds such as being in a cave, cathedral or, more
-/// subtly, in a small dense room.
+/// subtly, in a small dense room.///
+///
+/// Default parameter values and parameter limits are taken from
+/// the OpenAL specification: https://openal.org/documentation/
+/// 
 ///
 /// Usage example:
 /// \code

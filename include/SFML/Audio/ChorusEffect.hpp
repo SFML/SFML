@@ -210,6 +210,9 @@ private:
 /// This class implements a chorus effect which is used to create
 /// 'thicker' sounds by doubling the input via a small delay.
 ///
+/// Default parameter values and parameter limits are taken from
+/// the OpenAL specification: https://openal.org/documentation/
+/// 
 /// Usage example:
 /// \code
 /// //create an effect

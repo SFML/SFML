@@ -188,6 +188,9 @@ private:
 /// feedback is controllable. The delay is 'two tap' – you can control
 /// the interaction between two separate instances of echoes.
 ///
+/// Default parameter values and parameter limits are taken from
+/// the OpenAL specification: https://openal.org/documentation/
+/// 
 /// Usage example:
 /// \code
 /// //create an effect
