@@ -37,8 +37,10 @@ const BlendMode BlendAlpha(BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha, Ble
                            BlendMode::One, BlendMode::OneMinusSrcAlpha, BlendMode::Add);
 const BlendMode BlendAdd(BlendMode::SrcAlpha, BlendMode::One, BlendMode::Add,
                          BlendMode::One, BlendMode::One, BlendMode::Add);
-const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero);
-const BlendMode BlendNone(BlendMode::One, BlendMode::Zero);
+const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero, BlendMode::Add);
+const BlendMode BlendMin(BlendMode::One, BlendMode::One, BlendMode::Min);
+const BlendMode BlendMax(BlendMode::One, BlendMode::One, BlendMode::Max);
+const BlendMode BlendNone(BlendMode::One, BlendMode::Zero, BlendMode::Add);
 
 
 ////////////////////////////////////////////////////////////
