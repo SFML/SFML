@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ReverbEffect.hpp>
 
+#ifndef SFML_SYSTEM_IOS
+
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
@@ -108,7 +110,7 @@ void ReverbEffect::setDensity(float density)
 void ReverbEffect::setDiffusion(float diffusion)
 {
     m_diffusion = std::min(1.f, std::max(0.f, diffusion));
-    setParameter(REVERB_DIFFUSION, m_density);
+    setParameter(REVERB_DIFFUSION, m_diffusion);
 }
 
 
@@ -281,3 +283,185 @@ void ReverbEffect::applyParameterNames()
     }
 }
 } // namespace sf
+
+#else
+
+//empty implementation for IOS
+namespace sf
+{
+//values are initialised according to OpenAL extension guide p.66
+////////////////////////////////////////////////////////////
+ReverbEffect::ReverbEffect()
+    : SoundEffect       (0),
+    m_density           (1.f),
+    m_diffusion         (1.f),
+    m_gain              (0.32f),
+    m_decayTime         (1.4f),
+    m_reflectionGain    (0.05f),
+    m_reflectionDelay   (0.007f),
+    m_lateReverbGain    (1.26f),
+    m_lateReverbDelay   (0.011f),
+    m_roomRolloff       (0.f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+ReverbEffect::ReverbEffect(const ReverbEffect& copy)
+    : SoundEffect       (copy),
+    m_density           (1.f),
+    m_diffusion         (1.f),
+    m_gain              (0.32f),
+    m_decayTime         (1.4f),
+    m_reflectionGain    (0.05f),
+    m_reflectionDelay   (0.007f),
+    m_lateReverbGain    (1.26f),
+    m_lateReverbDelay   (0.011f),
+    m_roomRolloff       (0.f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setDensity(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setDiffusion(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setGain(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setDecayTime(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setReflectionGain(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setReflectionDelay(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setLateReverbGain(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setLateReverbDelay(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::setRoomRolloff(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getDensity() const
+{
+    return m_density;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getDiffusion() const
+{
+    return m_diffusion;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getGain() const
+{
+    return m_gain;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getDecayTime() const
+{
+    return m_decayTime;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getReflectionGain() const
+{
+    return m_reflectionGain;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getReflectionDelay() const
+{
+    return m_reflectionDelay;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getLateReverbGain() const
+{
+    return m_lateReverbGain;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getLateReverbDelay() const
+{
+    return m_lateReverbDelay;
+}
+
+
+////////////////////////////////////////////////////////////
+float ReverbEffect::getRoomRolloff() const
+{
+    return m_roomRolloff;
+}
+
+
+////////////////////////////////////////////////////////////
+ReverbEffect& ReverbEffect::operator= (const ReverbEffect& right)
+{
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void ReverbEffect::applyParameterNames()
+{
+
+}
+} // namespace sf
+
+#endif //SFML_SYSTEM_IOS

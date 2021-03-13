@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ChorusEffect.hpp>
 
+#ifndef SFML_SYSTEM_IOS
+
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
@@ -173,3 +175,128 @@ ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
     return *this;
 }
 } // namespace sf
+
+#else
+
+//empty implementation for IOS
+namespace sf
+{
+//defaults are set as p67 of the effect extension guide
+////////////////////////////////////////////////////////////
+ChorusEffect::ChorusEffect()
+    : SoundEffect   (0),
+    m_waveform      (Triangle),
+    m_phase         (90),
+    m_rate          (1.1f),
+    m_depth         (0.1f),
+    m_feedback      (0.25f),
+    m_delay         (0.016f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+ChorusEffect::ChorusEffect(const ChorusEffect& copy)
+    : SoundEffect   (copy),
+    m_waveform      (Triangle),
+    m_phase         (90),
+    m_rate          (1.1f),
+    m_depth         (0.1f),
+    m_feedback      (0.25f),
+    m_delay         (0.016f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setWaveform(Waveform)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setPhase(sf::Int32)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setRate(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setDepth(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setFeedback(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void ChorusEffect::setDelay(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+ChorusEffect::Waveform ChorusEffect::getWaveform() const
+{
+    return m_waveform;
+}
+
+
+////////////////////////////////////////////////////////////
+sf::Int32 ChorusEffect::getPhase() const
+{
+    return m_phase;
+}
+
+float ChorusEffect::getRate() const
+{
+    return m_rate;
+}
+
+
+////////////////////////////////////////////////////////////
+float ChorusEffect::getDepth() const
+{
+    return m_depth;
+}
+
+
+////////////////////////////////////////////////////////////
+float ChorusEffect::getFeedback() const
+{
+    return m_feedback;
+}
+
+
+////////////////////////////////////////////////////////////
+float ChorusEffect::getDelay() const
+{
+    return m_delay;
+}
+
+
+////////////////////////////////////////////////////////////
+ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
+{
+    return *this;
+}
+} // namespace sf
+
+#endif //SFML_SYSTEM_IOS

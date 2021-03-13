@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_SYSTEM_IOS
+
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/SoundEffect.hpp>
 #include <SFML/Audio/SoundSource.hpp>
@@ -119,7 +121,7 @@ SoundEffect::~SoundEffect()
 ////////////////////////////////////////////////////////////
 bool SoundEffect::isAvailable()
 {
-    return priv::AudioDevice::isExtensionSupported("ALC_EXT_EFX");
+return priv::AudioDevice::isExtensionSupported("ALC_EXT_EFX");
 }
 
 
@@ -195,3 +197,114 @@ void SoundEffect::ensureEffect(int type)
     m_effect = effect.handle;
 }
 } // namespace sf
+
+
+#else
+
+//empty implementation for IOS
+#include <SFML/Audio/SoundEffect.hpp>
+#include <SFML/System/Err.hpp>
+
+namespace
+{
+    bool hasWarned = false;
+}
+
+namespace sf
+{
+////////////////////////////////////////////////////////////
+SoundEffect::SoundEffect(int effectType)
+    : m_effectSlot  (0),
+    m_effect        (0),
+    m_type          (effectType),
+    m_volume        (1.f)
+{
+    if (!hasWarned)
+    {
+        sf::err() << "Sound effects are unavailable on IOS\n";
+        hasWarned = true;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+SoundEffect::SoundEffect(const SoundEffect& copy)
+    : m_effectSlot  (0),
+    m_effect        (0),
+    m_type          (copy.m_type),
+    m_volume        (1.f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+SoundEffect::~SoundEffect()
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+bool SoundEffect::isAvailable()
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::setVolume(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+float SoundEffect::getVolume() const
+{
+    return m_volume;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::setParameter(int, float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::setParameter(int, int)
+{
+
+}
+
+////////////////////////////////////////////////////////////
+SoundEffect& SoundEffect::operator=(const SoundEffect&)
+{
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::attachSoundSource(SoundSource*) const
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::detachSoundSource(SoundSource*) const
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundEffect::ensureEffect(int)
+{
+
+}
+} // namespace sf
+
+#endif //SFML_SYSTEM_IOS
