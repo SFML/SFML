@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/DelayEffect.hpp>
 
+#ifndef SFML_SYSTEM_IOS
+
 #define AL_ALEXT_PROTOTYPES
 #include <AL/efx.h>
 #include <AL/alext.h>
@@ -155,4 +157,117 @@ DelayEffect& DelayEffect::operator= (const DelayEffect& right)
     return *this;
 }
 
-} //naemspace sf
+} //namespace sf
+
+
+#else
+
+//empty implementation for IOS
+
+namespace sf
+{
+//default values as p108 of OpenAL extensions guide
+////////////////////////////////////////////////////////////
+DelayEffect::DelayEffect()
+    : SoundEffect   (0),
+    m_delay         (0.1f),
+    m_LRDelay       (0.1f),
+    m_damping       (0.5f),
+    m_feedback      (0.5f),
+    m_spread        (-1.f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+DelayEffect::DelayEffect(const DelayEffect& copy)
+    : SoundEffect   (copy),
+    m_delay         (0.1f),
+    m_LRDelay       (0.1f),
+    m_damping       (0.5f),
+    m_feedback      (0.5f),
+    m_spread        (-1.f)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void DelayEffect::setDelay(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void DelayEffect::setLRDelay(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void DelayEffect::setDamping(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void DelayEffect::setFeedback(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+void DelayEffect::setSpread(float)
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
+float DelayEffect::getDelay() const
+{
+    return m_delay;
+}
+
+
+////////////////////////////////////////////////////////////
+float DelayEffect::getLRDelay() const
+{
+    return m_LRDelay;
+}
+
+
+////////////////////////////////////////////////////////////
+float DelayEffect::getDamping() const
+{
+    return m_damping;
+}
+
+
+////////////////////////////////////////////////////////////
+float DelayEffect::getFeedback() const
+{
+    return m_feedback;
+}
+
+////////////////////////////////////////////////////////////
+float DelayEffect::getSpread() const
+{
+    return m_spread;
+}
+
+
+////////////////////////////////////////////////////////////
+DelayEffect& DelayEffect::operator= (const DelayEffect& right)
+{
+    return *this;
+}
+
+} //namespace sf
+
+#endif //SFML_SYSTEM_IOS
