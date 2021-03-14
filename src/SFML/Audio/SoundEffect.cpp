@@ -26,12 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include <SFML/Audio/SoundEffect.hpp>
+
 #ifndef SFML_SYSTEM_IOS
 
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/SoundEffect.hpp>
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/System/Err.hpp>
 
 #include "ALCheck.hpp"
 
@@ -202,7 +202,6 @@ void SoundEffect::ensureEffect(int type)
 #else
 
 //empty implementation for IOS
-#include <SFML/Audio/SoundEffect.hpp>
 #include <SFML/System/Err.hpp>
 
 namespace
