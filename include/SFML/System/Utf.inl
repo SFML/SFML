@@ -62,11 +62,11 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
         output = 0;
         switch (trailingBytes)
         {
-            case 5: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 4: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 3: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 2: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 1: output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 5: output += static_cast<Uint8>(*begin++); output <<= 6; // fallthrough
+            case 4: output += static_cast<Uint8>(*begin++); output <<= 6; // fallthrough
+            case 3: output += static_cast<Uint8>(*begin++); output <<= 6; // fallthrough
+            case 2: output += static_cast<Uint8>(*begin++); output <<= 6; // fallthrough
+            case 1: output += static_cast<Uint8>(*begin++); output <<= 6; // fallthrough
             case 0: output += static_cast<Uint8>(*begin++);
         }
         output -= offsets[trailingBytes];
@@ -114,9 +114,9 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         Uint8 bytes[4];
         switch (bytestoWrite)
         {
-            case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
-            case 3: bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
-            case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
+            case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; // fallthrough
+            case 3: bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; // fallthrough
+            case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; // fallthrough
             case 1: bytes[0] = static_cast<Uint8> (input | firstBytes[bytestoWrite]);
         }
 
