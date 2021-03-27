@@ -815,7 +815,7 @@ bool Shader::isGeometryAvailable()
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = isAvailable() && GLEXT_geometry_shader4;
+        available = isAvailable() && (GLEXT_geometry_shader4 || GLEXT_GL_VERSION_3_2);
     }
 
     return available;
