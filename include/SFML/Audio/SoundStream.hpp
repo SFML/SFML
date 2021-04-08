@@ -407,7 +407,7 @@ private:
 ///         // Change the current position in the stream source
 ///         ...
 ///     }
-/// }
+/// };
 ///
 /// // Usage
 /// CustomStream stream;
