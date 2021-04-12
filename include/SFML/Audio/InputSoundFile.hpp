@@ -32,7 +32,7 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 #include <string>
-#include <algorithm>
+#include <cstddef>
 
 
 namespace sf
