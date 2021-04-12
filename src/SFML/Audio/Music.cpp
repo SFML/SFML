@@ -30,6 +30,7 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
+#include <algorithm>
 
 
 namespace sf

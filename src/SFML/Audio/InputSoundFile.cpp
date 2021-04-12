@@ -32,6 +32,8 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <iostream>
+#include <algorithm>
 
 
 namespace sf
