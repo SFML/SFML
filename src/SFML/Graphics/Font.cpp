@@ -105,10 +105,10 @@ m_face       (copy.m_face),
 m_streamRec  (copy.m_streamRec),
 m_stroker    (copy.m_stroker),
 m_refCount   (copy.m_refCount),
+m_isSmooth   (copy.m_isSmooth),
 m_info       (copy.m_info),
 m_pages      (copy.m_pages),
-m_pixelBuffer(copy.m_pixelBuffer),
-m_isSmooth   (copy.m_isSmooth)
+m_pixelBuffer(copy.m_pixelBuffer)
 {
     #ifdef SFML_SYSTEM_ANDROID
         m_stream = NULL;
@@ -509,10 +509,10 @@ Font& Font::operator =(const Font& right)
     std::swap(m_streamRec,   temp.m_streamRec);
     std::swap(m_stroker,     temp.m_stroker);
     std::swap(m_refCount,    temp.m_refCount);
+    std::swap(m_isSmooth,    temp.m_isSmooth);
     std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
     std::swap(m_pixelBuffer, temp.m_pixelBuffer);
-    std::swap(m_isSmooth,    temp.m_isSmooth);
 
     #ifdef SFML_SYSTEM_ANDROID
         std::swap(m_stream, temp.m_stream);
