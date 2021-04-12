@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
-#include <algorithm>
 
 
 namespace sf
@@ -178,6 +177,33 @@ public:
     T top;    //!< Top coordinate of the rectangle
     T width;  //!< Width of the rectangle
     T height; //!< Height of the rectangle
+
+private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the minimum between two values
+    ///
+    /// This function is implemented here to avoid a dependency
+    /// on the <algorithm> C++ Standard header, unnecessarily
+    /// expensive to compile for the task of computing min/max.
+    ///
+    /// \param a First value
+    /// \param b Second value
+    ///
+    ////////////////////////////////////////////////////////////
+    static T getMin(T a, T b);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the maximum between two values
+    ///
+    /// This function is implemented here to avoid a dependency
+    /// on the <algorithm> C++ Standard header, unnecessarily
+    /// expensive to compile for the task of computing min/max.
+    ///
+    /// \param a First value
+    /// \param b Second value
+    ///
+    ////////////////////////////////////////////////////////////
+    static T getMax(T a, T b);
 };
 
 ////////////////////////////////////////////////////////////

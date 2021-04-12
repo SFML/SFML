@@ -31,7 +31,6 @@
 #include <SFML/Config.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/System/String.hpp>
-#include <algorithm>
 
 
 namespace sf
@@ -47,7 +46,11 @@ struct JoystickCaps
     JoystickCaps()
     {
         buttonCount = 0;
-        std::fill(axes, axes + Joystick::AxisCount, false);
+
+        for(int i = 0; i < Joystick::AxisCount; ++i)
+        {
+            axes[i] = false;
+        }
     }
 
     unsigned int buttonCount;               //!< Number of buttons supported by the joystick
@@ -64,8 +67,16 @@ struct JoystickState
     JoystickState()
     {
         connected = false;
-        std::fill(axes, axes + Joystick::AxisCount, 0.f);
-        std::fill(buttons, buttons + Joystick::ButtonCount, false);
+
+        for(int i = 0; i < Joystick::AxisCount; ++i)
+        {
+            axes[i] = 0.f;
+        }
+
+        for(int i = 0; i < Joystick::ButtonCount; ++i)
+        {
+            buttons[i] = false;
+        }
     }
 
     bool  connected;                      //!< Is the joystick currently connected?

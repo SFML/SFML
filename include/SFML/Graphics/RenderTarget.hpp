@@ -38,6 +38,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <cstddef>
 
 
 namespace sf
