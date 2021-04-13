@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#define SF_GLAD_GL_IMPLEMENTATION
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+#define SF_GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
 
 #if !defined(GL_MAJOR_VERSION)
     #define GL_MAJOR_VERSION 0x821B

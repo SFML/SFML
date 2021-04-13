@@ -34,6 +34,8 @@
 #include <OpenGLES/EAGLDrawable.h>
 #include <QuartzCore/CAEAGLLayer.h>
 #include <dlfcn.h>
+#define SF_GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
 
 
 namespace
@@ -50,7 +52,7 @@ namespace
     PFNGLRENDERBUFFERSTORAGEOESPROC        glRenderbufferStorageOESFunc        = 0;
 
 
-    void ensureInit()
+    void sfmlEaglContextEnsureInit()
     {
         static bool initialized = false;
         if (!initialized)
@@ -85,7 +87,7 @@ m_depthbuffer (0),
 m_vsyncEnabled(false),
 m_clock       ()
 {
-    ensureInit();
+    sfmlEaglContextEnsureInit();
 
     // Create the context
     if (shared)
@@ -105,7 +107,7 @@ m_depthbuffer (0),
 m_vsyncEnabled(false),
 m_clock       ()
 {
-    ensureInit();
+    sfmlEaglContextEnsureInit();
 
     const WindowImplUIKit* window = static_cast<const WindowImplUIKit*>(owner);
 
@@ -123,7 +125,7 @@ m_depthbuffer (0),
 m_vsyncEnabled(false),
 m_clock       ()
 {
-    ensureInit();
+    sfmlEaglContextEnsureInit();
 
     // This constructor should never be used by implementation
     err() << "Calling bad EaglContext constructor, please contact your developer :)" << std::endl;

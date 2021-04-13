@@ -32,6 +32,7 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#define SF_GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 #include <algorithm>
 #include <vector>
@@ -52,6 +53,7 @@
 
     #else
 
+        #undef SF_GLAD_GL_IMPLEMENTATION
         #include <SFML/Window/Win32/WglContext.hpp>
         typedef sf::priv::WglContext ContextType;
 
@@ -155,26 +157,26 @@ namespace
     // This mutex is also used to protect the shared context
     // from being locked on multiple threads and for managing
     // the resource count
-    sf::Mutex mutex;
+    sf::Mutex sfmlGlMutex;
 
     // OpenGL resources counter
-    unsigned int resourceCount = 0;
+    unsigned int sfmlGlResourceCount = 0;
 
     // This per-thread variable holds the current context for each thread
-    sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
+    sf::ThreadLocalPtr<sf::priv::GlContext> sfmlGlCurrentContext(NULL);
 
     // The hidden, inactive context that will be shared with all other contexts
-    ContextType* sharedContext = NULL;
+    ContextType* sfmlGlSharedContext = NULL;
 
     // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
-    sf::Uint64 id = 1; // start at 1, zero is "no context"
+    sf::Uint64 sfmlGlId = 1; // start at 1, zero is "no context"
 
     // Set containing callback functions to be called whenever a
     // context is going to be destroyed
     // Unshareable OpenGL resources rely on this to clean up properly
     // whenever a context containing them is destroyed
-    typedef std::set<std::pair<sf::ContextDestroyCallback, void*> > ContextDestroyCallbacks;
-    ContextDestroyCallbacks contextDestroyCallbacks;
+    typedef std::set<std::pair<sf::ContextDestroyCallback, void*> > SFMLGlContextDestroyCallbacks;
+    SFMLGlContextDestroyCallbacks sfmlGlContextDestroyCallbacks;
 
     // This structure contains all the state necessary to
     // track TransientContext usage
@@ -190,15 +192,15 @@ namespace
         sharedContextLock(0),
         useSharedContext (false)
         {
-            if (resourceCount == 0)
+            if (sfmlGlResourceCount == 0)
             {
                 context = new sf::Context;
             }
-            else if (!currentContext)
+            else if (!sfmlGlCurrentContext)
             {
-                sharedContextLock = new sf::Lock(mutex);
+                sharedContextLock = new sf::Lock(sfmlGlMutex);
                 useSharedContext = true;
-                sharedContext->setActive(true);
+                sfmlGlSharedContext->setActive(true);
             }
         }
 
@@ -209,7 +211,7 @@ namespace
         ~TransientContext()
         {
             if (useSharedContext)
-                sharedContext->setActive(false);
+                sfmlGlSharedContext->setActive(false);
 
             delete sharedContextLock;
             delete context;
@@ -313,32 +315,32 @@ namespace priv
 void GlContext::initResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     // If this is the very first resource, trigger the global context initialization
-    if (resourceCount == 0)
+    if (sfmlGlResourceCount == 0)
     {
-        if (sharedContext)
+        if (sfmlGlSharedContext)
         {
             // Increment the resources counter
-            resourceCount++;
+            sfmlGlResourceCount++;
 
             return;
         }
 
         // Create the shared context
-        sharedContext = new ContextType(NULL);
-        sharedContext->initialize(ContextSettings());
+        sfmlGlSharedContext = new ContextType(NULL);
+        sfmlGlSharedContext->initialize(ContextSettings());
 
         // Load our extensions vector
         loadExtensions();
 
         // Deactivate the shared context so that others can activate it when necessary
-        sharedContext->setActive(false);
+        sfmlGlSharedContext->setActive(false);
     }
 
     // Increment the resources counter
-    resourceCount++;
+    sfmlGlResourceCount++;
 }
 
 
@@ -346,20 +348,20 @@ void GlContext::initResource()
 void GlContext::cleanupResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     // Decrement the resources counter
-    resourceCount--;
+    sfmlGlResourceCount--;
 
     // If there's no more resource alive, we can trigger the global context cleanup
-    if (resourceCount == 0)
+    if (sfmlGlResourceCount == 0)
     {
-        if (!sharedContext)
+        if (!sfmlGlSharedContext)
             return;
 
         // Destroy the shared context
-        delete sharedContext;
-        sharedContext = NULL;
+        delete sfmlGlSharedContext;
+        sfmlGlSharedContext = NULL;
     }
 }
 
@@ -367,7 +369,7 @@ void GlContext::cleanupResource()
 ////////////////////////////////////////////////////////////
 void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
 {
-    contextDestroyCallbacks.insert(std::make_pair(callback, arg));
+    sfmlGlContextDestroyCallbacks.insert(std::make_pair(callback, arg));
 }
 
 
@@ -375,7 +377,7 @@ void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, 
 void GlContext::acquireTransientContext()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     // If this is the first TransientContextLock on this thread
     // construct the state object
@@ -391,7 +393,7 @@ void GlContext::acquireTransientContext()
 void GlContext::releaseTransientContext()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     // Make sure a matching acquireTransientContext() was called
     assert(transientContext);
@@ -413,9 +415,9 @@ void GlContext::releaseTransientContext()
 GlContext* GlContext::create()
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sfmlGlSharedContext != NULL);
 
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     GlContext* context = NULL;
 
@@ -423,12 +425,12 @@ GlContext* GlContext::create()
     // to ensure we have exclusive access to the shared context
     // in order to make sure it is not active during context creation
     {
-        sharedContext->setActive(true);
+        sfmlGlSharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext);
+        context = new ContextType(sfmlGlSharedContext);
 
-        sharedContext->setActive(false);
+        sfmlGlSharedContext->setActive(false);
     }
 
     context->initialize(ContextSettings());
@@ -441,24 +443,24 @@ GlContext* GlContext::create()
 GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sfmlGlSharedContext != NULL);
 
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
-    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // If sfmlGlResourceCount is 1 we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
 
     // Check if we need to convert our shared context into a core context
-    if ((resourceCount == 1) &&
+    if ((sfmlGlResourceCount == 1) &&
         (settings.attributeFlags & ContextSettings::Core) &&
-        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+        !(sfmlGlSharedContext->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
-        delete sharedContext;
-        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
-        sharedContext->initialize(sharedSettings);
+        delete sfmlGlSharedContext;
+        sfmlGlSharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sfmlGlSharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
         loadExtensions();
@@ -470,12 +472,12 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
     // to ensure we have exclusive access to the shared context
     // in order to make sure it is not active during context creation
     {
-        sharedContext->setActive(true);
+        sfmlGlSharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext, settings, owner, bitsPerPixel);
+        context = new ContextType(sfmlGlSharedContext, settings, owner, bitsPerPixel);
 
-        sharedContext->setActive(false);
+        sfmlGlSharedContext->setActive(false);
     }
 
     context->initialize(settings);
@@ -489,24 +491,24 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
 GlContext* GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sfmlGlSharedContext != NULL);
 
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
-    // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
+    // If sfmlGlResourceCount is 1 we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
 
     // Check if we need to convert our shared context into a core context
-    if ((resourceCount == 1) &&
+    if ((sfmlGlResourceCount == 1) &&
         (settings.attributeFlags & ContextSettings::Core) &&
-        !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
+        !(sfmlGlSharedContext->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
-        delete sharedContext;
-        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
-        sharedContext->initialize(sharedSettings);
+        delete sfmlGlSharedContext;
+        sfmlGlSharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sfmlGlSharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
         loadExtensions();
@@ -518,12 +520,12 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     // to ensure we have exclusive access to the shared context
     // in order to make sure it is not active during context creation
     {
-        sharedContext->setActive(true);
+        sfmlGlSharedContext->setActive(true);
 
         // Create the context
-        context = new ContextType(sharedContext, settings, width, height);
+        context = new ContextType(sfmlGlSharedContext, settings, width, height);
 
-        sharedContext->setActive(false);
+        sfmlGlSharedContext->setActive(false);
     }
 
     context->initialize(settings);
@@ -543,7 +545,7 @@ bool GlContext::isExtensionAvailable(const char* name)
 ////////////////////////////////////////////////////////////
 GlFunctionPointer GlContext::getFunction(const char* name)
 {
-    Lock lock(mutex);
+    Lock lock(sfmlGlMutex);
 
     return ContextType::getFunction(name);
 }
@@ -552,7 +554,7 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 Uint64 GlContext::getActiveContextId()
 {
-    return currentContext ? currentContext->m_id : 0;
+    return sfmlGlCurrentContext ? sfmlGlCurrentContext->m_id : 0;
 }
 
 
@@ -560,10 +562,10 @@ Uint64 GlContext::getActiveContextId()
 GlContext::~GlContext()
 {
     // Deactivate the context before killing it, unless we're inside Cleanup()
-    if (sharedContext)
+    if (sfmlGlSharedContext)
     {
-        if (this == currentContext)
-            currentContext = NULL;
+        if (this == sfmlGlCurrentContext)
+            sfmlGlCurrentContext = NULL;
     }
 }
 
@@ -580,15 +582,15 @@ bool GlContext::setActive(bool active)
 {
     if (active)
     {
-        if (this != currentContext)
+        if (this != sfmlGlCurrentContext)
         {
-            Lock lock(mutex);
+            Lock lock(sfmlGlMutex);
 
             // Activate the context
             if (makeCurrent(true))
             {
                 // Set it as the new current context for this thread
-                currentContext = this;
+                sfmlGlCurrentContext = this;
                 return true;
             }
             else
@@ -604,14 +606,14 @@ bool GlContext::setActive(bool active)
     }
     else
     {
-        if (this == currentContext)
+        if (this == sfmlGlCurrentContext)
         {
-            Lock lock(mutex);
+            Lock lock(sfmlGlMutex);
 
             // Deactivate the context
             if (makeCurrent(false))
             {
-                currentContext = NULL;
+                sfmlGlCurrentContext = NULL;
                 return true;
             }
             else
@@ -630,7 +632,7 @@ bool GlContext::setActive(bool active)
 
 ////////////////////////////////////////////////////////////
 GlContext::GlContext() :
-m_id(id++)
+m_id(sfmlGlId++)
 {
     // Nothing to do
 }
@@ -669,7 +671,7 @@ int GlContext::evaluateFormat(unsigned int bitsPerPixel, const ContextSettings& 
 void GlContext::cleanupUnsharedResources()
 {
     // Save the current context so we can restore it later
-    GlContext* contextToRestore = currentContext;
+    GlContext* contextToRestore = sfmlGlCurrentContext;
 
     // If this context is already active there is no need to save it
     if (contextToRestore == this)
@@ -679,7 +681,7 @@ void GlContext::cleanupUnsharedResources()
     setActive(true);
 
     // Call the registered destruction callbacks
-    for (ContextDestroyCallbacks::iterator iter = contextDestroyCallbacks.begin(); iter != contextDestroyCallbacks.end(); ++iter)
+    for (SFMLGlContextDestroyCallbacks::iterator iter = sfmlGlContextDestroyCallbacks.begin(); iter != sfmlGlContextDestroyCallbacks.end(); ++iter)
         iter->first(iter->second);
 
     // Make the originally active context active again

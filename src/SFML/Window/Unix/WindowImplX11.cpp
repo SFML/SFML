@@ -62,7 +62,7 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    sf::priv::WindowImplX11*              fullscreenWindow = NULL;
+    sf::priv::WindowImplX11*              sfmlWindowImplX11FullscreenWindow = NULL;
     std::vector<sf::priv::WindowImplX11*> allWindows;
     sf::Mutex                             allWindowsMutex;
     sf::String                            windowManagerName;
@@ -745,7 +745,7 @@ m_lastInputTime  (0)
         sizeHints->flags &= ~(PMinSize | PMaxSize);
         XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
- 
+
         setVideoMode(mode);
         switchToFullscreen();
     }
@@ -1368,7 +1368,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
                      1);
 
     // Set "this" as the current fullscreen window
-    fullscreenWindow = this;
+    sfmlWindowImplX11FullscreenWindow = this;
 
     XRRFreeScreenResources(res);
     XRRFreeOutputInfo(outputInfo);
@@ -1379,7 +1379,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::resetVideoMode()
 {
-    if (fullscreenWindow == this)
+    if (sfmlWindowImplX11FullscreenWindow == this)
     {
         // Try to set old configuration
         // Check if the XRandR extension
@@ -1433,7 +1433,7 @@ void WindowImplX11::resetVideoMode()
         }
 
         // Reset the fullscreen window
-        fullscreenWindow = NULL;
+        sfmlWindowImplX11FullscreenWindow = NULL;
     }
 }
 

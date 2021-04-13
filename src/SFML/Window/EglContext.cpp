@@ -69,7 +69,7 @@ namespace
 
 
     ////////////////////////////////////////////////////////////
-    void ensureInit()
+    void sfmlEglContextEnsureInit()
     {
         static bool initialized = false;
         if (!initialized)
@@ -98,7 +98,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
@@ -129,7 +129,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 
 #ifdef SFML_SYSTEM_ANDROID
 
@@ -166,7 +166,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 }
 
 
@@ -202,7 +202,7 @@ EglContext::~EglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer EglContext::getFunction(const char* name)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
@@ -288,7 +288,7 @@ void EglContext::destroySurface()
 ////////////////////////////////////////////////////////////
 EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 
     // Set our video settings constraint
     const EGLint attributes[] = {
@@ -352,7 +352,7 @@ void EglContext::updateSettings()
 ////////////////////////////////////////////////////////////
 XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    ensureInit();
+    sfmlEglContextEnsureInit();
 
     // Get the initialized EGL display
     EGLDisplay display = getInitializedDisplay();

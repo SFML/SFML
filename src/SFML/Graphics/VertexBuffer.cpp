@@ -36,7 +36,7 @@
 
 namespace
 {
-    sf::Mutex isAvailableMutex;
+    sf::Mutex sfmlVertexBufferIsAvailableMutex;
 
     GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
     {
@@ -332,7 +332,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    Lock lock(isAvailableMutex);
+    Lock lock(sfmlVertexBufferIsAvailableMutex);
 
     static bool checked = false;
     static bool available = false;

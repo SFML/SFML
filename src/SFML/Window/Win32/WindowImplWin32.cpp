@@ -64,7 +64,7 @@ namespace
     unsigned int               windowCount      = 0; // Windows owned by SFML
     unsigned int               handleCount      = 0; // All window handles
     const wchar_t*             className        = L"SFML_Window";
-    sf::priv::WindowImplWin32* fullscreenWindow = NULL;
+    sf::priv::WindowImplWin32* sfmlWindowImplWin32FullscreenWindow = NULL;
 
     const GUID GUID_DEVINTERFACE_HID = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
 
@@ -505,7 +505,7 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     ShowWindow(m_handle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
-    fullscreenWindow = this;
+    sfmlWindowImplWin32FullscreenWindow = this;
 }
 
 
@@ -513,10 +513,10 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
 void WindowImplWin32::cleanup()
 {
     // Restore the previous video mode (in case we were running in fullscreen)
-    if (fullscreenWindow == this)
+    if (sfmlWindowImplWin32FullscreenWindow == this)
     {
         ChangeDisplaySettingsW(NULL, 0);
-        fullscreenWindow = NULL;
+        sfmlWindowImplWin32FullscreenWindow = NULL;
     }
 
     // Unhide the mouse cursor (in case it was hidden)

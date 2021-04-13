@@ -34,13 +34,13 @@
 namespace
 {
     // OpenAL resources counter and its mutex
-    unsigned int count = 0;
-    sf::Mutex mutex;
+    unsigned int sfmlAlResourceCount = 0;
+    sf::Mutex sfmlAlResourceMutex;
 
     // The audio device is instantiated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.
     // It is destroyed when it is no longer needed.
-    sf::priv::AudioDevice* globalDevice;
+    sf::priv::AudioDevice* sfmlAlGlobalDevice;
 }
 
 
@@ -50,14 +50,14 @@ namespace sf
 AlResource::AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlAlResourceMutex);
 
     // If this is the very first resource, trigger the global device initialization
-    if (count == 0)
-        globalDevice = new priv::AudioDevice;
+    if (sfmlAlResourceCount == 0)
+        sfmlAlGlobalDevice = new priv::AudioDevice;
 
     // Increment the resources counter
-    count++;
+    sfmlAlResourceCount++;
 }
 
 
@@ -65,14 +65,14 @@ AlResource::AlResource()
 AlResource::~AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    Lock lock(sfmlAlResourceMutex);
 
     // Decrement the resources counter
-    count--;
+    sfmlAlResourceCount--;
 
     // If there's no more resource alive, we can destroy the device
-    if (count == 0)
-        delete globalDevice;
+    if (sfmlAlResourceCount == 0)
+        delete sfmlAlGlobalDevice;
 }
 
 } // namespace sf

@@ -40,14 +40,14 @@
 
 namespace
 {
-    sf::Mutex idMutex;
-    sf::Mutex maximumSizeMutex;
+    sf::Mutex sfmlTextureIdMutex;
+    sf::Mutex sfmlTextureMaximumSizeMutex;
 
     // Thread-safe unique identifier generator,
     // is used for states cache (see RenderTarget)
-    sf::Uint64 getUniqueId()
+    sf::Uint64 sfmlTextureGetUniqueId()
     {
-        sf::Lock lock(idMutex);
+        sf::Lock lock(sfmlTextureIdMutex);
 
         static sf::Uint64 id = 1; // start at 1, zero is "no texture"
 
@@ -69,7 +69,7 @@ m_isRepeated   (false),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
 m_hasMipmap    (false),
-m_cacheId      (getUniqueId())
+m_cacheId      (sfmlTextureGetUniqueId())
 {
 }
 
@@ -85,7 +85,7 @@ m_isRepeated   (copy.m_isRepeated),
 m_pixelsFlipped(false),
 m_fboAttachment(false),
 m_hasMipmap    (false),
-m_cacheId      (getUniqueId())
+m_cacheId      (sfmlTextureGetUniqueId())
 {
     if (copy.m_texture)
     {
@@ -206,7 +206,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-    m_cacheId = getUniqueId();
+    m_cacheId = sfmlTextureGetUniqueId();
 
     m_hasMipmap = false;
 
@@ -422,7 +422,7 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = false;
-        m_cacheId = getUniqueId();
+        m_cacheId = sfmlTextureGetUniqueId();
 
         // Force an OpenGL flush, so that the texture data will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
@@ -525,7 +525,7 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = false;
-        m_cacheId = getUniqueId();
+        m_cacheId = sfmlTextureGetUniqueId();
 
         // Force an OpenGL flush, so that the texture data will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
@@ -581,7 +581,7 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = true;
-        m_cacheId = getUniqueId();
+        m_cacheId = sfmlTextureGetUniqueId();
 
         // Force an OpenGL flush, so that the texture will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
@@ -790,7 +790,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    Lock lock(maximumSizeMutex);
+    Lock lock(sfmlTextureMaximumSizeMutex);
 
     static bool checked = false;
     static GLint size = 0;
@@ -832,8 +832,8 @@ void Texture::swap(Texture& right)
     std::swap(m_fboAttachment, right.m_fboAttachment);
     std::swap(m_hasMipmap,     right.m_hasMipmap);
 
-    m_cacheId = getUniqueId();
-    right.m_cacheId = getUniqueId();
+    m_cacheId = sfmlTextureGetUniqueId();
+    right.m_cacheId = sfmlTextureGetUniqueId();
 }
 
 

@@ -53,13 +53,13 @@
 namespace
 {
     // Mutex to protect ID generation and our context-RenderTarget-map
-    sf::Mutex mutex;
+    sf::Mutex sfmlRenderTargetMutex;
 
     // Unique identifier, used for identifying RenderTargets when
     // tracking the currently active RenderTarget within a given context
-    sf::Uint64 getUniqueId()
+    sf::Uint64 sfmlRenderTargetGetUniqueId()
     {
-        sf::Lock lock(mutex);
+        sf::Lock lock(sfmlRenderTargetMutex);
 
         static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
 
@@ -416,7 +416,7 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        sf::Lock lock(mutex);
+        sf::Lock lock(sfmlRenderTargetMutex);
 
         Uint64 contextId = Context::getActiveContextId();
 
@@ -574,7 +574,7 @@ void RenderTarget::initialize()
 
     // Generate a unique ID for this RenderTarget to track
     // whether it is active within a specific context
-    m_id = getUniqueId();
+    m_id = sfmlRenderTargetGetUniqueId();
 }
 
 

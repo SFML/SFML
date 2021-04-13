@@ -41,18 +41,18 @@
 
 namespace
 {
-    sf::Mutex glxErrorMutex;
-    bool glxErrorOccurred = false;
+    sf::Mutex sfmlGlxContextErrorMutex;
+    bool sfmlGlxErrorOccurred = false;
 
 
     ////////////////////////////////////////////////////////////
-    void ensureExtensionsInit(::Display* display, int screen)
+    void sfmlGlxContetEnsureExtensionsInit(::Display* display, int screen)
     {
         static bool initialized = false;
         if (!initialized)
         {
             initialized = true;
-    
+
             // We don't check the return value since the extension
             // flags are cleared even if loading fails
             gladLoaderLoadGLX(display, screen);
@@ -64,7 +64,7 @@ namespace
 
     int HandleXError(::Display*, XErrorEvent*)
     {
-        glxErrorOccurred = true;
+        sfmlGlxErrorOccurred = true;
         return 0;
     }
 
@@ -74,10 +74,10 @@ namespace
     public:
 
         GlxErrorHandler(::Display* display) :
-        m_lock   (glxErrorMutex),
+        m_lock   (sfmlGlxContextErrorMutex),
         m_display(display)
         {
-            glxErrorOccurred = false;
+            sfmlGlxErrorOccurred = false;
             m_previousHandler = XSetErrorHandler(HandleXError);
         }
 
@@ -114,7 +114,7 @@ m_ownsWindow(false)
     m_display = OpenDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    sfmlGlxContetEnsureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, 1, 1, VideoMode::getDesktopMode().bitsPerPixel);
@@ -139,7 +139,7 @@ m_ownsWindow(false)
     m_display = OpenDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    sfmlGlxContetEnsureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface from the owner window
     createSurface(static_cast< ::Window>(owner->getSystemHandle()));
@@ -164,7 +164,7 @@ m_ownsWindow(false)
     m_display = OpenDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    sfmlGlxContetEnsureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, width, height, VideoMode::getDesktopMode().bitsPerPixel);
@@ -192,7 +192,7 @@ GlxContext::~GlxContext()
         glXDestroyContext(m_display, m_context);
 
 #if defined(GLX_DEBUGGING)
-        if (glxErrorOccurred)
+        if (sfmlGlxErrorOccurred)
             err() << "GLX error in GlxContext::~GlxContext()" << std::endl;
 #endif
     }
@@ -250,7 +250,7 @@ bool GlxContext::makeCurrent(bool current)
     }
 
 #if defined(GLX_DEBUGGING)
-    if (glxErrorOccurred)
+    if (sfmlGlxErrorOccurred)
         err() << "GLX error in GlxContext::makeCurrent()" << std::endl;
 #endif
 
@@ -271,7 +271,7 @@ void GlxContext::display()
         glXSwapBuffers(m_display, m_window);
 
 #if defined(GLX_DEBUGGING)
-    if (glxErrorOccurred)
+    if (sfmlGlxErrorOccurred)
         err() << "GLX error in GlxContext::display()" << std::endl;
 #endif
 }
@@ -319,7 +319,7 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
 XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     // Make sure that extensions are initialized
-    ensureExtensionsInit(display, DefaultScreen(display));
+    sfmlGlxContetEnsureExtensionsInit(display, DefaultScreen(display));
 
     const int screen = DefaultScreen(display);
 
@@ -774,7 +774,7 @@ void GlxContext::createContext(GlxContext* shared)
         m_context = glXCreateContext(m_display, visualInfo, toShare, true);
 
 #if defined(GLX_DEBUGGING)
-    if (glxErrorOccurred)
+    if (sfmlGlxErrorOccurred)
         err() << "GLX error in GlxContext::createContext()" << std::endl;
 #endif
     }

@@ -56,8 +56,8 @@
 
 namespace
 {
-    sf::Mutex maxTextureUnitsMutex;
-    sf::Mutex isAvailableMutex;
+    sf::Mutex sfmlShaderMaxTextureUnitsMutex;
+    sf::Mutex sfmlShaderIsAvailableMutex;
 
     GLint checkMaxTextureUnits()
     {
@@ -71,7 +71,7 @@ namespace
     GLint getMaxTextureUnits()
     {
         // TODO: Remove this lock when it becomes unnecessary in C++11
-        sf::Lock lock(maxTextureUnitsMutex);
+        sf::Lock lock(sfmlShaderMaxTextureUnitsMutex);
 
         static GLint maxUnits = checkMaxTextureUnits();
 
@@ -773,7 +773,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    Lock lock(isAvailableMutex);
+    Lock lock(sfmlShaderIsAvailableMutex);
 
     static bool checked = false;
     static bool available = false;
@@ -801,7 +801,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    Lock lock(isAvailableMutex);
+    Lock lock(sfmlShaderIsAvailableMutex);
 
     static bool checked = false;
     static bool available = false;

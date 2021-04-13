@@ -40,7 +40,7 @@
 
 namespace
 {
-    ALCdevice* captureDevice = NULL;
+    ALCdevice* sfmlALCDeviceCaptureDevice = NULL;
 }
 
 namespace sf
@@ -81,7 +81,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
     }
 
     // Check that another capture is not already running
-    if (captureDevice)
+    if (sfmlALCDeviceCaptureDevice)
     {
         err() << "Trying to start audio capture, but another capture is already running" << std::endl;
         return false;
@@ -91,8 +91,8 @@ bool SoundRecorder::start(unsigned int sampleRate)
     ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
     // Open the capture device for capturing 16 bits samples
-    captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), sampleRate, format, sampleRate);
-    if (!captureDevice)
+    sfmlALCDeviceCaptureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), sampleRate, format, sampleRate);
+    if (!sfmlALCDeviceCaptureDevice)
     {
         err() << "Failed to open the audio capture device with the name: " << m_deviceName << std::endl;
         return false;
@@ -108,7 +108,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
     if (onStart())
     {
         // Start the capture
-        alcCaptureStart(captureDevice);
+        alcCaptureStart(sfmlALCDeviceCaptureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
         m_isCapturing = true;
@@ -188,8 +188,8 @@ bool SoundRecorder::setDevice(const std::string& name)
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
         // Open the requested capture device for capturing 16 bits samples
-        captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, m_sampleRate);
-        if (!captureDevice)
+        sfmlALCDeviceCaptureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, m_sampleRate);
+        if (!sfmlALCDeviceCaptureDevice)
         {
             // Notify derived class
             onStop();
@@ -199,7 +199,7 @@ bool SoundRecorder::setDevice(const std::string& name)
         }
 
         // Start the capture
-        alcCaptureStart(captureDevice);
+        alcCaptureStart(sfmlALCDeviceCaptureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
         m_isCapturing = true;
@@ -295,13 +295,13 @@ void SoundRecorder::processCapturedSamples()
 {
     // Get the number of samples available
     ALCint samplesAvailable;
-    alcGetIntegerv(captureDevice, ALC_CAPTURE_SAMPLES, 1, &samplesAvailable);
+    alcGetIntegerv(sfmlALCDeviceCaptureDevice, ALC_CAPTURE_SAMPLES, 1, &samplesAvailable);
 
     if (samplesAvailable > 0)
     {
         // Get the recorded samples
         m_samples.resize(samplesAvailable * getChannelCount());
-        alcCaptureSamples(captureDevice, &m_samples[0], samplesAvailable);
+        alcCaptureSamples(sfmlALCDeviceCaptureDevice, &m_samples[0], samplesAvailable);
 
         // Forward them to the derived class
         if (!onProcessSamples(&m_samples[0], m_samples.size()))
@@ -317,14 +317,14 @@ void SoundRecorder::processCapturedSamples()
 void SoundRecorder::cleanup()
 {
     // Stop the capture
-    alcCaptureStop(captureDevice);
+    alcCaptureStop(sfmlALCDeviceCaptureDevice);
 
     // Get the samples left in the buffer
     processCapturedSamples();
 
     // Close the device
-    alcCaptureCloseDevice(captureDevice);
-    captureDevice = NULL;
+    alcCaptureCloseDevice(sfmlALCDeviceCaptureDevice);
+    sfmlALCDeviceCaptureDevice = NULL;
 }
 
 } // namespace sf

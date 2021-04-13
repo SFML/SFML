@@ -33,7 +33,7 @@
 
 namespace
 {
-    const sf::WindowBase* fullscreenWindow = NULL;
+    const sf::WindowBase* sfmlWindowBaseFullscreenWindow = NULL;
 }
 
 
@@ -366,14 +366,14 @@ void WindowBase::initialize()
 ////////////////////////////////////////////////////////////
 const WindowBase* WindowBase::getFullscreenWindow()
 {
-    return fullscreenWindow;
+    return sfmlWindowBaseFullscreenWindow;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowBase::setFullscreenWindow(const WindowBase* window)
 {
-    fullscreenWindow = window;
+    sfmlWindowBaseFullscreenWindow = window;
 }
 
 } // namespace sf
