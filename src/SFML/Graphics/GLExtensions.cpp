@@ -30,6 +30,12 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
 
+// We check for this definition in order to avoid multiple definitions of GLAD
+// entities during unity builds of SFML.
+#ifndef GLAD_IMPL_UTIL_C_
+#include <glad/gl.h>
+#endif
+
 #if !defined(GL_MAJOR_VERSION)
     #define GL_MAJOR_VERSION 0x821B
 #endif

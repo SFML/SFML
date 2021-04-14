@@ -32,8 +32,12 @@
 
 namespace
 {
-    // This per-thread variable holds the current context for each thread
-    sf::ThreadLocalPtr<sf::Context> currentContext(NULL);
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace ContextImpl
+    {
+        // This per-thread variable holds the current context for each thread
+        sf::ThreadLocalPtr<sf::Context> currentContext(NULL);
+    }
 }
 
 namespace sf
@@ -60,7 +64,7 @@ bool Context::setActive(bool active)
     bool result = m_context->setActive(active);
 
     if (result)
-        currentContext = (active ? this : NULL);
+        ContextImpl::currentContext = (active ? this : NULL);
 
     return result;
 }
@@ -76,7 +80,7 @@ const ContextSettings& Context::getSettings() const
 ////////////////////////////////////////////////////////////
 const Context* Context::getActiveContext()
 {
-    return currentContext;
+    return ContextImpl::currentContext;
 }
 
 
