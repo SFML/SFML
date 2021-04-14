@@ -32,7 +32,7 @@
 
 namespace
 {
-    // This per-thread variable holds the current context for each thread
+    // This per-thread variable holds the last activated sf::Context for each thread
     sf::ThreadLocalPtr<sf::Context> currentContext(NULL);
 }
 
@@ -76,7 +76,11 @@ const ContextSettings& Context::getSettings() const
 ////////////////////////////////////////////////////////////
 const Context* Context::getActiveContext()
 {
-    return currentContext;
+    // We have to check that the last activated sf::Context is still active (a RenderTarget activation may have deactivated it)
+    if (currentContext && currentContext->m_context == priv::GlContext::getActiveContext())
+        return currentContext;
+    else
+        return NULL;
 }
 
 
