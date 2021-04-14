@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#define SF_GLAD_WGL_IMPLEMENTATION
 #include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/System/ThreadLocalPtr.hpp>
@@ -35,38 +34,48 @@
 #include <sstream>
 #include <vector>
 
+// We check for this definition in order to avoid multiple definitions of GLAD
+// entities during unity builds of SFML.
+#ifndef SF_GLAD_WGL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_WGL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_WGL_IMPLEMENTATION
+#include <glad/wgl.h>
+#endif
 
 namespace
 {
-    // Some drivers are bugged and don't track the current HDC/HGLRC properly
-    // In order to deactivate successfully, we need to track it ourselves as well
-    sf::ThreadLocalPtr<sf::priv::WglContext> currentContext(NULL);
-
-
-    ////////////////////////////////////////////////////////////
-    void ensureInit()
+    namespace WglContextImpl
     {
-        static bool initialized = false;
-        if (!initialized)
-        {
-            initialized = true;
+        // Some drivers are bugged and don't track the current HDC/HGLRC properly
+        // In order to deactivate successfully, we need to track it ourselves as well
+        sf::ThreadLocalPtr<sf::priv::WglContext> currentContext(NULL);
 
-            gladLoadWGL(NULL, sf::priv::WglContext::getFunction);
+
+        ////////////////////////////////////////////////////////////
+        void ensureInit()
+        {
+            static bool initialized = false;
+            if (!initialized)
+            {
+                initialized = true;
+
+                gladLoadWGL(NULL, sf::priv::WglContext::getFunction);
+            }
         }
-    }
 
 
-    ////////////////////////////////////////////////////////////
-    void ensureExtensionsInit(HDC deviceContext)
-    {
-        static bool initialized = false;
-        if (!initialized)
+        ////////////////////////////////////////////////////////////
+        void ensureExtensionsInit(HDC deviceContext)
         {
-            initialized = true;
+            static bool initialized = false;
+            if (!initialized)
+            {
+                initialized = true;
 
-            // We don't check the return value since the extension
-            // flags are cleared even if loading fails
-            gladLoadWGL(deviceContext, sf::priv::WglContext::getFunction);
+                // We don't check the return value since the extension
+                // flags are cleared even if loading fails
+                gladLoadWGL(deviceContext, sf::priv::WglContext::getFunction);
+            }
         }
     }
 }
@@ -101,7 +110,7 @@ m_deviceContext(NULL),
 m_context      (NULL),
 m_ownsWindow   (false)
 {
-    ensureInit();
+    WglContextImpl::ensureInit();
 
     // TODO: Delegate to the other constructor in C++11
 
@@ -124,7 +133,7 @@ m_deviceContext(NULL),
 m_context      (NULL),
 m_ownsWindow   (false)
 {
-    ensureInit();
+    WglContextImpl::ensureInit();
 
     // Save the creation settings
     m_settings = settings;
@@ -145,7 +154,7 @@ m_deviceContext(NULL),
 m_context      (NULL),
 m_ownsWindow   (false)
 {
-    ensureInit();
+    WglContextImpl::ensureInit();
 
     // Save the creation settings
     m_settings = settings;
@@ -167,10 +176,10 @@ WglContext::~WglContext()
     // Destroy the OpenGL context
     if (m_context)
     {
-        if (currentContext == this)
+        if (WglContextImpl::currentContext == this)
         {
             if (wglMakeCurrent(m_deviceContext, NULL) == TRUE)
-                currentContext = NULL;
+                WglContextImpl::currentContext = NULL;
         }
 
         wglDeleteContext(m_context);
@@ -234,7 +243,7 @@ bool WglContext::makeCurrent(bool current)
         return false;
     }
 
-    currentContext = (current ? this : NULL);
+    WglContextImpl::currentContext = (current ? this : NULL);
 
     return true;
 }
@@ -252,7 +261,7 @@ void WglContext::display()
 void WglContext::setVerticalSyncEnabled(bool enabled)
 {
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_deviceContext);
+    WglContextImpl::ensureExtensionsInit(m_deviceContext);
 
     if (SF_GLAD_WGL_EXT_swap_control)
     {
@@ -277,7 +286,7 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings, bool pbuffer)
 {
-    ensureInit();
+    WglContextImpl::ensureInit();
 
     // Let's find a suitable pixel format -- first try with wglChoosePixelFormatARB
     int bestFormat = 0;
@@ -658,7 +667,7 @@ void WglContext::createContext(WglContext* shared)
                 static Mutex mutex;
                 Lock lock(mutex);
 
-                if (currentContext == shared)
+                if (WglContextImpl::currentContext == shared)
                 {
                     if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
                     {
@@ -666,7 +675,7 @@ void WglContext::createContext(WglContext* shared)
                         return;
                     }
 
-                    currentContext = NULL;
+                    WglContextImpl::currentContext = NULL;
                 }
             }
 
@@ -728,7 +737,7 @@ void WglContext::createContext(WglContext* shared)
             static Mutex mutex;
             Lock lock(mutex);
 
-            if (currentContext == shared)
+            if (WglContextImpl::currentContext == shared)
             {
                 if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
                 {
@@ -736,7 +745,7 @@ void WglContext::createContext(WglContext* shared)
                     return;
                 }
 
-                currentContext = NULL;
+                WglContextImpl::currentContext = NULL;
             }
 
             if (wglShareLists(sharedContext, m_context) == FALSE)
@@ -749,7 +758,7 @@ void WglContext::createContext(WglContext* shared)
     if (!shared && m_context)
     {
         makeCurrent(true);
-        ensureExtensionsInit(m_deviceContext);
+        WglContextImpl::ensureExtensionsInit(m_deviceContext);
         makeCurrent(false);
     }
 }

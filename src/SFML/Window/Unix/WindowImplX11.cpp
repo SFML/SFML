@@ -62,105 +62,140 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    sf::priv::WindowImplX11*              fullscreenWindow = NULL;
-    std::vector<sf::priv::WindowImplX11*> allWindows;
-    sf::Mutex                             allWindowsMutex;
-    sf::String                            windowManagerName;
-
-    sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
-
-    static const unsigned long            eventMask = FocusChangeMask      | ButtonPressMask     |
-                                                      ButtonReleaseMask    | ButtonMotionMask    |
-                                                      PointerMotionMask    | KeyPressMask        |
-                                                      KeyReleaseMask       | StructureNotifyMask |
-                                                      EnterWindowMask      | LeaveWindowMask     |
-                                                      VisibilityChangeMask | PropertyChangeMask;
-
-    static const unsigned int             maxTrialsCount = 5;
-
-    // Predicate we use to find key repeat events in processEvent
-    struct KeyRepeatFinder
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace WindowsImplX11Impl
     {
-        KeyRepeatFinder(unsigned int keycode, Time time) : keycode(keycode), time(time) {}
+        sf::priv::WindowImplX11*              fullscreenWindow = NULL;
+        std::vector<sf::priv::WindowImplX11*> allWindows;
+        sf::Mutex                             allWindowsMutex;
+        sf::String                            windowManagerName;
 
-        // Predicate operator that checks event type, keycode and timestamp
-        bool operator()(const XEvent& event)
+        sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
+
+        static const unsigned long            eventMask = FocusChangeMask      | ButtonPressMask     |
+                                                        ButtonReleaseMask    | ButtonMotionMask    |
+                                                        PointerMotionMask    | KeyPressMask        |
+                                                        KeyReleaseMask       | StructureNotifyMask |
+                                                        EnterWindowMask      | LeaveWindowMask     |
+                                                        VisibilityChangeMask | PropertyChangeMask;
+
+        static const unsigned int             maxTrialsCount = 5;
+
+        // Predicate we use to find key repeat events in processEvent
+        struct KeyRepeatFinder
         {
-            return ((event.type == KeyPress) && (event.xkey.keycode == keycode) && (event.xkey.time - time < 2));
+            KeyRepeatFinder(unsigned int keycode, Time time) : keycode(keycode), time(time) {}
+
+            // Predicate operator that checks event type, keycode and timestamp
+            bool operator()(const XEvent& event)
+            {
+                return ((event.type == KeyPress) && (event.xkey.keycode == keycode) && (event.xkey.time - time < 2));
+            }
+
+            unsigned int keycode;
+            Time time;
+        };
+
+        // Filter the events received by windows (only allow those matching a specific window)
+        Bool checkEvent(::Display*, XEvent* event, XPointer userData)
+        {
+            // Just check if the event matches the window
+            return event->xany.window == reinterpret_cast< ::Window >(userData);
         }
 
-        unsigned int keycode;
-        Time time;
-    };
+        // Find the name of the current executable
+        std::string findExecutableName()
+        {
+            // We use /proc/self/cmdline to get the command line
+            // the user used to invoke this instance of the application
+            int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
 
-    // Filter the events received by windows (only allow those matching a specific window)
-    Bool checkEvent(::Display*, XEvent* event, XPointer userData)
-    {
-        // Just check if the event matches the window
-        return event->xany.window == reinterpret_cast< ::Window >(userData);
-    }
+            if (file < 0)
+                return "sfml";
 
-    // Find the name of the current executable
-    std::string findExecutableName()
-    {
-        // We use /proc/self/cmdline to get the command line
-        // the user used to invoke this instance of the application
-        int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
+            std::vector<char> buffer(256, 0);
+            std::size_t offset = 0;
+            ssize_t result = 0;
 
-        if (file < 0)
+            while ((result = read(file, &buffer[offset], 256)) > 0)
+            {
+                buffer.resize(buffer.size() + result, 0);
+                offset += result;
+            }
+
+            ::close(file);
+
+            if (offset)
+            {
+                buffer[offset] = 0;
+
+                // Remove the path to keep the executable name only
+                return basename(&buffer[0]);
+            }
+
+            // Default fallback name
             return "sfml";
-
-        std::vector<char> buffer(256, 0);
-        std::size_t offset = 0;
-        ssize_t result = 0;
-
-        while ((result = read(file, &buffer[offset], 256)) > 0)
-        {
-            buffer.resize(buffer.size() + result, 0);
-            offset += result;
         }
 
-        ::close(file);
-
-        if (offset)
+        // Check if Extended Window Manager Hints are supported
+        bool ewmhSupported()
         {
-            buffer[offset] = 0;
+            static bool checked = false;
+            static bool ewmhSupported = false;
 
-            // Remove the path to keep the executable name only
-            return basename(&buffer[0]);
-        }
+            if (checked)
+                return ewmhSupported;
 
-        // Default fallback name
-        return "sfml";
-    }
+            checked = true;
 
-    // Check if Extended Window Manager Hints are supported
-    bool ewmhSupported()
-    {
-        static bool checked = false;
-        static bool ewmhSupported = false;
+            Atom netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
+            Atom netSupported = sf::priv::getAtom("_NET_SUPPORTED", true);
 
-        if (checked)
-            return ewmhSupported;
+            if (!netSupportingWmCheck || !netSupported)
+                return false;
 
-        checked = true;
+            ::Display* display = sf::priv::OpenDisplay();
 
-        Atom netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
-        Atom netSupported = sf::priv::getAtom("_NET_SUPPORTED", true);
+            Atom actualType;
+            int actualFormat;
+            unsigned long numItems;
+            unsigned long numBytes;
+            unsigned char* data;
 
-        if (!netSupportingWmCheck || !netSupported)
-            return false;
+            int result = XGetWindowProperty(display,
+                                            DefaultRootWindow(display),
+                                            netSupportingWmCheck,
+                                            0,
+                                            1,
+                                            False,
+                                            XA_WINDOW,
+                                            &actualType,
+                                            &actualFormat,
+                                            &numItems,
+                                            &numBytes,
+                                            &data);
 
-        ::Display* display = sf::priv::OpenDisplay();
+            if (result != Success || actualType != XA_WINDOW || numItems != 1)
+            {
+                if (result == Success)
+                    XFree(data);
 
-        Atom actualType;
-        int actualFormat;
-        unsigned long numItems;
-        unsigned long numBytes;
-        unsigned char* data;
+                sf::priv::CloseDisplay(display);
+                return false;
+            }
 
-        int result = XGetWindowProperty(display,
-                                        DefaultRootWindow(display),
+            ::Window rootWindow = *reinterpret_cast< ::Window* >(data);
+
+            XFree(data);
+
+            if (!rootWindow)
+            {
+                sf::priv::CloseDisplay(display);
+                return false;
+            }
+
+            result = XGetWindowProperty(display,
+                                        rootWindow,
                                         netSupportingWmCheck,
                                         0,
                                         1,
@@ -172,305 +207,274 @@ namespace
                                         &numBytes,
                                         &data);
 
-        if (result != Success || actualType != XA_WINDOW || numItems != 1)
-        {
-            if (result == Success)
-                XFree(data);
+            if (result != Success || actualType != XA_WINDOW || numItems != 1)
+            {
+                if (result == Success)
+                    XFree(data);
 
-            sf::priv::CloseDisplay(display);
-            return false;
-        }
+                sf::priv::CloseDisplay(display);
+                return false;
+            }
 
-        ::Window rootWindow = *reinterpret_cast< ::Window* >(data);
+            ::Window childWindow = *reinterpret_cast< ::Window* >(data);
 
-        XFree(data);
-
-        if (!rootWindow)
-        {
-            sf::priv::CloseDisplay(display);
-            return false;
-        }
-
-        result = XGetWindowProperty(display,
-                                    rootWindow,
-                                    netSupportingWmCheck,
-                                    0,
-                                    1,
-                                    False,
-                                    XA_WINDOW,
-                                    &actualType,
-                                    &actualFormat,
-                                    &numItems,
-                                    &numBytes,
-                                    &data);
-
-        if (result != Success || actualType != XA_WINDOW || numItems != 1)
-        {
-            if (result == Success)
-                XFree(data);
-
-            sf::priv::CloseDisplay(display);
-            return false;
-        }
-
-        ::Window childWindow = *reinterpret_cast< ::Window* >(data);
-
-        XFree(data);
-
-        if (!childWindow)
-        {
-            sf::priv::CloseDisplay(display);
-            return false;
-        }
-
-        // Conforming window managers should return the same window for both queries
-        if (rootWindow != childWindow)
-        {
-            sf::priv::CloseDisplay(display);
-            return false;
-        }
-
-        ewmhSupported = true;
-
-        // We try to get the name of the window manager
-        // for window manager specific workarounds
-        Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
-
-        if (!netWmName)
-        {
-            sf::priv::CloseDisplay(display);
-            return true;
-        }
-
-        Atom utf8StringType = sf::priv::getAtom("UTF8_STRING");
-
-        if (!utf8StringType)
-            utf8StringType = XA_STRING;
-
-        result = XGetWindowProperty(display,
-                                    rootWindow,
-                                    netWmName,
-                                    0,
-                                    0x7fffffff,
-                                    False,
-                                    utf8StringType,
-                                    &actualType,
-                                    &actualFormat,
-                                    &numItems,
-                                    &numBytes,
-                                    &data);
-
-        if (actualType && numItems)
-        {
-            // It seems the wm name string reply is not necessarily
-            // null-terminated. The work around is to get its actual
-            // length to build a proper string
-            const char* begin = reinterpret_cast<const char*>(data);
-            const char* end = begin + numItems;
-            windowManagerName = sf::String::fromUtf8(begin, end);
-        }
-
-        if (result == Success)
             XFree(data);
 
-        sf::priv::CloseDisplay(display);
+            if (!childWindow)
+            {
+                sf::priv::CloseDisplay(display);
+                return false;
+            }
 
-        return true;
-    }
+            // Conforming window managers should return the same window for both queries
+            if (rootWindow != childWindow)
+            {
+                sf::priv::CloseDisplay(display);
+                return false;
+            }
 
-    // Get the parent window.
-    ::Window getParentWindow(::Display* disp, ::Window win)
-    {
-        ::Window root, parent;
-        ::Window* children = NULL;
-        unsigned int numChildren;
+            ewmhSupported = true;
 
-        XQueryTree(disp, win, &root, &parent, &children, &numChildren);
+            // We try to get the name of the window manager
+            // for window manager specific workarounds
+            Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
 
-        // Children information is not used, so must be freed.
-        if (children != NULL)
-            XFree(children);
+            if (!netWmName)
+            {
+                sf::priv::CloseDisplay(display);
+                return true;
+            }
 
-        return parent;
-    }
+            Atom utf8StringType = sf::priv::getAtom("UTF8_STRING");
 
-    // Get the Frame Extents from EWMH WMs that support it.
-    bool getEWMHFrameExtents(::Display* disp, ::Window win,
-        long& xFrameExtent, long& yFrameExtent)
-    {
-        if (!ewmhSupported())
-            return false;
+            if (!utf8StringType)
+                utf8StringType = XA_STRING;
 
-        Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
-
-        if (frameExtents == None)
-            return false;
-
-        bool gotFrameExtents = false;
-        Atom actualType;
-        int actualFormat;
-        unsigned long numItems;
-        unsigned long numBytesLeft;
-        unsigned char* data = NULL;
-
-        int result = XGetWindowProperty(disp,
-                                        win,
-                                        frameExtents,
+            result = XGetWindowProperty(display,
+                                        rootWindow,
+                                        netWmName,
                                         0,
-                                        4,
+                                        0x7fffffff,
                                         False,
-                                        XA_CARDINAL,
+                                        utf8StringType,
                                         &actualType,
                                         &actualFormat,
                                         &numItems,
-                                        &numBytesLeft,
+                                        &numBytes,
                                         &data);
 
-        if ((result == Success) && (actualType == XA_CARDINAL) &&
-            (actualFormat == 32) && (numItems == 4) && (numBytesLeft == 0) &&
-            (data != NULL))
-        {
-            gotFrameExtents = true;
+            if (actualType && numItems)
+            {
+                // It seems the wm name string reply is not necessarily
+                // null-terminated. The work around is to get its actual
+                // length to build a proper string
+                const char* begin = reinterpret_cast<const char*>(data);
+                const char* end = begin + numItems;
+                windowManagerName = sf::String::fromUtf8(begin, end);
+            }
 
-            long* extents = (long*) data;
+            if (result == Success)
+                XFree(data);
 
-            xFrameExtent = extents[0]; // Left.
-            yFrameExtent = extents[2]; // Top.
+            sf::priv::CloseDisplay(display);
+
+            return true;
         }
 
-        // Always free data.
-        if (data != NULL)
-            XFree(data);
+        // Get the parent window.
+        ::Window getParentWindow(::Display* disp, ::Window win)
+        {
+            ::Window root, parent;
+            ::Window* children = NULL;
+            unsigned int numChildren;
 
-        return gotFrameExtents;
-    }
+            XQueryTree(disp, win, &root, &parent, &children, &numChildren);
 
-    // Check if the current WM is in the list of good WMs that provide
-    // a correct absolute position for the window when queried.
-    bool isWMAbsolutePositionGood()
-    {
-        // This can only work with EWMH, to get the name.
-        if (!ewmhSupported())
+            // Children information is not used, so must be freed.
+            if (children != NULL)
+                XFree(children);
+
+            return parent;
+        }
+
+        // Get the Frame Extents from EWMH WMs that support it.
+        bool getEWMHFrameExtents(::Display* disp, ::Window win,
+            long& xFrameExtent, long& yFrameExtent)
+        {
+            if (!ewmhSupported())
+                return false;
+
+            Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
+
+            if (frameExtents == None)
+                return false;
+
+            bool gotFrameExtents = false;
+            Atom actualType;
+            int actualFormat;
+            unsigned long numItems;
+            unsigned long numBytesLeft;
+            unsigned char* data = NULL;
+
+            int result = XGetWindowProperty(disp,
+                                            win,
+                                            frameExtents,
+                                            0,
+                                            4,
+                                            False,
+                                            XA_CARDINAL,
+                                            &actualType,
+                                            &actualFormat,
+                                            &numItems,
+                                            &numBytesLeft,
+                                            &data);
+
+            if ((result == Success) && (actualType == XA_CARDINAL) &&
+                (actualFormat == 32) && (numItems == 4) && (numBytesLeft == 0) &&
+                (data != NULL))
+            {
+                gotFrameExtents = true;
+
+                long* extents = (long*) data;
+
+                xFrameExtent = extents[0]; // Left.
+                yFrameExtent = extents[2]; // Top.
+            }
+
+            // Always free data.
+            if (data != NULL)
+                XFree(data);
+
+            return gotFrameExtents;
+        }
+
+        // Check if the current WM is in the list of good WMs that provide
+        // a correct absolute position for the window when queried.
+        bool isWMAbsolutePositionGood()
+        {
+            // This can only work with EWMH, to get the name.
+            if (!ewmhSupported())
+                return false;
+
+            for (size_t i = 0; i < (sizeof(wmAbsPosGood) / sizeof(wmAbsPosGood[0])); i++)
+            {
+                if (wmAbsPosGood[i] == windowManagerName)
+                    return true;
+            }
+
             return false;
-
-        for (size_t i = 0; i < (sizeof(wmAbsPosGood) / sizeof(wmAbsPosGood[0])); i++)
-        {
-            if (wmAbsPosGood[i] == windowManagerName)
-                return true;
         }
 
-        return false;
-    }
-
-    sf::Keyboard::Key keysymToSF(KeySym symbol)
-    {
-        switch (symbol)
+        sf::Keyboard::Key keysymToSF(KeySym symbol)
         {
-            case XK_Shift_L:      return sf::Keyboard::LShift;
-            case XK_Shift_R:      return sf::Keyboard::RShift;
-            case XK_Control_L:    return sf::Keyboard::LControl;
-            case XK_Control_R:    return sf::Keyboard::RControl;
-            case XK_Alt_L:        return sf::Keyboard::LAlt;
-            case XK_Alt_R:        return sf::Keyboard::RAlt;
-            case XK_Super_L:      return sf::Keyboard::LSystem;
-            case XK_Super_R:      return sf::Keyboard::RSystem;
-            case XK_Menu:         return sf::Keyboard::Menu;
-            case XK_Escape:       return sf::Keyboard::Escape;
-            case XK_semicolon:    return sf::Keyboard::Semicolon;
-            case XK_slash:        return sf::Keyboard::Slash;
-            case XK_equal:        return sf::Keyboard::Equal;
-            case XK_minus:        return sf::Keyboard::Hyphen;
-            case XK_bracketleft:  return sf::Keyboard::LBracket;
-            case XK_bracketright: return sf::Keyboard::RBracket;
-            case XK_comma:        return sf::Keyboard::Comma;
-            case XK_period:       return sf::Keyboard::Period;
-            case XK_apostrophe:   return sf::Keyboard::Quote;
-            case XK_backslash:    return sf::Keyboard::Backslash;
-            case XK_grave:        return sf::Keyboard::Tilde;
-            case XK_space:        return sf::Keyboard::Space;
-            case XK_Return:       return sf::Keyboard::Enter;
-            case XK_KP_Enter:     return sf::Keyboard::Enter;
-            case XK_BackSpace:    return sf::Keyboard::Backspace;
-            case XK_Tab:          return sf::Keyboard::Tab;
-            case XK_Prior:        return sf::Keyboard::PageUp;
-            case XK_Next:         return sf::Keyboard::PageDown;
-            case XK_End:          return sf::Keyboard::End;
-            case XK_Home:         return sf::Keyboard::Home;
-            case XK_Insert:       return sf::Keyboard::Insert;
-            case XK_Delete:       return sf::Keyboard::Delete;
-            case XK_KP_Add:       return sf::Keyboard::Add;
-            case XK_KP_Subtract:  return sf::Keyboard::Subtract;
-            case XK_KP_Multiply:  return sf::Keyboard::Multiply;
-            case XK_KP_Divide:    return sf::Keyboard::Divide;
-            case XK_Pause:        return sf::Keyboard::Pause;
-            case XK_F1:           return sf::Keyboard::F1;
-            case XK_F2:           return sf::Keyboard::F2;
-            case XK_F3:           return sf::Keyboard::F3;
-            case XK_F4:           return sf::Keyboard::F4;
-            case XK_F5:           return sf::Keyboard::F5;
-            case XK_F6:           return sf::Keyboard::F6;
-            case XK_F7:           return sf::Keyboard::F7;
-            case XK_F8:           return sf::Keyboard::F8;
-            case XK_F9:           return sf::Keyboard::F9;
-            case XK_F10:          return sf::Keyboard::F10;
-            case XK_F11:          return sf::Keyboard::F11;
-            case XK_F12:          return sf::Keyboard::F12;
-            case XK_F13:          return sf::Keyboard::F13;
-            case XK_F14:          return sf::Keyboard::F14;
-            case XK_F15:          return sf::Keyboard::F15;
-            case XK_Left:         return sf::Keyboard::Left;
-            case XK_Right:        return sf::Keyboard::Right;
-            case XK_Up:           return sf::Keyboard::Up;
-            case XK_Down:         return sf::Keyboard::Down;
-            case XK_KP_Insert:    return sf::Keyboard::Numpad0;
-            case XK_KP_End:       return sf::Keyboard::Numpad1;
-            case XK_KP_Down:      return sf::Keyboard::Numpad2;
-            case XK_KP_Page_Down: return sf::Keyboard::Numpad3;
-            case XK_KP_Left:      return sf::Keyboard::Numpad4;
-            case XK_KP_Begin:     return sf::Keyboard::Numpad5;
-            case XK_KP_Right:     return sf::Keyboard::Numpad6;
-            case XK_KP_Home:      return sf::Keyboard::Numpad7;
-            case XK_KP_Up:        return sf::Keyboard::Numpad8;
-            case XK_KP_Page_Up:   return sf::Keyboard::Numpad9;
-            case XK_a:            return sf::Keyboard::A;
-            case XK_b:            return sf::Keyboard::B;
-            case XK_c:            return sf::Keyboard::C;
-            case XK_d:            return sf::Keyboard::D;
-            case XK_e:            return sf::Keyboard::E;
-            case XK_f:            return sf::Keyboard::F;
-            case XK_g:            return sf::Keyboard::G;
-            case XK_h:            return sf::Keyboard::H;
-            case XK_i:            return sf::Keyboard::I;
-            case XK_j:            return sf::Keyboard::J;
-            case XK_k:            return sf::Keyboard::K;
-            case XK_l:            return sf::Keyboard::L;
-            case XK_m:            return sf::Keyboard::M;
-            case XK_n:            return sf::Keyboard::N;
-            case XK_o:            return sf::Keyboard::O;
-            case XK_p:            return sf::Keyboard::P;
-            case XK_q:            return sf::Keyboard::Q;
-            case XK_r:            return sf::Keyboard::R;
-            case XK_s:            return sf::Keyboard::S;
-            case XK_t:            return sf::Keyboard::T;
-            case XK_u:            return sf::Keyboard::U;
-            case XK_v:            return sf::Keyboard::V;
-            case XK_w:            return sf::Keyboard::W;
-            case XK_x:            return sf::Keyboard::X;
-            case XK_y:            return sf::Keyboard::Y;
-            case XK_z:            return sf::Keyboard::Z;
-            case XK_0:            return sf::Keyboard::Num0;
-            case XK_1:            return sf::Keyboard::Num1;
-            case XK_2:            return sf::Keyboard::Num2;
-            case XK_3:            return sf::Keyboard::Num3;
-            case XK_4:            return sf::Keyboard::Num4;
-            case XK_5:            return sf::Keyboard::Num5;
-            case XK_6:            return sf::Keyboard::Num6;
-            case XK_7:            return sf::Keyboard::Num7;
-            case XK_8:            return sf::Keyboard::Num8;
-            case XK_9:            return sf::Keyboard::Num9;
-        }
+            switch (symbol)
+            {
+                case XK_Shift_L:      return sf::Keyboard::LShift;
+                case XK_Shift_R:      return sf::Keyboard::RShift;
+                case XK_Control_L:    return sf::Keyboard::LControl;
+                case XK_Control_R:    return sf::Keyboard::RControl;
+                case XK_Alt_L:        return sf::Keyboard::LAlt;
+                case XK_Alt_R:        return sf::Keyboard::RAlt;
+                case XK_Super_L:      return sf::Keyboard::LSystem;
+                case XK_Super_R:      return sf::Keyboard::RSystem;
+                case XK_Menu:         return sf::Keyboard::Menu;
+                case XK_Escape:       return sf::Keyboard::Escape;
+                case XK_semicolon:    return sf::Keyboard::Semicolon;
+                case XK_slash:        return sf::Keyboard::Slash;
+                case XK_equal:        return sf::Keyboard::Equal;
+                case XK_minus:        return sf::Keyboard::Hyphen;
+                case XK_bracketleft:  return sf::Keyboard::LBracket;
+                case XK_bracketright: return sf::Keyboard::RBracket;
+                case XK_comma:        return sf::Keyboard::Comma;
+                case XK_period:       return sf::Keyboard::Period;
+                case XK_apostrophe:   return sf::Keyboard::Quote;
+                case XK_backslash:    return sf::Keyboard::Backslash;
+                case XK_grave:        return sf::Keyboard::Tilde;
+                case XK_space:        return sf::Keyboard::Space;
+                case XK_Return:       return sf::Keyboard::Enter;
+                case XK_KP_Enter:     return sf::Keyboard::Enter;
+                case XK_BackSpace:    return sf::Keyboard::Backspace;
+                case XK_Tab:          return sf::Keyboard::Tab;
+                case XK_Prior:        return sf::Keyboard::PageUp;
+                case XK_Next:         return sf::Keyboard::PageDown;
+                case XK_End:          return sf::Keyboard::End;
+                case XK_Home:         return sf::Keyboard::Home;
+                case XK_Insert:       return sf::Keyboard::Insert;
+                case XK_Delete:       return sf::Keyboard::Delete;
+                case XK_KP_Add:       return sf::Keyboard::Add;
+                case XK_KP_Subtract:  return sf::Keyboard::Subtract;
+                case XK_KP_Multiply:  return sf::Keyboard::Multiply;
+                case XK_KP_Divide:    return sf::Keyboard::Divide;
+                case XK_Pause:        return sf::Keyboard::Pause;
+                case XK_F1:           return sf::Keyboard::F1;
+                case XK_F2:           return sf::Keyboard::F2;
+                case XK_F3:           return sf::Keyboard::F3;
+                case XK_F4:           return sf::Keyboard::F4;
+                case XK_F5:           return sf::Keyboard::F5;
+                case XK_F6:           return sf::Keyboard::F6;
+                case XK_F7:           return sf::Keyboard::F7;
+                case XK_F8:           return sf::Keyboard::F8;
+                case XK_F9:           return sf::Keyboard::F9;
+                case XK_F10:          return sf::Keyboard::F10;
+                case XK_F11:          return sf::Keyboard::F11;
+                case XK_F12:          return sf::Keyboard::F12;
+                case XK_F13:          return sf::Keyboard::F13;
+                case XK_F14:          return sf::Keyboard::F14;
+                case XK_F15:          return sf::Keyboard::F15;
+                case XK_Left:         return sf::Keyboard::Left;
+                case XK_Right:        return sf::Keyboard::Right;
+                case XK_Up:           return sf::Keyboard::Up;
+                case XK_Down:         return sf::Keyboard::Down;
+                case XK_KP_Insert:    return sf::Keyboard::Numpad0;
+                case XK_KP_End:       return sf::Keyboard::Numpad1;
+                case XK_KP_Down:      return sf::Keyboard::Numpad2;
+                case XK_KP_Page_Down: return sf::Keyboard::Numpad3;
+                case XK_KP_Left:      return sf::Keyboard::Numpad4;
+                case XK_KP_Begin:     return sf::Keyboard::Numpad5;
+                case XK_KP_Right:     return sf::Keyboard::Numpad6;
+                case XK_KP_Home:      return sf::Keyboard::Numpad7;
+                case XK_KP_Up:        return sf::Keyboard::Numpad8;
+                case XK_KP_Page_Up:   return sf::Keyboard::Numpad9;
+                case XK_a:            return sf::Keyboard::A;
+                case XK_b:            return sf::Keyboard::B;
+                case XK_c:            return sf::Keyboard::C;
+                case XK_d:            return sf::Keyboard::D;
+                case XK_e:            return sf::Keyboard::E;
+                case XK_f:            return sf::Keyboard::F;
+                case XK_g:            return sf::Keyboard::G;
+                case XK_h:            return sf::Keyboard::H;
+                case XK_i:            return sf::Keyboard::I;
+                case XK_j:            return sf::Keyboard::J;
+                case XK_k:            return sf::Keyboard::K;
+                case XK_l:            return sf::Keyboard::L;
+                case XK_m:            return sf::Keyboard::M;
+                case XK_n:            return sf::Keyboard::N;
+                case XK_o:            return sf::Keyboard::O;
+                case XK_p:            return sf::Keyboard::P;
+                case XK_q:            return sf::Keyboard::Q;
+                case XK_r:            return sf::Keyboard::R;
+                case XK_s:            return sf::Keyboard::S;
+                case XK_t:            return sf::Keyboard::T;
+                case XK_u:            return sf::Keyboard::U;
+                case XK_v:            return sf::Keyboard::V;
+                case XK_w:            return sf::Keyboard::W;
+                case XK_x:            return sf::Keyboard::X;
+                case XK_y:            return sf::Keyboard::Y;
+                case XK_z:            return sf::Keyboard::Z;
+                case XK_0:            return sf::Keyboard::Num0;
+                case XK_1:            return sf::Keyboard::Num1;
+                case XK_2:            return sf::Keyboard::Num2;
+                case XK_3:            return sf::Keyboard::Num3;
+                case XK_4:            return sf::Keyboard::Num4;
+                case XK_5:            return sf::Keyboard::Num5;
+                case XK_6:            return sf::Keyboard::Num6;
+                case XK_7:            return sf::Keyboard::Num7;
+                case XK_8:            return sf::Keyboard::Num8;
+                case XK_9:            return sf::Keyboard::Num9;
+            }
 
-        return sf::Keyboard::Unknown;
+            return sf::Keyboard::Unknown;
+        }
     }
 }
 
@@ -500,6 +504,8 @@ m_iconPixmap     (0),
 m_iconMaskPixmap (0),
 m_lastInputTime  (0)
 {
+    using namespace WindowsImplX11Impl;
+
     // Open a connection with the X server
     m_display = OpenDisplay();
 
@@ -549,6 +555,8 @@ m_iconPixmap     (0),
 m_iconMaskPixmap (0),
 m_lastInputTime  (0)
 {
+    using namespace WindowsImplX11Impl;
+
     // Open a connection with the X server
     m_display = OpenDisplay();
 
@@ -745,7 +753,7 @@ m_lastInputTime  (0)
         sizeHints->flags &= ~(PMinSize | PMaxSize);
         XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
- 
+
         setVideoMode(mode);
         switchToFullscreen();
     }
@@ -755,6 +763,8 @@ m_lastInputTime  (0)
 ////////////////////////////////////////////////////////////
 WindowImplX11::~WindowImplX11()
 {
+    using namespace WindowsImplX11Impl;
+
     // Cleanup graphical resources
     cleanup();
 
@@ -804,6 +814,8 @@ WindowHandle WindowImplX11::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::processEvents()
 {
+    using namespace WindowsImplX11Impl;
+
     XEvent event;
 
     // Pick out the events that are interesting for this window
@@ -826,6 +838,8 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
+    using namespace WindowsImplX11Impl;
+
     // Get absolute position of our window relative to root window. This
     // takes into account all information that X11 has, including X11
     // border widths and any decorations. It corresponds to where the
@@ -1119,6 +1133,8 @@ void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 {
+    using namespace WindowsImplX11Impl;
+
     // This has no effect in fullscreen mode
     if (m_fullscreen || (m_cursorGrabbed == grabbed))
         return;
@@ -1162,6 +1178,8 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
 {
+    using namespace WindowsImplX11Impl;
+
     // Focus is only stolen among SFML windows, not between applications
     // Check the global list of windows to find out whether an SFML window has the focus
     // Note: can't handle console and other non-SFML windows belonging to the application.
@@ -1226,6 +1244,8 @@ bool WindowImplX11::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::grabFocus()
 {
+    using namespace WindowsImplX11Impl;
+
     Atom netActiveWindow = None;
 
     if (ewmhSupported())
@@ -1275,6 +1295,8 @@ void WindowImplX11::grabFocus()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setVideoMode(const VideoMode& mode)
 {
+    using namespace WindowsImplX11Impl;
+
     // Skip mode switching if the new mode is equal to the desktop mode
     if (mode == VideoMode::getDesktopMode())
         return;
@@ -1379,6 +1401,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::resetVideoMode()
 {
+    using namespace WindowsImplX11Impl;
+
     if (fullscreenWindow == this)
     {
         // Try to set old configuration
@@ -1441,6 +1465,8 @@ void WindowImplX11::resetVideoMode()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen()
 {
+    using namespace WindowsImplX11Impl;
+
     grabFocus();
 
     if (ewmhSupported())
@@ -1497,6 +1523,8 @@ void WindowImplX11::switchToFullscreen()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setProtocols()
 {
+    using namespace WindowsImplX11Impl;
+
     Atom wmProtocols = getAtom("WM_PROTOCOLS");
     Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
 
@@ -1563,6 +1591,8 @@ void WindowImplX11::setProtocols()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
+    using namespace WindowsImplX11Impl;
+
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
 
@@ -1676,6 +1706,8 @@ void WindowImplX11::cleanup()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(XEvent& windowEvent)
 {
+    using namespace WindowsImplX11Impl;
+
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the
     // system's key events policy doesn't match SFML's one: X server will generate

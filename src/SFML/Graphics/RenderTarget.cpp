@@ -52,95 +52,99 @@
 
 namespace
 {
-    // Mutex to protect ID generation and our context-RenderTarget-map
-    sf::Mutex mutex;
-
-    // Unique identifier, used for identifying RenderTargets when
-    // tracking the currently active RenderTarget within a given context
-    sf::Uint64 getUniqueId()
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace RenderTargetImpl
     {
-        sf::Lock lock(mutex);
+        // Mutex to protect ID generation and our context-RenderTarget-map
+        sf::Mutex mutex;
 
-        static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
-
-        return id++;
-    }
-
-    // Map to help us detect whether a different RenderTarget
-    // has been activated within a single context
-    typedef std::map<sf::Uint64, sf::Uint64> ContextRenderTargetMap;
-    ContextRenderTargetMap contextRenderTargetMap;
-
-    // Check if a RenderTarget with the given ID is active in the current context
-    bool isActive(sf::Uint64 id)
-    {
-        ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
-
-        if ((iter == contextRenderTargetMap.end()) || (iter->second != id))
-            return false;
-
-        return true;
-    }
-
-    // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
-    sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
-    {
-        switch (blendFactor)
+        // Unique identifier, used for identifying RenderTargets when
+        // tracking the currently active RenderTarget within a given context
+        sf::Uint64 getUniqueId()
         {
-            case sf::BlendMode::Zero:             return GL_ZERO;
-            case sf::BlendMode::One:              return GL_ONE;
-            case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-            case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-            case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-            case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-            case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-            case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-            case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            sf::Lock lock(mutex);
+
+            static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
+
+            return id++;
         }
 
-        sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
-        assert(false);
-        return GL_ZERO;
-    }
+        // Map to help us detect whether a different RenderTarget
+        // has been activated within a single context
+        typedef std::map<sf::Uint64, sf::Uint64> ContextRenderTargetMap;
+        ContextRenderTargetMap contextRenderTargetMap;
 
-
-    // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-    sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
-    {
-        switch (blendEquation)
+        // Check if a RenderTarget with the given ID is active in the current context
+        bool isActive(sf::Uint64 id)
         {
-            case sf::BlendMode::Add:
-                return GLEXT_GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:
-                if (GLEXT_blend_subtract)
-                    return GLEXT_GL_FUNC_SUBTRACT;
-                break;
-            case sf::BlendMode::ReverseSubtract:
-                if (GLEXT_blend_subtract)
-                    return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
-                break;
-            case sf::BlendMode::Min:
-                if (GLEXT_blend_minmax)
-                    return GLEXT_GL_MIN;
-                break;
-            case sf::BlendMode::Max:
-                if (GLEXT_blend_minmax)
-                    return GLEXT_GL_MAX;
-                break;
+            ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
+
+            if ((iter == contextRenderTargetMap.end()) || (iter->second != id))
+                return false;
+
+            return true;
         }
 
-        static bool warned = false;
-        if (!warned)
+        // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
+        sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
         {
-            sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << std::endl;
-            sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << std::endl;
-            sf::err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            switch (blendFactor)
+            {
+                case sf::BlendMode::Zero:             return GL_ZERO;
+                case sf::BlendMode::One:              return GL_ONE;
+                case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
+                case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+                case sf::BlendMode::DstColor:         return GL_DST_COLOR;
+                case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+                case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
+                case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+                case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
+                case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            }
 
-            warned = true;
+            sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+            assert(false);
+            return GL_ZERO;
         }
 
-        return GLEXT_GL_FUNC_ADD;
+
+        // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
+        sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
+        {
+            switch (blendEquation)
+            {
+                case sf::BlendMode::Add:
+                    return GLEXT_GL_FUNC_ADD;
+                case sf::BlendMode::Subtract:
+                    if (GLEXT_blend_subtract)
+                        return GLEXT_GL_FUNC_SUBTRACT;
+                    break;
+                case sf::BlendMode::ReverseSubtract:
+                    if (GLEXT_blend_subtract)
+                        return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
+                    break;
+                case sf::BlendMode::Min:
+                    if (GLEXT_blend_minmax)
+                        return GLEXT_GL_MIN;
+                    break;
+                case sf::BlendMode::Max:
+                    if (GLEXT_blend_minmax)
+                        return GLEXT_GL_MAX;
+                    break;
+            }
+
+            static bool warned = false;
+            if (!warned)
+            {
+                sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << std::endl;
+                sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << std::endl;
+                sf::err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+                warned = true;
+            }
+
+            return GLEXT_GL_FUNC_ADD;
+        }
     }
 }
 
@@ -167,7 +171,7 @@ RenderTarget::~RenderTarget()
 ////////////////////////////////////////////////////////////
 void RenderTarget::clear(const Color& color)
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(NULL);
@@ -282,7 +286,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
         }
     #endif
 
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
         bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
@@ -382,7 +386,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
         }
     #endif
 
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         setupDraw(false, states);
 
@@ -424,11 +428,12 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        sf::Lock lock(mutex);
+        sf::Lock lock(RenderTargetImpl::mutex);
 
         Uint64 contextId = Context::getActiveContextId();
 
-        ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(contextId);
+        using RenderTargetImpl::contextRenderTargetMap;
+        RenderTargetImpl::ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(contextId);
 
         if (active)
         {
@@ -462,7 +467,7 @@ bool RenderTarget::setActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTarget::pushGLStates()
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         #ifdef SFML_DEBUG
             // make sure that the user didn't leave an unchecked OpenGL error
@@ -494,7 +499,7 @@ void RenderTarget::pushGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::popGLStates()
 {
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -523,7 +528,7 @@ void RenderTarget::resetGLStates()
         setActive(false);
     #endif
 
-    if (isActive(m_id) || setActive(true))
+    if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
@@ -582,7 +587,7 @@ void RenderTarget::initialize()
 
     // Generate a unique ID for this RenderTarget to track
     // whether it is active within a specific context
-    m_id = getUniqueId();
+    m_id = RenderTargetImpl::getUniqueId();
 }
 
 
@@ -608,6 +613,9 @@ void RenderTarget::applyCurrentView()
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
+    using RenderTargetImpl::factorToGlConstant;
+    using RenderTargetImpl::equationToGlConstant;
+
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEXT_blend_func_separate)
     {

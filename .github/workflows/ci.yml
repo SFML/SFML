@@ -17,10 +17,12 @@ jobs:
         - { name: Linux Clang,    os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
         - { name: MacOS XCode,    os: macos-latest   }
         config:
-        - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
-        - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
+        - { name: Shared,       flags: -DBUILD_SHARED_LIBS=TRUE }
+        - { name: Static,       flags: -DBUILD_SHARED_LIBS=FALSE }
 
         include:
+        - platform: { name: Windows VS2019, os: windows-latest }
+          config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
         - platform: { name: MacOS XCode, os: macos-latest }
           config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=TRUE }
         - platform: { name: MacOS XCode, os: macos-latest }
