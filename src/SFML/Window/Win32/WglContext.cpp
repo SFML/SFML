@@ -295,7 +295,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
 
         // Let's check how many formats are supporting our requirements
         int  formats[512];
-        UINT nbFormats;
+        UINT nbFormats = 0; // We must initialize to 0 otherwise broken drivers might fill with garbage in the following call
         bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 512, formats, &nbFormats) != FALSE;
 
         if (!isValid)
