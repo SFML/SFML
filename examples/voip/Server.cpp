@@ -9,8 +9,8 @@
 #include <iterator>
 
 
-const sf::Uint8 audioData   = 1;
-const sf::Uint8 endOfStream = 2;
+const sf::Uint8 serverAudioData   = 1;
+const sf::Uint8 serverEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ private:
             sf::Uint8 id;
             packet >> id;
 
-            if (id == audioData)
+            if (id == serverAudioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
                 const sf::Int16* samples     = reinterpret_cast<const sf::Int16*>(static_cast<const char*>(packet.getData()) + 1);
@@ -136,7 +136,7 @@ private:
                     std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
                 }
             }
-            else if (id == endOfStream)
+            else if (id == serverEndOfStream)
             {
                 // End of stream reached: we stop receiving audio data
                 std::cout << "Audio data has been 100% received!" << std::endl;

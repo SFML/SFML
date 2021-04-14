@@ -31,6 +31,9 @@
 #ifdef _WIN32_WINNT
     #undef _WIN32_WINNT
 #endif
+#ifdef WINVER
+    #undef WINVER
+#endif
 #define _WIN32_WINDOWS 0x0501
 #define _WIN32_WINNT   0x0501
 #define WINVER         0x0501

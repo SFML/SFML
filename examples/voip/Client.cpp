@@ -7,8 +7,8 @@
 #include <iostream>
 
 
-const sf::Uint8 audioData   = 1;
-const sf::Uint8 endOfStream = 2;
+const sf::Uint8 clientAudioData   = 1;
+const sf::Uint8 clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ private:
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
-        packet << audioData;
+        packet << clientAudioData;
         packet.append(samples, sampleCount * sizeof(sf::Int16));
 
         // Send the audio packet to the server
@@ -86,7 +86,7 @@ private:
     {
         // Send a "end-of-stream" packet
         sf::Packet packet;
-        packet << endOfStream;
+        packet << clientEndOfStream;
         m_socket.send(packet);
 
         // Close the socket

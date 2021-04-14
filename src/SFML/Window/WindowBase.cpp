@@ -33,7 +33,11 @@
 
 namespace
 {
-    const sf::WindowBase* fullscreenWindow = NULL;
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace WindowsBaseImpl
+    {
+        const sf::WindowBase* fullscreenWindow = NULL;
+    }
 }
 
 
@@ -366,14 +370,14 @@ void WindowBase::initialize()
 ////////////////////////////////////////////////////////////
 const WindowBase* WindowBase::getFullscreenWindow()
 {
-    return fullscreenWindow;
+    return WindowsBaseImpl::fullscreenWindow;
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowBase::setFullscreenWindow(const WindowBase* window)
 {
-    fullscreenWindow = window;
+    WindowsBaseImpl::fullscreenWindow = window;
 }
 
 } // namespace sf
