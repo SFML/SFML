@@ -308,6 +308,8 @@
     #define GLEXT_geometry_shader4                    SF_GLAD_GL_ARB_geometry_shader4
     #define GLEXT_GL_GEOMETRY_SHADER                  GL_GEOMETRY_SHADER_ARB
 
+#endif
+
     // OpenGL Versions
     #define GLEXT_GL_VERSION_1_0                      SF_GLAD_GL_VERSION_1_0
     #define GLEXT_GL_VERSION_1_1                      SF_GLAD_GL_VERSION_1_1
@@ -328,8 +330,6 @@
     #define GLEXT_GL_VERSION_4_4                      SF_GLAD_GL_VERSION_4_4
     #define GLEXT_GL_VERSION_4_5                      SF_GLAD_GL_VERSION_4_5
     #define GLEXT_GL_VERSION_4_6                      SF_GLAD_GL_VERSION_4_6
-
-#endif
 
 namespace sf
 {
