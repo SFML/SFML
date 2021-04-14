@@ -102,6 +102,7 @@ static void initializeMain(ActivityStates* states)
      * input queue.
      */
     ALooper_acquire(states->looper);
+    ALooper_wake(states->looper);
 
     // Get the default configuration
     states->config = AConfiguration_new();
