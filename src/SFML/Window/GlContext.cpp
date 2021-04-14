@@ -550,6 +550,13 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
+const GlContext* GlContext::getActiveContext()
+{
+    return currentContext;
+}
+
+
+////////////////////////////////////////////////////////////
 Uint64 GlContext::getActiveContextId()
 {
     return currentContext ? currentContext->m_id : 0;

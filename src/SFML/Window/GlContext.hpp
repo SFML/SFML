@@ -158,6 +158,14 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context
+    ///
+    /// \return The currently active context or NULL if none is active
+    ///
+    ////////////////////////////////////////////////////////////
+    static const GlContext* getActiveContext();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context's ID
     ///
     /// The context ID is used to identify contexts when
