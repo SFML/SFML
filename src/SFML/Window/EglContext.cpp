@@ -356,10 +356,10 @@ void EglContext::updateSettings()
 ////////////////////////////////////////////////////////////
 XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    ensureInit();
+    EGLContextImpl::ensureInit();
 
     // Get the initialized EGL display
-    EGLDisplay display = getInitializedDisplay();
+    EGLDisplay display = EGLContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
     EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
