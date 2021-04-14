@@ -45,7 +45,7 @@
 namespace
 {
     // A nested named namespace is used here to allow unity builds of SFML.
-    namespace EGLContextImpl
+    namespace EglContextImpl
     {
         EGLDisplay getInitializedDisplay()
         {
@@ -102,10 +102,10 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 
     // Get the initialized EGL display
-    m_display = EGLContextImpl::getInitializedDisplay();
+    m_display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
     m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
@@ -133,7 +133,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 
 #ifdef SFML_SYSTEM_ANDROID
 
@@ -146,7 +146,7 @@ m_config  (NULL)
 #endif
 
     // Get the initialized EGL display
-    m_display = EGLContextImpl::getInitializedDisplay();
+    m_display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, bitsPerPixel, settings);
@@ -170,7 +170,7 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 }
 
 
@@ -206,7 +206,7 @@ EglContext::~EglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer EglContext::getFunction(const char* name)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
@@ -292,7 +292,7 @@ void EglContext::destroySurface()
 ////////////////////////////////////////////////////////////
 EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 
     // Set our video settings constraint
     const EGLint attributes[] = {
@@ -356,10 +356,10 @@ void EglContext::updateSettings()
 ////////////////////////////////////////////////////////////
 XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    EGLContextImpl::ensureInit();
+    EglContextImpl::ensureInit();
 
     // Get the initialized EGL display
-    EGLDisplay display = EGLContextImpl::getInitializedDisplay();
+    EGLDisplay display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
     EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
