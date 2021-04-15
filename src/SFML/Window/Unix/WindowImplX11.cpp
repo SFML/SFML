@@ -1244,6 +1244,8 @@ bool WindowImplX11::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::grabFocus()
 {
+    using namespace WindowsImplX11Impl;
+
     Atom netActiveWindow = None;
 
     if (ewmhSupported())
@@ -1293,6 +1295,8 @@ void WindowImplX11::grabFocus()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setVideoMode(const VideoMode& mode)
 {
+    using namespace WindowsImplX11Impl;
+
     // Skip mode switching if the new mode is equal to the desktop mode
     if (mode == VideoMode::getDesktopMode())
         return;
