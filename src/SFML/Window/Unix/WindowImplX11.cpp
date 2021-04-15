@@ -1397,6 +1397,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::resetVideoMode()
 {
+    using namespace WindowsImplX11Impl;
+
     if (fullscreenWindow == this)
     {
         // Try to set old configuration
@@ -1459,6 +1461,8 @@ void WindowImplX11::resetVideoMode()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen()
 {
+    using namespace WindowsImplX11Impl;
+
     grabFocus();
 
     if (ewmhSupported())
