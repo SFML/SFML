@@ -1133,6 +1133,8 @@ void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 {
+    using namespace WindowsImplX11Impl;
+
     // This has no effect in fullscreen mode
     if (m_fullscreen || (m_cursorGrabbed == grabbed))
         return;
@@ -1176,6 +1178,8 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
 {
+    using namespace WindowsImplX11Impl;
+
     // Focus is only stolen among SFML windows, not between applications
     // Check the global list of windows to find out whether an SFML window has the focus
     // Note: can't handle console and other non-SFML windows belonging to the application.
@@ -1577,6 +1581,8 @@ void WindowImplX11::setProtocols()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
+    using namespace WindowsImplX11Impl;
+
     // Create the input context
     m_inputMethod = XOpenIM(m_display, NULL, NULL, NULL);
 
@@ -1690,6 +1696,8 @@ void WindowImplX11::cleanup()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(XEvent& windowEvent)
 {
+    using namespace WindowsImplX11Impl;
+
     // This function implements a workaround to properly discard
     // repeated key events when necessary. The problem is that the
     // system's key events policy doesn't match SFML's one: X server will generate
