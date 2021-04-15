@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#define SF_GLAD_GLX_IMPLEMENTATION
 #include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
@@ -33,6 +32,14 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <vector>
+
+// We check for this definition in order to avoid multiple definitions of GLAD
+// entities during unity builds of SFML.
+#ifndef SF_GLAD_GLX_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_GLX_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_GLX_IMPLEMENTATION
+#include <glad/glx.h>
+#endif
 
 #if !defined(GLX_DEBUGGING) && defined(SFML_DEBUG)
     // Enable this to print messages to err() everytime GLX produces errors
@@ -52,7 +59,7 @@ namespace
         if (!initialized)
         {
             initialized = true;
-    
+
             // We don't check the return value since the extension
             // flags are cleared even if loading fails
             gladLoaderLoadGLX(display, screen);

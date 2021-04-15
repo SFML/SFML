@@ -36,15 +36,19 @@
 
 namespace
 {
-    sf::Mutex isAvailableMutex;
-
-    GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace VertexBufferImpl
     {
-        switch (usage)
+        sf::Mutex isAvailableMutex;
+
+        GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
         {
-            case sf::VertexBuffer::Static:  return GLEXT_GL_STATIC_DRAW;
-            case sf::VertexBuffer::Dynamic: return GLEXT_GL_DYNAMIC_DRAW;
-            default:                        return GLEXT_GL_STREAM_DRAW;
+            switch (usage)
+            {
+                case sf::VertexBuffer::Static:  return GLEXT_GL_STATIC_DRAW;
+                case sf::VertexBuffer::Dynamic: return GLEXT_GL_DYNAMIC_DRAW;
+                default:                        return GLEXT_GL_STREAM_DRAW;
+            }
         }
     }
 }
@@ -143,7 +147,7 @@ bool VertexBuffer::create(std::size_t vertexCount)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
     m_size = vertexCount;
@@ -186,7 +190,7 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
     // Check if we need to resize or orphan the buffer
     if (vertexCount >= m_size)
     {
-        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, usageToGlEnum(m_usage)));
+        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
 
         m_size = vertexCount;
     }
@@ -230,7 +234,7 @@ bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexBuffer.m_size, 0, usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexBuffer.m_size, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
 
     void* destination = 0;
     glCheck(destination = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
@@ -332,7 +336,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    Lock lock(isAvailableMutex);
+    Lock lock(VertexBufferImpl::isAvailableMutex);
 
     static bool checked = false;
     static bool available = false;
