@@ -26,7 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #define VK_USE_PLATFORM_WIN32_KHR
 #define VK_NO_PROTOTYPES
