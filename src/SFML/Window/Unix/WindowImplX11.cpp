@@ -1515,6 +1515,8 @@ void WindowImplX11::switchToFullscreen()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setProtocols()
 {
+    using namespace WindowsImplX11Impl;
+
     Atom wmProtocols = getAtom("WM_PROTOCOLS");
     Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
 
