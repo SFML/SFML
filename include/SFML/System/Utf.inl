@@ -675,7 +675,7 @@ Uint32 Utf<32>::decodeWide(In input)
     // In both cases, a simple copy is enough (UCS-2 is a subset of UCS-4,
     // and UCS-4 *is* UTF-32).
 
-    return input;
+    return static_cast<Uint32>(input);
 }
 
 

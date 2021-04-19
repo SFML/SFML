@@ -142,7 +142,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
     release();
 
-    LPCTSTR shape;
+    LPCTSTR shape = NULL;
     switch (type)
     {
         case Cursor::Arrow:                  shape = IDC_ARROW;       break;
