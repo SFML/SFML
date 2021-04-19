@@ -122,16 +122,16 @@ namespace
                 switch (frame->header.bits_per_sample)
                 {
                     case 8:
-                        sample = buffer[j][i] << 8;
+                        sample = static_cast<sf::Int16>(buffer[j][i] << 8);
                         break;
                     case 16:
-                        sample = buffer[j][i];
+                        sample = static_cast<sf::Int16>(buffer[j][i]);
                         break;
                     case 24:
-                        sample = buffer[j][i] >> 8;
+                        sample = static_cast<sf::Int16>(buffer[j][i] >> 8);
                         break;
                     case 32:
-                        sample = buffer[j][i] >> 16;
+                        sample = static_cast<sf::Int16>(buffer[j][i] >> 16);
                         break;
                     default:
                         assert(false);

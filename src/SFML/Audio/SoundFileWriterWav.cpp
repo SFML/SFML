@@ -68,6 +68,11 @@ namespace
         };
         stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
     }
+
+    unsigned char toLower(unsigned char character)
+    {
+        return static_cast<unsigned char>(std::tolower(character));
+    }
 }
 
 namespace sf
@@ -78,7 +83,7 @@ namespace priv
 bool SoundFileWriterWav::check(const std::string& filename)
 {
     std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
 
     return extension == "wav";
 }
@@ -160,7 +165,7 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     encode(m_file, static_cast<Uint32>(sampleRate));
     Uint32 byteRate = sampleRate * channelCount * 2;
     encode(m_file, byteRate);
-    Uint16 blockAlign = channelCount * 2;
+    Uint16 blockAlign = static_cast<Uint16>(channelCount * 2);
     encode(m_file, blockAlign);
     Uint16 bitsPerSample = 16;
     encode(m_file, bitsPerSample);
