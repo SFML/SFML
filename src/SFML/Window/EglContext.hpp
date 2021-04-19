@@ -67,6 +67,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
+    /// \warning This constructor is currently not implemented; use a different overload.
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
