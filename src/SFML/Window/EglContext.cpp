@@ -169,13 +169,15 @@ m_config  (NULL)
 
 
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, unsigned int /*width*/, unsigned int /*height*/) :
 m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
     EglContextImpl::ensureInit();
+
+    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, width, height) is currently not implemented." << std::endl;
 }
 
 

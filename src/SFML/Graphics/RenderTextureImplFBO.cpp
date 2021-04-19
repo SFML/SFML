@@ -77,7 +77,7 @@ namespace
     }
 
     // Callback that is called every time a context is destroyed
-    void contextDestroyCallback(void* arg)
+    void contextDestroyCallback(void* /*arg*/)
     {
         sf::Lock lock(mutex);
 
