@@ -32,6 +32,14 @@
 #include <cassert>
 
 
+namespace
+{
+    unsigned char toLower(unsigned char character)
+    {
+        return static_cast<unsigned char>(std::tolower(character));
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -40,7 +48,7 @@ namespace priv
 bool SoundFileWriterFlac::check(const std::string& filename)
 {
     std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
 
     return extension == "flac";
 }

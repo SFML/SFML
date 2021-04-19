@@ -187,7 +187,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint32 sample = 0;
                 if (decode24bit(*m_stream, sample))
-                    *samples++ = sample >> 8;
+                    *samples++ = static_cast<Int16>(sample >> 8);
                 else
                     return count;
                 break;
@@ -197,7 +197,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint32 sample = 0;
                 if (decode(*m_stream, sample))
-                    *samples++ = sample >> 16;
+                    *samples++ = static_cast<Int16>(sample >> 16);
                 else
                     return count;
                 break;
