@@ -132,7 +132,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int /*bitsPerPixel*/) :
 m_display   (NULL),
 m_window    (0),
 m_context   (NULL),
@@ -547,6 +547,9 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
     XSetWindowAttributes attributes;
     attributes.colormap = XCreateColormap(m_display, RootWindow(m_display, screen), visualInfo.visual, AllocNone);
 
+    // Note: bitsPerPixel is explicitly ignored. Instead, DefaultDepth() is used in order to avoid window creation failure due to
+    // a depth not supported by the X window system. On Unix/Linux, the window's pixel format is not directly associated with the
+    // rendering surface (unlike on Windows, for example).
     m_window = XCreateWindow(m_display,
                              RootWindow(m_display, screen),
                              0, 0,
