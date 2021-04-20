@@ -3,7 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+#include <stb_perlin.h>
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <deque>
@@ -273,10 +273,10 @@ float getElevation(float x, float y)
     for (int i = 0; i < perlinOctaves; i++)
     {
         elevation += stb_perlin_noise3(
-            x * perlinFrequency * std::pow(perlinFrequencyBase, i),
-            y * perlinFrequency * std::pow(perlinFrequencyBase, i),
+            x * perlinFrequency * static_cast<float>(std::pow(perlinFrequencyBase, i)),
+            y * perlinFrequency * static_cast<float>(std::pow(perlinFrequencyBase, i)),
             0, 0, 0, 0
-        ) * std::pow(perlinFrequencyBase, -i);
+        ) * static_cast<float>(std::pow(perlinFrequencyBase, -i));
     }
 
     elevation = (elevation + 1.f) / 2.f;
@@ -286,6 +286,11 @@ float getElevation(float x, float y)
     elevation = std::min(std::max(elevation, 0.0f), 1.0f);
 
     return elevation;
+}
+
+float getElevation(unsigned int x, unsigned int y)
+{
+    return getElevation(static_cast<float>(x), static_cast<float>(y));
 }
 
 
@@ -307,6 +312,11 @@ float getMoisture(float x, float y)
     return (moisture + 1.f) / 2.f;
 }
 
+float getMoisture(unsigned int x, unsigned int y)
+{
+    return getMoisture(static_cast<float>(x), static_cast<float>(y));
+}
+
 
 ////////////////////////////////////////////////////////////
 /// Get the lowlands terrain color for the given moisture.
@@ -316,11 +326,11 @@ sf::Color getLowlandsTerrainColor(float moisture)
 {
     sf::Color color =
         moisture < 0.27f ? sf::Color(240, 240, 180) :
-        moisture < 0.3f ? sf::Color(240 - 240 * (moisture - 0.27f) / 0.03f, 240 - 40 * (moisture - 0.27f) / 0.03f, 180 - 180 * (moisture - 0.27f) / 0.03f) :
+        moisture < 0.3f ? sf::Color(240 - static_cast<sf::Uint8>(240 * (moisture - 0.27f) / 0.03f), 240 - static_cast<sf::Uint8>(40 * (moisture - 0.27f) / 0.03f), 180 - static_cast<sf::Uint8>(180 * (moisture - 0.27f) / 0.03f)) :
         moisture < 0.4f ? sf::Color(0, 200, 0) :
-        moisture < 0.48f ? sf::Color(0, 200 - 40 * (moisture - 0.4f) / 0.08f, 0) :
+        moisture < 0.48f ? sf::Color(0, 200 - static_cast<sf::Uint8>(40 * (moisture - 0.4f) / 0.08f), 0) :
         moisture < 0.6f ? sf::Color(0, 160, 0) :
-        moisture < 0.7f ? sf::Color(34 * (moisture - 0.6f) / 0.1f, 160 - 60 * (moisture - 0.6f) / 0.1f, 34 * (moisture - 0.6f) / 0.1f) :
+        moisture < 0.7f ? sf::Color(static_cast<sf::Uint8>(34 * (moisture - 0.6f) / 0.1f), 160 - static_cast<sf::Uint8>(60 * (moisture - 0.6f) / 0.1f), static_cast<sf::Uint8>(34 * (moisture - 0.6f) / 0.1f)) :
         sf::Color(34, 100, 34);
 
     return color;
@@ -338,13 +348,13 @@ sf::Color getHighlandsTerrainColor(float elevation, float moisture)
 
     sf::Color color =
         moisture < 0.6f ? sf::Color(112, 128, 144) :
-        sf::Color(112 + 110 * (moisture - 0.6f) / 0.4f, 128 + 56 * (moisture - 0.6f) / 0.4f, 144 - 9 * (moisture - 0.6f) / 0.4f);
+        sf::Color(112 + static_cast<sf::Uint8>(110 * (moisture - 0.6f) / 0.4f), 128 + static_cast<sf::Uint8>(56 * (moisture - 0.6f) / 0.4f), 144 - static_cast<sf::Uint8>(9 * (moisture - 0.6f) / 0.4f));
 
     float factor = std::min((elevation - 0.4f) / 0.1f, 1.f);
 
-    color.r = lowlandsColor.r * (1.f - factor) + color.r * factor;
-    color.g = lowlandsColor.g * (1.f - factor) + color.g * factor;
-    color.b = lowlandsColor.b * (1.f - factor) + color.b * factor;
+    color.r = static_cast<sf::Uint8>(lowlandsColor.r * (1.f - factor) + color.r * factor);
+    color.g = static_cast<sf::Uint8>(lowlandsColor.g * (1.f - factor) + color.g * factor);
+    color.b = static_cast<sf::Uint8>(lowlandsColor.b * (1.f - factor) + color.b * factor);
 
     return color;
 }
@@ -363,9 +373,9 @@ sf::Color getSnowcapTerrainColor(float elevation, float moisture)
 
     float factor = std::min((elevation - snowcapHeight) / 0.05f, 1.f);
 
-    color.r = highlandsColor.r * (1.f - factor) + color.r * factor;
-    color.g = highlandsColor.g * (1.f - factor) + color.g * factor;
-    color.b = highlandsColor.b * (1.f - factor) + color.b * factor;
+    color.r = static_cast<sf::Uint8>(highlandsColor.r * (1.f - factor) + color.r * factor);
+    color.g = static_cast<sf::Uint8>(highlandsColor.g * (1.f - factor) + color.g * factor);
+    color.b = static_cast<sf::Uint8>(highlandsColor.b * (1.f - factor) + color.b * factor);
 
     return color;
 }
@@ -379,9 +389,9 @@ sf::Color getSnowcapTerrainColor(float elevation, float moisture)
 sf::Color getTerrainColor(float elevation, float moisture)
 {
     sf::Color color =
-        elevation < 0.11f ? sf::Color(0, 0, elevation / 0.11f * 74.f + 181.0f) :
-        elevation < 0.14f ? sf::Color(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f, std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f, 255) :
-        elevation < 0.16f ? sf::Color((elevation - 0.14f) * 128.f / 0.02f + 48.f, (elevation - 0.14f) * 128.f / 0.02f + 48.f, 127.0f + (0.16f - elevation) * 128.f / 0.02f) :
+        elevation < 0.11f ? sf::Color(0, 0, static_cast<sf::Uint8>(elevation / 0.11f * 74.f + 181.0f)) :
+        elevation < 0.14f ? sf::Color(static_cast<sf::Uint8>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f), static_cast<sf::Uint8>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f), 255) :
+        elevation < 0.16f ? sf::Color(static_cast<sf::Uint8>((elevation - 0.14f) * 128.f / 0.02f + 48.f), static_cast<sf::Uint8>((elevation - 0.14f) * 128.f / 0.02f + 48.f), static_cast<sf::Uint8>(127.0f + (0.16f - elevation) * 128.f / 0.02f)) :
         elevation < 0.17f ? sf::Color(240, 230, 140) :
         elevation < 0.4f ? getLowlandsTerrainColor(moisture) :
         elevation < snowcapHeight ? getHighlandsTerrainColor(elevation, moisture) :
@@ -397,7 +407,7 @@ sf::Color getTerrainColor(float elevation, float moisture)
 /// of the 4 adjacent neighbours.
 ///
 ////////////////////////////////////////////////////////////
-sf::Vector2f computeNormal(int x, int y, float left, float right, float bottom, float top)
+sf::Vector2f computeNormal(float left, float right, float bottom, float top)
 {
     sf::Vector3f deltaX(1, 0, (std::pow(right, heightFlatten) - std::pow(left, heightFlatten)) * heightFactor);
     sf::Vector3f deltaY(0, 1, (std::pow(top, heightFlatten) - std::pow(bottom, heightFlatten)) * heightFactor);
@@ -438,9 +448,9 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
 
     for (unsigned int y = rowStart; y < rowEnd; y++)
     {
-        for (int x = 0; x < resolutionX; x++)
+        for (unsigned int x = 0; x < resolutionX; x++)
         {
-            int arrayIndexBase = ((y - rowStart) * resolutionX + x) * 6;
+            unsigned int arrayIndexBase = ((y - rowStart) * resolutionX + x) * 6;
 
             // Top left corner (first triangle)
             if (x > 0)
@@ -453,9 +463,9 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 0].position = sf::Vector2f(x * scalingFactorX, y * scalingFactorY);
+                vertices[arrayIndexBase + 0].position = sf::Vector2f(static_cast<float>(x) * scalingFactorX, static_cast<float>(y) * scalingFactorY);
                 vertices[arrayIndexBase + 0].color = getTerrainColor(getElevation(x, y), getMoisture(x, y));
-                vertices[arrayIndexBase + 0].texCoords = computeNormal(x, y, getElevation(x - 1, y), getElevation(x + 1, y), getElevation(x, y + 1), getElevation(x, y - 1));
+                vertices[arrayIndexBase + 0].texCoords = computeNormal(getElevation(x - 1, y), getElevation(x + 1, y), getElevation(x, y + 1), getElevation(x, y - 1));
             }
 
             // Bottom left corner (first triangle)
@@ -465,15 +475,15 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 1].position = sf::Vector2f(x * scalingFactorX, (y + 1) * scalingFactorY);
+                vertices[arrayIndexBase + 1].position = sf::Vector2f(static_cast<float>(x) * scalingFactorX, static_cast<float>(y + 1) * scalingFactorY);
                 vertices[arrayIndexBase + 1].color = getTerrainColor(getElevation(x, y + 1), getMoisture(x, y + 1));
-                vertices[arrayIndexBase + 1].texCoords = computeNormal(x, y + 1, getElevation(x - 1, y + 1), getElevation(x + 1, y + 1), getElevation(x, y + 2), getElevation(x, y));
+                vertices[arrayIndexBase + 1].texCoords = computeNormal(getElevation(x - 1, y + 1), getElevation(x + 1, y + 1), getElevation(x, y + 2), getElevation(x, y));
             }
 
             // Bottom right corner (first triangle)
-            vertices[arrayIndexBase + 2].position = sf::Vector2f((x + 1) * scalingFactorX, (y + 1) * scalingFactorY);
+            vertices[arrayIndexBase + 2].position = sf::Vector2f(static_cast<float>(x + 1) * scalingFactorX, static_cast<float>(y + 1) * scalingFactorY);
             vertices[arrayIndexBase + 2].color = getTerrainColor(getElevation(x + 1, y + 1), getMoisture(x + 1, y + 1));
-            vertices[arrayIndexBase + 2].texCoords = computeNormal(x + 1, y + 1, getElevation(x, y + 1), getElevation(x + 2, y + 1), getElevation(x + 1, y + 2), getElevation(x + 1, y));
+            vertices[arrayIndexBase + 2].texCoords = computeNormal(getElevation(x, y + 1), getElevation(x + 2, y + 1), getElevation(x + 1, y + 2), getElevation(x + 1, y));
 
             // Top left corner (second triangle)
             vertices[arrayIndexBase + 3] = vertices[arrayIndexBase + 0];
@@ -488,9 +498,9 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 5].position = sf::Vector2f((x + 1) * scalingFactorX, y * scalingFactorY);
+                vertices[arrayIndexBase + 5].position = sf::Vector2f(static_cast<float>(x + 1) * scalingFactorX, static_cast<float>(y) * scalingFactorY);
                 vertices[arrayIndexBase + 5].color = getTerrainColor(getElevation(x + 1, y), getMoisture(x + 1, y));
-                vertices[arrayIndexBase + 5].texCoords = computeNormal(x + 1, y, getElevation(x, y), getElevation(x + 2, y), getElevation(x + 1, y + 1), getElevation(x + 1, y - 1));
+                vertices[arrayIndexBase + 5].texCoords = computeNormal(getElevation(x, y), getElevation(x + 2, y), getElevation(x + 1, y + 1), getElevation(x + 1, y - 1));
             }
         }
     }
