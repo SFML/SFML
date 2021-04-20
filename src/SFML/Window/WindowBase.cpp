@@ -90,7 +90,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
         if (getFullscreenWindow())
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            style &= ~Style::Fullscreen;
+            style &= ~static_cast<Uint32>(Style::Fullscreen);
         }
         else
         {
@@ -109,7 +109,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
     // Check validity of style according to the underlying platform
     #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
         if (style & Style::Fullscreen)
-            style &= ~Style::Titlebar;
+            style &= ~static_cast<Uint32>(Style::Titlebar);
         else
             style |= Style::Titlebar;
     #else

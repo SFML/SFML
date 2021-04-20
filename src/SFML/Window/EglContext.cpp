@@ -163,7 +163,7 @@ m_config  (NULL)
 #if !defined(SFML_SYSTEM_ANDROID)
     // Create EGL surface (except on Android because the window is created
     // asynchronously, its activity manager will call it for us)
-    createSurface((EGLNativeWindowType)owner->getSystemHandle());
+    createSurface(owner->getSystemHandle());
 #endif
 }
 
@@ -215,7 +215,7 @@ GlFunctionPointer EglContext::getFunction(const char* name)
 {
     EglContextImpl::ensureInit();
 
-    return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
+    return eglGetProcAddress(name);
 }
 
 
@@ -306,7 +306,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
         EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
         EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
-        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel ? 1 : 0),
+        EGL_SAMPLE_BUFFERS, settings.antialiasingLevel ? 1 : 0,
         EGL_SAMPLES, static_cast<EGLint>(settings.antialiasingLevel),
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
@@ -337,21 +337,21 @@ void EglContext::updateSettings()
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_DEPTH_SIZE" << std::endl;
 
-    m_settings.depthBits = tmp;
+    m_settings.depthBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
 
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_STENCIL_SIZE" << std::endl;
 
-    m_settings.stencilBits = tmp;
+    m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
 
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_SAMPLES" << std::endl;
 
-    m_settings.antialiasingLevel = tmp;
+    m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
 
     m_settings.majorVersion = 1;
     m_settings.minorVersion = 1;
