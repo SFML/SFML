@@ -37,7 +37,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    Uint64 usecs = time.asMicroseconds();
+    Int64 usecs = time.asMicroseconds();
 
     // Construct the time to wait
     timespec ti;

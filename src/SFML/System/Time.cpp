@@ -44,7 +44,7 @@ m_microseconds(0)
 ////////////////////////////////////////////////////////////
 float Time::asSeconds() const
 {
-    return m_microseconds / 1000000.f;
+    return static_cast<float>(static_cast<double>(m_microseconds) / 1000000.0);
 }
 
 

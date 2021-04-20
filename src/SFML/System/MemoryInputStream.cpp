@@ -44,7 +44,7 @@ m_offset(0)
 void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
 {
     m_data = static_cast<const char*>(data);
-    m_size = sizeInBytes;
+    m_size = static_cast<Int64>(sizeInBytes);
     m_offset = 0;
 }
 
