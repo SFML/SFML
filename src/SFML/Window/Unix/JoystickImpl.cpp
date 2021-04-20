@@ -155,12 +155,12 @@ namespace
                             // If not mapped before and it got added, map it now
                             const char* syspath = udev_device_get_syspath(udevDevice);
 
-                            JoystickRecord record;
-                            record.deviceNode = devnode;
-                            record.systemPath = syspath ? syspath : "";
-                            record.plugged = true;
+                            JoystickRecord newRecord;
+                            newRecord.deviceNode = devnode;
+                            newRecord.systemPath = syspath ? syspath : "";
+                            newRecord.plugged    = true;
 
-                            joystickList.push_back(record);
+                            joystickList.push_back(newRecord);
                         }
                         else if (std::strstr(action, "remove"))
                         {
@@ -211,12 +211,12 @@ namespace
 
         udev_list_entry_foreach(device, devices) {
             const char* syspath = udev_list_entry_get_name(device);
-            udev_device* udevDevice = udev_device_new_from_syspath(udevContext, syspath);
+            udev_device* newUdevDevice = udev_device_new_from_syspath(udevContext, syspath);
 
-            if (udevDevice && isJoystick(udevDevice))
+            if (newUdevDevice && isJoystick(newUdevDevice))
             {
                 // Since isJoystick returned true, this has to succeed
-                const char* devnode = udev_device_get_devnode(udevDevice);
+                const char* devnode = udev_device_get_devnode(newUdevDevice);
 
                 JoystickList::iterator record;
 
@@ -233,16 +233,16 @@ namespace
                 // If not mapped before, map it now
                 if (record == joystickList.end())
                 {
-                    JoystickRecord record;
-                    record.deviceNode = devnode;
-                    record.systemPath = syspath;
-                    record.plugged = true;
+                    JoystickRecord nweRecord;
+                    nweRecord.deviceNode = devnode;
+                    nweRecord.systemPath = syspath;
+                    nweRecord.plugged    = true;
 
-                    joystickList.push_back(record);
+                    joystickList.push_back(nweRecord);
                 }
             }
 
-            udev_device_unref(udevDevice);
+            udev_device_unref(newUdevDevice);
         }
 
         udev_enumerate_unref(udevEnumerator);
@@ -602,7 +602,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
     // Get the number of buttons
     char buttonCount;
     ioctl(m_file, JSIOCGBUTTONS, &buttonCount);
-    caps.buttonCount = buttonCount;
+    caps.buttonCount = static_cast<unsigned int>(buttonCount);
     if (caps.buttonCount > Joystick::ButtonCount)
         caps.buttonCount = Joystick::ButtonCount;
 
@@ -649,7 +649,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
 
     // pop events from the joystick file
     js_event joyState;
-    int result = read(m_file, &joyState, sizeof(joyState));
+    ssize_t result = read(m_file, &joyState, sizeof(joyState));
     while (result > 0)
     {
         switch (joyState.type & ~JS_EVENT_INIT)

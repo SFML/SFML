@@ -81,10 +81,10 @@ namespace
 
         static const unsigned int             maxTrialsCount = 5;
 
-        // Predicate we use to find key repeat events in processEvent
-        struct KeyRepeatFinder
-        {
-            KeyRepeatFinder(unsigned int keycode, Time time) : keycode(keycode), time(time) {}
+    // Predicate we use to find key repeat events in processEvent
+    struct KeyRepeatFinder
+    {
+        KeyRepeatFinder(unsigned int initalKeycode, Time initialTime) : keycode(initalKeycode), time(initialTime) {}
 
             // Predicate operator that checks event type, keycode and timestamp
             bool operator()(const XEvent& event)
@@ -117,11 +117,11 @@ namespace
             std::size_t offset = 0;
             ssize_t result = 0;
 
-            while ((result = read(file, &buffer[offset], 256)) > 0)
-            {
-                buffer.resize(buffer.size() + result, 0);
-                offset += result;
-            }
+        while ((result = read(file, &buffer[offset], 256)) > 0)
+        {
+            buffer.resize(buffer.size() + static_cast<std::size_t>(result), 0);
+            offset += static_cast<std::size_t>(result);
+        }
 
             ::close(file);
 
@@ -335,7 +335,7 @@ namespace
             {
                 gotFrameExtents = true;
 
-                long* extents = (long*) data;
+            long* extents = reinterpret_cast<long*>(data);
 
                 xFrameExtent = extents[0]; // Left.
                 yFrameExtent = extents[2]; // Top.
@@ -573,12 +573,12 @@ m_lastInputTime  (0)
     }
     else
     {
-        windowPosition.x = (DisplayWidth(m_display, m_screen)  - mode.width) / 2;
-        windowPosition.y = (DisplayWidth(m_display, m_screen)  - mode.height) / 2;
+        windowPosition.x = (DisplayWidth(m_display, m_screen) - static_cast<int>(mode.width))  / 2;
+        windowPosition.y = (DisplayWidth(m_display, m_screen) - static_cast<int>(mode.height)) / 2;
     }
 
-    int width  = mode.width;
-    int height = mode.height;
+    unsigned int width  = mode.width;
+    unsigned int height = mode.height;
 
     Visual* visual = NULL;
     int depth = 0;
@@ -626,11 +626,11 @@ m_lastInputTime  (0)
     setProtocols();
 
     // Set the WM initial state to the normal state
-    XWMHints* hints = XAllocWMHints();
-    hints->flags         = StateHint;
-    hints->initial_state = NormalState;
-    XSetWMHints(m_display, m_window, hints);
-    XFree(hints);
+    XWMHints* xHints = XAllocWMHints();
+    xHints->flags         = StateHint;
+    xHints->initial_state = NormalState;
+    XSetWMHints(m_display, m_window, xHints);
+    XFree(xHints);
 
     // If not in fullscreen, set the window's style (tell the window manager to
     // change our window's decorations and functions according to the requested style)
@@ -705,8 +705,8 @@ m_lastInputTime  (0)
         m_useSizeHints = true;
         XSizeHints* sizeHints = XAllocSizeHints();
         sizeHints->flags = PMinSize | PMaxSize | USPosition;
-        sizeHints->min_width = sizeHints->max_width = width;
-        sizeHints->min_height = sizeHints->max_height = height;
+        sizeHints->min_width  = sizeHints->max_width  = static_cast<int>(width);
+        sizeHints->min_height = sizeHints->max_height = static_cast<int>(height);
         sizeHints->x = windowPosition.x;
         sizeHints->y = windowPosition.y;
         XSetWMNormalHints(m_display, m_window, sizeHints);
@@ -867,7 +867,7 @@ Vector2i WindowImplX11::getPosition() const
     {
         // Get final X/Y coordinates: subtract EWMH frame extents from
         // absolute window position.
-        return Vector2i((xAbsRelToRoot - xFrameExtent), (yAbsRelToRoot - yFrameExtent));
+        return Vector2i((xAbsRelToRoot - static_cast<int>(xFrameExtent)), (yAbsRelToRoot - static_cast<int>(yFrameExtent)));
     }
 
     // CASE 3: EWMH frame extents were not available, use geometry.
@@ -917,7 +917,7 @@ Vector2u WindowImplX11::getSize() const
 {
     XWindowAttributes attributes;
     XGetWindowAttributes(m_display, m_window, &attributes);
-    return Vector2u(attributes.width, attributes.height);
+    return Vector2u(Vector2i(attributes.width, attributes.height));
 }
 
 
@@ -929,8 +929,8 @@ void WindowImplX11::setSize(const Vector2u& size)
     {
         XSizeHints* sizeHints = XAllocSizeHints();
         sizeHints->flags = PMinSize | PMaxSize;
-        sizeHints->min_width = sizeHints->max_width = size.x;
-        sizeHints->min_height = sizeHints->max_height = size.y;
+        sizeHints->min_width  = sizeHints->max_width  = static_cast<int>(size.x);
+        sizeHints->min_height = sizeHints->max_height = static_cast<int>(size.y);
         XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
     }
@@ -955,12 +955,12 @@ void WindowImplX11::setTitle(const String& title)
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmName = getAtom("_NET_WM_NAME", false);
     XChangeProperty(m_display, m_window, wmName, useUtf8, 8,
-                    PropModeReplace, utf8Title.c_str(), utf8Title.size());
+                    PropModeReplace, utf8Title.c_str(), static_cast<int>(utf8Title.size()));
 
     // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
     Atom wmIconName = getAtom("_NET_WM_ICON_NAME", false);
     XChangeProperty(m_display, m_window, wmIconName, useUtf8, 8,
-                    PropModeReplace, utf8Title.c_str(), utf8Title.size());
+                    PropModeReplace, utf8Title.c_str(), static_cast<int>(utf8Title.size()));
 
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     #ifdef X_HAVE_UTF8_STRING
@@ -1003,8 +1003,8 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Create the icon pixmap
     Visual*      defVisual = DefaultVisual(m_display, m_screen);
-    unsigned int defDepth  = DefaultDepth(m_display, m_screen);
-    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, (char*)iconPixels, width, height, 32, 0);
+    unsigned int defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
+    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), width, height, 32, 0);
     if (!iconImage)
     {
         err() << "Failed to set the window's icon" << std::endl;
@@ -1036,12 +1036,12 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                 if (i * 8 + k < width)
                 {
                     Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= (opacity << k);
+                    maskPixels[i + j * pitch] |= static_cast<Uint8>(opacity << k);
                 }
             }
         }
     }
-    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, (char*)&maskPixels[0], width, height, 1, 0, 1);
+    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, reinterpret_cast<char*>(&maskPixels[0]), width, height, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
     XWMHints* hints = XAllocWMHints();
@@ -1061,10 +1061,10 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     for (std::size_t i = 0; i < width * height; ++i)
     {
-        *ptr++ = (pixels[i * 4 + 2] << 0 ) |
-                 (pixels[i * 4 + 1] << 8 ) |
-                 (pixels[i * 4 + 0] << 16) |
-                 (pixels[i * 4 + 3] << 24);
+        *ptr++ = static_cast<unsigned long>((pixels[i * 4 + 2] << 0 ) |
+                                            (pixels[i * 4 + 1] << 8 ) |
+                                            (pixels[i * 4 + 0] << 16) |
+                                            (pixels[i * 4 + 3] << 24));
     }
 
     Atom netWmIcon = getAtom("_NET_WM_ICON");
@@ -1076,7 +1076,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                     32,
                     PropModeReplace,
                     reinterpret_cast<const unsigned char*>(&icccmIconPixels[0]),
-                    2 + width * height);
+                    static_cast<int>(2 + width * height));
 
     XFlush(m_display);
 }
@@ -1269,7 +1269,7 @@ void WindowImplX11::grabFocus()
         event.xclient.format = 32;
         event.xclient.message_type = netActiveWindow;
         event.xclient.data.l[0] = 1; // Normal application
-        event.xclient.data.l[1] = m_lastInputTime;
+        event.xclient.data.l[1] = static_cast<long>(m_lastInputTime);
         event.xclient.data.l[2] = 0; // We don't know the currently active window
 
         int result = XSendEvent(m_display,
@@ -1504,7 +1504,7 @@ void WindowImplX11::switchToFullscreen()
         event.xclient.format = 32;
         event.xclient.message_type = netWmState;
         event.xclient.data.l[0] = 1; // _NET_WM_STATE_ADD
-        event.xclient.data.l[1] = netWmStateFullscreen;
+        event.xclient.data.l[1] = static_cast<long>(netWmStateFullscreen);
         event.xclient.data.l[2] = 0; // No second property
         event.xclient.data.l[3] = 1; // Normal window
 
@@ -1579,7 +1579,7 @@ void WindowImplX11::setProtocols()
                         32,
                         PropModeReplace,
                         reinterpret_cast<const unsigned char*>(&atoms[0]),
-                        atoms.size());
+                        static_cast<int>(atoms.size()));
     }
     else
     {
@@ -1819,8 +1819,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             {
                 Event event;
                 event.type        = Event::Resized;
-                event.size.width  = windowEvent.xconfigure.width;
-                event.size.height = windowEvent.xconfigure.height;
+                event.size.width  = static_cast<unsigned int>(windowEvent.xconfigure.width);
+                event.size.height = static_cast<unsigned int>(windowEvent.xconfigure.height);
                 pushEvent(event);
 
                 m_previousSize.x = windowEvent.xconfigure.width;
