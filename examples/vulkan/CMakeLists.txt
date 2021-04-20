@@ -9,3 +9,6 @@ sfml_add_example(vulkan GUI_APP
                  SOURCES ${SRC}
                  DEPENDS sfml-graphics
                  RESOURCES_DIR resources)
+
+# external dependency headers
+target_include_directories(vulkan SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/vulkan)

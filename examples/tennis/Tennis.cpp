@@ -142,7 +142,7 @@ int main()
                     do
                     {
                         // Make sure the ball initial angle is not too much vertical
-                        ballAngle = (std::rand() % 360) * 2 * pi / 360;
+                        ballAngle = static_cast<float>(std::rand() % 360) * 2 * pi / 360;
                     }
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }
@@ -242,9 +242,9 @@ int main()
                 ball.getPosition().y - ballRadius <= leftPaddle.getPosition().y + paddleSize.y / 2)
             {
                 if (ball.getPosition().y > leftPaddle.getPosition().y)
-                    ballAngle = pi - ballAngle + (std::rand() % 20) * pi / 180;
+                    ballAngle = pi - ballAngle + static_cast<float>(std::rand() % 20) * pi / 180;
                 else
-                    ballAngle = pi - ballAngle - (std::rand() % 20) * pi / 180;
+                    ballAngle = pi - ballAngle - static_cast<float>(std::rand() % 20) * pi / 180;
 
                 ballSound.play();
                 ball.setPosition(leftPaddle.getPosition().x + ballRadius + paddleSize.x / 2 + 0.1f, ball.getPosition().y);
@@ -257,9 +257,9 @@ int main()
                 ball.getPosition().y - ballRadius <= rightPaddle.getPosition().y + paddleSize.y / 2)
             {
                 if (ball.getPosition().y > rightPaddle.getPosition().y)
-                    ballAngle = pi - ballAngle + (std::rand() % 20) * pi / 180;
+                    ballAngle = pi - ballAngle + static_cast<float>(std::rand() % 20) * pi / 180;
                 else
-                    ballAngle = pi - ballAngle - (std::rand() % 20) * pi / 180;
+                    ballAngle = pi - ballAngle - static_cast<float>(std::rand() % 20) * pi / 180;
 
                 ballSound.play();
                 ball.setPosition(rightPaddle.getPosition().x - ballRadius - paddleSize.x / 2 - 0.1f, ball.getPosition().y);
