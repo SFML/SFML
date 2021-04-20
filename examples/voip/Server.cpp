@@ -84,7 +84,7 @@ private:
         // (don't forget that we run in two separate threads)
         {
             sf::Lock lock(m_mutex);
-            m_tempBuffer.assign(m_samples.begin() + m_offset, m_samples.end());
+            m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<sf::Int64>::difference_type>(m_offset), m_samples.end());
         }
 
         // Fill audio data to pass to the stream
@@ -103,7 +103,7 @@ private:
     ////////////////////////////////////////////////////////////
     virtual void onSeek(sf::Time timeOffset)
     {
-        m_offset = timeOffset.asMilliseconds() * getSampleRate() * getChannelCount() / 1000;
+        m_offset = static_cast<std::size_t>(timeOffset.asMilliseconds()) * getSampleRate() * getChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
