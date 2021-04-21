@@ -76,6 +76,17 @@ public:
     virtual bool activate(bool active) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
+    ///
+    /// You can request sRGB encoding for a render-texture
+    /// by having the sRgbCapable flag set for the context parameter of create() method
+    ///
+    /// \return True if the render-texture use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool isSrgb() const = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
     ///
     /// \param textureId OpenGL identifier of the target texture

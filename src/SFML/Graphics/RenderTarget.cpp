@@ -412,6 +412,14 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTarget::isSrgb() const
+{
+    // By default sRGB encoding is not enabled for an arbitrary RenderTarget
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
@@ -680,6 +688,16 @@ void RenderTarget::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 {
+    // Enable or disable sRGB encoding
+    // This is needed for drivers that do not check the format of the surface drawn to before applying sRGB conversion
+    if (!m_cache.enable)
+    {
+        if (isSrgb())
+            glCheck(glEnable(GL_FRAMEBUFFER_SRGB));
+        else
+            glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
+    }
+
     // First set the persistent OpenGL states if it's the very first call
     if (!m_cache.glStatesSet)
         resetGLStates();

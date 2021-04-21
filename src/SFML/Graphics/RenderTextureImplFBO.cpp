@@ -120,7 +120,8 @@ m_height            (0),
 m_context           (NULL),
 m_textureId         (0),
 m_multisample       (false),
-m_stencil           (false)
+m_stencil           (false),
+m_sRgb              (false)
 {
     Lock lock(mutex);
 
@@ -228,6 +229,8 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
         if (settings.stencilBits && !GLEXT_packed_depth_stencil)
             return false;
 
+        m_sRgb = settings.sRgbCapable && GL_EXT_texture_sRGB;
+
 #ifndef SFML_OPENGL_ES
 
         // Check if the requested anti-aliasing level is supported
@@ -296,7 +299,6 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
 #ifndef SFML_OPENGL_ES
 
             // Create the multisample color buffer
-            bool srgb = settings.sRgbCapable && GLEXT_texture_sRGB;
             GLuint color = 0;
             glCheck(GLEXT_glGenRenderbuffers(1, &color));
             m_colorBuffer = static_cast<unsigned int>(color);
@@ -306,7 +308,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
                 return false;
             }
             glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_colorBuffer));
-            glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER, settings.antialiasingLevel, srgb ? GL_SRGB8_ALPHA8_EXT : GL_RGBA, width, height));
+            glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER, settings.antialiasingLevel, m_sRgb ? GL_SRGB8_ALPHA8_EXT : GL_RGBA, width, height));
 
             // Create the multisample depth/stencil buffer if requested
             if (settings.stencilBits)
@@ -565,6 +567,13 @@ bool RenderTextureImplFBO::activate(bool active)
     }
 
     return createFrameBuffer();
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTextureImplFBO::isSrgb() const
+{
+    return m_sRgb;
 }
 
 
