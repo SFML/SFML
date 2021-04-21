@@ -108,7 +108,7 @@ void View::setSize(const Vector2f& size)
 ////////////////////////////////////////////////////////////
 void View::setRotation(float angle)
 {
-    m_rotation = static_cast<float>(fmod(angle, 360));
+    m_rotation = std::fmod(angle, 360.f);
     if (m_rotation < 0)
         m_rotation += 360.f;
 
@@ -202,8 +202,8 @@ const Transform& View::getTransform() const
     {
         // Rotation components
         float angle  = m_rotation * 3.141592654f / 180.f;
-        float cosine = static_cast<float>(std::cos(angle));
-        float sine   = static_cast<float>(std::sin(angle));
+        float cosine = std::cos(angle);
+        float sine   = std::sin(angle);
         float tx     = -m_center.x * cosine - m_center.y * sine + m_center.x;
         float ty     =  m_center.x * sine - m_center.y * cosine + m_center.y;
 

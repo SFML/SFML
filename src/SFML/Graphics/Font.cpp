@@ -48,11 +48,12 @@ namespace
     // FreeType callbacks that operate on a sf::InputStream
     unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
     {
+        sf::Int64 convertedOffset = static_cast<sf::Int64>(offset);
         sf::InputStream* stream = static_cast<sf::InputStream*>(rec->descriptor.pointer);
-        if (static_cast<unsigned long>(stream->seek(offset)) == offset)
+        if (stream->seek(convertedOffset) == convertedOffset)
         {
             if (count > 0)
-                return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), count));
+                return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), static_cast<sf::Int64>(count)));
             else
                 return 0;
         }
@@ -441,7 +442,7 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
     {
         // Return a fixed position if font is a bitmap font
         if (!FT_IS_SCALABLE(face))
-            return characterSize / 10.f;
+            return static_cast<float>(characterSize) / 10.f;
 
         return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) / static_cast<float>(1 << 6);
     }
@@ -461,7 +462,7 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
     {
         // Return a fixed thickness if font is a bitmap font
         if (!FT_IS_SCALABLE(face))
-            return characterSize / 14.f;
+            return static_cast<float>(characterSize) / 14.f;
 
         return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) / static_cast<float>(1 << 6);
     }
@@ -600,7 +601,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     {
         if (bold)
         {
-            FT_OutlineGlyph outlineGlyph = (FT_OutlineGlyph)glyphDesc;
+            FT_OutlineGlyph outlineGlyph = reinterpret_cast<FT_OutlineGlyph>(glyphDesc);
             FT_Outline_Embolden(&outlineGlyph->outline, weight);
         }
 
@@ -635,11 +636,11 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     if (bold)
         glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
 
-    glyph.lsbDelta = face->glyph->lsb_delta;
-    glyph.rsbDelta = face->glyph->rsb_delta;
+    glyph.lsbDelta = static_cast<int>(face->glyph->lsb_delta);
+    glyph.rsbDelta = static_cast<int>(face->glyph->rsb_delta);
 
-    int width  = bitmap.width;
-    int height = bitmap.rows;
+    unsigned int width  = bitmap.width;
+    unsigned int height = bitmap.rows;
 
     if ((width > 0) && (height > 0))
     {
@@ -658,10 +659,10 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
-        glyph.textureRect.left += padding;
-        glyph.textureRect.top += padding;
-        glyph.textureRect.width -= 2 * padding;
-        glyph.textureRect.height -= 2 * padding;
+        glyph.textureRect.left += static_cast<int>(padding);
+        glyph.textureRect.top  += static_cast<int>(padding);
+        glyph.textureRect.width  -= static_cast<int>(2 * padding);
+        glyph.textureRect.height -= static_cast<int>(2 * padding);
 
         // Compute the glyph's bounding box
         glyph.bounds.left   =  bitmapGlyph->left;
@@ -715,10 +716,10 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         }
 
         // Write the pixels to the texture
-        unsigned int x = glyph.textureRect.left - padding;
-        unsigned int y = glyph.textureRect.top - padding;
-        unsigned int w = glyph.textureRect.width + 2 * padding;
-        unsigned int h = glyph.textureRect.height + 2 * padding;
+        unsigned int x = static_cast<unsigned int>(glyph.textureRect.left) - padding;
+        unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
+        unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
+        unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
         page.texture.update(&m_pixelBuffer[0], w, h, x, y);
     }
 
@@ -738,7 +739,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     float bestRatio = 0;
     for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it)
     {
-        float ratio = static_cast<float>(height) / it->height;
+        float ratio = static_cast<float>(height) / static_cast<float>(it->height);
 
         // Ignore rows that are either too small or too high
         if ((ratio < 0.7f) || (ratio > 1.f))
@@ -760,7 +761,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     // If we didn't find a matching row, create a new one (10% taller than the glyph)
     if (!row)
     {
-        int rowHeight = height + height / 10;
+        unsigned int rowHeight = height + height / 10;
         while ((page.nextRow + rowHeight >= page.texture.getSize().y) || (width >= page.texture.getSize().x))
         {
             // Not enough space: resize the texture if possible
@@ -790,7 +791,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     }
 
     // Find the glyph's rectangle on the selected row
-    IntRect rect(row->width, row->top, width, height);
+    IntRect rect(Rect<unsigned int>(row->width, row->top, width, height));
 
     // Update the row informations
     row->width += width;
@@ -822,7 +823,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
                 err() << "Available sizes are: ";
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
                 {
-                    const unsigned int size = (face->available_sizes[i].y_ppem + 32) >> 6;
+                    const long size = (face->available_sizes[i].y_ppem + 32) >> 6;
                     err() << size << " ";
                 }
                 err() << std::endl;
@@ -849,8 +850,8 @@ nextRow(3)
     image.create(128, 128, Color(255, 255, 255, 0));
 
     // Reserve a 2x2 white square for texturing underlines
-    for (int x = 0; x < 2; ++x)
-        for (int y = 0; y < 2; ++y)
+    for (unsigned int x = 0; x < 2; ++x)
+        for (unsigned int y = 0; y < 2; ++y)
             image.setPixel(x, y, Color(255, 255, 255, 255));
 
     // Create the texture

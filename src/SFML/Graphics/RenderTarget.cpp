@@ -230,9 +230,9 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view)
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     Vector2f normalized;
-    IntRect viewport = getViewport(view);
-    normalized.x = -1.f + 2.f * (point.x - viewport.left) / viewport.width;
-    normalized.y =  1.f - 2.f * (point.y - viewport.top)  / viewport.height;
+    FloatRect viewport = FloatRect(getViewport(view));
+    normalized.x = -1.f + 2.f * (static_cast<float>(point.x) - viewport.left) / viewport.width;
+    normalized.y =  1.f - 2.f * (static_cast<float>(point.y) - viewport.top)  / viewport.height;
 
     // Then transform by the inverse of the view matrix
     return view.getInverseTransform().transformPoint(normalized);
@@ -254,7 +254,7 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view)
 
     // Then convert to viewport coordinates
     Vector2i pixel;
-    IntRect viewport = getViewport(view);
+    FloatRect viewport = FloatRect(getViewport(view));
     pixel.x = static_cast<int>(( normalized.x + 1.f) / 2.f * viewport.width  + viewport.left);
     pixel.y = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
 
@@ -596,7 +596,7 @@ void RenderTarget::applyCurrentView()
 {
     // Set the viewport
     IntRect viewport = getViewport(m_view);
-    int top = getSize().y - (viewport.top + viewport.height);
+    int top = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
     glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
 
     // Set the projection matrix

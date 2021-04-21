@@ -113,7 +113,7 @@ Texture::~Texture()
     {
         TransientContextLock lock;
 
-        GLuint texture = static_cast<GLuint>(m_texture);
+        GLuint texture = m_texture;
         glCheck(glDeleteTextures(1, &texture));
     }
 }
@@ -160,7 +160,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     {
         GLuint texture;
         glCheck(glGenTextures(1, &texture));
-        m_texture = static_cast<unsigned int>(texture);
+        m_texture = texture;
     }
 
     // Make sure that the current texture binding will be preserved
@@ -205,7 +205,7 @@ bool Texture::create(unsigned int width, unsigned int height)
 
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA), m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA), static_cast<GLsizei>(m_actualSize.x), static_cast<GLsizei>(m_actualSize.y), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -277,7 +277,7 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         if (rectangle.top + rectangle.height > height) rectangle.height = height - rectangle.top;
 
         // Create the texture and upload the pixels
-        if (create(rectangle.width, rectangle.height))
+        if (create(static_cast<unsigned int>(rectangle.width), static_cast<unsigned int>(rectangle.height)))
         {
             TransientContextLock lock;
 
@@ -371,8 +371,8 @@ Image Texture::copyToImage() const
         // Then we copy the useful pixels from the temporary array to the final one
         const Uint8* src = &allPixels[0];
         Uint8* dst = &pixels[0];
-        int srcPitch = m_actualSize.x * 4;
-        int dstPitch = m_size.x * 4;
+        unsigned int srcPitch = m_actualSize.x * 4;
+        unsigned int dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
@@ -422,7 +422,7 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
 
         // Copy pixels from the given array to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-        glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = false;
@@ -503,8 +503,8 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         {
             // Blit the texture contents from the source to the destination texture
             glCheck(GLEXT_glBlitFramebuffer(
-                0, texture.m_pixelsFlipped ? texture.m_size.y : 0, texture.m_size.x, texture.m_pixelsFlipped ? 0 : texture.m_size.y, // Source rectangle, flip y if source is flipped
-                x, y, x + texture.m_size.x, y + texture.m_size.y, // Destination rectangle
+                0, texture.m_pixelsFlipped ? static_cast<GLint>(texture.m_size.y) : 0, static_cast<GLint>(texture.m_size.x), texture.m_pixelsFlipped ? 0 : static_cast<GLint>(texture.m_size.y), // Source rectangle, flip y if source is flipped
+                static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLint>(x + texture.m_size.x), static_cast<GLint>(y + texture.m_size.y), // Destination rectangle
                 GL_COLOR_BUFFER_BIT, GL_NEAREST
             ));
         }
@@ -514,8 +514,8 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         }
 
         // Restore previously bound framebuffers
-        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_READ_FRAMEBUFFER, readFramebuffer));
-        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, drawFramebuffer));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_READ_FRAMEBUFFER, static_cast<GLuint>(readFramebuffer)));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, static_cast<GLuint>(drawFramebuffer)));
 
         // Delete the framebuffers
         glCheck(GLEXT_glDeleteFramebuffers(1, &sourceFrameBuffer));
@@ -581,7 +581,7 @@ void Texture::update(const Window& window, unsigned int x, unsigned int y)
 
         // Copy pixels from the back-buffer to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-        glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, window.getSize().x, window.getSize().y));
+        glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y), 0, 0, static_cast<GLsizei>(window.getSize().x), static_cast<GLsizei>(window.getSize().y)));
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = true;
@@ -757,15 +757,15 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
             // setup scale factors that convert the range [0 .. size] to [0 .. 1]
             if (coordinateType == Pixels)
             {
-                matrix[0] = 1.f / texture->m_actualSize.x;
-                matrix[5] = 1.f / texture->m_actualSize.y;
+                matrix[0] = 1.f / static_cast<float>(texture->m_actualSize.x);
+                matrix[5] = 1.f / static_cast<float>(texture->m_actualSize.y);
             }
 
             // If pixels are flipped we must invert the Y axis
             if (texture->m_pixelsFlipped)
             {
                 matrix[5] = -matrix[5];
-                matrix[13] = static_cast<float>(texture->m_size.y) / texture->m_actualSize.y;
+                matrix[13] = static_cast<float>(texture->m_size.y) / static_cast<float>(texture->m_actualSize.y);
             }
 
             // Load the matrix
