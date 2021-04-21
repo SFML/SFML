@@ -68,7 +68,7 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
     // Recompute the texture area if requested, or if there was no valid texture & rect before
     if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
     {
-        Vector2u size = texture.getSize();
+        Vector2i size = Vector2i(texture.getSize());
         setTextureRect(IntRect(0, 0, size.x, size.y));
     }
 
@@ -165,10 +165,12 @@ void Sprite::updatePositions()
 ////////////////////////////////////////////////////////////
 void Sprite::updateTexCoords()
 {
-    float left   = static_cast<float>(m_textureRect.left);
-    float right  = left + m_textureRect.width;
-    float top    = static_cast<float>(m_textureRect.top);
-    float bottom = top + m_textureRect.height;
+    FloatRect convertedTextureRect = FloatRect(m_textureRect);
+
+    float left   = convertedTextureRect.left;
+    float right  = left + convertedTextureRect.width;
+    float top    = convertedTextureRect.top;
+    float bottom = top + convertedTextureRect.height;
 
     m_vertices[0].texCoords = Vector2f(left, top);
     m_vertices[1].texCoords = Vector2f(left, bottom);
