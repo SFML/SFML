@@ -147,7 +147,7 @@ bool VertexBuffer::create(std::size_t vertexCount)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
     m_size = vertexCount;
@@ -190,12 +190,12 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
     // Check if we need to resize or orphan the buffer
     if (vertexCount >= m_size)
     {
-        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
 
         m_size = vertexCount;
     }
 
-    glCheck(GLEXT_glBufferSubData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * offset, sizeof(Vertex) * vertexCount, vertices));
+    glCheck(GLEXT_glBufferSubData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * offset, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), vertices));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
@@ -225,7 +225,7 @@ bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
         glCheck(GLEXT_glBindBuffer(GLEXT_GL_COPY_READ_BUFFER, vertexBuffer.m_buffer));
         glCheck(GLEXT_glBindBuffer(GLEXT_GL_COPY_WRITE_BUFFER, m_buffer));
 
-        glCheck(GLEXT_glCopyBufferSubData(GLEXT_GL_COPY_READ_BUFFER, GLEXT_GL_COPY_WRITE_BUFFER, 0, 0, sizeof(Vertex) * vertexBuffer.m_size));
+        glCheck(GLEXT_glCopyBufferSubData(GLEXT_GL_COPY_READ_BUFFER, GLEXT_GL_COPY_WRITE_BUFFER, 0, 0, static_cast<GLsizeiptr>(sizeof(Vertex) * vertexBuffer.m_size)));
 
         glCheck(GLEXT_glBindBuffer(GLEXT_GL_COPY_WRITE_BUFFER, 0));
         glCheck(GLEXT_glBindBuffer(GLEXT_GL_COPY_READ_BUFFER, 0));
@@ -234,7 +234,7 @@ bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * vertexBuffer.m_size, 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexBuffer.m_size), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
 
     void* destination = 0;
     glCheck(destination = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
