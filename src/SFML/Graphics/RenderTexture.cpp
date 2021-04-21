@@ -181,6 +181,13 @@ Vector2u RenderTexture::getSize() const
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTexture::isSrgb() const
+{
+    return m_impl->isSrgb();
+}
+
+
+////////////////////////////////////////////////////////////
 const Texture& RenderTexture::getTexture() const
 {
     return m_texture;

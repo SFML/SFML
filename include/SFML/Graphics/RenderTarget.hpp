@@ -277,6 +277,14 @@ public:
     virtual Vector2u getSize() const = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render target will use sRGB encoding when drawing on it
+    ///
+    /// \return True if the render target use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool isSrgb() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render target for rendering
     ///
     /// This function makes the render target's context current for

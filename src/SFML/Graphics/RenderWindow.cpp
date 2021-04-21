@@ -74,6 +74,13 @@ Vector2u RenderWindow::getSize() const
 
 
 ////////////////////////////////////////////////////////////
+bool RenderWindow::isSrgb() const
+{
+    return getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderWindow::setActive(bool active)
 {
     bool result = Window::setActive(active);

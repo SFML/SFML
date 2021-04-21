@@ -115,6 +115,17 @@ private:
     virtual bool activate(bool active);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
+    ///
+    /// You can request sRGB encoding for a render-texture
+    /// by having the sRgbCapable flag set for the context parameter of create() method
+    ///
+    /// \return True if the render-texture use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool isSrgb() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
     ///
     /// \param textureId OpenGL identifier of the target texture
@@ -135,6 +146,7 @@ private:
     unsigned int                   m_textureId;               //!< The ID of the texture to attach to the FBO
     bool                           m_multisample;             //!< Whether we have to create a multisample frame buffer as well
     bool                           m_stencil;                 //!< Whether we have stencil attachment
+    bool                           m_sRgb;                    //!< Whether we need to encode drawn pixels into sRGB color space
 };
 
 } // namespace priv
