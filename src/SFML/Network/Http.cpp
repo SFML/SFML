@@ -208,8 +208,8 @@ void Http::Response::parse(const std::string& data)
             (toLower(version.substr(0, 5)) == "http/")   &&
              isdigit(version[5]) && isdigit(version[7]))
         {
-            m_majorVersion = version[5] - '0';
-            m_minorVersion = version[7] - '0';
+            m_majorVersion = static_cast<unsigned int>(version[5] - '0');
+            m_minorVersion = static_cast<unsigned int>(version[7] - '0');
         }
         else
         {
