@@ -50,7 +50,7 @@ namespace
         if (stream.read(bytes, sizeof(bytes)) != sizeof(bytes))
             return false;
 
-        value = bytes[0] | (bytes[1] << 8);
+        value = static_cast<sf::Uint8>(bytes[0] | (bytes[1] << 8));
 
         return true;
     }
@@ -61,7 +61,7 @@ namespace
         if (stream.read(bytes, sizeof(bytes)) != sizeof(bytes))
             return false;
 
-        value = bytes[0] | (bytes[1] << 8);
+        value = static_cast<sf::Uint16>(bytes[0] | (bytes[1] << 8));
 
         return true;
     }
@@ -72,7 +72,7 @@ namespace
         if (stream.read(bytes, sizeof(bytes)) != sizeof(bytes))
             return false;
 
-        value = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16);
+        value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
 
         return true;
     }
@@ -83,7 +83,7 @@ namespace
         if (stream.read(bytes, sizeof(bytes)) != sizeof(bytes))
             return false;
 
-        value = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
+        value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
 
         return true;
     }
@@ -145,7 +145,7 @@ void SoundFileReaderWav::seek(Uint64 sampleOffset)
 {
     assert(m_stream);
 
-    m_stream->seek(m_dataStart + sampleOffset * m_bytesPerSample);
+    m_stream->seek(static_cast<Int64>(m_dataStart + sampleOffset * m_bytesPerSample));
 }
 
 
@@ -155,7 +155,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
     assert(m_stream);
 
     Uint64 count = 0;
-    Uint64 startPos = m_stream->tell();
+    Uint64 startPos = static_cast<Uint64>(m_stream->tell());
 
     // Tracking of m_dataEnd is important to prevent sf::Music from reading
     // data until EOF, as WAV files may have metadata at the end.
@@ -167,7 +167,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint8 sample = 0;
                 if (decode(*m_stream, sample))
-                    *samples++ = (static_cast<Int16>(sample) - 128) << 8;
+                    *samples++ = static_cast<Int16>((static_cast<Int16>(sample) - 128) << 8);
                 else
                     return count;
                 break;
@@ -336,7 +336,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             info.sampleCount = subChunkSize / m_bytesPerSample;
 
             // Store the start and end position of samples in the file
-            m_dataStart = subChunkStart;
+            m_dataStart = static_cast<Uint64>(subChunkStart);
             m_dataEnd = m_dataStart + info.sampleCount * m_bytesPerSample;
 
             dataChunkFound = true;
