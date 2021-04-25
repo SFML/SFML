@@ -162,7 +162,7 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
 
     // Write the sound attributes
     encode(m_file, static_cast<Uint16>(channelCount));
-    encode(m_file, static_cast<Uint32>(sampleRate));
+    encode(m_file, sampleRate);
     Uint32 byteRate = sampleRate * channelCount * 2;
     encode(m_file, byteRate);
     Uint16 blockAlign = static_cast<Uint16>(channelCount * 2);

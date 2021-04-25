@@ -101,7 +101,7 @@ void Sound::setBuffer(const SoundBuffer& buffer)
     // Assign and use the new buffer
     m_buffer = &buffer;
     m_buffer->attachSound(this);
-    alCheck(alSourcei(m_source, AL_BUFFER, m_buffer->m_buffer));
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
 }
 
 
