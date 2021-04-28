@@ -261,7 +261,7 @@ void SoundEffect::setVolumeMultiplier(float)
 ////////////////////////////////////////////////////////////
 float SoundEffect::getVolumeMultiplier() const
 {
-    return m_volume;
+    return m_volumeMultiplier;
 }
 
 
