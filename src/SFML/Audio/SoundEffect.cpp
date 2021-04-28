@@ -62,10 +62,10 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundEffect::SoundEffect(int effectType)
-    : m_effectSlot  (0),
-    m_effect        (0),
-    m_type          (effectType),
-    m_volume        (1.f)
+    : m_effectSlot      (0),
+    m_effect            (0),
+    m_type              (effectType),
+    m_volumeMultiplier  (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
 
@@ -77,10 +77,10 @@ SoundEffect::SoundEffect(int effectType)
 
 ////////////////////////////////////////////////////////////
 SoundEffect::SoundEffect(const SoundEffect& copy)
-    : m_effectSlot  (0),
-    m_effect        (0),
-    m_type          (copy.m_type),
-    m_volume        (1.f)
+    : m_effectSlot      (0),
+    m_effect            (0),
+    m_type              (copy.m_type),
+    m_volumeMultiplier  (1.f)
 {
     alCheck(alGenAuxiliaryEffectSlots(1, &m_effectSlot));
 
@@ -89,7 +89,7 @@ SoundEffect::SoundEffect(const SoundEffect& copy)
     alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
 
     //copy properties from copy
-    setVolume(copy.getVolume());
+    setVolumeMultiplier(copy.getVolumeMultiplier());
 }
 
 
@@ -126,18 +126,18 @@ return priv::AudioDevice::isExtensionSupported("ALC_EXT_EFX");
 
 
 ////////////////////////////////////////////////////////////
-void SoundEffect::setVolume(float vol)
+void SoundEffect::setVolumeMultiplier(float value)
 {
-    m_volume = std::min(1.f, std::max(0.f, vol));
+    m_volumeMultiplier = std::min(1.f, std::max(0.f, value));
 
-    alCheck(alAuxiliaryEffectSlotf(m_effectSlot, AL_EFFECTSLOT_GAIN, m_volume));
+    alCheck(alAuxiliaryEffectSlotf(m_effectSlot, AL_EFFECTSLOT_GAIN, m_volumeMultiplier));
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundEffect::getVolume() const
+float SoundEffect::getVolumeMultiplier() const
 {
-    return m_volume;
+    return m_volumeMultiplier;
 }
 
 
@@ -213,10 +213,10 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundEffect::SoundEffect(int effectType)
-    : m_effectSlot  (0),
-    m_effect        (0),
-    m_type          (effectType),
-    m_volume        (1.f)
+    : m_effectSlot      (0),
+    m_effect            (0),
+    m_type              (effectType),
+    m_volumeMultiplier  (1.f)
 {
     if (!hasWarned)
     {
@@ -228,10 +228,10 @@ SoundEffect::SoundEffect(int effectType)
 
 ////////////////////////////////////////////////////////////
 SoundEffect::SoundEffect(const SoundEffect& copy)
-    : m_effectSlot  (0),
-    m_effect        (0),
-    m_type          (copy.m_type),
-    m_volume        (1.f)
+    : m_effectSlot      (0),
+    m_effect            (0),
+    m_type              (copy.m_type),
+    m_volumeMultiplier  (1.f)
 {
 
 }
@@ -252,14 +252,14 @@ bool SoundEffect::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-void SoundEffect::setVolume(float)
+void SoundEffect::setVolumeMultiplier(float)
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-float SoundEffect::getVolume() const
+float SoundEffect::getVolumeMultiplier() const
 {
     return m_volume;
 }
