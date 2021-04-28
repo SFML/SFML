@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
+#include <SFML/Audio/Export.hpp>
 #include <set>
 
 namespace sf
@@ -51,22 +51,23 @@ public:
     static bool isAvailable();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the volume for this effect
+    /// \brief Sets the volume multiplier for this effect
     ///
-    /// The volume is in the range 0 - 1, multiplying the output volume
+    /// The value is in the range 0 - 1, multiplying the output volume
     /// of any SoundSource which uses this effect. A value of 0 will
-    /// effectively mute all sounds that have this effect applied
+    /// effectively mute all sounds that have this effect applied,
+    /// and 1 will set the output volume to that of the SoundSource
     ///
-    /// \param volume Floating point value automatically clamped between 0 and 1
+    /// \param value Floating point value automatically clamped between 0 and 1
     ///
     ////////////////////////////////////////////////////////////
-    void setVolume(float volume);
+    void setVolumeMultiplier(float value);
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns the current volume of this effect
     ///
     ////////////////////////////////////////////////////////////
-    float getVolume() const;
+    float getVolumeMultiplier() const;
 
 protected:
 
@@ -152,7 +153,7 @@ private:
     sf::Uint32 m_effect;                        //!< OpenAL Effect handle assigned to this slot
     int m_type;                                 //!< OpenAL Effect type used to track reference counting
 
-    float m_volume;                             //!< Current volume of this slot
+    float m_volumeMultiplier;                   //!< Current volume multiplier of this slot
 
     mutable std::set<SoundSource*> m_soundlist; //!< List of SoundSources using this effect
     void ensureEffect(int type);                //!< Used to ensure that there is only one instance of OpenAL effect object for each type
