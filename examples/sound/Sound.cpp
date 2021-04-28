@@ -118,7 +118,7 @@ int main()
     playMusic("ding.flac", reverbEffect);
 
     // Play music from a mp3 file
-    playMusic("ding.mp3");
+    playMusic("ding.mp3", reverbEffect);
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
