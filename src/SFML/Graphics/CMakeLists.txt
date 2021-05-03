@@ -119,7 +119,7 @@ endif()
 
 # starting from Visual Studio 2015, inline versions of some C functions are used; for compatibility link this library
 # see https://docs.microsoft.com/en-us/cpp/porting/overview-of-potential-upgrade-issues-visual-cpp?view=msvc-160#libraries
-if(SFML_COMPILER_MSVC AND MSVC_VERSION GREATER_EQUAL 1900)
+if((SFML_COMPILER_MSVC AND SFML_MSVC_VERSION GREATER_EQUAL 14) OR (SFML_COMPILER_CLANG AND SFML_OS_WINDOWS AND NOT MINGW))
     target_link_libraries(sfml-graphics PRIVATE legacy_stdio_definitions.lib)
 endif()
 
