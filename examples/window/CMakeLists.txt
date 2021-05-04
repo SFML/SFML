@@ -8,3 +8,6 @@ set(SRC ${SRCROOT}/Window.cpp)
 sfml_add_example(window GUI_APP
                  SOURCES ${SRC}
                  DEPENDS sfml-window)
+
+# external dependency headers
+target_include_directories(window SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/window)

@@ -17,3 +17,6 @@ sfml_add_example(opengl GUI_APP
                  BUNDLE_RESOURCES ${RESOURCES}
                  DEPENDS sfml-graphics
                  RESOURCES_DIR resources)
+
+# external dependency headers
+target_include_directories(opengl SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/opengl)

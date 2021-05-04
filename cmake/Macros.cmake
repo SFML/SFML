@@ -350,7 +350,7 @@ function(sfml_add_external)
             if (NOT include_dir)
                 message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
             endif()
-            target_include_directories(${target} INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
+            target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
         endforeach()
     endif()
 

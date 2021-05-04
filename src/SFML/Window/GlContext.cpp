@@ -294,8 +294,8 @@ namespace
             (version[prefixLength + 1] == '.') &&
             std::isdigit(version[prefixLength + 2]))
         {
-            major = version[prefixLength] - '0';
-            minor = version[prefixLength + 2] - '0';
+            major = static_cast<unsigned int>(version[prefixLength] - '0');
+            minor = static_cast<unsigned int>(version[prefixLength + 2] - '0');
 
             return true;
         }
@@ -866,8 +866,8 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
         }
     }
 
-    int version = m_settings.majorVersion * 10 + m_settings.minorVersion;
-    int requestedVersion = requestedSettings.majorVersion * 10 + requestedSettings.minorVersion;
+    int version = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
+    int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
 
     if ((m_settings.attributeFlags    != requestedSettings.attributeFlags)    ||
         (version                      <  requestedVersion)                    ||

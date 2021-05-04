@@ -293,7 +293,7 @@ In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
             if ((second >= 0xDC00) && (second <= 0xDFFF))
             {
                 // The second element is valid: convert the two elements to a UTF-32 character
-                output = ((first - 0xD800) << 10) + (second - 0xDC00) + 0x0010000;
+                output = ((first - 0xD800u) << 10) + (second - 0xDC00) + 0x0010000;
             }
             else
             {
@@ -675,7 +675,7 @@ Uint32 Utf<32>::decodeWide(In input)
     // In both cases, a simple copy is enough (UCS-2 is a subset of UCS-4,
     // and UCS-4 *is* UTF-32).
 
-    return input;
+    return static_cast<Uint32>(input);
 }
 
 

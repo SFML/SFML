@@ -202,7 +202,7 @@ Time InputSoundFile::getDuration() const
     if (m_channelCount == 0 || m_sampleRate == 0)
         return Time::Zero;
 
-    return seconds(static_cast<float>(m_sampleCount) / m_channelCount / m_sampleRate);
+    return seconds(static_cast<float>(m_sampleCount) / static_cast<float>(m_channelCount) / static_cast<float>(m_sampleRate));
 }
 
 
@@ -213,7 +213,7 @@ Time InputSoundFile::getTimeOffset() const
     if (m_channelCount == 0 || m_sampleRate == 0)
         return Time::Zero;
 
-    return seconds(static_cast<float>(m_sampleOffset) / m_channelCount / m_sampleRate);
+    return seconds(static_cast<float>(m_sampleOffset) / static_cast<float>(m_channelCount) / static_cast<float>(m_sampleRate));
 }
 
 
@@ -240,7 +240,7 @@ void InputSoundFile::seek(Uint64 sampleOffset)
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Time timeOffset)
 {
-    seek(static_cast<Uint64>(timeOffset.asSeconds() * m_sampleRate) * m_channelCount);
+    seek(static_cast<Uint64>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount);
 }
 
 

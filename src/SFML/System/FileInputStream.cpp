@@ -80,7 +80,7 @@ Int64 FileInputStream::read(void* data, Int64 size)
     return m_file->read(data, size);
 #else
     if (m_file)
-        return std::fread(data, 1, static_cast<std::size_t>(size), m_file);
+        return static_cast<Int64>(std::fread(data, 1, static_cast<std::size_t>(size), m_file));
     else
         return -1;
 #endif

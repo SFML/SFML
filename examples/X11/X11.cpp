@@ -6,7 +6,7 @@
 #include <SFML/System/Err.hpp>
 
 #define GLAD_GL_IMPLEMENTATION
-#include "gl.h"
+#include <gl.h>
 
 #include <X11/Xlib.h>
 #include <iostream>

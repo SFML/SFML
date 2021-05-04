@@ -91,7 +91,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
     ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
     // Open the capture device for capturing 16 bits samples
-    captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), sampleRate, format, sampleRate);
+    captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), sampleRate, format, static_cast<ALCsizei>(sampleRate));
     if (!captureDevice)
     {
         err() << "Failed to open the audio capture device with the name: " << m_deviceName << std::endl;
@@ -188,7 +188,7 @@ bool SoundRecorder::setDevice(const std::string& name)
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
         // Open the requested capture device for capturing 16 bits samples
-        captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, m_sampleRate);
+        captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, static_cast<ALCsizei>(m_sampleRate));
         if (!captureDevice)
         {
             // Notify derived class
@@ -300,7 +300,7 @@ void SoundRecorder::processCapturedSamples()
     if (samplesAvailable > 0)
     {
         // Get the recorded samples
-        m_samples.resize(samplesAvailable * getChannelCount());
+        m_samples.resize(static_cast<unsigned int>(samplesAvailable) * getChannelCount());
         alcCaptureSamples(captureDevice, &m_samples[0], samplesAvailable);
 
         // Forward them to the derived class

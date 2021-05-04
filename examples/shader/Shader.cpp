@@ -139,9 +139,9 @@ public:
         {
             float x = static_cast<float>(std::rand() % 800);
             float y = static_cast<float>(std::rand() % 600);
-            sf::Uint8 r = std::rand() % 255;
-            sf::Uint8 g = std::rand() % 255;
-            sf::Uint8 b = std::rand() % 255;
+            sf::Uint8 r = static_cast<sf::Uint8>(std::rand() % 255);
+            sf::Uint8 g = static_cast<sf::Uint8>(std::rand() % 255);
+            sf::Uint8 b = static_cast<sf::Uint8>(std::rand() % 255);
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
@@ -228,8 +228,8 @@ public:
         for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
             sf::Vector2f position;
-            position.x = std::cos(0.25f * (time * i + (m_entities.size() - i))) * 300 + 350;
-            position.y = std::sin(0.25f * (time * (m_entities.size() - i) + i)) * 200 + 250;
+            position.x = std::cos(0.25f * (time * static_cast<float>(i + (m_entities.size() - i)))) * 300 + 350;
+            position.y = std::sin(0.25f * (time * static_cast<float>((m_entities.size() - i) + i))) * 200 + 250;
             m_entities[i].setPosition(position);
         }
 
@@ -282,8 +282,8 @@ public:
         {
             // Spread the coordinates from -480 to +480
             // So they'll always fill the viewport at 800x600
-            m_pointCloud[i].position.x = rand() % 960 - 480.f;
-            m_pointCloud[i].position.y = rand() % 960 - 480.f;
+            m_pointCloud[i].position.x = static_cast<float>(rand() % 960) - 480.f;
+            m_pointCloud[i].position.y = static_cast<float>(rand() % 960) - 480.f;
         }
 
         // Load the texture
@@ -301,7 +301,7 @@ public:
         return true;
     }
 
-    void onUpdate(float time, float x, float y)
+    void onUpdate(float /*time*/, float x, float y)
     {
         // Reset our transformation matrix
         m_transform = sf::Transform::Identity;
@@ -433,8 +433,8 @@ int main()
         }
 
         // Update the current example
-        float x = static_cast<float>(sf::Mouse::getPosition(window).x) / window.getSize().x;
-        float y = static_cast<float>(sf::Mouse::getPosition(window).y) / window.getSize().y;
+        float x = static_cast<float>(sf::Mouse::getPosition(window).x) / static_cast<float>(window.getSize().x);
+        float y = static_cast<float>(sf::Mouse::getPosition(window).y) / static_cast<float>(window.getSize().y);
         effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
 
         // Clear the window

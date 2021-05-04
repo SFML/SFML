@@ -208,7 +208,7 @@ void WindowImpl::processJoystickEvents()
                     Joystick::Axis axis = static_cast<Joystick::Axis>(j);
                     float prevPos = m_previousAxes[i][axis];
                     float currPos = m_joystickStates[i].axes[axis];
-                    if (fabs(currPos - prevPos) >= m_joystickThreshold)
+                    if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
                         event.type = Event::JoystickMoved;

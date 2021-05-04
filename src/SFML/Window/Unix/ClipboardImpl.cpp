@@ -209,7 +209,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             // Notification that the current selection owner
             // has responded to our request
 
-            XSelectionEvent& selectionEvent = *reinterpret_cast<XSelectionEvent*>(&windowEvent.xselection);
+            XSelectionEvent& selectionEvent = windowEvent.xselection;
 
             m_clipboardContents.clear();
 
@@ -274,7 +274,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
         case SelectionRequest:
         {
             // Respond to a request for our clipboard contents
-            XSelectionRequestEvent& selectionRequestEvent = *reinterpret_cast<XSelectionRequestEvent*>(&windowEvent.xselectionrequest);
+            XSelectionRequestEvent& selectionRequestEvent = windowEvent.xselectionrequest;
 
             // Our reply
             XSelectionEvent selectionEvent;
@@ -307,7 +307,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                         32,
                         PropModeReplace,
                         reinterpret_cast<unsigned char*>(&targets[0]),
-                        targets.size()
+                        static_cast<int>(targets.size())
                     );
 
                     // Notify the requestor that they can read the targets from their window property
@@ -330,7 +330,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                         8,
                         PropModeReplace,
                         reinterpret_cast<const unsigned char*>(data.c_str()),
-                        data.size()
+                        static_cast<int>(data.size())
                     );
 
                     // Notify the requestor that they can read the data from their window property
@@ -353,8 +353,8 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                         m_utf8String,
                         8,
                         PropModeReplace,
-                        reinterpret_cast<const unsigned char*>(data.c_str()),
-                        data.size()
+                        data.c_str(),
+                        static_cast<int>(data.size())
                     );
 
                     // Notify the requestor that they can read the data from their window property

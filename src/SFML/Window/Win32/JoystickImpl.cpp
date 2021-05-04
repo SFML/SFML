@@ -523,12 +523,12 @@ bool JoystickImpl::openDInput(unsigned int index)
     m_buffered = false;
 
     // Search for a joystick with the given index in the connected list
-    for (std::vector<JoystickRecord>::iterator i = joystickList.begin(); i != joystickList.end(); ++i)
+    for (std::vector<JoystickRecord>::iterator it = joystickList.begin(); it != joystickList.end(); ++it)
     {
-        if (i->index == index)
+        if (it->index == index)
         {
             // Create device
-            HRESULT result = directInput->CreateDevice(i->guid, &m_device, NULL);
+            HRESULT result = directInput->CreateDevice(it->guid, &m_device, NULL);
 
             if (FAILED(result))
             {
@@ -905,7 +905,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
         // Get the current state of each axis
         for (int j = 0; j < Joystick::AxisCount; ++j)
         {
-            if (m_axes[j] == events[i].dwOfs)
+            if (m_axes[j] == static_cast<int>(events[i].dwOfs))
             {
                 if ((j == Joystick::PovX) || (j == Joystick::PovY))
                 {
@@ -941,7 +941,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
         // Get the current state of each button
         for (int j = 0; j < Joystick::ButtonCount; ++j)
         {
-            if (m_buttons[j] == events[i].dwOfs)
+            if (m_buttons[j] == static_cast<int>(events[i].dwOfs))
                 m_state.buttons[j] = (events[i].dwData != 0);
         }
     }

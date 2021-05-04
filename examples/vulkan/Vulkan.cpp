@@ -3,7 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #define GLAD_VULKAN_IMPLEMENTATION
-#include "vulkan.h"
+#include <vulkan.h>
 
 // Include graphics because we use sf::Image for loading images
 #include <SFML/Graphics.hpp>
@@ -162,7 +162,7 @@ namespace
     // Helper function we pass to GLAD to load Vulkan functions via SFML
     GLADapiproc getVulkanFunction(const char* name)
     {
-        return reinterpret_cast<GLADapiproc>(sf::Vulkan::getFunction(name));
+        return sf::Vulkan::getFunction(name);
     }
 
     // Debug we pass to Vulkan to call when it detects warnings or errors
@@ -341,7 +341,7 @@ public:
             vkWaitForFences(device, 1, &fences[i], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         if (commandBuffers.size())
-            vkFreeCommandBuffers(device, commandPool, commandBuffers.size(), &commandBuffers[0]);
+            vkFreeCommandBuffers(device, commandPool, static_cast<sf::Uint32>(commandBuffers.size()), &commandBuffers[0]);
 
         commandBuffers.clear();
 
@@ -472,9 +472,9 @@ public:
         VkInstanceCreateInfo instanceCreateInfo = VkInstanceCreateInfo();
         instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instanceCreateInfo.pApplicationInfo = &applicationInfo;
-        instanceCreateInfo.enabledLayerCount = validationLayers.size();
+        instanceCreateInfo.enabledLayerCount = static_cast<sf::Uint32>(validationLayers.size());
         instanceCreateInfo.ppEnabledLayerNames = &validationLayers[0];
-        instanceCreateInfo.enabledExtensionCount = requiredExtentions.size();
+        instanceCreateInfo.enabledExtensionCount = static_cast<sf::Uint32>(requiredExtentions.size());
         instanceCreateInfo.ppEnabledExtensionNames = &requiredExtentions[0];
 
         // Try to create a Vulkan instance with debug report enabled
@@ -485,7 +485,7 @@ public:
         {
             requiredExtentions.pop_back();
 
-            instanceCreateInfo.enabledExtensionCount = requiredExtentions.size();
+            instanceCreateInfo.enabledExtensionCount = static_cast<sf::Uint32>(requiredExtentions.size());
             instanceCreateInfo.ppEnabledExtensionNames = &requiredExtentions[0];
 
             result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
@@ -665,11 +665,11 @@ public:
         {
             VkBool32 surfaceSupported = VK_FALSE;
 
-            vkGetPhysicalDeviceSurfaceSupportKHR(gpu, i, surface, &surfaceSupported);
+            vkGetPhysicalDeviceSurfaceSupportKHR(gpu, static_cast<sf::Uint32>(i), surface, &surfaceSupported);
 
             if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) && (surfaceSupported == VK_TRUE))
             {
-                queueFamilyIndex = i;
+                queueFamilyIndex = static_cast<int>(i);
                 break;
             }
         }
@@ -685,7 +685,7 @@ public:
         VkDeviceQueueCreateInfo deviceQueueCreateInfo = VkDeviceQueueCreateInfo();
         deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         deviceQueueCreateInfo.queueCount = 1;
-        deviceQueueCreateInfo.queueFamilyIndex = queueFamilyIndex;
+        deviceQueueCreateInfo.queueFamilyIndex = static_cast<uint32_t>(queueFamilyIndex);
         deviceQueueCreateInfo.pQueuePriorities = &queuePriority;
 
         // Enable the swapchain extension
@@ -711,7 +711,7 @@ public:
         }
 
         // Retrieve a handle to the logical device command queue
-        vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+        vkGetDeviceQueue(device, static_cast<uint32_t>(queueFamilyIndex), 0, &queue);
     }
 
     // Query surface formats and set up swapchain
@@ -1240,7 +1240,7 @@ public:
         // We want to be able to reset command buffers after submitting them
         VkCommandPoolCreateInfo commandPoolCreateInfo = VkCommandPoolCreateInfo();
         commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        commandPoolCreateInfo.queueFamilyIndex = queueFamilyIndex;
+        commandPoolCreateInfo.queueFamilyIndex = static_cast<uint32_t>(queueFamilyIndex);
         commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
         // Create our command pool
@@ -1777,7 +1777,7 @@ public:
         }
 
         // Copy the image data into the buffer
-        std::memcpy(ptr, imageData.getPixelsPtr(), static_cast<size_t>(imageSize));
+        std::memcpy(ptr, imageData.getPixelsPtr(), imageSize);
 
         // Unmap the buffer
         vkUnmapMemory(device, stagingBufferMemory);
@@ -2266,7 +2266,7 @@ public:
         semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
         // Create a semaphore to track when an swapchain image is available for each frame in flight
-        for (int i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; i++)
         {
             imageAvailableSemaphores.push_back(0);
 
@@ -2279,7 +2279,7 @@ public:
         }
 
         // Create a semaphore to track when rendering is complete for each frame in flight
-        for (int i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; i++)
         {
             renderFinishedSemaphores.push_back(0);
 
@@ -2301,7 +2301,7 @@ public:
         fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
         // Create a fence to track when queue submission is complete for each frame in flight
-        for (int i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; i++)
         {
             fences.push_back(0);
 
@@ -2321,10 +2321,10 @@ public:
 
         // Construct the model matrix
         Matrix model = {
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
+            { 1.0f, 0.0f, 0.0f, 0.0f },
+            { 0.0f, 1.0f, 0.0f, 0.0f },
+            { 0.0f, 0.0f, 1.0f, 0.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f }
         };
 
         matrixRotateX(model, elapsed * 59.0f  * pi / 180.f);
@@ -2332,8 +2332,10 @@ public:
         matrixRotateZ(model, elapsed * 109.0f * pi / 180.f);
 
         // Translate the model based on the mouse position
-        float x = clamp( sf::Mouse::getPosition(window).x * 2.f / window.getSize().x - 1.f, -1.0f, 1.0f) * 2.0f;
-        float y = clamp(-sf::Mouse::getPosition(window).y * 2.f / window.getSize().y + 1.f, -1.0f, 1.0f) * 1.5f;
+        sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
+        sf::Vector2f windowSize = sf::Vector2f(window.getSize());
+        float x = clamp( mousePosition.x * 2.f / windowSize.x - 1.f, -1.0f, 1.0f) * 2.0f;
+        float y = clamp(-mousePosition.y * 2.f / windowSize.y + 1.f, -1.0f, 1.0f) * 1.5f;
 
         model[3][0] -= x;
         model[3][2] += y;
@@ -2493,8 +2495,8 @@ private:
 
     bool vulkanAvailable;
 
-    const int maxFramesInFlight;
-    int currentFrame;
+    const unsigned int maxFramesInFlight;
+    unsigned int currentFrame;
     bool swapchainOutOfDate;
 
     VkInstance instance;

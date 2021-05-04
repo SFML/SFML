@@ -33,6 +33,14 @@
 #include <cassert>
 
 
+namespace
+{
+    unsigned char toLower(unsigned char character)
+    {
+        return static_cast<unsigned char>(std::tolower(character));
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -41,7 +49,7 @@ namespace priv
 bool SoundFileWriterOgg::check(const std::string& filename)
 {
     std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
 
     return extension == "ogg";
 }
@@ -149,7 +157,7 @@ void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
 
         // Tell the library how many samples we've written
         vorbis_analysis_wrote(&m_state, std::min(frameCount, bufferSize));
-        
+
         frameCount -= bufferSize;
 
         // Flush any produced block

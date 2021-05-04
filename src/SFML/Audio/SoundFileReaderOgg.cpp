@@ -38,7 +38,7 @@ namespace
     size_t read(void* ptr, size_t size, size_t nmemb, void* data)
     {
         sf::InputStream* stream = static_cast<sf::InputStream*>(data);
-        return static_cast<std::size_t>(stream->read(ptr, size * nmemb));
+        return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
     }
 
     int seek(void* data, ogg_int64_t offset, int whence)
@@ -115,8 +115,8 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
 
     // Retrieve the music attributes
     vorbis_info* vorbisInfo = ov_info(&m_vorbis, -1);
-    info.channelCount = vorbisInfo->channels;
-    info.sampleRate = vorbisInfo->rate;
+    info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
+    info.sampleRate = static_cast<unsigned int>(vorbisInfo->rate);
     info.sampleCount = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
 
     // We must keep the channel count for the seek function
@@ -131,7 +131,7 @@ void SoundFileReaderOgg::seek(Uint64 sampleOffset)
 {
     assert(m_vorbis.datasource);
 
-    ov_pcm_seek(&m_vorbis, sampleOffset / m_channelCount);
+    ov_pcm_seek(&m_vorbis, static_cast<ogg_int64_t>(sampleOffset / m_channelCount));
 }
 
 
@@ -144,12 +144,12 @@ Uint64 SoundFileReaderOgg::read(Int16* samples, Uint64 maxCount)
     Uint64 count = 0;
     while (count < maxCount)
     {
-        int bytesToRead = static_cast<int>(maxCount - count) * sizeof(Int16);
+        int bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(Int16));
         long bytesRead = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, NULL);
         if (bytesRead > 0)
         {
-            long samplesRead = bytesRead / sizeof(Int16);
-            count += samplesRead;
+            long samplesRead = bytesRead / static_cast<long>(sizeof(Int16));
+            count += static_cast<Uint64>(samplesRead);
             samples += samplesRead;
         }
         else
