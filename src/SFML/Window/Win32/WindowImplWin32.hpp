@@ -246,15 +246,24 @@ private:
     void grabCursor(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get a Win32 virtual key code that correctly distinguishes between left and right keys
+    ///
+    /// \param rawKeyboard RAWKEYBOARD structure obtained from WM_INPUT
+    ///
+    /// \return virtual Win32 virtual key code
+    ///
+    ////////////////////////////////////////////////////////////
+    static USHORT getDistinguishedVirtualKey(const RAWKEYBOARD & rawKeyboard);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code
     ///
-    /// \param key   Virtual key code to convert
-    /// \param flags Additional flags
+    /// \param vk   Virtual key code to convert
     ///
     /// \return SFML key code corresponding to the key
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key virtualKeyCodeToSF(WPARAM key, LPARAM flags);
+    static Keyboard::Key virtualKeyCodeToSF(USHORT vk);
 
     ////////////////////////////////////////////////////////////
     /// \brief Function called whenever one of our windows receives a message
