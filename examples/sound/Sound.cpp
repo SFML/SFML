@@ -90,6 +90,9 @@ int main()
     // Play music from an ogg file
     playMusic("doodle_pop.ogg");
 
+    // Play music from an opus file
+    playMusic("error.opus");
+
     // Play music from a flac file
     playMusic("ding.flac");
 
