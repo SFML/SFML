@@ -106,6 +106,9 @@ void Socket::create(SocketHandle handle)
         // Set the current blocking state
         setBlocking(m_isBlocking);
 
+		const int data = 1;
+		setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &data, sizeof(int));
+
         if (m_type == Tcp)
         {
             // Disable the Nagle algorithm (i.e. removes buffering of TCP packets)
