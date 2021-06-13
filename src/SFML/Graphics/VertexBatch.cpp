@@ -22,48 +22,62 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICS_HPP
-#define SFML_GRAPHICS_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Window.hpp>
-#include <SFML/Graphics/BlendMode.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/ConvexShape.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Glyph.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Transform.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBatch.hpp>
-#include <SFML/Graphics/VertexBuffer.hpp>
-#include <SFML/Graphics/View.hpp>
 
 
-#endif // SFML_GRAPHICS_HPP
+namespace sf
+{
+////////////////////////////////////////////////////////////
+VertexBatch::VertexBatch(RenderTarget& target, PrimitiveType type) :
+VertexArray(type),
+m_target(target)
+{
+}
+
 
 ////////////////////////////////////////////////////////////
-/// \defgroup graphics Graphics module
-///
-/// 2D graphics module: sprites, text, shapes, ...
-///
+void VertexBatch::draw(const Vertex* vertices, std::size_t vertexCount,
+                       PrimitiveType type, const RenderStates& states)
+{
+    // Nothing to draw?
+    if (!vertices || (vertexCount == 0))
+        return;
+
+    // TODO: map vertices from type to gPT()
+
+    // GL_QUADS is unavailable on OpenGL ES
+    #ifdef SFML_OPENGL_ES
+        if (getPrimitiveType() == Quads)
+        {
+            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
+            return;
+        }
+    #endif
+
+    // Append all the vertices, transformed by the CPU
+    for (std::size_t i = 0; i < vertexCount; i++)
+    {
+        Vertex vert = vertices[i];
+        vert.position = states.transform.transformPoint(vert.position.x, vert.position.y);
+        append(vert);
+    }
+}
+
+
 ////////////////////////////////////////////////////////////
+Vector2u VertexBatch::getSize() const
+{
+    return m_target.getSize();
+}
+
+////////////////////////////////////////////////////////////
+bool VertexBatch::setActive(bool)
+{
+    // Since a vertex batch doesn't draw anything by itself, this doesnt matter
+    return true;
+}
+
+} // namespace sf
