@@ -50,61 +50,59 @@ void VertexBatch::draw(const Vertex* vertices, std::size_t vertexCount,
     // Transform all vertices on the CPU
     for (std::size_t i = 0; i < vertexCount; i++)
     {
-        Vertex vert = vertices[i];
-        vert.position = states.transform.transformPoint(vert.position.x, vert.position.y);
     }
 
-	// Batch vertices mapped to triangles
-	switch (type)
-	{
-		case Points:
-		case Lines:
-		case LineStrip:
-			err() << "sf::Points/Lines/LineStrip cannot be converted to triangles when batching, skipped" << std::endl;
-			return;
+    // Batch vertices mapped to triangles
+    switch (type)
+    {
+        case Points:
+        case Lines:
+        case LineStrip:
+            err() << "sf::Points/Lines/LineStrip cannot be converted to triangles when batching, skipped" << std::endl;
+            return;
 
-		case Triangles:
-			// Batch triangles as-is
-			for (std::size_t i = 0; i < vertexCount; i++)
-			{
-				append(vertices[i]);
-			}
-			break;
-		case TriangleStrip:
-			// Map strips 0/1/2/3/4 to 0/1/2 1/2/3 2/3/4 etc.
-			for (std::size_t i = 0; i < vertexCount - 2; i++)
-			{
-				append(vertices[i]);
-				append(vertices[i + 1]);
-				append(vertices[i + 2]);
-			}
-			break;
-		case TriangleFan:
-		{
-			// Map fan 0/1/2/3/4 to 0/1/2 0/2/3 0/3/4 etc.
-			const Vertex& center = vertices[0];
-			for (std::size_t i = 1; i < vertexCount - 1; i++)
-			{
-				append(center);
-				append(vertices[i]);
-				append(vertices[i + 1]);
-			}
-			break;
-		}
-		case Quads:
-			// Map quad 0/1/2/3 to 0/1/2 1/2/3
-			for (std::size_t i = 0; i < vertexCount; i += 4)
-			{
-				append(vertices[i]);
-				append(vertices[i + 1]);
-				append(vertices[i + 2]);
+        case Triangles:
+            // Batch triangles as-is
+            for (std::size_t i = 0; i < vertexCount; i++)
+            {
+                batch(vertices[i]);
+            }
+            break;
+        case TriangleStrip:
+            // Map strips 0/1/2/3/4 to 0/1/2 1/2/3 2/3/4 etc.
+            for (std::size_t i = 0; i < vertexCount - 2; i++)
+            {
+                batch(vertices[i]);
+                batch(vertices[i + 1]);
+                batch(vertices[i + 2]);
+            }
+            break;
+        case TriangleFan:
+        {
+            // Map fan 0/1/2/3/4 to 0/1/2 0/2/3 0/3/4 etc.
+            const Vertex& center = vertices[0];
+            for (std::size_t i = 1; i < vertexCount - 1; i++)
+            {
+                batch(center);
+                batch(vertices[i]);
+                batch(vertices[i + 1]);
+            }
+            break;
+        }
+        case Quads:
+            // Map quad 0/1/2/3 to 0/1/2 1/2/3
+            for (std::size_t i = 0; i < vertexCount; i += 4)
+            {
+                batch(vertices[i]);
+                batch(vertices[i + 1]);
+                batch(vertices[i + 2]);
 
-				append(vertices[i + 1]);
-				append(vertices[i + 2]);
-				append(vertices[i + 3]);
-			}
-			break;
-	}
+                batch(vertices[i + 1]);
+                batch(vertices[i + 2]);
+                batch(vertices[i + 3]);
+            }
+            break;
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -118,6 +116,13 @@ bool VertexBatch::setActive(bool)
 {
     // Since a vertex batch doesn't draw anything by itself, this doesnt matter
     return true;
+}
+
+////////////////////////////////////////////////////////////
+void VertexBatch::batch(Vertex vert, const RenderStates& states)
+{
+    vert.position = states.transform.transformPoint(vert.position.x, vert.position.y);
+    append(vert)
 }
 
 } // namespace sf
