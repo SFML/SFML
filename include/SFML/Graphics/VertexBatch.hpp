@@ -54,7 +54,7 @@ public:
     /// \param type   Type of primitives, assumed to be triangles
     ///
     ////////////////////////////////////////////////////////////
-    explicit VertexBatch(RenderTarget& target, PrimitiveType type = PrimitiveType::Triangles);
+    explicit VertexBatch(RenderTarget& target);
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw a drawable object to the render target
@@ -69,6 +69,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices
+    /// Primitives that aren't triangles will be converted before batching.
     ///
     /// \param vertices    Pointer to the vertices
     /// \param vertexCount Number of vertices in the array

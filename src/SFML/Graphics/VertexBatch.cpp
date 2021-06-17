@@ -26,13 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/VertexBatch.hpp>
+#include <SFML/System/Err.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexBatch::VertexBatch(RenderTarget& target, PrimitiveType type) :
-VertexArray(type),
+VertexBatch::VertexBatch(RenderTarget& target) :
+VertexArray(Triangles),
 m_target(target)
 {
 }
@@ -42,30 +43,69 @@ m_target(target)
 void VertexBatch::draw(const Vertex* vertices, std::size_t vertexCount,
                        PrimitiveType type, const RenderStates& states)
 {
-    // Nothing to draw?
+    // Nothing to batch?
     if (!vertices || (vertexCount == 0))
         return;
 
-    // TODO: map vertices from type to gPT()
-
-    // GL_QUADS is unavailable on OpenGL ES
-    #ifdef SFML_OPENGL_ES
-        if (getPrimitiveType() == Quads)
-        {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
-            return;
-        }
-    #endif
-
-    // Append all the vertices, transformed by the CPU
+    // Transform all vertices on the CPU
     for (std::size_t i = 0; i < vertexCount; i++)
     {
         Vertex vert = vertices[i];
         vert.position = states.transform.transformPoint(vert.position.x, vert.position.y);
-        append(vert);
     }
-}
 
+	// Batch vertices mapped to triangles
+	switch (type)
+	{
+		case Points:
+		case Lines:
+		case LineStrip:
+			err() << "sf::Points/Lines/LineStrip cannot be converted to triangles when batching, skipped" << std::endl;
+			return;
+
+		case Triangles:
+			// Batch triangles as-is
+			for (std::size_t i = 0; i < vertexCount; i++)
+			{
+				append(vertices[i]);
+			}
+			break;
+		case TriangleStrip:
+			// Map strips 0/1/2/3/4 to 0/1/2 1/2/3 2/3/4 etc.
+			for (std::size_t i = 0; i < vertexCount - 2; i++)
+			{
+				append(vertices[i]);
+				append(vertices[i + 1]);
+				append(vertices[i + 2]);
+			}
+			break;
+		case TriangleFan:
+		{
+			// Map fan 0/1/2/3/4 to 0/1/2 0/2/3 0/3/4 etc.
+			const Vertex& center = vertices[0];
+			for (std::size_t i = 1; i < vertexCount - 1; i++)
+			{
+				append(center);
+				append(vertices[i]);
+				append(vertices[i + 1]);
+			}
+			break;
+		}
+		case Quads:
+			// Map quad 0/1/2/3 to 0/1/2 1/2/3
+			for (std::size_t i = 0; i < vertexCount; i += 4)
+			{
+				append(vertices[i]);
+				append(vertices[i + 1]);
+				append(vertices[i + 2]);
+
+				append(vertices[i + 1]);
+				append(vertices[i + 2]);
+				append(vertices[i + 3]);
+			}
+			break;
+	}
+}
 
 ////////////////////////////////////////////////////////////
 Vector2u VertexBatch::getSize() const
