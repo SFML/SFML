@@ -112,6 +112,17 @@ public:
     ////////////////////////////////////////////////////////////
     virtual Vector2u getSize() const;
 
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell if the window will use sRGB encoding when drawing on it
+    ///
+    /// You can request sRGB encoding for a window by having the sRgbCapable flag set in the ContextSettings
+    ///
+    /// \return True if the window use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool isSrgb() const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the window as the current target
     ///        for OpenGL rendering

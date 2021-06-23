@@ -86,6 +86,13 @@ bool RenderTextureImplDefault::activate(bool active)
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTextureImplDefault::isSrgb() const
+{
+    return m_context->getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
