@@ -1,0 +1,14 @@
+build/
+build2/
+build1/
+build3/
+*.obj
+*.rsp
+*.make
+.vscode/
+CMakeFiles/
+*.CMakeFiles
+*.a
+Makefile
+*.cmake
+*.dll
