@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
+#include <SFML/System/ThreadLocalPtr.hpp>
+#include <SFML/System/NonCopyable.hpp>
 #include <streambuf>
 #include <cstdio>
 
@@ -93,6 +95,23 @@ private:
         return 0;
     }
 };
+
+// Groups a std::ostream with its std::streambuf
+struct ThreadLocalErr : sf::NonCopyable
+{
+    DefaultErrStreamBuf buffer;
+    std::ostream stream;
+
+    ThreadLocalErr() :
+    buffer(),
+    stream(&buffer)
+    {
+    }
+};
+
+// This per-thread variable holds the current instance of DefaultErrStreamBuf
+sf::ThreadLocalPtr<ThreadLocalErr> currentErr(NULL);
+
 }
 
 namespace sf
@@ -100,11 +119,12 @@ namespace sf
 ////////////////////////////////////////////////////////////
 std::ostream& err()
 {
-    static DefaultErrStreamBuf buffer;
-    static std::ostream stream(&buffer);
+    if (currentErr == NULL)
+    {
+        currentErr = new ThreadLocalErr();
+    }
 
-    return stream;
+    return currentErr->stream;
 }
-
 
 } // namespace sf
