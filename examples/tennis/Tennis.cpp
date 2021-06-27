@@ -39,7 +39,7 @@ int main()
     float ballRadius = 10.f;
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Pong",
+    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Tennis",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -48,6 +48,14 @@ int main()
     if (!ballSoundBuffer.loadFromFile(resourcesDir() + "ball.wav"))
         return EXIT_FAILURE;
     sf::Sound ballSound(ballSoundBuffer);
+
+    // Create the SFML logo texture:
+    sf::Texture sfmlLogoTexture;
+    if(!sfmlLogoTexture.loadFromFile(resourcesDir() + "sfml_logo.png"))
+        return EXIT_FAILURE;
+    sf::Sprite sfmlLogo;
+    sfmlLogo.setTexture(sfmlLogoTexture);
+    sfmlLogo.setPosition(170, 50);
 
     // Create the left paddle
     sf::RectangleShape leftPaddle;
@@ -68,27 +76,27 @@ int main()
     // Create the ball
     sf::CircleShape ball;
     ball.setRadius(ballRadius - 3);
-    ball.setOutlineThickness(3);
+    ball.setOutlineThickness(2);
     ball.setOutlineColor(sf::Color::Black);
     ball.setFillColor(sf::Color::White);
     ball.setOrigin(ballRadius / 2, ballRadius / 2);
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile(resourcesDir() + "sansation.ttf"))
+    if (!font.loadFromFile(resourcesDir() + "tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Initialize the pause message
     sf::Text pauseMessage;
     pauseMessage.setFont(font);
     pauseMessage.setCharacterSize(40);
-    pauseMessage.setPosition(170.f, 150.f);
+    pauseMessage.setPosition(170.f, 200.f);
     pauseMessage.setFillColor(sf::Color::White);
-    
+
     #ifdef SFML_SYSTEM_IOS
-    pauseMessage.setString("Welcome to SFML pong!\nTouch the screen to start the game");
+    pauseMessage.setString("Welcome to SFML Tennis!\nTouch the screen to start the game.");
     #else
-    pauseMessage.setString("Welcome to SFML pong!\nPress space to start the game");
+    pauseMessage.setString("Welcome to SFML Tennis!\n\nPress space to start the game.");
     #endif
 
     // Define the paddles properties
@@ -197,21 +205,21 @@ int main()
             ball.move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
 
             #ifdef SFML_SYSTEM_IOS
-            const std::string inputString = "Touch the screen to restart";
+            const std::string inputString = "Touch the screen to restart.";
             #else
-            const std::string inputString = "Press space to restart or\nescape to exit";
+            const std::string inputString = "Press space to restart or\nescape to exit.";
             #endif
             
             // Check collisions between the ball and the screen
             if (ball.getPosition().x - ballRadius < 0.f)
             {
                 isPlaying = false;
-                pauseMessage.setString("You Lost!\n" + inputString);
+                pauseMessage.setString("You Lost!\n\n" + inputString);
             }
             if (ball.getPosition().x + ballRadius > gameWidth)
             {
                 isPlaying = false;
-                pauseMessage.setString("You Won!\n" + inputString);
+                pauseMessage.setString("You Won!\n\n" + inputString);
             }
             if (ball.getPosition().y - ballRadius < 0.f)
             {
@@ -259,7 +267,7 @@ int main()
         }
 
         // Clear the window
-        window.clear(sf::Color(50, 200, 50));
+        window.clear(sf::Color(50, 50, 50));
 
         if (isPlaying)
         {
@@ -272,6 +280,7 @@ int main()
         {
             // Draw the pause message
             window.draw(pauseMessage);
+            window.draw(sfmlLogo);
         }
 
         // Display things on screen

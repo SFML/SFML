@@ -39,9 +39,8 @@ set(SRC ${SRCROOT}/CocoaAppDelegate.h
 compile_xib(INPUT "${SRCROOT}/MainMenu.xib" OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.nib")
 
 # all resource files
-set(RESOURCES ${SRCROOT}/resources/logo.png
-              ${SRCROOT}/resources/icon.icns
-              ${SRCROOT}/resources/sansation.ttf
+set(RESOURCES ${SRCROOT}/resources/icon.icns
+              ${SRCROOT}/resources/tuffy.ttf
               ${SRCROOT}/resources/blue.png
               ${SRCROOT}/resources/green.png
               ${SRCROOT}/resources/red.png

@@ -1,9 +1,4 @@
-# CMake's built-in Android support requires 3.7.0
-if(CMAKE_SYSTEM_NAME MATCHES "Android")
-    cmake_minimum_required(VERSION 3.7.2)
-else()
-    cmake_minimum_required(VERSION 3.0.2)
-endif()
+cmake_minimum_required(VERSION 3.7.2)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -222,12 +217,12 @@ if(SFML_OS_WINDOWS)
     sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
 
     # the following combination of flags is not valid
-    if (BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
+    if(BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
         message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
     endif()
 
     # for VC++, we can apply it globally by modifying the compiler flags
-    if(SFML_COMPILER_MSVC AND SFML_USE_STATIC_STD_LIBS)
+    if((SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW)) AND SFML_USE_STATIC_STD_LIBS)
         foreach(flag
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
@@ -258,10 +253,12 @@ if(SFML_OS_MACOSX)
         endif()
     endif()
 
-    # only the default architecture (i.e. 64-bit) is supported
-    if(NOT CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-        message(FATAL_ERROR "Only 64-bit architecture is supported")
-    endif()
+    # only the default x86_64 or arm64 are supported
+    foreach (arch IN LISTS CMAKE_OSX_ARCHITECTURES)
+        if (NOT (arch STREQUAL "x86_64" OR arch STREQUAL "arm64"))
+            message(FATAL_ERROR "Invalid arch ${arch}")
+        endif()
+    endforeach()
 
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
@@ -424,7 +421,7 @@ if(SFML_OS_WINDOWS)
             install(DIRECTORY extlibs/bin/x86/ DESTINATION ${CMAKE_INSTALL_BINDIR})
             if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
                 install(DIRECTORY extlibs/libs-msvc/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            elseif(SFML_COMPILER_MSVC)
+            elseif(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
                 install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
             else()
                 install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -433,7 +430,7 @@ if(SFML_OS_WINDOWS)
             install(DIRECTORY extlibs/bin/x64/ DESTINATION ${CMAKE_INSTALL_BINDIR})
             if(SFML_COMPILER_MSVC AND SFML_MSVC_VERSION LESS 14)
                 install(DIRECTORY extlibs/libs-msvc/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            elseif(SFML_COMPILER_MSVC)
+            elseif(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
                 install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
             else()
                 install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -524,3 +521,23 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 sfml_export_targets()
+
+set(CPACK_PACKAGE_NAME_SUMMARY "Simple and Fast Multimedia Library")
+set(CPACK_PACKAGE_VENDOR "SFML Team")
+set(CPACK_PACKAGE_FILE_NAME "SFML-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${CMAKE_BUILD_TYPE}")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/readme.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.md")
+set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "SFML ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+set(CPACK_MONOLITHIC_INSTALL ON)
+
+# NSIS configurations
+set(CPACK_NSIS_DISPLAY_NAME "SFML ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION})")
+set(CPACK_NSIS_CONTACT "team@sfml-dev.org")
+set(NSIS_IMAGE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/tools/nsis/")
+string(REGEX REPLACE "/" "\\\\\\\\" NSIS_IMAGE_PATH ${NSIS_IMAGE_PATH})
+set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\"${NSIS_IMAGE_PATH}sidebar.bmp\\\"\n!define MUI_HEADERIMAGE_BITMAP \\\"${NSIS_IMAGE_PATH}header.bmp\\\"\n!define MUI_ICON \\\"${NSIS_IMAGE_PATH}sfml.ico\\\"")
+
+include(CPack)

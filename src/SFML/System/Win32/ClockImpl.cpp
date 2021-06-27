@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -54,9 +54,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Time ClockImpl::getCurrentTime()
 {
-    // Get the frequency of the performance counter
-    // (it is constant across the program lifetime)
-    static LARGE_INTEGER frequency = getFrequency();
+    // Calculate inverse of frequency multiplied by 1000000 to prevent overflow in final calculation
+    // Frequency is constant across the program lifetime
+    static double inverse = 1000000.0 / getFrequency().QuadPart;
 
     // Detect if we are on Windows XP or older
     static bool oldWindows = isWindowsXpOrOlder();
@@ -80,7 +80,7 @@ Time ClockImpl::getCurrentTime()
     }
 
     // Return the current time as microseconds
-    return sf::microseconds(1000000 * time.QuadPart / frequency.QuadPart);
+    return sf::microseconds(static_cast<sf::Int64>(time.QuadPart * inverse));
 }
 
 } // namespace priv

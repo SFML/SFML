@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -45,7 +45,6 @@
     #define GLEXT_multitexture                        true
     #define GLEXT_texture_edge_clamp                  true
     #define GLEXT_EXT_texture_edge_clamp              true
-    #define GLEXT_blend_minmax                        true
     #define GLEXT_glClientActiveTexture               glClientActiveTexture
     #define GLEXT_glActiveTexture                     glActiveTexture
     #define GLEXT_GL_TEXTURE0                         GL_TEXTURE0
@@ -140,6 +139,11 @@
     #define GLEXT_texture_sRGB                        false
     #define GLEXT_GL_SRGB8_ALPHA8                     0
 
+    // Core since 3.0 - EXT_blend_minmax
+    #define GLEXT_blend_minmax                        SF_GLAD_GL_EXT_blend_minmax
+    #define GLEXT_GL_MIN                              GL_MIN_EXT
+    #define GLEXT_GL_MAX                              GL_MAX_EXT
+
 #else
 
     // SFML requires at a bare minimum OpenGL 1.1 capability
@@ -164,6 +168,8 @@
     #define GLEXT_blend_minmax                        SF_GLAD_GL_EXT_blend_minmax
     #define GLEXT_glBlendEquation                     glBlendEquationEXT
     #define GLEXT_GL_FUNC_ADD                         GL_FUNC_ADD_EXT
+    #define GLEXT_GL_MIN                              GL_MIN_EXT
+    #define GLEXT_GL_MAX                              GL_MAX_EXT
 
     // Core since 1.2 - EXT_blend_subtract
     #define GLEXT_blend_subtract                      SF_GLAD_GL_EXT_blend_subtract
@@ -303,6 +309,27 @@
     #define GLEXT_GL_GEOMETRY_SHADER                  GL_GEOMETRY_SHADER_ARB
 
 #endif
+
+    // OpenGL Versions
+    #define GLEXT_GL_VERSION_1_0                      SF_GLAD_GL_VERSION_1_0
+    #define GLEXT_GL_VERSION_1_1                      SF_GLAD_GL_VERSION_1_1
+    #define GLEXT_GL_VERSION_1_2                      SF_GLAD_GL_VERSION_1_2
+    #define GLEXT_GL_VERSION_1_3                      SF_GLAD_GL_VERSION_1_3
+    #define GLEXT_GL_VERSION_1_4                      SF_GLAD_GL_VERSION_1_4
+    #define GLEXT_GL_VERSION_1_5                      SF_GLAD_GL_VERSION_1_5
+    #define GLEXT_GL_VERSION_2_0                      SF_GLAD_GL_VERSION_2_0
+    #define GLEXT_GL_VERSION_2_1                      SF_GLAD_GL_VERSION_2_1
+    #define GLEXT_GL_VERSION_3_0                      SF_GLAD_GL_VERSION_3_0
+    #define GLEXT_GL_VERSION_3_1                      SF_GLAD_GL_VERSION_3_1
+    #define GLEXT_GL_VERSION_3_2                      SF_GLAD_GL_VERSION_3_2
+    #define GLEXT_GL_VERSION_3_3                      SF_GLAD_GL_VERSION_3_3
+    #define GLEXT_GL_VERSION_4_0                      SF_GLAD_GL_VERSION_4_0
+    #define GLEXT_GL_VERSION_4_1                      SF_GLAD_GL_VERSION_4_1
+    #define GLEXT_GL_VERSION_4_2                      SF_GLAD_GL_VERSION_4_2
+    #define GLEXT_GL_VERSION_4_3                      SF_GLAD_GL_VERSION_4_3
+    #define GLEXT_GL_VERSION_4_4                      SF_GLAD_GL_VERSION_4_4
+    #define GLEXT_GL_VERSION_4_5                      SF_GLAD_GL_VERSION_4_5
+    #define GLEXT_GL_VERSION_4_6                      SF_GLAD_GL_VERSION_4_6
 
 namespace sf
 {

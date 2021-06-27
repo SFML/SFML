@@ -84,6 +84,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::~WindowImplAndroid()
 {
+    WindowImplAndroid::singleInstance = NULL;
 }
 
 
@@ -216,22 +217,25 @@ bool WindowImplAndroid::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::forwardEvent(const Event& event)
 {
-    ActivityStates* states = getActivity(NULL);
-
-    if (event.type == Event::GainedFocus)
+    if (WindowImplAndroid::singleInstance != NULL)
     {
-        WindowImplAndroid::singleInstance->m_size.x = ANativeWindow_getWidth(states->window);
-        WindowImplAndroid::singleInstance->m_size.y = ANativeWindow_getHeight(states->window);
-        WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
-        WindowImplAndroid::singleInstance->m_hasFocus = true;
-    }
-    else if (event.type == Event::LostFocus)
-    {
-        WindowImplAndroid::singleInstance->m_windowBeingDestroyed = true;
-        WindowImplAndroid::singleInstance->m_hasFocus = false;
-    }
+        ActivityStates* states = getActivity(NULL);
 
-    WindowImplAndroid::singleInstance->pushEvent(event);
+        if (event.type == Event::GainedFocus)
+        {
+            WindowImplAndroid::singleInstance->m_size.x = ANativeWindow_getWidth(states->window);
+            WindowImplAndroid::singleInstance->m_size.y = ANativeWindow_getHeight(states->window);
+            WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
+            WindowImplAndroid::singleInstance->m_hasFocus = true;
+        }
+        else if (event.type == Event::LostFocus)
+        {
+            WindowImplAndroid::singleInstance->m_windowBeingDestroyed = true;
+            WindowImplAndroid::singleInstance->m_hasFocus = false;
+        }
+
+        WindowImplAndroid::singleInstance->pushEvent(event);
+    }
 }
 
 
@@ -664,7 +668,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_BUTTON_THUMBR:
         case AKEYCODE_BUTTON_START:
         case AKEYCODE_BUTTON_SELECT:
-        case AKEYCODE_BUTTON_MODE:        return Keyboard::Unknown;
+        case AKEYCODE_BUTTON_MODE:
+        default:                          return Keyboard::Unknown;
     }
 }
 

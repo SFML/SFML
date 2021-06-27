@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -58,6 +58,9 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
 ////////////////////////////////////////////////////////////
 bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
 {
+    // Set texture to be in sRGB scale if requested
+    m_texture.setSrgb(settings.sRgbCapable);
+
     // Create the texture
     if (!m_texture.create(width, height))
     {
@@ -174,6 +177,13 @@ void RenderTexture::display()
 Vector2u RenderTexture::getSize() const
 {
     return m_texture.getSize();
+}
+
+
+////////////////////////////////////////////////////////////
+bool RenderTexture::isSrgb() const
+{
+    return m_impl->isSrgb();
 }
 
 
