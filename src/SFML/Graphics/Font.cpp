@@ -143,7 +143,7 @@ bool Font::loadFromFile(const std::string& filename)
 
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = new int[1];
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -208,7 +208,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = new int[1];
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -263,7 +263,7 @@ bool Font::loadFromStream(InputStream& stream)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = new int[1];
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
