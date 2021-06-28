@@ -69,7 +69,7 @@ public:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    bool loadFromPixels(const Uint8* pixels, const Vector2u& size, const Vector2u& hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor

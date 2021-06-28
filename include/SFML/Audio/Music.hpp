@@ -208,7 +208,7 @@ public:
     /// \see getLoopPoints
     ///
     ////////////////////////////////////////////////////////////
-    void setLoopPoints(TimeSpan timePoints);
+    void setLoopPoints(const TimeSpan& timePoints);
 
 protected:
 

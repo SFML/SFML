@@ -118,7 +118,7 @@ Music::TimeSpan Music::getLoopPoints() const
 
 
 ////////////////////////////////////////////////////////////
-void Music::setLoopPoints(TimeSpan timePoints)
+void Music::setLoopPoints(const TimeSpan& timePoints)
 {
     Span<Uint64> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
 
