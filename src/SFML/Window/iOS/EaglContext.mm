@@ -164,8 +164,19 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
 {
     static void* module = 0;
 
-    if (!module)
-        module = dlopen("libGLESv1_CM.dylib", RTLD_LAZY | RTLD_LOCAL);
+    const int libCount = 3;
+    const char* libs[libCount] =
+    {
+        "libGLESv1_CM.dylib",
+        "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
+        "OpenGLES.framework/OpenGLES"
+    };
+    
+    for (int i = 0; i < libCount; ++i)
+    {
+        if (!module)
+            module = dlopen(libs[i], RTLD_LAZY | RTLD_LOCAL);
+    }
 
     if (module)
         return reinterpret_cast<GlFunctionPointer>(dlsym(module, name));
