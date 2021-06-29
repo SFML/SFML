@@ -84,6 +84,19 @@ if(SFML_BUILD_WINDOW)
     sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
 endif()
 
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_NETBSD OR SMFL_OS_OPENBSD)
+    sfml_set_option(SFML_WAYLAND FALSE BOOL "TRUE to use Wayland on unix like systems")
+endif()
+
+if(SFML_WAYLAND)
+    include(FindPkgConfig)
+    pkg_check_modules(Wayland REQUIRED
+        wayland-client)
+    include(CheckIncludeFiles)
+    include(CheckFunctionExists)
+    add_definitions("-DSFML_WAYLAND")
+endif()
+
 # add an option for building the test suite
 sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
 

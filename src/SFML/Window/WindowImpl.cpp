@@ -41,6 +41,14 @@
     #include <SFML/Window/Win32/VulkanImplWin32.hpp>
     typedef sf::priv::VulkanImplWin32 VulkanImplType;
 
+#elif defined(SFML_USE_WAYLAND)
+
+    #include <SFML/Window/Wayland/WindowImplWayland.hpp>
+    typedef sf::priv::WindowImplWayland WindowImplType;
+
+    #include <SFML/Window/Wayland/VulkanImplWayland.hpp>
+    typedef sf::priv::VulkanImplWayland VulkanImplType;
+
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
     #include <SFML/Window/X11/WindowImplX11.hpp>

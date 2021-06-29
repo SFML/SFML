@@ -2,6 +2,32 @@
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Window)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 
+set(WAYLAND_PROTOCOL_SRC)
+
+if(SFML_WAYLAND)
+	include_directories("${CMAKE_BINARY_DIR}/src")
+	find_program(WAYLAND_SCANNER_EXECUTABLE NAMES wayland-scanner)
+	pkg_check_modules(WAYLAND_PROTOCOLS REQUIRED wayland-protocols)
+	pkg_get_variable(WAYLAND_PROTOCOLS_BASE_DIR wayland-protocols pkgdatadir)
+	macro(wayland_generate protocol output)
+		add_custom_command(OUTPUT "${output}.h"
+			COMMAND "${WAYLAND_SCANNER_EXECUTABLE}" client-header < ${protocol} > ${output}.h
+			DEPENDS "${protocol}"
+			VERBATIM)
+		set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} "${output}.h")
+		add_custom_command(OUTPUT "${output}.c"
+			COMMAND "${WAYLAND_SCANNER_EXECUTABLE}" private-code < ${protocol} > ${output}.c
+			DEPENDS "${protocol}"
+			VERBATIM)
+		set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} "${output}.c")
+	endmacro()
+
+	wayland_generate(
+		"${WAYLAND_PROTOCOLS_BASE_DIR}/stable/xdg-shell/xdg-shell.xml"
+		"${CMAKE_BINARY_DIR}/src/xdg-shell-client-protocol"
+	)
+endif()
+
 # all source files
 set(SRC
     ${INCROOT}/Clipboard.hpp
@@ -83,23 +109,46 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     set(PLATFORM_SRC
-        ${SRCROOT}/X11/CursorImpl.hpp
-        ${SRCROOT}/X11/CursorImpl.cpp
-        ${SRCROOT}/X11/ClipboardImpl.hpp
-        ${SRCROOT}/X11/ClipboardImpl.cpp
-        ${SRCROOT}/X11/Display.cpp
-        ${SRCROOT}/X11/Display.hpp
-        ${SRCROOT}/X11/InputImpl.cpp
-        ${SRCROOT}/X11/InputImpl.hpp
         ${SRCROOT}/Generic/SensorImpl.cpp
         ${SRCROOT}/Generic/SensorImpl.hpp
-        ${SRCROOT}/X11/VideoModeImpl.cpp
-        ${SRCROOT}/X11/VulkanImplX11.cpp
-        ${SRCROOT}/X11/VulkanImplX11.hpp
-        ${SRCROOT}/X11/WindowImplX11.cpp
-        ${SRCROOT}/X11/WindowImplX11.hpp
     )
-    if(NOT SFML_OS_ANDROID)
+    if (SFML_WAYLAND)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${WAYLAND_PROTOCOL_SRC}
+#            ${SRCROOT}/Wayland/CursorImpl.hpp
+#            ${SRCROOT}/Wayland/CursorImpl.cpp
+#            ${SRCROOT}/Wayland/ClipboardImpl.hpp
+#            ${SRCROOT}/Wayland/ClipboardImpl.cpp
+            ${SRCROOT}/Wayland/Display.cpp
+            ${SRCROOT}/Wayland/Display.hpp
+#            ${SRCROOT}/Wayland/InputImpl.cpp
+#            ${SRCROOT}/Wayland/InputImpl.hpp
+#            ${SRCROOT}/Wayland/VideoModeImpl.cpp
+            ${SRCROOT}/Wayland/VulkanImplWayland.cpp
+            ${SRCROOT}/Wayland/VulkanImplWayland.hpp
+            ${SRCROOT}/Wayland/WindowImplWayland.cpp
+            ${SRCROOT}/Wayland/WindowImplWayland.hpp
+        )
+    else()
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/X11/CursorImpl.hpp
+            ${SRCROOT}/X11/CursorImpl.cpp
+            ${SRCROOT}/X11/ClipboardImpl.hpp
+            ${SRCROOT}/X11/ClipboardImpl.cpp
+            ${SRCROOT}/X11/Display.cpp
+            ${SRCROOT}/X11/Display.hpp
+            ${SRCROOT}/X11/InputImpl.cpp
+            ${SRCROOT}/X11/InputImpl.hpp
+            ${SRCROOT}/X11/VideoModeImpl.cpp
+            ${SRCROOT}/X11/VulkanImplX11.cpp
+            ${SRCROOT}/X11/VulkanImplX11.hpp
+            ${SRCROOT}/X11/WindowImplX11.cpp
+            ${SRCROOT}/X11/WindowImplX11.hpp
+        )
+    endif()
+    if(NOT SFML_OS_ANDROID AND NOT SFML_WAYLAND)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
             ${SRCROOT}/X11/GlxContext.cpp
@@ -251,8 +300,12 @@ target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/he
 
 # find and setup usage for external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB" "X11_Xcursor_LIB")
-    target_link_libraries(sfml-window PRIVATE X11)
+    if(SFML_WAYLAND)
+        target_link_libraries(sfml-window PRIVATE wayland-client)
+    else()
+        sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB" "X11_Xcursor_LIB")
+        target_link_libraries(sfml-window PRIVATE X11)
+    endif()
 endif()
 
 # CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability

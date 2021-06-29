@@ -44,8 +44,13 @@ namespace sf
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
+#if defined(SFML_WAYLAND)
+    // Window handle is struct wl_display* (void*) on Unix - Wayland
+    typedef void* WindowHandle;
+#else
     // Window handle is Window (unsigned long) on Unix - X11
     typedef unsigned long WindowHandle;
+#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
