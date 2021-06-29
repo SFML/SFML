@@ -83,34 +83,34 @@ if(SFML_OS_WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     set(PLATFORM_SRC
-        ${SRCROOT}/Unix/CursorImpl.hpp
-        ${SRCROOT}/Unix/CursorImpl.cpp
-        ${SRCROOT}/Unix/ClipboardImpl.hpp
-        ${SRCROOT}/Unix/ClipboardImpl.cpp
-        ${SRCROOT}/Unix/Display.cpp
-        ${SRCROOT}/Unix/Display.hpp
-        ${SRCROOT}/Unix/InputImpl.cpp
-        ${SRCROOT}/Unix/InputImpl.hpp
-        ${SRCROOT}/Unix/SensorImpl.cpp
-        ${SRCROOT}/Unix/SensorImpl.hpp
-        ${SRCROOT}/Unix/VideoModeImpl.cpp
-        ${SRCROOT}/Unix/VulkanImplX11.cpp
-        ${SRCROOT}/Unix/VulkanImplX11.hpp
-        ${SRCROOT}/Unix/WindowImplX11.cpp
-        ${SRCROOT}/Unix/WindowImplX11.hpp
+        ${SRCROOT}/X11/CursorImpl.hpp
+        ${SRCROOT}/X11/CursorImpl.cpp
+        ${SRCROOT}/X11/ClipboardImpl.hpp
+        ${SRCROOT}/X11/ClipboardImpl.cpp
+        ${SRCROOT}/X11/Display.cpp
+        ${SRCROOT}/X11/Display.hpp
+        ${SRCROOT}/X11/InputImpl.cpp
+        ${SRCROOT}/X11/InputImpl.hpp
+        ${SRCROOT}/Generic/SensorImpl.cpp
+        ${SRCROOT}/Generic/SensorImpl.hpp
+        ${SRCROOT}/X11/VideoModeImpl.cpp
+        ${SRCROOT}/X11/VulkanImplX11.cpp
+        ${SRCROOT}/X11/VulkanImplX11.hpp
+        ${SRCROOT}/X11/WindowImplX11.cpp
+        ${SRCROOT}/X11/WindowImplX11.hpp
     )
     if(NOT SFML_OS_ANDROID)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
-            ${SRCROOT}/Unix/GlxContext.cpp
-            ${SRCROOT}/Unix/GlxContext.hpp
+            ${SRCROOT}/X11/GlxContext.cpp
+            ${SRCROOT}/X11/GlxContext.hpp
         )
     endif()
     if(SFML_OS_LINUX)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
-            ${SRCROOT}/Unix/JoystickImpl.cpp
-            ${SRCROOT}/Unix/JoystickImpl.hpp
+            ${SRCROOT}/Linux/JoystickImpl.cpp
+            ${SRCROOT}/Linux/JoystickImpl.hpp
         )
     elseif(SFML_OS_FREEBSD)
         set(PLATFORM_SRC
@@ -121,8 +121,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     elseif(SFML_OS_OPENBSD)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
-            ${SRCROOT}/OpenBSD/JoystickImpl.cpp
-            ${SRCROOT}/OpenBSD/JoystickImpl.hpp
+            ${SRCROOT}/Generic/JoystickImpl.cpp
+            ${SRCROOT}/Generic/JoystickImpl.hpp
         )
     elseif(SFML_OS_NETBSD)
         set(PLATFORM_SRC
@@ -268,7 +268,7 @@ if(SFML_OS_IOS)
     target_link_libraries(sfml-window PRIVATE GLES)
 elseif(SFML_OS_ANDROID)
     sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
-    
+
     sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
     target_link_libraries(sfml-window PRIVATE EGL)
     target_link_libraries(sfml-window PRIVATE GLES)

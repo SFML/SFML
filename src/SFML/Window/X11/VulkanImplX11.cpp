@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/X11/VulkanImplX11.hpp>
+#include <SFML/Window/X11/Display.hpp>
 #include <dlfcn.h>
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES

@@ -34,7 +34,7 @@ typedef sf::priv::VulkanImplWin32 VulkanImplType;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
+#include <SFML/Window/X11/VulkanImplX11.hpp>
 typedef sf::priv::VulkanImplX11 VulkanImplType;
 
 #else

@@ -65,7 +65,7 @@
 
     #else
 
-        #include <SFML/Window/Unix/GlxContext.hpp>
+        #include <SFML/Window/X11/GlxContext.hpp>
         typedef sf::priv::GlxContext ContextType;
 
     #endif

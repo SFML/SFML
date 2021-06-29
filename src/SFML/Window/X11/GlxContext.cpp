@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #define SF_GLAD_GLX_IMPLEMENTATION
-#include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
-#include <SFML/Window/Unix/GlxContext.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/X11/WindowImplX11.hpp> // important to be included first (conflict with None)
+#include <SFML/Window/X11/GlxContext.hpp>
+#include <SFML/Window/X11/Display.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
@@ -52,7 +52,7 @@ namespace
         if (!initialized)
         {
             initialized = true;
-    
+
             // We don't check the return value since the extension
             // flags are cleared even if loading fails
             gladLoaderLoadGLX(display, screen);
