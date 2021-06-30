@@ -164,18 +164,18 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
 {
     static void* module = 0;
 
-    const int LIB_COUNT = 3;
-    const char* LIBS[LIB_COUNT] =
+    const int libCount = 3;
+    const char* libs[libCount] =
     {
         "libGLESv1_CM.dylib",
         "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
         "OpenGLES.framework/OpenGLES"
     };
     
-    for ( int i = 0; i < LIB_COUNT; ++i )
+    for (int i = 0; i < libCount; ++i)
     {
-        if ( !module )
-            module = dlopen( LIBS[ i ], RTLD_LAZY | RTLD_LOCAL );
+        if (!module)
+            module = dlopen(libs[i], RTLD_LAZY | RTLD_LOCAL);
     }
 
     if (module)
