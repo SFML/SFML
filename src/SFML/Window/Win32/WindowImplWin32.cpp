@@ -340,7 +340,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
     RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
-    AdjustWindowRect(&rectangle, GetWindowLong(m_handle, GWL_STYLE), false);
+    AdjustWindowRect(&rectangle, GetWindowLongPtr(m_handle, GWL_STYLE), false);
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
 
@@ -496,8 +496,9 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     }
 
     // Make the window flags compatible with fullscreen mode
-    SetWindowLongW(m_handle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-    SetWindowLongW(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowLongPtrW(m_handle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+    SetWindowLongPtrW(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    ShowWindow(m_handle, SW_SHOW);
 
     // Resize the window so that it fits the entire screen
     SetWindowPos(m_handle, HWND_TOP, 0, 0, mode.width, mode.height, SWP_FRAMECHANGED);
