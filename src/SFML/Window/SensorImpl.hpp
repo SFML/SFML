@@ -37,7 +37,7 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
-    #include <SFML/Window/Unix/SensorImpl.hpp>
+    #include <SFML/Window/Generic/SensorImpl.hpp>
 
 #elif defined(SFML_SYSTEM_MACOS)
 

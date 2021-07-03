@@ -28,7 +28,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/X11/Display.hpp>
 #include <X11/keysym.h>
 #include <cassert>
 #include <cstdlib>

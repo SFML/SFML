@@ -22,8 +22,15 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPLUNIX_HPP
-#define SFML_SENSORIMPLUNIX_HPP
+#ifndef SFML_VULKANIMPLWAYLAND_HPP
+#define SFML_VULKANIMPLWAYLAND_HPP
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Window/Vulkan.hpp>
+#include <SFML/Window/WindowHandle.hpp>
+#include <vector>
 
 
 namespace sf
@@ -31,66 +38,61 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Unix implementation of sensors
+/// \brief Wayland implementation of Vulkan
 ///
 ////////////////////////////////////////////////////////////
-class SensorImpl
+class VulkanImplWayland
 {
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global initialization of the sensor module
+    /// \brief Tell whether or not the system supports Vulkan
+    ///
+    /// This function should always be called before using
+    /// the Vulkan features. If it returns false, then
+    /// any attempt to use Vulkan will fail.
+    ///
+    /// If only compute is required, set \a requireGraphics
+    /// to false to skip checking for the extensions necessary
+    /// for graphics rendering.
+    ///
+    /// \param requireGraphics
+    ///
+    /// \return True if Vulkan is supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static void initialize();
+    static bool isAvailable(bool requireGraphics = true);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform the global cleanup of the sensor module
+    /// \brief Get the address of a Vulkan function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the Vulkan function, 0 on failure
     ///
     ////////////////////////////////////////////////////////////
-    static void cleanup();
+    static VulkanFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a sensor is available
+    /// \brief Get Vulkan instance extensions required for graphics
     ///
-    /// \param sensor Sensor to check
-    ///
-    /// \return True if the sensor is available, false otherwise
+    /// \return Vulkan instance extensions required for graphics
     ///
     ////////////////////////////////////////////////////////////
-    static bool isAvailable(Sensor::Type sensor);
+    static const std::vector<const char*>& getGraphicsRequiredInstanceExtensions();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open the sensor
+    /// \brief Create a Vulkan rendering surface
     ///
-    /// \param sensor Type of the sensor
+    /// \param instance     Vulkan instance
+    /// \param windowHandle Handle to the window to create the surface for
+    /// \param surface      Created surface
+    /// \param allocator    Allocator to use
     ///
-    /// \return True on success, false on failure
-    ///
-    ////////////////////////////////////////////////////////////
-    bool open(Sensor::Type sensor);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Close the sensor
+    /// \return True if surface creation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    void close();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the sensor and get its new value
-    ///
-    /// \return Sensor value
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector3f update();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable the sensor
-    ///
-    /// \param enabled True to enable, false to disable
-    ///
-    ////////////////////////////////////////////////////////////
-    void setEnabled(bool enabled);
+    static bool createVulkanSurface(const VkInstance& instance, WindowHandle windowHandle, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator);
 };
 
 } // namespace priv
@@ -98,4 +100,4 @@ public:
 } // namespace sf
 
 
-#endif // SFML_SENSORIMPLUNIX_HPP
+#endif // SFML_VULKANIMPLWAYLAND_HPP

@@ -25,10 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Wayland/VulkanImplWayland.hpp>
+#include <SFML/Window/Wayland/Display.hpp>
 #include <dlfcn.h>
-#define VK_USE_PLATFORM_XLIB_KHR
+#define VK_USE_PLATFORM_WAYLAND_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
 #include <string>
@@ -110,7 +110,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::isAvailable(bool requireGraphics)
+bool VulkanImplWayland::isAvailable(bool requireGraphics)
 {
     static bool checked = false;
     static bool computeAvailable = false;
@@ -149,7 +149,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
                 {
                     has_VK_KHR_surface = true;
                 }
-                else if (!std::strcmp(iter->extensionName, VK_KHR_XLIB_SURFACE_EXTENSION_NAME))
+                else if (!std::strcmp(iter->extensionName, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME))
                 {
                     has_VK_KHR_platform_surface = true;
                 }
@@ -168,7 +168,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
+VulkanFunctionPointer VulkanImplWayland::getFunction(const char* name)
 {
     if (!isAvailable(false))
         return 0;
@@ -178,14 +178,14 @@ VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtensions()
+const std::vector<const char*>& VulkanImplWayland::getGraphicsRequiredInstanceExtensions()
 {
     static std::vector<const char*> extensions;
 
     if (extensions.empty())
     {
         extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-        extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+        extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
     }
 
     return extensions;
@@ -193,7 +193,7 @@ const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtens
 
 
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle windowHandle, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator)
+bool VulkanImplWayland::createVulkanSurface(const VkInstance& instance, WindowHandle windowHandle, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator)
 {
     if (!isAvailable())
         return false;
@@ -201,21 +201,16 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle
     // Make a copy of the instance handle since we get it passed as a reference
     VkInstance inst = instance;
 
-    PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateXlibSurfaceKHR"));
+    PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = reinterpret_cast<PFN_vkCreateWaylandSurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateWaylandSurfaceKHR"));
 
-    if (!vkCreateXlibSurfaceKHR)
+    if (!vkCreateWaylandSurfaceKHR)
         return false;
 
-    // Since the surface is basically attached to the window, the connection
-    // to the X display will stay open even after we open and close it here
-    VkXlibSurfaceCreateInfoKHR surfaceCreateInfo = VkXlibSurfaceCreateInfoKHR();
-    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.dpy = OpenDisplay();
-    surfaceCreateInfo.window = windowHandle;
+    VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo = VkWaylandSurfaceCreateInfoKHR();
+    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    // TODO
 
-    bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
-
-    CloseDisplay(surfaceCreateInfo.dpy);
+    bool result = (vkCreateWaylandSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
 
     return result;
 }

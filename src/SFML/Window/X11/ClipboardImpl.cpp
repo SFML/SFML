@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/ClipboardImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/X11/ClipboardImpl.hpp>
+#include <SFML/Window/X11/Display.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <X11/Xatom.h>

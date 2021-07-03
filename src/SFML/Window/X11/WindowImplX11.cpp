@@ -25,10 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/WindowImplX11.hpp>
-#include <SFML/Window/Unix/ClipboardImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/InputImpl.hpp>
+#include <SFML/Window/X11/WindowImplX11.hpp>
+#include <SFML/Window/X11/ClipboardImpl.hpp>
+#include <SFML/Window/X11/Display.hpp>
+#include <SFML/Window/X11/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -53,7 +53,7 @@
     #include <SFML/Window/EglContext.hpp>
     typedef sf::priv::EglContext ContextType;
 #else
-    #include <SFML/Window/Unix/GlxContext.hpp>
+    #include <SFML/Window/X11/GlxContext.hpp>
     typedef sf::priv::GlxContext ContextType;
 #endif
 
@@ -745,7 +745,7 @@ m_lastInputTime  (0)
         sizeHints->flags &= ~(PMinSize | PMaxSize);
         XSetWMNormalHints(m_display, m_window, sizeHints);
         XFree(sizeHints);
- 
+
         setVideoMode(mode);
         switchToFullscreen();
     }

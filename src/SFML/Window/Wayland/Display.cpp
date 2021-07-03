@@ -25,71 +25,63 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Vulkan.hpp>
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Mutex.hpp>
+#include <SFML/System/Lock.hpp>
+#include <SFML/Window/Wayland/Display.hpp>
+#include <wayland-client.h>
+#include <cassert>
+#include <cstdlib>
+#include <map>
 
-#if defined(SFML_SYSTEM_WINDOWS)
 
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-typedef sf::priv::VulkanImplWin32 VulkanImplType;
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-
-#include <SFML/Window/X11/VulkanImplX11.hpp>
-typedef sf::priv::VulkanImplX11 VulkanImplType;
-
-#else
-
-#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
-
-#endif
-
+namespace
+{
+    // The shared display and its reference counter
+    struct wl_display* sharedDisplay = NULL;
+    unsigned int referenceCount = 0;
+    sf::Mutex mutex;
+}
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+namespace priv
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
+////////////////////////////////////////////////////////////
+struct wl_display* OpenDisplay()
+{
+    Lock lock(mutex);
 
-    return false;
+    if (referenceCount == 0)
+    {
+        sharedDisplay = wl_display_connect(NULL);
 
-#else
+        // Opening display failed: The best we can do at the moment is to output a meaningful error message
+        // and cause an abnormal program termination
+        if (!sharedDisplay)
+        {
+            err() << "Failed to open Wayland display" << std::endl;
+            std::abort();
+        }
+    }
 
-    return VulkanImplType::isAvailable(requireGraphics);
-
-#endif
+    referenceCount++;
+    return sharedDisplay;
 }
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
+void CloseDisplay(struct wl_display* display)
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
+    Lock lock(mutex);
 
-    return NULL;
+    assert(display == sharedDisplay);
 
-#else
-
-    return VulkanImplType::getFunction(name);
-
-#endif
+    referenceCount--;
+    if (referenceCount == 0)
+        wl_display_disconnect(display);
 }
 
-
-////////////////////////////////////////////////////////////
-const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
-{
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
-
-    static const std::vector<const char*> empty;
-
-    return empty;
-
-#else
-
-    return VulkanImplType::getGraphicsRequiredInstanceExtensions();
-
-#endif
-}
+} // namespace priv
 
 } // namespace sf

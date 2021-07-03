@@ -22,25 +22,42 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPL_HPP
-#define SFML_INPUTIMPL_HPP
+#ifndef SFML_SHAREDDISPLAY_HPP
+#define SFML_SHAREDDISPLAY_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/Window/Win32/InputImpl.hpp>
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-    #include <SFML/Window/X11/InputImpl.hpp>
-#elif defined(SFML_SYSTEM_MACOS)
-    #include <SFML/Window/OSX/InputImpl.hpp>
-#elif defined(SFML_SYSTEM_IOS)
-    #include <SFML/Window/iOS/InputImpl.hpp>
-#elif defined(SFML_SYSTEM_ANDROID)
-    #include <SFML/Window/Android/InputImpl.hpp>
-#endif
+#include <string>
+#include <wayland-client.h>
 
 
-#endif // SFML_INPUTIMPL_HPP
+namespace sf
+{
+namespace priv
+{
+////////////////////////////////////////////////////////////
+/// \brief Get the shared Display
+///
+/// This function increments the reference count of the display,
+/// it must be matched with a call to CloseDisplay.
+///
+/// \return Pointer to the shared display
+///
+////////////////////////////////////////////////////////////
+struct wl_display* OpenDisplay();
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared display
+///
+/// \param display Display to release
+///
+////////////////////////////////////////////////////////////
+void CloseDisplay(struct wl_display* display);
+
+} // namespace priv
+
+} // namespace sf
+
+
+#endif // SFML_SHAREDDISPLAY_HPP

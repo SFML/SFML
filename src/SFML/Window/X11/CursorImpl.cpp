@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/CursorImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/X11/CursorImpl.hpp>
+#include <SFML/Window/X11/Display.hpp>
 #include <X11/cursorfont.h>
 #include <X11/Xutil.h>
 #include <X11/Xcursor/Xcursor.h>

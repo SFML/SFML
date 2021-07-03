@@ -22,104 +22,80 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLUNIX_HPP
-#define SFML_CURSORIMPLUNIX_HPP
+#ifndef SFML_SENSORIMPLUNIX_HPP
+#define SFML_SENSORIMPLUNIX_HPP
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Window/Cursor.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
-#include <X11/Xlib.h>
 
 namespace sf
 {
-
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Unix implementation of Cursor
+/// \brief Generic implementation of sensors
 ///
 ////////////////////////////////////////////////////////////
-class CursorImpl : NonCopyable
+class SensorImpl
 {
 public:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Refer to sf::Cursor::Cursor().
+    /// \brief Perform the global initialization of the sensor module
     ///
     ////////////////////////////////////////////////////////////
-    CursorImpl();
+    static void initialize();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    /// Refer to sf::Cursor::~Cursor().
+    /// \brief Perform the global cleanup of the sensor module
     ///
     ////////////////////////////////////////////////////////////
-    ~CursorImpl();
+    static void cleanup();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a cursor with the provided image
+    /// \brief Check if a sensor is available
     ///
-    /// Refer to sf::Cursor::loadFromPixels().
+    /// \param sensor Sensor to check
+    ///
+    /// \return True if the sensor is available, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    static bool isAvailable(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a native system cursor
+    /// \brief Open the sensor
     ///
-    /// Refer to sf::Cursor::loadFromSystem().
+    /// \param sensor Type of the sensor
+    ///
+    /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSystem(Cursor::Type type);
-
-private:
-
-    friend class WindowImplX11;
+    bool open(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Checks if colored cursors are supported for this display.
+    /// \brief Close the sensor
     ///
     ////////////////////////////////////////////////////////////
-    bool isColorCursorSupported();
+    void close();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a cursor with the provided image (ARGB support)
+    /// \brief Update the sensor and get its new value
     ///
-    /// Refer to sf::Cursor::loadFromPixels().
+    /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    Vector3f update();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a cursor with the provided image (monochrome)
+    /// \brief Enable or disable the sensor
     ///
-    /// Refer to sf::Cursor::loadFromPixels().
-    ///
-    ////////////////////////////////////////////////////////////
-    bool loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Vector2u hotspot);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Release the cursor, if we have loaded one.
+    /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    void release();
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    ::Display* m_display;
-    ::Cursor   m_cursor;
+    void setEnabled(bool enabled);
 };
 
 } // namespace priv
 
 } // namespace sf
 
-#endif // SFML_CUSROSIMPLUNIX_HPP
+
+#endif // SFML_SENSORIMPLUNIX_HPP
