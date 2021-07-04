@@ -236,6 +236,7 @@ void Shape::draw(RenderTarget& target, const RenderStates& states) const
     RenderStates statesCopy(states);
 
     statesCopy.transform *= getTransform();
+    statesCopy.coordinateType = CoordinateType::Pixels;
 
     // Render the inside
     statesCopy.texture = m_texture;

@@ -85,6 +85,7 @@ set(GRAPHICS_SRC
     Graphics/CircleShape.test.cpp
     Graphics/Color.test.cpp
     Graphics/ConvexShape.test.cpp
+    Graphics/CoordinateType.test.cpp
     Graphics/Drawable.test.cpp
     Graphics/Font.test.cpp
     Graphics/Glyph.test.cpp

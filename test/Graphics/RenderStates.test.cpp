@@ -22,6 +22,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
             const sf::RenderStates renderStates;
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == sf::Transform());
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Pixels);
             CHECK(renderStates.texture == nullptr);
             CHECK(renderStates.shader == nullptr);
         }
@@ -37,6 +38,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
             const sf::RenderStates renderStates(blendMode);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.transform == sf::Transform());
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Pixels);
             CHECK(renderStates.texture == nullptr);
             CHECK(renderStates.shader == nullptr);
         }
@@ -47,6 +49,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
             const sf::RenderStates renderStates(transform);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == transform);
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Pixels);
             CHECK(renderStates.texture == nullptr);
             CHECK(renderStates.shader == nullptr);
         }
@@ -57,6 +60,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
             const sf::RenderStates renderStates(texture);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == sf::Transform());
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Pixels);
             CHECK(renderStates.texture == texture);
             CHECK(renderStates.shader == nullptr);
         }
@@ -67,6 +71,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
             const sf::RenderStates renderStates(shader);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == sf::Transform());
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Pixels);
             CHECK(renderStates.texture == nullptr);
             CHECK(renderStates.shader == shader);
         }
@@ -80,9 +85,10 @@ TEST_CASE("[Graphics] sf::RenderStates")
                                           sf::BlendMode::DstAlpha,
                                           sf::BlendMode::Max);
             const sf::Transform    transform(10, 2, 3, 4, 50, 40, 30, 20, 10);
-            const sf::RenderStates renderStates(blendMode, transform, nullptr, nullptr);
+            const sf::RenderStates renderStates(blendMode, transform, sf::CoordinateType::Normalized, nullptr, nullptr);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.transform == transform);
+            CHECK(renderStates.coordinateType == sf::CoordinateType::Normalized);
             CHECK(renderStates.texture == nullptr);
             CHECK(renderStates.shader == nullptr);
         }
@@ -92,6 +98,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
     {
         CHECK(sf::RenderStates::Default.blendMode == sf::BlendMode());
         CHECK(sf::RenderStates::Default.transform == sf::Transform());
+        CHECK(sf::RenderStates::Default.coordinateType == sf::CoordinateType::Pixels);
         CHECK(sf::RenderStates::Default.texture == nullptr);
         CHECK(sf::RenderStates::Default.shader == nullptr);
     }

@@ -862,7 +862,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
         glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
 
         // Check if we need to define a special texture matrix
-        if ((coordinateType == Pixels) || texture->m_pixelsFlipped)
+        if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped)
         {
             // clang-format off
             GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
@@ -873,7 +873,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 
             // If non-normalized coordinates (= pixels) are requested, we need to
             // setup scale factors that convert the range [0 .. size] to [0 .. 1]
-            if (coordinateType == Pixels)
+            if (coordinateType == CoordinateType::Pixels)
             {
                 matrix[0] = 1.f / static_cast<float>(texture->m_actualSize.x);
                 matrix[5] = 1.f / static_cast<float>(texture->m_actualSize.y);
@@ -889,10 +889,16 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
             // Load the matrix
             glCheck(glMatrixMode(GL_TEXTURE));
             glCheck(glLoadMatrixf(matrix));
-
-            // Go back to model-view mode (sf::RenderTarget relies on it)
-            glCheck(glMatrixMode(GL_MODELVIEW));
         }
+        else
+        {
+            // Reset the texture matrix
+            glCheck(glMatrixMode(GL_TEXTURE));
+            glCheck(glLoadIdentity());
+        }
+
+        // Go back to model-view mode (sf::RenderTarget relies on it)
+        glCheck(glMatrixMode(GL_MODELVIEW));
     }
     else
     {

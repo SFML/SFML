@@ -31,6 +31,7 @@
 
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -462,10 +463,11 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new texture
     ///
-    /// \param texture Texture to apply
+    /// \param texture        Texture to apply
+    /// \param coordinateType The texture coordinate type to use
     ///
     ////////////////////////////////////////////////////////////
-    void applyTexture(const Texture* texture);
+    void applyTexture(const Texture* texture, CoordinateType coordinateType = CoordinateType::Pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new shader
@@ -514,6 +516,7 @@ private:
         bool                  scissorEnabled;        //!< Is scissor testing enabled?
         BlendMode             lastBlendMode;         //!< Cached blending mode
         std::uint64_t         lastTextureId;         //!< Cached texture
+        CoordinateType        lastCoordinateType;    //!< Texture coordinate type
         bool                  texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
         bool                  useVertexCache;        //!< Did we previously use the vertex cache?
         std::array<Vertex, 4> vertexCache;           //!< Pre-transformed vertices cache

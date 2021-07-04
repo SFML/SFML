@@ -7,6 +7,7 @@ set(SRC
     ${INCROOT}/BlendMode.hpp
     ${INCROOT}/Color.hpp
     ${INCROOT}/Color.inl
+    ${INCROOT}/CoordinateType.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Font.cpp
     ${INCROOT}/Font.hpp

@@ -355,7 +355,8 @@ void Text::draw(RenderTarget& target, const RenderStates& states) const
     RenderStates statesCopy(states);
 
     statesCopy.transform *= getTransform();
-    statesCopy.texture = &m_font->getTexture(m_characterSize);
+    statesCopy.texture        = &m_font->getTexture(m_characterSize);
+    statesCopy.coordinateType = CoordinateType::Pixels;
 
     // Only draw the outline if there is something to draw
     if (m_outlineThickness != 0)
