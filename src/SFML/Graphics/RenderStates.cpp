@@ -71,10 +71,12 @@ RenderStates::RenderStates(const Shader* theShader) : shader(theShader)
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const BlendMode& theBlendMode,
                            const Transform& theTransform,
+                           CoordinateType   theCoordinateType,
                            const Texture*   theTexture,
                            const Shader*    theShader) :
 blendMode(theBlendMode),
 transform(theTransform),
+coordinateType(theCoordinateType),
 texture(theTexture),
 shader(theShader)
 {

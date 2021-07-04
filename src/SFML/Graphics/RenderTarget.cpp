@@ -676,11 +676,12 @@ void RenderTarget::applyTransform(const Transform& transform)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::applyTexture(const Texture* texture)
+void RenderTarget::applyTexture(const Texture* texture, CoordinateType coordinateType)
 {
-    Texture::bind(texture, Texture::Pixels);
+    Texture::bind(texture, coordinateType);
 
-    m_cache.lastTextureId = texture ? texture->m_cacheId : 0;
+    m_cache.lastTextureId      = texture ? texture->m_cacheId : 0;
+    m_cache.lastCoordinateType = coordinateType;
 }
 
 
@@ -740,13 +741,13 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
         // This saves us from having to call glFlush() in
         // RenderTextureImplFBO which can be quite costly
         // See: https://www.khronos.org/opengl/wiki/Memory_Model
-        applyTexture(states.texture);
+        applyTexture(states.texture, states.coordinateType);
     }
     else
     {
         const std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
-        if (textureId != m_cache.lastTextureId)
-            applyTexture(states.texture);
+        if (textureId != m_cache.lastTextureId || states.coordinateType != m_cache.lastCoordinateType)
+            applyTexture(states.texture, states.coordinateType);
     }
 
     // Apply the shader

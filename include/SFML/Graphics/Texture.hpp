@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
 #include <SFML/Window/GlResource.hpp>
@@ -52,16 +53,6 @@ class Image;
 class SFML_GRAPHICS_API Texture : GlResource
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Types of texture coordinates that can be used for rendering
-    ///
-    ////////////////////////////////////////////////////////////
-    enum CoordinateType
-    {
-        Normalized, //!< Texture coordinates in range [0 .. 1]
-        Pixels      //!< Texture coordinates in range [0 .. size]
-    };
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -578,7 +569,7 @@ public:
     /// \param coordinateType Type of texture coordinates to use
     ///
     ////////////////////////////////////////////////////////////
-    static void bind(const Texture* texture, CoordinateType coordinateType = Normalized);
+    static void bind(const Texture* texture, CoordinateType coordinateType = CoordinateType::Normalized);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum texture size allowed
