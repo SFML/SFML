@@ -224,8 +224,17 @@ bool WglContext::makeCurrent(bool current)
 ////////////////////////////////////////////////////////////
 void WglContext::display()
 {
-    if (m_deviceContext && m_context)
-        SwapBuffers(m_deviceContext);
+    if (m_deviceContext && m_context) 
+    {
+        bool success = SwapBuffers(m_deviceContext);
+        if (!success) 
+        {
+            err() << "SwapBuffers error: " << GetLastError() << std::endl;
+            ReleaseDC(m_window, m_deviceContext);
+            m_deviceContext = GetDC(m_window);
+            success = SwapBuffers(m_deviceContext);
+        }
+    }
 }
 
 
