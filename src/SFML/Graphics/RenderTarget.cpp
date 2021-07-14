@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -110,13 +110,36 @@ namespace
     {
         switch (blendEquation)
         {
-            case sf::BlendMode::Add:             return GLEXT_GL_FUNC_ADD;
-            case sf::BlendMode::Subtract:        return GLEXT_GL_FUNC_SUBTRACT;
-            case sf::BlendMode::ReverseSubtract: return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
+            case sf::BlendMode::Add:
+                return GLEXT_GL_FUNC_ADD;
+            case sf::BlendMode::Subtract:
+                if (GLEXT_blend_subtract)
+                    return GLEXT_GL_FUNC_SUBTRACT;
+                break;
+            case sf::BlendMode::ReverseSubtract:
+                if (GLEXT_blend_subtract)
+                    return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
+                break;
+            case sf::BlendMode::Min:
+                if (GLEXT_blend_minmax)
+                    return GLEXT_GL_MIN;
+                break;
+            case sf::BlendMode::Max:
+                if (GLEXT_blend_minmax)
+                    return GLEXT_GL_MAX;
+                break;
         }
 
-        sf::err() << "Invalid value for sf::BlendMode::Equation! Fallback to sf::BlendMode::Add." << std::endl;
-        assert(false);
+        static bool warned = false;
+        if (!warned)
+        {
+            sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << std::endl;
+            sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << std::endl;
+            sf::err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+            warned = true;
+        }
+
         return GLEXT_GL_FUNC_ADD;
     }
 }
@@ -389,6 +412,14 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
 
 
 ////////////////////////////////////////////////////////////
+bool RenderTarget::isSrgb() const
+{
+    // By default sRGB encoding is not enabled for an arbitrary RenderTarget
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
@@ -591,7 +622,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
             factorToGlConstant(mode.colorDstFactor)));
     }
 
-    if (GLEXT_blend_minmax && GLEXT_blend_subtract)
+    if (GLEXT_blend_minmax || GLEXT_blend_subtract)
     {
         if (GLEXT_blend_equation_separate)
         {
@@ -610,7 +641,11 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 
         if (!warned)
         {
-            err() << "OpenGL extension EXT_blend_minmax and/or EXT_blend_subtract unavailable" << std::endl;
+#ifdef SFML_OPENGL_ES
+            err() << "OpenGL ES extension OES_blend_subtract unavailable" << std::endl;
+#else
+            err() << "OpenGL extension EXT_blend_minmax and EXT_blend_subtract unavailable" << std::endl;
+#endif
             err() << "Selecting a blend equation not possible" << std::endl;
             err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
@@ -653,6 +688,16 @@ void RenderTarget::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 {
+    // Enable or disable sRGB encoding
+    // This is needed for drivers that do not check the format of the surface drawn to before applying sRGB conversion
+    if (!m_cache.enable)
+    {
+        if (isSrgb())
+            glCheck(glEnable(GL_FRAMEBUFFER_SRGB));
+        else
+            glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
+    }
+
     // First set the persistent OpenGL states if it's the very first call
     if (!m_cache.glStatesSet)
         resetGLStates();

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -181,7 +181,6 @@ void WindowImpl::processJoystickEvents()
         // Copy the previous state of the joystick and get the new one
         JoystickState previousState = m_joystickStates[i];
         m_joystickStates[i] = JoystickManager::getInstance().getState(i);
-        JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
 
         // Connection state
         bool connected = m_joystickStates[i].connected;
@@ -199,6 +198,8 @@ void WindowImpl::processJoystickEvents()
 
         if (connected)
         {
+            JoystickCaps caps = JoystickManager::getInstance().getCapabilities(i);
+
             // Axes
             for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
             {

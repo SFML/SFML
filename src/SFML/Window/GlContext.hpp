@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -156,6 +156,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static GlFunctionPointer getFunction(const char* name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the currently active context
+    ///
+    /// \return The currently active context or NULL if none is active
+    ///
+    ////////////////////////////////////////////////////////////
+    static const GlContext* getActiveContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context's ID

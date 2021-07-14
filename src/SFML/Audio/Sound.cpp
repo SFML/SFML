@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -159,6 +159,10 @@ Sound& Sound::operator =(const Sound& right)
     // Here we don't use the copy-and-swap idiom, because it would mess up
     // the list of sound instances contained in the buffers and unnecessarily
     // destroy/create OpenAL sound sources
+
+    // Handle self-assignment here, as no copy-and-swap idiom is being used
+    if (this == &right)
+        return *this;
 
     // Delegate to base class, which copies all the sound attributes
     SoundSource::operator=(right);

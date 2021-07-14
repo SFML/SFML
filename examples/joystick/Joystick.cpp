@@ -88,12 +88,12 @@ namespace
 int main()
 {
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(400, 680), "Joystick", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(400, 775), "Joystick", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile("resources/tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Set up our string conversion parameters

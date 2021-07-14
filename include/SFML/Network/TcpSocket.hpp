@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -68,7 +68,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of the connected peer
     ///
-    /// It the socket is not connected, this function returns
+    /// If the socket is not connected, this function returns
     /// sf::IpAddress::None.
     ///
     /// \return Address of the remote peer

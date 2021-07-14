@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -68,9 +68,11 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum Equation
     {
-        Add,            //!< Pixel = Src * SrcFactor + Dst * DstFactor
-        Subtract,       //!< Pixel = Src * SrcFactor - Dst * DstFactor
-        ReverseSubtract //!< Pixel = Dst * DstFactor - Src * SrcFactor
+        Add,             //!< Pixel = Src * SrcFactor + Dst * DstFactor
+        Subtract,        //!< Pixel = Src * SrcFactor - Dst * DstFactor
+        ReverseSubtract, //!< Pixel = Dst * DstFactor - Src * SrcFactor
+        Min,             //!< Pixel = min(Dst, Src)
+        Max              //!< Pixel = max(Dst, Src)
     };
 
     ////////////////////////////////////////////////////////////
@@ -150,6 +152,8 @@ SFML_GRAPHICS_API bool operator !=(const BlendMode& left, const BlendMode& right
 SFML_GRAPHICS_API extern const BlendMode BlendAlpha;    //!< Blend source and dest according to dest alpha
 SFML_GRAPHICS_API extern const BlendMode BlendAdd;      //!< Add source to dest
 SFML_GRAPHICS_API extern const BlendMode BlendMultiply; //!< Multiply source and dest
+SFML_GRAPHICS_API extern const BlendMode BlendMin;      //!< Take minimum between source and dest
+SFML_GRAPHICS_API extern const BlendMode BlendMax;      //!< Take maximum between source and dest
 SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with source
 
 } // namespace sf

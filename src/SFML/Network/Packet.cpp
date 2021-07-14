@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -123,7 +123,7 @@ Packet& Packet::operator >>(Int8& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Int8*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -136,7 +136,7 @@ Packet& Packet::operator >>(Uint8& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -149,7 +149,8 @@ Packet& Packet::operator >>(Int16& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Int16*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohs(data);
         m_readPos += sizeof(data);
     }
 
@@ -162,7 +163,8 @@ Packet& Packet::operator >>(Uint16& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohs(*reinterpret_cast<const Uint16*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohs(data);
         m_readPos += sizeof(data);
     }
 
@@ -175,7 +177,8 @@ Packet& Packet::operator >>(Int32& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Int32*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohl(data);
         m_readPos += sizeof(data);
     }
 
@@ -188,7 +191,8 @@ Packet& Packet::operator >>(Uint32& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = ntohl(*reinterpret_cast<const Uint32*>(&m_data[m_readPos]));
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
+        data = ntohl(data);
         m_readPos += sizeof(data);
     }
 
@@ -203,7 +207,8 @@ Packet& Packet::operator >>(Int64& data)
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        const Uint8* bytes = reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
+        Uint8 bytes[sizeof(data)];
+        std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
         data = (static_cast<Int64>(bytes[0]) << 56) |
                (static_cast<Int64>(bytes[1]) << 48) |
                (static_cast<Int64>(bytes[2]) << 40) |
@@ -226,7 +231,8 @@ Packet& Packet::operator >>(Uint64& data)
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        const Uint8* bytes = reinterpret_cast<const Uint8*>(&m_data[m_readPos]);
+        Uint8 bytes[sizeof(data)];
+        std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
         data = (static_cast<Uint64>(bytes[0]) << 56) |
                (static_cast<Uint64>(bytes[1]) << 48) |
                (static_cast<Uint64>(bytes[2]) << 40) |
@@ -247,7 +253,7 @@ Packet& Packet::operator >>(float& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const float*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 
@@ -260,7 +266,7 @@ Packet& Packet::operator >>(double& data)
 {
     if (checkSize(sizeof(data)))
     {
-        data = *reinterpret_cast<const double*>(&m_data[m_readPos]);
+        std::memcpy(&data, &m_data[m_readPos], sizeof(data));
         m_readPos += sizeof(data);
     }
 

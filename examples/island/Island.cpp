@@ -85,7 +85,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile("resources/tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Create all of our graphics resources

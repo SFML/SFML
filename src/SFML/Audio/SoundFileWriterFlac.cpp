@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -39,7 +39,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterFlac::check(const std::string& filename)
 {
-    std::string extension = filename.substr(filename.find_last_of(".") + 1);
+    std::string extension = filename.substr(filename.find_last_of('.') + 1);
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
     return extension == "flac";

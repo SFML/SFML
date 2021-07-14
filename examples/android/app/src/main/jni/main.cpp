@@ -91,20 +91,12 @@ int main(int argc, char *argv[])
     image.setOrigin(texture.getSize().x/2, texture.getSize().y/2);
 
     sf::Font font;
-    if (!font.loadFromFile("sansation.ttf"))
+    if (!font.loadFromFile("tuffy.ttf"))
         return EXIT_FAILURE;
 
     sf::Text text("Tap anywhere to move the logo.", font, 64);
     text.setFillColor(sf::Color::Black);
     text.setPosition(10, 10);
-
-    // Loading canary.wav fails for me for now; haven't had time to test why
-
-    /*sf::Music music;
-    if(!music.openFromFile("canary.wav"))
-        return EXIT_FAILURE;
-
-    music.play();*/
 
     sf::View view = window.getDefaultView();
 

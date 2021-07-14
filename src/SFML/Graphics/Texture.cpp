@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -162,7 +162,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
 
-    static bool textureEdgeClamp = GLEXT_texture_edge_clamp;
+    static bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_GL_VERSION_1_2 || Context::isExtensionAvailable("GL_EXT_texture_edge_clamp");
 
     if (!m_isRepeated && !textureEdgeClamp)
     {

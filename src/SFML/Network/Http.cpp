@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -327,7 +327,7 @@ void Http::setHost(const std::string& host, unsigned short port)
     {
         // HTTPS protocol -- unsupported (requires encryption and certificates and stuff...)
         err() << "HTTPS protocol is not supported by sf::Http" << std::endl;
-        m_hostName = "";
+        m_hostName.clear();
         m_port     = 0;
     }
     else

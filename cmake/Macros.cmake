@@ -74,6 +74,26 @@ macro(sfml_add_library target)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
             set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+            # fill out all variables we use to generate the .rc file
+            string(TIMESTAMP RC_CURRENT_YEAR "%Y")
+            string(REGEX REPLACE "sfml-([a-z])([a-z]*)" "\\1" RC_MODULE_NAME_HEAD "${target}")
+            string(REGEX REPLACE "sfml-([a-z])([a-z]*)" "\\2" RC_MODULE_NAME_TAIL "${target}")
+            string(TOUPPER "${RC_MODULE_NAME_HEAD}" RC_MODULE_NAME_HEAD)
+            set(RC_MODULE_NAME "${RC_MODULE_NAME_HEAD}${RC_MODULE_NAME_TAIL}")
+            set(RC_VERSION_SUFFIX "") # Add something like the git revision short SHA-1 in the future
+            set(RC_PRERELEASE "0") # Set to 1 to mark the DLL as a pre-release DLL
+            set(RC_TARGET_NAME "${target}")
+            set(RC_TARGET_FILE_NAME_SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+            # generate the .rc file
+            configure_file(
+                "${SFML_SOURCE_DIR}/tools/windows/resource.rc.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc"
+                @ONLY
+            )
+            target_sources(${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc")
+            source_group("" FILES "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc")
         else()
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
         endif()

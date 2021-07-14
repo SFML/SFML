@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2021 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -54,7 +54,7 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/sansation.ttf"))
+        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
             NSLog(@"Couldn't load the font");
 
         text.setFillColor(sf::Color::White);

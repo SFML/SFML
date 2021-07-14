@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2020 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2021 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -123,6 +123,8 @@
 
         // Set the view to the window as its content view.
         [m_window setContentView:m_oglView];
+        
+        [m_oglView finishInit];
     }
 
     return self;
