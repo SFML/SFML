@@ -93,6 +93,9 @@ int main()
     // Play music from a flac file
     playMusic("ding.flac");
 
+    // Play music from a mp3 file
+    playMusic("ding.mp3");
+
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
     std::cin.ignore(10000, '\n');
