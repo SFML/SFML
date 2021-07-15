@@ -68,6 +68,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp
     ${INCROOT}/VertexArray.hpp
+    ${SRCROOT}/VertexBatch.cpp
+    ${INCROOT}/VertexBatch.hpp
     ${SRCROOT}/VertexBuffer.cpp
     ${INCROOT}/VertexBuffer.hpp
 )
