@@ -36,7 +36,8 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 CursorImpl::CursorImpl() :
-m_cursor(NULL)
+m_cursor(NULL),
+m_systemCursor(false)
 {
     // That's it.
 }
@@ -118,6 +119,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 
     // Create the cursor
     m_cursor = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
+    m_systemCursor = false;
 
     // The data has been copied into the cursor, so get rid of these
     DeleteObject(color);
@@ -166,8 +168,9 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::NotAllowed:             shape = IDC_NO;          break;
     }
 
-    // Create a copy of the shared system cursor that we can destroy later
-    m_cursor = CopyCursor(LoadCursor(NULL, shape));
+    // Get the shared system cursor and make sure not to destroy it
+    m_cursor = LoadCursor(NULL, shape);
+    m_systemCursor = true;
 
     if (m_cursor)
     {
@@ -184,7 +187,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 ////////////////////////////////////////////////////////////
 void CursorImpl::release()
 {
-    if (m_cursor) {
+    if (m_cursor && !m_systemCursor) {
         DestroyCursor(m_cursor);
         m_cursor = NULL;
     }
