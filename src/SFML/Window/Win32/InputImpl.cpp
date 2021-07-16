@@ -35,6 +35,7 @@
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
+#include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <windows.h>
 
 
@@ -229,26 +230,34 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int /*finger*/)
+bool InputImpl::isTouchDown(unsigned int finger)
 {
-    // Not applicable
-    return false;
+    return WindowImplWin32::isTouchDown(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    // Not applicable
-    return Vector2i();
+    return WindowImplWin32::getTouchPosition(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
+Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& relativeTo)
 {
-    // Not applicable
-    return Vector2i();
+    WindowHandle handle = relativeTo.getSystemHandle();
+    Vector2i pos;
+    
+    if (handle && WindowImplWin32::isTouchDown(finger))
+    {
+        pos = WindowImplWin32::getTouchPosition(finger);
+        POINT point = { pos.x, pos.y };
+        ScreenToClient(handle, &point);
+        pos.x = point.x;
+        pos.y = point.y;
+    }
+    return pos;
 }
 
 } // namespace priv
