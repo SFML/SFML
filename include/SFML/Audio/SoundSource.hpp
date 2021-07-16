@@ -35,6 +35,8 @@
 
 namespace sf
 {
+class SoundEffect;
+
 ////////////////////////////////////////////////////////////
 /// \brief Base class defining a sound's properties
 ///
@@ -293,6 +295,35 @@ public:
     ////////////////////////////////////////////////////////////
     virtual Status getStatus() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set an effect to be applied to the sound source
+    ///
+    /// \param effect Pointer to a SoundEffect object, or nullptr.
+    /// Setting this to nullptr will remove any currently assigned effects.
+    /// \see SoundEffect
+    ///
+    ////////////////////////////////////////////////////////////
+    void setEffect(const SoundEffect* effect);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns a pointer to the active SoundEffect.
+    ///
+    /// \return If a SoundEffect object has been assigned to this SoundSource
+    /// then a pointer to that object is returned, else returns nullptr
+    ////////////////////////////////////////////////////////////
+    const SoundEffect* getEffect() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset the internal effect of the sound
+    ///
+    /// This function is for internal use only, you don't have
+    /// to use it. It is called by the sf::SoundEffect that
+    /// this sound uses, when it is destroyed in order to prevent
+    /// the sound from using a dead effect.
+    ///
+    ////////////////////////////////////////////////////////////
+    void resetEffect();
+
 protected:
 
     ////////////////////////////////////////////////////////////
@@ -307,6 +338,8 @@ protected:
     // Member data
     ////////////////////////////////////////////////////////////
     unsigned int m_source; //!< OpenAL source identifier
+
+    const SoundEffect* m_effect;
 };
 
 } // namespace sf
