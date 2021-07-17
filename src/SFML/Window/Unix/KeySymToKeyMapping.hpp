@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2021 Marco Antognini (antognini.marco@gmail.com),
-//                         Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,49 +22,42 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_KEYSYMTOKEYMAPPING_HPP
+#define SFML_KEYSYMTOKEYMAPPING_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <AppKit/AppKit.h>
+#include <SFML/Window/Keyboard.hpp> // sf::Keyboard::Key
+#include <X11/X.h> // KeySym
 
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
-}
-
+namespace sf
+{
+namespace priv
+{
 ////////////////////////////////////////////////////////////
-/// Keyboard Modifiers Helper
+/// \brief Convert X11 KeySym to sf::Keyboard::Key
 ///
-/// Handle left & right modifiers (cmd, ctrl, alt, shift)
-/// events and send them back to the requester.
+/// \param symbol X11 KeySym
 ///
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
-/// \brief Initialize the global state (only if needed)
-///
-/// It needs to be called before any event, e.g. in the window constructor.
+/// \return The corresponding sf::Keyboard::Key
 ///
 ////////////////////////////////////////////////////////////
-void initialiseKeyboardHelper(void);
+Keyboard::Key keySymToKey(KeySym symbol);
 
 
 ////////////////////////////////////////////////////////////
-/// \brief Set up a SFML key event based on the given modifiers flags and key code
+/// \brief Convert sf::Keyboard::Key to X11 KeySym
+///
+/// \param key X11 sf::Keyboard::Key
+///
+/// \return The corresponding X11 KeySym
 ///
 ////////////////////////////////////////////////////////////
-sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key,
-                                          sf::Keyboard::Scancode code);
+KeySym keyToKeySym(Keyboard::Key key);
 
+} // namespace priv
 
-////////////////////////////////////////////////////////////
-/// \brief Handle the state of modifiers keys
-///
-/// Send key released & pressed events to the requester.
-///
-////////////////////////////////////////////////////////////
-void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& requester);
+} // namespace sf
 
-
+#endif // SFML_KEYSYMTOKEYMAPPING_HPP

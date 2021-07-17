@@ -33,6 +33,8 @@
 
 namespace sf
 {
+class String;
+
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time state of the keyboard
 ///
@@ -43,6 +45,10 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Key codes
+    ///
+    /// The enumerators refer to the "localized" key; i.e. depending
+    /// on the layout set by the operating system, a key can be mapped
+    /// to `Y` or `Z`.
     ///
     ////////////////////////////////////////////////////////////
     enum Key
@@ -88,18 +94,18 @@ public:
         LControl,     //!< The left Control key
         LShift,       //!< The left Shift key
         LAlt,         //!< The left Alt key
-        LSystem,      //!< The left OS specific key: window (Windows and Linux), apple (MacOS X), ...
+        LSystem,      //!< The left OS specific key: window (Windows and Linux), apple (macOS), ...
         RControl,     //!< The right Control key
         RShift,       //!< The right Shift key
         RAlt,         //!< The right Alt key
-        RSystem,      //!< The right OS specific key: window (Windows and Linux), apple (MacOS X), ...
+        RSystem,      //!< The right OS specific key: window (Windows and Linux), apple (macOS), ...
         Menu,         //!< The Menu key
         LBracket,     //!< The [ key
         RBracket,     //!< The ] key
         Semicolon,    //!< The ; key
         Comma,        //!< The , key
         Period,       //!< The . key
-        Quote,        //!< The ' key
+        Apostrophe,   //!< The ' key
         Slash,        //!< The / key
         Backslash,    //!< The \ key
         Tilde,        //!< The ~ key
@@ -154,11 +160,179 @@ public:
 
         // Deprecated values:
 
-        Dash      = Hyphen,       //!< \deprecated Use Hyphen instead
-        BackSpace = Backspace,    //!< \deprecated Use Backspace instead
-        BackSlash = Backslash,    //!< \deprecated Use Backslash instead
-        SemiColon = Semicolon,    //!< \deprecated Use Semicolon instead
-        Return    = Enter         //!< \deprecated Use Enter instead
+        Dash      = Hyphen,    //!< \deprecated Use Hyphen instead
+        BackSpace = Backspace, //!< \deprecated Use Backspace instead
+        BackSlash = Backslash, //!< \deprecated Use Backslash instead
+        SemiColon = Semicolon, //!< \deprecated Use Semicolon instead
+        Return    = Enter,     //!< \deprecated Use Enter instead
+        Quote     = Apostrophe //!< \deprecated Use Apostrophe instead
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Scancodes
+    ///
+    /// The enumerators are bound to a physical key and do not depend on
+    /// the keyboard layout used by the operating system. Usually, the AT-101
+    /// keyboard can be used as reference for the physical position of the keys.
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Scancode
+    {
+        ScanUnknown = -1,       //!< Represents any scancode not present in this enum
+        ScanA = 0,              //!< Keyboard a and A key
+        ScanB,                  //!< Keyboard b and B key
+        ScanC,                  //!< Keyboard c and C key
+        ScanD,                  //!< Keyboard d and D key
+        ScanE,                  //!< Keyboard e and E key
+        ScanF,                  //!< Keyboard f and F key
+        ScanG,                  //!< Keyboard g and G key
+        ScanH,                  //!< Keyboard h and H key
+        ScanI,                  //!< Keyboard i and I key
+        ScanJ,                  //!< Keyboard j and J key
+        ScanK,                  //!< Keyboard k and K key
+        ScanL,                  //!< Keyboard l and L key
+        ScanM,                  //!< Keyboard m and M key
+        ScanN,                  //!< Keyboard n and N key
+        ScanO,                  //!< Keyboard o and O key
+        ScanP,                  //!< Keyboard p and P key
+        ScanQ,                  //!< Keyboard q and Q key
+        ScanR,                  //!< Keyboard r and R key
+        ScanS,                  //!< Keyboard s and S key
+        ScanT,                  //!< Keyboard t and T key
+        ScanU,                  //!< Keyboard u and U key
+        ScanV,                  //!< Keyboard v and V key
+        ScanW,                  //!< Keyboard w and W key
+        ScanX,                  //!< Keyboard x and X key
+        ScanY,                  //!< Keyboard y and Y key
+        ScanZ,                  //!< Keyboard z and Z key
+        ScanNum1,               //!< Keyboard 1 and ! key
+        ScanNum2,               //!< Keyboard 2 and @ key
+        ScanNum3,               //!< Keyboard 3 and # key
+        ScanNum4,               //!< Keyboard 4 and $ key
+        ScanNum5,               //!< Keyboard 5 and % key
+        ScanNum6,               //!< Keyboard 6 and ^ key
+        ScanNum7,               //!< Keyboard 7 and & key
+        ScanNum8,               //!< Keyboard 8 and * key
+        ScanNum9,               //!< Keyboard 9 and ) key
+        ScanNum0,               //!< Keyboard 0 and ) key
+        ScanEnter,              //!< Keyboard Enter/Return key
+        ScanEscape,             //!< Keyboard Escape key
+        ScanBackspace,          //!< Keyboard Backspace key
+        ScanTab,                //!< Keyboard Tab key
+        ScanSpace,              //!< Keyboard Space key
+        ScanHyphen,             //!< Keyboard - and _ key
+        ScanEqual,              //!< Keyboard = and +
+        ScanLBracket,           //!< Keyboard [ and { key
+        ScanRBracket,           //!< Keyboard ] and } key
+        // For US keyboards mapped to key 29 (Microsoft Keyboard Scan Code Specification)
+        // For Non-US keyboards mapped to key 42 (Microsoft Keyboard Scan Code Specification)
+        // Typical language mappings: Belg:£µ` FrCa:<>} Dan:*' Dutch:`´ Fren:µ* Ger:'# Ital:§ù LatAm:[}` Nor:*@ Span:ç} Swed:*' Swiss:$£} UK:~# Brazil:}]
+        ScanBackslash,          //!< Keyboard \ and | key OR various keys for Non-US keyboards
+        ScanSemicolon,          //!< Keyboard ; and : key
+        ScanApostrophe,         //!< Keyboard ' and " key
+        ScanGrave,              //!< Keyboard ` and ~ key
+        ScanComma,              //!< Keyboard , and < key
+        ScanPeriod,             //!< Keyboard . and > key
+        ScanSlash,              //!< Keyboard / and ? key
+        ScanF1,                 //!< Keyboard F1 key
+        ScanF2,                 //!< Keyboard F2 key
+        ScanF3,                 //!< Keyboard F3 key
+        ScanF4,                 //!< Keyboard F4 key
+        ScanF5,                 //!< Keyboard F5 key
+        ScanF6,                 //!< Keyboard F6 key
+        ScanF7,                 //!< Keyboard F7 key
+        ScanF8,                 //!< Keyboard F8 key
+        ScanF9,                 //!< Keyboard F9 key
+        ScanF10,                //!< Keyboard F10 key
+        ScanF11,                //!< Keyboard F11 key
+        ScanF12,                //!< Keyboard F12 key
+        ScanF13,                //!< Keyboard F13 key
+        ScanF14,                //!< Keyboard F14 key
+        ScanF15,                //!< Keyboard F15 key
+        ScanF16,                //!< Keyboard F16 key
+        ScanF17,                //!< Keyboard F17 key
+        ScanF18,                //!< Keyboard F18 key
+        ScanF19,                //!< Keyboard F19 key
+        ScanF20,                //!< Keyboard F20 key
+        ScanF21,                //!< Keyboard F21 key
+        ScanF22,                //!< Keyboard F22 key
+        ScanF23,                //!< Keyboard F23 key
+        ScanF24,                //!< Keyboard F24 key
+        ScanCapsLock,           //!< Keyboard Caps %Lock key
+        ScanPrintScreen,        //!< Keyboard Print Screen key
+        ScanScrollLock,         //!< Keyboard Scroll %Lock key
+        ScanPause,              //!< Keyboard Pause key
+        ScanInsert,             //!< Keyboard Insert key
+        ScanHome,               //!< Keyboard Home key
+        ScanPageUp,             //!< Keyboard Page Up key
+        ScanDelete,             //!< Keyboard Delete Forward key
+        ScanEnd,                //!< Keyboard End key
+        ScanPageDown,           //!< Keyboard Page Down key
+        ScanRight,              //!< Keyboard Right Arrow key
+        ScanLeft,               //!< Keyboard Left Arrow key
+        ScanDown,               //!< Keyboard Down Arrow key
+        ScanUp,                 //!< Keyboard Up Arrow key
+        ScanNumLock,            //!< Keypad Num %Lock and Clear key
+        ScanNumpadDivide,       //!< Keypad / key
+        ScanNumpadMultiply,     //!< Keypad * key
+        ScanNumpadMinus,        //!< Keypad - key
+        ScanNumpadPlus,         //!< Keypad + key
+        ScanNumpadEqual,        //!< keypad = key
+        ScanNumpadEnter,        //!< Keypad Enter/Return key
+        ScanNumpadDecimal,      //!< Keypad . and Delete key
+        ScanNumpad1,            //!< Keypad 1 and End key
+        ScanNumpad2,            //!< Keypad 2 and Down Arrow key
+        ScanNumpad3,            //!< Keypad 3 and Page Down key
+        ScanNumpad4,            //!< Keypad 4 and Left Arrow key
+        ScanNumpad5,            //!< Keypad 5 key
+        ScanNumpad6,            //!< Keypad 6 and Right Arrow key
+        ScanNumpad7,            //!< Keypad 7 and Home key
+        ScanNumpad8,            //!< Keypad 8 and Up Arrow key
+        ScanNumpad9,            //!< Keypad 9 and Page Up key
+        ScanNumpad0,            //!< Keypad 0 and Insert key
+        // For US keyboards doesn't exist
+        // For Non-US keyboards mapped to key 45 (Microsoft Keyboard Scan Code Specification)
+        // Typical language mappings: Belg:<\> FrCa:«°» Dan:<\> Dutch:]|[ Fren:<> Ger:<|> Ital:<> LatAm:<> Nor:<> Span:<> Swed:<|> Swiss:<\> UK:\| Brazil: \|.
+        ScanNonUsBackslash,     //!< Keyboard Non-US \ and | key
+        ScanApplication,        //!< Keyboard Application key
+        ScanExecute,            //!< Keyboard Execute key
+        ScanModeChange,         //!< Keyboard Mode Change key
+        ScanHelp,               //!< Keyboard Help key
+        ScanMenu,               //!< Keyboard Menu key
+        ScanSelect,             //!< Keyboard Select key
+        ScanRedo,               //!< Keyboard Redo key
+        ScanUndo,               //!< Keyboard Undo key
+        ScanCut,                //!< Keyboard Cut key
+        ScanCopy,               //!< Keyboard Copy key
+        ScanPaste,              //!< Keyboard Paste key
+        ScanVolumeMute,         //!< Keyboard Volume Mute key
+        ScanVolumeUp,           //!< Keyboard Volume Up key
+        ScanVolumeDown,         //!< Keyboard Volume Down key
+        ScanMediaPlayPause,     //!< Keyboard Media Play Pause key
+        ScanMediaStop,          //!< Keyboard Media Stop key
+        ScanMediaNextTrack,     //!< Keyboard Media Next Track key
+        ScanMediaPreviousTrack, //!< Keyboard Media Previous Track key
+        ScanLControl,           //!< Keyboard Left Control key
+        ScanLShift,             //!< Keyboard Left Shift key
+        ScanLAlt,               //!< Keyboard Left Alt key
+        ScanLSystem,            //!< Keyboard Left System key
+        ScanRControl,           //!< Keyboard Right Control key
+        ScanRShift,             //!< Keyboard Right Shift key
+        ScanRAlt,               //!< Keyboard Right Alt key
+        ScanRSystem,            //!< Keyboard Right System key
+        ScanBack,               //!< Keyboard Back key
+        ScanForward,            //!< Keyboard Forward key
+        ScanRefresh,            //!< Keyboard Refresh key
+        ScanStop,               //!< Keyboard Stop key
+        ScanSearch,             //!< Keyboard Search key
+        ScanFavorites,          //!< Keyboard Favorites key
+        ScanHomePage,           //!< Keyboard Home Page key
+        ScanLaunchApplication1, //!< Keyboard Launch Application 1 key
+        ScanLaunchApplication2, //!< Keyboard Launch Application 2 key
+        ScanLaunchMail,         //!< Keyboard Launch Mail key
+        ScanLaunchMediaSelect,  //!< Keyboard Launch Media Select key
+
+        ScanCodeCount           //!< Keep last -- the total number of scancodes
     };
 
     ////////////////////////////////////////////////////////////
@@ -172,11 +346,72 @@ public:
     static bool isKeyPressed(Key key);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check if a key is pressed
+    ///
+    /// \param code Scancode to check
+    ///
+    /// \return True if the physical key is pressed, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isKeyPressed(Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Localize a physical key to a logical one
+    ///
+    /// \param code Scancode to localize
+    ///
+    /// \return The key corresponding to the scancode under the current
+    ///         keyboard layout used by the operating system, or
+    ///         sf::Keyboard::Unknown when the scancode cannot be mapped
+    ///         to a Key.
+    ///
+    /// \see unlocalize
+    ///
+    ////////////////////////////////////////////////////////////
+    static Key localize(Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Identify the physical key corresponding to a logical one
+    ///
+    /// \param key Key to "unlocalize"
+    ///
+    /// \return The scancode corresponding to the key under the current
+    ///         keyboard layout used by the operating system, or
+    ///         sf::Keyboard::ScanUnknown when the key cannot be mapped
+    ///         to a sf::Keyboard::Scancode.
+    ///
+    /// \see localize
+    ///
+    ////////////////////////////////////////////////////////////
+    static Scancode unlocalize(Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Provide a string representation for a given scancode
+    ///
+    /// From a high level point of view, this conversion corresponds
+    /// somewhat to the string available through sf::Event::TextEvent
+    /// when the given physical key is pressed by the user, when no
+    /// modifiers are involved.
+    ///
+    /// \warning The result is OS-dependent: for example, sf::Keyboard::ScanLSystem
+    ///          is "Left Meta" on Linux, "Left Windows" on Windows and
+    ///          "Left Command" on macOS.
+    ///
+    /// The current keyboard layout set by the operating system is used to
+    /// interpret the scancode: for example, sf::Keyboard::Semicolon is
+    /// mapped to ";" for layout and to "é" for others.
+    ///
+    /// \return The localized description of the code
+    ///
+    ////////////////////////////////////////////////////////////
+    static String getDescription(Scancode code);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the virtual keyboard
     ///
-    /// Warning: the virtual keyboard is not supported on all
-    /// systems. It will typically be implemented on mobile OSes
-    /// (Android, iOS) but not on desktop OSes (Windows, Linux, ...).
+    /// \warning The virtual keyboard is not supported on all
+    ///          systems. It will typically be implemented on mobile OSes
+    ///          (Android, iOS) but not on desktop OSes (Windows, Linux, ...).
     ///
     /// If the virtual keyboard is not available, this function does
     /// nothing.
@@ -224,6 +459,10 @@ public:
 /// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 /// {
 ///     // quit...
+/// }
+/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::ScanGrave))
+/// {
+///     // open in-game command line
 /// }
 /// \endcode
 ///
