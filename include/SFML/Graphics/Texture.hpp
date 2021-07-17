@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Window/GlResource.hpp>
@@ -51,6 +52,9 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Types of texture coordinates that can be used for rendering
+    ///
+    /// This enum is present for backward compatibility only. Prefer using
+    /// sf::CoordinateType instead.
     ///
     ////////////////////////////////////////////////////////////
     enum CoordinateType
@@ -569,7 +573,16 @@ public:
     /// \param coordinateType Type of texture coordinates to use
     ///
     ////////////////////////////////////////////////////////////
-    static void bind(const Texture* texture, CoordinateType coordinateType = Normalized);
+    static void bind(const Texture* texture, sf::CoordinateType coordinateType = sf::CoordinateType::Normalized);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind a texture for rendering (deprecated)
+    ///
+    /// This function is only provided for backward compatibility. Please use the other
+    /// bind() function.
+    ///
+    ////////////////////////////////////////////////////////////
+    static SFML_DEPRECATED void bind(const Texture* texture, CoordinateType coordinateType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum texture size allowed

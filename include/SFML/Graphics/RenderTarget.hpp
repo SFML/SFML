@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -418,10 +419,11 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new texture
     ///
-    /// \param texture Texture to apply
+    /// \param texture        Texture to apply
+    /// \param coordinateType The texture coordinate type to use
     ///
     ////////////////////////////////////////////////////////////
-    void applyTexture(const Texture* texture);
+    void applyTexture(const Texture* texture, CoordinateType coordinateType = Pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new shader
@@ -466,14 +468,15 @@ private:
     {
         enum {VertexCacheSize = 4};
 
-        bool      enable;         //!< Is the cache enabled?
-        bool      glStatesSet;    //!< Are our internal GL states set yet?
-        bool      viewChanged;    //!< Has the current view changed since last draw?
-        BlendMode lastBlendMode;  //!< Cached blending mode
-        Uint64    lastTextureId;  //!< Cached texture
-        bool      texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool      useVertexCache; //!< Did we previously use the vertex cache?
-        Vertex    vertexCache[VertexCacheSize]; //!< Pre-transformed vertices cache
+        bool           enable;                       //!< Is the cache enabled?
+        bool           glStatesSet;                  //!< Are our internal GL states set yet?
+        bool           viewChanged;                  //!< Has the current view changed since last draw?
+        BlendMode      lastBlendMode;                //!< Cached blending mode
+        Uint64         lastTextureId;                //!< Cached texture
+        CoordinateType lastCoordinateType;           //!< Texture coordinate type
+        bool           texCoordsArrayEnabled;        //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool           useVertexCache;               //!< Did we previously use the vertex cache?
+        Vertex         vertexCache[VertexCacheSize]; //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////

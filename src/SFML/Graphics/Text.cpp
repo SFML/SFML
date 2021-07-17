@@ -379,6 +379,7 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
         states.transform *= getTransform();
         states.texture = &m_font->getTexture(m_characterSize);
+        states.coordinateType = Pixels;
 
         // Only draw the outline if there is something to draw
         if (m_outlineThickness != 0)

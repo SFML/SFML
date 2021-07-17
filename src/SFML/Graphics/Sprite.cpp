@@ -145,6 +145,7 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     {
         states.transform *= getTransform();
         states.texture = m_texture;
+        states.coordinateType = Pixels;
         target.draw(m_vertices, 4, TriangleStrip, states);
     }
 }

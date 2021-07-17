@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+#include <SFML/Graphics/CoordinateType.hpp>
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
@@ -77,6 +78,14 @@ public:
     RenderStates(const Transform& theTransform);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a default set of render states with a custom texture coordinate type
+    ///
+    /// \param theCoordinateType Texture coordinate type to use
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderStates(CoordinateType theCoordinateType);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom texture
     ///
     /// \param theTexture Texture to use
@@ -93,7 +102,7 @@ public:
     RenderStates(const Shader* theShader);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct a set of render states with all its attributes
+    /// \brief Construct a set of render states with most of its attributes (for backward compatibility)
     ///
     /// \param theBlendMode Blend mode to use
     /// \param theTransform Transform to use
@@ -105,6 +114,20 @@ public:
                  const Texture* theTexture, const Shader* theShader);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a set of render states with all its attributes
+    ///
+    /// \param theBlendMode      Blend mode to use
+    /// \param theTransform      Transform to use
+    /// \param theCoordinateType Texture coordinate type to use
+    /// \param theTexture        Texture to use
+    /// \param theShader         Shader to use
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
+                 CoordinateType theCoordinateType, const Texture* theTexture,
+                 const Shader* theShader);
+
+    ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     static const RenderStates Default; //!< Special instance holding the default render states
@@ -112,10 +135,11 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    BlendMode      blendMode; //!< Blending mode
-    Transform      transform; //!< Transform
-    const Texture* texture;   //!< Texture
-    const Shader*  shader;    //!< Shader
+    BlendMode      blendMode;      //!< Blending mode
+    Transform      transform;      //!< Transform
+    CoordinateType coordinateType; //!< Texture coordinate type
+    const Texture* texture;        //!< Texture
+    const Shader*  shader;         //!< Shader
 };
 
 } // namespace sf
@@ -128,10 +152,11 @@ public:
 /// \class sf::RenderStates
 /// \ingroup graphics
 ///
-/// There are four global states that can be applied to
+/// There are five global states that can be applied to
 /// the drawn objects:
 /// \li the blend mode: how pixels of the object are blended with the background
 /// \li the transform: how the object is positioned/rotated/scaled
+/// \li the texture coordinate type: how texture coordinates are interpreted
 /// \li the texture: what image is mapped to the object
 /// \li the shader: what custom effect is applied to the object
 ///

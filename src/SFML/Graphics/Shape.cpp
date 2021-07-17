@@ -213,6 +213,7 @@ void Shape::update()
 void Shape::draw(RenderTarget& target, RenderStates states) const
 {
     states.transform *= getTransform();
+    states.coordinateType = Pixels;
 
     // Render the inside
     states.texture = m_texture;

@@ -41,50 +41,66 @@ const RenderStates RenderStates::Default(BlendMode(
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates() :
-blendMode(BlendAlpha),
-transform(),
-texture  (NULL),
-shader   (NULL)
+blendMode     (BlendAlpha),
+transform     (),
+coordinateType(CoordinateType::Pixels),
+texture       (NULL),
+shader        (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const Transform& theTransform) :
-blendMode(BlendAlpha),
-transform(theTransform),
-texture  (NULL),
-shader   (NULL)
+blendMode     (BlendAlpha),
+transform     (theTransform),
+coordinateType(CoordinateType::Pixels),
+texture       (NULL),
+shader        (NULL)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+RenderStates::RenderStates(CoordinateType theCoordinateType) :
+blendMode     (BlendAlpha),
+transform     (),
+coordinateType(theCoordinateType),
+texture       (NULL),
+shader        (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const BlendMode& theBlendMode) :
-blendMode(theBlendMode),
-transform(),
-texture  (NULL),
-shader   (NULL)
+blendMode     (theBlendMode),
+transform     (),
+coordinateType(CoordinateType::Pixels),
+texture       (NULL),
+shader        (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const Texture* theTexture) :
-blendMode(BlendAlpha),
-transform(),
-texture  (theTexture),
-shader   (NULL)
+blendMode     (BlendAlpha),
+transform     (),
+coordinateType(CoordinateType::Pixels),
+texture       (theTexture),
+shader        (NULL)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const Shader* theShader) :
-blendMode(BlendAlpha),
-transform(),
-texture  (NULL),
-shader   (theShader)
+blendMode     (BlendAlpha),
+transform     (),
+coordinateType(CoordinateType::Pixels),
+texture       (NULL),
+shader        (theShader)
 {
 }
 
@@ -92,10 +108,24 @@ shader   (theShader)
 ////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
                            const Texture* theTexture, const Shader* theShader) :
-blendMode(theBlendMode),
-transform(theTransform),
-texture  (theTexture),
-shader   (theShader)
+blendMode     (theBlendMode),
+transform     (theTransform),
+coordinateType(CoordinateType::Pixels),
+texture       (theTexture),
+shader        (theShader)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+RenderStates::RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
+                           CoordinateType theCoordinateType, const Texture* theTexture,
+                           const Shader* theShader) :
+blendMode     (theBlendMode),
+transform     (theTransform),
+coordinateType(theCoordinateType),
+texture       (theTexture),
+shader        (theShader)
 {
 }
 
