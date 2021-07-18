@@ -39,6 +39,9 @@ endif()
 # project name
 project(SFML)
 
+# avoid missing libraries when building with latest NDK
+set(CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR};${CMAKE_FIND_ROOT_PATH}")
+
 # include the configuration file
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
