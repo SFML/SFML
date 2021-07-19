@@ -189,6 +189,7 @@ void doServer(unsigned short port)
     std::cin.ignore(10000, '\n');
 
     // Replay the sound (just to make sure replaying the received data is OK)
+    audioStream.setPlayingOffset(sf::Time());
     audioStream.play();
 
     // Loop until the sound playback is finished
