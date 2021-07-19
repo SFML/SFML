@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.7.2)
 
+# customize the compiler options CMake uses to initialize variables with
+set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerOptionsOverride.cmake")
+
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
     if(NOT DEFINED ${var})

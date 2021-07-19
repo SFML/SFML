@@ -1224,18 +1224,6 @@ static void sf_glad_egl_load_EGL_KHR_reusable_sync( GLADuserptrloadfunc load, vo
     sf_glad_eglSignalSyncKHR = (PFNEGLSIGNALSYNCKHRPROC) load(userptr, "eglSignalSyncKHR");
 }
 
-
-static void sf_glad_egl_resolve_aliases(void) {
-    if (sf_glad_eglClientWaitSync == NULL && sf_glad_eglClientWaitSyncKHR != NULL) sf_glad_eglClientWaitSync = (PFNEGLCLIENTWAITSYNCPROC)sf_glad_eglClientWaitSyncKHR;
-    if (sf_glad_eglClientWaitSyncKHR == NULL && sf_glad_eglClientWaitSync != NULL) sf_glad_eglClientWaitSyncKHR = (PFNEGLCLIENTWAITSYNCKHRPROC)sf_glad_eglClientWaitSync;
-    if (sf_glad_eglCreateSync == NULL && sf_glad_eglCreateSync64KHR != NULL) sf_glad_eglCreateSync = (PFNEGLCREATESYNCPROC)sf_glad_eglCreateSync64KHR;
-    if (sf_glad_eglCreateSync64KHR == NULL && sf_glad_eglCreateSync != NULL) sf_glad_eglCreateSync64KHR = (PFNEGLCREATESYNC64KHRPROC)sf_glad_eglCreateSync;
-    if (sf_glad_eglDestroyImage == NULL && sf_glad_eglDestroyImageKHR != NULL) sf_glad_eglDestroyImage = (PFNEGLDESTROYIMAGEPROC)sf_glad_eglDestroyImageKHR;
-    if (sf_glad_eglDestroyImageKHR == NULL && sf_glad_eglDestroyImage != NULL) sf_glad_eglDestroyImageKHR = (PFNEGLDESTROYIMAGEKHRPROC)sf_glad_eglDestroyImage;
-    if (sf_glad_eglDestroySync == NULL && sf_glad_eglDestroySyncKHR != NULL) sf_glad_eglDestroySync = (PFNEGLDESTROYSYNCPROC)sf_glad_eglDestroySyncKHR;
-    if (sf_glad_eglDestroySyncKHR == NULL && sf_glad_eglDestroySync != NULL) sf_glad_eglDestroySyncKHR = (PFNEGLDESTROYSYNCKHRPROC)sf_glad_eglDestroySync;
-}
-
 static int sf_glad_egl_get_extensions(EGLDisplay display, const char **extensions) {
     *extensions = eglQueryString(display, EGL_EXTENSIONS);
 
@@ -1260,10 +1248,6 @@ static int sf_glad_egl_has_extension(const char *extensions, const char *ext) {
         }
         extensions = terminator;
     }
-}
-
-static GLADapiproc sf_glad_egl_get_proc_from_userptr(void *userptr, const char *name) {
-    return (GLAD_GNUC_EXTENSION (GLADapiproc (*)(const char *name)) userptr)(name);
 }
 
 static int sf_glad_egl_find_extensions_egl(EGLDisplay display) {
@@ -1343,12 +1327,6 @@ static int gladLoadEGLUserPtr(EGLDisplay display, GLADuserptrloadfunc load, void
 
     return version;
 }
-
-static int gladLoadEGL(EGLDisplay display, GLADloadfunc load) {
-    return gladLoadEGLUserPtr(display, sf_glad_egl_get_proc_from_userptr, GLAD_GNUC_EXTENSION (void*) load);
-}
-
-
 
 #ifdef SF_GLAD_EGL
 

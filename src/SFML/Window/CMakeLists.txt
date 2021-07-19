@@ -239,7 +239,7 @@ sfml_add_library(sfml-window
 target_link_libraries(sfml-window PUBLIC sfml-system)
 
 # glad sources
-target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
 # When static linking on macOS, we need to add this flag for objective C to work
 if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)

@@ -488,10 +488,6 @@ static void sf_glad_wgl_load_WGL_EXT_swap_control(GLADuserptrloadfunc load, void
     sf_glad_wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) load(userptr, "wglSwapIntervalEXT");
 }
 
-
-static void sf_glad_wgl_resolve_aliases(void) {
-}
-
 static int sf_glad_wgl_has_extension(HDC hdc, const char *ext) {
     const char *terminator;
     const char *loc;
@@ -571,16 +567,6 @@ static int gladLoadWGLUserPtr(HDC hdc, GLADuserptrloadfunc load, void *userptr) 
 static int gladLoadWGL(HDC hdc, GLADloadfunc load) {
     return gladLoadWGLUserPtr(hdc, sf_glad_wgl_get_proc_from_userptr, GLAD_GNUC_EXTENSION (void*) load);
 }
- 
-
-#ifdef SF_GLAD_WGL
-
-static int gladLoaderLoadWGL(HDC hdc) {
-    return gladLoadWGLUserPtr(hdc, sf_glad_wgl_get_proc_from_userptr, GLAD_GNUC_EXTENSION (void*) wglGetProcAddress);
-}
-
-
-#endif /* SF_GLAD_WGL */
 
 #endif /* SF_GLAD_WGL_IMPLEMENTATION */
 
