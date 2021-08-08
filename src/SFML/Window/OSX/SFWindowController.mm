@@ -512,6 +512,7 @@
     [m_window close];
     [m_window setDelegate:nil];
     [self setRequesterTo:0];
+    [SFApplication processEvent];
 }
 
 
