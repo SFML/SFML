@@ -154,7 +154,11 @@ WindowImplCocoa::~WindowImplCocoa()
     // Put the next window in front, if any.
     NSArray* windows = [NSApp orderedWindows];
     if ([windows count] > 0)
-        [[windows objectAtIndex:0] makeKeyAndOrderFront:nil];
+    {
+        NSWindow *nextWindow = [windows objectAtIndex:0];
+        if ([nextWindow isVisible])
+            [nextWindow makeKeyAndOrderFront:nil];
+    }
 
     drainThreadPool(); // Make sure everything was freed
     // This solve some issue when sf::Window::Create is called for the

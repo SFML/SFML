@@ -58,6 +58,18 @@
 -(BOOL)canBecomeKeyWindow;
 
 ////////////////////////////////////////////////////////////
+/// \brief Allow fullscreen windows to become the main window
+///
+/// By default, fullscreen windows (using NSBorderlessWindowMask)
+/// cannot become the main window, so this method is changed to
+/// always return YES.
+///
+/// \return YES
+///
+////////////////////////////////////////////////////////////
+-(BOOL)canBecomeMainWindow;
+
+////////////////////////////////////////////////////////////
 /// \brief Prevent system alert
 ///
 /// \param theEvent a Cocoa event
