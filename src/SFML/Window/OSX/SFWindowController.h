@@ -62,6 +62,7 @@ namespace sf {
     sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
     BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
     BOOL                        m_restoreResize;    ///< See note above
+    BOOL                        m_highDpi;          ///< Support high-DPI rendering or not
 }
 
 ////////////////////////////////////////////////////////////
