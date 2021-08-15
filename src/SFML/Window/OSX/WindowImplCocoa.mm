@@ -130,9 +130,6 @@ m_showCursor(true)
     // Transform the app process.
     setUpProcess();
 
-    // Use backing size
-    scaleInWidthHeight(mode, nil);
-
     m_delegate = [[SFWindowController alloc] initWithMode:mode andStyle:style];
     [m_delegate changeTitle:sfStringToNSString(title)];
     [m_delegate setRequesterTo:this];
@@ -544,4 +541,3 @@ bool WindowImplCocoa::hasFocus() const
 } // namespace priv
 
 } // namespace sf
-
