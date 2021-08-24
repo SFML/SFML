@@ -182,7 +182,7 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/WindowImplCocoa.hpp
         ${SRCROOT}/OSX/WindowImplCocoa.mm
         ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
-        ${SRCROOT}/OSX/AutoreleasePoolWrapper.h
+        ${SRCROOT}/OSX/AutoreleasePoolWrapper.hpp
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )
     source_group("mac" FILES ${PLATFORM_SRC})

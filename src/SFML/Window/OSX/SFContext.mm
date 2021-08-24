@@ -26,13 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/SFContext.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 #include <dlfcn.h>
 #include <stdint.h>
-
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 
 namespace sf
 {
@@ -46,9 +45,7 @@ m_context(0),
 m_view(0),
 m_window(0)
 {
-    // Ask for a pool.
-    ensureThreadHasPool();
-
+    AutoreleasePool pool;
     // Create the context
     createContext(shared,
                   VideoMode::getDesktopMode().bitsPerPixel,
@@ -63,9 +60,7 @@ m_context(0),
 m_view(0),
 m_window(0)
 {
-    // Ask for a pool.
-    ensureThreadHasPool();
-
+    AutoreleasePool pool;
     // Create the context.
     createContext(shared, bitsPerPixel, settings);
 
@@ -82,11 +77,9 @@ m_context(0),
 m_view(0),
 m_window(0)
 {
+    AutoreleasePool pool;
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::setUpProcess();
-
-    // Ask for a pool.
-    ensureThreadHasPool();
 
     // Create the context.
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
@@ -106,6 +99,7 @@ m_window(0)
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
+    AutoreleasePool pool;
     // Notify unshared OpenGL resources of context destruction
     cleanupUnsharedResources();
 
@@ -124,6 +118,7 @@ SFContext::~SFContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer SFContext::getFunction(const char* name)
 {
+    AutoreleasePool pool;
     static void* image = NULL;
 
     if (!image)
@@ -136,6 +131,7 @@ GlFunctionPointer SFContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 bool SFContext::makeCurrent(bool current)
 {
+    AutoreleasePool pool;
     if (current)
     {
         [m_context makeCurrentContext];
@@ -152,6 +148,7 @@ bool SFContext::makeCurrent(bool current)
 ////////////////////////////////////////////////////////////
 void SFContext::display()
 {
+    AutoreleasePool pool;
     [m_context flushBuffer];
 }
 
@@ -159,6 +156,7 @@ void SFContext::display()
 ////////////////////////////////////////////////////////////
 void SFContext::setVerticalSyncEnabled(bool enabled)
 {
+    AutoreleasePool pool;
     GLint swapInterval = enabled ? 1 : 0;
 
     [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
@@ -170,6 +168,7 @@ void SFContext::createContext(SFContext* shared,
                               unsigned int bitsPerPixel,
                               const ContextSettings& settings)
 {
+    AutoreleasePool pool;
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
 
