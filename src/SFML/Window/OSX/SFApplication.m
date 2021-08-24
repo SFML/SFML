@@ -52,6 +52,8 @@
 ////////////////////////////////////////////////////////
 +(void)setUpMenuBar
 {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
     [SFApplication sharedApplication]; // Make sure NSApp exists
 
     // Set the main menu bar
@@ -76,6 +78,8 @@
     NSMenu* windowMenu = [[SFApplication newWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
+
+    [pool drain];
 }
 
 
@@ -97,6 +101,8 @@
     //    Show All
     //    --------------------
     //    Quit AppName      Command+Q
+
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     NSString* appName = [SFApplication applicationName];
 
@@ -153,6 +159,8 @@
     [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:appName]
                          action:@selector(terminate:)
                   keyEquivalent:@"q"];
+
+    [pool drain];
 
     return appleMenu;
 }

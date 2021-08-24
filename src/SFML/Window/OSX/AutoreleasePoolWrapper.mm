@@ -26,80 +26,25 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cassert>
-#include <pthread.h>
 
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
+
 #import <Foundation/Foundation.h>
 
-
-////////////////////////////////////////////////////////////
-/// Here we manage one and only one pool by thread. This prevents draining one
-/// pool and making other pools invalid which can lead to a crash on 10.5 and an
-/// annoying message on 10.6 (*** attempt to pop an unknown autorelease pool).
-///
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
-// Private data
-////////////////////////////////////////////////////////////
-static pthread_key_t  poolKey;
-static pthread_once_t initOnceToken = PTHREAD_ONCE_INIT;
-
-
-////////////////////////////////////////////////////////////
-/// \brief (local function) Drain one more time the pool
-///        but this time don't create a new one.
-///
-////////////////////////////////////////////////////////////
-static void destroyPool(void* data)
+namespace sf
 {
-    NSAutoreleasePool* pool = (NSAutoreleasePool*)data;
+
+////////////////////////////////////////////////////////
+AutoreleasePool::AutoreleasePool()
+{
+    pool = [[NSAutoreleasePool alloc] init];
+}
+
+
+////////////////////////////////////////////////////////
+AutoreleasePool::~AutoreleasePool()
+{
     [pool drain];
 }
 
-
-////////////////////////////////////////////////////////////
-/// \brief (local function) Init the pthread key for the pool
-///
-////////////////////////////////////////////////////////////
-static void createPoolKey(void)
-{
-    pthread_key_create(&poolKey, destroyPool);
-}
-
-
-////////////////////////////////////////////////////////////
-/// \brief (local function) Store a new pool for this thread
-///
-////////////////////////////////////////////////////////////
-static void createNewPool(void)
-{
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    pthread_setspecific(poolKey, pool);
-}
-
-
-////////////////////////////////////////////////////////////
-void ensureThreadHasPool(void)
-{
-    pthread_once(&initOnceToken, createPoolKey);
-    if (pthread_getspecific(poolKey) == NULL)
-    {
-        createNewPool();
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void drainThreadPool(void)
-{
-    void* data = pthread_getspecific(poolKey);
-    assert(data != NULL);
-
-    // Drain the pool but keep it alive by creating a new one
-    destroyPool(data);
-    createNewPool();
-}
-
+} // namespace sf

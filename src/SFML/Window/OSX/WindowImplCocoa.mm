@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
 
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
 #import <SFML/Window/OSX/Scaling.h>
 #import <SFML/Window/OSX/SFApplication.h>
@@ -59,6 +59,7 @@ namespace
 ////////////////////////////////////////////////////////
 void hideMouseCursor()
 {
+    AutoreleasePool pool;
     if (!isCursorHidden)
     {
         [NSCursor hide];
@@ -70,6 +71,7 @@ void hideMouseCursor()
 ////////////////////////////////////////////////////////
 void showMouseCursor()
 {
+    AutoreleasePool pool;
     if (isCursorHidden)
     {
         [NSCursor unhide];
@@ -84,9 +86,7 @@ void showMouseCursor()
 WindowImplCocoa::WindowImplCocoa(WindowHandle handle) :
 m_showCursor(true)
 {
-    // Ask for a pool.
-    ensureThreadHasPool();
-
+    AutoreleasePool pool;
     // Treat the handle as it real type
     id nsHandle = (id)handle;
     if ([nsHandle isKindOfClass:[NSWindow class]])
@@ -126,11 +126,9 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode,
                                  const ContextSettings& /*settings*/) :
 m_showCursor(true)
 {
+    AutoreleasePool pool;
     // Transform the app process.
     setUpProcess();
-
-    // Ask for a pool.
-    ensureThreadHasPool();
 
     // Use backing size
     scaleInWidthHeight(mode, nil);
@@ -147,8 +145,12 @@ m_showCursor(true)
 ////////////////////////////////////////////////////////////
 WindowImplCocoa::~WindowImplCocoa()
 {
+    AutoreleasePool pool;
     [m_delegate closeWindow];
-
+    // Tell the window/view controller (and the OpenGL view) that the delegate
+    // (this object) no longer exists to prevent events being sent to the window
+    // after it has been deleted.
+    [m_delegate setRequesterTo:0];
     [m_delegate release];
 
     // Put the next window in front, if any.
@@ -159,16 +161,13 @@ WindowImplCocoa::~WindowImplCocoa()
         if ([nextWindow isVisible])
             [nextWindow makeKeyAndOrderFront:nil];
     }
-
-    drainThreadPool(); // Make sure everything was freed
-    // This solve some issue when sf::Window::Create is called for the
-    // second time (nothing was render until the function was called again)
 }
 
 
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::applyContext(NSOpenGLContextRef context) const
 {
+    AutoreleasePool pool;
     [m_delegate applyContext:context];
 }
 
@@ -176,6 +175,7 @@ void WindowImplCocoa::applyContext(NSOpenGLContextRef context) const
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setUpProcess(void)
 {
+    AutoreleasePool pool;
     static bool isTheProcessSetAsApplication = false;
 
     if (!isTheProcessSetAsApplication)
@@ -398,8 +398,8 @@ void WindowImplCocoa::textEntered(unichar charcode)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::processEvents()
 {
+    AutoreleasePool pool;
     [m_delegate processEvent];
-    drainThreadPool(); // Reduce memory footprint
 }
 
 #pragma mark
@@ -408,6 +408,7 @@ void WindowImplCocoa::processEvents()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplCocoa::getSystemHandle() const
 {
+    AutoreleasePool pool;
     return [m_delegate getSystemHandle];
 }
 
@@ -415,6 +416,7 @@ WindowHandle WindowImplCocoa::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplCocoa::getPosition() const
 {
+    AutoreleasePool pool;
     NSPoint pos = [m_delegate position];
     sf::Vector2i ret(pos.x, pos.y);
     scaleOutXY(ret, m_delegate);
@@ -425,6 +427,7 @@ Vector2i WindowImplCocoa::getPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setPosition(const Vector2i& position)
 {
+    AutoreleasePool pool;
     sf::Vector2i backingPosition = position;
     scaleInXY(backingPosition, m_delegate);
     [m_delegate setWindowPositionToX:backingPosition.x Y:backingPosition.y];
@@ -434,6 +437,7 @@ void WindowImplCocoa::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplCocoa::getSize() const
 {
+    AutoreleasePool pool;
     NSSize size = [m_delegate size];
     Vector2u ret(size.width, size.height);
     scaleOutXY(ret, m_delegate);
@@ -453,6 +457,7 @@ void WindowImplCocoa::setSize(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setTitle(const String& title)
 {
+    AutoreleasePool pool;
     [m_delegate changeTitle:sfStringToNSString(title)];
 }
 
@@ -460,6 +465,7 @@ void WindowImplCocoa::setTitle(const String& title)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
 {
+    AutoreleasePool pool;
     [m_delegate setIconTo:width by:height with:pixels];
 }
 
@@ -467,6 +473,7 @@ void WindowImplCocoa::setIcon(unsigned int width, unsigned int height, const Uin
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setVisible(bool visible)
 {
+    AutoreleasePool pool;
     if (visible)
         [m_delegate showWindow];
     else
@@ -477,6 +484,7 @@ void WindowImplCocoa::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setMouseCursorVisible(bool visible)
 {
+    AutoreleasePool pool;
     m_showCursor = visible;
 
     // If the mouse is over the window, we apply the new setting
@@ -493,6 +501,7 @@ void WindowImplCocoa::setMouseCursorVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setMouseCursorGrabbed(bool grabbed)
 {
+    AutoreleasePool pool;
     [m_delegate setCursorGrabbed:grabbed];
 }
 
@@ -500,6 +509,7 @@ void WindowImplCocoa::setMouseCursorGrabbed(bool grabbed)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setMouseCursor(const CursorImpl& cursor)
 {
+    AutoreleasePool pool;
     [m_delegate setCursor:cursor.m_cursor];
 }
 
@@ -507,6 +517,7 @@ void WindowImplCocoa::setMouseCursor(const CursorImpl& cursor)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 {
+    AutoreleasePool pool;
     if (enabled)
         [m_delegate enableKeyRepeat];
     else
@@ -517,6 +528,7 @@ void WindowImplCocoa::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::requestFocus()
 {
+    AutoreleasePool pool;
     [m_delegate requestFocus];
 }
 
@@ -524,6 +536,7 @@ void WindowImplCocoa::requestFocus()
 ////////////////////////////////////////////////////////////
 bool WindowImplCocoa::hasFocus() const
 {
+    AutoreleasePool pool;
     return [m_delegate hasFocus];
 }
 

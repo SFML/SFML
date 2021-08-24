@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
 #include <SFML/System/Err.hpp>
@@ -106,6 +107,7 @@ void JoystickImpl::cleanup()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
+    AutoreleasePool pool;
     bool state = false; // Is the index-th joystick connected?
 
     // First, let's check if the device was previously detected:
@@ -180,6 +182,7 @@ bool JoystickImpl::isConnected(unsigned int index)
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
+    AutoreleasePool pool;
     m_index = index;
     m_hat = NULL;
     Location deviceLoc = m_locationIDs[index]; // The device we need to load
@@ -325,6 +328,7 @@ bool JoystickImpl::open(unsigned int index)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::close()
 {
+    AutoreleasePool pool;
     for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it)
         CFRelease(*it);
     m_buttons.clear();
@@ -345,6 +349,7 @@ void JoystickImpl::close()
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
 {
+    AutoreleasePool pool;
     JoystickCaps caps;
 
     // Buttons:
@@ -364,6 +369,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 ////////////////////////////////////////////////////////////
 Joystick::Identification JoystickImpl::getIdentification() const
 {
+    AutoreleasePool pool;
     return m_identification;
 }
 
@@ -371,6 +377,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
+    AutoreleasePool pool;
     static const JoystickState disconnectedState; // return this if joystick was disconnected
     JoystickState state; // otherwise return that
     state.connected = true;
