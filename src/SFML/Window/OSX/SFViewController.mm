@@ -197,7 +197,7 @@
 ////////////////////////////////////////////////////////
 -(void)closeWindow
 {
-    sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
+    // If the "window" is really a view, this is a no-op.
 }
 
 
