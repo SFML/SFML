@@ -55,6 +55,7 @@ sfml_add_example(cocoa
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
                  DEPENDS sfml-system sfml-window sfml-graphics)
+target_compile_options(cocoa PRIVATE -Wno-deprecated-declarations)
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE TRUE
                       MACOSX_BUNDLE_INFO_PLIST ${SRCROOT}/resources/Cocoa-Info.plist)

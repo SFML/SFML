@@ -285,6 +285,10 @@ if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
     endif()
 endif()
 
+if(SFML_OS_MACOSX)
+    target_compile_options(sfml-window PRIVATE -Wno-deprecated-declarations)
+endif()
+
 if(SFML_OS_LINUX)
     sfml_find_package(UDev INCLUDE "UDEV_INCLUDE_DIR" LINK "UDEV_LIBRARIES")
     target_link_libraries(sfml-window PRIVATE UDev dl)

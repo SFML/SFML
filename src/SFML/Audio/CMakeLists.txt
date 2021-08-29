@@ -85,6 +85,10 @@ if(SFML_OS_ANDROID)
     target_link_libraries(sfml-audio PRIVATE android OpenSLES)
 endif()
 
+if(SFML_OS_MACOSX)
+    target_compile_options(sfml-audio PRIVATE -Wno-deprecated-declarations)
+endif()
+
 target_link_libraries(sfml-audio
                       PUBLIC sfml-system
                       PRIVATE VORBIS FLAC)
