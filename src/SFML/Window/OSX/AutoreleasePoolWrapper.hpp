@@ -58,7 +58,7 @@ public:
     AutoreleasePool();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor. Drains the autorelease pool.
+    /// \brief Drain the autorelease pool.
     ///
     ////////////////////////////////////////////////////////////
     ~AutoreleasePool();
