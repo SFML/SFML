@@ -70,11 +70,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices
     /// Primitives that aren't triangles will be converted before batching.
+    /// Only a single texture + shader are supported.
     ///
     /// \param vertices    Pointer to the vertices
     /// \param vertexCount Number of vertices in the array
     /// \param type        Type of primitives to draw
-    /// \param states      Render states to transform vertices with
+    /// \param states      Render states to transform vertices with (everything else is ignored!)
     ///
     ////////////////////////////////////////////////////////////
     virtual void draw(const Vertex* vertices, std::size_t vertexCount,
