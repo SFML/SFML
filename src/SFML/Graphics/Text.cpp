@@ -34,21 +34,21 @@
 namespace
 {
     // Add an underline or strikethrough line to the vertex array
-    void addLine(sf::VertexArray& vertices, float lineLength, float lineTop, const sf::Color& color, float offset, float thickness, float outlineThickness = 0)
+    void addLine(sf::VertexArray& vertices, float lineLength, float lineTop, const sf::Color& color, float offset, float thickness)
     {
         float top = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
         float bottom = top + std::floor(thickness + 0.5f);
 
-        vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness,             top    - outlineThickness), color, sf::Vector2f(1, 1)));
-        vertices.append(sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top    - outlineThickness), color, sf::Vector2f(1, 1)));
-        vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness,             bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-        vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness,             bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-        vertices.append(sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top    - outlineThickness), color, sf::Vector2f(1, 1)));
-        vertices.append(sf::Vertex(sf::Vector2f(lineLength + outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(0,          top),    color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(lineLength, top),    color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(0,          bottom), color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(0,          bottom), color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(lineLength, top),    color, sf::Vector2f(1, 1)));
+        vertices.append(sf::Vertex(sf::Vector2f(lineLength, bottom), color, sf::Vector2f(1, 1)));
     }
 
     // Add a glyph quad to the vertex array
-    void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear, float outlineThickness = 0)
+    void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear)
     {
         float padding = 1.0;
 
@@ -62,12 +62,12 @@ namespace
         float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
         float v2 = static_cast<float>(glyph.textureRect.top  + glyph.textureRect.height) + padding;
 
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * top    - outlineThickness, position.y + top    - outlineThickness), color, sf::Vector2f(u1, v1)));
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * top    - outlineThickness, position.y + top    - outlineThickness), color, sf::Vector2f(u2, v1)));
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * bottom - outlineThickness, position.y + bottom - outlineThickness), color, sf::Vector2f(u1, v2)));
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * bottom - outlineThickness, position.y + bottom - outlineThickness), color, sf::Vector2f(u1, v2)));
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * top    - outlineThickness, position.y + top    - outlineThickness), color, sf::Vector2f(u2, v1)));
-        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * bottom - outlineThickness, position.y + bottom - outlineThickness), color, sf::Vector2f(u2, v2)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * top   , position.y + top),    color, sf::Vector2f(u1, v1)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * top   , position.y + top),    color, sf::Vector2f(u2, v1)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + left  - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * top   , position.y + top),    color, sf::Vector2f(u2, v1)));
+        vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u2, v2)));
     }
 }
 
@@ -459,7 +459,7 @@ void Text::ensureGeometryUpdate() const
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
@@ -468,7 +468,7 @@ void Text::ensureGeometryUpdate() const
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness);
         }
 
         prevChar = curChar;
@@ -506,13 +506,13 @@ void Text::ensureGeometryUpdate() const
             float bottom = glyph.bounds.top  + glyph.bounds.height;
 
             // Add the outline glyph to the vertices
-            addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear, m_outlineThickness);
+            addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear);
 
             // Update the current bounds with the outlined glyph bounds
-            minX = std::min(minX, x + left   - italicShear * bottom - m_outlineThickness);
-            maxX = std::max(maxX, x + right  - italicShear * top    - m_outlineThickness);
-            minY = std::min(minY, y + top    - m_outlineThickness);
-            maxY = std::max(maxY, y + bottom - m_outlineThickness);
+            minX = std::min(minX, x + left   - italicShear * bottom);
+            maxX = std::max(maxX, x + right  - italicShear * top);
+            minY = std::min(minY, y + top);
+            maxY = std::max(maxY, y + bottom);
         }
 
         // Extract the current glyph's description
@@ -545,7 +545,7 @@ void Text::ensureGeometryUpdate() const
         addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
@@ -554,7 +554,7 @@ void Text::ensureGeometryUpdate() const
         addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness);
     }
 
     // Update the bounding rectangle

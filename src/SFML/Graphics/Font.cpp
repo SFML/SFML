@@ -614,8 +614,11 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     }
 
     // Convert the glyph to a bitmap (i.e. rasterize it)
+    // Warning! After this line, do not read any data from glyphDesc directly, use
+    // bitmapGlyph.root to access the FT_Glyph data.
     FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
-    FT_Bitmap& bitmap = reinterpret_cast<FT_BitmapGlyph>(glyphDesc)->bitmap;
+    FT_BitmapGlyph bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyphDesc);
+    FT_Bitmap& bitmap = bitmapGlyph->bitmap;
 
     // Apply bold if necessary -- fallback technique using bitmap (lower quality)
     if (!outline)
@@ -628,7 +631,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     }
 
     // Compute the glyph's advance offset
-    glyph.advance = static_cast<float>(face->glyph->metrics.horiAdvance) / static_cast<float>(1 << 6);
+    glyph.advance = std::round(static_cast<float>(bitmapGlyph->root.advance.x) / static_cast<float>(1 << 16));
     if (bold)
         glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
 
@@ -661,10 +664,10 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         glyph.textureRect.height -= 2 * padding;
 
         // Compute the glyph's bounding box
-        glyph.bounds.left   =  static_cast<float>(face->glyph->metrics.horiBearingX) / static_cast<float>(1 << 6);
-        glyph.bounds.top    = -static_cast<float>(face->glyph->metrics.horiBearingY) / static_cast<float>(1 << 6);
-        glyph.bounds.width  =  static_cast<float>(face->glyph->metrics.width)        / static_cast<float>(1 << 6) + outlineThickness * 2;
-        glyph.bounds.height =  static_cast<float>(face->glyph->metrics.height)       / static_cast<float>(1 << 6) + outlineThickness * 2;
+        glyph.bounds.left   =  bitmapGlyph->left;
+        glyph.bounds.top    = -bitmapGlyph->top;
+        glyph.bounds.width  =  bitmap.width;
+        glyph.bounds.height =  bitmap.rows;
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(width * height * 4);
