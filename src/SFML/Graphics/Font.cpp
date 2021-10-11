@@ -631,7 +631,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     }
 
     // Compute the glyph's advance offset
-    glyph.advance = std::round(static_cast<float>(bitmapGlyph->root.advance.x) / static_cast<float>(1 << 16));
+    glyph.advance = static_cast<float>(bitmapGlyph->root.advance.x >> 16);
     if (bold)
         glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
 
