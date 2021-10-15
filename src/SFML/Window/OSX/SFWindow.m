@@ -46,6 +46,13 @@
 
 
 ////////////////////////////////////////////////////////
+-(BOOL)canBecomeMainWindow
+{
+    return YES;
+}
+
+
+////////////////////////////////////////////////////////
 -(void)keyDown:(NSEvent*)theEvent
 {
     // Do nothing except preventing a system alert each time a key is pressed

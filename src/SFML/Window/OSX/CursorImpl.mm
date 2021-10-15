@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/CursorImpl.hpp>
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <AppKit/AppKit.h>
 
@@ -56,14 +56,14 @@ namespace priv
 CursorImpl::CursorImpl() :
 m_cursor(nil)
 {
-    // Just ask for a pool
-    ensureThreadHasPool();
+
 }
 
 
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
 {
+    AutoreleasePool pool;
     [m_cursor release];
 }
 
@@ -71,6 +71,7 @@ CursorImpl::~CursorImpl()
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
+    AutoreleasePool pool;
     if (m_cursor)
     {
         [m_cursor release];
@@ -89,6 +90,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
+    AutoreleasePool pool;
     NSCursor* newCursor = nil;
 
     switch (type)
