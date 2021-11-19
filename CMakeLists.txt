@@ -199,6 +199,9 @@ endif()
 
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
+    # build with c++17
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
     if(CMAKE_VERSION VERSION_LESS 3.1)
         sfml_set_option(SFML_GENERATE_PDB FALSE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
