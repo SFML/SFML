@@ -195,7 +195,7 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
         m_size = vertexCount;
     }
 
-    glCheck(GLEXT_glBufferSubData(GLEXT_GL_ARRAY_BUFFER, sizeof(Vertex) * offset, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), vertices));
+    glCheck(GLEXT_glBufferSubData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLintptrARB>(sizeof(Vertex) * offset), static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), vertices));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
