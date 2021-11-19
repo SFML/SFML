@@ -6,3 +6,4 @@ android.iml
 app/build
 app/.externalNativeBuild
 app/src/main/obj
+build/
