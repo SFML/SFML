@@ -43,8 +43,8 @@ namespace
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace TextureImpl
     {
-        std::mutex idMutex;
-        std::mutex maximumSizeMutex;
+        std::recursive_mutex idMutex;
+        std::recursive_mutex maximumSizeMutex;
 
         // Thread-safe unique identifier generator,
         // is used for states cache (see RenderTarget)

@@ -39,7 +39,7 @@ namespace
     // The shared display and its reference counter
     Display* sharedDisplay = nullptr;
     unsigned int referenceCount = 0;
-    std::mutex mutex;
+    std::recursive_mutex mutex;
 
     typedef std::map<std::string, Atom> AtomMap;
     AtomMap atoms;

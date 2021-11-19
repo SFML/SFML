@@ -277,7 +277,7 @@ private:
     ////////////////////////////////////////////////////////////
     InputSoundFile     m_file;     //!< The streamed music file
     std::vector<Int16> m_samples;  //!< Temporary buffer of samples
-    std::mutex         m_mutex;    //!< Mutex protecting the data
+    std::recursive_mutex         m_mutex;    //!< Mutex protecting the data
     Span<Uint64>       m_loopSpan; //!< Loop Range Specifier
 };
 

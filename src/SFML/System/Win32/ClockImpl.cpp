@@ -64,7 +64,7 @@ Time ClockImpl::getCurrentTime()
 
     if (oldWindows)
     {
-        static std::mutex oldWindowsMutex;
+        static std::recursive_mutex oldWindowsMutex;
 
         // Acquire a lock (CRITICAL_SECTION) to prevent travelling back in time
         std::scoped_lock lock(oldWindowsMutex);

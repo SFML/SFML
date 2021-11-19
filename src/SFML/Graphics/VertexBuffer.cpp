@@ -38,7 +38,7 @@ namespace
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace VertexBufferImpl
     {
-        std::mutex isAvailableMutex;
+        std::recursive_mutex isAvailableMutex;
 
         GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
         {

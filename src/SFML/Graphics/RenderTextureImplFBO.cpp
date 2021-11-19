@@ -50,7 +50,7 @@ namespace
     std::set<std::pair<sf::Uint64, unsigned int> > staleFrameBuffers;
 
     // Mutex to protect both active and stale frame buffer sets
-    std::mutex mutex;
+    std::recursive_mutex mutex;
 
     // This function is called either when a RenderTextureImplFBO is
     // destroyed or via contextDestroyCallback when context destruction

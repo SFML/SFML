@@ -662,7 +662,7 @@ void WglContext::createContext(WglContext* shared)
 
             if (sharedContext)
             {
-                static std::mutex mutex;
+                static std::recursive_mutex mutex;
                 std::scoped_lock lock(mutex);
 
                 if (WglContextImpl::currentContext == shared)
@@ -732,7 +732,7 @@ void WglContext::createContext(WglContext* shared)
         if (sharedContext)
         {
             // wglShareLists doesn't seem to be thread-safe
-            static std::mutex mutex;
+            static std::recursive_mutex mutex;
             std::scoped_lock lock(mutex);
 
             if (WglContextImpl::currentContext == shared)

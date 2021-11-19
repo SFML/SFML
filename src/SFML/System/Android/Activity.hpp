@@ -68,7 +68,7 @@ struct ActivityStates
     void* savedState;
     size_t savedStateSize;
 
-    std::mutex mutex;
+    std::recursive_mutex mutex;
 
     void (*forwardEvent)(const Event& event);
     int (*processEvent)(int fd, int events, void* data);

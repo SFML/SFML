@@ -55,7 +55,7 @@ namespace
     namespace RenderTargetImpl
     {
         // Mutex to protect ID generation and our context-RenderTarget-map
-        std::mutex mutex;
+        std::recursive_mutex mutex;
 
         // Unique identifier, used for identifying RenderTargets when
         // tracking the currently active RenderTarget within a given context

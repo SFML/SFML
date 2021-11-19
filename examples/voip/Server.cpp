@@ -157,7 +157,7 @@ private:
     ////////////////////////////////////////////////////////////
     sf::TcpListener        m_listener;
     sf::TcpSocket          m_client;
-    std::mutex              m_mutex;
+    std::recursive_mutex             m_mutex;
     std::vector<sf::Int16> m_samples;
     std::vector<sf::Int16> m_tempBuffer;
     std::size_t            m_offset;

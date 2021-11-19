@@ -55,8 +55,8 @@
 
 namespace
 {
-    std::mutex maxTextureUnitsMutex;
-    std::mutex isAvailableMutex;
+    std::recursive_mutex maxTextureUnitsMutex;
+    std::recursive_mutex isAvailableMutex;
 
     GLint checkMaxTextureUnits()
     {

@@ -40,7 +40,7 @@ namespace
     int pendingWorkCount = 0;
     bool workPending = true;
     bool bufferUploadPending = false;
-    std::mutex workQueueMutex;
+    std::recursive_mutex workQueueMutex;
 
     struct Setting
     {

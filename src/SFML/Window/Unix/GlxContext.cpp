@@ -47,7 +47,7 @@
 
 namespace
 {
-    std::mutex glxErrorMutex;
+    std::recursive_mutex glxErrorMutex;
     bool glxErrorOccurred = false;
 
 
@@ -94,7 +94,7 @@ namespace
         }
 
     private:
-        std::scoped_lock<std::mutex> m_lock;
+        std::scoped_lock<std::recursive_mutex> m_lock;
         ::Display*                  m_display;
         int                         (*m_previousHandler)(::Display*, XErrorEvent*);
     };
