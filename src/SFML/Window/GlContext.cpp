@@ -291,14 +291,14 @@ namespace
         {
             std::size_t prefixLength = std::strlen(prefix);
 
-        if ((std::strlen(version) >= (prefixLength + 3)) &&
-            (std::strncmp(version, prefix, prefixLength) == 0) &&
-            std::isdigit(version[prefixLength]) &&
-            (version[prefixLength + 1] == '.') &&
-            std::isdigit(version[prefixLength + 2]))
-        {
-            major = static_cast<unsigned int>(version[prefixLength] - '0');
-            minor = static_cast<unsigned int>(version[prefixLength + 2] - '0');
+            if ((std::strlen(version) >= (prefixLength + 3)) &&
+                (std::strncmp(version, prefix, prefixLength) == 0) &&
+                std::isdigit(version[prefixLength]) &&
+                (version[prefixLength + 1] == '.') &&
+                std::isdigit(version[prefixLength + 2]))
+            {
+                major = static_cast<unsigned int>(version[prefixLength] - '0');
+                minor = static_cast<unsigned int>(version[prefixLength + 2] - '0');
 
                 return true;
             }

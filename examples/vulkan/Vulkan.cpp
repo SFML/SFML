@@ -894,7 +894,7 @@ public:
                 return;
             }
 
-            std::vector<char> buffer(static_cast<std::size_t>(file.getSize()));
+            std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
 
             if (file.read(&buffer[0], file.getSize()) != file.getSize())
             {
@@ -902,8 +902,8 @@ public:
                 return;
             }
 
-            shaderModuleCreateInfo.codeSize = buffer.size();
-            shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(&buffer[0]);
+            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
+            shaderModuleCreateInfo.pCode = &buffer[0];
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &vertexShaderModule) != VK_SUCCESS)
             {
@@ -922,7 +922,7 @@ public:
                 return;
             }
 
-            std::vector<char> buffer(static_cast<std::size_t>(file.getSize()));
+            std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
 
             if (file.read(&buffer[0], file.getSize()) != file.getSize())
             {
@@ -930,8 +930,8 @@ public:
                 return;
             }
 
-            shaderModuleCreateInfo.codeSize = buffer.size();
-            shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(&buffer[0]);
+            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
+            shaderModuleCreateInfo.pCode = &buffer[0];
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &fragmentShaderModule) != VK_SUCCESS)
             {
@@ -1277,7 +1277,7 @@ public:
 
         for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
         {
-            if ((memoryRequirements.memoryTypeBits & (1 << memoryType)) &&
+            if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
                 break;
         }
@@ -1599,7 +1599,7 @@ public:
 
         for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
         {
-            if ((memoryRequirements.memoryTypeBits & (1 << memoryType)) &&
+            if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
                 break;
         }
@@ -1777,7 +1777,7 @@ public:
         }
 
         // Copy the image data into the buffer
-        std::memcpy(ptr, imageData.getPixelsPtr(), imageSize);
+        std::memcpy(ptr, imageData.getPixelsPtr(), static_cast<std::size_t>(imageSize));
 
         // Unmap the buffer
         vkUnmapMemory(device, stagingBufferMemory);

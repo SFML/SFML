@@ -33,13 +33,13 @@ int main()
 
     // Define some constants
     const float pi = 3.14159f;
-    const int gameWidth = 800;
-    const int gameHeight = 600;
+    const float gameWidth = 800;
+    const float gameHeight = 600;
     sf::Vector2f paddleSize(25, 100);
     float ballRadius = 10.f;
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Tennis",
+    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight), 32), "SFML Tennis",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -134,26 +134,26 @@ int main()
                     clock.restart();
 
                     // Reset the position of the paddles and ball
-                    leftPaddle.setPosition(10 + paddleSize.x / 2, gameHeight / 2);
-                    rightPaddle.setPosition(gameWidth - 10 - paddleSize.x / 2, gameHeight / 2);
-                    ball.setPosition(gameWidth / 2, gameHeight / 2);
+                    leftPaddle.setPosition(10.f + paddleSize.x / 2.f, gameHeight / 2.f);
+                    rightPaddle.setPosition(gameWidth - 10.f - paddleSize.x / 2.f, gameHeight / 2.f);
+                    ball.setPosition(gameWidth / 2.f, gameHeight / 2.f);
 
                     // Reset the ball angle
                     do
                     {
                         // Make sure the ball initial angle is not too much vertical
-                        ballAngle = static_cast<float>(std::rand() % 360) * 2 * pi / 360;
+                        ballAngle = static_cast<float>(std::rand() % 360) * 2.f * pi / 360.f;
                     }
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }
             }
-            
+
             // Window size changed, adjust view appropriately
             if (event.type == sf::Event::Resized)
             {
                 sf::View view;
                 view.setSize(gameWidth, gameHeight);
-                view.setCenter(gameWidth/2.f, gameHeight/2.f);
+                view.setCenter(gameWidth / 2.f, gameHeight  /2.f);
                 window.setView(view);
             }
         }
@@ -173,7 +173,7 @@ int main()
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);
             }
-            
+
             if (sf::Touch::isDown(0))
             {
                 sf::Vector2i pos = sf::Touch::getPosition(0);
@@ -209,7 +209,7 @@ int main()
             #else
             const std::string inputString = "Press space to restart or\nescape to exit.";
             #endif
-            
+
             // Check collisions between the ball and the screen
             if (ball.getPosition().x - ballRadius < 0.f)
             {

@@ -56,7 +56,7 @@ Time ClockImpl::getCurrentTime()
 {
     // Calculate inverse of frequency multiplied by 1000000 to prevent overflow in final calculation
     // Frequency is constant across the program lifetime
-    static double inverse = 1000000.0 / getFrequency().QuadPart;
+    static double inverse = 1000000.0 / static_cast<double>(getFrequency().QuadPart);
 
     // Detect if we are on Windows XP or older
     static bool oldWindows = isWindowsXpOrOlder();
@@ -80,7 +80,7 @@ Time ClockImpl::getCurrentTime()
     }
 
     // Return the current time as microseconds
-    return sf::microseconds(static_cast<sf::Int64>(time.QuadPart * inverse));
+    return sf::microseconds(static_cast<sf::Int64>(static_cast<double>(time.QuadPart) * inverse));
 }
 
 } // namespace priv

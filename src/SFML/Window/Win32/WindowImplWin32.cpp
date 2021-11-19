@@ -86,7 +86,7 @@ namespace
             };
 
             typedef HRESULT (WINAPI* SetProcessDpiAwarenessFuncType)(ProcessDpiAwareness);
-            SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness"));
+            SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
 
             if (SetProcessDpiAwarenessFunc)
             {
@@ -114,7 +114,7 @@ namespace
         if (user32Dll)
         {
             typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
-            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(GetProcAddress(user32Dll, "SetProcessDPIAware"));
+            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
 
             if (SetProcessDPIAwareFunc)
             {
@@ -190,8 +190,8 @@ m_cursorGrabbed   (m_fullscreen)
     HDC screenDC = GetDC(NULL);
     int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.width))  / 2;
     int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.height)) / 2;
-    int width  = mode.width;
-    int height = mode.height;
+    int width  = static_cast<int>(mode.width);
+    int height = static_cast<int>(mode.height);
     ReleaseDC(NULL, screenDC);
 
     // Choose the window style according to the Style parameter
@@ -333,7 +333,7 @@ Vector2u WindowImplWin32::getSize() const
     RECT rect;
     GetClientRect(m_handle, &rect);
 
-    return Vector2u(rect.right - rect.left, rect.bottom - rect.top);
+    return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));
 }
 
 
@@ -343,7 +343,7 @@ void WindowImplWin32::setSize(const Vector2u& size)
     // SetWindowPos wants the total size of the window (including title bar and borders),
     // so we have to compute it
     RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
-    AdjustWindowRect(&rectangle, GetWindowLongPtr(m_handle, GWL_STYLE), false);
+    AdjustWindowRect(&rectangle, static_cast<DWORD>(GetWindowLongPtr(m_handle, GWL_STYLE)), false);
     int width  = rectangle.right - rectangle.left;
     int height = rectangle.bottom - rectangle.top;
 
@@ -376,13 +376,13 @@ void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uin
     }
 
     // Create the icon from the pixel array
-    m_icon = CreateIcon(GetModuleHandleW(NULL), width, height, 1, 32, NULL, &iconPixels[0]);
+    m_icon = CreateIcon(GetModuleHandleW(NULL), static_cast<int>(width), static_cast<int>(height), 1, 32, NULL, &iconPixels[0]);
 
     // Set it as both big and small icon of the window
     if (m_icon)
     {
-        SendMessageW(m_handle, WM_SETICON, ICON_BIG,   (LPARAM)m_icon);
-        SendMessageW(m_handle, WM_SETICON, ICON_SMALL, (LPARAM)m_icon);
+        SendMessageW(m_handle, WM_SETICON, ICON_BIG,   reinterpret_cast<LPARAM>(m_icon));
+        SendMessageW(m_handle, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(m_icon));
     }
     else
     {
@@ -500,11 +500,11 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     }
 
     // Make the window flags compatible with fullscreen mode
-    SetWindowLongPtr(m_handle, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+    SetWindowLongPtr(m_handle, GWL_STYLE, static_cast<LONG_PTR>(WS_POPUP) | static_cast<LONG_PTR>(WS_CLIPCHILDREN) | static_cast<LONG_PTR>(WS_CLIPSIBLINGS));
     SetWindowLongPtr(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 
     // Resize the window so that it fits the entire screen
-    SetWindowPos(m_handle, HWND_TOP, 0, 0, mode.width, mode.height, SWP_FRAMECHANGED);
+    SetWindowPos(m_handle, HWND_TOP, 0, 0, static_cast<int>(mode.width), static_cast<int>(mode.height), SWP_FRAMECHANGED);
     ShowWindow(m_handle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
@@ -1131,7 +1131,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     if (message == WM_CREATE)
     {
         // Get WindowImplWin32 instance (it was passed as the last argument of CreateWindow)
-        LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
+        LONG_PTR window = reinterpret_cast<LONG_PTR>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
 
         // Set as the "user data" parameter of the window
         SetWindowLongPtrW(handle, GWLP_USERDATA, window);

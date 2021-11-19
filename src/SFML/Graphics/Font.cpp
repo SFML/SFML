@@ -131,7 +131,7 @@ Font::~Font()
     #ifdef SFML_SYSTEM_ANDROID
 
     if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
+        delete static_cast<priv::ResourceStream*>(m_stream);
 
     #endif
 }
@@ -195,10 +195,10 @@ bool Font::loadFromFile(const std::string& filename)
     #else
 
     if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
+        delete static_cast<priv::ResourceStream*>(m_stream);
 
     m_stream = new priv::ResourceStream(filename);
-    return loadFromStream(*(priv::ResourceStream*)m_stream);
+    return loadFromStream(*static_cast<priv::ResourceStream*>(m_stream));
 
     #endif
 }
@@ -659,16 +659,16 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
-        glyph.textureRect.left += static_cast<int>(padding);
-        glyph.textureRect.top  += static_cast<int>(padding);
+        glyph.textureRect.left   += static_cast<int>(padding);
+        glyph.textureRect.top    += static_cast<int>(padding);
         glyph.textureRect.width  -= static_cast<int>(2 * padding);
         glyph.textureRect.height -= static_cast<int>(2 * padding);
 
         // Compute the glyph's bounding box
-        glyph.bounds.left   =  bitmapGlyph->left;
-        glyph.bounds.top    = -bitmapGlyph->top;
-        glyph.bounds.width  =  bitmap.width;
-        glyph.bounds.height =  bitmap.rows;
+        glyph.bounds.left   = static_cast<float>( bitmapGlyph->left);
+        glyph.bounds.top    = static_cast<float>(-bitmapGlyph->top);
+        glyph.bounds.width  = static_cast<float>( bitmap.width);
+        glyph.bounds.height = static_cast<float>( bitmap.rows);
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(width * height * 4);

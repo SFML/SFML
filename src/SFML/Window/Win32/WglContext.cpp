@@ -480,8 +480,8 @@ void WglContext::updateSettingsFromPixelFormat()
 
         if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, attributes, values) == TRUE)
         {
-            m_settings.depthBits   = values[0];
-            m_settings.stencilBits = values[1];
+            m_settings.depthBits   = static_cast<unsigned int>(values[0]);
+            m_settings.stencilBits = static_cast<unsigned int>(values[1]);
         }
         else
         {
@@ -497,7 +497,7 @@ void WglContext::updateSettingsFromPixelFormat()
 
             if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues) == TRUE)
             {
-                m_settings.antialiasingLevel = sampleValues[0] ? sampleValues[1] : 0;
+                m_settings.antialiasingLevel = static_cast<unsigned int>(sampleValues[0] ? sampleValues[1] : 0);
             }
             else
             {
@@ -551,7 +551,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         {
             int attributes[] = {0, 0};
 
-            m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext, bestFormat, width, height, attributes);
+            m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext, bestFormat, static_cast<int>(width), static_cast<int>(height), attributes);
 
             if (m_pbuffer)
             {
@@ -580,7 +580,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         // with other contexts and thus wglShareLists would always fail
 
         // Create the hidden window
-        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, width, height, NULL, NULL, GetModuleHandle(NULL), NULL);
+        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, static_cast<int>(width), static_cast<int>(height), NULL, NULL, GetModuleHandle(NULL), NULL);
         ShowWindow(m_window, SW_HIDE);
         m_deviceContext = GetDC(m_window);
 
@@ -633,9 +633,9 @@ void WglContext::createContext(WglContext* shared)
             if ((m_settings.majorVersion > 1) || ((m_settings.majorVersion == 1) && (m_settings.minorVersion > 1)))
             {
                 attributes.push_back(WGL_CONTEXT_MAJOR_VERSION_ARB);
-                attributes.push_back(m_settings.majorVersion);
+                attributes.push_back(static_cast<int>(m_settings.majorVersion));
                 attributes.push_back(WGL_CONTEXT_MINOR_VERSION_ARB);
-                attributes.push_back(m_settings.minorVersion);
+                attributes.push_back(static_cast<int>(m_settings.minorVersion));
             }
 
             // Check if setting the profile is supported

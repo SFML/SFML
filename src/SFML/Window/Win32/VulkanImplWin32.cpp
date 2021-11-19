@@ -91,7 +91,7 @@ namespace
         template<typename T>
         bool loadEntryPoint(T& entryPoint, const char* name)
         {
-            entryPoint = reinterpret_cast<T>(GetProcAddress(library, name));
+            entryPoint = reinterpret_cast<T>(reinterpret_cast<void*>(GetProcAddress(library, name)));
 
             return (entryPoint != NULL);
         }

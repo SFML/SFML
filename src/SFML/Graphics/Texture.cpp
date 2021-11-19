@@ -36,6 +36,7 @@
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <cstring>
+#include <climits>
 
 
 namespace
@@ -378,7 +379,7 @@ Image Texture::copyToImage() const
         if (m_pixelsFlipped)
         {
             src += srcPitch * (m_size.y - 1);
-            srcPitch = -srcPitch;
+            srcPitch = UINT_MAX - srcPitch + 1;
         }
 
         for (unsigned int i = 0; i < m_size.y; ++i)

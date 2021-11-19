@@ -178,7 +178,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
 
             // Wait for something to write on our socket (which means that the connection request has returned)
-            if (select(getHandle() + 1, NULL, &selector, NULL, &time) > 0)
+            if (select(static_cast<int>(getHandle() + 1), NULL, &selector, NULL, &time) > 0)
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
@@ -242,13 +242,13 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     }
 
     // Loop until every byte has been sent
-    ssize_t result = 0;
+    int result = 0;
     for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
     {
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wuseless-cast"
         // Send a chunk of data
-        result = ::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags);
+        result = static_cast<int>(::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
         #pragma GCC diagnostic pop
 
         // Check for errors
@@ -326,15 +326,24 @@ Socket::Status TcpSocket::send(Packet& packet)
     std::vector<char> blockToSend(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the block to send
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
     std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    #pragma GCC diagnostic pop
     if (size > 0)
         std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
 
+    // These warnings are ignored here for portability, as even on Windows the
+    // signature of `send` might change depending on whether Win32 or MinGW is
+    // being used.
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
     Status status = send(&blockToSend[0] + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+    #pragma GCC diagnostic pop
     #pragma GCC diagnostic pop
 
     // In the case of a partial send, record the location to resume from

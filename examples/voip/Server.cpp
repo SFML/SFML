@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -126,14 +127,15 @@ private:
             if (id == serverAudioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                const sf::Int16* samples     = reinterpret_cast<const sf::Int16*>(static_cast<const char*>(packet.getData()) + 1);
-                std::size_t      sampleCount = (packet.getDataSize() - 1) / sizeof(sf::Int16);
+                std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(sf::Int16);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
                     sf::Lock lock(m_mutex);
-                    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
+                    std::size_t oldSize = m_samples.size();
+                    m_samples.resize(oldSize + sampleCount);
+                    std::memcpy(&(m_samples[oldSize]), static_cast<const char*>(packet.getData()) + 1, sampleCount * sizeof(sf::Int16));
                 }
             }
             else if (id == serverEndOfStream)
