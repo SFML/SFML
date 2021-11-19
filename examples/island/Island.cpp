@@ -355,12 +355,12 @@ sf::Color getHighlandsTerrainColor(float elevation, float moisture)
 
     sf::Color color =
         moisture < 0.6f ? sf::Color(112, 128, 144) :
-        sf::Color(112 + (110 * (moisture - 0.6f) / 0.4f), 128 + (56 * (moisture - 0.6f) / 0.4f), 144 - (9 * (moisture - 0.6f) / 0.4f));
+        colorFromFloats(112 + (110 * (moisture - 0.6f) / 0.4f), 128 + (56 * (moisture - 0.6f) / 0.4f), 144 - (9 * (moisture - 0.6f) / 0.4f));
 
     float factor = std::min((elevation - 0.4f) / 0.1f, 1.f);
 
-    color.r = (lowlandsColor.r * (1.f - factor) + color.r * factor);
-    color.g = (lowlandsColor.g * (1.f - factor) + color.g * factor);
+    color.r = static_cast<sf::Uint8>(lowlandsColor.r * (1.f - factor) + color.r * factor);
+    color.g = static_cast<sf::Uint8>(lowlandsColor.g * (1.f - factor) + color.g * factor);
     color.b = static_cast<sf::Uint8>(lowlandsColor.b * (1.f - factor) + color.b * factor);
 
     return color;
