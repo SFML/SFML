@@ -1777,7 +1777,7 @@ public:
         }
 
         // Copy the image data into the buffer
-        std::memcpy(ptr, imageData.getPixelsPtr(), imageSize);
+        std::memcpy(ptr, imageData.getPixelsPtr(), static_cast<std::size_t>(imageSize));
 
         // Unmap the buffer
         vkUnmapMemory(device, stagingBufferMemory);
