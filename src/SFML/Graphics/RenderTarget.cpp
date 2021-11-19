@@ -33,7 +33,6 @@
 #include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <iostream>
@@ -56,7 +55,7 @@ namespace
     namespace RenderTargetImpl
     {
         // Mutex to protect ID generation and our context-RenderTarget-map
-        sf::Mutex mutex;
+        std::mutex mutex;
 
         // Unique identifier, used for identifying RenderTargets when
         // tracking the currently active RenderTarget within a given context

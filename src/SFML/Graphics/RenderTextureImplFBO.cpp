@@ -28,7 +28,6 @@
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <utility>
 #include <set>
@@ -51,7 +50,7 @@ namespace
     std::set<std::pair<sf::Uint64, unsigned int> > staleFrameBuffers;
 
     // Mutex to protect both active and stale frame buffer sets
-    sf::Mutex mutex;
+    std::mutex mutex;
 
     // This function is called either when a RenderTextureImplFBO is
     // destroyed or via contextDestroyCallback when context destruction

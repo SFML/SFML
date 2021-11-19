@@ -31,7 +31,6 @@
 #include <SFML/Graphics/TextureSaver.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/Window.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <cstring>
@@ -44,8 +43,8 @@ namespace
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace TextureImpl
     {
-        sf::Mutex idMutex;
-        sf::Mutex maximumSizeMutex;
+        std::mutex idMutex;
+        std::mutex maximumSizeMutex;
 
         // Thread-safe unique identifier generator,
         // is used for states cache (see RenderTarget)
