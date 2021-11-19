@@ -68,14 +68,14 @@ namespace
     }
 
     // Retrieve the maximum number of texture units available
-    GLint getMaxTextureUnits()
+    std::size_t getMaxTextureUnits()
     {
         // TODO: Remove this lock when it becomes unnecessary in C++11
         sf::Lock lock(maxTextureUnitsMutex);
 
         static GLint maxUnits = checkMaxTextureUnits();
 
-        return maxUnits;
+        return static_cast<std::size_t>(maxUnits);
     }
 
     // Read the contents of a file into an array of char
@@ -85,12 +85,12 @@ namespace
         if (file)
         {
             file.seekg(0, std::ios_base::end);
-            std::streamsize size = file.tellg();
+            std::ifstream::pos_type size = file.tellg();
             if (size > 0)
             {
                 file.seekg(0, std::ios_base::beg);
                 buffer.resize(static_cast<std::size_t>(size));
-                file.read(&buffer[0], size);
+                file.read(&buffer[0], static_cast<std::streamsize>(size));
             }
             buffer.push_back('\0');
             return true;
@@ -556,8 +556,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
-                GLint maxUnits = getMaxTextureUnits();
-                if (m_textures.size() + 1 >= static_cast<std::size_t>(maxUnits))
+                if (m_textures.size() + 1 >= getMaxTextureUnits())
                 {
                     err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
                     return;

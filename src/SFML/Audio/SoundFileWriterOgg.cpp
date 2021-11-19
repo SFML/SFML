@@ -85,7 +85,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 
     // Setup the encoder: VBR, automatic bitrate management
     // Quality is in range [-1 .. 1], 0.4 gives ~128 kbps for a 44 KHz stereo sound
-    int status = vorbis_encode_init_vbr(&m_vorbis, channelCount, sampleRate, 0.4f);
+    int status = vorbis_encode_init_vbr(&m_vorbis, static_cast<long>(channelCount), static_cast<long>(sampleRate), 0.4f);
     if (status < 0)
     {
         err() << "Failed to write ogg/vorbis file \"" << filename << "\" (unsupported bitrate)" << std::endl;

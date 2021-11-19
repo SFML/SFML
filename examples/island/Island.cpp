@@ -322,16 +322,23 @@ float getMoisture(unsigned int x, unsigned int y)
 /// Get the lowlands terrain color for the given moisture.
 ///
 ////////////////////////////////////////////////////////////
+sf::Color colorFromFloats(float r, float g, float b)
+{
+    return sf::Color(static_cast<sf::Uint8>(r),
+                     static_cast<sf::Uint8>(g),
+                     static_cast<sf::Uint8>(b));
+}
+
 sf::Color getLowlandsTerrainColor(float moisture)
 {
     sf::Color color =
-        moisture < 0.27f ? sf::Color(240, 240, 180) :
-        moisture < 0.3f ? sf::Color(240 - static_cast<sf::Uint8>(240 * (moisture - 0.27f) / 0.03f), 240 - static_cast<sf::Uint8>(40 * (moisture - 0.27f) / 0.03f), 180 - static_cast<sf::Uint8>(180 * (moisture - 0.27f) / 0.03f)) :
-        moisture < 0.4f ? sf::Color(0, 200, 0) :
-        moisture < 0.48f ? sf::Color(0, 200 - static_cast<sf::Uint8>(40 * (moisture - 0.4f) / 0.08f), 0) :
-        moisture < 0.6f ? sf::Color(0, 160, 0) :
-        moisture < 0.7f ? sf::Color(static_cast<sf::Uint8>(34 * (moisture - 0.6f) / 0.1f), 160 - static_cast<sf::Uint8>(60 * (moisture - 0.6f) / 0.1f), static_cast<sf::Uint8>(34 * (moisture - 0.6f) / 0.1f)) :
-        sf::Color(34, 100, 34);
+        moisture < 0.27f ? colorFromFloats(240, 240, 180) :
+        moisture < 0.3f ? colorFromFloats(240 - (240 * (moisture - 0.27f) / 0.03f), 240 - (40 * (moisture - 0.27f) / 0.03f), 180 - (180 * (moisture - 0.27f) / 0.03f)) :
+        moisture < 0.4f ? colorFromFloats(0, 200, 0) :
+        moisture < 0.48f ? colorFromFloats(0, 200 - (40 * (moisture - 0.4f) / 0.08f), 0) :
+        moisture < 0.6f ? colorFromFloats(0, 160, 0) :
+        moisture < 0.7f ? colorFromFloats((34 * (moisture - 0.6f) / 0.1f), 160 - (60 * (moisture - 0.6f) / 0.1f), (34 * (moisture - 0.6f) / 0.1f)) :
+        colorFromFloats(34, 100, 34);
 
     return color;
 }
@@ -348,7 +355,7 @@ sf::Color getHighlandsTerrainColor(float elevation, float moisture)
 
     sf::Color color =
         moisture < 0.6f ? sf::Color(112, 128, 144) :
-        sf::Color(112 + static_cast<sf::Uint8>(110 * (moisture - 0.6f) / 0.4f), 128 + static_cast<sf::Uint8>(56 * (moisture - 0.6f) / 0.4f), 144 - static_cast<sf::Uint8>(9 * (moisture - 0.6f) / 0.4f));
+        colorFromFloats(112 + (110 * (moisture - 0.6f) / 0.4f), 128 + (56 * (moisture - 0.6f) / 0.4f), 144 - (9 * (moisture - 0.6f) / 0.4f));
 
     float factor = std::min((elevation - 0.4f) / 0.1f, 1.f);
 

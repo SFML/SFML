@@ -152,7 +152,7 @@ namespace
 
             if (result != ERROR_SUCCESS)
             {
-                sf::err() << "Unable to open registry for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+                sf::err() << "Unable to open registry for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
                 return joystickDescription;
             }
         }
@@ -172,7 +172,7 @@ namespace
 
         if (result != ERROR_SUCCESS)
         {
-            sf::err() << "Unable to query registry key for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            sf::err() << "Unable to query registry key for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
             return joystickDescription;
         }
 
@@ -184,7 +184,7 @@ namespace
 
         if (result != ERROR_SUCCESS)
         {
-            sf::err() << "Unable to open registry key for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            sf::err() << "Unable to open registry key for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
             return joystickDescription;
         }
 
@@ -195,7 +195,7 @@ namespace
 
         if (result != ERROR_SUCCESS)
         {
-            sf::err() << "Unable to query name for joystick at index " << index << ": " << getErrorString(result) << std::endl;
+            sf::err() << "Unable to query name for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
             return joystickDescription;
         }
 
@@ -365,17 +365,17 @@ JoystickState JoystickImpl::update()
         state.connected = true;
 
         // Axes
-        state.axes[Joystick::X] = (pos.dwXpos - (m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / (m_caps.wXmax - m_caps.wXmin);
-        state.axes[Joystick::Y] = (pos.dwYpos - (m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / (m_caps.wYmax - m_caps.wYmin);
-        state.axes[Joystick::Z] = (pos.dwZpos - (m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / (m_caps.wZmax - m_caps.wZmin);
-        state.axes[Joystick::R] = (pos.dwRpos - (m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / (m_caps.wRmax - m_caps.wRmin);
-        state.axes[Joystick::U] = (pos.dwUpos - (m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / (m_caps.wUmax - m_caps.wUmin);
-        state.axes[Joystick::V] = (pos.dwVpos - (m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / (m_caps.wVmax - m_caps.wVmin);
+        state.axes[Joystick::X] = (static_cast<float>(pos.dwXpos) - static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
+        state.axes[Joystick::Y] = (static_cast<float>(pos.dwYpos) - static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
+        state.axes[Joystick::Z] = (static_cast<float>(pos.dwZpos) - static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
+        state.axes[Joystick::R] = (static_cast<float>(pos.dwRpos) - static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
+        state.axes[Joystick::U] = (static_cast<float>(pos.dwUpos) - static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
+        state.axes[Joystick::V] = (static_cast<float>(pos.dwVpos) - static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            float angle = pos.dwPOV / 18000.f * 3.141592654f;
+            float angle = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
             state.axes[Joystick::PovX] = std::sin(angle) * 100;
             state.axes[Joystick::PovY] = std::cos(angle) * 100;
         }
@@ -387,7 +387,7 @@ JoystickState JoystickImpl::update()
 
         // Buttons
         for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
-            state.buttons[i] = (pos.dwButtons & (1 << i)) != 0;
+            state.buttons[i] = (pos.dwButtons & (1u << i)) != 0;
     }
 
     return state;
@@ -404,7 +404,7 @@ void JoystickImpl::initializeDInput()
     {
         // Try to get the address of the DirectInput8Create entry point
         typedef HRESULT(WINAPI *DirectInput8CreateFunc)(HINSTANCE, DWORD, REFIID, LPVOID*, LPUNKNOWN);
-        DirectInput8CreateFunc directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(GetProcAddress(dinput8dll, "DirectInput8Create"));
+        DirectInput8CreateFunc directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
 
         if (directInput8Create)
         {
@@ -643,7 +643,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 for (int i = 0; i < 4; ++i)
                 {
                     data[8 * 4 + i].pguid = &guids::GUID_POV;
-                    data[8 * 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_POV(i));
+                    data[8 * 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_POV(static_cast<unsigned int>(i)));
                     data[8 * 4 + i].dwType = povType;
                     data[8 * 4 + i].dwFlags = 0;
                 }

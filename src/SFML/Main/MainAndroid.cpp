@@ -161,7 +161,6 @@ void goToFullscreenMode(ANativeActivity* activity)
         AWINDOW_FLAG_FULLSCREEN);
 
     // Hide the navigation bar
-    JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
     jobject objectActivity = activity->clazz;
@@ -216,7 +215,6 @@ void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
     // DisplayMetrics dm = new DisplayMetrics();
     // getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-    JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
     jobject objectActivity = activity->clazz;
@@ -248,6 +246,7 @@ void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
 ////////////////////////////////////////////////////////////
 static void onStart(ANativeActivity* activity)
 {
+    (void) activity;
 }
 
 
@@ -287,6 +286,7 @@ static void onPause(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 static void onStop(ANativeActivity* activity)
 {
+    (void) activity;
 }
 
 
@@ -339,6 +339,8 @@ static void onDestroy(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 {
+    (void) window;
+
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
 
@@ -364,6 +366,8 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 ////////////////////////////////////////////////////////////
 static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window)
 {
+    (void) window;
+
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
 
@@ -389,12 +393,16 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 ////////////////////////////////////////////////////////////
 static void onNativeWindowRedrawNeeded(ANativeActivity* activity, ANativeWindow* window)
 {
+    (void) activity;
+    (void) window;
 }
 
 
 ////////////////////////////////////////////////////////////
 static void onNativeWindowResized(ANativeActivity* activity, ANativeWindow* window)
 {
+    (void) activity;
+    (void) window;
 }
 
 
@@ -435,12 +443,16 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 ////////////////////////////////////////////////////////////
 static void onWindowFocusChanged(ANativeActivity* activity, int focused)
 {
+    (void) activity;
+    (void) focused;
 }
 
 
 ////////////////////////////////////////////////////////////
 static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
 {
+    (void) rect;
+
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
     sf::Lock lock(states->mutex);
@@ -450,8 +462,8 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
         // Send an event to warn people about the window move/resize
         sf::Event event;
         event.type = sf::Event::Resized;
-        event.size.width = ANativeWindow_getWidth(states->window);
-        event.size.height = ANativeWindow_getHeight(states->window);
+        event.size.width = static_cast<unsigned int>(ANativeWindow_getWidth(states->window));
+        event.size.height = static_cast<unsigned int>(ANativeWindow_getHeight(states->window));
 
         states->forwardEvent(event);
     }
@@ -461,12 +473,14 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
 ////////////////////////////////////////////////////////////
 static void onConfigurationChanged(ANativeActivity* activity)
 {
+    (void) activity;
 }
 
 
 ////////////////////////////////////////////////////////////
 static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 {
+    (void) activity;
     *outLen = 0;
 
     return NULL;
@@ -476,6 +490,7 @@ static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 ////////////////////////////////////////////////////////////
 static void onLowMemory(ANativeActivity* activity)
 {
+    (void) activity;
 }
 
 

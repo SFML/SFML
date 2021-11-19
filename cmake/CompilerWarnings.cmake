@@ -31,37 +31,60 @@ function(set_file_warnings)
 
         # Disables, remove when appropriate
         /wd4996 # disable warnings about deprecated functions
+        /wd4068 # disable warnings about unknown pragmas (e.g. #pragma GCC)
+        /wd4505 # disable warnings about unused functions that might be platform-specific
+        /wd4800 # disable warnings regarding implicit conversions to bool
     )
 
-    set(CLANG_WARNINGS
+    # some warnings are not supported on older NDK versions used for CI
+    if (ANDROID)
+        set(NON_ANDROID_CLANG_AND_GCC_WARNINGS "")
+        set(NON_ANDROID_GCC_WARNINGS "")
+    else()
+        set(NON_ANDROID_CLANG_AND_GCC_WARNINGS
+            -Wnull-dereference # warn if a null dereference is detected
+            -Wold-style-cast # warn for c-style casts
+            -Wpedantic # warn if non-standard C++ is used
+        )
+
+        set(NON_ANDROID_GCC_WARNINGS
+            -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
+            -Wduplicated-cond # warn if if / else chain has duplicated conditions
+        )
+    endif()
+
+    set(CLANG_AND_GCC_WARNINGS
         -Wall
         -Wextra # reasonable and standard
         -Wshadow # warn the user if a variable declaration shadows one from a parent context
         -Wnon-virtual-dtor # warn the user if a class with virtual functions has a non-virtual destructor. This helps catch hard to track down memory errors
-        -Wold-style-cast # warn for c-style casts
         -Wcast-align # warn for potential performance problem casts
         -Wunused # warn on anything being unused
         -Woverloaded-virtual # warn if you overload (not override) a virtual function
-        -Wpedantic # warn if non-standard C++ is used
         -Wconversion # warn on type conversions that may lose data
         -Wsign-conversion # warn on sign conversions
-        -Wnull-dereference # warn if a null dereference is detected
         -Wdouble-promotion # warn if float is implicit promoted to double
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
-        # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement. Disabled until better compiler support for explicit fallthrough is available.
+        # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement (disabled until better compiler support for explicit fallthrough is available)
+        ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
+    )
+
+
+    set(CLANG_WARNINGS
+        ${CLANG_AND_GCC_WARNINGS}
+        -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
     )
 
     if(WARNINGS_AS_ERRORS)
-        set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
+        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
     endif()
 
     set(GCC_WARNINGS
-        ${CLANG_WARNINGS}
-        -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
-        -Wduplicated-cond # warn if if / else chain has duplicated conditions
+        ${CLANG_AND_GCC_WARNINGS}
+        ${NON_ANDROID_GCC_WARNINGS}
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
-        -Wuseless-cast # warn if you perform a cast to the same type
+        # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some typedefs might vary between platforms)
     )
 
     # Don't enable -Wduplicated-branches for GCC < 8.1 since it will lead to false positives

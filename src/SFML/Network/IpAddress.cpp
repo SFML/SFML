@@ -198,7 +198,9 @@ void IpAddress::resolve(const std::string& address)
             {
                 if (result)
                 {
-                    ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
+                    sockaddr_in sin;
+                    std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
+                    ip = sin.sin_addr.s_addr;
                     freeaddrinfo(result);
                     m_address = ip;
                     m_valid = true;

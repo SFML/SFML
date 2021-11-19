@@ -60,8 +60,8 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     std::memset(&bitmapHeader, 0, sizeof(BITMAPV5HEADER));
 
     bitmapHeader.bV5Size        = sizeof(BITMAPV5HEADER);
-    bitmapHeader.bV5Width       = size.x;
-    bitmapHeader.bV5Height      = -static_cast<int>(size.y); // Negative indicates origin is in upper-left corner
+    bitmapHeader.bV5Width       = static_cast<LONG>(size.x);
+    bitmapHeader.bV5Height      = -static_cast<LONG>(size.y); // Negative indicates origin is in upper-left corner
     bitmapHeader.bV5Planes      = 1;
     bitmapHeader.bV5BitCount    = 32;
     bitmapHeader.bV5Compression = BI_BITFIELDS;
@@ -94,11 +94,11 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     Uint32* bitmapOffset = bitmapData;
     for (std::size_t remaining = size.x * size.y; remaining > 0; --remaining, pixels += 4)
     {
-        *bitmapOffset++ = (pixels[3] << 24) | (pixels[0] << 16) | (pixels[1] << 8) | pixels[2];
+        *bitmapOffset++ = static_cast<Uint32>((pixels[3] << 24) | (pixels[0] << 16) | (pixels[1] << 8) | pixels[2]);
     }
 
     // Create a dummy mask bitmap (it won't be used)
-    HBITMAP mask = CreateBitmap(size.x, size.y, 1, 1, NULL);
+    HBITMAP mask = CreateBitmap(static_cast<int>(size.x), static_cast<int>(size.y), 1, 1, NULL);
 
     if (!mask)
     {
