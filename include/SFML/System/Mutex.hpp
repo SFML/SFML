@@ -29,15 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-
+#include <mutex>
 
 
 namespace sf
 {
-namespace priv
-{
-    class MutexImpl;
-}
 
 ////////////////////////////////////////////////////////////
 /// \brief Blocks concurrent access to shared resources
@@ -92,7 +88,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::MutexImpl* m_mutexImpl; //!< OS-specific implementation
+    std::mutex m_mutex; //!< OS-specific implementation
 };
 
 } // namespace sf

@@ -47,8 +47,6 @@ if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/ClockImpl.cpp
         ${SRCROOT}/Win32/ClockImpl.hpp
-        ${SRCROOT}/Win32/MutexImpl.cpp
-        ${SRCROOT}/Win32/MutexImpl.hpp
         ${SRCROOT}/Win32/SleepImpl.cpp
         ${SRCROOT}/Win32/SleepImpl.hpp
         ${SRCROOT}/Win32/ThreadImpl.cpp
@@ -61,8 +59,6 @@ else()
     set(PLATFORM_SRC
         ${SRCROOT}/Unix/ClockImpl.cpp
         ${SRCROOT}/Unix/ClockImpl.hpp
-        ${SRCROOT}/Unix/MutexImpl.cpp
-        ${SRCROOT}/Unix/MutexImpl.hpp
         ${SRCROOT}/Unix/SleepImpl.cpp
         ${SRCROOT}/Unix/SleepImpl.hpp
         ${SRCROOT}/Unix/ThreadImpl.cpp
