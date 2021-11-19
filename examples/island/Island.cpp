@@ -12,6 +12,7 @@
 #include <cstring>
 #include <cmath>
 #include <mutex>
+#include <thread>
 
 
 namespace
@@ -35,7 +36,7 @@ namespace
     };
 
     std::deque<WorkItem> workQueue;
-    std::vector<sf::Thread*> threads;
+    std::vector<std::thread> threads;
     int pendingWorkCount = 0;
     bool workPending = true;
     bool bufferUploadPending = false;
@@ -132,8 +133,7 @@ int main()
         // Start up our thread pool
         for (unsigned int i = 0; i < threadCount; i++)
         {
-            threads.push_back(new sf::Thread(threadFunction));
-            threads.back()->launch();
+            threads.emplace_back(threadFunction);
         }
 
         // Create our VertexBuffer with enough space to hold all the terrain geometry
@@ -251,8 +251,7 @@ int main()
 
     while (!threads.empty())
     {
-        threads.back()->wait();
-        delete threads.back();
+        threads.back().join();
         threads.pop_back();
     }
 

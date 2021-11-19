@@ -40,12 +40,12 @@
 
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Thread.hpp>
 #include <SFML/System/Err.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
 #include <cstring>
 #include <mutex>
+#include <thread>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
@@ -550,7 +550,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     sf::err().rdbuf(&states->logcat);
 
     // Launch the main thread
-    sf::Thread* thread = new sf::Thread(sf::priv::main, states);
+    auto* thread = new std::thread(sf::priv::main, states);
     thread->launch();
 
     // Wait for the main thread to be initialized

@@ -16,9 +16,6 @@ set(SRC
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
     ${INCROOT}/String.inl
-    ${SRCROOT}/Thread.cpp
-    ${INCROOT}/Thread.hpp
-    ${INCROOT}/Thread.inl
     ${SRCROOT}/Time.cpp
     ${INCROOT}/Time.hpp
     ${INCROOT}/Utf.hpp
@@ -41,8 +38,6 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/ClockImpl.hpp
         ${SRCROOT}/Win32/SleepImpl.cpp
         ${SRCROOT}/Win32/SleepImpl.hpp
-        ${SRCROOT}/Win32/ThreadImpl.cpp
-        ${SRCROOT}/Win32/ThreadImpl.hpp
     )
     source_group("windows" FILES ${PLATFORM_SRC})
 else()
@@ -51,8 +46,6 @@ else()
         ${SRCROOT}/Unix/ClockImpl.hpp
         ${SRCROOT}/Unix/SleepImpl.cpp
         ${SRCROOT}/Unix/SleepImpl.hpp
-        ${SRCROOT}/Unix/ThreadImpl.cpp
-        ${SRCROOT}/Unix/ThreadImpl.hpp
     )
 
     if(SFML_OS_ANDROID)

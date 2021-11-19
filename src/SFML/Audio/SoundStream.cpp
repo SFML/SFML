@@ -41,7 +41,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundStream::SoundStream() :
-m_thread          (&SoundStream::streamData, this),
+m_thread          (),
 m_threadMutex     (),
 m_threadStartState(Stopped),
 m_isStreaming     (false),
@@ -63,14 +63,14 @@ SoundStream::~SoundStream()
 {
     // Stop the sound if it was playing
 
-    // Request the thread to terminate
+    // Request the thread to join
     {
         std::scoped_lock lock(m_threadMutex);
         m_isStreaming = false;
     }
 
-    // Wait for the thread to terminate
-    m_thread.wait();
+    // Wait for the thread to join
+    m_thread.value().join();
 }
 
 
@@ -133,7 +133,7 @@ void SoundStream::play()
     // Start updating the stream in a separate thread to avoid blocking the application
     m_isStreaming = true;
     m_threadStartState = Playing;
-    m_thread.launch();
+    m_thread.emplace(&SoundStream::streamData, this);
 }
 
 
@@ -157,14 +157,14 @@ void SoundStream::pause()
 ////////////////////////////////////////////////////////////
 void SoundStream::stop()
 {
-    // Request the thread to terminate
+    // Request the thread to join
     {
         std::scoped_lock lock(m_threadMutex);
         m_isStreaming = false;
     }
 
-    // Wait for the thread to terminate
-    m_thread.wait();
+    // Wait for the thread to join
+    m_thread.value().join();
 
     // Move to the beginning
     onSeek(Time::Zero);
@@ -223,7 +223,7 @@ void SoundStream::setPlayingOffset(Time timeOffset)
 
     m_isStreaming = true;
     m_threadStartState = oldStatus;
-    m_thread.launch();
+    m_thread.emplace(&SoundStream::streamData, this);
 }
 
 
