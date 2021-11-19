@@ -33,7 +33,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 ANativeActivity* getNativeActivity()
 {
-    return priv::getActivity()->activity;
+    return priv::getActivity().activity;
 }
 
 } // namespace sf
