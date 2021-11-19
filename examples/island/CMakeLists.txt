@@ -10,5 +10,9 @@ sfml_add_example(island GUI_APP
                  DEPENDS sfml-graphics
                  RESOURCES_DIR resources)
 
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
+    target_link_libraries(island PRIVATE pthread)
+endif()
+
 # external dependency headers
 target_include_directories(island SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/island)
