@@ -35,6 +35,7 @@
 #include <SFML/System/Vector3.hpp>
 #include <map>
 #include <string>
+#include <unordered_map>
 
 
 namespace sf
@@ -665,8 +666,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<int, const Texture*> TextureTable;
-    typedef std::map<std::string, int> UniformTable;
+    using TextureTable = std::map<int, const Texture*>;
+    using UniformTable = std::unordered_map<std::string, int>;
 
     ////////////////////////////////////////////////////////////
     // Member data

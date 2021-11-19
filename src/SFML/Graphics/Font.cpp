@@ -486,9 +486,9 @@ void Font::setSmooth(bool smooth)
     {
         m_isSmooth = smooth;
 
-        for (sf::Font::PageTable::iterator page = m_pages.begin(); page != m_pages.end(); ++page)
+        for (auto& [key, page] : m_pages)
         {
-            page->second.texture.setSmooth(m_isSmooth);
+            page.texture.setSmooth(m_isSmooth);
         }
     }
 }
