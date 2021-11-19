@@ -40,9 +40,9 @@ namespace priv
 ResourceStream::ResourceStream(const std::string& filename) :
 m_file (NULL)
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
-    m_file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
+    m_file = AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
 }
 
 
