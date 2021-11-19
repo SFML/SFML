@@ -102,23 +102,6 @@ public:
     ///
     /// These two statements are equivalent:
     /// \code
-    /// sf::Vector2f transformedPoint = matrix.transformPoint(x, y);
-    /// sf::Vector2f transformedPoint = matrix * sf::Vector2f(x, y);
-    /// \endcode
-    ///
-    /// \param x X coordinate of the point to transform
-    /// \param y Y coordinate of the point to transform
-    ///
-    /// \return Transformed point
-    ///
-    ////////////////////////////////////////////////////////////
-    Vector2f transformPoint(float x, float y) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Transform a 2D point
-    ///
-    /// These two statements are equivalent:
-    /// \code
     /// sf::Vector2f transformedPoint = matrix.transformPoint(point);
     /// sf::Vector2f transformedPoint = matrix * point;
     /// \endcode
@@ -165,26 +148,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Transform& combine(const Transform& transform);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Combine the current transform with a translation
-    ///
-    /// This function returns a reference to *this, so that calls
-    /// can be chained.
-    /// \code
-    /// sf::Transform transform;
-    /// transform.translate(100, 200).rotate(45);
-    /// \endcode
-    ///
-    /// \param x Offset to apply on X axis
-    /// \param y Offset to apply on Y axis
-    ///
-    /// \return Reference to *this
-    ///
-    /// \see rotate, scale
-    ///
-    ////////////////////////////////////////////////////////////
-    Transform& translate(float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation

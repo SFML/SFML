@@ -90,7 +90,7 @@ public:
                          "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
         m_text.setFont(getFont());
         m_text.setCharacterSize(22);
-        m_text.setPosition(30, 20);
+        m_text.setPosition({30.f, 20.f});
 
         // Load the shader
         if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
@@ -203,7 +203,7 @@ public:
 
         // Initialize the background sprite
         m_backgroundSprite.setTexture(m_backgroundTexture);
-        m_backgroundSprite.setPosition(135, 100);
+        m_backgroundSprite.setPosition({135.f, 100.f});
 
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
@@ -306,7 +306,7 @@ public:
         // Reset our transformation matrix
         m_transform = sf::Transform::Identity;
         // Move to the center of the window
-        m_transform.translate(400, 300);
+        m_transform.translate({400.f, 300.f});
         // Rotate everything based on cursor position
         m_transform.rotate(x * 360.f);
 
@@ -374,17 +374,17 @@ int main()
     if (!textBackgroundTexture.loadFromFile("resources/text-background.png"))
         return EXIT_FAILURE;
     sf::Sprite textBackground(textBackgroundTexture);
-    textBackground.setPosition(0, 520);
+    textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
     sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
-    description.setPosition(10, 530);
+    description.setPosition({10.f, 530.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
     sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
-    instructions.setPosition(280, 555);
+    instructions.setPosition({280.f, 555.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop

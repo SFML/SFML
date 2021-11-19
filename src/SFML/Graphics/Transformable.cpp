@@ -52,19 +52,11 @@ Transformable::~Transformable()
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setPosition(float x, float y)
-{
-    m_position.x = x;
-    m_position.y = y;
-    m_transformNeedUpdate = true;
-    m_inverseTransformNeedUpdate = true;
-}
-
-
-////////////////////////////////////////////////////////////
 void Transformable::setPosition(const Vector2f& position)
 {
-    setPosition(position.x, position.y);
+    m_position = position;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
@@ -81,27 +73,9 @@ void Transformable::setRotation(float angle)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setScale(float factorX, float factorY)
-{
-    m_scale.x = factorX;
-    m_scale.y = factorY;
-    m_transformNeedUpdate = true;
-    m_inverseTransformNeedUpdate = true;
-}
-
-
-////////////////////////////////////////////////////////////
 void Transformable::setScale(const Vector2f& factors)
 {
-    setScale(factors.x, factors.y);
-}
-
-
-////////////////////////////////////////////////////////////
-void Transformable::setOrigin(float x, float y)
-{
-    m_origin.x = x;
-    m_origin.y = y;
+    m_scale = factors;
     m_transformNeedUpdate = true;
     m_inverseTransformNeedUpdate = true;
 }
@@ -110,7 +84,9 @@ void Transformable::setOrigin(float x, float y)
 ////////////////////////////////////////////////////////////
 void Transformable::setOrigin(const Vector2f& origin)
 {
-    setOrigin(origin.x, origin.y);
+    m_origin = origin;
+    m_transformNeedUpdate = true;
+    m_inverseTransformNeedUpdate = true;
 }
 
 
@@ -143,16 +119,9 @@ const Vector2f& Transformable::getOrigin() const
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::move(float offsetX, float offsetY)
-{
-    setPosition(m_position.x + offsetX, m_position.y + offsetY);
-}
-
-
-////////////////////////////////////////////////////////////
 void Transformable::move(const Vector2f& offset)
 {
-    setPosition(m_position.x + offset.x, m_position.y + offset.y);
+    setPosition(m_position + offset);
 }
 
 
@@ -164,16 +133,9 @@ void Transformable::rotate(float angle)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::scale(float factorX, float factorY)
-{
-    setScale(m_scale.x * factorX, m_scale.y * factorY);
-}
-
-
-////////////////////////////////////////////////////////////
 void Transformable::scale(const Vector2f& factor)
 {
-    setScale(m_scale.x * factor.x, m_scale.y * factor.y);
+    setScale({m_scale.x * factor.x, m_scale.y * factor.y});
 }
 
 

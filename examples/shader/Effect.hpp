@@ -50,7 +50,7 @@ public:
         else
         {
             sf::Text error("Shader not\nsupported", getFont());
-            error.setPosition(320.f, 200.f);
+            error.setPosition({320.f, 200.f});
             error.setCharacterSize(36);
             target.draw(error, states);
         }

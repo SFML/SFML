@@ -61,21 +61,6 @@ public:
     /// See the move function to apply an offset based on the previous position instead.
     /// The default position of a transformable object is (0, 0).
     ///
-    /// \param x X coordinate of the new position
-    /// \param y Y coordinate of the new position
-    ///
-    /// \see move, getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    void setPosition(float x, float y);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief set the position of the object
-    ///
-    /// This function completely overwrites the previous position.
-    /// See the move function to apply an offset based on the previous position instead.
-    /// The default position of a transformable object is (0, 0).
-    ///
     /// \param position New position
     ///
     /// \see move, getPosition
@@ -104,45 +89,12 @@ public:
     /// See the scale function to add a factor based on the previous scale instead.
     /// The default scale of a transformable object is (1, 1).
     ///
-    /// \param factorX New horizontal scale factor
-    /// \param factorY New vertical scale factor
-    ///
-    /// \see scale, getScale
-    ///
-    ////////////////////////////////////////////////////////////
-    void setScale(float factorX, float factorY);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief set the scale factors of the object
-    ///
-    /// This function completely overwrites the previous scale.
-    /// See the scale function to add a factor based on the previous scale instead.
-    /// The default scale of a transformable object is (1, 1).
-    ///
     /// \param factors New scale factors
     ///
     /// \see scale, getScale
     ///
     ////////////////////////////////////////////////////////////
     void setScale(const Vector2f& factors);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief set the local origin of the object
-    ///
-    /// The origin of an object defines the center point for
-    /// all transformations (position, scale, rotation).
-    /// The coordinates of this point must be relative to the
-    /// top-left corner of the object, and ignore all
-    /// transformations (position, scale, rotation).
-    /// The default origin of a transformable object is (0, 0).
-    ///
-    /// \param x X coordinate of the new origin
-    /// \param y Y coordinate of the new origin
-    ///
-    /// \see getOrigin
-    ///
-    ////////////////////////////////////////////////////////////
-    void setOrigin(float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the local origin of the object
@@ -210,25 +162,6 @@ public:
     /// unlike setPosition which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
-    /// sf::Vector2f pos = object.getPosition();
-    /// object.setPosition(pos.x + offsetX, pos.y + offsetY);
-    /// \endcode
-    ///
-    /// \param offsetX X offset
-    /// \param offsetY Y offset
-    ///
-    /// \see setPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    void move(float offsetX, float offsetY);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move the object by a given offset
-    ///
-    /// This function adds to the current position of the object,
-    /// unlike setPosition which overwrites it.
-    /// Thus, it is equivalent to the following code:
-    /// \code
     /// object.setPosition(object.getPosition() + offset);
     /// \endcode
     ///
@@ -253,25 +186,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void rotate(float angle);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Scale the object
-    ///
-    /// This function multiplies the current scale of the object,
-    /// unlike setScale which overwrites it.
-    /// Thus, it is equivalent to the following code:
-    /// \code
-    /// sf::Vector2f scale = object.getScale();
-    /// object.setScale(scale.x * factorX, scale.y * factorY);
-    /// \endcode
-    ///
-    /// \param factorX Horizontal scale factor
-    /// \param factorY Vertical scale factor
-    ///
-    /// \see setScale
-    ///
-    ////////////////////////////////////////////////////////////
-    void scale(float factorX, float factorY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Scale the object

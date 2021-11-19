@@ -95,17 +95,10 @@ Transform Transform::getInverse() const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f Transform::transformPoint(float x, float y) const
-{
-    return Vector2f(m_matrix[0] * x + m_matrix[4] * y + m_matrix[12],
-                    m_matrix[1] * x + m_matrix[5] * y + m_matrix[13]);
-}
-
-
-////////////////////////////////////////////////////////////
 Vector2f Transform::transformPoint(const Vector2f& point) const
 {
-    return transformPoint(point.x, point.y);
+    return Vector2f(m_matrix[0] * point.x + m_matrix[4] * point.y + m_matrix[12],
+                    m_matrix[1] * point.x + m_matrix[5] * point.y + m_matrix[13]);
 }
 
 
@@ -115,10 +108,10 @@ FloatRect Transform::transformRect(const FloatRect& rectangle) const
     // Transform the 4 corners of the rectangle
     const Vector2f points[] =
     {
-        transformPoint(rectangle.left, rectangle.top),
-        transformPoint(rectangle.left, rectangle.top + rectangle.height),
-        transformPoint(rectangle.left + rectangle.width, rectangle.top),
-        transformPoint(rectangle.left + rectangle.width, rectangle.top + rectangle.height)
+        transformPoint({rectangle.left, rectangle.top}),
+        transformPoint({rectangle.left, rectangle.top + rectangle.height}),
+        transformPoint({rectangle.left + rectangle.width, rectangle.top}),
+        transformPoint({rectangle.left + rectangle.width, rectangle.top + rectangle.height})
     };
 
     // Compute the bounding rectangle of the transformed points
@@ -159,20 +152,13 @@ Transform& Transform::combine(const Transform& transform)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::translate(float x, float y)
+Transform& Transform::translate(const Vector2f& offset)
 {
-    Transform translation(1, 0, x,
-                          0, 1, y,
+    Transform translation(1, 0, offset.x,
+                          0, 1, offset.y,
                           0, 0, 1);
 
     return combine(translation);
-}
-
-
-////////////////////////////////////////////////////////////
-Transform& Transform::translate(const Vector2f& offset)
-{
-    return translate(offset.x, offset.y);
 }
 
 
