@@ -651,7 +651,7 @@ private:
     /// \return Location ID of the uniform, or -1 if not found
     ///
     ////////////////////////////////////////////////////////////
-    int getUniformLocation(const std::string& name);
+    [[nodiscard]] int getUniformLocation(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief RAII object to save and restore the program
