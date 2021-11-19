@@ -40,6 +40,7 @@
 #include <cctype>
 #include <cassert>
 #include <mutex>
+#include <optional>
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
@@ -156,7 +157,7 @@ namespace
         // This mutex is also used to protect the shared context
         // from being locked on multiple threads and for managing
         // the resource count
-        std::mutex mutex;
+        std::recursive_mutex mutex;
 
         // OpenGL resources counter
         unsigned int resourceCount = 0;
@@ -188,7 +189,7 @@ namespace
             TransientContext() :
             referenceCount   (0),
             context          (0),
-            sharedContextLock(nullptr),
+            sharedContextLock(),
             useSharedContext (false)
             {
                 if (resourceCount == 0)
@@ -197,7 +198,7 @@ namespace
                 }
                 else if (!currentContext)
                 {
-                    sharedContextLock = new std::scoped_lock<std::mutex>(mutex);
+                    sharedContextLock.emplace(mutex);
                     useSharedContext = true;
                     sharedContext->setActive(true);
                 }
@@ -212,7 +213,7 @@ namespace
                 if (useSharedContext)
                     sharedContext->setActive(false);
 
-                delete sharedContextLock;
+                sharedContextLock.reset();
                 delete context;
             }
 
@@ -226,10 +227,10 @@ namespace
             ///////////////////////////////////////////////////////////
             // Member data
             ////////////////////////////////////////////////////////////
-            unsigned int                 referenceCount;
-            sf::Context*                 context;
-            std::scoped_lock<std::mutex>* sharedContextLock;
-            bool                         useSharedContext;
+            unsigned int                                          referenceCount;
+            sf::Context*                                          context;
+            std::optional<std::scoped_lock<std::recursive_mutex>> sharedContextLock;
+            bool                                                  useSharedContext;
         };
 
         // This per-thread variable tracks if and how a transient
