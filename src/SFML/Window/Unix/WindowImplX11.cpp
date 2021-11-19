@@ -48,6 +48,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cassert>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -1056,7 +1057,10 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
     unsigned long* ptr = &icccmIconPixels[0];
 
+    assert(ptr != NULL);
     *ptr++ = width;
+
+    assert(ptr != NULL);
     *ptr++ = height;
 
     for (std::size_t i = 0; i < width * height; ++i)
