@@ -202,24 +202,6 @@ public:
     ///
     /// \see getFillColor
     ///
-    /// \deprecated There is now fill and outline colors instead
-    /// of a single global color.
-    /// Use setFillColor() or setOutlineColor() instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setColor(const Color& color);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the fill color of the text
-    ///
-    /// By default, the text's fill color is opaque white.
-    /// Setting the fill color to a transparent color with an outline
-    /// will cause the outline to be displayed in the fill area of the text.
-    ///
-    /// \param color New fill color of the text
-    ///
-    /// \see getFillColor
-    ///
     ////////////////////////////////////////////////////////////
     void setFillColor(const Color& color);
 
@@ -322,20 +304,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Uint32 getStyle() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the fill color of the text
-    ///
-    /// \return Fill color of the text
-    ///
-    /// \see setFillColor
-    ///
-    /// \deprecated There is now fill and outline colors instead
-    /// of a single global color.
-    /// Use getFillColor() or getOutlineColor() instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] const Color& getColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the fill color of the text

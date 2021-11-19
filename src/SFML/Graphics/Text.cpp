@@ -183,13 +183,6 @@ void Text::setStyle(Uint32 style)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setColor(const Color& color)
-{
-    setFillColor(color);
-}
-
-
-////////////////////////////////////////////////////////////
 void Text::setFillColor(const Color& color)
 {
     if (color != m_fillColor)
@@ -275,13 +268,6 @@ float Text::getLineSpacing() const
 Uint32 Text::getStyle() const
 {
     return m_style;
-}
-
-
-////////////////////////////////////////////////////////////
-const Color& Text::getColor() const
-{
-    return getFillColor();
 }
 
 
