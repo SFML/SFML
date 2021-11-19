@@ -25,7 +25,7 @@
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Rect<T>::Rect() :
+constexpr inline Rect<T>::Rect() :
 left  (0),
 top   (0),
 width (0),
@@ -37,7 +37,7 @@ height(0)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Rect<T>::Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight) :
+constexpr inline Rect<T>::Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight) :
 left  (rectLeft),
 top   (rectTop),
 width (rectWidth),
@@ -49,7 +49,7 @@ height(rectHeight)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
+constexpr inline Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
 left  (position.x),
 top   (position.y),
 width (size.x),
@@ -62,7 +62,7 @@ height(size.y)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-Rect<T>::Rect(const Rect<U>& rectangle) :
+constexpr inline Rect<T>::Rect(const Rect<U>& rectangle) :
 left  (static_cast<T>(rectangle.left)),
 top   (static_cast<T>(rectangle.top)),
 width (static_cast<T>(rectangle.width)),
@@ -73,7 +73,7 @@ height(static_cast<T>(rectangle.height))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::contains(T x, T y) const
+constexpr inline bool Rect<T>::contains(T x, T y) const
 {
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
@@ -89,7 +89,7 @@ bool Rect<T>::contains(T x, T y) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::contains(const Vector2<T>& point) const
+constexpr inline bool Rect<T>::contains(const Vector2<T>& point) const
 {
     return contains(point.x, point.y);
 }
@@ -97,7 +97,7 @@ bool Rect<T>::contains(const Vector2<T>& point) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::intersects(const Rect<T>& rectangle) const
+constexpr inline bool Rect<T>::intersects(const Rect<T>& rectangle) const
 {
     Rect<T> intersection;
     return intersects(rectangle, intersection);
@@ -106,7 +106,7 @@ bool Rect<T>::intersects(const Rect<T>& rectangle) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
+constexpr inline bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 {
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
@@ -142,13 +142,13 @@ bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersection) const
 }
 
 template <typename T>
-sf::Vector2<T> Rect<T>::getPosition() const
+constexpr inline sf::Vector2<T> Rect<T>::getPosition() const
 {
     return sf::Vector2<T>(left, top);
 }
 
 template <typename T>
-sf::Vector2<T> Rect<T>::getSize() const
+constexpr inline sf::Vector2<T> Rect<T>::getSize() const
 {
     return sf::Vector2<T>(width, height);
 }
@@ -156,7 +156,7 @@ sf::Vector2<T> Rect<T>::getSize() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
+constexpr inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
 {
     return (left.left == right.left) && (left.width == right.width) &&
            (left.top == right.top) && (left.height == right.height);
@@ -165,7 +165,7 @@ inline bool operator ==(const Rect<T>& left, const Rect<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-inline bool operator !=(const Rect<T>& left, const Rect<T>& right)
+constexpr inline bool operator !=(const Rect<T>& left, const Rect<T>& right)
 {
     return !(left == right);
 }
