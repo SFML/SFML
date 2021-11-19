@@ -37,7 +37,6 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Thread.hpp>

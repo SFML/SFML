@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -41,7 +40,7 @@ namespace priv
 /// \brief Global sensor manager
 ///
 ////////////////////////////////////////////////////////////
-class SensorManager : NonCopyable
+class SensorManager
 {
 public:
 
@@ -111,6 +110,13 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     ~SensorManager();
+
+    ////////////////////////////////////////////////////////////
+    /// Prevent copies.
+    ///
+    ////////////////////////////////////////////////////////////
+    SensorManager(const SensorManager&) = delete;
+    SensorManager& operator=(const SensorManager&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Sensor information and state

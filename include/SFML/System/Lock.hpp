@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -40,7 +39,7 @@ class Mutex;
 /// \brief Automatic wrapper for locking and unlocking mutexes
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API Lock : NonCopyable
+class SFML_SYSTEM_API Lock
 {
 public:
 
@@ -61,6 +60,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Lock();
+
+    ////////////////////////////////////////////////////////////
+    /// Prevent copies.
+    ///
+    ////////////////////////////////////////////////////////////
+    Lock(const Lock&) = delete;
+    Lock& operator=(const Lock&) = delete;
 
 private:
 

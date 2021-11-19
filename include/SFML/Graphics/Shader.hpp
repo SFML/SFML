@@ -31,7 +31,6 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Glsl.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <map>
@@ -49,7 +48,7 @@ class Transform;
 /// \brief Shader class (vertex, geometry and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shader : GlResource, NonCopyable
+class SFML_GRAPHICS_API Shader : GlResource
 {
 public:
 
@@ -96,6 +95,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Shader();
+
+    ////////////////////////////////////////////////////////////
+    /// Prevent copies.
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file

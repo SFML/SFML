@@ -177,7 +177,7 @@ Shader::CurrentTextureType Shader::CurrentTexture;
 
 
 ////////////////////////////////////////////////////////////
-struct Shader::UniformBinder : private NonCopyable
+struct Shader::UniformBinder
 {
     ////////////////////////////////////////////////////////////
     /// \brief Constructor: set up state before uniform is set
@@ -210,6 +210,13 @@ struct Shader::UniformBinder : private NonCopyable
         if (currentProgram && (currentProgram != savedProgram))
             glCheck(GLEXT_glUseProgramObject(savedProgram));
     }
+
+    ////////////////////////////////////////////////////////////
+    /// Prevent copies.
+    ///
+    ////////////////////////////////////////////////////////////
+    UniformBinder(const UniformBinder&) = delete;
+    UniformBinder& operator=(const UniformBinder&) = delete;
 
     TransientContextLock lock;           //!< Lock to keep context active while uniform is bound
     GLEXT_GLhandle       savedProgram;   //!< Handle to the previously active program object

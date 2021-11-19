@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -76,7 +75,7 @@ protected:
     /// \brief RAII helper class to temporarily lock an available context for use
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_WINDOW_API TransientContextLock : NonCopyable
+    class SFML_WINDOW_API TransientContextLock
     {
     public:
         ////////////////////////////////////////////////////////////
@@ -90,6 +89,13 @@ protected:
         ///
         ////////////////////////////////////////////////////////////
         ~TransientContextLock();
+
+        ////////////////////////////////////////////////////////////
+        /// Prevent copies.
+        ///
+        ////////////////////////////////////////////////////////////
+        TransientContextLock(const TransientContextLock&) = delete;
+        TransientContextLock& operator=(const TransientContextLock&) = delete;
     };
 };
 

@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
@@ -44,7 +43,7 @@ namespace priv
 /// This is a typical "not supported" implementation.
 ///
 ////////////////////////////////////////////////////////////
-class CursorImpl : NonCopyable
+class CursorImpl
 {
 public:
 
@@ -63,6 +62,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~CursorImpl();
+
+    ////////////////////////////////////////////////////////////
+    /// Prevent copies.
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl(const CursorImpl&) = delete;
+    CursorImpl& operator=(const CursorImpl&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
