@@ -28,7 +28,6 @@
 #include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <mutex>
 #include <vector>
@@ -48,7 +47,7 @@
 
 namespace
 {
-    sf::Mutex glxErrorMutex;
+    std::mutex glxErrorMutex;
     bool glxErrorOccurred = false;
 
 
@@ -95,7 +94,7 @@ namespace
         }
 
     private:
-        std::scoped_lock<sf::Mutex> m_lock;
+        std::scoped_lock<std::mutex> m_lock;
         ::Display*                  m_display;
         int                         (*m_previousHandler)(::Display*, XErrorEvent*);
     };

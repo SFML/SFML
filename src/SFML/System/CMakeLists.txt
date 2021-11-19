@@ -10,8 +10,6 @@ set(SRC
     ${INCROOT}/Err.hpp
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
-    ${SRCROOT}/Mutex.cpp
-    ${INCROOT}/Mutex.hpp
     ${INCROOT}/NativeActivity.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp

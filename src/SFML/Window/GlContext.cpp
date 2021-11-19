@@ -28,7 +28,6 @@
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/EglContext.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <glad/gl.h>
 #include <algorithm>
@@ -157,7 +156,7 @@ namespace
         // This mutex is also used to protect the shared context
         // from being locked on multiple threads and for managing
         // the resource count
-        sf::Mutex mutex;
+        std::mutex mutex;
 
         // OpenGL resources counter
         unsigned int resourceCount = 0;
@@ -198,7 +197,7 @@ namespace
                 }
                 else if (!currentContext)
                 {
-                    sharedContextLock = new std::scoped_lock<sf::Mutex>(mutex);
+                    sharedContextLock = new std::scoped_lock<std::mutex>(mutex);
                     useSharedContext = true;
                     sharedContext->setActive(true);
                 }
@@ -229,7 +228,7 @@ namespace
             ////////////////////////////////////////////////////////////
             unsigned int                 referenceCount;
             sf::Context*                 context;
-            std::scoped_lock<sf::Mutex>* sharedContextLock;
+            std::scoped_lock<std::mutex>* sharedContextLock;
             bool                         useSharedContext;
         };
 

@@ -29,7 +29,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
 #include <mutex>
@@ -39,7 +38,7 @@ namespace
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace VertexBufferImpl
     {
-        sf::Mutex isAvailableMutex;
+        std::mutex isAvailableMutex;
 
         GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
         {

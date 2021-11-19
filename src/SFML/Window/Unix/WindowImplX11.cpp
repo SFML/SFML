@@ -31,7 +31,6 @@
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <X11/Xlibint.h>
 #include <X11/Xutil.h>
@@ -68,7 +67,7 @@ namespace
     {
         sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
         std::vector<sf::priv::WindowImplX11*> allWindows;
-        sf::Mutex                             allWindowsMutex;
+        std::mutex                             allWindowsMutex;
         sf::String                            windowManagerName;
 
         sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };

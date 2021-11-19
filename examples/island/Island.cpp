@@ -39,7 +39,7 @@ namespace
     int pendingWorkCount = 0;
     bool workPending = true;
     bool bufferUploadPending = false;
-    sf::Mutex workQueueMutex;
+    std::mutex workQueueMutex;
 
     struct Setting
     {

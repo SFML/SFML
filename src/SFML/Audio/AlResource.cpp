@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <mutex>
 
 
@@ -35,7 +34,7 @@ namespace
 {
     // OpenAL resources counter and its mutex
     unsigned int count = 0;
-    sf::Mutex mutex;
+    std::mutex mutex;
 
     // The audio device is instantiated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.

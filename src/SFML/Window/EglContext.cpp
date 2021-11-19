@@ -30,7 +30,6 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <mutex>
 #ifdef SFML_SYSTEM_ANDROID
     #include <SFML/System/Android/Activity.hpp>

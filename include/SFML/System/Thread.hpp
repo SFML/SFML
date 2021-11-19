@@ -281,8 +281,8 @@ private:
 /// all threads inside the same process share the same memory space,
 /// which means that you may end up accessing the same variable
 /// from multiple threads at the same time. To prevent this
-/// kind of situations, you can use mutexes (see sf::Mutex).
+/// kind of situations, you can use mutexes (see std::mutex).
 ///
-/// \see sf::Mutex
+/// \see std::mutex
 ///
 ////////////////////////////////////////////////////////////

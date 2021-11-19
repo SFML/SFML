@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
 #include <SFML/Window/Win32/WglContext.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
 #include <mutex>
 #include <sstream>
@@ -663,7 +662,7 @@ void WglContext::createContext(WglContext* shared)
 
             if (sharedContext)
             {
-                static Mutex mutex;
+                static std::mutex mutex;
                 std::scoped_lock lock(mutex);
 
                 if (WglContextImpl::currentContext == shared)
@@ -733,7 +732,7 @@ void WglContext::createContext(WglContext* shared)
         if (sharedContext)
         {
             // wglShareLists doesn't seem to be thread-safe
-            static Mutex mutex;
+            static std::mutex mutex;
             std::scoped_lock lock(mutex);
 
             if (WglContextImpl::currentContext == shared)
