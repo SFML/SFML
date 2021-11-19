@@ -128,7 +128,11 @@ void SoundRecorder::stop()
     if (m_isCapturing)
     {
         m_isCapturing = false;
-        m_thread.value().join();
+
+        if (m_thread.has_value() && m_thread->joinable())
+        {
+            m_thread->join();
+        }
 
         // Notify derived class
         onStop();
@@ -182,7 +186,11 @@ bool SoundRecorder::setDevice(const std::string& name)
     {
         // Stop the capturing thread
         m_isCapturing = false;
-        m_thread.value().join();
+
+        if (m_thread.has_value() && m_thread->joinable())
+        {
+            m_thread->join();
+        }
 
         // Determine the recording format
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;

@@ -70,7 +70,10 @@ SoundStream::~SoundStream()
     }
 
     // Wait for the thread to join
-    m_thread.value().join();
+    if (m_thread.has_value() && m_thread->joinable())
+    {
+        m_thread->join();
+    }
 }
 
 
@@ -164,7 +167,10 @@ void SoundStream::stop()
     }
 
     // Wait for the thread to join
-    m_thread.value().join();
+    if (m_thread.has_value() && m_thread->joinable())
+    {
+        m_thread->join();
+    }
 
     // Move to the beginning
     onSeek(Time::Zero);
