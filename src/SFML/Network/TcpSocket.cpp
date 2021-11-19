@@ -178,7 +178,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
 
             // Wait for something to write on our socket (which means that the connection request has returned)
-            if (select(getHandle() + 1, NULL, &selector, NULL, &time) > 0)
+            if (select(static_cast<int>(getHandle() + 1), NULL, &selector, NULL, &time) > 0)
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
@@ -330,11 +330,16 @@ Socket::Status TcpSocket::send(Packet& packet)
     if (size > 0)
         std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
 
+    // These warnings are ignored here for portability, as even on Windows the
+    // signature of `send` might change depending on whether Win32 or MinGW is
+    // being used.
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
     Status status = send(&blockToSend[0] + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+    #pragma GCC diagnostic pop
     #pragma GCC diagnostic pop
 
     // In the case of a partial send, record the location to resume from

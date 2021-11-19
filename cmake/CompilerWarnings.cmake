@@ -48,7 +48,7 @@ function(set_file_warnings)
         -Wnull-dereference # warn if a null dereference is detected
         -Wdouble-promotion # warn if float is implicit promoted to double
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
-        # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement. Disabled until better compiler support for explicit fallthrough is available.
+        # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement (disabled until better compiler support for explicit fallthrough is available)
     )
 
     if(WARNINGS_AS_ERRORS)
@@ -61,7 +61,7 @@ function(set_file_warnings)
         -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
         -Wduplicated-cond # warn if if / else chain has duplicated conditions
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
-        -Wuseless-cast # warn if you perform a cast to the same type
+        # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some typedefs might vary between platforms)
     )
 
     # Don't enable -Wduplicated-branches for GCC < 8.1 since it will lead to false positives

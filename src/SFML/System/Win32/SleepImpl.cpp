@@ -44,7 +44,7 @@ void sleepImpl(Time time)
     timeBeginPeriod(tc.wPeriodMin);
 
     // Wait...
-    ::Sleep(time.asMilliseconds());
+    ::Sleep(static_cast<DWORD>(time.asMilliseconds()));
 
     // Reset the timer resolution back to the system default
     timeEndPeriod(tc.wPeriodMin);
