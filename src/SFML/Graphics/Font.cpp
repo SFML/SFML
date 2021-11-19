@@ -131,7 +131,7 @@ Font::~Font()
     #ifdef SFML_SYSTEM_ANDROID
 
     if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
+        delete static_cast<priv::ResourceStream*>(m_stream);
 
     #endif
 }
@@ -195,10 +195,10 @@ bool Font::loadFromFile(const std::string& filename)
     #else
 
     if (m_stream)
-        delete (priv::ResourceStream*)m_stream;
+        delete static_cast<priv::ResourceStream*>(m_stream);
 
     m_stream = new priv::ResourceStream(filename);
-    return loadFromStream(*(priv::ResourceStream*)m_stream);
+    return loadFromStream(*static_cast<priv::ResourceStream*>(m_stream));
 
     #endif
 }
