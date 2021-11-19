@@ -31,6 +31,7 @@ function(set_file_warnings)
 
         # Disables, remove when appropriate
         /wd4996 # disable warnings about deprecated functions
+        /wd4068 # disable warnings about unknown pragmas (e.g. #pragma GCC)
     )
 
     set(CLANG_AND_GCC_WARNINGS

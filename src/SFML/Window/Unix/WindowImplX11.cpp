@@ -1057,11 +1057,11 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
     unsigned long* ptr = &icccmIconPixels[0];
 
-    assert(ptr != NULL);
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
     *ptr++ = width;
-
-    assert(ptr != NULL);
     *ptr++ = height;
+    #pragma GCC diagnostic pop
 
     for (std::size_t i = 0; i < width * height; ++i)
     {
