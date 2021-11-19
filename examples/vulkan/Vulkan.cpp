@@ -1277,7 +1277,7 @@ public:
 
         for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
         {
-            if ((memoryRequirements.memoryTypeBits & (1 << memoryType)) &&
+            if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
                 break;
         }
@@ -1599,7 +1599,7 @@ public:
 
         for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
         {
-            if ((memoryRequirements.memoryTypeBits & (1 << memoryType)) &&
+            if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
                 break;
         }
