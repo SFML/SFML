@@ -242,13 +242,13 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     }
 
     // Loop until every byte has been sent
-    ssize_t result = 0;
+    int result = 0;
     for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
     {
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wuseless-cast"
         // Send a chunk of data
-        result = ::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags);
+        result = static_cast<int>(::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
         #pragma GCC diagnostic pop
 
         // Check for errors
