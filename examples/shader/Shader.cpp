@@ -31,14 +31,18 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+        textureUniformLocation = m_shader.getUniformLocation("texture");
+        pixelThresholdUniformLocation = m_shader.getUniformLocation("pixel_threshold");
+
+        m_shader.setUniform(textureUniformLocation, sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float, float x, float y)
     {
-        m_shader.setUniform("pixel_threshold", (x + y) / 30);
+        m_shader.setUniform(pixelThresholdUniformLocation, (x + y) / 30);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -52,6 +56,8 @@ private:
     sf::Texture m_texture;
     sf::Sprite m_sprite;
     sf::Shader m_shader;
+    int textureUniformLocation;
+    int pixelThresholdUniformLocation;
 };
 
 
@@ -96,14 +102,18 @@ public:
         if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
             return false;
 
+        wavePhaseUniformLocation = m_shader.getUniformLocation("wave_phase");
+        waveAmplitudeUniformLocation = m_shader.getUniformLocation("wave_amplitude");
+        blurRadiusUniformLocation = m_shader.getUniformLocation("blur_radius");
+
         return true;
     }
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setUniform("wave_phase", time);
-        m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
-        m_shader.setUniform("blur_radius", (x + y) * 0.008f);
+        m_shader.setUniform(wavePhaseUniformLocation, time);
+        m_shader.setUniform(waveAmplitudeUniformLocation, sf::Vector2f(x * 40, y * 40));
+        m_shader.setUniform(blurRadiusUniformLocation, (x + y) * 0.008f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -116,6 +126,9 @@ private:
 
     sf::Text m_text;
     sf::Shader m_shader;
+    int wavePhaseUniformLocation;
+    int waveAmplitudeUniformLocation;
+    int blurRadiusUniformLocation;
 };
 
 
@@ -149,16 +162,21 @@ public:
         if (!m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
             return false;
 
+        stormPositionUniformLocation = m_shader.getUniformLocation("storm_position");
+        stormInnerRadiusUniformLocation = m_shader.getUniformLocation("storm_inner_radius");
+        stormTotalRadiusUniformLocation = m_shader.getUniformLocation("storm_total_radius");
+        blinkAlphaUniformLocation = m_shader.getUniformLocation("blink_alpha");
+
         return true;
     }
 
     void onUpdate(float time, float x, float y)
     {
         float radius = 200 + std::cos(time) * 150;
-        m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
-        m_shader.setUniform("storm_inner_radius", radius / 3);
-        m_shader.setUniform("storm_total_radius", radius);
-        m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader.setUniform(stormPositionUniformLocation, sf::Vector2f(x * 800, y * 600));
+        m_shader.setUniform(stormInnerRadiusUniformLocation, radius / 3);
+        m_shader.setUniform(stormTotalRadiusUniformLocation, radius);
+        m_shader.setUniform(blinkAlphaUniformLocation, 0.5f + std::cos(time * 3) * 0.25f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -171,6 +189,10 @@ private:
 
     sf::VertexArray m_points;
     sf::Shader m_shader;
+    int stormPositionUniformLocation;
+    int stormInnerRadiusUniformLocation;
+    int stormTotalRadiusUniformLocation;
+    int blinkAlphaUniformLocation;
 };
 
 
@@ -215,14 +237,18 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
             return false;
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+        textureUniformLocation = m_shader.getUniformLocation("texture");
+        edgeThresholdUniformLocation = m_shader.getUniformLocation("edge_threshold");
+
+        m_shader.setUniform(textureUniformLocation, sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float time, float x, float y)
     {
-        m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
+        m_shader.setUniform(edgeThresholdUniformLocation, 1 - (x + y) / 2);
 
         // Update the position of the moving entities
         for (std::size_t i = 0; i < m_entities.size(); ++i)
@@ -255,6 +281,8 @@ private:
     sf::Sprite m_backgroundSprite;
     std::vector<sf::Sprite> m_entities;
     sf::Shader m_shader;
+    int textureUniformLocation;
+    int edgeThresholdUniformLocation;
 };
 
 
@@ -293,10 +321,16 @@ public:
         // Load the shader
         if (!m_shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))
             return false;
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+        textureUniformLocation = m_shader.getUniformLocation("texture");
+        resolutionUniformLocation = m_shader.getUniformLocation("resolution");
+        sizeUniformLocation = m_shader.getUniformLocation("size");
+
+
+        m_shader.setUniform(textureUniformLocation, sf::Shader::CurrentTexture);
 
         // Set the render resolution (used for proper scaling)
-        m_shader.setUniform("resolution", sf::Vector2f(800, 600));
+        m_shader.setUniform(resolutionUniformLocation, sf::Vector2f(800, 600));
 
         return true;
     }
@@ -314,7 +348,7 @@ public:
         float size = 25 + std::abs(y) * 50;
 
         // Update the shader parameter
-        m_shader.setUniform("size", sf::Vector2f(size, size));
+        m_shader.setUniform(sizeUniformLocation, sf::Vector2f(size, size));
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -334,6 +368,9 @@ private:
     sf::Transform m_transform;
     sf::Shader m_shader;
     sf::VertexArray m_pointCloud;
+    int textureUniformLocation;
+    int resolutionUniformLocation;
+    int sizeUniformLocation;
 };
 
 
