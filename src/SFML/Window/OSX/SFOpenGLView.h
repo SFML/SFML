@@ -78,6 +78,7 @@ namespace sf {
     BOOL                          m_cursorGrabbed;  ///< Is the mouse cursor trapped?
     CGFloat                       m_deltaXBuffer;   ///< See note about cursor grabbing above
     CGFloat                       m_deltaYBuffer;   ///< See note about cursor grabbing above
+    BOOL                          m_highDpi;        ///< Is high-DPI enabled?
 
     // Hidden text view used to convert key event to actual chars.
     // We use a silent responder to prevent sound alerts.
@@ -99,7 +100,7 @@ namespace sf {
 /// \return an initialized view
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen;
+-(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi;
 
 ////////////////////////////////////////////////////////////
 /// \brief Finish the creation of the SFML OpenGL view

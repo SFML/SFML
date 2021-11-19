@@ -86,11 +86,17 @@
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect
 {
-    return [self initWithFrame:frameRect fullscreen:NO];
+    return [self initWithFrame:frameRect fullscreen:NO highDpi:NO];
 }
 
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
+{
+    return [self initWithFrame:frameRect fullscreen:isFullscreen highDpi:NO];
+}
+
+////////////////////////////////////////////////////////
+-(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi
 {
     if ((self = [super initWithFrame:frameRect]))
     {
@@ -118,8 +124,12 @@
         m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
         [m_hiddenTextView setNextResponder:m_silentResponder];
 
-        // Request high resolution on high DPI displays
-        [self setWantsBestResolutionOpenGLSurface:YES];
+        // If high DPI is requested, then use high resolution for the OpenGL view.
+        // Currently, isHighDpi is always expected to be NO, and so the OpenGL view will render scaled.
+        // Note: setWantsBestResolutionOpenGLSurface requires YES to work properly, rather than simply non-zero value.
+        // isHighDpi is an Objective-C BOOL, which can have non-zero values other than YES.
+        m_highDpi = isHighDpi ? YES : NO;
+        [self setWantsBestResolutionOpenGLSurface:m_highDpi];
 
         // At that point, the view isn't attached to a window. We defer the rest of
         // the initialization process to later.
@@ -224,7 +234,7 @@
     NSWindow* window = [self window];
     NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
     CGFloat oldScaleFactor = m_scaleFactor;
-    m_scaleFactor = [screen backingScaleFactor];
+    m_scaleFactor = m_highDpi ? [screen backingScaleFactor] : 1.0;
 
     // Send a resize event if the scaling factor changed
     if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
