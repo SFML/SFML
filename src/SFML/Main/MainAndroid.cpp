@@ -46,6 +46,7 @@
 #include <cstring>
 #include <mutex>
 #include <thread>
+#include <cassert>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
@@ -81,6 +82,8 @@ int getAndroidApiLevel(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
+    assert(activity != NULL);
+
     // Hide the ugly cast we find in each callback function
     return (ActivityStates*)activity->instance;
 }
@@ -327,7 +330,7 @@ static void onDestroy(ANativeActivity* activity)
     delete states;
 
     // Reset the activity pointer for all modules
-    sf::priv::getActivity(nullptr, true);
+    sf::priv::resetActivity(nullptr);
 
     // The application should now terminate
 }
@@ -509,7 +512,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     states->terminated = false;
 
     // Share it across the SFML modules
-    sf::priv::getActivity(states, true);
+    sf::priv::resetActivity(states);
 
     // These functions will update the activity states and therefore, will allow
     // SFML to be kept in the know

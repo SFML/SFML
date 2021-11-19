@@ -34,6 +34,7 @@
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
+#include <mutex>
 
 
 namespace sf

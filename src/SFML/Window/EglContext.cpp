@@ -56,10 +56,10 @@ namespace
 #if defined(SFML_SYSTEM_ANDROID)
 
             // On Android, its native activity handles this for us
-            sf::priv::ActivityStates* states = sf::priv::getActivity(nullptr);
-            std::scoped_lock lock(states->mutex);
+            sf::priv::ActivityStates& states = sf::priv::getActivity();
+            std::scoped_lock lock(states.mutex);
 
-            return states->display;
+            return states.display;
 
 #endif
 
@@ -142,10 +142,10 @@ m_config  (nullptr)
 #ifdef SFML_SYSTEM_ANDROID
 
     // On Android, we must save the created context
-    ActivityStates* states = getActivity(nullptr);
-    std::scoped_lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
-    states->context = this;
+    states.context = this;
 
 #endif
 
