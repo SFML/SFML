@@ -326,7 +326,10 @@ Socket::Status TcpSocket::send(Packet& packet)
     std::vector<char> blockToSend(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the block to send
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
     std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    #pragma GCC diagnostic pop
     if (size > 0)
         std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
 
@@ -335,6 +338,7 @@ Socket::Status TcpSocket::send(Packet& packet)
     // being used.
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;

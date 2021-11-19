@@ -33,7 +33,7 @@ function(set_file_warnings)
         /wd4996 # disable warnings about deprecated functions
     )
 
-    set(CLANG_WARNINGS
+    set(CLANG_AND_GCC_WARNINGS
         -Wall
         -Wextra # reasonable and standard
         -Wshadow # warn the user if a variable declaration shadows one from a parent context
@@ -51,13 +51,18 @@ function(set_file_warnings)
         # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement (disabled until better compiler support for explicit fallthrough is available)
     )
 
+    set(CLANG_WARNINGS
+        ${CLANG_AND_GCC_WARNINGS}
+        -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
+    )
+
     if(WARNINGS_AS_ERRORS)
-        set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
+        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
     endif()
 
     set(GCC_WARNINGS
-        ${CLANG_WARNINGS}
+        ${CLANG_AND_GCC_WARNINGS}
         -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
         -Wduplicated-cond # warn if if / else chain has duplicated conditions
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
