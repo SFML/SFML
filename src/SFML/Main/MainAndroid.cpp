@@ -554,7 +554,6 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
 
     // Launch the main thread
     auto* thread = new std::thread(sf::priv::main, states);
-    thread->launch();
 
     // Wait for the main thread to be initialized
     states->mutex.lock();
