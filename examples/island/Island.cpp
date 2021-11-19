@@ -220,8 +220,7 @@ int main()
                         bufferUploadPending = false;
                     }
 
-                    int location = terrainShader.getUniformLocation("lightFactor");
-                    terrainShader.setUniform(location, lightFactor);
+                    terrainShader.setUniform("lightFactor", lightFactor);
                     window.draw(terrain, terrainStates);
                 }
             }
