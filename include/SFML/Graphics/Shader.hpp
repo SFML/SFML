@@ -557,7 +557,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, float) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x);
+    [[deprecated]] void setParameter(const std::string& name, float x);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 2-components vector parameter of the shader
@@ -565,7 +565,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y);
+    [[deprecated]] void setParameter(const std::string& name, float x, float y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 3-components vector parameter of the shader
@@ -573,7 +573,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y, float z);
+    [[deprecated]] void setParameter(const std::string& name, float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 4-components vector parameter of the shader
@@ -581,7 +581,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, float x, float y, float z, float w);
+    [[deprecated]] void setParameter(const std::string& name, float x, float y, float z, float w);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 2-components vector parameter of the shader
@@ -589,7 +589,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Vector2f& vector);
+    [[deprecated]] void setParameter(const std::string& name, const Vector2f& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a 3-components vector parameter of the shader
@@ -597,7 +597,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Vector3f& vector);
+    [[deprecated]] void setParameter(const std::string& name, const Vector3f& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a color parameter of the shader
@@ -605,7 +605,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Color& color);
+    [[deprecated]] void setParameter(const std::string& name, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a matrix parameter of the shader
@@ -613,7 +613,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Glsl::Mat4&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Transform& transform);
+    [[deprecated]] void setParameter(const std::string& name, const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -621,7 +621,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, const Texture&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, const Texture& texture);
+    [[deprecated]] void setParameter(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change a texture parameter of the shader
@@ -629,7 +629,7 @@ public:
     /// \deprecated Use setUniform(const std::string&, CurrentTextureType) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED void setParameter(const std::string& name, CurrentTextureType);
+    [[deprecated]] void setParameter(const std::string& name, CurrentTextureType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the shader.
