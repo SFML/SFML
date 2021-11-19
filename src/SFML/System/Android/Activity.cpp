@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/Activity.hpp>
 #include <android/log.h>
+#include <cassert>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-error", __VA_ARGS__))
 
@@ -56,14 +57,24 @@ namespace sf
 {
 namespace priv
 {
-ActivityStates* getActivity(ActivityStates* initializedStates, bool reset)
+
+ActivityStates*& getActivityStatesPtr()
 {
     static ActivityStates* states = NULL;
-
-    if (!states || reset)
-        states = initializedStates;
-
     return states;
 }
+
+void resetActivity(ActivityStates* initializedStates)
+{
+    getActivityStatesPtr() = initializedStates;
+}
+
+ActivityStates& getActivity()
+{
+    ActivityStates*& states = getActivityStatesPtr();
+    assert(states != NULL);
+    return *states;
+}
+
 }
 }

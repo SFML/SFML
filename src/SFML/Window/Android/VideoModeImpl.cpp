@@ -52,10 +52,10 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 VideoMode VideoModeImpl::getDesktopMode()
 {
     // Get the activity states
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    priv::ActivityStates& states = priv::getActivity();
+    Lock lock(states.mutex);
 
-    return VideoMode(states->screenSize.x, states->screenSize.y);
+    return VideoMode(states.screenSize.x, states.screenSize.y);
 }
 
 } // namespace priv
