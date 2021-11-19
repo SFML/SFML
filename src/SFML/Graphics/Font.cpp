@@ -85,16 +85,16 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Font::Font() :
-m_library  (NULL),
-m_face     (NULL),
-m_streamRec(NULL),
-m_stroker  (NULL),
-m_refCount (NULL),
+m_library  (nullptr),
+m_face     (nullptr),
+m_streamRec(nullptr),
+m_stroker  (nullptr),
+m_refCount (nullptr),
 m_isSmooth (true),
 m_info     ()
 {
     #ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
+        m_stream = nullptr;
     #endif
 }
 
@@ -112,7 +112,7 @@ m_pages      (copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
     #ifdef SFML_SYSTEM_ANDROID
-        m_stream = NULL;
+        m_stream = nullptr;
     #endif
 
     // Note: as FreeType doesn't provide functions for copying/cloning,
@@ -283,7 +283,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     FT_StreamRec* rec = new FT_StreamRec;
     std::memset(rec, 0, sizeof(*rec));
-    rec->base               = NULL;
+    rec->base               = nullptr;
     rec->size               = static_cast<unsigned long>(stream.getSize());
     rec->pos                = 0;
     rec->descriptor.pointer = &stream;
@@ -557,11 +557,11 @@ void Font::cleanup()
     }
 
     // Reset members
-    m_library   = NULL;
-    m_face      = NULL;
-    m_stroker   = NULL;
-    m_streamRec = NULL;
-    m_refCount  = NULL;
+    m_library   = nullptr;
+    m_face      = nullptr;
+    m_stroker   = nullptr;
+    m_streamRec = nullptr;
+    m_refCount  = nullptr;
     m_pages.clear();
     std::vector<Uint8>().swap(m_pixelBuffer);
 }
@@ -735,7 +735,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height) const
 {
     // Find the line that fits well the glyph
-    Row* row = NULL;
+    Row* row = nullptr;
     float bestRatio = 0;
     for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it)
     {

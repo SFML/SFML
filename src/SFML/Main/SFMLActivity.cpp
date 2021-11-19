@@ -61,7 +61,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
 
     // No meta-data "sfml.app.lib_name" was found so we abort and inform the user
-    if (valueString == NULL)
+    if (valueString == nullptr)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
         exit(1);
@@ -69,7 +69,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 
     // Convert the application name to a C++ string and return it
     const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
-    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, NULL);
+    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, nullptr);
 
     if (applicationNameLength >= 256)
     {
@@ -109,7 +109,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     // Get the library absolute path and convert it
     jmethodID MethodGetPath = lJNIEnv->GetMethodID(ClassFile, "getPath", "()Ljava/lang/String;");
     jstring javaLibraryPath = static_cast<jstring>(lJNIEnv->CallObjectMethod(ObjectFile, MethodGetPath));
-    const char* libraryPath = lJNIEnv->GetStringUTFChars(javaLibraryPath, NULL);
+    const char* libraryPath = lJNIEnv->GetStringUTFChars(javaLibraryPath, nullptr);
 
     // Manually load the library
     void * handle = dlopen(libraryPath, RTLD_NOW | RTLD_GLOBAL);

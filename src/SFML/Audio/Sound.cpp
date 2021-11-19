@@ -34,14 +34,14 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sound::Sound() :
-m_buffer(NULL)
+m_buffer(nullptr)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 Sound::Sound(const SoundBuffer& buffer) :
-m_buffer(NULL)
+m_buffer(nullptr)
 {
     setBuffer(buffer);
 }
@@ -50,7 +50,7 @@ m_buffer(NULL)
 ////////////////////////////////////////////////////////////
 Sound::Sound(const Sound& copy) :
 SoundSource(copy),
-m_buffer   (NULL)
+m_buffer   (nullptr)
 {
     if (copy.m_buffer)
         setBuffer(*copy.m_buffer);
@@ -172,7 +172,7 @@ Sound& Sound::operator =(const Sound& right)
     {
         stop();
         m_buffer->detachSound(this);
-        m_buffer = NULL;
+        m_buffer = nullptr;
     }
 
     // Copy the remaining sound attributes
@@ -195,7 +195,7 @@ void Sound::resetBuffer()
     {
         alCheck(alSourcei(m_source, AL_BUFFER, 0));
         m_buffer->detachSound(this);
-        m_buffer = NULL;
+        m_buffer = nullptr;
     }
 }
 

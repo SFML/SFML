@@ -138,7 +138,7 @@ bool JoystickImpl::isConnected(unsigned int index)
             // Get all devices
             CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
 
-            if (devices != NULL)
+            if (devices != nullptr)
             {
                 CFIndex size = CFSetGetCount(devices);
                 if (size > 0)
@@ -184,12 +184,12 @@ bool JoystickImpl::open(unsigned int index)
 {
     AutoreleasePool pool;
     m_index = index;
-    m_hat = NULL;
+    m_hat = nullptr;
     Location deviceLoc = m_locationIDs[index]; // The device we need to load
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
-    if (devices == NULL)
+    if (devices == nullptr)
         return false;
 
     // Get a usable copy of the joysticks devices.
@@ -217,9 +217,9 @@ bool JoystickImpl::open(unsigned int index)
     m_identification.productId = getDeviceUint(self, CFSTR(kIOHIDProductIDKey), m_index);
 
     // Get a list of all elements attached to the device.
-    CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self, NULL, kIOHIDOptionsTypeNone);
+    CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone);
 
-    if (elements == NULL)
+    if (elements == nullptr)
     {
         CFRelease(devices);
         return false;
@@ -311,7 +311,7 @@ bool JoystickImpl::open(unsigned int index)
         CFRetain(*it);
     for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
         CFRetain(it->second);
-    if (m_hat != NULL)
+    if (m_hat != nullptr)
         CFRetain(m_hat);
 
     // Note: we didn't retain element in the switch because we might have multiple
@@ -337,9 +337,9 @@ void JoystickImpl::close()
         CFRelease(it->second);
     m_axis.clear();
 
-    if (m_hat != NULL)
+    if (m_hat != nullptr)
         CFRelease(m_hat);
-    m_hat = NULL;
+    m_hat = nullptr;
 
     // And we unregister this joystick
     m_locationIDs[m_index] = 0;
@@ -359,7 +359,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
     for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it)
         caps.axes[it->first] = true;
 
-    if (m_hat != NULL)
+    if (m_hat != nullptr)
         caps.axes[Joystick::PovX] = caps.axes[Joystick::PovY] = true;
 
     return caps;
@@ -390,7 +390,7 @@ JoystickState JoystickImpl::update()
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
-    if (devices == NULL)
+    if (devices == nullptr)
         return disconnectedState;
 
     // Get a usable copy of the joysticks devices.
@@ -468,7 +468,7 @@ JoystickState JoystickImpl::update()
     //   West / 6          Null  / 8         East / 2
     //   South-West / 5    South / 4   South-East / 3
     //
-    if (m_hat != NULL)
+    if (m_hat != nullptr)
     {
         IOHIDValueRef value = 0;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(m_hat), m_hat, &value);

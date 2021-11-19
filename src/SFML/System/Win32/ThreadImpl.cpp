@@ -39,7 +39,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ThreadImpl::ThreadImpl(Thread* owner)
 {
-    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, &ThreadImpl::entryPoint, owner, 0, &m_threadId));
+    m_thread = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, &ThreadImpl::entryPoint, owner, 0, &m_threadId));
 
     if (!m_thread)
         err() << "Failed to create thread" << std::endl;

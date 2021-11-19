@@ -58,7 +58,7 @@ void SensorImpl::initialize()
 
     // Create the sensor events queue and attach it to the looper
     sensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper,
-        1, &processSensorEvents, NULL);
+        1, &processSensorEvents, nullptr);
 }
 
 
@@ -113,7 +113,7 @@ void SensorImpl::close()
 Vector3f SensorImpl::update()
 {
     // Update our sensor data list
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
     return sensorData[m_index];
 }

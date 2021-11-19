@@ -29,7 +29,7 @@ std::string resourcesDir()
 ////////////////////////////////////////////////////////////
 int main()
 {
-    std::srand(static_cast<unsigned int>(std::time(NULL)));
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     // Define some constants
     const float pi = 3.14159f;
@@ -147,7 +147,7 @@ int main()
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }
             }
-            
+
             // Window size changed, adjust view appropriately
             if (event.type == sf::Event::Resized)
             {
@@ -173,7 +173,7 @@ int main()
             {
                 leftPaddle.move(0.f, paddleSpeed * deltaTime);
             }
-            
+
             if (sf::Touch::isDown(0))
             {
                 sf::Vector2i pos = sf::Touch::getPosition(0);
@@ -209,7 +209,7 @@ int main()
             #else
             const std::string inputString = "Press space to restart or\nescape to exit.";
             #endif
-            
+
             // Check collisions between the ball and the screen
             if (ball.getPosition().x - ballRadius < 0.f)
             {

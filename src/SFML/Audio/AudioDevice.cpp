@@ -34,8 +34,8 @@
 
 namespace
 {
-    ALCdevice*  audioDevice  = NULL;
-    ALCcontext* audioContext = NULL;
+    ALCdevice*  audioDevice  = nullptr;
+    ALCcontext* audioContext = nullptr;
 
     float        listenerVolume = 100.f;
     sf::Vector3f listenerPosition (0.f, 0.f, 0.f);
@@ -51,12 +51,12 @@ namespace priv
 AudioDevice::AudioDevice()
 {
     // Create the device
-    audioDevice = alcOpenDevice(NULL);
+    audioDevice = alcOpenDevice(nullptr);
 
     if (audioDevice)
     {
         // Create the context
-        audioContext = alcCreateContext(audioDevice, NULL);
+        audioContext = alcCreateContext(audioDevice, nullptr);
 
         if (audioContext)
         {
@@ -90,7 +90,7 @@ AudioDevice::AudioDevice()
 AudioDevice::~AudioDevice()
 {
     // Destroy the context
-    alcMakeContextCurrent(NULL);
+    alcMakeContextCurrent(nullptr);
     if (audioContext)
         alcDestroyContext(audioContext);
 

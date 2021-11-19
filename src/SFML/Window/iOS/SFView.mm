@@ -183,7 +183,7 @@
 
     if (self)
     {
-        self.context = NULL;
+        self.context = nullptr;
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer

@@ -117,7 +117,7 @@ bool SoundFileReaderWav::check(InputStream& stream)
 
 ////////////////////////////////////////////////////////////
 SoundFileReaderWav::SoundFileReaderWav() :
-m_stream        (NULL),
+m_stream        (nullptr),
 m_bytesPerSample(0),
 m_dataStart     (0),
 m_dataEnd       (0)

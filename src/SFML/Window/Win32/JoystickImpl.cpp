@@ -68,8 +68,8 @@ namespace
         const GUID GUID_RyAxis        = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
     }
 
-    HMODULE dinput8dll = NULL;
-    IDirectInput8W* directInput = NULL;
+    HMODULE dinput8dll = nullptr;
+    IDirectInput8W* directInput = nullptr;
 
     struct JoystickRecord
     {
@@ -117,7 +117,7 @@ namespace
     {
         PTCHAR buffer;
 
-        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, reinterpret_cast<PTCHAR>(&buffer), 0, NULL) == 0)
+        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error, 0, reinterpret_cast<PTCHAR>(&buffer), 0, nullptr) == 0)
             return "Unknown error.";
 
         sf::String message = buffer;
@@ -167,7 +167,7 @@ namespace
         TCHAR keyData[256];
         DWORD keyDataSize = sizeof(keyData);
 
-        result = RegQueryValueEx(currentKey, subkey.c_str(), NULL, NULL, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+        result = RegQueryValueEx(currentKey, subkey.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
         RegCloseKey(currentKey);
 
         if (result != ERROR_SUCCESS)
@@ -190,7 +190,7 @@ namespace
 
         keyDataSize = sizeof(keyData);
 
-        result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, NULL, NULL, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+        result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
         RegCloseKey(currentKey);
 
         if (result != ERROR_SUCCESS)
@@ -409,14 +409,14 @@ void JoystickImpl::initializeDInput()
         if (directInput8Create)
         {
             // Try to acquire a DirectInput 8.x interface
-            HRESULT result = directInput8Create(GetModuleHandleW(NULL), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), NULL);
+            HRESULT result = directInput8Create(GetModuleHandleW(nullptr), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), nullptr);
 
             if (FAILED(result))
             {
                 // De-initialize everything
-                directInput = NULL;
+                directInput = nullptr;
                 FreeLibrary(dinput8dll);
-                dinput8dll = NULL;
+                dinput8dll = nullptr;
 
                 err() << "Failed to initialize DirectInput: " << result << std::endl;
             }
@@ -425,7 +425,7 @@ void JoystickImpl::initializeDInput()
         {
             // Unload dinput8.dll
             FreeLibrary(dinput8dll);
-            dinput8dll = NULL;
+            dinput8dll = nullptr;
         }
     }
 }
@@ -438,7 +438,7 @@ void JoystickImpl::cleanupDInput()
     if (directInput)
     {
         directInput->Release();
-        directInput = NULL;
+        directInput = nullptr;
     }
 
     // Unload dinput8.dll
@@ -469,7 +469,7 @@ void JoystickImpl::updateConnectionsDInput()
         joystickList[i].plugged = false;
 
     // Enumerate devices
-    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, &JoystickImpl::deviceEnumerationCallback, NULL, DIEDFL_ATTACHEDONLY);
+    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, &JoystickImpl::deviceEnumerationCallback, nullptr, DIEDFL_ATTACHEDONLY);
 
     // Remove devices that were not connected during the enumeration
     for (std::vector<JoystickRecord>::iterator i = joystickList.begin(); i != joystickList.end();)
@@ -509,7 +509,7 @@ void JoystickImpl::updateConnectionsDInput()
 bool JoystickImpl::openDInput(unsigned int index)
 {
     // Initialize DirectInput members
-    m_device = NULL;
+    m_device = nullptr;
 
     for (int i = 0; i < Joystick::AxisCount; ++i)
         m_axes[i] = -1;
@@ -528,7 +528,7 @@ bool JoystickImpl::openDInput(unsigned int index)
         if (it->index == index)
         {
             // Create device
-            HRESULT result = directInput->CreateDevice(it->guid, &m_device, NULL);
+            HRESULT result = directInput->CreateDevice(it->guid, &m_device, nullptr);
 
             if (FAILED(result))
             {
@@ -559,7 +559,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                         {
                             // Device is blacklisted
                             m_device->Release();
-                            m_device = NULL;
+                            m_device = nullptr;
 
                             return false;
                         }
@@ -650,7 +650,7 @@ bool JoystickImpl::openDInput(unsigned int index)
 
                 for (int i = 0; i < sf::Joystick::ButtonCount; ++i)
                 {
-                    data[8 * 4 + 4 + i].pguid = NULL;
+                    data[8 * 4 + 4 + i].pguid = nullptr;
                     data[8 * 4 + 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_BUTTON(i));
                     data[8 * 4 + 4 + i].dwType = buttonType;
                     data[8 * 4 + 4 + i].dwFlags = 0;
@@ -674,7 +674,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 err() << "Failed to set DirectInput device data format: " << result << std::endl;
 
                 m_device->Release();
-                m_device = NULL;
+                m_device = nullptr;
 
                 return false;
             }
@@ -687,7 +687,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 err() << "Failed to get DirectInput device capabilities: " << result << std::endl;
 
                 m_device->Release();
-                m_device = NULL;
+                m_device = nullptr;
 
                 return false;
             }
@@ -700,7 +700,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 err() << "Failed to enumerate DirectInput device objects: " << result << std::endl;
 
                 m_device->Release();
-                m_device = NULL;
+                m_device = nullptr;
 
                 return false;
             }
@@ -724,7 +724,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                               << m_identification.name.toAnsiString() << "\": " << result << std::endl;
 
                         m_device->Release();
-                        m_device = NULL;
+                        m_device = nullptr;
 
                         return false;
                     }
@@ -756,7 +756,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                             << m_identification.name.toAnsiString() << "\": " << result << std::endl;
 
                         m_device->Release();
-                        m_device = NULL;
+                        m_device = nullptr;
 
                         return false;
                     }
@@ -778,7 +778,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                         }
 
                         m_device->Release();
-                        m_device = NULL;
+                        m_device = nullptr;
 
                         return false;
                     }
@@ -812,7 +812,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                       << m_identification.name.toAnsiString() << "\": " << result << std::endl;
 
                 m_device->Release();
-                m_device = NULL;
+                m_device = nullptr;
 
                 return false;
             }
@@ -832,7 +832,7 @@ void JoystickImpl::closeDInput()
     {
         // Release the device
         m_device->Release();
-        m_device = NULL;
+        m_device = nullptr;
     }
 }
 
@@ -885,7 +885,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
     if ((result == DIERR_NOTACQUIRED) || (result == DIERR_INPUTLOST))
     {
         m_device->Release();
-        m_device = NULL;
+        m_device = nullptr;
 
         return m_state;
     }
@@ -979,7 +979,7 @@ JoystickState JoystickImpl::updateDInputPolled()
         if ((result == DIERR_NOTACQUIRED) || (result == DIERR_INPUTLOST))
         {
             m_device->Release();
-            m_device = NULL;
+            m_device = nullptr;
 
             return state;
         }

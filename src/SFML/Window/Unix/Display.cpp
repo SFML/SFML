@@ -38,7 +38,7 @@
 namespace
 {
     // The shared display and its reference counter
-    Display* sharedDisplay = NULL;
+    Display* sharedDisplay = nullptr;
     unsigned int referenceCount = 0;
     sf::Mutex mutex;
 
@@ -57,7 +57,7 @@ Display* OpenDisplay()
 
     if (referenceCount == 0)
     {
-        sharedDisplay = XOpenDisplay(NULL);
+        sharedDisplay = XOpenDisplay(nullptr);
 
         // Opening display failed: The best we can do at the moment is to output a meaningful error message
         // and cause an abnormal program termination

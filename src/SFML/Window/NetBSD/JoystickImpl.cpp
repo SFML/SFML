@@ -164,7 +164,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    hid_init(NULL);
+    hid_init(nullptr);
 
     // Do an initial scan
     updatePluggedList();

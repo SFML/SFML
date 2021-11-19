@@ -193,8 +193,8 @@ void IpAddress::resolve(const std::string& address)
             addrinfo hints;
             std::memset(&hints, 0, sizeof(hints));
             hints.ai_family = AF_INET;
-            addrinfo* result = NULL;
-            if (getaddrinfo(address.c_str(), NULL, &hints, &result) == 0)
+            addrinfo* result = nullptr;
+            if (getaddrinfo(address.c_str(), nullptr, &hints, &result) == 0)
             {
                 if (result)
                 {

@@ -36,7 +36,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Window::Window() :
-m_context       (NULL),
+m_context       (nullptr),
 m_frameTimeLimit(Time::Zero)
 {
 
@@ -45,7 +45,7 @@ m_frameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
-m_context       (NULL),
+m_context       (nullptr),
 m_frameTimeLimit(Time::Zero)
 {
     Window::create(mode, title, style, settings);
@@ -54,7 +54,7 @@ m_frameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
-m_context       (NULL),
+m_context       (nullptr),
 m_frameTimeLimit(Time::Zero)
 {
     Window::create(handle, settings);
@@ -155,7 +155,7 @@ void Window::close()
 {
     // Delete the context
     delete m_context;
-    m_context = NULL;
+    m_context = nullptr;
 
     // Close the base window
     WindowBase::close();

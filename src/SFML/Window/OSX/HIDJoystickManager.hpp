@@ -68,7 +68,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Copy the devices associated with this HID manager
     ///
-    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
+    /// \return a retained CFSetRef of IOHIDDeviceRef or nullptr
     ///
     ////////////////////////////////////////////////////////////
     CFSetRef copyJoysticks();

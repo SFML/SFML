@@ -43,7 +43,7 @@ namespace
     struct VulkanLibraryWrapper
     {
         VulkanLibraryWrapper() :
-        library(NULL)
+        library(nullptr)
         {
         }
 
@@ -67,21 +67,21 @@ namespace
             if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
             {
                 FreeLibrary(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
             if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
             {
                 FreeLibrary(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
             if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
             {
                 FreeLibrary(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
@@ -93,7 +93,7 @@ namespace
         {
             entryPoint = reinterpret_cast<T>(reinterpret_cast<void*>(GetProcAddress(library, name)));
 
-            return (entryPoint != NULL);
+            return (entryPoint != nullptr);
         }
 
         HMODULE library;
@@ -135,7 +135,7 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
 
             uint32_t extensionCount = 0;
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, NULL);
+            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
 
             extensionProperties.resize(extensionCount);
 
@@ -210,7 +210,7 @@ bool VulkanImplWin32::createVulkanSurface(const VkInstance& instance, WindowHand
 
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = VkWin32SurfaceCreateInfoKHR();
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.hinstance = GetModuleHandleA(NULL);
+    surfaceCreateInfo.hinstance = GetModuleHandleA(nullptr);
     surfaceCreateInfo.hwnd = windowHandle;
 
     return (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
