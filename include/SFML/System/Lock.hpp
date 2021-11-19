@@ -28,56 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
-
-
-namespace sf
-{
-class Mutex;
-
-////////////////////////////////////////////////////////////
-/// \brief Automatic wrapper for locking and unlocking mutexes
-///
-////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API Lock
-{
-public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the lock with a target mutex
-    ///
-    /// The mutex passed to sf::Lock is automatically locked.
-    ///
-    /// \param mutex Mutex to lock
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit Lock(Mutex& mutex);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    /// The destructor of sf::Lock automatically unlocks its mutex.
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Lock();
-
-    ////////////////////////////////////////////////////////////
-    /// Prevent copies.
-    ///
-    ////////////////////////////////////////////////////////////
-    Lock(const Lock&) = delete;
-    Lock& operator=(const Lock&) = delete;
-
-private:
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    Mutex& m_mutex; //!< Mutex to lock / unlock
-};
-
-} // namespace sf
-
+#include <mutex>
 
 #endif // SFML_LOCK_HPP
 
@@ -103,7 +54,7 @@ private:
 ///
 /// void function()
 /// {
-///     sf::Lock lock(mutex); // mutex is now locked
+///     std::scoped_lock lock(mutex); // mutex is now locked
 ///
 ///     functionThatMayThrowAnException(); // mutex is unlocked if this function throws
 ///
@@ -126,7 +77,7 @@ private:
 /// void function()
 /// {
 ///     {
-///       sf::Lock lock(mutex);
+///       std::scoped_lock lock(mutex);
 ///       codeThatRequiresProtection();
 ///
 ///     } // mutex is unlocked here

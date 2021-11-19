@@ -28,7 +28,7 @@
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 
 
 namespace
@@ -50,7 +50,7 @@ namespace sf
 AlResource::AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // If this is the very first resource, trigger the global device initialization
     if (count == 0)
@@ -65,7 +65,7 @@ AlResource::AlResource()
 AlResource::~AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // Decrement the resources counter
     count--;

@@ -32,11 +32,11 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
 #include <cstring>
 #include <climits>
+#include <mutex>
 
 
 namespace
@@ -51,7 +51,7 @@ namespace
         // is used for states cache (see RenderTarget)
         sf::Uint64 getUniqueId()
         {
-            sf::Lock lock(idMutex);
+            std::scoped_lock lock(idMutex);
 
             static sf::Uint64 id = 1; // start at 1, zero is "no texture"
 
@@ -795,7 +795,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    Lock lock(TextureImpl::maximumSizeMutex);
+    std::scoped_lock lock(TextureImpl::maximumSizeMutex);
 
     static bool checked = false;
     static GLint size = 0;

@@ -27,12 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/keysym.h>
 #include <cassert>
 #include <cstdlib>
 #include <map>
+#include <mutex>
 
 
 namespace
@@ -53,7 +53,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Display* OpenDisplay()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     if (referenceCount == 0)
     {
@@ -76,7 +76,7 @@ Display* OpenDisplay()
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(display == sharedDisplay);
 

@@ -29,10 +29,10 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <utility>
 #include <set>
+#include <mutex>
 
 
 namespace
@@ -79,7 +79,7 @@ namespace
     // Callback that is called every time a context is destroyed
     void contextDestroyCallback(void* /*arg*/)
     {
-        sf::Lock lock(mutex);
+        std::scoped_lock lock(mutex);
 
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
@@ -123,7 +123,7 @@ m_multisample       (false),
 m_stencil           (false),
 m_sRgb              (false)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // Register the context destruction callback
     registerContextDestroyCallback(contextDestroyCallback, 0);
@@ -139,7 +139,7 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 {
     TransientContextLock contextLock;
 
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // Remove the frame buffer mapping from the set of all active mappings
     frameBuffers.erase(&m_frameBuffers);
@@ -443,7 +443,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
     }
 
     {
-        Lock lock(mutex);
+        std::scoped_lock lock(mutex);
 
         // Insert the FBO into our map
         m_frameBuffers.insert(std::make_pair(Context::getActiveContextId(), frameBuffer));
@@ -490,7 +490,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
         }
 
         {
-            Lock lock(mutex);
+            std::scoped_lock lock(mutex);
 
             // Insert the FBO into our map
             m_multisampleFrameBuffers.insert(std::make_pair(Context::getActiveContextId(), multisampleFrameBuffer));
@@ -538,7 +538,7 @@ bool RenderTextureImplFBO::activate(bool active)
     // If none is found, there is no FBO corresponding to the
     // currently active context so we will have to create a new FBO
     {
-        Lock lock(mutex);
+        std::scoped_lock lock(mutex);
 
         std::map<Uint64, unsigned int>::iterator iter;
 
@@ -592,7 +592,7 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
     {
         Uint64 contextId = Context::getActiveContextId();
 
-        Lock lock(mutex);
+        std::scoped_lock lock(mutex);
 
         std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
         std::map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);

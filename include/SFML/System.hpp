@@ -34,7 +34,6 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Sleep.hpp>

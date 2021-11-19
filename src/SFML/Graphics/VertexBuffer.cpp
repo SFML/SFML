@@ -30,9 +30,9 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
+#include <mutex>
 
 namespace
 {
@@ -336,7 +336,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    Lock lock(VertexBufferImpl::isAvailableMutex);
+    std::scoped_lock lock(VertexBufferImpl::isAvailableMutex);
 
     static bool checked = false;
     static bool available = false;

@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cstring>
 #include <cmath>
+#include <mutex>
 
 
 namespace
@@ -207,7 +208,7 @@ int main()
         if (prerequisitesSupported)
         {
             {
-                sf::Lock lock(workQueueMutex);
+                std::scoped_lock lock(workQueueMutex);
 
                 // Don't bother updating/drawing the VertexBuffer while terrain is being regenerated
                 if (!pendingWorkCount)
@@ -244,7 +245,7 @@ int main()
 
     // Shut down our thread pool
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
         workPending = false;
     }
 
@@ -538,7 +539,7 @@ void threadFunction()
 
         // Check if there are new work items in the queue
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (!workPending)
                 return;
@@ -561,7 +562,7 @@ void threadFunction()
         processWorkItem(vertices, workItem);
 
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             --pendingWorkCount;
         }
@@ -583,7 +584,7 @@ void generateTerrain(sf::Vertex* buffer)
     for (;;)
     {
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (workQueue.empty())
                 break;
@@ -594,7 +595,7 @@ void generateTerrain(sf::Vertex* buffer)
 
     // Queue all the new work items
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
 
         for (unsigned int i = 0; i < blockCount; i++)
         {
