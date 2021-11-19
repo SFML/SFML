@@ -6,8 +6,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 set(SRC
     ${SRCROOT}/BlendMode.cpp
     ${INCROOT}/BlendMode.hpp
-    ${SRCROOT}/Color.cpp
     ${INCROOT}/Color.hpp
+    ${INCROOT}/Color.inl
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Font.cpp
     ${INCROOT}/Font.hpp

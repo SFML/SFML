@@ -22,31 +22,23 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Color.hpp>
-#include <algorithm>
 
-
-namespace sf
-{
 ////////////////////////////////////////////////////////////
 // Static member data
 ////////////////////////////////////////////////////////////
-const Color Color::Black(0, 0, 0);
-const Color Color::White(255, 255, 255);
-const Color Color::Red(255, 0, 0);
-const Color Color::Green(0, 255, 0);
-const Color Color::Blue(0, 0, 255);
-const Color Color::Yellow(255, 255, 0);
-const Color Color::Magenta(255, 0, 255);
-const Color Color::Cyan(0, 255, 255);
-const Color Color::Transparent(0, 0, 0, 0);
+inline Color Color::Black{0, 0, 0};          //!< Black predefined color
+inline Color Color::White{255, 255, 255};    //!< White predefined color
+inline Color Color::Red{255, 0, 0};          //!< Red predefined color
+inline Color Color::Green{0, 255, 0};        //!< Green predefined color
+inline Color Color::Blue{0, 0, 255};         //!< Blue predefined color
+inline Color Color::Yellow{255, 255, 0};     //!< Yellow predefined color
+inline Color Color::Magenta{255, 0, 255};    //!< Magenta predefined color
+inline Color Color::Cyan{0, 255, 255};       //!< Cyan predefined color
+inline Color Color::Transparent{0, 0, 0, 0}; //!< Transparent (black) predefined color
 
 
 ////////////////////////////////////////////////////////////
-Color::Color() :
+constexpr inline Color::Color() :
 r(0),
 g(0),
 b(0),
@@ -57,7 +49,7 @@ a(255)
 
 
 ////////////////////////////////////////////////////////////
-Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
+constexpr inline Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
 r(red),
 g(green),
 b(blue),
@@ -68,7 +60,7 @@ a(alpha)
 
 
 ////////////////////////////////////////////////////////////
-Color::Color(Uint32 color) :
+constexpr inline Color::Color(Uint32 color) :
 r(static_cast<Uint8>((color & 0xff000000) >> 24)),
 g(static_cast<Uint8>((color & 0x00ff0000) >> 16)),
 b((color & 0x0000ff00) >> 8 ),
@@ -79,14 +71,14 @@ a((color & 0x000000ff) >> 0 )
 
 
 ////////////////////////////////////////////////////////////
-Uint32 Color::toInteger() const
+constexpr inline Uint32 Color::toInteger() const
 {
     return static_cast<Uint32>((r << 24) | (g << 16) | (b << 8) | a);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator ==(const Color& left, const Color& right)
+constexpr inline bool operator ==(const Color& left, const Color& right)
 {
     return (left.r == right.r) &&
            (left.g == right.g) &&
@@ -96,14 +88,14 @@ bool operator ==(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-bool operator !=(const Color& left, const Color& right)
+constexpr inline bool operator !=(const Color& left, const Color& right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-Color operator +(const Color& left, const Color& right)
+constexpr inline Color operator +(const Color& left, const Color& right)
 {
     return Color(Uint8(std::min(int(left.r) + right.r, 255)),
                  Uint8(std::min(int(left.g) + right.g, 255)),
@@ -113,7 +105,7 @@ Color operator +(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-Color operator -(const Color& left, const Color& right)
+constexpr inline Color operator -(const Color& left, const Color& right)
 {
     return Color(Uint8(std::max(int(left.r) - right.r, 0)),
                  Uint8(std::max(int(left.g) - right.g, 0)),
@@ -123,7 +115,7 @@ Color operator -(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-Color operator *(const Color& left, const Color& right)
+constexpr inline Color operator *(const Color& left, const Color& right)
 {
     return Color(Uint8(int(left.r) * right.r / 255),
                  Uint8(int(left.g) * right.g / 255),
@@ -133,23 +125,21 @@ Color operator *(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-Color& operator +=(Color& left, const Color& right)
+constexpr inline Color& operator +=(Color& left, const Color& right)
 {
     return left = left + right;
 }
 
 
 ////////////////////////////////////////////////////////////
-Color& operator -=(Color& left, const Color& right)
+constexpr inline Color& operator -=(Color& left, const Color& right)
 {
     return left = left - right;
 }
 
 
 ////////////////////////////////////////////////////////////
-Color& operator *=(Color& left, const Color& right)
+constexpr inline Color& operator *=(Color& left, const Color& right)
 {
     return left = left * right;
 }
-
-} // namespace sf
