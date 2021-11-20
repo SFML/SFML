@@ -137,3 +137,4 @@ constexpr inline Color::ColorInit::operator Color() const
 
 // Sanity check:
 static_assert(Color::Black == Color{0, 0, 0, 255});
+static_assert(Color{0, 0, 0, 255} == Color::Black);

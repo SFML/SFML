@@ -82,7 +82,7 @@ int getAndroidApiLevel(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
-    assert(activity != NULL);
+    assert(activity != nullptr);
 
     // Hide the ugly cast we find in each callback function
     return (ActivityStates*)activity->instance;

@@ -578,7 +578,7 @@ public:
     /// // draw OpenGL stuff that use s1...
     /// sf::Shader::bind(&s2);
     /// // draw OpenGL stuff that use s2...
-    /// sf::Shader::bind(NULL);
+    /// sf::Shader::bind(nullptr);
     /// // draw OpenGL stuff that use no shader...
     /// \endcode
     ///
@@ -623,7 +623,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
-    /// If one of the arguments is NULL, the corresponding shader
+    /// If one of the arguments is `nullptr`, the corresponding shader
     /// is not created.
     ///
     /// \param vertexShaderCode   Source code of the vertex shader
@@ -794,7 +794,7 @@ private:
 /// \code
 /// sf::Shader::bind(&shader);
 /// ... render OpenGL geometry ...
-/// sf::Shader::bind(NULL);
+/// sf::Shader::bind(nullptr);
 /// \endcode
 ///
 /// \see sf::Glsl

@@ -72,7 +72,7 @@ void resetActivity(ActivityStates* initializedStates)
 ActivityStates& getActivity()
 {
     ActivityStates*& states = getActivityStatesPtr();
-    assert(states != NULL);
+    assert(states != nullptr);
     return *states;
 }
 
