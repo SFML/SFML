@@ -45,8 +45,6 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-
-
 #endif // SFML_SFML_WINDOW_HPP
 
 ////////////////////////////////////////////////////////////

@@ -41,7 +41,6 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/UdpSocket.hpp>
 
-
 #endif // SFML_NETWORK_HPP
 
 ////////////////////////////////////////////////////////////
