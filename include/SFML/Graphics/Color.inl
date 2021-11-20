@@ -24,20 +24,6 @@
 
 
 ////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-inline Color Color::Black{0, 0, 0};          //!< Black predefined color
-inline Color Color::White{255, 255, 255};    //!< White predefined color
-inline Color Color::Red{255, 0, 0};          //!< Red predefined color
-inline Color Color::Green{0, 255, 0};        //!< Green predefined color
-inline Color Color::Blue{0, 0, 255};         //!< Blue predefined color
-inline Color Color::Yellow{255, 255, 0};     //!< Yellow predefined color
-inline Color Color::Magenta{255, 0, 255};    //!< Magenta predefined color
-inline Color Color::Cyan{0, 255, 255};       //!< Cyan predefined color
-inline Color Color::Transparent{0, 0, 0, 0}; //!< Transparent (black) predefined color
-
-
-////////////////////////////////////////////////////////////
 constexpr inline Color::Color() :
 r(0),
 g(0),
@@ -143,3 +129,11 @@ constexpr inline Color& operator *=(Color& left, const Color& right)
 {
     return left = left * right;
 }
+
+constexpr inline Color::ColorInit::operator Color() const
+{
+    return Color(r, g, b, a);
+}
+
+// Sanity check:
+static_assert(Color::Black == Color{0, 0, 0, 255});

@@ -40,6 +40,18 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class Color
 {
+private:
+
+    struct ColorInit
+    {
+        Uint8 r;
+        Uint8 g;
+        Uint8 b;
+        Uint8 a;
+
+        constexpr inline operator Color() const;
+    };
+
 public:
 
     ////////////////////////////////////////////////////////////
@@ -81,15 +93,15 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static Color Black;          //!< Black predefined color
-    static Color White;    //!< White predefined color
-    static Color Red;          //!< Red predefined color
-    static Color Green;        //!< Green predefined color
-    static Color Blue;         //!< Blue predefined color
-    static Color Yellow;     //!< Yellow predefined color
-    static Color Magenta;    //!< Magenta predefined color
-    static Color Cyan;       //!< Cyan predefined color
-    static Color Transparent; //!< Transparent (black) predefined color
+    inline static constexpr ColorInit Black{0, 0, 0, 255};       //!< Black predefined color
+    inline static constexpr ColorInit White{255, 255, 255, 255}; //!< White predefined color
+    inline static constexpr ColorInit Red{255, 0, 0, 255};       //!< Red predefined color
+    inline static constexpr ColorInit Green{0, 255, 0, 255};     //!< Green predefined color
+    inline static constexpr ColorInit Blue{0, 0, 255, 255};      //!< Blue predefined color
+    inline static constexpr ColorInit Yellow{255, 255, 0, 255};  //!< Yellow predefined color
+    inline static constexpr ColorInit Magenta{255, 0, 255, 255}; //!< Magenta predefined color
+    inline static constexpr ColorInit Cyan{0, 255, 255, 255};    //!< Cyan predefined color
+    inline static constexpr ColorInit Transparent{0, 0, 0, 0};   //!< Transparent (black) predefined color
 
     ////////////////////////////////////////////////////////////
     // Member data
