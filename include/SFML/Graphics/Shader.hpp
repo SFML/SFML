@@ -741,9 +741,6 @@ private:
 /// shader.setUniform("current", sf::Shader::CurrentTexture);
 /// \endcode
 ///
-/// The old setParameter() overloads are deprecated and will be removed in a
-/// future version. You should use their setUniform() equivalents instead.
-///
 /// The special Shader::CurrentTexture argument maps the
 /// given \p sampler2D uniform to the current texture of the
 /// object being drawn (which cannot be known in advance).

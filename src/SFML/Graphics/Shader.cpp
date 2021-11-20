@@ -1167,66 +1167,6 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixAr
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y, float z)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, float x, float y, float z, float w)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Vector2f& v)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Vector3f& v)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Color& color)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Transform& transform)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, const Texture& texture)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-void Shader::setParameter(const std::string& name, CurrentTextureType)
-{
-}
-
-
-////////////////////////////////////////////////////////////
 unsigned int Shader::getNativeHandle() const
 {
     return 0;
