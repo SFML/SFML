@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+#include <SFML/System/Priv/MinMax.hpp>
 #include <cmath>
 
 #import <SFML/Window/OSX/SFOpenGLView.h>
@@ -46,7 +47,7 @@
     m_cursor = cursor;
 
     // indirect call to resetCursorRects to set the cursor
-    [self.window invalidateCursorRectsForView:self]; 
+    [self.window invalidateCursorRectsForView:self];
 }
 
 
@@ -381,8 +382,8 @@
         NSSize  size   = [self frame].size;
         NSPoint origin = [self frame].origin;
         NSPoint oldPos = rawPos;
-        rawPos.x = std::min(std::max(origin.x, rawPos.x), origin.x + size.width - 1);
-        rawPos.y = std::min(std::max(origin.y + 1, rawPos.y), origin.y + size.height);
+        rawPos.x = priv::min(priv::max(origin.x, rawPos.x), origin.x + size.width - 1);
+        rawPos.y = priv::min(priv::max(origin.y + 1, rawPos.y), origin.y + size.height);
         // Note: the `-1` and `+1` on the two lines above prevent the user to click
         // on the left or below the window, repectively, and therefore prevent the
         // application to lose focus by accident. The sign of this offset is determinded

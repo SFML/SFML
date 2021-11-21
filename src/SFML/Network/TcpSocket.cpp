@@ -30,7 +30,7 @@
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
-#include <algorithm>
+#include <SFML/System/Priv/MinMax.hpp>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -397,7 +397,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
     while (m_pendingPacket.Data.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
+        std::size_t sizeToGet = priv::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
         Status status = receive(buffer, sizeToGet, received);
         if (status != Done)
             return status;

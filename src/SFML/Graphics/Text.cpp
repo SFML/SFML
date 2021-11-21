@@ -28,6 +28,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/System/Priv/MinMax.hpp>
 #include <cmath>
 
 
@@ -463,8 +464,8 @@ void Text::ensureGeometryUpdate() const
         if ((curChar == L' ') || (curChar == L'\n') || (curChar == L'\t'))
         {
             // Update the current bounds (min coordinates)
-            minX = std::min(minX, x);
-            minY = std::min(minY, y);
+            minX = priv::min(minX, x);
+            minY = priv::min(minY, y);
 
             switch (curChar)
             {
@@ -474,8 +475,8 @@ void Text::ensureGeometryUpdate() const
             }
 
             // Update the current bounds (max coordinates)
-            maxX = std::max(maxX, x);
-            maxY = std::max(maxY, y);
+            maxX = priv::max(maxX, x);
+            maxY = priv::max(maxY, y);
 
             // Next glyph, no need to create a quad for whitespace
             continue;
@@ -495,10 +496,10 @@ void Text::ensureGeometryUpdate() const
             addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear);
 
             // Update the current bounds with the outlined glyph bounds
-            minX = std::min(minX, x + left   - italicShear * bottom);
-            maxX = std::max(maxX, x + right  - italicShear * top);
-            minY = std::min(minY, y + top);
-            maxY = std::max(maxY, y + bottom);
+            minX = priv::min(minX, x + left   - italicShear * bottom);
+            maxX = priv::max(maxX, x + right  - italicShear * top);
+            minY = priv::min(minY, y + top);
+            maxY = priv::max(maxY, y + bottom);
         }
 
         // Extract the current glyph's description
@@ -515,10 +516,10 @@ void Text::ensureGeometryUpdate() const
             float right  = glyph.bounds.left + glyph.bounds.width;
             float bottom = glyph.bounds.top  + glyph.bounds.height;
 
-            minX = std::min(minX, x + left  - italicShear * bottom);
-            maxX = std::max(maxX, x + right - italicShear * top);
-            minY = std::min(minY, y + top);
-            maxY = std::max(maxY, y + bottom);
+            minX = priv::min(minX, x + left  - italicShear * bottom);
+            maxX = priv::max(maxX, x + right - italicShear * top);
+            minY = priv::min(minY, y + top);
+            maxY = priv::max(maxY, y + bottom);
         }
 
         // Advance to the next character

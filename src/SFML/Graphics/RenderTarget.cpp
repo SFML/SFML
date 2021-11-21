@@ -34,9 +34,9 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Priv/MinMax.hpp>
 #include <cassert>
 #include <iostream>
-#include <algorithm>
 #include <map>
 #include <mutex>
 
@@ -370,7 +370,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
         return;
 
     // Clamp vertexCount to something that makes sense
-    vertexCount = std::min(vertexCount, vertexBuffer.getVertexCount() - firstVertex);
+    vertexCount = priv::min(vertexCount, vertexBuffer.getVertexCount() - firstVertex);
 
     // Nothing to draw?
     if (!vertexCount || !vertexBuffer.getNativeHandle())

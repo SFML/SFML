@@ -31,8 +31,8 @@
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Priv/MinMax.hpp>
 #include <ApplicationServices/ApplicationServices.h>
-#include <algorithm>
 
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <SFML/Window/OSX/Scaling.h>
@@ -106,7 +106,7 @@
 
         if (m_window == nil)
         {
-            sf::err() << "No window was given to -[SFWindowController initWithWindow:]." << std::endl;
+            sf::err() << "No window was given to -[SFWindowController initWithWindow:]." << sf::errEndl;
             return self;
         }
 
@@ -119,13 +119,13 @@
         {
             sf::err() << "Could not create an instance of NSOpenGLView "
                       << "in -[SFWindowController initWithWindow:]."
-                      << std::endl;
+                      << sf::errEndl;
             return self;
         }
 
         // Set the view to the window as its content view.
         [m_window setContentView:m_oglView];
-        
+
         [m_oglView finishInit];
     }
 
@@ -143,7 +143,7 @@
          * See https://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
          * for more information.
          */
-        sf::err() << "Cannot create a window from a worker thread. (OS X limitation)" << std::endl;
+        sf::err() << "Cannot create a window from a worker thread. (OS X limitation)" << sf::errEndl;
 
         return nil;
     }
@@ -184,7 +184,7 @@
     {
         sf::err() << "Could not create an instance of NSWindow "
                   << "in -[SFWindowController setupFullscreenViewWithMode:]."
-                  << std::endl;
+                  << sf::errEndl;
         return;
     }
 
@@ -209,13 +209,13 @@
     {
         sf::err() << "Could not create an instance of SFBlackView "
                   << "in -[SFWindowController setupFullscreenViewWithMode:]."
-                  << std::endl;
+                  << sf::errEndl;
         return;
     }
 
     // Create our OpenGL view size and the view
-    CGFloat width = std::min(mode.width, desktop.width);
-    CGFloat height = std::min(mode.height, desktop.height);
+    CGFloat width = priv::min(mode.width, desktop.width);
+    CGFloat height = priv::min(mode.height, desktop.height);
     CGFloat x = (desktop.width - width) / 2.0;
     CGFloat y = (desktop.height - height) / 2.0;
     NSRect oglRect = NSMakeRect(x, y, width, height);
@@ -228,7 +228,7 @@
     {
         sf::err() << "Could not create an instance of NSOpenGLView "
                   << "in -[SFWindowController setupFullscreenViewWithMode:]."
-                  << std::endl;
+                  << sf::errEndl;
         return;
     }
 
@@ -274,7 +274,7 @@
     {
         sf::err() << "Could not create an instance of NSWindow "
                   << "in -[SFWindowController setupWindowWithMode:andStyle:]."
-                  << std::endl;
+                  << sf::errEndl;
 
         return;
     }
@@ -288,7 +288,7 @@
     {
         sf::err() << "Could not create an instance of NSOpenGLView "
                   << "in -[SFWindowController setupWindowWithMode:andStyle:]."
-                  << std::endl;
+                  << sf::errEndl;
 
         return;
     }
@@ -442,8 +442,8 @@
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
         sf::priv::scaleInWidthHeight(desktop, nil);
 
-        width = std::min(width, desktop.width);
-        height = std::min(height, desktop.height);
+        width = priv::min(width, desktop.width);
+        height = priv::min(height, desktop.height);
 
         CGFloat x = (desktop.width - width) / 2.0;
         CGFloat y = (desktop.height - height) / 2.0;
@@ -577,7 +577,7 @@
          * See https://lists.apple.com/archives/cocoa-dev/2011/Feb/msg00460.html
          * for more information.
          */
-        sf::err() << "Cannot fetch event from a worker thread. (OS X restriction)" << std::endl;
+        sf::err() << "Cannot fetch event from a worker thread. (OS X restriction)" << sf::errEndl;
 
         return;
     }

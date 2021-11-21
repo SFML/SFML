@@ -32,8 +32,7 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
-#include <iostream>
-#include <algorithm>
+#include <SFML/System/Priv/MinMax.hpp>
 
 
 namespace sf
@@ -231,7 +230,7 @@ void InputSoundFile::seek(Uint64 sampleOffset)
     {
         // The reader handles an overrun gracefully, but we
         // pre-check to keep our known position consistent
-        m_sampleOffset = std::min(sampleOffset / m_channelCount * m_channelCount, m_sampleCount);
+        m_sampleOffset = priv::min(sampleOffset / m_channelCount * m_channelCount, m_sampleCount);
         m_reader->seek(m_sampleOffset);
     }
 }
