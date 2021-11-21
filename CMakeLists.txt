@@ -346,6 +346,7 @@ else()
 
     # create SFML.framework
     add_library(SFML ${SFML_SOURCES})
+    set_property(TARGET SFML PROPERTY CXX_STANDARD 17)
 
     # set the target flags to use the appropriate C++ standard library
     sfml_set_stdlib(SFML)
