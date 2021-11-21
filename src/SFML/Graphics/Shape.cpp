@@ -28,7 +28,6 @@
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Err.hpp>
 #include <cmath>
 
 

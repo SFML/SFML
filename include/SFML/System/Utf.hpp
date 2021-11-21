@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <locale>
 #include <string>
-#include <cstdlib>
+#include <cstddef>
 
 
 namespace sf
