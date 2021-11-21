@@ -30,6 +30,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 
 #include <X11/Xlibint.h>
