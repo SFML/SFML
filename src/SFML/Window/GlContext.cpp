@@ -41,6 +41,7 @@
 #include <cassert>
 #include <mutex>
 #include <optional>
+#include <ios>
 
 
 #if defined(SFML_SYSTEM_WINDOWS)
@@ -768,7 +769,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 
     if (!glGetIntegervFunc || !glGetErrorFunc || !glGetStringFunc || !glEnableFunc || !glIsEnabledFunc)
     {
-        err() << "Could not load necessary function to initialize OpenGL context" << std::endl;
+        err() << "Could not load necessary function to initialize OpenGL context" << errEndl;
         return;
     }
 
@@ -803,12 +804,12 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
                 !parseVersionString(version, "OpenGL ES ",    m_settings.majorVersion, m_settings.minorVersion) &&
                 !parseVersionString(version, "",              m_settings.majorVersion, m_settings.minorVersion))
             {
-                err() << "Unable to parse OpenGL version string: \"" << version << "\", defaulting to 1.1" << std::endl;
+                err() << "Unable to parse OpenGL version string: \"" << version << "\", defaulting to 1.1" << errEndl;
             }
         }
         else
         {
-            err() << "Unable to retrieve OpenGL version string, defaulting to 1.1" << std::endl;
+            err() << "Unable to retrieve OpenGL version string, defaulting to 1.1" << errEndl;
         }
     }
 
@@ -891,7 +892,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         // Check to see if the enable was successful
         if (glIsEnabledFunc(GL_FRAMEBUFFER_SRGB) == GL_FALSE)
         {
-            err() << "Warning: Failed to enable GL_FRAMEBUFFER_SRGB" << std::endl;
+            err() << "Warning: Failed to enable GL_FRAMEBUFFER_SRGB" << errEndl;
             m_settings.sRgbCapable = false;
         }
     }
@@ -911,7 +912,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
 
     if (!glGetStringFunc)
     {
-        err() << "Could not load glGetString function" << std::endl;
+        err() << "Could not load glGetString function" << errEndl;
 
         return;
     }
@@ -924,8 +925,8 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
     {
         if ((std::strcmp(vendorName, "Microsoft Corporation") == 0) && (std::strcmp(rendererName, "GDI Generic") == 0))
         {
-            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl
-                  << "The current OpenGL implementation is not hardware-accelerated" << std::endl;
+            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << errEndl
+                  << "The current OpenGL implementation is not hardware-accelerated" << errEndl;
         }
     }
 
@@ -939,7 +940,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
         (m_settings.depthBits         <  requestedSettings.depthBits)         ||
         (!m_settings.sRgbCapable      && requestedSettings.sRgbCapable))
     {
-        err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << std::endl;
+        err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << errEndl;
         err() << "Requested: version = " << requestedSettings.majorVersion << "." << requestedSettings.minorVersion
               << " ; depth bits = " << requestedSettings.depthBits
               << " ; stencil bits = " << requestedSettings.stencilBits
@@ -948,7 +949,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
               << " ; core = " << ((requestedSettings.attributeFlags & ContextSettings::Core) != 0)
               << " ; debug = " << ((requestedSettings.attributeFlags & ContextSettings::Debug) != 0)
               << " ; sRGB = " << requestedSettings.sRgbCapable
-              << std::noboolalpha << std::endl;
+              << std::noboolalpha << errEndl;
         err() << "Created: version = " << m_settings.majorVersion << "." << m_settings.minorVersion
               << " ; depth bits = " << m_settings.depthBits
               << " ; stencil bits = " << m_settings.stencilBits
@@ -957,7 +958,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
               << " ; core = " << ((m_settings.attributeFlags & ContextSettings::Core) != 0)
               << " ; debug = " << ((m_settings.attributeFlags & ContextSettings::Debug) != 0)
               << " ; sRGB = " << m_settings.sRgbCapable
-              << std::noboolalpha << std::endl;
+              << std::noboolalpha << errEndl;
     }
 }
 

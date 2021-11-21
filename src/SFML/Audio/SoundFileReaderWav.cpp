@@ -132,7 +132,7 @@ bool SoundFileReaderWav::open(InputStream& stream, Info& info)
 
     if (!parseHeader(info))
     {
-        err() << "Failed to open WAV sound file (invalid or unsupported file)" << std::endl;
+        err() << "Failed to open WAV sound file (invalid or unsupported file)" << errEndl;
         return false;
     }
 
@@ -283,7 +283,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                 return false;
             if (bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32)
             {
-                err() << "Unsupported sample size: " << bitsPerSample << " bit (Supported sample sizes are 8/16/24/32 bit)" << std::endl;
+                err() << "Unsupported sample size: " << bitsPerSample << " bit (Supported sample sizes are 8/16/24/32 bit)" << errEndl;
                 return false;
             }
             m_bytesPerSample = bitsPerSample / 8;
@@ -312,14 +312,14 @@ bool SoundFileReaderWav::parseHeader(Info& info)
 
                 if (std::memcmp(subformat, waveSubformatPcm, sizeof(subformat)) != 0)
                 {
-                    err() << "Unsupported format: extensible format with non-PCM subformat" << std::endl;
+                    err() << "Unsupported format: extensible format with non-PCM subformat" << errEndl;
                     return false;
                 }
 
                 if (validBitsPerSample != bitsPerSample)
                 {
                     err() << "Unsupported format: sample size (" << validBitsPerSample << " bits) and "
-                            "sample container size (" << bitsPerSample << " bits) differ" << std::endl;
+                            "sample container size (" << bitsPerSample << " bits) differ" << errEndl;
                     return false;
                 }
             }

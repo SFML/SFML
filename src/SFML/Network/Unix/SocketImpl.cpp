@@ -74,12 +74,12 @@ void SocketImpl::setBlocking(SocketHandle sock, bool block)
     if (block)
     {
         if (fcntl(sock, F_SETFL, status & ~O_NONBLOCK) == -1)
-            err() << "Failed to set file status flags: " << errno << std::endl;
+            err() << "Failed to set file status flags: " << errno << errEndl;
     }
     else
     {
         if (fcntl(sock, F_SETFL, status | O_NONBLOCK) == -1)
-            err() << "Failed to set file status flags: " << errno << std::endl;
+            err() << "Failed to set file status flags: " << errno << errEndl;
 
     }
 }

@@ -76,12 +76,12 @@ AudioDevice::AudioDevice()
         }
         else
         {
-            err() << "Failed to create the audio context" << std::endl;
+            err() << "Failed to create the audio context" << errEndl;
         }
     }
     else
     {
-        err() << "Failed to open the audio device" << std::endl;
+        err() << "Failed to open the audio device" << errEndl;
     }
 }
 

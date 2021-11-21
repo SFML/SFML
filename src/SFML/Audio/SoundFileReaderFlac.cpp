@@ -226,7 +226,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
     m_decoder = FLAC__stream_decoder_new();
     if (!m_decoder)
     {
-        err() << "Failed to open FLAC file (failed to allocate the decoder)" << std::endl;
+        err() << "Failed to open FLAC file (failed to allocate the decoder)" << errEndl;
         return false;
     }
 
@@ -238,7 +238,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
     if (!FLAC__stream_decoder_process_until_end_of_metadata(m_decoder))
     {
         close();
-        err() << "Failed to open FLAC file (failed to read metadata)" << std::endl;
+        err() << "Failed to open FLAC file (failed to read metadata)" << errEndl;
         return false;
     }
 

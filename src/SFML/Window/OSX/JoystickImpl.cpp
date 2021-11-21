@@ -60,7 +60,7 @@ namespace
             return stringFromCFString(str);
         }
 
-        sf::err() << "Unable to read string value for property '" << stringFromCFString(prop) << "' for joystick at index " << index << std::endl;
+        sf::err() << "Unable to read string value for property '" << stringFromCFString(prop) << "' for joystick at index " << index << sf::errEndl;
         return "Unknown Joystick";
     }
 
@@ -76,7 +76,7 @@ namespace
             return value;
         }
 
-        sf::err() << "Unable to read uint value for property '" << stringFromCFString(prop) << "' for joystick at index " << index << std::endl;
+        sf::err() << "Unable to read uint value for property '" << stringFromCFString(prop) << "' for joystick at index " << index << sf::errEndl;
         return 0;
     }
 }
@@ -263,7 +263,7 @@ bool JoystickImpl::open(unsigned int index)
                                           << "Joystick (vendor/product id: 0x" << m_identification.vendorId
                                           << "/0x" << m_identification.productId << std::dec
                                           << ") range is an unexpected one: [" << min << ", " << max << "]"
-                                          << std::endl;
+                                          << sf::errEndl;
                             }
                             else
                             {
@@ -280,13 +280,13 @@ bool JoystickImpl::open(unsigned int index)
                         {
                             sf::err() << std::hex << "Gamepage (vendor/product id: 0x" << m_identification.vendorId
                                       << "/0x" << m_identification.productId << ") is not an CA but a 0x"
-                                      << IOHIDElementGetCollectionType(element) << std::dec << std::endl;
+                                      << IOHIDElementGetCollectionType(element) << std::dec << sf::errEndl;
                         }
                         break;
 
                     default:
 #ifdef SFML_DEBUG
-                        sf::err() << "Unexpected usage for element of Page Generic Desktop: 0x" << std::hex << IOHIDElementGetUsage(element) << std::dec << std::endl;
+                        sf::err() << "Unexpected usage for element of Page Generic Desktop: 0x" << std::hex << IOHIDElementGetUsage(element) << std::dec << sf::errEndl;
 #endif
                         break;
                 }

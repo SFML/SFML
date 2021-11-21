@@ -62,7 +62,7 @@ Display* OpenDisplay()
         // and cause an abnormal program termination
         if (!sharedDisplay)
         {
-            err() << "Failed to open X11 display; make sure the DISPLAY environment variable is set correctly" << std::endl;
+            err() << "Failed to open X11 display; make sure the DISPLAY environment variable is set correctly" << errEndl;
             std::abort();
         }
     }

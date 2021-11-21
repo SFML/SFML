@@ -64,7 +64,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, const Contex
     // Create the texture
     if (!m_texture.create(width, height))
     {
-        err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
+        err() << "Impossible to create render texture (failed to create the target texture)" << errEndl;
         return false;
     }
 

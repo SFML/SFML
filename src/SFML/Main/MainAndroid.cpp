@@ -550,7 +550,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
 
     // Redirect error messages to logcat
-    sf::err().rdbuf(&states->logcat);
+    sf::err().os->rdbuf(&states->logcat);
 
     // Launch the main thread
     auto* thread = new std::thread(sf::priv::main, states);

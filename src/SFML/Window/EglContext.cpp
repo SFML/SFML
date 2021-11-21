@@ -176,7 +176,7 @@ m_config  (nullptr)
 {
     EglContextImpl::ensureInit();
 
-    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, width, height) is currently not implemented." << std::endl;
+    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, width, height) is currently not implemented." << sf::errEndl;
 }
 
 
@@ -334,21 +334,21 @@ void EglContext::updateSettings()
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp));
 
     if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_DEPTH_SIZE" << std::endl;
+        err() << "Failed to retrieve EGL_DEPTH_SIZE" << errEndl;
 
     m_settings.depthBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
 
     if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_STENCIL_SIZE" << std::endl;
+        err() << "Failed to retrieve EGL_STENCIL_SIZE" << errEndl;
 
     m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
 
     if (result == EGL_FALSE)
-        err() << "Failed to retrieve EGL_SAMPLES" << std::endl;
+        err() << "Failed to retrieve EGL_SAMPLES" << errEndl;
 
     m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
 
@@ -378,7 +378,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     if (nativeVisualId == 0)
     {
         // Should never happen...
-        err() << "No EGL visual found. You should check your graphics driver" << std::endl;
+        err() << "No EGL visual found. You should check your graphics driver" << errEndl;
 
         return XVisualInfo();
     }
@@ -395,7 +395,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     if (visualCount == 0)
     {
         // Can't happen...
-        err() << "No X11 visual found. Bug in your EGL implementation ?" << std::endl;
+        err() << "No X11 visual found. Bug in your EGL implementation ?" << errEndl;
 
         return XVisualInfo();
     }

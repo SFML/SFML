@@ -133,7 +133,7 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image \"" << filename << "\". Reason: " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image \"" << filename << "\". Reason: " << stbi_failure_reason() << errEndl;
 
         return false;
     }
@@ -177,14 +177,14 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         else
         {
             // Error, failed to load the image
-            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << errEndl;
 
             return false;
         }
     }
     else
     {
-        err() << "Failed to load image from memory, no data provided" << std::endl;
+        err() << "Failed to load image from memory, no data provided" << errEndl;
         return false;
     }
 }
@@ -232,7 +232,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << errEndl;
 
         return false;
     }
@@ -278,7 +278,7 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         }
     }
 
-    err() << "Failed to save image \"" << filename << "\"" << std::endl;
+    err() << "Failed to save image \"" << filename << "\"" << errEndl;
     return false;
 }
 
@@ -319,7 +319,7 @@ bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::U
         }
     }
 
-    err() << "Failed to save image with format \"" << format << "\"" << std::endl;
+    err() << "Failed to save image with format \"" << format << "\"" << errEndl;
     return false;
 }
 

@@ -168,7 +168,7 @@ namespace
     // Debug we pass to Vulkan to call when it detects warnings or errors
     VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* pMessage, void*)
     {
-        sf::err() << pMessage << std::endl;
+        sf::err() << pMessage << sf::errEndl;
 
         return VK_FALSE;
     }

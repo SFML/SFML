@@ -133,7 +133,7 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsi
               << "count: "      << sampleCount  << ", "
               << "channels: "   << channelCount << ", "
               << "samplerate: " << sampleRate   << ")"
-              << std::endl;
+              << errEndl;
 
         return false;
     }
@@ -249,7 +249,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     // Check if the format is valid
     if (format == 0)
     {
-        err() << "Failed to load sound buffer (unsupported number of channels: " << channelCount << ")" << std::endl;
+        err() << "Failed to load sound buffer (unsupported number of channels: " << channelCount << ")" << errEndl;
         return false;
     }
 

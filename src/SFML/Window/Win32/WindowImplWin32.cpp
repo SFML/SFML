@@ -95,7 +95,7 @@ namespace
                 // and S_OK means the call was successful
                 if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
                 {
-                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+                    sf::err() << "Failed to set process DPI awareness" << sf::errEndl;
                 }
                 else
                 {
@@ -119,7 +119,7 @@ namespace
             if (SetProcessDPIAwareFunc)
             {
                 if (!SetProcessDPIAwareFunc())
-                    sf::err() << "Failed to set process DPI awareness" << std::endl;
+                    sf::err() << "Failed to set process DPI awareness" << sf::errEndl;
             }
 
             FreeLibrary(user32Dll);
@@ -386,7 +386,7 @@ void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uin
     }
     else
     {
-        err() << "Failed to set the window's icon" << std::endl;
+        err() << "Failed to set the window's icon" << errEndl;
     }
 }
 
@@ -495,7 +495,7 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     // Apply fullscreen mode
     if (ChangeDisplaySettingsW(&devMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
     {
-        err() << "Failed to change display mode for fullscreen" << std::endl;
+        err() << "Failed to change display mode for fullscreen" << errEndl;
         return;
     }
 

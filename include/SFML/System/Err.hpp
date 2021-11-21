@@ -29,8 +29,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <ostream>
+#include <iosfwd>
 
+namespace sf::priv
+{
+struct SFML_SYSTEM_API ErrorOStream { std::ostream* os; };
+struct SFML_SYSTEM_API ErrorOStreamEndl { };
+
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream& e, ErrorOStreamEndl);
+
+template <typename T>
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream& e, T);
+
+}
 
 namespace sf
 {
@@ -38,7 +49,8 @@ namespace sf
 /// \brief Standard stream used by SFML to output warnings and errors
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API std::ostream& err();
+SFML_SYSTEM_API priv::ErrorOStream& err();
+constexpr inline priv::ErrorOStreamEndl errEndl{};
 
 } // namespace sf
 

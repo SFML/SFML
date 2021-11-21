@@ -610,7 +610,7 @@ void Ftp::DataChannel::receive(std::ostream& stream)
 
         if (!stream.good())
         {
-            err() << "FTP Error: Writing to the file has failed" << std::endl;
+            err() << "FTP Error: Writing to the file has failed" << errEndl;
             break;
         }
     }
@@ -634,7 +634,7 @@ void Ftp::DataChannel::send(std::istream& stream)
 
         if (!stream.good() && !stream.eof())
         {
-            err() << "FTP Error: Reading from the file has failed" << std::endl;
+            err() << "FTP Error: Reading from the file has failed" << errEndl;
             break;
         }
 

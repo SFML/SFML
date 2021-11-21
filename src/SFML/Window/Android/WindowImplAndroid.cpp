@@ -331,7 +331,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR) {
-        err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
+        err() << "Failed to initialize JNI, couldn't get the Unicode value" << errEndl;
         return 0;
     }
 
@@ -696,7 +696,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR)
-        err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
+        err() << "Failed to initialize JNI, couldn't get the Unicode value" << errEndl;
 
     // Retrieve key data from the input event
     jlong downTime = AKeyEvent_getDownTime(event);

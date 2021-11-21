@@ -101,7 +101,7 @@ namespace
                 case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
             }
 
-            sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+            sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << sf::errEndl;
             assert(false);
             return GL_ZERO;
         }
@@ -135,9 +135,9 @@ namespace
             static bool warned = false;
             if (!warned)
             {
-                sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << std::endl;
-                sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << std::endl;
-                sf::err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+                sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << sf::errEndl;
+                sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << sf::errEndl;
+                sf::err() << "Ensure that hardware acceleration is enabled if available" << sf::errEndl;
 
                 warned = true;
             }
@@ -280,7 +280,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
     #ifdef SFML_OPENGL_ES
         if (type == Quads)
         {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
+            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << errEndl;
             return;
         }
     #endif
@@ -361,7 +361,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
     // VertexBuffer not supported?
     if (!VertexBuffer::isAvailable())
     {
-        err() << "sf::VertexBuffer is not available, drawing skipped" << std::endl;
+        err() << "sf::VertexBuffer is not available, drawing skipped" << errEndl;
         return;
     }
 
@@ -380,7 +380,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
     #ifdef SFML_OPENGL_ES
         if (vertexBuffer.getPrimitiveType() == Quads)
         {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
+            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << errEndl;
             return;
         }
     #endif
@@ -475,7 +475,7 @@ void RenderTarget::pushGLStates()
             {
                 err() << "OpenGL error (" << error << ") detected in user code, "
                       << "you should check for errors with glGetError()"
-                      << std::endl;
+                      << errEndl;
             }
         #endif
 
@@ -649,12 +649,12 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
         if (!warned)
         {
 #ifdef SFML_OPENGL_ES
-            err() << "OpenGL ES extension OES_blend_subtract unavailable" << std::endl;
+            err() << "OpenGL ES extension OES_blend_subtract unavailable" << errEndl;
 #else
-            err() << "OpenGL extension EXT_blend_minmax and EXT_blend_subtract unavailable" << std::endl;
+            err() << "OpenGL extension EXT_blend_minmax and EXT_blend_subtract unavailable" << errEndl;
 #endif
-            err() << "Selecting a blend equation not possible" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "Selecting a blend equation not possible" << errEndl;
+            err() << "Ensure that hardware acceleration is enabled if available" << errEndl;
 
             warned = true;
         }

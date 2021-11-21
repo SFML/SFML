@@ -71,7 +71,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     // Wrap the input file into a file stream
     FileInputStream stream;
     if (!stream.open(filename)) {
-        err() << "Failed to open sound file \"" << filename << "\" (couldn't open stream)" << std::endl;
+        err() << "Failed to open sound file \"" << filename << "\" (couldn't open stream)" << errEndl;
         return nullptr;
     }
 
@@ -84,7 +84,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     }
 
     // No suitable reader found
-    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
+    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << errEndl;
     return nullptr;
 }
 
@@ -108,7 +108,7 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     }
 
     // No suitable reader found
-    err() << "Failed to open sound file from memory (format not supported)" << std::endl;
+    err() << "Failed to open sound file from memory (format not supported)" << errEndl;
     return nullptr;
 }
 
@@ -128,7 +128,7 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     }
 
     // No suitable reader found
-    err() << "Failed to open sound file from stream (format not supported)" << std::endl;
+    err() << "Failed to open sound file from stream (format not supported)" << errEndl;
     return nullptr;
 }
 
@@ -147,7 +147,7 @@ SoundFileWriter* SoundFileFactory::createWriterFromFilename(const std::string& f
     }
 
     // No suitable writer found
-    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
+    err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << errEndl;
     return nullptr;
 }
 

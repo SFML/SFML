@@ -89,7 +89,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
         // Make sure there's not already a fullscreen window (only one is allowed)
         if (getFullscreenWindow())
         {
-            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << errEndl;
             style &= ~static_cast<Uint32>(Style::Fullscreen);
         }
         else
@@ -97,7 +97,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
             // Make sure that the chosen video mode is compatible
             if (!mode.isValid())
             {
-                err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
+                err() << "The requested video mode is not available, switching to a valid mode" << errEndl;
                 mode = VideoMode::getFullscreenModes()[0];
             }
 

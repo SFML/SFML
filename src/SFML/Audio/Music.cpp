@@ -125,7 +125,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
     // Check our state. This averts a divide-by-zero. GetChannelCount() is cheap enough to use often
     if (getChannelCount() == 0 || m_file.getSampleCount() == 0)
     {
-        sf::err() << "Music is not in a valid state to assign Loop Points." << std::endl;
+        sf::err() << "Music is not in a valid state to assign Loop Points." << sf::errEndl;
         return;
     }
 
@@ -138,12 +138,12 @@ void Music::setLoopPoints(TimeSpan timePoints)
     // Validate
     if (samplePoints.offset >= m_file.getSampleCount())
     {
-        sf::err() << "LoopPoints offset val must be in range [0, Duration)." << std::endl;
+        sf::err() << "LoopPoints offset val must be in range [0, Duration)." << sf::errEndl;
         return;
     }
     if (samplePoints.length == 0)
     {
-        sf::err() << "LoopPoints length val must be nonzero." << std::endl;
+        sf::err() << "LoopPoints length val must be nonzero." << sf::errEndl;
         return;
     }
 

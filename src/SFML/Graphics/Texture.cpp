@@ -99,7 +99,7 @@ m_cacheId      (TextureImpl::getUniqueId())
         }
         else
         {
-            err() << "Failed to copy texture, failed to create new texture" << std::endl;
+            err() << "Failed to copy texture, failed to create new texture" << errEndl;
         }
     }
 }
@@ -125,7 +125,7 @@ bool Texture::create(unsigned int width, unsigned int height)
     // Check if texture parameters are valid before creating it
     if ((width == 0) || (height == 0))
     {
-        err() << "Failed to create texture, invalid size (" << width << "x" << height << ")" << std::endl;
+        err() << "Failed to create texture, invalid size (" << width << "x" << height << ")" << errEndl;
         return false;
     }
 
@@ -144,7 +144,7 @@ bool Texture::create(unsigned int width, unsigned int height)
         err() << "Failed to create texture, its internal size is too high "
               << "(" << actualSize.x << "x" << actualSize.y << ", "
               << "maximum is " << maxSize << "x" << maxSize << ")"
-              << std::endl;
+              << errEndl;
         return false;
     }
 
@@ -174,9 +174,9 @@ bool Texture::create(unsigned int width, unsigned int height)
 
         if (!warned)
         {
-            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
-            err() << "Artifacts may occur along texture edges" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << errEndl;
+            err() << "Artifacts may occur along texture edges" << errEndl;
+            err() << "Ensure that hardware acceleration is enabled if available" << errEndl;
 
             warned = true;
         }
@@ -191,11 +191,11 @@ bool Texture::create(unsigned int width, unsigned int height)
         if (!warned)
         {
 #ifndef SFML_OPENGL_ES
-            err() << "OpenGL extension EXT_texture_sRGB unavailable" << std::endl;
+            err() << "OpenGL extension EXT_texture_sRGB unavailable" << errEndl;
 #else
-            err() << "OpenGL ES extension EXT_sRGB unavailable" << std::endl;
+            err() << "OpenGL ES extension EXT_sRGB unavailable" << errEndl;
 #endif
-            err() << "Automatic sRGB to linear conversion disabled" << std::endl;
+            err() << "Automatic sRGB to linear conversion disabled" << errEndl;
 
             warned = true;
         }
@@ -480,7 +480,7 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
 
         if (!sourceFrameBuffer || !destFrameBuffer)
         {
-            err() << "Cannot copy texture, failed to create a frame buffer object" << std::endl;
+            err() << "Cannot copy texture, failed to create a frame buffer object" << errEndl;
             return;
         }
 
@@ -510,7 +510,7 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
         }
         else
         {
-            err() << "Cannot copy texture, failed to link texture to frame buffer" << std::endl;
+            err() << "Cannot copy texture, failed to link texture to frame buffer" << errEndl;
         }
 
         // Restore previously bound framebuffers
@@ -667,9 +667,9 @@ void Texture::setRepeated(bool repeated)
 
                 if (!warned)
                 {
-                    err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
-                    err() << "Artifacts may occur along texture edges" << std::endl;
-                    err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+                    err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << errEndl;
+                    err() << "Artifacts may occur along texture edges" << errEndl;
+                    err() << "Ensure that hardware acceleration is enabled if available" << errEndl;
 
                     warned = true;
                 }

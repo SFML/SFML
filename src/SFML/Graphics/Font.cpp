@@ -152,7 +152,7 @@ bool Font::loadFromFile(const std::string& filename)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
+        err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << errEndl;
         return false;
     }
     m_library = library;
@@ -161,7 +161,7 @@ bool Font::loadFromFile(const std::string& filename)
     FT_Face face;
     if (FT_New_Face(static_cast<FT_Library>(m_library), filename.c_str(), 0, &face) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
+        err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << errEndl;
         return false;
     }
 
@@ -169,7 +169,7 @@ bool Font::loadFromFile(const std::string& filename)
     FT_Stroker stroker;
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to create the stroker)" << std::endl;
+        err() << "Failed to load font \"" << filename << "\" (failed to create the stroker)" << errEndl;
         FT_Done_Face(face);
         return false;
     }
@@ -177,7 +177,7 @@ bool Font::loadFromFile(const std::string& filename)
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << errEndl;
         FT_Stroker_Done(stroker);
         FT_Done_Face(face);
         return false;
@@ -217,7 +217,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
+        err() << "Failed to load font from memory (failed to initialize FreeType)" << errEndl;
         return false;
     }
     m_library = library;
@@ -226,7 +226,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Face face;
     if (FT_New_Memory_Face(static_cast<FT_Library>(m_library), reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
     {
-        err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
+        err() << "Failed to load font from memory (failed to create the font face)" << errEndl;
         return false;
     }
 
@@ -234,7 +234,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Stroker stroker;
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
-        err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
+        err() << "Failed to load font from memory (failed to create the stroker)" << errEndl;
         FT_Done_Face(face);
         return false;
     }
@@ -242,7 +242,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        err() << "Failed to load font from memory (failed to set the Unicode character set)" << errEndl;
         FT_Stroker_Done(stroker);
         FT_Done_Face(face);
         return false;
@@ -272,7 +272,7 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
+        err() << "Failed to load font from stream (failed to initialize FreeType)" << errEndl;
         return false;
     }
     m_library = library;
@@ -300,7 +300,7 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Face face;
     if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0)
     {
-        err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
+        err() << "Failed to load font from stream (failed to create the font face)" << errEndl;
         delete rec;
         return false;
     }
@@ -309,7 +309,7 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Stroker stroker;
     if (FT_Stroker_New(static_cast<FT_Library>(m_library), &stroker) != 0)
     {
-        err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
+        err() << "Failed to load font from stream (failed to create the stroker)" << errEndl;
         FT_Done_Face(face);
         delete rec;
         return false;
@@ -318,7 +318,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
+        err() << "Failed to load font from stream (failed to set the Unicode character set)" << errEndl;
         FT_Done_Face(face);
         FT_Stroker_Done(stroker);
         delete rec;
@@ -628,7 +628,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
             FT_Bitmap_Embolden(static_cast<FT_Library>(m_library), &bitmap, weight, weight);
 
         if (outlineThickness != 0)
-            err() << "Failed to outline glyph (no fallback available)" << std::endl;
+            err() << "Failed to outline glyph (no fallback available)" << errEndl;
     }
 
     // Compute the glyph's advance offset
@@ -779,7 +779,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             else
             {
                 // Oops, we've reached the maximum texture size...
-                err() << "Failed to add a new character to the font: the maximum texture size has been reached" << std::endl;
+                err() << "Failed to add a new character to the font: the maximum texture size has been reached" << errEndl;
                 return IntRect(0, 0, 2, 2);
             }
         }
@@ -819,18 +819,18 @@ bool Font::setCurrentSize(unsigned int characterSize) const
             // fail if the requested size is not available
             if (!FT_IS_SCALABLE(face))
             {
-                err() << "Failed to set bitmap font size to " << characterSize << std::endl;
+                err() << "Failed to set bitmap font size to " << characterSize << errEndl;
                 err() << "Available sizes are: ";
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
                 {
                     const long size = (face->available_sizes[i].y_ppem + 32) >> 6;
                     err() << size << " ";
                 }
-                err() << std::endl;
+                err() << errEndl;
             }
             else
             {
-                err() << "Failed to set font size to " << characterSize << std::endl;
+                err() << "Failed to set font size to " << characterSize << errEndl;
             }
         }
 

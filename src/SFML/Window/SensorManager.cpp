@@ -58,7 +58,7 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
     }
     else
     {
-        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)" << std::endl;
+        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)" << errEndl;
     }
 }
 

@@ -100,13 +100,13 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             else
             {
                 // Failed to get the screen configuration
-                err() << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
+                err() << "Failed to retrieve the screen configuration while trying to get the supported video modes" << errEndl;
             }
         }
         else
         {
             // XRandr extension is not supported: we cannot get the video modes
-            err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
+            err() << "Failed to use the XRandR extension while trying to get the supported video modes" << errEndl;
         }
 
         // Close the connection with the X server
@@ -115,7 +115,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     else
     {
         // We couldn't connect to the X server
-        err() << "Failed to connect to the X server while trying to get the supported video modes" << std::endl;
+        err() << "Failed to connect to the X server while trying to get the supported video modes" << errEndl;
     }
 
     return modes;
@@ -168,13 +168,13 @@ VideoMode VideoModeImpl::getDesktopMode()
             else
             {
                 // Failed to get the screen configuration
-                err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
+                err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << errEndl;
             }
         }
         else
         {
             // XRandr extension is not supported: we cannot get the video modes
-            err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
+            err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << errEndl;
         }
 
         // Close the connection with the X server
@@ -183,7 +183,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     else
     {
         // We couldn't connect to the X server
-        err() << "Failed to connect to the X server while trying to get the desktop video modes" << std::endl;
+        err() << "Failed to connect to the X server while trying to get the desktop video modes" << errEndl;
     }
 
     return desktopMode;

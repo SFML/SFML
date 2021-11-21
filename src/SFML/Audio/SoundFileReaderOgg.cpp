@@ -109,7 +109,7 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
     int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, callbacks);
     if (status < 0)
     {
-        err() << "Failed to open Vorbis file for reading" << std::endl;
+        err() << "Failed to open Vorbis file for reading" << errEndl;
         return false;
     }
 
