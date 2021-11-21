@@ -27,7 +27,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/Err.hpp>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
