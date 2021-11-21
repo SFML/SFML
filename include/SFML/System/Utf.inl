@@ -121,7 +121,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         }
 
         // Add them to the output
-        output = std::copy(bytes, bytes + bytestoWrite, output);
+        output = priv::copy(bytes, bytes + bytestoWrite, output);
     }
 
     return output;
@@ -244,7 +244,7 @@ Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 template <typename In, typename Out>
 Out Utf<8>::toUtf8(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -413,7 +413,7 @@ Out Utf<16>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -482,7 +482,7 @@ Out Utf<16>::toUtf8(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<16>::toUtf16(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -563,7 +563,7 @@ Out Utf<32>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -630,7 +630,7 @@ Out Utf<32>::toUtf16(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<32>::toUtf32(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 

@@ -28,6 +28,7 @@ set(SRC
     ${INCROOT}/FileInputStream.hpp
     ${SRCROOT}/MemoryInputStream.cpp
     ${INCROOT}/MemoryInputStream.hpp
+    ${INCROOT}/Priv/MinMax.hpp
 )
 source_group("" FILES ${SRC})
 

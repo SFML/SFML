@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
-#include <algorithm>
+#include <SFML/System/Priv/MinMax.hpp>
 
 
 namespace sf

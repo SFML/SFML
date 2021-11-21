@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <algorithm>
+#include <SFML/System/Priv/MinMax.hpp>
 
 
 namespace sf

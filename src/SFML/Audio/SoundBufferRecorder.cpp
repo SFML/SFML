@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <algorithm>
+#include <SFML/System/Priv/Copy.hpp>
 #include <iterator>
 
 
@@ -53,7 +53,7 @@ bool SoundBufferRecorder::onStart()
 ////////////////////////////////////////////////////////////
 bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sampleCount)
 {
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
+    priv::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
 
     return true;
 }

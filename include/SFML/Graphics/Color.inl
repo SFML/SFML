@@ -83,20 +83,20 @@ constexpr inline bool operator !=(const Color& left, const Color& right)
 ////////////////////////////////////////////////////////////
 constexpr inline Color operator +(const Color& left, const Color& right)
 {
-    return Color(Uint8(std::min(int(left.r) + right.r, 255)),
-                 Uint8(std::min(int(left.g) + right.g, 255)),
-                 Uint8(std::min(int(left.b) + right.b, 255)),
-                 Uint8(std::min(int(left.a) + right.a, 255)));
+    return Color(Uint8(priv::min(int(left.r) + right.r, 255)),
+                 Uint8(priv::min(int(left.g) + right.g, 255)),
+                 Uint8(priv::min(int(left.b) + right.b, 255)),
+                 Uint8(priv::min(int(left.a) + right.a, 255)));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr inline Color operator -(const Color& left, const Color& right)
 {
-    return Color(Uint8(std::max(int(left.r) - right.r, 0)),
-                 Uint8(std::max(int(left.g) - right.g, 0)),
-                 Uint8(std::max(int(left.b) - right.b, 0)),
-                 Uint8(std::max(int(left.a) - right.a, 0)));
+    return Color(Uint8(priv::max(int(left.r) - right.r, 0)),
+                 Uint8(priv::max(int(left.g) - right.g, 0)),
+                 Uint8(priv::max(int(left.b) - right.b, 0)),
+                 Uint8(priv::max(int(left.a) - right.a, 0)));
 }
 
 

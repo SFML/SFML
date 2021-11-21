@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <algorithm>
+#include <SFML/System/Priv/Copy.hpp>
 #include <locale>
 #include <string>
 #include <cstddef>
