@@ -100,28 +100,30 @@ private:
 namespace sf::priv
 {
 
-ErrorOStream& operator<<(ErrorOStream& e, ErrorOStreamEndl) { (*e.os) << std::endl; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, ErrorOStreamEndl)
+{
+    (*e.os) << std::endl;
+    return e;
+}
 
-template <typename T>
-ErrorOStream& operator<<(ErrorOStream& e, T x) { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, char* x)                             { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, const char* x)                       { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, const short* x)                      { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, bool x)                              { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, short x)                             { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, unsigned short x)                    { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, int x)                               { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, unsigned int x)                      { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, long x)                              { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, unsigned long x)                     { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, long long x)                         { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, unsigned long long x)                { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, float x)                             { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, double x)                            { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, long double x)                       { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, const std::string& x)                { (*e.os) << x; return e; }
+ErrorOStream& operator<<(ErrorOStream& e, std::ios_base& (*x)(std::ios_base&)) { (*e.os) << x; return e; }
 
-template ErrorOStream& operator<<(ErrorOStream&, char*);
-template ErrorOStream& operator<<(ErrorOStream&, const char*);
-template ErrorOStream& operator<<(ErrorOStream&, const short*);
-template ErrorOStream& operator<<(ErrorOStream&, bool);
-template ErrorOStream& operator<<(ErrorOStream&, short);
-template ErrorOStream& operator<<(ErrorOStream&, unsigned short);
-template ErrorOStream& operator<<(ErrorOStream&, int);
-template ErrorOStream& operator<<(ErrorOStream&, unsigned int);
-template ErrorOStream& operator<<(ErrorOStream&, long);
-template ErrorOStream& operator<<(ErrorOStream&, unsigned long);
-template ErrorOStream& operator<<(ErrorOStream&, long long);
-template ErrorOStream& operator<<(ErrorOStream&, unsigned long long);
-template ErrorOStream& operator<<(ErrorOStream&, float);
-template ErrorOStream& operator<<(ErrorOStream&, double);
-template ErrorOStream& operator<<(ErrorOStream&, long double);
-template ErrorOStream& operator<<(ErrorOStream&, std::string);
-template ErrorOStream& operator<<(ErrorOStream&, std::ios_base& (*)(std::ios_base&));
 }
 
 namespace sf

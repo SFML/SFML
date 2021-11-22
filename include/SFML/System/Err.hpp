@@ -33,13 +33,28 @@
 
 namespace sf::priv
 {
-struct SFML_SYSTEM_API ErrorOStream { std::ostream* os; };
+
+struct SFML_SYSTEM_API ErrorOStream     { std::ostream* os; };
 struct SFML_SYSTEM_API ErrorOStreamEndl { };
 
 SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream& e, ErrorOStreamEndl);
-
-template <typename T>
-SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream& e, T);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, char*);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, const char*);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, const short*);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, bool);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, short);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, unsigned short);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, int);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, unsigned int);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, long);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, unsigned long);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, long long);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, unsigned long long);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, float);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, double);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, long double);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, const std::string&);
+SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, std::ios_base& (*)(std::ios_base&));
 
 }
 
