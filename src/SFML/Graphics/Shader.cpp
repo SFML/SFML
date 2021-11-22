@@ -55,7 +55,6 @@
 
 namespace
 {
-    std::recursive_mutex maxTextureUnitsMutex;
     std::recursive_mutex isAvailableMutex;
 
     GLint checkMaxTextureUnits()
@@ -69,11 +68,7 @@ namespace
     // Retrieve the maximum number of texture units available
     GLint getMaxTextureUnits()
     {
-        // TODO: Remove this lock when it becomes unnecessary in C++11
-        std::scoped_lock lock(maxTextureUnitsMutex);
-
         static GLint maxUnits = checkMaxTextureUnits();
-
         return maxUnits;
     }
 
