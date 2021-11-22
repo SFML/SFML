@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 #include <iosfwd>
+#include <string>
 
 namespace sf::priv
 {

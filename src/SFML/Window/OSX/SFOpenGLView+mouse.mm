@@ -382,8 +382,8 @@
         NSSize  size   = [self frame].size;
         NSPoint origin = [self frame].origin;
         NSPoint oldPos = rawPos;
-        rawPos.x = priv::min(priv::max(origin.x, rawPos.x), origin.x + size.width - 1);
-        rawPos.y = priv::min(priv::max(origin.y + 1, rawPos.y), origin.y + size.height);
+        rawPos.x = sf::priv::min(sf::priv::max(origin.x, rawPos.x), origin.x + size.width - 1);
+        rawPos.y = sf::priv::min(sf::priv::max(origin.y + 1, rawPos.y), origin.y + size.height);
         // Note: the `-1` and `+1` on the two lines above prevent the user to click
         // on the left or below the window, repectively, and therefore prevent the
         // application to lose focus by accident. The sign of this offset is determinded
