@@ -38,6 +38,7 @@ struct SFML_SYSTEM_API ErrorOStream     { std::ostream* os; };
 struct SFML_SYSTEM_API ErrorOStreamEndl { };
 
 SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream& e, ErrorOStreamEndl);
+
 SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, char*);
 SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, const char*);
 SFML_SYSTEM_API ErrorOStream& operator<<(ErrorOStream&, const short*);
