@@ -126,7 +126,7 @@ m_clock       ()
     ensureInit();
 
     // This constructor should never be used by implementation
-    err() << "Calling bad EaglContext constructor, please contact your developer :)" << std::endl;
+    err() << "Calling bad EaglContext constructor, please contact your developer :)" << sf::errEndl;
 }
 
 
@@ -171,7 +171,7 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
         "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
         "OpenGLES.framework/OpenGLES"
     };
-    
+
     for (int i = 0; i < libCount; ++i)
     {
         if (!module)
@@ -233,7 +233,7 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     // Make sure that everything's ok
     GLenum status = glCheckFramebufferStatusOESFunc(GL_FRAMEBUFFER_OES);
     if (status != GL_FRAMEBUFFER_COMPLETE_OES)
-        err() << "Failed to create a valid frame buffer (error code: " << status << ")" << std::endl;
+        err() << "Failed to create a valid frame buffer (error code: " << status << ")" << sf::errEndl;
 
     // Restore the previous context
     [EAGLContext setCurrentContext:previousContext];

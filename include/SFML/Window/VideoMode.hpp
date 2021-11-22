@@ -217,7 +217,7 @@ SFML_WINDOW_API bool operator >=(const VideoMode& left, const VideoMode& right);
 ///     sf::VideoMode mode = modes[i];
 ///     std::cout << "Mode #" << i << ": "
 ///               << mode.width << "x" << mode.height << " - "
-///               << mode.bitsPerPixel << " bpp" << std::endl;
+///               << mode.bitsPerPixel << " bpp" << '\n';
 /// }
 ///
 /// // Create a window with the same pixel depth as the desktop

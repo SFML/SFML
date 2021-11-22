@@ -242,7 +242,7 @@ void SFContext::createContext(SFContext* shared,
     {
         if (!(m_settings.attributeFlags & ContextSettings::Core))
         {
-            sf::err() << "Warning. Compatibility profile not supported on this platform." << std::endl;
+            sf::err() << "Warning. Compatibility profile not supported on this platform." << sf::errEndl;
             m_settings.attributeFlags |= ContextSettings::Core;
         }
         m_settings.majorVersion = 3;
@@ -253,7 +253,7 @@ void SFContext::createContext(SFContext* shared,
 
     if (m_settings.attributeFlags & ContextSettings::Debug)
     {
-        sf::err() << "Warning. OpenGL debugging not supported on this platform." << std::endl;
+        sf::err() << "Warning. OpenGL debugging not supported on this platform." << sf::errEndl;
         m_settings.attributeFlags &= ~ContextSettings::Debug;
     }
 
@@ -267,7 +267,7 @@ void SFContext::createContext(SFContext* shared,
 
     if (pixFmt == nil)
     {
-        sf::err() << "Error. Unable to find a suitable pixel format." << std::endl;
+        sf::err() << "Error. Unable to find a suitable pixel format." << sf::errEndl;
         return;
     }
 
@@ -280,7 +280,7 @@ void SFContext::createContext(SFContext* shared,
 
         if (sharedContext == [NSOpenGLContext currentContext])
         {
-            sf::err() << "Failed to deactivate shared context before sharing" << std::endl;
+            sf::err() << "Failed to deactivate shared context before sharing" << sf::errEndl;
             return;
         }
     }
@@ -291,14 +291,14 @@ void SFContext::createContext(SFContext* shared,
 
     if (m_context == nil)
     {
-        sf::err() << "Error. Unable to create the context. Retrying without shared context." << std::endl;
+        sf::err() << "Error. Unable to create the context. Retrying without shared context." << sf::errEndl;
         m_context = [[NSOpenGLContext alloc] initWithFormat:pixFmt
                                              shareContext:nil];
 
         if (m_context == nil)
-            sf::err() << "Error. Unable to create the context." << std::endl;
+            sf::err() << "Error. Unable to create the context." << sf::errEndl;
         else
-            sf::err() << "Warning. New context created without shared context." << std::endl;
+            sf::err() << "Warning. New context created without shared context." << sf::errEndl;
     }
 
     // Free up.

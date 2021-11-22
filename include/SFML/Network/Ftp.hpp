@@ -594,32 +594,32 @@ private:
 /// // Connect to the server
 /// sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
 /// if (response.isOk())
-///     std::cout << "Connected" << std::endl;
+///     std::cout << "Connected\n";
 ///
 /// // Log in
 /// response = ftp.login("laurent", "dF6Zm89D");
 /// if (response.isOk())
-///     std::cout << "Logged in" << std::endl;
+///     std::cout << "Logged in\n";
 ///
 /// // Print the working directory
 /// sf::Ftp::DirectoryResponse directory = ftp.getWorkingDirectory();
 /// if (directory.isOk())
-///     std::cout << "Working directory: " << directory.getDirectory() << std::endl;
+///     std::cout << "Working directory: " << directory.getDirectory() << '\n';
 ///
 /// // Create a new directory
 /// response = ftp.createDirectory("files");
 /// if (response.isOk())
-///     std::cout << "Created new directory" << std::endl;
+///     std::cout << "Created new directory\n";
 ///
 /// // Upload a file to this new directory
 /// response = ftp.upload("local-path/file.txt", "files", sf::Ftp::Ascii);
 /// if (response.isOk())
-///     std::cout << "File uploaded" << std::endl;
+///     std::cout << "File uploaded\n";
 ///
 /// // Send specific commands (here: FEAT to list supported FTP features)
 /// response = ftp.sendCommand("FEAT");
 /// if (response.isOk())
-///     std::cout << "Feature list:\n" << response.getMessage() << std::endl;
+///     std::cout << "Feature list:\n" << response.getMessage() << '\n';
 ///
 /// // Disconnect from the server (optional)
 /// ftp.disconnect();

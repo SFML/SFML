@@ -107,7 +107,7 @@ m_showCursor(true)
                   << "(or any of their subclasses). You gave a <"
                   << [[nsHandle className] UTF8String]
                   << "> object."
-                  << std::endl;
+                  << sf::errEndl;
         return;
 
     }

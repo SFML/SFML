@@ -105,7 +105,7 @@ m_manager(0)
 
     if (m_layoutData == 0)
     {
-        sf::err() << "Cannot get the keyboard layout" << std::endl;
+        sf::err() << "Cannot get the keyboard layout" << sf::errEndl;
         freeUp();
         return;
     }
@@ -125,7 +125,7 @@ m_manager(0)
 
     if (openStatus != kIOReturnSuccess)
     {
-        sf::err() << "Error when opening the HID manager" << std::endl;
+        sf::err() << "Error when opening the HID manager" << sf::errEndl;
         freeUp();
         return;
     }
@@ -152,7 +152,7 @@ void HIDInputManager::initializeKeyboard()
     CFSetRef keyboards = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (keyboards == nullptr)
     {
-        sf::err() << "No keyboard detected by the HID manager!" << std::endl;
+        sf::err() << "No keyboard detected by the HID manager!" << sf::errEndl;
         freeUp();
         return;
     }
@@ -185,7 +185,7 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
                                                       kIOHIDOptionsTypeNone);
     if (keys == nullptr)
     {
-        sf::err() << "We got a keyboard without any keys (1)" << std::endl;
+        sf::err() << "We got a keyboard without any keys (1)" << sf::errEndl;
         return;
     }
 
@@ -194,7 +194,7 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 
     if (keysCount == 0)
     {
-        sf::err() << "We got a keyboard without any keys (2)" << std::endl;
+        sf::err() << "We got a keyboard without any keys (2)" << sf::errEndl;
         CFRelease(keys);
         return;
     }
@@ -294,7 +294,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
         //              << usageCode
         //              << std::dec
         //              << "."
-        //              << std::endl;
+        //              << sf::errEndl;
         //}
 
     } /* if (error == noErr) */
@@ -302,7 +302,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     {
         sf::err() << "Cannot translate the virtual key code, error: "
                   << error
-                  << std::endl;
+                  << sf::errEndl;
     }
 }
 
