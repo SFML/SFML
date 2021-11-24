@@ -65,19 +65,19 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    priv::ActivityStates& states = priv::getActivity();
+    Lock lock(states.mutex);
 
     if (style& Style::Fullscreen)
-        states->fullscreen = true;
+        states.fullscreen = true;
 
     WindowImplAndroid::singleInstance = this;
-    states->forwardEvent = forwardEvent;
+    states.forwardEvent = forwardEvent;
 
     // Register process event callback
-    states->processEvent = processEvent;
+    states.processEvent = processEvent;
 
-    states->initialized = true;
+    states.initialized = true;
 }
 
 
@@ -91,10 +91,10 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
 
-    return states->window;
+    return states.window;
 }
 
 
@@ -104,22 +104,22 @@ void WindowImplAndroid::processEvents()
     // Process incoming OS events
     ALooper_pollAll(0, NULL, NULL, NULL);
 
-    ActivityStates* states = getActivity(NULL);
-    sf::Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
 
     if (m_windowBeingCreated)
     {
-        states->context->createSurface(states->window);
+        states.context->createSurface(states.window);
         m_windowBeingCreated = false;
     }
 
     if (m_windowBeingDestroyed)
     {
-        states->context->destroySurface();
+        states.context->destroySurface();
         m_windowBeingDestroyed = false;
     }
 
-    states->updated = true;
+    states.updated = true;
 }
 
 
@@ -219,12 +219,12 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 {
     if (WindowImplAndroid::singleInstance != NULL)
     {
-        ActivityStates* states = getActivity(NULL);
+        ActivityStates& states = getActivity();
 
         if (event.type == Event::GainedFocus)
         {
-            WindowImplAndroid::singleInstance->m_size.x = ANativeWindow_getWidth(states->window);
-            WindowImplAndroid::singleInstance->m_size.y = ANativeWindow_getHeight(states->window);
+            WindowImplAndroid::singleInstance->m_size.x = ANativeWindow_getWidth(states.window);
+            WindowImplAndroid::singleInstance->m_size.y = ANativeWindow_getHeight(states.window);
             WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
             WindowImplAndroid::singleInstance->m_hasFocus = true;
         }
@@ -242,14 +242,14 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int fd, int events, void* data)
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
 
     AInputEvent* _event = NULL;
 
-    if (AInputQueue_getEvent(states->inputQueue, &_event) >= 0)
+    if (AInputQueue_getEvent(states.inputQueue, &_event) >= 0)
     {
-        if (AInputQueue_preDispatchEvent(states->inputQueue, _event))
+        if (AInputQueue_preDispatchEvent(states.inputQueue, _event))
             return 1;
 
         int handled = 0;
@@ -306,7 +306,7 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
 
         }
 
-        AInputQueue_finishEvent(states->inputQueue, _event, handled);
+        AInputQueue_finishEvent(states.inputQueue, _event, handled);
     }
 
     return 1;
@@ -314,14 +314,14 @@ int WindowImplAndroid::processEvent(int fd, int events, void* data)
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& states)
 {
     // Prepare the Java virtual machine
     jint lResult;
     jint lFlags = 0;
 
-    JavaVM* lJavaVM = states->activity->vm;
-    JNIEnv* lJNIEnv = states->activity->env;
+    JavaVM* lJavaVM = states.activity->vm;
+    JNIEnv* lJNIEnv = states.activity->env;
 
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
@@ -378,7 +378,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates* s
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AKeyEvent_getAction(_event);
@@ -442,7 +442,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates* stat
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AMotionEvent_getAction(_event);
@@ -468,18 +468,18 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* s
             event.mouseMove.x = x;
             event.mouseMove.y = y;
 
-            states->mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
+            states.mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
         }
         else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
-            if (states->touchEvents[id].x == x && states->touchEvents[id].y == y)
+            if (states.touchEvents[id].x == x && states.touchEvents[id].y == y)
                 continue;
 
             event.touch.finger = id;
             event.touch.x = x;
             event.touch.y = y;
 
-            states->touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
+            states.touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
         }
 
         forwardEvent(event);
@@ -489,7 +489,7 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates* s
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, ActivityStates* states)
+int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, ActivityStates& states)
 {
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AMotionEvent_getAction(_event);
@@ -512,7 +512,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             event.mouseButton.y = y;
 
             if (id >= 0 && id < Mouse::ButtonCount)
-                states->isButtonPressed[id] = true;
+                states.isButtonPressed[id] = true;
         }
         else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
@@ -521,7 +521,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             event.touch.x = x;
             event.touch.y = y;
 
-            states->touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
+            states.touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
         }
     }
     else
@@ -534,7 +534,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             event.mouseButton.y = y;
 
             if (id >= 0 && id < Mouse::ButtonCount)
-                states->isButtonPressed[id] = false;
+                states.isButtonPressed[id] = false;
         }
         else if (device & AINPUT_SOURCE_TOUCHSCREEN)
         {
@@ -543,7 +543,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             event.touch.x = x;
             event.touch.y = y;
 
-            states->touchEvents.erase(id);
+            states.touchEvents.erase(id);
         }
     }
 
@@ -678,15 +678,15 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
 
     // Initializes JNI
     jint lResult;
     jint lFlags = 0;
 
-    JavaVM* lJavaVM = states->activity->vm;
-    JNIEnv* lJNIEnv = states->activity->env;
+    JavaVM* lJavaVM = states.activity->vm;
+    JNIEnv* lJNIEnv = states.activity->env;
 
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;

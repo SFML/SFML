@@ -39,7 +39,6 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/String.hpp>
 #include <windows.h>
 #include <mmsystem.h>
 #include <dinput.h>

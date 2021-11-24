@@ -3,7 +3,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
-#include <SFML/System/Err.hpp>
 
 #define GLAD_GL_IMPLEMENTATION
 #include "gl.h"

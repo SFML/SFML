@@ -46,6 +46,7 @@
 #include <android/window.h>
 #include <android/native_activity.h>
 #include <cstring>
+#include <cassert>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
@@ -70,10 +71,10 @@ int getAndroidApiLevel(ANativeActivity* activity)
     jfieldID sdkIntFieldID = lJNIEnv->GetStaticFieldID(versionClass, "SDK_INT", "I");
     if (sdkIntFieldID == NULL)
         return 0;
-    
+
     jint sdkInt = 0;
     sdkInt = lJNIEnv->GetStaticIntField(versionClass, sdkIntFieldID);
-    
+
     return sdkInt;
 }
 
@@ -81,6 +82,8 @@ int getAndroidApiLevel(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
+    assert(activity != NULL);
+
     // Hide the ugly cast we find in each callback function
     return (ActivityStates*)activity->instance;
 }
@@ -97,8 +100,8 @@ static void initializeMain(ActivityStates* states)
     states->looper = looper;
 
     /**
-     * Acquire increments a reference counter on the looper. This keeps android 
-     * from collecting it before the activity thread has a chance to detach its 
+     * Acquire increments a reference counter on the looper. This keeps android
+     * from collecting it before the activity thread has a chance to detach its
      * input queue.
      */
     ALooper_acquire(states->looper);
@@ -175,7 +178,7 @@ void goToFullscreenMode(ANativeActivity* activity)
 
     // Default flags
     jint flags = 0;
-    
+
     // API Level 14
     if (apiLevel >= 14)
     {
@@ -327,7 +330,7 @@ static void onDestroy(ANativeActivity* activity)
     delete states;
 
     // Reset the activity pointer for all modules
-    sf::priv::getActivity(NULL, true);
+    sf::priv::resetActivity(NULL);
 
     // The application should now terminate
 }
@@ -509,7 +512,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     states->terminated = false;
 
     // Share it across the SFML modules
-    sf::priv::getActivity(states, true);
+    sf::priv::resetActivity(states);
 
     // These functions will update the activity states and therefore, will allow
     // SFML to be kept in the know
