@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/GlxContext.hpp>
-#include <SFML/Window/Unix/WindowImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
