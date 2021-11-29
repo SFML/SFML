@@ -983,6 +983,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             pushEvent(event);
             break;
         }
+
+        // Hardware configuration change event
         case WM_DEVICECHANGE:
         {
             // Some sort of device change has happened, update joystick connections
