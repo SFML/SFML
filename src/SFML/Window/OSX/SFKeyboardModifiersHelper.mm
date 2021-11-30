@@ -169,7 +169,7 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
         NSLeftShiftKeyMask, NSRightShiftKeyMask,
         state.leftShiftWasDown, state.rightShiftWasDown,
         sf::Keyboard::LShift, sf::Keyboard::RShift,
-        sf::Keyboard::ScanLShift, sf::Keyboard::ScanRShift,
+        sf::Keyboard::Scan::LShift, sf::Keyboard::Scan::RShift,
         requester
     );
 
@@ -179,7 +179,7 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
         NSLeftCommandKeyMask, NSRightCommandKeyMask,
         state.leftCommandWasDown, state.rightCommandWasDown,
         sf::Keyboard::LSystem, sf::Keyboard::RSystem,
-        sf::Keyboard::ScanLSystem, sf::Keyboard::ScanRSystem,
+        sf::Keyboard::Scan::LSystem, sf::Keyboard::Scan::RSystem,
         requester
     );
 
@@ -189,7 +189,7 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
         NSLeftAlternateKeyMask, NSRightAlternateKeyMask,
         state.leftAlternateWasDown, state.rightAlternateWasDown,
         sf::Keyboard::LAlt, sf::Keyboard::RAlt,
-        sf::Keyboard::ScanLAlt, sf::Keyboard::ScanRAlt,
+        sf::Keyboard::Scan::LAlt, sf::Keyboard::Scan::RAlt,
         requester
     );
 
@@ -199,7 +199,7 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
         NSLeftControlKeyMask, NSRightControlKeyMask,
         state.leftControlWasDown, state.rightControlWasDown,
         sf::Keyboard::LControl, sf::Keyboard::RControl,
-        sf::Keyboard::ScanLControl, sf::Keyboard::ScanRControl,
+        sf::Keyboard::Scan::LControl, sf::Keyboard::Scan::RControl,
         requester
     );
 }
