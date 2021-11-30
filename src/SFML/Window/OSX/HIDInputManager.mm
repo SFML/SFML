@@ -103,7 +103,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 {
-    return (code != Keyboard::ScanUnknown) && isPressed(m_keys[code]);
+    return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[code]);
 }
 
 
@@ -129,98 +129,98 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
     // Phase 1: Get names for layout independent keys
     switch (code)
     {
-        case sf::Keyboard::ScanEnter:     return "Enter";
-        case sf::Keyboard::ScanEscape:    return "Escape";
-        case sf::Keyboard::ScanBackspace: return "Backspace";
-        case sf::Keyboard::ScanTab:       return "Tab";
-        case sf::Keyboard::ScanSpace:     return "Space";
+        case sf::Keyboard::Scan::Enter:     return "Enter";
+        case sf::Keyboard::Scan::Escape:    return "Escape";
+        case sf::Keyboard::Scan::Backspace: return "Backspace";
+        case sf::Keyboard::Scan::Tab:       return "Tab";
+        case sf::Keyboard::Scan::Space:     return "Space";
 
-        case sf::Keyboard::ScanF1:  return "F1";
-        case sf::Keyboard::ScanF2:  return "F2";
-        case sf::Keyboard::ScanF3:  return "F3";
-        case sf::Keyboard::ScanF4:  return "F4";
-        case sf::Keyboard::ScanF5:  return "F5";
-        case sf::Keyboard::ScanF6:  return "F6";
-        case sf::Keyboard::ScanF7:  return "F7";
-        case sf::Keyboard::ScanF8:  return "F8";
-        case sf::Keyboard::ScanF9:  return "F9";
-        case sf::Keyboard::ScanF10: return "F10";
-        case sf::Keyboard::ScanF11: return "F11";
-        case sf::Keyboard::ScanF12: return "F12";
-        case sf::Keyboard::ScanF13: return "F13";
-        case sf::Keyboard::ScanF14: return "F14";
-        case sf::Keyboard::ScanF15: return "F15";
-        case sf::Keyboard::ScanF16: return "F16";
-        case sf::Keyboard::ScanF17: return "F17";
-        case sf::Keyboard::ScanF18: return "F18";
-        case sf::Keyboard::ScanF19: return "F19";
-        case sf::Keyboard::ScanF20: return "F20";
-        case sf::Keyboard::ScanF21: return "F21";
-        case sf::Keyboard::ScanF22: return "F22";
-        case sf::Keyboard::ScanF23: return "F23";
-        case sf::Keyboard::ScanF24: return "F24";
+        case sf::Keyboard::Scan::F1:  return "F1";
+        case sf::Keyboard::Scan::F2:  return "F2";
+        case sf::Keyboard::Scan::F3:  return "F3";
+        case sf::Keyboard::Scan::F4:  return "F4";
+        case sf::Keyboard::Scan::F5:  return "F5";
+        case sf::Keyboard::Scan::F6:  return "F6";
+        case sf::Keyboard::Scan::F7:  return "F7";
+        case sf::Keyboard::Scan::F8:  return "F8";
+        case sf::Keyboard::Scan::F9:  return "F9";
+        case sf::Keyboard::Scan::F10: return "F10";
+        case sf::Keyboard::Scan::F11: return "F11";
+        case sf::Keyboard::Scan::F12: return "F12";
+        case sf::Keyboard::Scan::F13: return "F13";
+        case sf::Keyboard::Scan::F14: return "F14";
+        case sf::Keyboard::Scan::F15: return "F15";
+        case sf::Keyboard::Scan::F16: return "F16";
+        case sf::Keyboard::Scan::F17: return "F17";
+        case sf::Keyboard::Scan::F18: return "F18";
+        case sf::Keyboard::Scan::F19: return "F19";
+        case sf::Keyboard::Scan::F20: return "F20";
+        case sf::Keyboard::Scan::F21: return "F21";
+        case sf::Keyboard::Scan::F22: return "F22";
+        case sf::Keyboard::Scan::F23: return "F23";
+        case sf::Keyboard::Scan::F24: return "F24";
 
-        case sf::Keyboard::ScanCapsLock:    return "CapsLock";
-        case sf::Keyboard::ScanPrintScreen: return "PrintScreen";
-        case sf::Keyboard::ScanScrollLock:  return "ScrollLock";
+        case sf::Keyboard::Scan::CapsLock:    return "CapsLock";
+        case sf::Keyboard::Scan::PrintScreen: return "PrintScreen";
+        case sf::Keyboard::Scan::ScrollLock:  return "ScrollLock";
 
-        case sf::Keyboard::ScanPause:    return "Pause";
-        case sf::Keyboard::ScanInsert:   return "Insert";
-        case sf::Keyboard::ScanHome:     return "Home";
-        case sf::Keyboard::ScanPageUp:   return "PageUp";
-        case sf::Keyboard::ScanDelete:   return "Delete";
-        case sf::Keyboard::ScanEnd:      return "End";
-        case sf::Keyboard::ScanPageDown: return "PageDown";
+        case sf::Keyboard::Scan::Pause:    return "Pause";
+        case sf::Keyboard::Scan::Insert:   return "Insert";
+        case sf::Keyboard::Scan::Home:     return "Home";
+        case sf::Keyboard::Scan::PageUp:   return "PageUp";
+        case sf::Keyboard::Scan::Delete:   return "Delete";
+        case sf::Keyboard::Scan::End:      return "End";
+        case sf::Keyboard::Scan::PageDown: return "PageDown";
 
-        case sf::Keyboard::ScanLeft:  return "Left Arrow";
-        case sf::Keyboard::ScanRight: return "Right Arrow";
-        case sf::Keyboard::ScanDown:  return "Down Arrow";
-        case sf::Keyboard::ScanUp:    return "Up Arrow";
+        case sf::Keyboard::Scan::Left:  return "Left Arrow";
+        case sf::Keyboard::Scan::Right: return "Right Arrow";
+        case sf::Keyboard::Scan::Down:  return "Down Arrow";
+        case sf::Keyboard::Scan::Up:    return "Up Arrow";
 
-        case sf::Keyboard::ScanNumLock:        return "NumLock";
-        case sf::Keyboard::ScanNumpadDivide:   return "Divide (Numpad)";
-        case sf::Keyboard::ScanNumpadMultiply: return "Multiply (Numpad)";
-        case sf::Keyboard::ScanNumpadMinus:    return "Minus (Numpad)";
-        case sf::Keyboard::ScanNumpadPlus:     return "Plus (Numpad)";
-        case sf::Keyboard::ScanNumpadEqual:    return "Equal (Numpad)";
-        case sf::Keyboard::ScanNumpadEnter:    return "Enter (Numpad)";
-        case sf::Keyboard::ScanNumpadDecimal:  return "Decimal (Numpad)";
+        case sf::Keyboard::Scan::NumLock:        return "NumLock";
+        case sf::Keyboard::Scan::NumpadDivide:   return "Divide (Numpad)";
+        case sf::Keyboard::Scan::NumpadMultiply: return "Multiply (Numpad)";
+        case sf::Keyboard::Scan::NumpadMinus:    return "Minus (Numpad)";
+        case sf::Keyboard::Scan::NumpadPlus:     return "Plus (Numpad)";
+        case sf::Keyboard::Scan::NumpadEqual:    return "Equal (Numpad)";
+        case sf::Keyboard::Scan::NumpadEnter:    return "Enter (Numpad)";
+        case sf::Keyboard::Scan::NumpadDecimal:  return "Decimal (Numpad)";
 
-        case sf::Keyboard::ScanNumpad0: return "0 (Numpad)";
-        case sf::Keyboard::ScanNumpad1: return "1 (Numpad)";
-        case sf::Keyboard::ScanNumpad2: return "2 (Numpad)";
-        case sf::Keyboard::ScanNumpad3: return "3 (Numpad)";
-        case sf::Keyboard::ScanNumpad4: return "4 (Numpad)";
-        case sf::Keyboard::ScanNumpad5: return "5 (Numpad)";
-        case sf::Keyboard::ScanNumpad6: return "6 (Numpad)";
-        case sf::Keyboard::ScanNumpad7: return "7 (Numpad)";
-        case sf::Keyboard::ScanNumpad8: return "8 (Numpad)";
-        case sf::Keyboard::ScanNumpad9: return "9 (Numpad)";
+        case sf::Keyboard::Scan::Numpad0: return "0 (Numpad)";
+        case sf::Keyboard::Scan::Numpad1: return "1 (Numpad)";
+        case sf::Keyboard::Scan::Numpad2: return "2 (Numpad)";
+        case sf::Keyboard::Scan::Numpad3: return "3 (Numpad)";
+        case sf::Keyboard::Scan::Numpad4: return "4 (Numpad)";
+        case sf::Keyboard::Scan::Numpad5: return "5 (Numpad)";
+        case sf::Keyboard::Scan::Numpad6: return "6 (Numpad)";
+        case sf::Keyboard::Scan::Numpad7: return "7 (Numpad)";
+        case sf::Keyboard::Scan::Numpad8: return "8 (Numpad)";
+        case sf::Keyboard::Scan::Numpad9: return "9 (Numpad)";
 
-        case sf::Keyboard::ScanApplication: return "Application";
-        case sf::Keyboard::ScanExecute:     return "Execute";
-        case sf::Keyboard::ScanHelp:        return "Help";
-        case sf::Keyboard::ScanMenu:        return "Menu";
-        case sf::Keyboard::ScanSelect:      return "Select";
-        case sf::Keyboard::ScanStop:        return "Stop";
-        case sf::Keyboard::ScanRedo:        return "Redo";
-        case sf::Keyboard::ScanUndo:        return "Undo";
-        case sf::Keyboard::ScanCut:         return "Cut";
-        case sf::Keyboard::ScanCopy:        return "Copy";
-        case sf::Keyboard::ScanPaste:       return "Paste";
-        case sf::Keyboard::ScanSearch:      return "Search";
-        case sf::Keyboard::ScanVolumeMute:  return "Volume Mute";
-        case sf::Keyboard::ScanVolumeUp:    return "Volume Up";
-        case sf::Keyboard::ScanVolumeDown:  return "Volume Down";
+        case sf::Keyboard::Scan::Application: return "Application";
+        case sf::Keyboard::Scan::Execute:     return "Execute";
+        case sf::Keyboard::Scan::Help:        return "Help";
+        case sf::Keyboard::Scan::Menu:        return "Menu";
+        case sf::Keyboard::Scan::Select:      return "Select";
+        case sf::Keyboard::Scan::Stop:        return "Stop";
+        case sf::Keyboard::Scan::Redo:        return "Redo";
+        case sf::Keyboard::Scan::Undo:        return "Undo";
+        case sf::Keyboard::Scan::Cut:         return "Cut";
+        case sf::Keyboard::Scan::Copy:        return "Copy";
+        case sf::Keyboard::Scan::Paste:       return "Paste";
+        case sf::Keyboard::Scan::Search:      return "Search";
+        case sf::Keyboard::Scan::VolumeMute:  return "Volume Mute";
+        case sf::Keyboard::Scan::VolumeUp:    return "Volume Up";
+        case sf::Keyboard::Scan::VolumeDown:  return "Volume Down";
 
-        case sf::Keyboard::ScanLControl: return "Left Control";
-        case sf::Keyboard::ScanLShift:   return "Left Shift";
-        case sf::Keyboard::ScanLAlt:     return "Left Alt";
-        case sf::Keyboard::ScanLSystem:  return "Left Command";
-        case sf::Keyboard::ScanRControl: return "Right Control";
-        case sf::Keyboard::ScanRShift:   return "Right Shift";
-        case sf::Keyboard::ScanRAlt:     return "Right Alt";
-        case sf::Keyboard::ScanRSystem:  return "Right Command";
+        case sf::Keyboard::Scan::LControl: return "Left Control";
+        case sf::Keyboard::Scan::LShift:   return "Left Shift";
+        case sf::Keyboard::Scan::LAlt:     return "Left Alt";
+        case sf::Keyboard::Scan::LSystem:  return "Left Command";
+        case sf::Keyboard::Scan::RControl: return "Right Control";
+        case sf::Keyboard::Scan::RShift:   return "Right Shift";
+        case sf::Keyboard::Scan::RAlt:     return "Right Alt";
+        case sf::Keyboard::Scan::RSystem:  return "Right Command";
 
         default:
         {
@@ -330,7 +330,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
 {
     UInt32 usage = IOHIDElementGetUsage(key);
     sf::Keyboard::Scancode code = usageToScancode(usage);
-    if (code != Keyboard::ScanUnknown)
+    if (code != Keyboard::Scan::Unknown)
     {
         CFRetain(key);
         m_keys[code].push_back(key);
@@ -343,8 +343,8 @@ void HIDInputManager::buildMappings()
 {
     // Reset the mappings
     for (int i = 0; i < Keyboard::KeyCount; ++i)
-        m_keyToScancodeMapping[i] = Keyboard::ScanUnknown;
-    for (int i = 0; i < Keyboard::ScancodeCount; ++i)
+        m_keyToScancodeMapping[i] = Keyboard::Scan::Unknown;
+    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
         m_scancodeToKeyMapping[i] = Keyboard::Unknown;
 
     // Get the current keyboard layout
@@ -362,7 +362,7 @@ void HIDInputManager::buildMappings()
 
     // For each scancode having a IOHIDElement, we translate the corresponding
     // virtual code to a localized Key.
-    for (int i = 0; i < Keyboard::ScancodeCount; ++i)
+    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
     {
         Keyboard::Scancode scan = static_cast<Keyboard::Scancode>(i);
         UInt8 virtualCode = scanToVirtualCode(scan);
@@ -481,202 +481,202 @@ sf::Keyboard::Scancode HIDInputManager::usageToScancode(UInt32 usage)
 {
     switch (usage)
     {
-        case kHIDUsage_KeyboardErrorRollOver:  return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardPOSTFail:       return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardErrorUndefined: return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeyboardErrorRollOver:  return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardPOSTFail:       return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardErrorUndefined: return sf::Keyboard::Scan::Unknown;
 
-        case kHIDUsage_KeyboardA: return sf::Keyboard::ScanA;
-        case kHIDUsage_KeyboardB: return sf::Keyboard::ScanB;
-        case kHIDUsage_KeyboardC: return sf::Keyboard::ScanC;
-        case kHIDUsage_KeyboardD: return sf::Keyboard::ScanD;
-        case kHIDUsage_KeyboardE: return sf::Keyboard::ScanE;
-        case kHIDUsage_KeyboardF: return sf::Keyboard::ScanF;
-        case kHIDUsage_KeyboardG: return sf::Keyboard::ScanG;
-        case kHIDUsage_KeyboardH: return sf::Keyboard::ScanH;
-        case kHIDUsage_KeyboardI: return sf::Keyboard::ScanI;
-        case kHIDUsage_KeyboardJ: return sf::Keyboard::ScanJ;
-        case kHIDUsage_KeyboardK: return sf::Keyboard::ScanK;
-        case kHIDUsage_KeyboardL: return sf::Keyboard::ScanL;
-        case kHIDUsage_KeyboardM: return sf::Keyboard::ScanM;
-        case kHIDUsage_KeyboardN: return sf::Keyboard::ScanN;
-        case kHIDUsage_KeyboardO: return sf::Keyboard::ScanO;
-        case kHIDUsage_KeyboardP: return sf::Keyboard::ScanP;
-        case kHIDUsage_KeyboardQ: return sf::Keyboard::ScanQ;
-        case kHIDUsage_KeyboardR: return sf::Keyboard::ScanR;
-        case kHIDUsage_KeyboardS: return sf::Keyboard::ScanS;
-        case kHIDUsage_KeyboardT: return sf::Keyboard::ScanT;
-        case kHIDUsage_KeyboardU: return sf::Keyboard::ScanU;
-        case kHIDUsage_KeyboardV: return sf::Keyboard::ScanV;
-        case kHIDUsage_KeyboardW: return sf::Keyboard::ScanW;
-        case kHIDUsage_KeyboardX: return sf::Keyboard::ScanX;
-        case kHIDUsage_KeyboardY: return sf::Keyboard::ScanY;
-        case kHIDUsage_KeyboardZ: return sf::Keyboard::ScanZ;
+        case kHIDUsage_KeyboardA: return sf::Keyboard::Scan::A;
+        case kHIDUsage_KeyboardB: return sf::Keyboard::Scan::B;
+        case kHIDUsage_KeyboardC: return sf::Keyboard::Scan::C;
+        case kHIDUsage_KeyboardD: return sf::Keyboard::Scan::D;
+        case kHIDUsage_KeyboardE: return sf::Keyboard::Scan::E;
+        case kHIDUsage_KeyboardF: return sf::Keyboard::Scan::F;
+        case kHIDUsage_KeyboardG: return sf::Keyboard::Scan::G;
+        case kHIDUsage_KeyboardH: return sf::Keyboard::Scan::H;
+        case kHIDUsage_KeyboardI: return sf::Keyboard::Scan::I;
+        case kHIDUsage_KeyboardJ: return sf::Keyboard::Scan::J;
+        case kHIDUsage_KeyboardK: return sf::Keyboard::Scan::K;
+        case kHIDUsage_KeyboardL: return sf::Keyboard::Scan::L;
+        case kHIDUsage_KeyboardM: return sf::Keyboard::Scan::M;
+        case kHIDUsage_KeyboardN: return sf::Keyboard::Scan::N;
+        case kHIDUsage_KeyboardO: return sf::Keyboard::Scan::O;
+        case kHIDUsage_KeyboardP: return sf::Keyboard::Scan::P;
+        case kHIDUsage_KeyboardQ: return sf::Keyboard::Scan::Q;
+        case kHIDUsage_KeyboardR: return sf::Keyboard::Scan::R;
+        case kHIDUsage_KeyboardS: return sf::Keyboard::Scan::S;
+        case kHIDUsage_KeyboardT: return sf::Keyboard::Scan::T;
+        case kHIDUsage_KeyboardU: return sf::Keyboard::Scan::U;
+        case kHIDUsage_KeyboardV: return sf::Keyboard::Scan::V;
+        case kHIDUsage_KeyboardW: return sf::Keyboard::Scan::W;
+        case kHIDUsage_KeyboardX: return sf::Keyboard::Scan::X;
+        case kHIDUsage_KeyboardY: return sf::Keyboard::Scan::Y;
+        case kHIDUsage_KeyboardZ: return sf::Keyboard::Scan::Z;
 
-        case kHIDUsage_Keyboard1: return sf::Keyboard::ScanNum1;
-        case kHIDUsage_Keyboard2: return sf::Keyboard::ScanNum2;
-        case kHIDUsage_Keyboard3: return sf::Keyboard::ScanNum3;
-        case kHIDUsage_Keyboard4: return sf::Keyboard::ScanNum4;
-        case kHIDUsage_Keyboard5: return sf::Keyboard::ScanNum5;
-        case kHIDUsage_Keyboard6: return sf::Keyboard::ScanNum6;
-        case kHIDUsage_Keyboard7: return sf::Keyboard::ScanNum7;
-        case kHIDUsage_Keyboard8: return sf::Keyboard::ScanNum8;
-        case kHIDUsage_Keyboard9: return sf::Keyboard::ScanNum9;
-        case kHIDUsage_Keyboard0: return sf::Keyboard::ScanNum0;
+        case kHIDUsage_Keyboard1: return sf::Keyboard::Scan::Num1;
+        case kHIDUsage_Keyboard2: return sf::Keyboard::Scan::Num2;
+        case kHIDUsage_Keyboard3: return sf::Keyboard::Scan::Num3;
+        case kHIDUsage_Keyboard4: return sf::Keyboard::Scan::Num4;
+        case kHIDUsage_Keyboard5: return sf::Keyboard::Scan::Num5;
+        case kHIDUsage_Keyboard6: return sf::Keyboard::Scan::Num6;
+        case kHIDUsage_Keyboard7: return sf::Keyboard::Scan::Num7;
+        case kHIDUsage_Keyboard8: return sf::Keyboard::Scan::Num8;
+        case kHIDUsage_Keyboard9: return sf::Keyboard::Scan::Num9;
+        case kHIDUsage_Keyboard0: return sf::Keyboard::Scan::Num0;
 
-        case kHIDUsage_KeyboardReturnOrEnter:       return sf::Keyboard::ScanEnter;
-        case kHIDUsage_KeyboardEscape:              return sf::Keyboard::ScanEscape;
-        case kHIDUsage_KeyboardDeleteOrBackspace:   return sf::Keyboard::ScanBackspace;
-        case kHIDUsage_KeyboardTab:                 return sf::Keyboard::ScanTab;
-        case kHIDUsage_KeyboardSpacebar:            return sf::Keyboard::ScanSpace;
-        case kHIDUsage_KeyboardHyphen:              return sf::Keyboard::ScanHyphen;
-        case kHIDUsage_KeyboardEqualSign:           return sf::Keyboard::ScanEqual;
-        case kHIDUsage_KeyboardOpenBracket:         return sf::Keyboard::ScanLBracket;
-        case kHIDUsage_KeyboardCloseBracket:        return sf::Keyboard::ScanRBracket;
-        case kHIDUsage_KeyboardBackslash:           return sf::Keyboard::ScanBackslash;
-        case kHIDUsage_KeyboardNonUSPound:          return sf::Keyboard::ScanBackslash;
-        case kHIDUsage_KeyboardSemicolon:           return sf::Keyboard::ScanSemicolon;
-        case kHIDUsage_KeyboardQuote:               return sf::Keyboard::ScanApostrophe;
-        case kHIDUsage_KeyboardGraveAccentAndTilde: return sf::Keyboard::ScanGrave;
-        case kHIDUsage_KeyboardComma:               return sf::Keyboard::ScanComma;
-        case kHIDUsage_KeyboardPeriod:              return sf::Keyboard::ScanPeriod;
-        case kHIDUsage_KeyboardSlash:               return sf::Keyboard::ScanSlash;
-        case kHIDUsage_KeyboardCapsLock:            return sf::Keyboard::ScanCapsLock;
+        case kHIDUsage_KeyboardReturnOrEnter:       return sf::Keyboard::Scan::Enter;
+        case kHIDUsage_KeyboardEscape:              return sf::Keyboard::Scan::Escape;
+        case kHIDUsage_KeyboardDeleteOrBackspace:   return sf::Keyboard::Scan::Backspace;
+        case kHIDUsage_KeyboardTab:                 return sf::Keyboard::Scan::Tab;
+        case kHIDUsage_KeyboardSpacebar:            return sf::Keyboard::Scan::Space;
+        case kHIDUsage_KeyboardHyphen:              return sf::Keyboard::Scan::Hyphen;
+        case kHIDUsage_KeyboardEqualSign:           return sf::Keyboard::Scan::Equal;
+        case kHIDUsage_KeyboardOpenBracket:         return sf::Keyboard::Scan::LBracket;
+        case kHIDUsage_KeyboardCloseBracket:        return sf::Keyboard::Scan::RBracket;
+        case kHIDUsage_KeyboardBackslash:           return sf::Keyboard::Scan::Backslash;
+        case kHIDUsage_KeyboardNonUSPound:          return sf::Keyboard::Scan::Backslash;
+        case kHIDUsage_KeyboardSemicolon:           return sf::Keyboard::Scan::Semicolon;
+        case kHIDUsage_KeyboardQuote:               return sf::Keyboard::Scan::Apostrophe;
+        case kHIDUsage_KeyboardGraveAccentAndTilde: return sf::Keyboard::Scan::Grave;
+        case kHIDUsage_KeyboardComma:               return sf::Keyboard::Scan::Comma;
+        case kHIDUsage_KeyboardPeriod:              return sf::Keyboard::Scan::Period;
+        case kHIDUsage_KeyboardSlash:               return sf::Keyboard::Scan::Slash;
+        case kHIDUsage_KeyboardCapsLock:            return sf::Keyboard::Scan::CapsLock;
 
-        case kHIDUsage_KeyboardF1:  return sf::Keyboard::ScanF1;
-        case kHIDUsage_KeyboardF2:  return sf::Keyboard::ScanF2;
-        case kHIDUsage_KeyboardF3:  return sf::Keyboard::ScanF3;
-        case kHIDUsage_KeyboardF4:  return sf::Keyboard::ScanF4;
-        case kHIDUsage_KeyboardF5:  return sf::Keyboard::ScanF5;
-        case kHIDUsage_KeyboardF6:  return sf::Keyboard::ScanF6;
-        case kHIDUsage_KeyboardF7:  return sf::Keyboard::ScanF7;
-        case kHIDUsage_KeyboardF8:  return sf::Keyboard::ScanF8;
-        case kHIDUsage_KeyboardF9:  return sf::Keyboard::ScanF9;
-        case kHIDUsage_KeyboardF10: return sf::Keyboard::ScanF10;
-        case kHIDUsage_KeyboardF11: return sf::Keyboard::ScanF11;
-        case kHIDUsage_KeyboardF12: return sf::Keyboard::ScanF12;
+        case kHIDUsage_KeyboardF1:  return sf::Keyboard::Scan::F1;
+        case kHIDUsage_KeyboardF2:  return sf::Keyboard::Scan::F2;
+        case kHIDUsage_KeyboardF3:  return sf::Keyboard::Scan::F3;
+        case kHIDUsage_KeyboardF4:  return sf::Keyboard::Scan::F4;
+        case kHIDUsage_KeyboardF5:  return sf::Keyboard::Scan::F5;
+        case kHIDUsage_KeyboardF6:  return sf::Keyboard::Scan::F6;
+        case kHIDUsage_KeyboardF7:  return sf::Keyboard::Scan::F7;
+        case kHIDUsage_KeyboardF8:  return sf::Keyboard::Scan::F8;
+        case kHIDUsage_KeyboardF9:  return sf::Keyboard::Scan::F9;
+        case kHIDUsage_KeyboardF10: return sf::Keyboard::Scan::F10;
+        case kHIDUsage_KeyboardF11: return sf::Keyboard::Scan::F11;
+        case kHIDUsage_KeyboardF12: return sf::Keyboard::Scan::F12;
 
-        case kHIDUsage_KeyboardPrintScreen:   return sf::Keyboard::ScanPrintScreen;
-        case kHIDUsage_KeyboardScrollLock:    return sf::Keyboard::ScanScrollLock;
-        case kHIDUsage_KeyboardPause:         return sf::Keyboard::ScanPause;
-        case kHIDUsage_KeyboardInsert:        return sf::Keyboard::ScanInsert;
-        case kHIDUsage_KeyboardHome:          return sf::Keyboard::ScanHome;
-        case kHIDUsage_KeyboardPageUp:        return sf::Keyboard::ScanPageUp;
-        case kHIDUsage_KeyboardDeleteForward: return sf::Keyboard::ScanDelete;
-        case kHIDUsage_KeyboardEnd:           return sf::Keyboard::ScanEnd;
-        case kHIDUsage_KeyboardPageDown:      return sf::Keyboard::ScanPageDown;
+        case kHIDUsage_KeyboardPrintScreen:   return sf::Keyboard::Scan::PrintScreen;
+        case kHIDUsage_KeyboardScrollLock:    return sf::Keyboard::Scan::ScrollLock;
+        case kHIDUsage_KeyboardPause:         return sf::Keyboard::Scan::Pause;
+        case kHIDUsage_KeyboardInsert:        return sf::Keyboard::Scan::Insert;
+        case kHIDUsage_KeyboardHome:          return sf::Keyboard::Scan::Home;
+        case kHIDUsage_KeyboardPageUp:        return sf::Keyboard::Scan::PageUp;
+        case kHIDUsage_KeyboardDeleteForward: return sf::Keyboard::Scan::Delete;
+        case kHIDUsage_KeyboardEnd:           return sf::Keyboard::Scan::End;
+        case kHIDUsage_KeyboardPageDown:      return sf::Keyboard::Scan::PageDown;
 
-        case kHIDUsage_KeyboardRightArrow: return sf::Keyboard::ScanRight;
-        case kHIDUsage_KeyboardLeftArrow:  return sf::Keyboard::ScanLeft;
-        case kHIDUsage_KeyboardDownArrow:  return sf::Keyboard::ScanDown;
-        case kHIDUsage_KeyboardUpArrow:    return sf::Keyboard::ScanUp;
+        case kHIDUsage_KeyboardRightArrow: return sf::Keyboard::Scan::Right;
+        case kHIDUsage_KeyboardLeftArrow:  return sf::Keyboard::Scan::Left;
+        case kHIDUsage_KeyboardDownArrow:  return sf::Keyboard::Scan::Down;
+        case kHIDUsage_KeyboardUpArrow:    return sf::Keyboard::Scan::Up;
 
-        case kHIDUsage_KeypadNumLock:   return sf::Keyboard::ScanNumLock;
-        case kHIDUsage_KeypadSlash:     return sf::Keyboard::ScanNumpadDivide;
-        case kHIDUsage_KeypadAsterisk:  return sf::Keyboard::ScanNumpadMultiply;
-        case kHIDUsage_KeypadHyphen:    return sf::Keyboard::ScanNumpadMinus;
-        case kHIDUsage_KeypadPlus:      return sf::Keyboard::ScanNumpadPlus;
-        case kHIDUsage_KeypadEqualSign: return sf::Keyboard::ScanNumpadEqual;
-        case kHIDUsage_KeypadEnter:     return sf::Keyboard::ScanNumpadEnter;
-        case kHIDUsage_KeypadPeriod:    return sf::Keyboard::ScanNumpadDecimal;
+        case kHIDUsage_KeypadNumLock:   return sf::Keyboard::Scan::NumLock;
+        case kHIDUsage_KeypadSlash:     return sf::Keyboard::Scan::NumpadDivide;
+        case kHIDUsage_KeypadAsterisk:  return sf::Keyboard::Scan::NumpadMultiply;
+        case kHIDUsage_KeypadHyphen:    return sf::Keyboard::Scan::NumpadMinus;
+        case kHIDUsage_KeypadPlus:      return sf::Keyboard::Scan::NumpadPlus;
+        case kHIDUsage_KeypadEqualSign: return sf::Keyboard::Scan::NumpadEqual;
+        case kHIDUsage_KeypadEnter:     return sf::Keyboard::Scan::NumpadEnter;
+        case kHIDUsage_KeypadPeriod:    return sf::Keyboard::Scan::NumpadDecimal;
 
-        case kHIDUsage_Keypad1: return sf::Keyboard::ScanNumpad1;
-        case kHIDUsage_Keypad2: return sf::Keyboard::ScanNumpad2;
-        case kHIDUsage_Keypad3: return sf::Keyboard::ScanNumpad3;
-        case kHIDUsage_Keypad4: return sf::Keyboard::ScanNumpad4;
-        case kHIDUsage_Keypad5: return sf::Keyboard::ScanNumpad5;
-        case kHIDUsage_Keypad6: return sf::Keyboard::ScanNumpad6;
-        case kHIDUsage_Keypad7: return sf::Keyboard::ScanNumpad7;
-        case kHIDUsage_Keypad8: return sf::Keyboard::ScanNumpad8;
-        case kHIDUsage_Keypad9: return sf::Keyboard::ScanNumpad9;
-        case kHIDUsage_Keypad0: return sf::Keyboard::ScanNumpad0;
+        case kHIDUsage_Keypad1: return sf::Keyboard::Scan::Numpad1;
+        case kHIDUsage_Keypad2: return sf::Keyboard::Scan::Numpad2;
+        case kHIDUsage_Keypad3: return sf::Keyboard::Scan::Numpad3;
+        case kHIDUsage_Keypad4: return sf::Keyboard::Scan::Numpad4;
+        case kHIDUsage_Keypad5: return sf::Keyboard::Scan::Numpad5;
+        case kHIDUsage_Keypad6: return sf::Keyboard::Scan::Numpad6;
+        case kHIDUsage_Keypad7: return sf::Keyboard::Scan::Numpad7;
+        case kHIDUsage_Keypad8: return sf::Keyboard::Scan::Numpad8;
+        case kHIDUsage_Keypad9: return sf::Keyboard::Scan::Numpad9;
+        case kHIDUsage_Keypad0: return sf::Keyboard::Scan::Numpad0;
 
-        case kHIDUsage_KeyboardNonUSBackslash: return sf::Keyboard::ScanNonUsBackslash;
-        case kHIDUsage_KeyboardApplication:    return sf::Keyboard::ScanApplication;
-        case kHIDUsage_KeyboardPower:          return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeyboardNonUSBackslash: return sf::Keyboard::Scan::NonUsBackslash;
+        case kHIDUsage_KeyboardApplication:    return sf::Keyboard::Scan::Application;
+        case kHIDUsage_KeyboardPower:          return sf::Keyboard::Scan::Unknown;
 
-        case kHIDUsage_KeyboardF13: return sf::Keyboard::ScanF13;
-        case kHIDUsage_KeyboardF14: return sf::Keyboard::ScanF14;
-        case kHIDUsage_KeyboardF15: return sf::Keyboard::ScanF15;
-        case kHIDUsage_KeyboardF16: return sf::Keyboard::ScanF16;
-        case kHIDUsage_KeyboardF17: return sf::Keyboard::ScanF17;
-        case kHIDUsage_KeyboardF18: return sf::Keyboard::ScanF18;
-        case kHIDUsage_KeyboardF19: return sf::Keyboard::ScanF19;
-        case kHIDUsage_KeyboardF20: return sf::Keyboard::ScanF20;
-        case kHIDUsage_KeyboardF21: return sf::Keyboard::ScanF21;
-        case kHIDUsage_KeyboardF22: return sf::Keyboard::ScanF22;
-        case kHIDUsage_KeyboardF23: return sf::Keyboard::ScanF23;
-        case kHIDUsage_KeyboardF24: return sf::Keyboard::ScanF24;
+        case kHIDUsage_KeyboardF13: return sf::Keyboard::Scan::F13;
+        case kHIDUsage_KeyboardF14: return sf::Keyboard::Scan::F14;
+        case kHIDUsage_KeyboardF15: return sf::Keyboard::Scan::F15;
+        case kHIDUsage_KeyboardF16: return sf::Keyboard::Scan::F16;
+        case kHIDUsage_KeyboardF17: return sf::Keyboard::Scan::F17;
+        case kHIDUsage_KeyboardF18: return sf::Keyboard::Scan::F18;
+        case kHIDUsage_KeyboardF19: return sf::Keyboard::Scan::F19;
+        case kHIDUsage_KeyboardF20: return sf::Keyboard::Scan::F20;
+        case kHIDUsage_KeyboardF21: return sf::Keyboard::Scan::F21;
+        case kHIDUsage_KeyboardF22: return sf::Keyboard::Scan::F22;
+        case kHIDUsage_KeyboardF23: return sf::Keyboard::Scan::F23;
+        case kHIDUsage_KeyboardF24: return sf::Keyboard::Scan::F24;
 
-        case kHIDUsage_KeyboardExecute: return sf::Keyboard::ScanExecute;
-        case kHIDUsage_KeyboardHelp:    return sf::Keyboard::ScanHelp;
-        case kHIDUsage_KeyboardMenu:    return sf::Keyboard::ScanMenu;
-        case kHIDUsage_KeyboardSelect:  return sf::Keyboard::ScanSelect;
-        case kHIDUsage_KeyboardStop:    return sf::Keyboard::ScanStop;
-        case kHIDUsage_KeyboardAgain:   return sf::Keyboard::ScanRedo;
-        case kHIDUsage_KeyboardUndo:    return sf::Keyboard::ScanUndo;
-        case kHIDUsage_KeyboardCut:     return sf::Keyboard::ScanCut;
-        case kHIDUsage_KeyboardCopy:    return sf::Keyboard::ScanCopy;
-        case kHIDUsage_KeyboardPaste:   return sf::Keyboard::ScanPaste;
-        case kHIDUsage_KeyboardFind:    return sf::Keyboard::ScanSearch;
+        case kHIDUsage_KeyboardExecute: return sf::Keyboard::Scan::Execute;
+        case kHIDUsage_KeyboardHelp:    return sf::Keyboard::Scan::Help;
+        case kHIDUsage_KeyboardMenu:    return sf::Keyboard::Scan::Menu;
+        case kHIDUsage_KeyboardSelect:  return sf::Keyboard::Scan::Select;
+        case kHIDUsage_KeyboardStop:    return sf::Keyboard::Scan::Stop;
+        case kHIDUsage_KeyboardAgain:   return sf::Keyboard::Scan::Redo;
+        case kHIDUsage_KeyboardUndo:    return sf::Keyboard::Scan::Undo;
+        case kHIDUsage_KeyboardCut:     return sf::Keyboard::Scan::Cut;
+        case kHIDUsage_KeyboardCopy:    return sf::Keyboard::Scan::Copy;
+        case kHIDUsage_KeyboardPaste:   return sf::Keyboard::Scan::Paste;
+        case kHIDUsage_KeyboardFind:    return sf::Keyboard::Scan::Search;
 
-        case kHIDUsage_KeyboardMute:       return sf::Keyboard::ScanVolumeMute;
-        case kHIDUsage_KeyboardVolumeUp:   return sf::Keyboard::ScanVolumeUp;
-        case kHIDUsage_KeyboardVolumeDown: return sf::Keyboard::ScanVolumeDown;
+        case kHIDUsage_KeyboardMute:       return sf::Keyboard::Scan::VolumeMute;
+        case kHIDUsage_KeyboardVolumeUp:   return sf::Keyboard::Scan::VolumeUp;
+        case kHIDUsage_KeyboardVolumeDown: return sf::Keyboard::Scan::VolumeDown;
 
-        case kHIDUsage_KeyboardLockingCapsLock:   return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLockingNumLock:    return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLockingScrollLock: return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeyboardLockingCapsLock:   return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLockingNumLock:    return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLockingScrollLock: return sf::Keyboard::Scan::Unknown;
 
-        case kHIDUsage_KeypadComma:            return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeypadEqualSignAS400:   return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational1: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational2: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational3: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational4: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational5: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational6: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational7: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational8: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardInternational9: return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeypadComma:            return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeypadEqualSignAS400:   return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational1: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational2: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational3: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational4: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational5: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational6: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational7: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational8: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardInternational9: return sf::Keyboard::Scan::Unknown;
 
-        case kHIDUsage_KeyboardLANG1: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG2: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG3: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG4: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG5: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG6: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG7: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG8: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardLANG9: return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeyboardLANG1: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG2: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG3: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG4: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG5: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG6: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG7: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG8: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardLANG9: return sf::Keyboard::Scan::Unknown;
 
-        case kHIDUsage_KeyboardAlternateErase:    return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardSysReqOrAttention: return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardCancel:            return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardClear:             return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardPrior:             return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardReturn:            return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardSeparator:         return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardOut:               return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardOper:              return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardClearOrAgain:      return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardCrSelOrProps:      return sf::Keyboard::ScanUnknown;
-        case kHIDUsage_KeyboardExSel:             return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_KeyboardAlternateErase:    return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardSysReqOrAttention: return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardCancel:            return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardClear:             return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardPrior:             return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardReturn:            return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardSeparator:         return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardOut:               return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardOper:              return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardClearOrAgain:      return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardCrSelOrProps:      return sf::Keyboard::Scan::Unknown;
+        case kHIDUsage_KeyboardExSel:             return sf::Keyboard::Scan::Unknown;
 
             /* 0xa5-0xdf Reserved */
 
-        case kHIDUsage_KeyboardLeftControl:  return sf::Keyboard::ScanLControl;
-        case kHIDUsage_KeyboardLeftShift:    return sf::Keyboard::ScanLShift;
-        case kHIDUsage_KeyboardLeftAlt:      return sf::Keyboard::ScanLAlt;
-        case kHIDUsage_KeyboardLeftGUI:      return sf::Keyboard::ScanLSystem;
-        case kHIDUsage_KeyboardRightControl: return sf::Keyboard::ScanRControl;
-        case kHIDUsage_KeyboardRightShift:   return sf::Keyboard::ScanRShift;
-        case kHIDUsage_KeyboardRightAlt:     return sf::Keyboard::ScanRAlt;
-        case kHIDUsage_KeyboardRightGUI:     return sf::Keyboard::ScanRSystem;
+        case kHIDUsage_KeyboardLeftControl:  return sf::Keyboard::Scan::LControl;
+        case kHIDUsage_KeyboardLeftShift:    return sf::Keyboard::Scan::LShift;
+        case kHIDUsage_KeyboardLeftAlt:      return sf::Keyboard::Scan::LAlt;
+        case kHIDUsage_KeyboardLeftGUI:      return sf::Keyboard::Scan::LSystem;
+        case kHIDUsage_KeyboardRightControl: return sf::Keyboard::Scan::RControl;
+        case kHIDUsage_KeyboardRightShift:   return sf::Keyboard::Scan::RShift;
+        case kHIDUsage_KeyboardRightAlt:     return sf::Keyboard::Scan::RAlt;
+        case kHIDUsage_KeyboardRightGUI:     return sf::Keyboard::Scan::RSystem;
 
             /* 0xe8-0xffff Reserved */
 
-        case kHIDUsage_Keyboard_Reserved: return sf::Keyboard::ScanUnknown;
-        default:                          return sf::Keyboard::ScanUnknown;
+        case kHIDUsage_Keyboard_Reserved: return sf::Keyboard::Scan::Unknown;
+        default:                          return sf::Keyboard::Scan::Unknown;
     }
 }
 
@@ -973,164 +973,164 @@ Keyboard::Scancode HIDInputManager::nonLocalizedKey(UniChar virtualKeycode)
     // /System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h
     switch (virtualKeycode)
     {
-        case 0x00: return sf::Keyboard::ScanA;
-        case 0x0b: return sf::Keyboard::ScanB;
-        case 0x08: return sf::Keyboard::ScanC;
-        case 0x02: return sf::Keyboard::ScanD;
-        case 0x0e: return sf::Keyboard::ScanE;
-        case 0x03: return sf::Keyboard::ScanF;
-        case 0x05: return sf::Keyboard::ScanG;
-        case 0x04: return sf::Keyboard::ScanH;
-        case 0x22: return sf::Keyboard::ScanI;
-        case 0x26: return sf::Keyboard::ScanJ;
-        case 0x28: return sf::Keyboard::ScanK;
-        case 0x25: return sf::Keyboard::ScanL;
-        case 0x2e: return sf::Keyboard::ScanM;
-        case 0x2d: return sf::Keyboard::ScanN;
-        case 0x1f: return sf::Keyboard::ScanO;
-        case 0x23: return sf::Keyboard::ScanP;
-        case 0x0c: return sf::Keyboard::ScanQ;
-        case 0x0f: return sf::Keyboard::ScanR;
-        case 0x01: return sf::Keyboard::ScanS;
-        case 0x11: return sf::Keyboard::ScanT;
-        case 0x20: return sf::Keyboard::ScanU;
-        case 0x09: return sf::Keyboard::ScanV;
-        case 0x0d: return sf::Keyboard::ScanW;
-        case 0x07: return sf::Keyboard::ScanX;
-        case 0x10: return sf::Keyboard::ScanY;
-        case 0x06: return sf::Keyboard::ScanZ;
+        case 0x00: return sf::Keyboard::Scan::A;
+        case 0x0b: return sf::Keyboard::Scan::B;
+        case 0x08: return sf::Keyboard::Scan::C;
+        case 0x02: return sf::Keyboard::Scan::D;
+        case 0x0e: return sf::Keyboard::Scan::E;
+        case 0x03: return sf::Keyboard::Scan::F;
+        case 0x05: return sf::Keyboard::Scan::G;
+        case 0x04: return sf::Keyboard::Scan::H;
+        case 0x22: return sf::Keyboard::Scan::I;
+        case 0x26: return sf::Keyboard::Scan::J;
+        case 0x28: return sf::Keyboard::Scan::K;
+        case 0x25: return sf::Keyboard::Scan::L;
+        case 0x2e: return sf::Keyboard::Scan::M;
+        case 0x2d: return sf::Keyboard::Scan::N;
+        case 0x1f: return sf::Keyboard::Scan::O;
+        case 0x23: return sf::Keyboard::Scan::P;
+        case 0x0c: return sf::Keyboard::Scan::Q;
+        case 0x0f: return sf::Keyboard::Scan::R;
+        case 0x01: return sf::Keyboard::Scan::S;
+        case 0x11: return sf::Keyboard::Scan::T;
+        case 0x20: return sf::Keyboard::Scan::U;
+        case 0x09: return sf::Keyboard::Scan::V;
+        case 0x0d: return sf::Keyboard::Scan::W;
+        case 0x07: return sf::Keyboard::Scan::X;
+        case 0x10: return sf::Keyboard::Scan::Y;
+        case 0x06: return sf::Keyboard::Scan::Z;
 
-        case 0x12: return sf::Keyboard::ScanNum1;
-        case 0x13: return sf::Keyboard::ScanNum2;
-        case 0x14: return sf::Keyboard::ScanNum3;
-        case 0x15: return sf::Keyboard::ScanNum4;
-        case 0x17: return sf::Keyboard::ScanNum5;
-        case 0x16: return sf::Keyboard::ScanNum6;
-        case 0x1a: return sf::Keyboard::ScanNum7;
-        case 0x1c: return sf::Keyboard::ScanNum8;
-        case 0x19: return sf::Keyboard::ScanNum9;
-        case 0x1d: return sf::Keyboard::ScanNum0;
+        case 0x12: return sf::Keyboard::Scan::Num1;
+        case 0x13: return sf::Keyboard::Scan::Num2;
+        case 0x14: return sf::Keyboard::Scan::Num3;
+        case 0x15: return sf::Keyboard::Scan::Num4;
+        case 0x17: return sf::Keyboard::Scan::Num5;
+        case 0x16: return sf::Keyboard::Scan::Num6;
+        case 0x1a: return sf::Keyboard::Scan::Num7;
+        case 0x1c: return sf::Keyboard::Scan::Num8;
+        case 0x19: return sf::Keyboard::Scan::Num9;
+        case 0x1d: return sf::Keyboard::Scan::Num0;
 
-        case 0x24: return sf::Keyboard::ScanEnter;
-        case 0x35: return sf::Keyboard::ScanEscape;
-        case 0x33: return sf::Keyboard::ScanBackspace;
-        case 0x30: return sf::Keyboard::ScanTab;
-        case 0x31: return sf::Keyboard::ScanSpace;
+        case 0x24: return sf::Keyboard::Scan::Enter;
+        case 0x35: return sf::Keyboard::Scan::Escape;
+        case 0x33: return sf::Keyboard::Scan::Backspace;
+        case 0x30: return sf::Keyboard::Scan::Tab;
+        case 0x31: return sf::Keyboard::Scan::Space;
 
-        case 0x18: return sf::Keyboard::ScanEqual;
-        case 0x21: return sf::Keyboard::ScanLBracket;
-        case 0x1e: return sf::Keyboard::ScanRBracket;
-        case 0x2a: return sf::Keyboard::ScanBackslash;
-        case 0x1b: return sf::Keyboard::ScanHyphen;
-        case 0x29: return sf::Keyboard::ScanSemicolon;
-        case 0x27: return sf::Keyboard::ScanApostrophe;
-        case 0x32: return sf::Keyboard::ScanGrave;
-        case 0x2b: return sf::Keyboard::ScanComma;
-        case 0x2f: return sf::Keyboard::ScanPeriod;
-        case 0x2c: return sf::Keyboard::ScanSlash;
+        case 0x18: return sf::Keyboard::Scan::Equal;
+        case 0x21: return sf::Keyboard::Scan::LBracket;
+        case 0x1e: return sf::Keyboard::Scan::RBracket;
+        case 0x2a: return sf::Keyboard::Scan::Backslash;
+        case 0x1b: return sf::Keyboard::Scan::Hyphen;
+        case 0x29: return sf::Keyboard::Scan::Semicolon;
+        case 0x27: return sf::Keyboard::Scan::Apostrophe;
+        case 0x32: return sf::Keyboard::Scan::Grave;
+        case 0x2b: return sf::Keyboard::Scan::Comma;
+        case 0x2f: return sf::Keyboard::Scan::Period;
+        case 0x2c: return sf::Keyboard::Scan::Slash;
 
-        case 0x7a: return sf::Keyboard::ScanF1;
-        case 0x78: return sf::Keyboard::ScanF2;
-        case 0x63: return sf::Keyboard::ScanF3;
-        case 0x76: return sf::Keyboard::ScanF4;
-        case 0x60: return sf::Keyboard::ScanF5;
-        case 0x61: return sf::Keyboard::ScanF6;
-        case 0x62: return sf::Keyboard::ScanF7;
-        case 0x64: return sf::Keyboard::ScanF8;
-        case 0x65: return sf::Keyboard::ScanF9;
-        case 0x6d: return sf::Keyboard::ScanF10;
-        case 0x67: return sf::Keyboard::ScanF11;
-        case 0x6f: return sf::Keyboard::ScanF12;
-        case 0x69: return sf::Keyboard::ScanF13;
-        case 0x6b: return sf::Keyboard::ScanF14;
-        case 0x71: return sf::Keyboard::ScanF15;
+        case 0x7a: return sf::Keyboard::Scan::F1;
+        case 0x78: return sf::Keyboard::Scan::F2;
+        case 0x63: return sf::Keyboard::Scan::F3;
+        case 0x76: return sf::Keyboard::Scan::F4;
+        case 0x60: return sf::Keyboard::Scan::F5;
+        case 0x61: return sf::Keyboard::Scan::F6;
+        case 0x62: return sf::Keyboard::Scan::F7;
+        case 0x64: return sf::Keyboard::Scan::F8;
+        case 0x65: return sf::Keyboard::Scan::F9;
+        case 0x6d: return sf::Keyboard::Scan::F10;
+        case 0x67: return sf::Keyboard::Scan::F11;
+        case 0x6f: return sf::Keyboard::Scan::F12;
+        case 0x69: return sf::Keyboard::Scan::F13;
+        case 0x6b: return sf::Keyboard::Scan::F14;
+        case 0x71: return sf::Keyboard::Scan::F15;
 
-        case 0x6A: return sf::Keyboard::ScanF16;
-        case 0x40: return sf::Keyboard::ScanF17;
-        case 0x4F: return sf::Keyboard::ScanF18;
-        case 0x50: return sf::Keyboard::ScanF19;
-        case 0x5A: return sf::Keyboard::ScanF20;
+        case 0x6A: return sf::Keyboard::Scan::F16;
+        case 0x40: return sf::Keyboard::Scan::F17;
+        case 0x4F: return sf::Keyboard::Scan::F18;
+        case 0x50: return sf::Keyboard::Scan::F19;
+        case 0x5A: return sf::Keyboard::Scan::F20;
         
         /* TODO Those are missing:
-         * case 0x: return sf::Keyboard::ScanF21;
-         * case 0x: return sf::Keyboard::ScanF22;
-         * case 0x: return sf::Keyboard::ScanF23;
-         * case 0x: return sf::Keyboard::ScanF24;
+         * case 0x: return sf::Keyboard::Scan::F21;
+         * case 0x: return sf::Keyboard::Scan::F22;
+         * case 0x: return sf::Keyboard::Scan::F23;
+         * case 0x: return sf::Keyboard::Scan::F24;
          */
 
-        case 0x39: return sf::Keyboard::ScanCapsLock;
+        case 0x39: return sf::Keyboard::Scan::CapsLock;
 
         /* TODO Those are missing:
-         * case 0x: return sf::Keyboard::ScanPrintScreen;
-         * case 0x: return sf::Keyboard::ScanScrollLock;
-         * case 0x: return sf::Keyboard::ScanPause;
+         * case 0x: return sf::Keyboard::Scan::PrintScreen;
+         * case 0x: return sf::Keyboard::Scan::ScrollLock;
+         * case 0x: return sf::Keyboard::Scan::Pause;
          */
 
-        case 0x72: return sf::Keyboard::ScanInsert;
-        case 0x73: return sf::Keyboard::ScanHome;
-        case 0x74: return sf::Keyboard::ScanPageUp;
-        case 0x75: return sf::Keyboard::ScanDelete;
-        case 0x77: return sf::Keyboard::ScanEnd;
-        case 0x79: return sf::Keyboard::ScanPageDown;
+        case 0x72: return sf::Keyboard::Scan::Insert;
+        case 0x73: return sf::Keyboard::Scan::Home;
+        case 0x74: return sf::Keyboard::Scan::PageUp;
+        case 0x75: return sf::Keyboard::Scan::Delete;
+        case 0x77: return sf::Keyboard::Scan::End;
+        case 0x79: return sf::Keyboard::Scan::PageDown;
 
-        case 0x7c: return sf::Keyboard::ScanRight;
-        case 0x7b: return sf::Keyboard::ScanLeft;
-        case 0x7d: return sf::Keyboard::ScanDown;
-        case 0x7e: return sf::Keyboard::ScanUp;
+        case 0x7c: return sf::Keyboard::Scan::Right;
+        case 0x7b: return sf::Keyboard::Scan::Left;
+        case 0x7d: return sf::Keyboard::Scan::Down;
+        case 0x7e: return sf::Keyboard::Scan::Up;
 
-        case 0x47: return sf::Keyboard::ScanNumLock;
-        case 0x4b: return sf::Keyboard::ScanNumpadDivide;
-        case 0x43: return sf::Keyboard::ScanNumpadMultiply;
-        case 0x4e: return sf::Keyboard::ScanNumpadMinus;
-        case 0x45: return sf::Keyboard::ScanNumpadPlus;
-        case 0x51: return sf::Keyboard::ScanNumpadEqual;
-        case 0x4c: return sf::Keyboard::ScanNumpadEnter;
-        case 0x41: return sf::Keyboard::ScanNumpadDecimal;
+        case 0x47: return sf::Keyboard::Scan::NumLock;
+        case 0x4b: return sf::Keyboard::Scan::NumpadDivide;
+        case 0x43: return sf::Keyboard::Scan::NumpadMultiply;
+        case 0x4e: return sf::Keyboard::Scan::NumpadMinus;
+        case 0x45: return sf::Keyboard::Scan::NumpadPlus;
+        case 0x51: return sf::Keyboard::Scan::NumpadEqual;
+        case 0x4c: return sf::Keyboard::Scan::NumpadEnter;
+        case 0x41: return sf::Keyboard::Scan::NumpadDecimal;
 
-        case 0x53: return sf::Keyboard::ScanNumpad1;
-        case 0x54: return sf::Keyboard::ScanNumpad2;
-        case 0x55: return sf::Keyboard::ScanNumpad3;
-        case 0x56: return sf::Keyboard::ScanNumpad4;
-        case 0x57: return sf::Keyboard::ScanNumpad5;
-        case 0x58: return sf::Keyboard::ScanNumpad6;
-        case 0x59: return sf::Keyboard::ScanNumpad7;
-        case 0x5b: return sf::Keyboard::ScanNumpad8;
-        case 0x5c: return sf::Keyboard::ScanNumpad9;
-        case 0x52: return sf::Keyboard::ScanNumpad0;
+        case 0x53: return sf::Keyboard::Scan::Numpad1;
+        case 0x54: return sf::Keyboard::Scan::Numpad2;
+        case 0x55: return sf::Keyboard::Scan::Numpad3;
+        case 0x56: return sf::Keyboard::Scan::Numpad4;
+        case 0x57: return sf::Keyboard::Scan::Numpad5;
+        case 0x58: return sf::Keyboard::Scan::Numpad6;
+        case 0x59: return sf::Keyboard::Scan::Numpad7;
+        case 0x5b: return sf::Keyboard::Scan::Numpad8;
+        case 0x5c: return sf::Keyboard::Scan::Numpad9;
+        case 0x52: return sf::Keyboard::Scan::Numpad0;
 
         /* TODO Those are missing:
-         * case 0x: return sf::Keyboard::ScanNonUsBackslash;
-         * case 0x: return sf::Keyboard::ScanApplication;
-         * case 0x: return sf::Keyboard::ScanExecute;
-         * case 0x: return sf::Keyboard::ScanHelp;
-         * case 0x: return sf::Keyboard::ScanMenu;
-         * case 0x: return sf::Keyboard::ScanSelect;
-         * case 0x: return sf::Keyboard::ScanStop;
-         * case 0x: return sf::Keyboard::ScanRedo;
-         * case 0x: return sf::Keyboard::ScanUndo;
-         * case 0x: return sf::Keyboard::ScanCut;
-         * case 0x: return sf::Keyboard::ScanCopy;
-         * case 0x: return sf::Keyboard::ScanPaste;
-         * case 0x: return sf::Keyboard::ScanSearch;
+         * case 0x: return sf::Keyboard::Scan::NonUsBackslash;
+         * case 0x: return sf::Keyboard::Scan::Application;
+         * case 0x: return sf::Keyboard::Scan::Execute;
+         * case 0x: return sf::Keyboard::Scan::Help;
+         * case 0x: return sf::Keyboard::Scan::Menu;
+         * case 0x: return sf::Keyboard::Scan::Select;
+         * case 0x: return sf::Keyboard::Scan::Stop;
+         * case 0x: return sf::Keyboard::Scan::Redo;
+         * case 0x: return sf::Keyboard::Scan::Undo;
+         * case 0x: return sf::Keyboard::Scan::Cut;
+         * case 0x: return sf::Keyboard::Scan::Copy;
+         * case 0x: return sf::Keyboard::Scan::Paste;
+         * case 0x: return sf::Keyboard::Scan::Search;
          */
 
-        case 0x4a: return sf::Keyboard::ScanVolumeMute;
-        case 0x48: return sf::Keyboard::ScanVolumeUp;
-        case 0x49: return sf::Keyboard::ScanVolumeDown;
+        case 0x4a: return sf::Keyboard::Scan::VolumeMute;
+        case 0x48: return sf::Keyboard::Scan::VolumeUp;
+        case 0x49: return sf::Keyboard::Scan::VolumeDown;
 
         /* NOTE Those are symmetric so we leave them out.
          *      Thankfully handled through modifiers and not virtual codes.
-         * case 0x3b: return sf::Keyboard::ScanLControl;
-         * case 0x38: return sf::Keyboard::ScanLShift;
-         * case 0x3a: return sf::Keyboard::ScanLAlt;
-         * case 0x37: return sf::Keyboard::ScanLSystem;
-         * case 0x3b: return sf::Keyboard::ScanRControl;
-         * case 0x38: return sf::Keyboard::ScanRShift;
-         * case 0x3a: return sf::Keyboard::ScanRAlt;
-         * case 0x37: return sf::Keyboard::ScanRSystem;
+         * case 0x3b: return sf::Keyboard::Scan::LControl;
+         * case 0x38: return sf::Keyboard::Scan::LShift;
+         * case 0x3a: return sf::Keyboard::Scan::LAlt;
+         * case 0x37: return sf::Keyboard::Scan::LSystem;
+         * case 0x3b: return sf::Keyboard::Scan::RControl;
+         * case 0x38: return sf::Keyboard::Scan::RShift;
+         * case 0x3a: return sf::Keyboard::Scan::RAlt;
+         * case 0x37: return sf::Keyboard::Scan::RSystem;
          */
 
-        default: return sf::Keyboard::ScanUnknown;
+        default: return sf::Keyboard::Scan::Unknown;
     }
 }
 
@@ -1140,145 +1140,145 @@ UInt8 HIDInputManager::scanToVirtualCode(Keyboard::Scancode code)
 {
     switch (code)
     {
-        case sf::Keyboard::ScanA: return 0x00;
-        case sf::Keyboard::ScanB: return 0x0b;
-        case sf::Keyboard::ScanC: return 0x08;
-        case sf::Keyboard::ScanD: return 0x02;
-        case sf::Keyboard::ScanE: return 0x0e;
-        case sf::Keyboard::ScanF: return 0x03;
-        case sf::Keyboard::ScanG: return 0x05;
-        case sf::Keyboard::ScanH: return 0x04;
-        case sf::Keyboard::ScanI: return 0x22;
-        case sf::Keyboard::ScanJ: return 0x26;
-        case sf::Keyboard::ScanK: return 0x28;
-        case sf::Keyboard::ScanL: return 0x25;
-        case sf::Keyboard::ScanM: return 0x2e;
-        case sf::Keyboard::ScanN: return 0x2d;
-        case sf::Keyboard::ScanO: return 0x1f;
-        case sf::Keyboard::ScanP: return 0x23;
-        case sf::Keyboard::ScanQ: return 0x0c;
-        case sf::Keyboard::ScanR: return 0x0f;
-        case sf::Keyboard::ScanS: return 0x01;
-        case sf::Keyboard::ScanT: return 0x11;
-        case sf::Keyboard::ScanU: return 0x20;
-        case sf::Keyboard::ScanV: return 0x09;
-        case sf::Keyboard::ScanW: return 0x0d;
-        case sf::Keyboard::ScanX: return 0x07;
-        case sf::Keyboard::ScanY: return 0x10;
-        case sf::Keyboard::ScanZ: return 0x06;
+        case sf::Keyboard::Scan::A: return 0x00;
+        case sf::Keyboard::Scan::B: return 0x0b;
+        case sf::Keyboard::Scan::C: return 0x08;
+        case sf::Keyboard::Scan::D: return 0x02;
+        case sf::Keyboard::Scan::E: return 0x0e;
+        case sf::Keyboard::Scan::F: return 0x03;
+        case sf::Keyboard::Scan::G: return 0x05;
+        case sf::Keyboard::Scan::H: return 0x04;
+        case sf::Keyboard::Scan::I: return 0x22;
+        case sf::Keyboard::Scan::J: return 0x26;
+        case sf::Keyboard::Scan::K: return 0x28;
+        case sf::Keyboard::Scan::L: return 0x25;
+        case sf::Keyboard::Scan::M: return 0x2e;
+        case sf::Keyboard::Scan::N: return 0x2d;
+        case sf::Keyboard::Scan::O: return 0x1f;
+        case sf::Keyboard::Scan::P: return 0x23;
+        case sf::Keyboard::Scan::Q: return 0x0c;
+        case sf::Keyboard::Scan::R: return 0x0f;
+        case sf::Keyboard::Scan::S: return 0x01;
+        case sf::Keyboard::Scan::T: return 0x11;
+        case sf::Keyboard::Scan::U: return 0x20;
+        case sf::Keyboard::Scan::V: return 0x09;
+        case sf::Keyboard::Scan::W: return 0x0d;
+        case sf::Keyboard::Scan::X: return 0x07;
+        case sf::Keyboard::Scan::Y: return 0x10;
+        case sf::Keyboard::Scan::Z: return 0x06;
 
-        case sf::Keyboard::ScanNum1: return 0x12;
-        case sf::Keyboard::ScanNum2: return 0x13;
-        case sf::Keyboard::ScanNum3: return 0x14;
-        case sf::Keyboard::ScanNum4: return 0x15;
-        case sf::Keyboard::ScanNum5: return 0x17;
-        case sf::Keyboard::ScanNum6: return 0x16;
-        case sf::Keyboard::ScanNum7: return 0x1a;
-        case sf::Keyboard::ScanNum8: return 0x1c;
-        case sf::Keyboard::ScanNum9: return 0x19;
-        case sf::Keyboard::ScanNum0: return 0x1d;
+        case sf::Keyboard::Scan::Num1: return 0x12;
+        case sf::Keyboard::Scan::Num2: return 0x13;
+        case sf::Keyboard::Scan::Num3: return 0x14;
+        case sf::Keyboard::Scan::Num4: return 0x15;
+        case sf::Keyboard::Scan::Num5: return 0x17;
+        case sf::Keyboard::Scan::Num6: return 0x16;
+        case sf::Keyboard::Scan::Num7: return 0x1a;
+        case sf::Keyboard::Scan::Num8: return 0x1c;
+        case sf::Keyboard::Scan::Num9: return 0x19;
+        case sf::Keyboard::Scan::Num0: return 0x1d;
 
-        case sf::Keyboard::ScanEnter:     return 0x24;
-        case sf::Keyboard::ScanEscape:    return 0x35;
-        case sf::Keyboard::ScanBackspace: return 0x33;
-        case sf::Keyboard::ScanTab:       return 0x30;
-        case sf::Keyboard::ScanSpace:     return 0x31;
+        case sf::Keyboard::Scan::Enter:     return 0x24;
+        case sf::Keyboard::Scan::Escape:    return 0x35;
+        case sf::Keyboard::Scan::Backspace: return 0x33;
+        case sf::Keyboard::Scan::Tab:       return 0x30;
+        case sf::Keyboard::Scan::Space:     return 0x31;
 
-        case sf::Keyboard::ScanEqual:       return 0x18;
-        case sf::Keyboard::ScanLBracket:    return 0x21;
-        case sf::Keyboard::ScanRBracket:    return 0x1e;
-        case sf::Keyboard::ScanBackslash:   return 0x2a;
-        case sf::Keyboard::ScanHyphen:      return 0x1b;
-        case sf::Keyboard::ScanSemicolon:   return 0x29;
-        case sf::Keyboard::ScanApostrophe:  return 0x27;
-        case sf::Keyboard::ScanGrave:       return 0x32;
-        case sf::Keyboard::ScanComma:       return 0x2b;
-        case sf::Keyboard::ScanPeriod:      return 0x2f;
-        case sf::Keyboard::ScanSlash:       return 0x2c;
+        case sf::Keyboard::Scan::Equal:       return 0x18;
+        case sf::Keyboard::Scan::LBracket:    return 0x21;
+        case sf::Keyboard::Scan::RBracket:    return 0x1e;
+        case sf::Keyboard::Scan::Backslash:   return 0x2a;
+        case sf::Keyboard::Scan::Hyphen:      return 0x1b;
+        case sf::Keyboard::Scan::Semicolon:   return 0x29;
+        case sf::Keyboard::Scan::Apostrophe:  return 0x27;
+        case sf::Keyboard::Scan::Grave:       return 0x32;
+        case sf::Keyboard::Scan::Comma:       return 0x2b;
+        case sf::Keyboard::Scan::Period:      return 0x2f;
+        case sf::Keyboard::Scan::Slash:       return 0x2c;
 
-        case sf::Keyboard::ScanF1:  return 0x7a;
-        case sf::Keyboard::ScanF2:  return 0x78;
-        case sf::Keyboard::ScanF3:  return 0x63;
-        case sf::Keyboard::ScanF4:  return 0x76;
-        case sf::Keyboard::ScanF5:  return 0x60;
-        case sf::Keyboard::ScanF6:  return 0x61;
-        case sf::Keyboard::ScanF7:  return 0x62;
-        case sf::Keyboard::ScanF8:  return 0x64;
-        case sf::Keyboard::ScanF9:  return 0x65;
-        case sf::Keyboard::ScanF10: return 0x6d;
-        case sf::Keyboard::ScanF11: return 0x67;
-        case sf::Keyboard::ScanF12: return 0x6f;
-        case sf::Keyboard::ScanF13: return 0x69;
-        case sf::Keyboard::ScanF14: return 0x6b;
-        case sf::Keyboard::ScanF15: return 0x71;
+        case sf::Keyboard::Scan::F1:  return 0x7a;
+        case sf::Keyboard::Scan::F2:  return 0x78;
+        case sf::Keyboard::Scan::F3:  return 0x63;
+        case sf::Keyboard::Scan::F4:  return 0x76;
+        case sf::Keyboard::Scan::F5:  return 0x60;
+        case sf::Keyboard::Scan::F6:  return 0x61;
+        case sf::Keyboard::Scan::F7:  return 0x62;
+        case sf::Keyboard::Scan::F8:  return 0x64;
+        case sf::Keyboard::Scan::F9:  return 0x65;
+        case sf::Keyboard::Scan::F10: return 0x6d;
+        case sf::Keyboard::Scan::F11: return 0x67;
+        case sf::Keyboard::Scan::F12: return 0x6f;
+        case sf::Keyboard::Scan::F13: return 0x69;
+        case sf::Keyboard::Scan::F14: return 0x6b;
+        case sf::Keyboard::Scan::F15: return 0x71;
 
-        case sf::Keyboard::ScanCapsLock: return 0x39;
-
-        /* TODO Those are missing:
-         * case sf::Keyboard::ScanPrintScreen: return 0;
-         * case sf::Keyboard::ScanScrollLock:  return 0;
-         * case sf::Keyboard::ScanPause:    return 0;
-         */
-        case sf::Keyboard::ScanInsert:   return 0x72;
-        case sf::Keyboard::ScanHome:     return 0x73;
-        case sf::Keyboard::ScanPageUp:   return 0x74;
-        case sf::Keyboard::ScanDelete:   return 0x75;
-        case sf::Keyboard::ScanEnd:      return 0x77;
-        case sf::Keyboard::ScanPageDown: return 0x79;
-
-        case sf::Keyboard::ScanRight: return 0x7c;
-        case sf::Keyboard::ScanLeft:  return 0x7b;
-        case sf::Keyboard::ScanDown:  return 0x7d;
-        case sf::Keyboard::ScanUp:    return 0x7e;
-
-        case sf::Keyboard::ScanNumLock:        return 0x47;
-        case sf::Keyboard::ScanNumpadDivide:   return 0x4b;
-        case sf::Keyboard::ScanNumpadMultiply: return 0x43;
-        case sf::Keyboard::ScanNumpadMinus:    return 0x4e;
-        case sf::Keyboard::ScanNumpadPlus:     return 0x45;
-        case sf::Keyboard::ScanNumpadEqual:    return 0x51;
-        case sf::Keyboard::ScanNumpadEnter:    return 0x4c;
-        case sf::Keyboard::ScanNumpadDecimal:  return 0x41;
-
-        case sf::Keyboard::ScanNumpad1: return 0x53;
-        case sf::Keyboard::ScanNumpad2: return 0x54;
-        case sf::Keyboard::ScanNumpad3: return 0x55;
-        case sf::Keyboard::ScanNumpad4: return 0x56;
-        case sf::Keyboard::ScanNumpad5: return 0x57;
-        case sf::Keyboard::ScanNumpad6: return 0x58;
-        case sf::Keyboard::ScanNumpad7: return 0x59;
-        case sf::Keyboard::ScanNumpad8: return 0x5b;
-        case sf::Keyboard::ScanNumpad9: return 0x5c;
-        case sf::Keyboard::ScanNumpad0: return 0x52;
+        case sf::Keyboard::Scan::CapsLock: return 0x39;
 
         /* TODO Those are missing:
-         * case sf::Keyboard::ScanNonUsBackslash: return 0;
-         * case sf::Keyboard::ScanApplication: return 0;
-         * case sf::Keyboard::ScanExecute:     return 0;
-         * case sf::Keyboard::ScanHelp:        return 0;
-         * case sf::Keyboard::ScanMenu:        return 0;
-         * case sf::Keyboard::ScanSelect:      return 0;
-         * case sf::Keyboard::ScanStop:        return 0;
-         * case sf::Keyboard::ScanRedo:        return 0;
-         * case sf::Keyboard::ScanUndo:        return 0;
-         * case sf::Keyboard::ScanCut:         return 0;
-         * case sf::Keyboard::ScanCopy:        return 0;
-         * case sf::Keyboard::ScanPaste:       return 0;
-         * case sf::Keyboard::ScanSearch:      return 0;
+         * case sf::Keyboard::Scan::PrintScreen: return 0;
+         * case sf::Keyboard::Scan::ScrollLock:  return 0;
+         * case sf::Keyboard::Scan::Pause:    return 0;
+         */
+        case sf::Keyboard::Scan::Insert:   return 0x72;
+        case sf::Keyboard::Scan::Home:     return 0x73;
+        case sf::Keyboard::Scan::PageUp:   return 0x74;
+        case sf::Keyboard::Scan::Delete:   return 0x75;
+        case sf::Keyboard::Scan::End:      return 0x77;
+        case sf::Keyboard::Scan::PageDown: return 0x79;
+
+        case sf::Keyboard::Scan::Right: return 0x7c;
+        case sf::Keyboard::Scan::Left:  return 0x7b;
+        case sf::Keyboard::Scan::Down:  return 0x7d;
+        case sf::Keyboard::Scan::Up:    return 0x7e;
+
+        case sf::Keyboard::Scan::NumLock:        return 0x47;
+        case sf::Keyboard::Scan::NumpadDivide:   return 0x4b;
+        case sf::Keyboard::Scan::NumpadMultiply: return 0x43;
+        case sf::Keyboard::Scan::NumpadMinus:    return 0x4e;
+        case sf::Keyboard::Scan::NumpadPlus:     return 0x45;
+        case sf::Keyboard::Scan::NumpadEqual:    return 0x51;
+        case sf::Keyboard::Scan::NumpadEnter:    return 0x4c;
+        case sf::Keyboard::Scan::NumpadDecimal:  return 0x41;
+
+        case sf::Keyboard::Scan::Numpad1: return 0x53;
+        case sf::Keyboard::Scan::Numpad2: return 0x54;
+        case sf::Keyboard::Scan::Numpad3: return 0x55;
+        case sf::Keyboard::Scan::Numpad4: return 0x56;
+        case sf::Keyboard::Scan::Numpad5: return 0x57;
+        case sf::Keyboard::Scan::Numpad6: return 0x58;
+        case sf::Keyboard::Scan::Numpad7: return 0x59;
+        case sf::Keyboard::Scan::Numpad8: return 0x5b;
+        case sf::Keyboard::Scan::Numpad9: return 0x5c;
+        case sf::Keyboard::Scan::Numpad0: return 0x52;
+
+        /* TODO Those are missing:
+         * case sf::Keyboard::Scan::NonUsBackslash: return 0;
+         * case sf::Keyboard::Scan::Application: return 0;
+         * case sf::Keyboard::Scan::Execute:     return 0;
+         * case sf::Keyboard::Scan::Help:        return 0;
+         * case sf::Keyboard::Scan::Menu:        return 0;
+         * case sf::Keyboard::Scan::Select:      return 0;
+         * case sf::Keyboard::Scan::Stop:        return 0;
+         * case sf::Keyboard::Scan::Redo:        return 0;
+         * case sf::Keyboard::Scan::Undo:        return 0;
+         * case sf::Keyboard::Scan::Cut:         return 0;
+         * case sf::Keyboard::Scan::Copy:        return 0;
+         * case sf::Keyboard::Scan::Paste:       return 0;
+         * case sf::Keyboard::Scan::Search:      return 0;
          */
 
-        case sf::Keyboard::ScanVolumeMute: return 0x4a;
-        case sf::Keyboard::ScanVolumeUp:   return 0x48;
-        case sf::Keyboard::ScanVolumeDown: return 0x49;
+        case sf::Keyboard::Scan::VolumeMute: return 0x4a;
+        case sf::Keyboard::Scan::VolumeUp:   return 0x48;
+        case sf::Keyboard::Scan::VolumeDown: return 0x49;
 
-        case sf::Keyboard::ScanLControl: return 0x3b;
-        case sf::Keyboard::ScanLShift:   return 0x38;
-        case sf::Keyboard::ScanLAlt:     return 0x3a;
-        case sf::Keyboard::ScanLSystem:  return 0x37;
-        case sf::Keyboard::ScanRControl: return 0x3b;
-        case sf::Keyboard::ScanRShift:   return 0x38;
-        case sf::Keyboard::ScanRAlt:     return 0x3a;
-        case sf::Keyboard::ScanRSystem:  return 0x37;
+        case sf::Keyboard::Scan::LControl: return 0x3b;
+        case sf::Keyboard::Scan::LShift:   return 0x38;
+        case sf::Keyboard::Scan::LAlt:     return 0x3a;
+        case sf::Keyboard::Scan::LSystem:  return 0x37;
+        case sf::Keyboard::Scan::RControl: return 0x3b;
+        case sf::Keyboard::Scan::RShift:   return 0x38;
+        case sf::Keyboard::Scan::RAlt:     return 0x3a;
+        case sf::Keyboard::Scan::RSystem:  return 0x37;
 
         default: return 0x00;
     }
@@ -1290,65 +1290,65 @@ Keyboard::Key HIDInputManager::localizedKeyFallback(Keyboard::Scancode code)
 {
     switch (code)
     {
-        case sf::Keyboard::ScanEnter:      return sf::Keyboard::Return;
-        case sf::Keyboard::ScanEscape:     return sf::Keyboard::Escape;
-        case sf::Keyboard::ScanBackspace:  return sf::Keyboard::BackSpace;
-        case sf::Keyboard::ScanTab:        return sf::Keyboard::Tab;
-        case sf::Keyboard::ScanSpace:      return sf::Keyboard::Space;
+        case sf::Keyboard::Scan::Enter:      return sf::Keyboard::Return;
+        case sf::Keyboard::Scan::Escape:     return sf::Keyboard::Escape;
+        case sf::Keyboard::Scan::Backspace:  return sf::Keyboard::BackSpace;
+        case sf::Keyboard::Scan::Tab:        return sf::Keyboard::Tab;
+        case sf::Keyboard::Scan::Space:      return sf::Keyboard::Space;
 
-        case sf::Keyboard::ScanF1:   return sf::Keyboard::F1;
-        case sf::Keyboard::ScanF2:   return sf::Keyboard::F2;
-        case sf::Keyboard::ScanF3:   return sf::Keyboard::F3;
-        case sf::Keyboard::ScanF4:   return sf::Keyboard::F4;
-        case sf::Keyboard::ScanF5:   return sf::Keyboard::F5;
-        case sf::Keyboard::ScanF6:   return sf::Keyboard::F6;
-        case sf::Keyboard::ScanF7:   return sf::Keyboard::F7;
-        case sf::Keyboard::ScanF8:   return sf::Keyboard::F8;
-        case sf::Keyboard::ScanF9:   return sf::Keyboard::F9;
-        case sf::Keyboard::ScanF10:  return sf::Keyboard::F10;
-        case sf::Keyboard::ScanF11:  return sf::Keyboard::F11;
-        case sf::Keyboard::ScanF12:  return sf::Keyboard::F12;
-        case sf::Keyboard::ScanF13:  return sf::Keyboard::F13;
-        case sf::Keyboard::ScanF14:  return sf::Keyboard::F14;
-        case sf::Keyboard::ScanF15:  return sf::Keyboard::F15;
+        case sf::Keyboard::Scan::F1:   return sf::Keyboard::F1;
+        case sf::Keyboard::Scan::F2:   return sf::Keyboard::F2;
+        case sf::Keyboard::Scan::F3:   return sf::Keyboard::F3;
+        case sf::Keyboard::Scan::F4:   return sf::Keyboard::F4;
+        case sf::Keyboard::Scan::F5:   return sf::Keyboard::F5;
+        case sf::Keyboard::Scan::F6:   return sf::Keyboard::F6;
+        case sf::Keyboard::Scan::F7:   return sf::Keyboard::F7;
+        case sf::Keyboard::Scan::F8:   return sf::Keyboard::F8;
+        case sf::Keyboard::Scan::F9:   return sf::Keyboard::F9;
+        case sf::Keyboard::Scan::F10:  return sf::Keyboard::F10;
+        case sf::Keyboard::Scan::F11:  return sf::Keyboard::F11;
+        case sf::Keyboard::Scan::F12:  return sf::Keyboard::F12;
+        case sf::Keyboard::Scan::F13:  return sf::Keyboard::F13;
+        case sf::Keyboard::Scan::F14:  return sf::Keyboard::F14;
+        case sf::Keyboard::Scan::F15:  return sf::Keyboard::F15;
 
-        case sf::Keyboard::ScanPause:    return sf::Keyboard::Pause;
-        case sf::Keyboard::ScanInsert:   return sf::Keyboard::Insert;
-        case sf::Keyboard::ScanHome:     return sf::Keyboard::Home;
-        case sf::Keyboard::ScanPageUp:   return sf::Keyboard::PageUp;
-        case sf::Keyboard::ScanDelete:   return sf::Keyboard::Delete;
-        case sf::Keyboard::ScanEnd:      return sf::Keyboard::End;
-        case sf::Keyboard::ScanPageDown: return sf::Keyboard::PageDown;
+        case sf::Keyboard::Scan::Pause:    return sf::Keyboard::Pause;
+        case sf::Keyboard::Scan::Insert:   return sf::Keyboard::Insert;
+        case sf::Keyboard::Scan::Home:     return sf::Keyboard::Home;
+        case sf::Keyboard::Scan::PageUp:   return sf::Keyboard::PageUp;
+        case sf::Keyboard::Scan::Delete:   return sf::Keyboard::Delete;
+        case sf::Keyboard::Scan::End:      return sf::Keyboard::End;
+        case sf::Keyboard::Scan::PageDown: return sf::Keyboard::PageDown;
 
-        case sf::Keyboard::ScanRight:  return sf::Keyboard::Right;
-        case sf::Keyboard::ScanLeft:   return sf::Keyboard::Left;
-        case sf::Keyboard::ScanDown:   return sf::Keyboard::Down;
-        case sf::Keyboard::ScanUp:     return sf::Keyboard::Up;
+        case sf::Keyboard::Scan::Right:  return sf::Keyboard::Right;
+        case sf::Keyboard::Scan::Left:   return sf::Keyboard::Left;
+        case sf::Keyboard::Scan::Down:   return sf::Keyboard::Down;
+        case sf::Keyboard::Scan::Up:     return sf::Keyboard::Up;
 
-        case sf::Keyboard::ScanNumpadDivide:   return sf::Keyboard::Divide;
-        case sf::Keyboard::ScanNumpadMultiply: return sf::Keyboard::Multiply;
-        case sf::Keyboard::ScanNumpadMinus:    return sf::Keyboard::Subtract;
-        case sf::Keyboard::ScanNumpadPlus:     return sf::Keyboard::Add;
+        case sf::Keyboard::Scan::NumpadDivide:   return sf::Keyboard::Divide;
+        case sf::Keyboard::Scan::NumpadMultiply: return sf::Keyboard::Multiply;
+        case sf::Keyboard::Scan::NumpadMinus:    return sf::Keyboard::Subtract;
+        case sf::Keyboard::Scan::NumpadPlus:     return sf::Keyboard::Add;
 
-        case sf::Keyboard::ScanNumpad0:  return sf::Keyboard::Numpad1;
-        case sf::Keyboard::ScanNumpad1:  return sf::Keyboard::Numpad2;
-        case sf::Keyboard::ScanNumpad2:  return sf::Keyboard::Numpad3;
-        case sf::Keyboard::ScanNumpad3:  return sf::Keyboard::Numpad4;
-        case sf::Keyboard::ScanNumpad4:  return sf::Keyboard::Numpad5;
-        case sf::Keyboard::ScanNumpad5:  return sf::Keyboard::Numpad6;
-        case sf::Keyboard::ScanNumpad6:  return sf::Keyboard::Numpad7;
-        case sf::Keyboard::ScanNumpad7:  return sf::Keyboard::Numpad8;
-        case sf::Keyboard::ScanNumpad8:  return sf::Keyboard::Numpad9;
-        case sf::Keyboard::ScanNumpad9:  return sf::Keyboard::Numpad0;
+        case sf::Keyboard::Scan::Numpad0:  return sf::Keyboard::Numpad1;
+        case sf::Keyboard::Scan::Numpad1:  return sf::Keyboard::Numpad2;
+        case sf::Keyboard::Scan::Numpad2:  return sf::Keyboard::Numpad3;
+        case sf::Keyboard::Scan::Numpad3:  return sf::Keyboard::Numpad4;
+        case sf::Keyboard::Scan::Numpad4:  return sf::Keyboard::Numpad5;
+        case sf::Keyboard::Scan::Numpad5:  return sf::Keyboard::Numpad6;
+        case sf::Keyboard::Scan::Numpad6:  return sf::Keyboard::Numpad7;
+        case sf::Keyboard::Scan::Numpad7:  return sf::Keyboard::Numpad8;
+        case sf::Keyboard::Scan::Numpad8:  return sf::Keyboard::Numpad9;
+        case sf::Keyboard::Scan::Numpad9:  return sf::Keyboard::Numpad0;
 
-        case sf::Keyboard::ScanLControl:  return sf::Keyboard::LControl;
-        case sf::Keyboard::ScanLShift:    return sf::Keyboard::LShift;
-        case sf::Keyboard::ScanLAlt:      return sf::Keyboard::LAlt;
-        case sf::Keyboard::ScanLSystem:   return sf::Keyboard::LSystem;
-        case sf::Keyboard::ScanRControl:  return sf::Keyboard::RControl;
-        case sf::Keyboard::ScanRShift:    return sf::Keyboard::RShift;
-        case sf::Keyboard::ScanRAlt:      return sf::Keyboard::RAlt;
-        case sf::Keyboard::ScanRSystem:   return sf::Keyboard::RSystem;
+        case sf::Keyboard::Scan::LControl:  return sf::Keyboard::LControl;
+        case sf::Keyboard::Scan::LShift:    return sf::Keyboard::LShift;
+        case sf::Keyboard::Scan::LAlt:      return sf::Keyboard::LAlt;
+        case sf::Keyboard::Scan::LSystem:   return sf::Keyboard::LSystem;
+        case sf::Keyboard::Scan::RControl:  return sf::Keyboard::RControl;
+        case sf::Keyboard::Scan::RShift:    return sf::Keyboard::RShift;
+        case sf::Keyboard::Scan::RAlt:      return sf::Keyboard::RAlt;
+        case sf::Keyboard::Scan::RSystem:   return sf::Keyboard::RSystem;
 
         default: return sf::Keyboard::Unknown;
     }
