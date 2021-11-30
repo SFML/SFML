@@ -33,13 +33,13 @@ int main()
 
     // Define some constants
     const float pi = 3.14159f;
-    const int gameWidth = 800;
-    const int gameHeight = 600;
+    const float gameWidth = 800;
+    const float gameHeight = 600;
     sf::Vector2f paddleSize(25, 100);
     float ballRadius = 10.f;
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, 32), "SFML Tennis",
+    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight), 32), "SFML Tennis",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -142,7 +142,7 @@ int main()
                     do
                     {
                         // Make sure the ball initial angle is not too much vertical
-                        ballAngle = static_cast<float>(std::rand() % 360) * 2 * pi / 360;
+                        ballAngle = static_cast<float>(std::rand() % 360) * 2.f * pi / 360.f;
                     }
                     while (std::abs(std::cos(ballAngle)) < 0.7f);
                 }

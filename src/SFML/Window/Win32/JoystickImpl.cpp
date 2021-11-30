@@ -387,7 +387,7 @@ JoystickState JoystickImpl::update()
 
         // Buttons
         for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
-            state.buttons[i] = (pos.dwButtons & (1 << i)) != 0;
+            state.buttons[i] = (pos.dwButtons & (1u << i)) != 0;
     }
 
     return state;

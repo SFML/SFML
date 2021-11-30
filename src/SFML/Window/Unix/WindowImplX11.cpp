@@ -85,10 +85,10 @@ namespace
 
         static const unsigned int             maxTrialsCount = 5;
 
-    // Predicate we use to find key repeat events in processEvent
-    struct KeyRepeatFinder
-    {
-        KeyRepeatFinder(unsigned int initalKeycode, Time initialTime) : keycode(initalKeycode), time(initialTime) {}
+        // Predicate we use to find key repeat events in processEvent
+        struct KeyRepeatFinder
+        {
+            KeyRepeatFinder(unsigned int initalKeycode, Time initialTime) : keycode(initalKeycode), time(initialTime) {}
 
             // Predicate operator that checks event type, keycode and timestamp
             bool operator()(const XEvent& event)
@@ -121,11 +121,11 @@ namespace
             std::size_t offset = 0;
             ssize_t result = 0;
 
-        while ((result = read(file, &buffer[offset], 256)) > 0)
-        {
-            buffer.resize(buffer.size() + static_cast<std::size_t>(result), 0);
-            offset += static_cast<std::size_t>(result);
-        }
+            while ((result = read(file, &buffer[offset], 256)) > 0)
+            {
+                buffer.resize(buffer.size() + static_cast<std::size_t>(result), 0);
+                offset += static_cast<std::size_t>(result);
+            }
 
             ::close(file);
 
@@ -188,7 +188,10 @@ namespace
                 return false;
             }
 
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wcast-align"
             ::Window rootWindow = *reinterpret_cast< ::Window* >(data);
+            #pragma GCC diagnostic pop
 
             XFree(data);
 
@@ -220,7 +223,10 @@ namespace
                 return false;
             }
 
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wcast-align"
             ::Window childWindow = *reinterpret_cast< ::Window* >(data);
+            #pragma GCC diagnostic pop
 
             XFree(data);
 
@@ -339,7 +345,10 @@ namespace
             {
                 gotFrameExtents = true;
 
-            long* extents = reinterpret_cast<long*>(data);
+                #pragma GCC diagnostic push
+                #pragma GCC diagnostic ignored "-Wcast-align"
+                long* extents = reinterpret_cast<long*>(data);
+                #pragma GCC diagnostic pop
 
                 xFrameExtent = extents[0]; // Left.
                 yFrameExtent = extents[2]; // Top.

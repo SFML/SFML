@@ -18,7 +18,7 @@ sfml_add_library(sfml-main STATIC SOURCES ${SRC})
 
 if(SFML_OS_ANDROID)
     # glad sources
-    target_include_directories(sfml-main PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+    target_include_directories(sfml-main SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 endif()
 
 # overwrite sfml-main suffix for backward compatibility with FindSFML.cmake
