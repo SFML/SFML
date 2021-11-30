@@ -186,8 +186,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
-    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
+    static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
+    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
 };
 
 } // namespace priv
