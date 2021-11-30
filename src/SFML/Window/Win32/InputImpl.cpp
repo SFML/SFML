@@ -42,8 +42,8 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
-Keyboard::Key      InputImpl::m_scancodeToKeyMapping[Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
+Keyboard::Scancode InputImpl::m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
+Keyboard::Key      InputImpl::m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key virtualKeyToSfKey(UINT virtualKey)
@@ -276,163 +276,163 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
     // Reference: https://msdn.microsoft.com/en-us/library/aa299374(v=vs.60).aspx
     switch (code)
     {
-        case Keyboard::ScanA: return 0x1E;
-        case Keyboard::ScanB: return 0x30;
-        case Keyboard::ScanC: return 0x2E;
-        case Keyboard::ScanD: return 0x20;
-        case Keyboard::ScanE: return 0x12;
-        case Keyboard::ScanF: return 0x21;
-        case Keyboard::ScanG: return 0x22;
-        case Keyboard::ScanH: return 0x23;
-        case Keyboard::ScanI: return 0x17;
-        case Keyboard::ScanJ: return 0x24;
-        case Keyboard::ScanK: return 0x25;
-        case Keyboard::ScanL: return 0x26;
-        case Keyboard::ScanM: return 0x32;
-        case Keyboard::ScanN: return 0x31;
-        case Keyboard::ScanO: return 0x18;
-        case Keyboard::ScanP: return 0x19;
-        case Keyboard::ScanQ: return 0x10;
-        case Keyboard::ScanR: return 0x13;
-        case Keyboard::ScanS: return 0x1F;
-        case Keyboard::ScanT: return 0x14;
-        case Keyboard::ScanU: return 0x16;
-        case Keyboard::ScanV: return 0x2F;
-        case Keyboard::ScanW: return 0x11;
-        case Keyboard::ScanX: return 0x2D;
-        case Keyboard::ScanY: return 0x15;
-        case Keyboard::ScanZ: return 0x2C;
+        case Keyboard::Scan::A: return 0x1E;
+        case Keyboard::Scan::B: return 0x30;
+        case Keyboard::Scan::C: return 0x2E;
+        case Keyboard::Scan::D: return 0x20;
+        case Keyboard::Scan::E: return 0x12;
+        case Keyboard::Scan::F: return 0x21;
+        case Keyboard::Scan::G: return 0x22;
+        case Keyboard::Scan::H: return 0x23;
+        case Keyboard::Scan::I: return 0x17;
+        case Keyboard::Scan::J: return 0x24;
+        case Keyboard::Scan::K: return 0x25;
+        case Keyboard::Scan::L: return 0x26;
+        case Keyboard::Scan::M: return 0x32;
+        case Keyboard::Scan::N: return 0x31;
+        case Keyboard::Scan::O: return 0x18;
+        case Keyboard::Scan::P: return 0x19;
+        case Keyboard::Scan::Q: return 0x10;
+        case Keyboard::Scan::R: return 0x13;
+        case Keyboard::Scan::S: return 0x1F;
+        case Keyboard::Scan::T: return 0x14;
+        case Keyboard::Scan::U: return 0x16;
+        case Keyboard::Scan::V: return 0x2F;
+        case Keyboard::Scan::W: return 0x11;
+        case Keyboard::Scan::X: return 0x2D;
+        case Keyboard::Scan::Y: return 0x15;
+        case Keyboard::Scan::Z: return 0x2C;
     
-        case Keyboard::ScanNum1: return 0x02;
-        case Keyboard::ScanNum2: return 0x03;
-        case Keyboard::ScanNum3: return 0x04;
-        case Keyboard::ScanNum4: return 0x05;
-        case Keyboard::ScanNum5: return 0x06;
-        case Keyboard::ScanNum6: return 0x07;
-        case Keyboard::ScanNum7: return 0x08;
-        case Keyboard::ScanNum8: return 0x09;
-        case Keyboard::ScanNum9: return 0x0A;
-        case Keyboard::ScanNum0: return 0x0B;
+        case Keyboard::Scan::Num1: return 0x02;
+        case Keyboard::Scan::Num2: return 0x03;
+        case Keyboard::Scan::Num3: return 0x04;
+        case Keyboard::Scan::Num4: return 0x05;
+        case Keyboard::Scan::Num5: return 0x06;
+        case Keyboard::Scan::Num6: return 0x07;
+        case Keyboard::Scan::Num7: return 0x08;
+        case Keyboard::Scan::Num8: return 0x09;
+        case Keyboard::Scan::Num9: return 0x0A;
+        case Keyboard::Scan::Num0: return 0x0B;
     
-        case Keyboard::ScanEnter:      return 0x1C;
-        case Keyboard::ScanEscape:     return 0x01;
-        case Keyboard::ScanBackspace:  return 0x0E;
-        case Keyboard::ScanTab:        return 0x0F;
-        case Keyboard::ScanSpace:      return 0x39;
-        case Keyboard::ScanHyphen:     return 0x0C;
-        case Keyboard::ScanEqual:      return 0x0D;
-        case Keyboard::ScanLBracket:   return 0x1A;
-        case Keyboard::ScanRBracket:   return 0x1B;
-        case Keyboard::ScanBackslash:  return 0x2B;
-        case Keyboard::ScanSemicolon:  return 0x27;
-        case Keyboard::ScanApostrophe: return 0x28;
-        case Keyboard::ScanGrave:      return 0x29;
-        case Keyboard::ScanComma:      return 0x33;
-        case Keyboard::ScanPeriod:     return 0x34;
-        case Keyboard::ScanSlash:      return 0x35;
+        case Keyboard::Scan::Enter:      return 0x1C;
+        case Keyboard::Scan::Escape:     return 0x01;
+        case Keyboard::Scan::Backspace:  return 0x0E;
+        case Keyboard::Scan::Tab:        return 0x0F;
+        case Keyboard::Scan::Space:      return 0x39;
+        case Keyboard::Scan::Hyphen:     return 0x0C;
+        case Keyboard::Scan::Equal:      return 0x0D;
+        case Keyboard::Scan::LBracket:   return 0x1A;
+        case Keyboard::Scan::RBracket:   return 0x1B;
+        case Keyboard::Scan::Backslash:  return 0x2B;
+        case Keyboard::Scan::Semicolon:  return 0x27;
+        case Keyboard::Scan::Apostrophe: return 0x28;
+        case Keyboard::Scan::Grave:      return 0x29;
+        case Keyboard::Scan::Comma:      return 0x33;
+        case Keyboard::Scan::Period:     return 0x34;
+        case Keyboard::Scan::Slash:      return 0x35;
     
-        case Keyboard::ScanF1:  return 0x3B;
-        case Keyboard::ScanF2:  return 0x3C;
-        case Keyboard::ScanF3:  return 0x3D;
-        case Keyboard::ScanF4:  return 0x3E;
-        case Keyboard::ScanF5:  return 0x3F;
-        case Keyboard::ScanF6:  return 0x40;
-        case Keyboard::ScanF7:  return 0x41;
-        case Keyboard::ScanF8:  return 0x42;
-        case Keyboard::ScanF9:  return 0x43;
-        case Keyboard::ScanF10: return 0x44;
-        case Keyboard::ScanF11: return 0x57;
-        case Keyboard::ScanF12: return 0x58;
-        case Keyboard::ScanF13: return 0x64;
-        case Keyboard::ScanF14: return 0x65;
-        case Keyboard::ScanF15: return 0x66;
-        case Keyboard::ScanF16: return 0x67;
-        case Keyboard::ScanF17: return 0x68;
-        case Keyboard::ScanF18: return 0x69;
-        case Keyboard::ScanF19: return 0x6A;
-        case Keyboard::ScanF20: return 0x6B;
-        case Keyboard::ScanF21: return 0x6C;
-        case Keyboard::ScanF22: return 0x6D;
-        case Keyboard::ScanF23: return 0x6E;
-        case Keyboard::ScanF24: return 0x76;
+        case Keyboard::Scan::F1:  return 0x3B;
+        case Keyboard::Scan::F2:  return 0x3C;
+        case Keyboard::Scan::F3:  return 0x3D;
+        case Keyboard::Scan::F4:  return 0x3E;
+        case Keyboard::Scan::F5:  return 0x3F;
+        case Keyboard::Scan::F6:  return 0x40;
+        case Keyboard::Scan::F7:  return 0x41;
+        case Keyboard::Scan::F8:  return 0x42;
+        case Keyboard::Scan::F9:  return 0x43;
+        case Keyboard::Scan::F10: return 0x44;
+        case Keyboard::Scan::F11: return 0x57;
+        case Keyboard::Scan::F12: return 0x58;
+        case Keyboard::Scan::F13: return 0x64;
+        case Keyboard::Scan::F14: return 0x65;
+        case Keyboard::Scan::F15: return 0x66;
+        case Keyboard::Scan::F16: return 0x67;
+        case Keyboard::Scan::F17: return 0x68;
+        case Keyboard::Scan::F18: return 0x69;
+        case Keyboard::Scan::F19: return 0x6A;
+        case Keyboard::Scan::F20: return 0x6B;
+        case Keyboard::Scan::F21: return 0x6C;
+        case Keyboard::Scan::F22: return 0x6D;
+        case Keyboard::Scan::F23: return 0x6E;
+        case Keyboard::Scan::F24: return 0x76;
     
-        case Keyboard::ScanCapsLock:    return 0x3A;
-        case Keyboard::ScanPrintScreen: return 0xE037;
-        case Keyboard::ScanScrollLock:  return 0x46;
-        case Keyboard::ScanPause:       return 0x45;
-        case Keyboard::ScanInsert:      return 0xE052;
-        case Keyboard::ScanHome:        return 0xE047;
-        case Keyboard::ScanPageUp:      return 0xE049;
-        case Keyboard::ScanDelete:      return 0xE053;
-        case Keyboard::ScanEnd:         return 0xE04F;
-        case Keyboard::ScanPageDown:    return 0xE051;
-        case Keyboard::ScanRight:       return 0xE04D;
-        case Keyboard::ScanLeft:        return 0xE04B;
-        case Keyboard::ScanDown:        return 0xE050;
-        case Keyboard::ScanUp:          return 0xE048;
-        case Keyboard::ScanNumLock:     return 0xE045;
+        case Keyboard::Scan::CapsLock:    return 0x3A;
+        case Keyboard::Scan::PrintScreen: return 0xE037;
+        case Keyboard::Scan::ScrollLock:  return 0x46;
+        case Keyboard::Scan::Pause:       return 0x45;
+        case Keyboard::Scan::Insert:      return 0xE052;
+        case Keyboard::Scan::Home:        return 0xE047;
+        case Keyboard::Scan::PageUp:      return 0xE049;
+        case Keyboard::Scan::Delete:      return 0xE053;
+        case Keyboard::Scan::End:         return 0xE04F;
+        case Keyboard::Scan::PageDown:    return 0xE051;
+        case Keyboard::Scan::Right:       return 0xE04D;
+        case Keyboard::Scan::Left:        return 0xE04B;
+        case Keyboard::Scan::Down:        return 0xE050;
+        case Keyboard::Scan::Up:          return 0xE048;
+        case Keyboard::Scan::NumLock:     return 0xE045;
 
-        case Keyboard::ScanNumpadDivide:   return 0xE035;
-        case Keyboard::ScanNumpadMultiply: return 0x37;
-        case Keyboard::ScanNumpadMinus:    return 0xA4;
-        case Keyboard::ScanNumpadPlus:     return 0x4E;
-        case Keyboard::ScanNumpadEqual:    return 0x7E;
-        case Keyboard::ScanNumpadEnter:    return 0xE01C;
-        case Keyboard::ScanNumpadDecimal:  return 0x53;
+        case Keyboard::Scan::NumpadDivide:   return 0xE035;
+        case Keyboard::Scan::NumpadMultiply: return 0x37;
+        case Keyboard::Scan::NumpadMinus:    return 0xA4;
+        case Keyboard::Scan::NumpadPlus:     return 0x4E;
+        case Keyboard::Scan::NumpadEqual:    return 0x7E;
+        case Keyboard::Scan::NumpadEnter:    return 0xE01C;
+        case Keyboard::Scan::NumpadDecimal:  return 0x53;
         
-        case Keyboard::ScanNumpad1:        return 0x4F;
-        case Keyboard::ScanNumpad2:        return 0x50;
-        case Keyboard::ScanNumpad3:        return 0x51;
-        case Keyboard::ScanNumpad4:        return 0x4B;
-        case Keyboard::ScanNumpad5:        return 0x4C;
-        case Keyboard::ScanNumpad6:        return 0x4D;
-        case Keyboard::ScanNumpad7:        return 0x47;
-        case Keyboard::ScanNumpad8:        return 0x48;
-        case Keyboard::ScanNumpad9:        return 0x49;
-        case Keyboard::ScanNumpad0:        return 0x52;
+        case Keyboard::Scan::Numpad1:        return 0x4F;
+        case Keyboard::Scan::Numpad2:        return 0x50;
+        case Keyboard::Scan::Numpad3:        return 0x51;
+        case Keyboard::Scan::Numpad4:        return 0x4B;
+        case Keyboard::Scan::Numpad5:        return 0x4C;
+        case Keyboard::Scan::Numpad6:        return 0x4D;
+        case Keyboard::Scan::Numpad7:        return 0x47;
+        case Keyboard::Scan::Numpad8:        return 0x48;
+        case Keyboard::Scan::Numpad9:        return 0x49;
+        case Keyboard::Scan::Numpad0:        return 0x52;
     
-        case Keyboard::ScanNonUsBackslash: return 0x56;
-        // No known scancode for Keyboard::ScanApplication
-        // No known scancode for Keyboard::ScanExecute
-        // No known scancode for Keyboard::ScanModeChange
-        case Keyboard::ScanHelp:           return 0xE061;
-        case Keyboard::ScanMenu:           return 0xE05D;
-        case Keyboard::ScanSelect:         return 0xE01E;
-        // No known scancode for Keyboard::ScanRedo
-        // No known scancode for Keyboard::ScanUndo
-        // No known scancode for Keyboard::ScanCut
-        // No known scancode for Keyboard::ScanCopy
-        // No known scancode for Keyboard::ScanPaste
+        case Keyboard::Scan::NonUsBackslash: return 0x56;
+        // No known scancode for Keyboard::Scan::Application
+        // No known scancode for Keyboard::Scan::Execute
+        // No known scancode for Keyboard::Scan::ModeChange
+        case Keyboard::Scan::Help:           return 0xE061;
+        case Keyboard::Scan::Menu:           return 0xE05D;
+        case Keyboard::Scan::Select:         return 0xE01E;
+        // No known scancode for Keyboard::Scan::Redo
+        // No known scancode for Keyboard::Scan::Undo
+        // No known scancode for Keyboard::Scan::Cut
+        // No known scancode for Keyboard::Scan::Copy
+        // No known scancode for Keyboard::Scan::Paste
 
-        case Keyboard::ScanVolumeMute:         return 0xE020;
-        case Keyboard::ScanVolumeUp:           return 0xE02E;
-        case Keyboard::ScanVolumeDown:         return 0xE02C;
-        case Keyboard::ScanMediaPlayPause:     return 0xE022;
-        case Keyboard::ScanMediaStop:          return 0xE024;
-        case Keyboard::ScanMediaNextTrack:     return 0xE019;
-        case Keyboard::ScanMediaPreviousTrack: return 0xE010;
+        case Keyboard::Scan::VolumeMute:         return 0xE020;
+        case Keyboard::Scan::VolumeUp:           return 0xE02E;
+        case Keyboard::Scan::VolumeDown:         return 0xE02C;
+        case Keyboard::Scan::MediaPlayPause:     return 0xE022;
+        case Keyboard::Scan::MediaStop:          return 0xE024;
+        case Keyboard::Scan::MediaNextTrack:     return 0xE019;
+        case Keyboard::Scan::MediaPreviousTrack: return 0xE010;
 
-        case Keyboard::ScanLControl: return 0x1D;
-        case Keyboard::ScanLShift:   return 0x2A;
-        case Keyboard::ScanLAlt:     return 0x38;
-        case Keyboard::ScanLSystem:  return 0xE05B;
-        case Keyboard::ScanRControl: return 0xE01D;
-        case Keyboard::ScanRShift:   return 0x36;
-        case Keyboard::ScanRAlt:     return 0xE038;
-        case Keyboard::ScanRSystem:  return 0xE05C;
+        case Keyboard::Scan::LControl: return 0x1D;
+        case Keyboard::Scan::LShift:   return 0x2A;
+        case Keyboard::Scan::LAlt:     return 0x38;
+        case Keyboard::Scan::LSystem:  return 0xE05B;
+        case Keyboard::Scan::RControl: return 0xE01D;
+        case Keyboard::Scan::RShift:   return 0x36;
+        case Keyboard::Scan::RAlt:     return 0xE038;
+        case Keyboard::Scan::RSystem:  return 0xE05C;
 
-        case Keyboard::ScanBack:      return 0xE06A;
-        case Keyboard::ScanForward:   return 0xE069;
-        case Keyboard::ScanRefresh:   return 0xE067;
-        case Keyboard::ScanStop:      return 0xE068;
-        case Keyboard::ScanSearch:    return 0xE065;
-        case Keyboard::ScanFavorites: return 0xE066;
-        case Keyboard::ScanHomePage:  return 0xE030;
+        case Keyboard::Scan::Back:      return 0xE06A;
+        case Keyboard::Scan::Forward:   return 0xE069;
+        case Keyboard::Scan::Refresh:   return 0xE067;
+        case Keyboard::Scan::Stop:      return 0xE068;
+        case Keyboard::Scan::Search:    return 0xE065;
+        case Keyboard::Scan::Favorites: return 0xE066;
+        case Keyboard::Scan::HomePage:  return 0xE030;
 
-        case Keyboard::ScanLaunchApplication1: return 0xE06B;
-        case Keyboard::ScanLaunchApplication2: return 0xE021;
-        case Keyboard::ScanLaunchMail:         return 0xE06C;
-        case Keyboard::ScanLaunchMediaSelect:  return 0xE06D;
+        case Keyboard::Scan::LaunchApplication1: return 0xE06B;
+        case Keyboard::Scan::LaunchApplication2: return 0xE021;
+        case Keyboard::Scan::LaunchMail:         return 0xE06C;
+        case Keyboard::Scan::LaunchMediaSelect:  return 0xE06D;
 
         // Unable to map to a scancode
         default: return 0x0;
@@ -446,44 +446,44 @@ WORD sfScanToWinScanExtended(Keyboard::Scancode code)
     // Reference: https://msdn.microsoft.com/en-us/library/aa299374(v=vs.60).aspx
     switch (code)
     {
-        case Keyboard::ScanPrintScreen:        return 55  | 0xE100;
-        case Keyboard::ScanInsert:             return 82  | 0xE100;
-        case Keyboard::ScanHome:               return 71  | 0xE100;
-        case Keyboard::ScanPageUp:             return 73  | 0xE100;
-        case Keyboard::ScanDelete:             return 83  | 0xE100;
-        case Keyboard::ScanEnd:                return 79  | 0xE100;
-        case Keyboard::ScanPageDown:           return 81  | 0xE100;
-        case Keyboard::ScanRight:              return 77  | 0xE100;
-        case Keyboard::ScanLeft:               return 75  | 0xE100;
-        case Keyboard::ScanDown:               return 80  | 0xE100;
-        case Keyboard::ScanUp:                 return 72  | 0xE100;
-        case Keyboard::ScanNumLock:            return 69  | 0xE100;
-        case Keyboard::ScanNumpadEnter:        return 28  | 0xE100;
-        case Keyboard::ScanHelp:               return 97  | 0xE100;
-        case Keyboard::ScanMenu:               return 93  | 0xE100;
-        case Keyboard::ScanSelect:             return 30  | 0xE100;
-        case Keyboard::ScanVolumeMute:         return 32  | 0xE100;
-        case Keyboard::ScanVolumeUp:           return 46  | 0xE100;
-        case Keyboard::ScanVolumeDown:         return 44  | 0xE100;
-        case Keyboard::ScanMediaPlayPause:     return 34  | 0xE100;
-        case Keyboard::ScanMediaStop:          return 36  | 0xE100;
-        case Keyboard::ScanMediaNextTrack:     return 25  | 0xE100;
-        case Keyboard::ScanMediaPreviousTrack: return 16  | 0xE100;
-        case Keyboard::ScanLSystem:            return 91  | 0xE100;
-        case Keyboard::ScanRControl:           return 29  | 0xE100;
-        case Keyboard::ScanRAlt:               return 56  | 0xE100;
-        case Keyboard::ScanRSystem:            return 92  | 0xE100;
-        case Keyboard::ScanBack:               return 106 | 0xE100;
-        case Keyboard::ScanForward:            return 105 | 0xE100;
-        case Keyboard::ScanRefresh:            return 103 | 0xE100;
-        case Keyboard::ScanStop:               return 104 | 0xE100;
-        case Keyboard::ScanSearch:             return 101 | 0xE100;
-        case Keyboard::ScanFavorites:          return 102 | 0xE100;
-        case Keyboard::ScanHomePage:           return 48  | 0xE100;
-        case Keyboard::ScanLaunchApplication1: return 107 | 0xE100;
-        case Keyboard::ScanLaunchApplication2: return 33  | 0xE100;
-        case Keyboard::ScanLaunchMail:         return 108 | 0xE100;
-        case Keyboard::ScanLaunchMediaSelect:  return 109 | 0xE100;
+        case Keyboard::Scan::PrintScreen:        return 55  | 0xE100;
+        case Keyboard::Scan::Insert:             return 82  | 0xE100;
+        case Keyboard::Scan::Home:               return 71  | 0xE100;
+        case Keyboard::Scan::PageUp:             return 73  | 0xE100;
+        case Keyboard::Scan::Delete:             return 83  | 0xE100;
+        case Keyboard::Scan::End:                return 79  | 0xE100;
+        case Keyboard::Scan::PageDown:           return 81  | 0xE100;
+        case Keyboard::Scan::Right:              return 77  | 0xE100;
+        case Keyboard::Scan::Left:               return 75  | 0xE100;
+        case Keyboard::Scan::Down:               return 80  | 0xE100;
+        case Keyboard::Scan::Up:                 return 72  | 0xE100;
+        case Keyboard::Scan::NumLock:            return 69  | 0xE100;
+        case Keyboard::Scan::NumpadEnter:        return 28  | 0xE100;
+        case Keyboard::Scan::Help:               return 97  | 0xE100;
+        case Keyboard::Scan::Menu:               return 93  | 0xE100;
+        case Keyboard::Scan::Select:             return 30  | 0xE100;
+        case Keyboard::Scan::VolumeMute:         return 32  | 0xE100;
+        case Keyboard::Scan::VolumeUp:           return 46  | 0xE100;
+        case Keyboard::Scan::VolumeDown:         return 44  | 0xE100;
+        case Keyboard::Scan::MediaPlayPause:     return 34  | 0xE100;
+        case Keyboard::Scan::MediaStop:          return 36  | 0xE100;
+        case Keyboard::Scan::MediaNextTrack:     return 25  | 0xE100;
+        case Keyboard::Scan::MediaPreviousTrack: return 16  | 0xE100;
+        case Keyboard::Scan::LSystem:            return 91  | 0xE100;
+        case Keyboard::Scan::RControl:           return 29  | 0xE100;
+        case Keyboard::Scan::RAlt:               return 56  | 0xE100;
+        case Keyboard::Scan::RSystem:            return 92  | 0xE100;
+        case Keyboard::Scan::Back:               return 106 | 0xE100;
+        case Keyboard::Scan::Forward:            return 105 | 0xE100;
+        case Keyboard::Scan::Refresh:            return 103 | 0xE100;
+        case Keyboard::Scan::Stop:               return 104 | 0xE100;
+        case Keyboard::Scan::Search:             return 101 | 0xE100;
+        case Keyboard::Scan::Favorites:          return 102 | 0xE100;
+        case Keyboard::Scan::HomePage:           return 48  | 0xE100;
+        case Keyboard::Scan::LaunchApplication1: return 107 | 0xE100;
+        case Keyboard::Scan::LaunchApplication2: return 33  | 0xE100;
+        case Keyboard::Scan::LaunchMail:         return 108 | 0xE100;
+        case Keyboard::Scan::LaunchMediaSelect:  return 109 | 0xE100;
 
         // Use non-extended mapping
         default: return sfScanToWinScan(code);
@@ -497,37 +497,37 @@ UINT sfScanToVirtualKey(Keyboard::Scancode code)
     // Manually map non-extended key codes
     switch (code)
     {
-        case Keyboard::ScanNumpad0:
+        case Keyboard::Scan::Numpad0:
             return VK_NUMPAD0;
-        case Keyboard::ScanNumpad1:
+        case Keyboard::Scan::Numpad1:
             return VK_NUMPAD1;
-        case Keyboard::ScanNumpad2:
+        case Keyboard::Scan::Numpad2:
             return VK_NUMPAD2;
-        case Keyboard::ScanNumpad3:
+        case Keyboard::Scan::Numpad3:
             return VK_NUMPAD3;
-        case Keyboard::ScanNumpad4:
+        case Keyboard::Scan::Numpad4:
             return VK_NUMPAD4;
-        case Keyboard::ScanNumpad5:
+        case Keyboard::Scan::Numpad5:
             return VK_NUMPAD5;
-        case Keyboard::ScanNumpad6:
+        case Keyboard::Scan::Numpad6:
             return VK_NUMPAD6;
-        case Keyboard::ScanNumpad7:
+        case Keyboard::Scan::Numpad7:
             return VK_NUMPAD7;
-        case Keyboard::ScanNumpad8:
+        case Keyboard::Scan::Numpad8:
             return VK_NUMPAD8;
-        case Keyboard::ScanNumpad9:
+        case Keyboard::Scan::Numpad9:
             return VK_NUMPAD9;
-        case Keyboard::ScanNumpadMinus:
+        case Keyboard::Scan::NumpadMinus:
             return VK_SUBTRACT;
-        case Keyboard::ScanNumpadDecimal:
+        case Keyboard::Scan::NumpadDecimal:
             return VK_DECIMAL;
-        case Keyboard::ScanNumpadDivide:
+        case Keyboard::Scan::NumpadDivide:
             return VK_DIVIDE;
-        case Keyboard::ScanPause:
+        case Keyboard::Scan::Pause:
             return VK_PAUSE;
-        case Keyboard::ScanRControl:
+        case Keyboard::Scan::RControl:
             return VK_RCONTROL;
-        case Keyboard::ScanRAlt:
+        case Keyboard::Scan::RAlt:
             return VK_RMENU;
         default:
             return MapVirtualKey(winScancode, MAPVK_VSC_TO_VK_EX);
@@ -536,7 +536,7 @@ UINT sfScanToVirtualKey(Keyboard::Scancode code)
 
 bool isValidScancode(Keyboard::Scancode code)
 {
-    return code > Keyboard::ScanUnknown && code < Keyboard::ScancodeCount;
+    return code > Keyboard::Scan::Unknown && code < Keyboard::Scan::ScancodeCount;
 }
 
 bool isValidKey(Keyboard::Key key)
@@ -554,13 +554,13 @@ void InputImpl::ensureMappings()
 
     // Phase 1: Initialize mappings with default values
     for (int i = 0; i < Keyboard::KeyCount; ++i)
-        m_keyToScancodeMapping[i] = Keyboard::ScanUnknown;
+        m_keyToScancodeMapping[i] = Keyboard::Scan::Unknown;
 
-    for (int i = 0; i < Keyboard::ScancodeCount; ++i)
+    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
         m_scancodeToKeyMapping[i] = Keyboard::Unknown;
 
     // Phase 2: Translate scancode to virtual code to key names
-    for (int i = 0; i < Keyboard::ScancodeCount; ++i)
+    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
     {
         Keyboard::Scancode scan = static_cast<Keyboard::Scancode>(i);
         UINT virtualKey = sfScanToVirtualKey(scan);
@@ -601,7 +601,7 @@ Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
 Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
 {
     if (!isValidKey(key))
-        return Keyboard::ScanUnknown;
+        return Keyboard::Scan::Unknown;
 
     ensureMappings();
 

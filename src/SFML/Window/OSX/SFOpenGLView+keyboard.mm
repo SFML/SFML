@@ -94,7 +94,7 @@
     {
         sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
 
-        if ((key.code != sf::Keyboard::Unknown) || (key.scancode != sf::Keyboard::ScanUnknown))
+        if ((key.code != sf::Keyboard::Unknown) || (key.scancode != sf::Keyboard::Scan::Unknown))
             m_requester->keyDown(key);
     }
 
