@@ -66,6 +66,9 @@ macro(sfml_add_library target)
         add_library(${target} ${THIS_SOURCES})
     endif()
 
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
     set_file_warnings(${THIS_SOURCES})
 
     # define the export symbol of the module
@@ -265,6 +268,9 @@ macro(sfml_add_example target)
         add_executable(${target} ${target_input})
     endif()
 
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
     set_file_warnings(${target_input})
 
     # set the debug suffix
@@ -302,6 +308,9 @@ function(sfml_add_test target SOURCES DEPENDS)
     # create the target
     add_executable(${target} ${SOURCES})
 
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
 
@@ -309,7 +318,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     if(DEPENDS)
         target_link_libraries(${target} PRIVATE ${DEPENDS})
     endif()
-    
+
     # Add the test
     add_test(${target} ${target})
 
