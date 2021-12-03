@@ -166,7 +166,7 @@ public:
     /// \return Image containing the captured contents
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED Image capture() const;
+    [[deprecated]] Image capture() const;
 
 protected:
 

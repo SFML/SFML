@@ -86,7 +86,7 @@ public:
     /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer);
+    [[deprecated]] bool create(unsigned int width, unsigned int height, bool depthBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the render-texture

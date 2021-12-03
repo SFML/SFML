@@ -2076,7 +2076,6 @@ PREDEFINED             = SFML_SYSTEM_API \
                          SFML_WINDOW_API \
                          SFML_AUDIO_API \
                          SFML_GRAPHICS_API \
-                         SFML_DEPRECATED \
                          SFML_DOXYGEN
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
