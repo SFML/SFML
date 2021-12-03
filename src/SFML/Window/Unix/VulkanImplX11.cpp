@@ -41,7 +41,7 @@ namespace
     struct VulkanLibraryWrapper
     {
         VulkanLibraryWrapper() :
-        library(NULL)
+        library(nullptr)
         {
         }
 
@@ -65,21 +65,21 @@ namespace
             if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
             {
                 dlclose(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
             if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
             {
                 dlclose(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
             if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
             {
                 dlclose(library);
-                library = NULL;
+                library = nullptr;
                 return false;
             }
 
@@ -91,7 +91,7 @@ namespace
         {
             entryPoint = reinterpret_cast<T>(dlsym(library, name));
 
-            return (entryPoint != NULL);
+            return (entryPoint != nullptr);
         }
 
         void* library;
@@ -133,7 +133,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             uint32_t extensionCount = 0;
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, NULL);
+            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
 
             extensionProperties.resize(extensionCount);
 

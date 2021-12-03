@@ -55,7 +55,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     EaglContext(EaglContext* shared);
@@ -148,8 +148,8 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
-    /// \param window       Window to attach the context to (can be NULL)
+    /// \param shared       Context to share the new one with (can be a null pointer)
+    /// \param window       Window to attach the context to (can be a null pointer)
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///

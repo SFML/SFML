@@ -188,7 +188,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
     CGPoint pos = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(NULL,
+    CGEventRef event = CGEventCreateMouseEvent(nullptr,
                                                kCGEventMouseMoved,
                                                pos,
                                                /* we don't care about this: */ kCGMouseButtonLeft);

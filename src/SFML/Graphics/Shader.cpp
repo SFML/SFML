@@ -252,11 +252,11 @@ bool Shader::loadFromFile(const std::string& filename, Type type)
 
     // Compile the shader program
     if (type == Vertex)
-        return compile(&shader[0], NULL, NULL);
+        return compile(&shader[0], nullptr, nullptr);
     else if (type == Geometry)
-        return compile(NULL, &shader[0], NULL);
+        return compile(nullptr, &shader[0], nullptr);
     else
-        return compile(NULL, NULL, &shader[0]);
+        return compile(nullptr, nullptr, &shader[0]);
 }
 
 
@@ -280,7 +280,7 @@ bool Shader::loadFromFile(const std::string& vertexShaderFilename, const std::st
     }
 
     // Compile the shader program
-    return compile(&vertexShader[0], NULL, &fragmentShader[0]);
+    return compile(&vertexShader[0], nullptr, &fragmentShader[0]);
 }
 
 
@@ -321,11 +321,11 @@ bool Shader::loadFromMemory(const std::string& shader, Type type)
 {
     // Compile the shader program
     if (type == Vertex)
-        return compile(shader.c_str(), NULL, NULL);
+        return compile(shader.c_str(), nullptr, nullptr);
     else if (type == Geometry)
-        return compile(NULL, shader.c_str(), NULL);
+        return compile(nullptr, shader.c_str(), nullptr);
     else
-        return compile(NULL, NULL, shader.c_str());
+        return compile(nullptr, nullptr, shader.c_str());
 }
 
 
@@ -333,7 +333,7 @@ bool Shader::loadFromMemory(const std::string& shader, Type type)
 bool Shader::loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader)
 {
     // Compile the shader program
-    return compile(vertexShader.c_str(), NULL, fragmentShader.c_str());
+    return compile(vertexShader.c_str(), nullptr, fragmentShader.c_str());
 }
 
 
@@ -358,11 +358,11 @@ bool Shader::loadFromStream(InputStream& stream, Type type)
 
     // Compile the shader program
     if (type == Vertex)
-        return compile(&shader[0], NULL, NULL);
+        return compile(&shader[0], nullptr, nullptr);
     else if (type == Geometry)
-        return compile(NULL, &shader[0], NULL);
+        return compile(nullptr, &shader[0], nullptr);
     else
-        return compile(NULL, NULL, &shader[0]);
+        return compile(nullptr, nullptr, &shader[0]);
 }
 
 
@@ -386,7 +386,7 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragme
     }
 
     // Compile the shader program
-    return compile(&vertexShader[0], NULL, &fragmentShader[0]);
+    return compile(&vertexShader[0], nullptr, &fragmentShader[0]);
 }
 
 
@@ -864,7 +864,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         // Create and compile the shader
         GLEXT_GLhandle vertexShader;
         glCheck(vertexShader = GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
-        glCheck(GLEXT_glShaderSource(vertexShader, 1, &vertexShaderCode, NULL));
+        glCheck(GLEXT_glShaderSource(vertexShader, 1, &vertexShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(vertexShader));
 
         // Check the compile log
@@ -891,7 +891,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     {
         // Create and compile the shader
         GLEXT_GLhandle geometryShader = GLEXT_glCreateShaderObject(GLEXT_GL_GEOMETRY_SHADER);
-        glCheck(GLEXT_glShaderSource(geometryShader, 1, &geometryShaderCode, NULL));
+        glCheck(GLEXT_glShaderSource(geometryShader, 1, &geometryShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(geometryShader));
 
         // Check the compile log
@@ -919,7 +919,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         // Create and compile the shader
         GLEXT_GLhandle fragmentShader;
         glCheck(fragmentShader = GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
-        glCheck(GLEXT_glShaderSource(fragmentShader, 1, &fragmentShaderCode, NULL));
+        glCheck(GLEXT_glShaderSource(fragmentShader, 1, &fragmentShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(fragmentShader));
 
         // Check the compile log

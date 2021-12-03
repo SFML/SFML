@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Sprite::Sprite() :
-m_texture    (NULL),
+m_texture    (nullptr),
 m_textureRect()
 {
 }
@@ -43,7 +43,7 @@ m_textureRect()
 
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture) :
-m_texture    (NULL),
+m_texture    (nullptr),
 m_textureRect()
 {
     setTexture(texture, true);
@@ -52,7 +52,7 @@ m_textureRect()
 
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture, const IntRect& rectangle) :
-m_texture    (NULL),
+m_texture    (nullptr),
 m_textureRect()
 {
     // Compute the texture area

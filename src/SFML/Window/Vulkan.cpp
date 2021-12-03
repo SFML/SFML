@@ -66,7 +66,7 @@ VulkanFunctionPointer Vulkan::getFunction(const char* name)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    return NULL;
+    return nullptr;
 
 #else
 

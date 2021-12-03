@@ -66,7 +66,7 @@ protected:
 
     static const sf::Font& getFont()
     {
-        assert(s_font != NULL);
+        assert(s_font != nullptr);
         return *s_font;
     }
 

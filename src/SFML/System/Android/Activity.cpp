@@ -60,7 +60,7 @@ namespace priv
 
 ActivityStates*& getActivityStatesPtr()
 {
-    static ActivityStates* states = NULL;
+    static ActivityStates* states = nullptr;
     return states;
 }
 
@@ -72,7 +72,7 @@ void resetActivity(ActivityStates* initializedStates)
 ActivityStates& getActivity()
 {
     ActivityStates* const states = getActivityStatesPtr();
-    assert(states != NULL);
+    assert(states != nullptr);
     return *states;
 }
 

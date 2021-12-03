@@ -33,7 +33,7 @@
 namespace
 {
     // Save the global instance of the delegate
-    SFAppDelegate* delegateInstance = NULL;
+    SFAppDelegate* delegateInstance = nullptr;
 
     // Current touches positions
     std::vector<sf::Vector2i> touchPositions;
@@ -59,7 +59,7 @@ namespace
     NSAssert(delegateInstance,
              @"SFAppDelegate instance is nil, this means SFML was not properly initialized. "
              "Make sure that the file defining your main() function includes <SFML/Main.hpp>");
-    
+
     return delegateInstance;
 }
 
@@ -68,7 +68,7 @@ namespace
 - (void)runUserMain
 {
     // Arguments intentionally dropped, see comments in main in sfml-main
-    sfmlMain(0, NULL);
+    sfmlMain(0, nullptr);
 }
 
 
@@ -248,7 +248,7 @@ namespace
 {
     position.x *= backingScaleFactor;
     position.y *= backingScaleFactor;
-    
+
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -272,7 +272,7 @@ namespace
 {
     position.x *= backingScaleFactor;
     position.y *= backingScaleFactor;
-    
+
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));

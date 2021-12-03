@@ -56,7 +56,7 @@
     // work for characters like é or à.
     const char *cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
 
-    if (cstr != NULL)
+    if (cstr != nullptr)
         return std::string(cstr);
     else
         return "";

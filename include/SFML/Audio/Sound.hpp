@@ -158,7 +158,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
     ///
-    /// \return Sound buffer attached to the sound (can be NULL)
+    /// \return Sound buffer attached to the sound (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     const SoundBuffer* getBuffer() const;

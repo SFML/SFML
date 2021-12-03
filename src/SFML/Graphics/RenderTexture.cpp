@@ -35,7 +35,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 RenderTexture::RenderTexture() :
-m_impl(NULL)
+m_impl(nullptr)
 {
 
 }

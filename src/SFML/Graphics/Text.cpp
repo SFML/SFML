@@ -77,7 +77,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Text::Text() :
 m_string             (),
-m_font               (NULL),
+m_font               (nullptr),
 m_characterSize      (30),
 m_letterSpacingFactor(1.f),
 m_lineSpacingFactor  (1.f),

@@ -36,7 +36,7 @@ namespace
     namespace ContextImpl
     {
         // This per-thread variable holds the current context for each thread
-        sf::ThreadLocalPtr<sf::Context> currentContext(NULL);
+        sf::ThreadLocalPtr<sf::Context> currentContext(nullptr);
     }
 }
 
@@ -64,7 +64,7 @@ bool Context::setActive(bool active)
     bool result = m_context->setActive(active);
 
     if (result)
-        ContextImpl::currentContext = (active ? this : NULL);
+        ContextImpl::currentContext = (active ? this : nullptr);
 
     return result;
 }
@@ -86,7 +86,7 @@ const Context* Context::getActiveContext()
     if (currentContext && currentContext->m_context == priv::GlContext::getActiveContext())
         return currentContext;
     else
-        return NULL;
+        return nullptr;
 }
 
 

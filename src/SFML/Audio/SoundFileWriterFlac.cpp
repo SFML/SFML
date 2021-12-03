@@ -56,7 +56,7 @@ bool SoundFileWriterFlac::check(const std::string& filename)
 
 ////////////////////////////////////////////////////////////
 SoundFileWriterFlac::SoundFileWriterFlac() :
-m_encoder     (NULL),
+m_encoder     (nullptr),
 m_channelCount(0),
 m_samples32   ()
 {
@@ -87,7 +87,7 @@ bool SoundFileWriterFlac::open(const std::string& filename, unsigned int sampleR
     FLAC__stream_encoder_set_sample_rate(m_encoder, sampleRate);
 
     // Initialize the output stream
-    if (FLAC__stream_encoder_init_file(m_encoder, filename.c_str(), NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
+    if (FLAC__stream_encoder_init_file(m_encoder, filename.c_str(), nullptr, nullptr) != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
     {
         err() << "Failed to write flac file \"" << filename << "\" (failed to open the file)" << std::endl;
         close();
@@ -132,7 +132,7 @@ void SoundFileWriterFlac::close()
 
         // Destroy the encoder
         FLAC__stream_encoder_delete(m_encoder);
-        m_encoder = NULL;
+        m_encoder = nullptr;
     }
 }
 

@@ -108,9 +108,9 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared) :
-m_display   (NULL),
+m_display   (nullptr),
 m_window    (0),
-m_context   (NULL),
+m_context   (nullptr),
 m_pbuffer   (0),
 m_ownsWindow(false)
 {
@@ -133,9 +133,9 @@ m_ownsWindow(false)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int /*bitsPerPixel*/) :
-m_display   (NULL),
+m_display   (nullptr),
 m_window    (0),
-m_context   (NULL),
+m_context   (nullptr),
 m_pbuffer   (0),
 m_ownsWindow(false)
 {
@@ -158,9 +158,9 @@ m_ownsWindow(false)
 
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-m_display   (NULL),
+m_display   (nullptr),
 m_window    (0),
-m_context   (NULL),
+m_context   (nullptr),
 m_pbuffer   (0),
 m_ownsWindow(false)
 {
@@ -195,7 +195,7 @@ GlxContext::~GlxContext()
 #endif
 
         if (glXGetCurrentContext() == m_context)
-            glXMakeCurrent(m_display, None, NULL);
+            glXMakeCurrent(m_display, None, nullptr);
         glXDestroyContext(m_display, m_context);
 
 #if defined(GLX_DEBUGGING)
@@ -253,7 +253,7 @@ bool GlxContext::makeCurrent(bool current)
     }
     else
     {
-        result = glXMakeCurrent(m_display, None, NULL);
+        result = glXMakeCurrent(m_display, None, nullptr);
     }
 
 #if defined(GLX_DEBUGGING)
@@ -332,7 +332,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 
     // Retrieve all the visuals
     int count;
-    XVisualInfo* visuals = XGetVisualInfo(display, 0, NULL, &count);
+    XVisualInfo* visuals = XGetVisualInfo(display, 0, nullptr, &count);
     if (visuals)
     {
         // Evaluate all the returned visuals, and pick the best one
@@ -492,13 +492,13 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
         if (hasCreatePbuffer)
         {
             // Get a GLXFBConfig that matches the visual
-            GLXFBConfig* config = NULL;
+            GLXFBConfig* config = nullptr;
 
             // We don't supply attributes to match against, since
             // the visual we are matching against was already
             // deemed suitable in selectBestVisual()
             int nbConfigs = 0;
-            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
+            GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), nullptr, &nbConfigs);
 
             for (int i = 0; configs && (i < nbConfigs); ++i)
             {
@@ -583,7 +583,7 @@ void GlxContext::createContext(GlxContext* shared)
     // Get a working copy of the context settings
     ContextSettings settings = m_settings;
 
-    XVisualInfo* visualInfo = NULL;
+    XVisualInfo* visualInfo = nullptr;
 
     if (m_pbuffer)
     {
@@ -631,7 +631,7 @@ void GlxContext::createContext(GlxContext* shared)
     }
 
     // Get the context to share display lists with
-    GLXContext toShare = shared ? shared->m_context : NULL;
+    GLXContext toShare = shared ? shared->m_context : nullptr;
 
     // There are no GLX versions prior to 1.0
     int major = 0;
@@ -647,13 +647,13 @@ void GlxContext::createContext(GlxContext* shared)
     if (hasCreateContextArb)
     {
         // Get a GLXFBConfig that matches the window's visual, for glXCreateContextAttribsARB
-        GLXFBConfig* config = NULL;
+        GLXFBConfig* config = nullptr;
 
         // We don't supply attributes to match against, since
         // the visual we are matching against was already
         // deemed suitable in selectBestVisual()
         int nbConfigs = 0;
-        GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), NULL, &nbConfigs);
+        GLXFBConfig* configs = glXChooseFBConfig(m_display, DefaultScreen(m_display), nullptr, &nbConfigs);
 
         for (int i = 0; configs && (i < nbConfigs); ++i)
         {
@@ -718,7 +718,7 @@ void GlxContext::createContext(GlxContext* shared)
 
             if (toShare)
             {
-                if (!glXMakeCurrent(m_display, None, NULL))
+                if (!glXMakeCurrent(m_display, None, nullptr))
                 {
                     err() << "Failed to deactivate shared context before sharing" << std::endl;
                     return;
@@ -773,7 +773,7 @@ void GlxContext::createContext(GlxContext* shared)
 
         if (toShare)
         {
-            if (!glXMakeCurrent(m_display, None, NULL))
+            if (!glXMakeCurrent(m_display, None, nullptr))
             {
                 err() << "Failed to deactivate shared context before sharing" << std::endl;
                 return;

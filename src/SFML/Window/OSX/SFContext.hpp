@@ -68,7 +68,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     SFContext(SFContext* shared);
@@ -149,7 +149,7 @@ private:
     /// \brief Create the context
     /// \note Must only be called from Ctor.
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param shared       Context to share the new one with (can be a null pointer)
     /// \param bitsPerPixel bpp
     /// \param settings     Creation parameters
     ///

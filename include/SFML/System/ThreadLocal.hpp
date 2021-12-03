@@ -54,7 +54,7 @@ public:
     /// \param value Optional value to initialize the variable
     ///
     ////////////////////////////////////////////////////////////
-    ThreadLocal(void* value = NULL);
+    ThreadLocal(void* value = nullptr);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
