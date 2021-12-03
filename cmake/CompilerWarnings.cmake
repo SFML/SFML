@@ -65,7 +65,7 @@ function(set_file_warnings)
         -Wsign-conversion # warn on sign conversions
         -Wdouble-promotion # warn if float is implicit promoted to double
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
-        # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement (disabled until better compiler support for explicit fallthrough is available)
+        -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
 
