@@ -364,7 +364,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     {
         // Not found: we have to load it
         Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
-        return glyphs.insert(std::make_pair(key, glyph)).first->second;
+        return glyphs.emplace(key, glyph).first->second;
     }
 }
 
@@ -785,7 +785,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
         }
 
         // We can now create the new row
-        page.rows.push_back(Row(page.nextRow, rowHeight));
+        page.rows.emplace_back(page.nextRow, rowHeight);
         page.nextRow += rowHeight;
         row = &page.rows.back();
     }

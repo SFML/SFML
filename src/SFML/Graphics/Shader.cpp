@@ -999,7 +999,7 @@ int Shader::getUniformLocation(const std::string& name)
     {
         // Not in cache, request the location from OpenGL
         int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
-        m_uniforms.insert(std::make_pair(name, location));
+        m_uniforms.emplace(name, location);
 
         if (location == -1)
             err() << "Uniform \"" << name << "\" not found in shader" << std::endl;

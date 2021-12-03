@@ -161,10 +161,10 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 
     // Move all frame buffer objects to stale set
     for (std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
-        staleFrameBuffers.insert(std::make_pair(iter->first, iter->second));
+        staleFrameBuffers.emplace(iter->first, iter->second);
 
     for (std::map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
-        staleFrameBuffers.insert(std::make_pair(iter->first, iter->second));
+        staleFrameBuffers.emplace(iter->first, iter->second);
 
     // Clean up FBOs
     destroyStaleFBOs();
@@ -446,7 +446,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
         Lock lock(mutex);
 
         // Insert the FBO into our map
-        m_frameBuffers.insert(std::make_pair(Context::getActiveContextId(), frameBuffer));
+        m_frameBuffers.emplace(Context::getActiveContextId(), frameBuffer);
     }
 
 #ifndef SFML_OPENGL_ES
@@ -493,7 +493,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
             Lock lock(mutex);
 
             // Insert the FBO into our map
-            m_multisampleFrameBuffers.insert(std::make_pair(Context::getActiveContextId(), multisampleFrameBuffer));
+            m_multisampleFrameBuffers.emplace(Context::getActiveContextId(), multisampleFrameBuffer);
         }
     }
 
