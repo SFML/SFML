@@ -6,16 +6,17 @@ SFML is a simple, fast, cross-platform and object-oriented multimedia API. It pr
 
 ## Authors
 
-  - Laurent Gomila — main developer (laurent@sfml-dev.org)
-  - Marco Antognini — OS X developer (hiura@sfml-dev.org)
-  - Jonathan De Wachter — Android developer (dewachter.jonathan@gmail.com)
-  - Jan Haller (bromeon@sfml-dev.org)
-  - Stefan Schindler (tank@sfml-dev.org)
-  - Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
-  - binary1248 (binary1248@hotmail.com)
-  - Artur Moreira (artturmoreira@gmail.com)
-  - Mario Liebisch (mario@sfml-dev.org)
-  - And many other members of the SFML community
+-   Laurent Gomila (laurent@sfml-dev.org)
+-   Marco Antognini (hiura@sfml-dev.org)
+-   binary1248 (binary1248@hotmail.com)
+-   Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
+-   Jonathan De Wachter (dewachter.jonathan@gmail.com)
+-   Jan Haller (bromeon@sfml-dev.org)
+-   Mario Liebisch (mario@sfml-dev.org)
+-   Stefan Schindler (tank@sfml-dev.org)
+-   Artur Moreira (artturmoreira@gmail.com)
+-   Vittorio Romeo (vittorioromeo@sfml-dev.org)
+-   And many other members of the SFML community
 
 ## Download
 
@@ -29,10 +30,10 @@ Follow the instructions of the [tutorials](https://www.sfml-dev.org/tutorials/),
 
 There are several places to learn SFML:
 
-  * The [official tutorials](https://www.sfml-dev.org/tutorials/)
-  * The [online API documentation](https://www.sfml-dev.org/documentation/)
-  * The [community wiki](https://github.com/SFML/SFML/wiki/)
-  * The [community forum](https://en.sfml-dev.org/forums/) ([French](https://fr.sfml-dev.org/forums/))
+-   The [official tutorials](https://www.sfml-dev.org/tutorials/)
+-   The [online API documentation](https://www.sfml-dev.org/documentation/)
+-   The [community wiki](https://github.com/SFML/SFML/wiki/)
+-   The [community forum](https://en.sfml-dev.org/forums/) ([French](https://fr.sfml-dev.org/forums/))
 
 ## Contribute
 
