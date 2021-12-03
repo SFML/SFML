@@ -264,7 +264,7 @@ namespace
                     while (*extensionString && (*extensionString != ' '))
                         extensionString++;
 
-                    extensions.push_back(std::string(extension, extensionString));
+                    extensions.emplace_back(extension, extensionString);
                 }
                 while (*extensionString++);
             }
@@ -381,7 +381,7 @@ void GlContext::cleanupResource()
 ////////////////////////////////////////////////////////////
 void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
 {
-    GlContextImpl::contextDestroyCallbacks.insert(std::make_pair(callback, arg));
+    GlContextImpl::contextDestroyCallbacks.emplace(callback, arg);
 }
 
 

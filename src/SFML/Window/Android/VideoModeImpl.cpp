@@ -43,7 +43,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     // Return both portrait and landscape resolutions
     std::vector<VideoMode> modes;
     modes.push_back(desktop);
-    modes.push_back(VideoMode(desktop.height, desktop.width, desktop.bitsPerPixel));
+    modes.emplace_back(desktop.height, desktop.width, desktop.bitsPerPixel);
     return modes;
 }
 
