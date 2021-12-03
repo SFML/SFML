@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/ResourceStream.hpp>
 #include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 
 
 namespace sf

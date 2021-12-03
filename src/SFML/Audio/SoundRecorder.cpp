@@ -47,7 +47,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
-m_thread            (&SoundRecorder::record, this),
+m_thread            (),
 m_sampleRate        (0),
 m_processingInterval(milliseconds(100)),
 m_isCapturing       (false),
@@ -112,7 +112,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
 
         // Start the capture in a new thread, to avoid blocking the main thread
         m_isCapturing = true;
-        m_thread.launch();
+        m_thread.emplace(&SoundRecorder::record, this);
 
         return true;
     }
@@ -128,7 +128,11 @@ void SoundRecorder::stop()
     if (m_isCapturing)
     {
         m_isCapturing = false;
-        m_thread.wait();
+
+        if (m_thread.has_value() && m_thread->joinable())
+        {
+            m_thread->join();
+        }
 
         // Notify derived class
         onStop();
@@ -182,7 +186,11 @@ bool SoundRecorder::setDevice(const std::string& name)
     {
         // Stop the capturing thread
         m_isCapturing = false;
-        m_thread.wait();
+
+        if (m_thread.has_value() && m_thread->joinable())
+        {
+            m_thread->join();
+        }
 
         // Determine the recording format
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
@@ -203,7 +211,7 @@ bool SoundRecorder::setDevice(const std::string& name)
 
         // Start the capture in a new thread, to avoid blocking the main thread
         m_isCapturing = true;
-        m_thread.launch();
+        m_thread.emplace(&SoundRecorder::record, this);
     }
 
     return true;
