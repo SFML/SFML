@@ -30,8 +30,9 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <utility>
-#include <set>
 #include <mutex>
+#include <unordered_map>
+#include <unordered_set>
 
 
 namespace
@@ -39,7 +40,7 @@ namespace
     // Set to track all active FBO mappings
     // This is used to free active FBOs while their owning
     // RenderTextureImplFBO is still alive
-    std::set<std::map<sf::Uint64, unsigned int>*> frameBuffers;
+    std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*> frameBuffers;
 
     // Set to track all stale FBOs
     // This is used to free stale FBOs after their owning
@@ -47,7 +48,7 @@ namespace
     // An FBO cannot be destroyed until it's containing context
     // becomes active, so the destruction of the RenderTextureImplFBO
     // has to be decoupled from the destruction of the FBOs themselves
-    std::set<std::pair<sf::Uint64, unsigned int> > staleFrameBuffers;
+    std::unordered_map<sf::Uint64, unsigned int> staleFrameBuffers;
 
     // Mutex to protect both active and stale frame buffer sets
     std::recursive_mutex mutex;
@@ -59,7 +60,7 @@ namespace
     {
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
-        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
+        for (std::unordered_map<sf::Uint64, unsigned int>::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
         {
             if (iter->first == contextId)
             {
@@ -83,9 +84,9 @@ namespace
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
         // Destroy active frame buffer objects
-        for (std::set<std::map<sf::Uint64, unsigned int>*>::iterator frameBuffersIter = frameBuffers.begin(); frameBuffersIter != frameBuffers.end(); ++frameBuffersIter)
+        for (std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*>::iterator frameBuffersIter = frameBuffers.begin(); frameBuffersIter != frameBuffers.end(); ++frameBuffersIter)
         {
-            for (std::map<sf::Uint64, unsigned int>::iterator iter = (*frameBuffersIter)->begin(); iter != (*frameBuffersIter)->end(); ++iter)
+            for (std::unordered_map<sf::Uint64, unsigned int>::iterator iter = (*frameBuffersIter)->begin(); iter != (*frameBuffersIter)->end(); ++iter)
             {
                 if (iter->first == contextId)
                 {
@@ -159,10 +160,10 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     }
 
     // Move all frame buffer objects to stale set
-    for (std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
+    for (std::unordered_map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
         staleFrameBuffers.emplace(iter->first, iter->second);
 
-    for (std::map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
+    for (std::unordered_map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
         staleFrameBuffers.emplace(iter->first, iter->second);
 
     // Clean up FBOs
@@ -539,7 +540,7 @@ bool RenderTextureImplFBO::activate(bool active)
     {
         std::scoped_lock lock(mutex);
 
-        std::map<Uint64, unsigned int>::iterator iter;
+        std::unordered_map<Uint64, unsigned int>::iterator iter;
 
         if (m_multisample)
         {
@@ -593,8 +594,8 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
         std::scoped_lock lock(mutex);
 
-        std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
-        std::map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);
+        std::unordered_map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
+        std::unordered_map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);
 
         if ((iter != m_frameBuffers.end()) && (multisampleIter != m_multisampleFrameBuffers.end()))
         {

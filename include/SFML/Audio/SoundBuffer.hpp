@@ -33,7 +33,7 @@
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
-#include <set>
+#include <unordered_set>
 
 
 namespace sf
@@ -267,7 +267,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::set<Sound*> SoundList; //!< Set of unique sound instances
+    typedef std::unordered_set<Sound*> SoundList; //!< Set of unique sound instances
 
     ////////////////////////////////////////////////////////////
     // Member data

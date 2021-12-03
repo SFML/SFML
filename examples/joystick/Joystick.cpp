@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 
 namespace
@@ -18,7 +18,7 @@ namespace
         sf::Text value;
     };
 
-    typedef std::map<std::string, JoystickObject> Texts;
+    typedef std::unordered_map<std::string, JoystickObject> Texts;
     Texts texts;
     std::ostringstream sstr;
     float threshold = 0.1f;

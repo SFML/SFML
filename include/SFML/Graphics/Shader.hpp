@@ -33,7 +33,6 @@
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -666,7 +665,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using TextureTable = std::map<int, const Texture*>;
+    using TextureTable = std::unordered_map<int, const Texture*>;
     using UniformTable = std::unordered_map<std::string, int>;
 
     ////////////////////////////////////////////////////////////

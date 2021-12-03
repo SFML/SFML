@@ -30,8 +30,8 @@
 #include <X11/keysym.h>
 #include <cassert>
 #include <cstdlib>
-#include <map>
 #include <mutex>
+#include <unordered_map>
 
 
 namespace
@@ -41,7 +41,7 @@ namespace
     unsigned int referenceCount = 0;
     std::recursive_mutex mutex;
 
-    typedef std::map<std::string, Atom> AtomMap;
+    typedef std::unordered_map<std::string, Atom> AtomMap;
     AtomMap atoms;
 }
 
