@@ -91,7 +91,9 @@ struct ActivityStates
     LogcatStream logcat;
 };
 
-SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);
+SFML_SYSTEM_API ActivityStates*& getActivityStatesPtr();
+SFML_SYSTEM_API void resetActivity(ActivityStates* initializedStates);
+SFML_SYSTEM_API ActivityStates& getActivity();
 
 } // namespace priv
 } // namespace sf

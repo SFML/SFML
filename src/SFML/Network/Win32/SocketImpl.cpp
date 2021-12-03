@@ -64,7 +64,7 @@ void SocketImpl::close(SocketHandle sock)
 void SocketImpl::setBlocking(SocketHandle sock, bool block)
 {
     u_long blocking = block ? 0 : 1;
-    ioctlsocket(sock, FIONBIO, &blocking);
+    ioctlsocket(sock, static_cast<long>(FIONBIO), &blocking);
 }
 
 

@@ -69,7 +69,7 @@ m_valid  (false)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)),
+m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))),
 m_valid  (true)
 {
 }
@@ -198,7 +198,9 @@ void IpAddress::resolve(const std::string& address)
             {
                 if (result)
                 {
-                    ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
+                    sockaddr_in sin;
+                    std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
+                    ip = sin.sin_addr.s_addr;
                     freeaddrinfo(result);
                     m_address = ip;
                     m_valid = true;

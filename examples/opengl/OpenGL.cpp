@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #define GLAD_GL_IMPLEMENTATION
-#include "gl.h"
+#include <gl.h>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
@@ -100,12 +100,12 @@ int main()
         glDisable(GL_LIGHTING);
 
         // Configure the viewport (the same size as the window)
-        glViewport(0, 0, window.getSize().x, window.getSize().y);
+        glViewport(0, 0, static_cast<GLsizei>(window.getSize().x), static_cast<GLsizei>(window.getSize().y));
 
         // Setup a perspective projection
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
+        GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
 #ifdef SFML_OPENGL_ES
         glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
 #else
@@ -237,22 +237,22 @@ int main()
                     // Make the window the active window for OpenGL calls
                     window.setActive(true);
 
-                    glViewport(0, 0, event.size.width, event.size.height);
+                    glViewport(0, 0, static_cast<GLsizei>(event.size.width), static_cast<GLsizei>(event.size.height));
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
-                    GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
+                    GLfloat newRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
 #ifdef SFML_OPENGL_ES
-                    glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+                    glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
 #else
-                    glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+                    glFrustum(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
 #endif
 
                     // Make the window no longer the active window for OpenGL calls
                     window.setActive(false);
 
                     sf::View view;
-                    view.setSize(textureSize.x, textureSize.y);
-                    view.setCenter(textureSize.x/2.f, textureSize.y/2.f);
+                    view.setSize(sf::Vector2f(textureSize));
+                    view.setCenter(sf::Vector2f(textureSize) / 2.f);
                     window.setView(view);
                 }
             }
@@ -277,8 +277,8 @@ int main()
             pos = sf::Mouse::getPosition(window);
             #endif
 
-            float x = pos.x * 200.f / window.getSize().x - 100.f;
-            float y = -pos.y * 200.f / window.getSize().y + 100.f;
+            float x = static_cast<float>(pos.x) * 200.f / static_cast<float>(window.getSize().x) - 100.f;
+            float y = -static_cast<float>(pos.y) * 200.f / static_cast<float>(window.getSize().y) + 100.f;
 
             // Apply some transformations
             glMatrixMode(GL_MODELVIEW);

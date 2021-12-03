@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.8)
+
+# customize the compiler options CMake uses to initialize variables with
+set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerOptionsOverride.cmake")
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -48,9 +51,10 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 include(GNUInstallDirs)
 
 # setup version numbers
-set(VERSION_MAJOR 2)
-set(VERSION_MINOR 5)
-set(VERSION_PATCH 1)
+set(VERSION_MAJOR 3)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+set(VERSION_IS_RELEASE OFF)
 
 # add an option for choosing the build type (shared or static)
 if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
@@ -340,6 +344,9 @@ else()
 
     # create SFML.framework
     add_library(SFML ${SFML_SOURCES})
+
+    # enable C++17 support
+    target_compile_features(SFML PUBLIC cxx_std_17)
 
     # set the target flags to use the appropriate C++ standard library
     sfml_set_stdlib(SFML)

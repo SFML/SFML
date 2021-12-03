@@ -132,7 +132,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int /*bitsPerPixel*/) :
 m_display   (NULL),
 m_window    (0),
 m_context   (NULL),
@@ -149,7 +149,7 @@ m_ownsWindow(false)
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface from the owner window
-    createSurface(static_cast< ::Window>(owner->getSystemHandle()));
+    createSurface(owner->getSystemHandle());
 
     // Create the context
     createContext(shared);
@@ -224,7 +224,7 @@ GlxContext::~GlxContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer GlxContext::getFunction(const char* name)
 {
-    return reinterpret_cast<GlFunctionPointer>(glXGetProcAddress(reinterpret_cast<const GLubyte*>(name)));
+    return glXGetProcAddress(reinterpret_cast<const GLubyte*>(name));
 }
 
 
@@ -439,7 +439,7 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 
     m_settings.depthBits         = static_cast<unsigned int>(depth);
     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
-    m_settings.antialiasingLevel = multiSampling ? samples : 0;
+    m_settings.antialiasingLevel = multiSampling ? static_cast<unsigned int>(samples) : 0;
     m_settings.sRgbCapable       = (sRgb == True);
 }
 
@@ -547,6 +547,9 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
     XSetWindowAttributes attributes;
     attributes.colormap = XCreateColormap(m_display, RootWindow(m_display, screen), visualInfo.visual, AllocNone);
 
+    // Note: bitsPerPixel is explicitly ignored. Instead, DefaultDepth() is used in order to avoid window creation failure due to
+    // a depth not supported by the X window system. On Unix/Linux, the window's pixel format is not directly associated with the
+    // rendering surface (unlike on Windows, for example).
     m_window = XCreateWindow(m_display,
                              RootWindow(m_display, screen),
                              0, 0,
@@ -680,9 +683,9 @@ void GlxContext::createContext(GlxContext* shared)
             if ((m_settings.majorVersion > 1) || ((m_settings.majorVersion == 1) && (m_settings.minorVersion > 1)))
             {
                 attributes.push_back(GLX_CONTEXT_MAJOR_VERSION_ARB);
-                attributes.push_back(m_settings.majorVersion);
+                attributes.push_back(static_cast<int>(m_settings.majorVersion));
                 attributes.push_back(GLX_CONTEXT_MINOR_VERSION_ARB);
-                attributes.push_back(m_settings.minorVersion);
+                attributes.push_back(static_cast<int>(m_settings.minorVersion));
             }
 
             // Check if setting the profile is supported

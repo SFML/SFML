@@ -210,10 +210,10 @@ private:
     ////////////////////////////////////////////////////////////
     static int processEvent(int fd, int events, void* data);
 
-    static int processScrollEvent(AInputEvent* _event, ActivityStates* states);
-    static int processKeyEvent(AInputEvent* _event, ActivityStates* states);
-    static int processMotionEvent(AInputEvent* _event, ActivityStates* states);
-    static int processPointerEvent(bool isDown, AInputEvent* event, ActivityStates* states);
+    static int processScrollEvent(AInputEvent* _event, ActivityStates& states);
+    static int processKeyEvent(AInputEvent* _event, ActivityStates& states);
+    static int processMotionEvent(AInputEvent* _event, ActivityStates& states);
+    static int processPointerEvent(bool isDown, AInputEvent* event, ActivityStates& states);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a Android key to SFML key code

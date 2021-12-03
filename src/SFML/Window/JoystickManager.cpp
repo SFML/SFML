@@ -64,7 +64,7 @@ const Joystick::Identification& JoystickManager::getIdentification(unsigned int 
 ////////////////////////////////////////////////////////////
 void JoystickManager::update()
 {
-    for (int i = 0; i < Joystick::Count; ++i)
+    for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         Item& item = m_joysticks[i];
 

@@ -88,7 +88,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
         if (getFullscreenWindow())
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            style &= ~Style::Fullscreen;
+            style &= ~static_cast<Uint32>(Style::Fullscreen);
         }
         else
         {
@@ -107,7 +107,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
     // Check validity of style according to the underlying platform
     #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
         if (style & Style::Fullscreen)
-            style &= ~Style::Titlebar;
+            style &= ~static_cast<Uint32>(Style::Titlebar);
         else
             style |= Style::Titlebar;
     #else
@@ -183,7 +183,7 @@ void Window::setVerticalSyncEnabled(bool enabled)
 void Window::setFramerateLimit(unsigned int limit)
 {
     if (limit > 0)
-        m_frameTimeLimit = seconds(1.f / limit);
+        m_frameTimeLimit = seconds(1.f / static_cast<float>(limit));
     else
         m_frameTimeLimit = Time::Zero;
 }

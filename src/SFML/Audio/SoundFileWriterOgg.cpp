@@ -33,6 +33,14 @@
 #include <cassert>
 
 
+namespace
+{
+    unsigned char toLower(unsigned char character)
+    {
+        return static_cast<unsigned char>(std::tolower(character));
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -41,7 +49,7 @@ namespace priv
 bool SoundFileWriterOgg::check(const std::string& filename)
 {
     std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
 
     return extension == "ogg";
 }
@@ -77,7 +85,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 
     // Setup the encoder: VBR, automatic bitrate management
     // Quality is in range [-1 .. 1], 0.4 gives ~128 kbps for a 44 KHz stereo sound
-    int status = vorbis_encode_init_vbr(&m_vorbis, channelCount, sampleRate, 0.4f);
+    int status = vorbis_encode_init_vbr(&m_vorbis, static_cast<long>(channelCount), static_cast<long>(sampleRate), 0.4f);
     if (status < 0)
     {
         err() << "Failed to write ogg/vorbis file \"" << filename << "\" (unsupported bitrate)" << std::endl;
@@ -149,7 +157,7 @@ void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
 
         // Tell the library how many samples we've written
         vorbis_analysis_wrote(&m_state, std::min(frameCount, bufferSize));
-        
+
         frameCount -= bufferSize;
 
         // Flush any produced block

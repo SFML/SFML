@@ -37,12 +37,12 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    Uint64 usecs = time.asMicroseconds();
+    Int64 usecs = time.asMicroseconds();
 
     // Construct the time to wait
     timespec ti;
-    ti.tv_nsec = (usecs % 1000000) * 1000;
-    ti.tv_sec = usecs / 1000000;
+    ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
+    ti.tv_sec = static_cast<time_t>(usecs / 1000000);
 
     // Wait...
     // If nanosleep returns -1, we check errno. If it is EINTR

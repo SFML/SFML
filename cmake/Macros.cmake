@@ -1,5 +1,8 @@
 include(CMakeParseArguments)
 
+# include the compiler warnings helpers
+include(${CMAKE_CURRENT_LIST_DIR}/CompilerWarnings.cmake)
+
 # This little macro lets you set any Xcode specific property
 macro (sfml_set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
@@ -62,6 +65,11 @@ macro(sfml_add_library target)
     else()
         add_library(${target} ${THIS_SOURCES})
     endif()
+
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
+    set_file_warnings(${THIS_SOURCES})
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
@@ -260,6 +268,11 @@ macro(sfml_add_example target)
         add_executable(${target} ${target_input})
     endif()
 
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
+    set_file_warnings(${target_input})
+
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 
@@ -295,6 +308,9 @@ function(sfml_add_test target SOURCES DEPENDS)
     # create the target
     add_executable(${target} ${SOURCES})
 
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
 
@@ -302,7 +318,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     if(DEPENDS)
         target_link_libraries(${target} PRIVATE ${DEPENDS})
     endif()
-    
+
     # Add the test
     add_test(${target} ${target})
 
@@ -343,7 +359,7 @@ function(sfml_add_external)
             if (NOT include_dir)
                 message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
             endif()
-            target_include_directories(${target} INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
+            target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
         endforeach()
     endif()
 

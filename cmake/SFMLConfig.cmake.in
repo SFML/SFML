@@ -13,8 +13,8 @@
 # If nothing is specified, the version won't be checked (i.e. any version will be accepted).
 # example:
 #   find_package(SFML COMPONENTS ...)     # no specific version required
-#   find_package(SFML 2 COMPONENTS ...)   # any 2.x version
-#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater
+#   find_package(SFML 3 COMPONENTS ...)   # any 3.x version
+#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater with the same major version
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
@@ -22,7 +22,16 @@
 # they will all be configured automatically, even if you use SFML static libraries.
 # example:
 #   set(SFML_STATIC_LIBRARIES TRUE)
-#   find_package(SFML 2 COMPONENTS network system)
+#   find_package(SFML 3 COMPONENTS network system)
+#
+# When searching for SFML with find_package(), keep in mind that it will also find versions which are
+# in development (i.e. between two released versions), if you have them in your search path.
+# If you want to make sure that a found SFML package corresponds to an official release, check the
+# bool output variable SFML_VERSION_IS_RELEASE, which is true for official releases and false for development versions.
+#
+# If you want to use the latest features before a new SFML version is released, make sure to look for
+# the upcoming version number. For example, if you want to use latest SFML 3 features before 3.0.0 is officially released,
+# look for version 3 with find_package().
 #
 # On macOS by default CMake will search for frameworks. If you want to use static libraries and have installed
 # both SFML frameworks and SFML static libraries, your must set CMAKE_FIND_FRAMEWORK to "NEVER" or "LAST"
@@ -117,6 +126,8 @@ if (EXISTS "${targets_config_file}")
     include("${CMAKE_CURRENT_LIST_DIR}/SFMLConfigDependencies.cmake")
 
     if (SFML_FOUND)
+        set(SFML_VERSION_IS_RELEASE @VERSION_IS_RELEASE@)
+
         foreach (component ${SFML_FIND_COMPONENTS})
             string(TOUPPER "${component}" UPPER_COMPONENT)
             if (TARGET sfml-${component})

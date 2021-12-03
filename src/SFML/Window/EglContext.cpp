@@ -57,10 +57,10 @@ namespace
 #if defined(SFML_SYSTEM_ANDROID)
 
             // On Android, its native activity handles this for us
-            sf::priv::ActivityStates* states = sf::priv::getActivity(NULL);
-            sf::Lock lock(states->mutex);
+            sf::priv::ActivityStates& states = sf::priv::getActivity();
+            sf::Lock lock(states.mutex);
 
-            return states->display;
+            return states.display;
 
 #endif
 
@@ -143,10 +143,10 @@ m_config  (NULL)
 #ifdef SFML_SYSTEM_ANDROID
 
     // On Android, we must save the created context
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    Lock lock(states.mutex);
 
-    states->context = this;
+    states.context = this;
 
 #endif
 
@@ -163,19 +163,21 @@ m_config  (NULL)
 #if !defined(SFML_SYSTEM_ANDROID)
     // Create EGL surface (except on Android because the window is created
     // asynchronously, its activity manager will call it for us)
-    createSurface((EGLNativeWindowType)owner->getSystemHandle());
+    createSurface(owner->getSystemHandle());
 #endif
 }
 
 
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, unsigned int /*width*/, unsigned int /*height*/) :
 m_display (EGL_NO_DISPLAY),
 m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
     EglContextImpl::ensureInit();
+
+    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, width, height) is currently not implemented." << std::endl;
 }
 
 
@@ -213,7 +215,7 @@ GlFunctionPointer EglContext::getFunction(const char* name)
 {
     EglContextImpl::ensureInit();
 
-    return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
+    return eglGetProcAddress(name);
 }
 
 
@@ -304,7 +306,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
         EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
         EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
-        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel ? 1 : 0),
+        EGL_SAMPLE_BUFFERS, settings.antialiasingLevel ? 1 : 0,
         EGL_SAMPLES, static_cast<EGLint>(settings.antialiasingLevel),
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
@@ -335,21 +337,21 @@ void EglContext::updateSettings()
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_DEPTH_SIZE" << std::endl;
 
-    m_settings.depthBits = tmp;
+    m_settings.depthBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
 
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_STENCIL_SIZE" << std::endl;
 
-    m_settings.stencilBits = tmp;
+    m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
     eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
 
     if (result == EGL_FALSE)
         err() << "Failed to retrieve EGL_SAMPLES" << std::endl;
 
-    m_settings.antialiasingLevel = tmp;
+    m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
 
     m_settings.majorVersion = 1;
     m_settings.minorVersion = 1;
