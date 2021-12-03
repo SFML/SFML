@@ -95,8 +95,8 @@ namespace
 
     private:
         std::scoped_lock<std::recursive_mutex> m_lock;
-        ::Display*                  m_display;
-        int                         (*m_previousHandler)(::Display*, XErrorEvent*);
+        ::Display*                             m_display;
+        int                                    (*m_previousHandler)(::Display*, XErrorEvent*);
     };
 }
 

@@ -56,7 +56,7 @@ namespace
 #if defined(SFML_SYSTEM_ANDROID)
 
             // On Android, its native activity handles this for us
-            priv::ActivityStates& states = priv::getActivity();
+            sf::priv::ActivityStates& states = sf::priv::getActivity();
             std::scoped_lock lock(states.mutex);
 
             return states.display;

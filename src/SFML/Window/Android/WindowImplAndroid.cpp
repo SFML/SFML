@@ -65,7 +65,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
 {
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     if (style& Style::Fullscreen)
@@ -91,7 +91,7 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     return states.window;
@@ -104,7 +104,7 @@ void WindowImplAndroid::processEvents()
     // Process incoming OS events
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     if (m_windowBeingCreated)
@@ -242,7 +242,7 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int fd, int events, void* data)
 {
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     AInputEvent* _event = nullptr;
@@ -678,7 +678,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     // Initializes JNI
