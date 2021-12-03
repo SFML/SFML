@@ -32,7 +32,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <utility>
 
@@ -44,8 +44,8 @@
 
 namespace
 {
-    std::map<unsigned int, std::string> plugged;
-    std::map<int, std::pair<int, int> > hatValueMap;
+    std::unordered_map<unsigned int, std::string> plugged;
+    std::unordered_map<int, std::pair<int, int> > hatValueMap;
 
     bool isJoystick(const char *name)
     {
