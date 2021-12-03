@@ -49,7 +49,7 @@ LRESULT CALLBACK onEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
 ////////////////////////////////////////////////////////////
 int main()
 {
-    HINSTANCE instance = GetModuleHandle(NULL);
+    HINSTANCE instance = GetModuleHandle(nullptr);
 
     // Define a class for our main window
     WNDCLASS windowClass;
@@ -58,22 +58,22 @@ int main()
     windowClass.cbClsExtra    = 0;
     windowClass.cbWndExtra    = 0;
     windowClass.hInstance     = instance;
-    windowClass.hIcon         = NULL;
+    windowClass.hIcon         = nullptr;
     windowClass.hCursor       = 0;
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BACKGROUND);
-    windowClass.lpszMenuName  = NULL;
+    windowClass.lpszMenuName  = nullptr;
     windowClass.lpszClassName = TEXT("SFML App");
     RegisterClass(&windowClass);
 
     // Let's create the main window
-    HWND window = CreateWindow(TEXT("SFML App"), TEXT("SFML Win32"), WS_SYSMENU | WS_VISIBLE, 200, 200, 660, 520, NULL, NULL, instance, NULL);
+    HWND window = CreateWindow(TEXT("SFML App"), TEXT("SFML Win32"), WS_SYSMENU | WS_VISIBLE, 200, 200, 660, 520, nullptr, nullptr, instance, nullptr);
 
     // Add a button for exiting
-    button = CreateWindow(TEXT("BUTTON"), TEXT("Quit"), WS_CHILD | WS_VISIBLE, 560, 440, 80, 40, window, NULL, instance, NULL);
+    button = CreateWindow(TEXT("BUTTON"), TEXT("Quit"), WS_CHILD | WS_VISIBLE, 560, 440, 80, 40, window, nullptr, instance, nullptr);
 
     // Let's create two SFML views
-    HWND view1 = CreateWindow(TEXT("STATIC"), NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 20,  20, 300, 400, window, NULL, instance, NULL);
-    HWND view2 = CreateWindow(TEXT("STATIC"), NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 340, 20, 300, 400, window, NULL, instance, NULL);
+    HWND view1 = CreateWindow(TEXT("STATIC"), nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 20,  20, 300, 400, window, nullptr, instance, nullptr);
+    HWND view2 = CreateWindow(TEXT("STATIC"), nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 340, 20, 300, 400, window, nullptr, instance, nullptr);
     sf::RenderWindow SFMLView1(view1);
     sf::RenderWindow SFMLView2(view2);
 
@@ -94,7 +94,7 @@ int main()
     message.message = static_cast<UINT>(~WM_QUIT);
     while (message.message != WM_QUIT)
     {
-        if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+        if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
         {
             // If a message was waiting in the message queue, process it
             TranslateMessage(&message);

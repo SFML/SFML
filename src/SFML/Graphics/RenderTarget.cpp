@@ -174,7 +174,7 @@ void RenderTarget::clear(const Color& color)
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
-        applyTexture(NULL);
+        applyTexture(nullptr);
 
         glCheck(glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
         glCheck(glClear(GL_COLOR_BUFFER_BIT));
@@ -404,7 +404,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
         drawPrimitives(vertexBuffer.getPrimitiveType(), firstVertex, vertexCount);
 
         // Unbind vertex buffer
-        VertexBuffer::bind(NULL);
+        VertexBuffer::bind(nullptr);
 
         cleanupDraw(states);
 
@@ -556,12 +556,12 @@ void RenderTarget::resetGLStates()
 
         // Apply the default SFML states
         applyBlendMode(BlendAlpha);
-        applyTexture(NULL);
+        applyTexture(nullptr);
         if (shaderAvailable)
-            applyShader(NULL);
+            applyShader(nullptr);
 
         if (vertexBufferAvailable)
-            glCheck(VertexBuffer::bind(NULL));
+            glCheck(VertexBuffer::bind(nullptr));
 
         m_cache.texCoordsArrayEnabled = true;
 
@@ -771,12 +771,12 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
 {
     // Unbind the shader, if any
     if (states.shader)
-        applyShader(NULL);
+        applyShader(nullptr);
 
     // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
     // This prevents a bug where some drivers do not clear RenderTextures properly.
     if (states.texture && states.texture->m_fboAttachment)
-        applyTexture(NULL);
+        applyTexture(nullptr);
 
     // Re-enable the cache at the end of the draw if it was disabled
     m_cache.enable = true;

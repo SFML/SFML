@@ -178,7 +178,7 @@ private:
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
-    /// \return a retained CFSetRef of IOHIDDeviceRef or NULL
+    /// \return a retained CFSetRef of IOHIDDeviceRef or a null pointer
     ///
     ////////////////////////////////////////////////////////////
     CFSetRef copyDevices(UInt32 page, UInt32 usage);

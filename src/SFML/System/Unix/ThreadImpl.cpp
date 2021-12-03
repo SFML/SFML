@@ -39,7 +39,7 @@ namespace priv
 ThreadImpl::ThreadImpl(Thread* owner) :
 m_isActive(true)
 {
-    m_isActive = pthread_create(&m_thread, NULL, &ThreadImpl::entryPoint, owner) == 0;
+    m_isActive = pthread_create(&m_thread, nullptr, &ThreadImpl::entryPoint, owner) == 0;
 
     if (!m_isActive)
         std::cerr << "Failed to create thread" << std::endl;
@@ -52,7 +52,7 @@ void ThreadImpl::wait()
     if (m_isActive)
     {
         assert(pthread_equal(pthread_self(), m_thread) == 0); // A thread cannot wait for itself!
-        pthread_join(m_thread, NULL);
+        pthread_join(m_thread, nullptr);
     }
 }
 
@@ -80,13 +80,13 @@ void* ThreadImpl::entryPoint(void* userData)
 
     #ifndef SFML_SYSTEM_ANDROID
         // Tell the thread to handle cancel requests immediately
-        pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+        pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, nullptr);
     #endif
 
     // Forward to the owner
     owner->run();
 
-    return NULL;
+    return nullptr;
 }
 
 } // namespace priv

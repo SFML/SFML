@@ -38,7 +38,7 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 ResourceStream::ResourceStream(const std::string& filename) :
-m_file (NULL)
+m_file (nullptr)
 {
     ActivityStates& states = getActivity();
     Lock lock(states.mutex);

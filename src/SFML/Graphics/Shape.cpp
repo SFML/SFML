@@ -157,7 +157,7 @@ FloatRect Shape::getGlobalBounds() const
 
 ////////////////////////////////////////////////////////////
 Shape::Shape() :
-m_texture         (NULL),
+m_texture         (nullptr),
 m_textureRect     (),
 m_fillColor       (255, 255, 255),
 m_outlineColor    (255, 255, 255),
@@ -220,7 +220,7 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
     // Render the outline
     if (m_outlineThickness != 0)
     {
-        states.texture = NULL;
+        states.texture = nullptr;
         target.draw(m_outlineVertices, states);
     }
 }

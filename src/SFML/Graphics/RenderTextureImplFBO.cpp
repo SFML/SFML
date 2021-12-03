@@ -117,7 +117,7 @@ m_depthStencilBuffer(0),
 m_colorBuffer       (0),
 m_width             (0),
 m_height            (0),
-m_context           (NULL),
+m_context           (nullptr),
 m_textureId         (0),
 m_multisample       (false),
 m_stencil           (false),
@@ -541,7 +541,7 @@ bool RenderTextureImplFBO::activate(bool active)
         Lock lock(mutex);
 
         std::map<Uint64, unsigned int>::iterator iter;
-        
+
         if (m_multisample)
         {
             iter = m_multisampleFrameBuffers.find(contextId);

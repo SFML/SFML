@@ -175,7 +175,7 @@ void SoundFileWriterOgg::flushBlocks()
     while (vorbis_analysis_blockout(&m_state, &block) == 1)
     {
         // Let the automatic bitrate management do its job
-        vorbis_analysis(&block, NULL);
+        vorbis_analysis(&block, nullptr);
         vorbis_bitrate_addblock(&block);
 
         // Get new packets from the bitrate management engine

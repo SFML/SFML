@@ -72,7 +72,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     FileInputStream stream;
     if (!stream.open(filename)) {
         err() << "Failed to open sound file \"" << filename << "\" (couldn't open stream)" << std::endl;
-        return NULL;
+        return nullptr;
     }
 
     // Test the filename in all the registered factories
@@ -85,7 +85,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
 
     // No suitable reader found
     err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
-    return NULL;
+    return nullptr;
 }
 
 
@@ -109,7 +109,7 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
 
     // No suitable reader found
     err() << "Failed to open sound file from memory (format not supported)" << std::endl;
-    return NULL;
+    return nullptr;
 }
 
 
@@ -129,7 +129,7 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
 
     // No suitable reader found
     err() << "Failed to open sound file from stream (format not supported)" << std::endl;
-    return NULL;
+    return nullptr;
 }
 
 
@@ -148,7 +148,7 @@ SoundFileWriter* SoundFileFactory::createWriterFromFilename(const std::string& f
 
     // No suitable writer found
     err() << "Failed to open sound file \"" << filename << "\" (format not supported)" << std::endl;
-    return NULL;
+    return nullptr;
 }
 
 } // namespace sf

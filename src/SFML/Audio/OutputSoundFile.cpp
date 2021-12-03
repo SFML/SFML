@@ -34,7 +34,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 OutputSoundFile::OutputSoundFile() :
-m_writer(NULL)
+m_writer(nullptr)
 {
 }
 
@@ -82,7 +82,7 @@ void OutputSoundFile::close()
 {
     // Destroy the reader
     delete m_writer;
-    m_writer = NULL;
+    m_writer = nullptr;
 }
 
 } // namespace sf

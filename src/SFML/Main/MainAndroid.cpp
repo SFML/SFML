@@ -65,11 +65,11 @@ int getAndroidApiLevel(ANativeActivity* activity)
     JNIEnv* lJNIEnv = activity->env;
 
     jclass versionClass = lJNIEnv->FindClass("android/os/Build$VERSION");
-    if (versionClass == NULL)
+    if (versionClass == nullptr)
         return 0;
 
     jfieldID sdkIntFieldID = lJNIEnv->GetStaticFieldID(versionClass, "SDK_INT", "I");
-    if (sdkIntFieldID == NULL)
+    if (sdkIntFieldID == nullptr)
         return 0;
 
     jint sdkInt = 0;
@@ -82,7 +82,7 @@ int getAndroidApiLevel(ANativeActivity* activity)
 ////////////////////////////////////////////////////////////
 ActivityStates* retrieveStates(ANativeActivity* activity)
 {
-    assert(activity != NULL);
+    assert(activity != nullptr);
 
     // Hide the ugly cast we find in each callback function
     return (ActivityStates*)activity->instance;
@@ -132,7 +132,7 @@ void* main(ActivityStates* states)
     initializeMain(states);
 
     sleep(seconds(0.5));
-    ::main(0, NULL);
+    ::main(0, nullptr);
 
     // Terminate properly the main thread and wait until it's done
     terminateMain(states);
@@ -143,7 +143,7 @@ void* main(ActivityStates* states)
         states->terminated = true;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 } // namespace priv
@@ -330,7 +330,7 @@ static void onDestroy(ANativeActivity* activity)
     delete states;
 
     // Reset the activity pointer for all modules
-    sf::priv::resetActivity(NULL);
+    sf::priv::resetActivity(nullptr);
 
     // The application should now terminate
 }
@@ -372,7 +372,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     sf::Lock lock(states->mutex);
 
     // Update the activity states
-    states->window = NULL;
+    states->window = nullptr;
 
     // Notify SFML mechanism
     sf::Event event;
@@ -416,7 +416,7 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
     {
         sf::Lock lock(states->mutex);
 
-        AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, NULL);
+        AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, nullptr);
         states->inputQueue = queue;
     }
 }
@@ -433,7 +433,7 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
         sf::Lock lock(states->mutex);
 
         AInputQueue_detachLooper(queue);
-        states->inputQueue = NULL;
+        states->inputQueue = nullptr;
 
         ALooper_release(states->looper);
     }
@@ -458,7 +458,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
     sf::Lock lock(states->mutex);
 
     // Make sure the window still exists before we access the dimensions on it
-    if (states->window != NULL) {
+    if (states->window != nullptr) {
         // Send an event to warn people about the window move/resize
         sf::Event event;
         event.type = sf::Event::Resized;
@@ -483,7 +483,7 @@ static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
     (void) activity;
     *outLen = 0;
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -498,15 +498,15 @@ static void onLowMemory(ANativeActivity* activity)
 JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
-    sf::priv::ActivityStates* states = NULL;
+    sf::priv::ActivityStates* states = nullptr;
     states = new sf::priv::ActivityStates;
 
     // Initialize the states value
-    states->activity   = NULL;
-    states->window     = NULL;
-    states->looper     = NULL;
-    states->inputQueue = NULL;
-    states->config     = NULL;
+    states->activity   = nullptr;
+    states->window     = nullptr;
+    states->looper     = nullptr;
+    states->inputQueue = nullptr;
+    states->config     = nullptr;
 
     for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
         states->isButtonPressed[i] = false;
@@ -514,7 +514,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     gladLoaderLoadEGL(EGL_DEFAULT_DISPLAY);
     states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    if (savedState != NULL)
+    if (savedState != nullptr)
     {
         states->savedState = malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
@@ -560,7 +560,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
         AWINDOW_FLAG_KEEP_SCREEN_ON);
 
     // Initialize the display
-    eglInitialize(states->display, NULL, NULL);
+    eglInitialize(states->display, nullptr, nullptr);
 
     getScreenSizeInPixels(activity, &states->screenSize.x, &states->screenSize.y);
 

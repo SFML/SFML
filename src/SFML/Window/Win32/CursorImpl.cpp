@@ -36,7 +36,7 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 CursorImpl::CursorImpl() :
-m_cursor(NULL),
+m_cursor(nullptr),
 m_systemCursor(false)
 {
     // That's it.
@@ -70,18 +70,18 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     bitmapHeader.bV5BlueMask    = 0x000000ff;
     bitmapHeader.bV5AlphaMask   = 0xff000000;
 
-    Uint32* bitmapData = NULL;
+    Uint32* bitmapData = nullptr;
 
-    HDC screenDC = GetDC(NULL);
+    HDC screenDC = GetDC(nullptr);
     HBITMAP color = CreateDIBSection(
         screenDC,
         reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
         DIB_RGB_COLORS,
         reinterpret_cast<void**>(&bitmapData),
-        NULL,
+        nullptr,
         0
     );
-    ReleaseDC(NULL, screenDC);
+    ReleaseDC(nullptr, screenDC);
 
     if (!color)
     {
@@ -98,7 +98,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     }
 
     // Create a dummy mask bitmap (it won't be used)
-    HBITMAP mask = CreateBitmap(static_cast<int>(size.x), static_cast<int>(size.y), 1, 1, NULL);
+    HBITMAP mask = CreateBitmap(static_cast<int>(size.x), static_cast<int>(size.y), 1, 1, nullptr);
 
     if (!mask)
     {
@@ -142,7 +142,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
     release();
 
-    LPCTSTR shape = NULL;
+    LPCTSTR shape = nullptr;
     switch (type)
     {
         case Cursor::Arrow:                  shape = IDC_ARROW;       break;
@@ -169,7 +169,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     }
 
     // Get the shared system cursor and make sure not to destroy it
-    m_cursor = LoadCursor(NULL, shape);
+    m_cursor = LoadCursor(nullptr, shape);
     m_systemCursor = true;
 
     if (m_cursor)
@@ -189,7 +189,7 @@ void CursorImpl::release()
 {
     if (m_cursor && !m_systemCursor) {
         DestroyCursor(m_cursor);
-        m_cursor = NULL;
+        m_cursor = nullptr;
     }
 }
 

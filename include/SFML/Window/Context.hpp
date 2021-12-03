@@ -116,7 +116,7 @@ public:
     /// Contexts created e.g. by RenderTargets or for internal
     /// use will not be returned by this function.
     ///
-    /// \return The currently active context or NULL if none is active
+    /// \return The currently active context or a null pointer if none is active
     ///
     ////////////////////////////////////////////////////////////
     static const Context* getActiveContext();

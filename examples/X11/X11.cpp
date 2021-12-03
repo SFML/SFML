@@ -142,7 +142,7 @@ void draw(sf::Window& window, float elapsedTime)
 int main()
 {
     // Open a connection with the X server
-    Display* display = XOpenDisplay(NULL);
+    Display* display = XOpenDisplay(nullptr);
     if (!display)
         return EXIT_FAILURE;
 
@@ -171,13 +171,13 @@ int main()
                                  DefaultDepth(display, screen),
                                  InputOutput,
                                  DefaultVisual(display, screen),
-                                 0, NULL);
+                                 0, nullptr);
     Window view2 = XCreateWindow(display, window,
                                  330, 10, 310, 310, 0,
                                  DefaultDepth(display, screen),
                                  InputOutput,
                                  DefaultVisual(display, screen),
-                                 0, NULL);
+                                 0, nullptr);
 
     // Show our windows
     XMapWindow(display, window);

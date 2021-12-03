@@ -7,7 +7,7 @@
 #include <cmath>
 
 
-const sf::Font* Effect::s_font = NULL;
+const sf::Font* Effect::s_font = nullptr;
 
 ////////////////////////////////////////////////////////////
 // "Pixelate" fragment shader

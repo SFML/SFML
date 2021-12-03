@@ -36,7 +36,7 @@ namespace
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace WindowsBaseImpl
     {
-        const sf::WindowBase* fullscreenWindow = NULL;
+        const sf::WindowBase* fullscreenWindow = nullptr;
     }
 }
 
@@ -45,7 +45,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase() :
-m_impl          (NULL),
+m_impl          (nullptr),
 m_size          (0, 0)
 {
 
@@ -54,7 +54,7 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase(VideoMode mode, const String& title, Uint32 style) :
-m_impl          (NULL),
+m_impl          (nullptr),
 m_size          (0, 0)
 {
     WindowBase::create(mode, title, style);
@@ -63,7 +63,7 @@ m_size          (0, 0)
 
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase(WindowHandle handle) :
-m_impl          (NULL),
+m_impl          (nullptr),
 m_size          (0, 0)
 {
     WindowBase::create(handle);
@@ -144,18 +144,18 @@ void WindowBase::close()
 {
     // Delete the window implementation
     delete m_impl;
-    m_impl = NULL;
+    m_impl = nullptr;
 
     // Update the fullscreen window
     if (this == getFullscreenWindow())
-        setFullscreenWindow(NULL);
+        setFullscreenWindow(nullptr);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool WindowBase::isOpen() const
 {
-    return m_impl != NULL;
+    return m_impl != nullptr;
 }
 
 

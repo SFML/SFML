@@ -191,7 +191,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
     ClientData data;
     data.stream = &stream;
     data.error = false;
-    FLAC__stream_decoder_init_stream(decoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, NULL, &streamError, &data);
+    FLAC__stream_decoder_init_stream(decoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, nullptr, &streamError, &data);
 
     // Read the header
     bool valid = FLAC__stream_decoder_process_until_end_of_metadata(decoder) != 0;
@@ -206,7 +206,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
 
 ////////////////////////////////////////////////////////////
 SoundFileReaderFlac::SoundFileReaderFlac() :
-m_decoder(NULL),
+m_decoder(nullptr),
 m_clientData()
 {
 }
@@ -255,7 +255,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
     assert(m_decoder);
 
     // Reset the callback data (the "write" callback will be called)
-    m_clientData.buffer = NULL;
+    m_clientData.buffer = nullptr;
     m_clientData.remaining = 0;
     m_clientData.leftovers.clear();
 
@@ -331,7 +331,7 @@ void SoundFileReaderFlac::close()
     {
         FLAC__stream_decoder_finish(m_decoder);
         FLAC__stream_decoder_delete(m_decoder);
-        m_decoder = NULL;
+        m_decoder = nullptr;
     }
 }
 

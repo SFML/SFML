@@ -48,7 +48,7 @@ namespace
     {
         // Some drivers are bugged and don't track the current HDC/HGLRC properly
         // In order to deactivate successfully, we need to track it ourselves as well
-        sf::ThreadLocalPtr<sf::priv::WglContext> currentContext(NULL);
+        sf::ThreadLocalPtr<sf::priv::WglContext> currentContext(nullptr);
 
 
         ////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace
             {
                 initialized = true;
 
-                gladLoadWGL(NULL, sf::priv::WglContext::getFunction);
+                gladLoadWGL(nullptr, sf::priv::WglContext::getFunction);
             }
         }
 
@@ -89,7 +89,7 @@ namespace priv
 String getErrorString(DWORD errorCode)
 {
     PTCHAR buffer;
-    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, errorCode, 0, reinterpret_cast<LPTSTR>(&buffer), 256, NULL) != 0)
+    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, errorCode, 0, reinterpret_cast<LPTSTR>(&buffer), 256, nullptr) != 0)
     {
         String errMsg(buffer);
         LocalFree(buffer);
@@ -104,10 +104,10 @@ String getErrorString(DWORD errorCode)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     WglContextImpl::ensureInit();
@@ -127,10 +127,10 @@ m_ownsWindow   (false)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     WglContextImpl::ensureInit();
@@ -148,10 +148,10 @@ m_ownsWindow   (false)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
-m_window       (NULL),
-m_pbuffer      (NULL),
-m_deviceContext(NULL),
-m_context      (NULL),
+m_window       (nullptr),
+m_pbuffer      (nullptr),
+m_deviceContext(nullptr),
+m_context      (nullptr),
 m_ownsWindow   (false)
 {
     WglContextImpl::ensureInit();
@@ -178,8 +178,8 @@ WglContext::~WglContext()
     {
         if (WglContextImpl::currentContext == this)
         {
-            if (wglMakeCurrent(m_deviceContext, NULL) == TRUE)
-                WglContextImpl::currentContext = NULL;
+            if (wglMakeCurrent(m_deviceContext, nullptr) == TRUE)
+                WglContextImpl::currentContext = nullptr;
         }
 
         wglDeleteContext(m_context);
@@ -219,7 +219,7 @@ GlFunctionPointer WglContext::getFunction(const char* name)
             return address;
     }
 
-    static HMODULE module = NULL;
+    static HMODULE module = nullptr;
 
     if (!module)
         module = GetModuleHandleA("OpenGL32.dll");
@@ -237,13 +237,13 @@ bool WglContext::makeCurrent(bool current)
     if (!m_deviceContext || !m_context)
         return false;
 
-    if (wglMakeCurrent(m_deviceContext, current ? m_context : NULL) == FALSE)
+    if (wglMakeCurrent(m_deviceContext, current ? m_context : nullptr) == FALSE)
     {
         err() << "Failed to " << (current ? "activate" : "deactivate") << " OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
         return false;
     }
 
-    WglContextImpl::currentContext = (current ? this : NULL);
+    WglContextImpl::currentContext = (current ? this : nullptr);
 
     return true;
 }
@@ -305,7 +305,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         // Let's check how many formats are supporting our requirements
         int  formats[512];
         UINT nbFormats = 0; // We must initialize to 0 otherwise broken drivers might fill with garbage in the following call
-        bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, NULL, 512, formats, &nbFormats) != FALSE;
+        bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != FALSE;
 
         if (!isValid)
             err() << "Failed to enumerate pixel formats: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
@@ -563,7 +563,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
                     err() << "Failed to retrieve pixel buffer device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
 
                     wglDestroyPbufferARB(m_pbuffer);
-                    m_pbuffer = NULL;
+                    m_pbuffer = nullptr;
                 }
             }
             else
@@ -580,7 +580,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         // with other contexts and thus wglShareLists would always fail
 
         // Create the hidden window
-        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, static_cast<int>(width), static_cast<int>(height), NULL, NULL, GetModuleHandle(NULL), NULL);
+        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, static_cast<int>(width), static_cast<int>(height), nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
         ShowWindow(m_window, SW_HIDE);
         m_deviceContext = GetDC(m_window);
 
@@ -620,7 +620,7 @@ void WglContext::createContext(WglContext* shared)
     ContextSettings settings = m_settings;
 
     // Get the context to share display lists with
-    HGLRC sharedContext = shared ? shared->m_context : NULL;
+    HGLRC sharedContext = shared ? shared->m_context : nullptr;
 
     // Create the OpenGL context -- first try using wglCreateContextAttribsARB
     while (!m_context && m_settings.majorVersion)
@@ -669,13 +669,13 @@ void WglContext::createContext(WglContext* shared)
 
                 if (WglContextImpl::currentContext == shared)
                 {
-                    if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
+                    if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                     {
                         err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
                         return;
                     }
 
-                    WglContextImpl::currentContext = NULL;
+                    WglContextImpl::currentContext = nullptr;
                 }
             }
 
@@ -739,13 +739,13 @@ void WglContext::createContext(WglContext* shared)
 
             if (WglContextImpl::currentContext == shared)
             {
-                if (wglMakeCurrent(shared->m_deviceContext, NULL) == FALSE)
+                if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                 {
                     err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
                     return;
                 }
 
-                WglContextImpl::currentContext = NULL;
+                WglContextImpl::currentContext = nullptr;
             }
 
             if (wglShareLists(sharedContext, m_context) == FALSE)

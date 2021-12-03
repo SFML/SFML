@@ -164,10 +164,10 @@ namespace
         unsigned int resourceCount = 0;
 
         // This per-thread variable holds the current context for each thread
-        sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(NULL);
+        sf::ThreadLocalPtr<sf::priv::GlContext> currentContext(nullptr);
 
         // The hidden, inactive context that will be shared with all other contexts
-        ContextType* sharedContext = NULL;
+        ContextType* sharedContext = nullptr;
 
         // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
         sf::Uint64 id = 1; // start at 1, zero is "no context"
@@ -229,7 +229,7 @@ namespace
 
         // This per-thread variable tracks if and how a transient
         // context is currently being used on the current thread
-        sf::ThreadLocalPtr<TransientContext> transientContext(NULL);
+        sf::ThreadLocalPtr<TransientContext> transientContext(nullptr);
 
         // Supported OpenGL extensions
         std::vector<std::string> extensions;
@@ -337,7 +337,7 @@ void GlContext::initResource()
         }
 
         // Create the shared context
-        sharedContext = new ContextType(NULL);
+        sharedContext = new ContextType(nullptr);
         sharedContext->initialize(ContextSettings());
 
         // Load our extensions vector
@@ -373,7 +373,7 @@ void GlContext::cleanupResource()
 
         // Destroy the shared context
         delete sharedContext;
-        sharedContext = NULL;
+        sharedContext = nullptr;
     }
 }
 
@@ -425,7 +425,7 @@ void GlContext::releaseTransientContext()
     if (transientContext->referenceCount == 0)
     {
         delete transientContext;
-        transientContext = NULL;
+        transientContext = nullptr;
     }
 }
 
@@ -437,11 +437,11 @@ GlContext* GlContext::create()
     using GlContextImpl::sharedContext;
 
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sharedContext != nullptr);
 
     Lock lock(mutex);
 
-    GlContext* context = NULL;
+    GlContext* context = nullptr;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -470,7 +470,7 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
     using GlContextImpl::loadExtensions;
 
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sharedContext != nullptr);
 
     Lock lock(mutex);
 
@@ -486,14 +486,14 @@ GlContext* GlContext::create(const ContextSettings& settings, const WindowImpl* 
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
         delete sharedContext;
-        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext = new ContextType(nullptr, sharedSettings, 1, 1);
         sharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
         loadExtensions();
     }
 
-    GlContext* context = NULL;
+    GlContext* context = nullptr;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -523,7 +523,7 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
     using GlContextImpl::loadExtensions;
 
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    assert(sharedContext != NULL);
+    assert(sharedContext != nullptr);
 
     Lock lock(mutex);
 
@@ -539,14 +539,14 @@ GlContext* GlContext::create(const ContextSettings& settings, unsigned int width
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
         delete sharedContext;
-        sharedContext = new ContextType(NULL, sharedSettings, 1, 1);
+        sharedContext = new ContextType(nullptr, sharedSettings, 1, 1);
         sharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
         loadExtensions();
     }
 
-    GlContext* context = NULL;
+    GlContext* context = nullptr;
 
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
@@ -610,7 +610,7 @@ GlContext::~GlContext()
     if (sharedContext)
     {
         if (this == currentContext)
-            currentContext = NULL;
+            currentContext = nullptr;
     }
 }
 
@@ -662,7 +662,7 @@ bool GlContext::setActive(bool active)
             // Deactivate the context
             if (makeCurrent(false))
             {
-                currentContext = NULL;
+                currentContext = nullptr;
                 return true;
             }
             else
@@ -728,7 +728,7 @@ void GlContext::cleanupUnsharedResources()
 
     // If this context is already active there is no need to save it
     if (contextToRestore == this)
-        contextToRestore = NULL;
+        contextToRestore = nullptr;
 
     // Make this context active so resources can be freed
     setActive(true);

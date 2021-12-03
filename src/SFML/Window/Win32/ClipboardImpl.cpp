@@ -46,7 +46,7 @@ String ClipboardImpl::getString()
         return text;
     }
 
-    if (!OpenClipboard(NULL))
+    if (!OpenClipboard(nullptr))
     {
         std::cerr << "Failed to open the Win32 clipboard." << std::endl;
         return text;
@@ -72,7 +72,7 @@ String ClipboardImpl::getString()
 ////////////////////////////////////////////////////////////
 void ClipboardImpl::setString(const String& text)
 {
-    if (!OpenClipboard(NULL))
+    if (!OpenClipboard(nullptr))
     {
         std::cerr << "Failed to open the Win32 clipboard." << std::endl;
         return;

@@ -40,8 +40,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 InputSoundFile::InputSoundFile() :
-m_reader      (NULL),
-m_stream      (NULL),
+m_reader      (nullptr),
+m_stream      (nullptr),
 m_streamOwned (false),
 m_sampleOffset   (0),
 m_sampleCount (0),
@@ -260,7 +260,7 @@ void InputSoundFile::close()
 {
     // Destroy the reader
     delete m_reader;
-    m_reader = NULL;
+    m_reader = nullptr;
 
     // Destroy the stream if we own it
     if (m_streamOwned)
@@ -268,7 +268,7 @@ void InputSoundFile::close()
         delete m_stream;
         m_streamOwned = false;
     }
-    m_stream = NULL;
+    m_stream = nullptr;
     m_sampleOffset = 0;
 
     // Reset the sound file attributes

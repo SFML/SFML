@@ -105,7 +105,7 @@ private:
     ///
     /// \param type Type of the sensor
     ///
-    /// \return The default Android sensor, NULL otherwise
+    /// \return The default Android sensor, a null pointer otherwise
     ///
     ////////////////////////////////////////////////////////////
     static ASensor const* getDefaultSensor(Sensor::Type sensor);

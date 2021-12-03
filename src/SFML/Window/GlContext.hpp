@@ -160,7 +160,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context
     ///
-    /// \return The currently active context or NULL if none is active
+    /// \return The currently active context or a null pointer if none is active
     ///
     ////////////////////////////////////////////////////////////
     static const GlContext* getActiveContext();
