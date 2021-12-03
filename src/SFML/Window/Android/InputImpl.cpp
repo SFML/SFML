@@ -138,7 +138,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     return states.isButtonPressed[button];
@@ -150,7 +150,7 @@ Vector2i InputImpl::getMousePosition()
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     return states.mousePosition;
@@ -183,7 +183,7 @@ bool InputImpl::isTouchDown(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     return states.touchEvents.find(finger) != states.touchEvents.end();
@@ -195,7 +195,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     return states.touchEvents.find(finger)->second;

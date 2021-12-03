@@ -71,7 +71,7 @@ namespace
     {
         sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
         std::vector<sf::priv::WindowImplX11*> allWindows;
-        std::recursive_mutex                            allWindowsMutex;
+        std::recursive_mutex                  allWindowsMutex;
         sf::String                            windowManagerName;
 
         sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };

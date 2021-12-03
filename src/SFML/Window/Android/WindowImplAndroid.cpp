@@ -65,7 +65,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
 {
-    priv::ActivityStates& states = priv::getActivity();
+    ActivityStates& states = getActivity();
     std::scoped_lock lock(states.mutex);
 
     if (style& Style::Fullscreen)

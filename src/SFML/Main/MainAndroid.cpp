@@ -47,6 +47,8 @@
 #include <mutex>
 #include <thread>
 #include <cassert>
+#include <mutex>
+#include <thread>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
