@@ -460,7 +460,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Get the fullscreen window
     ///
-    /// \return The fullscreen window or `nullptr` if there is none
+    /// \return The fullscreen window or a null pointer if there is none
     ///
     ////////////////////////////////////////////////////////////
     const WindowBase* getFullscreenWindow();

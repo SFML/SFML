@@ -48,11 +48,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
     ///
-    /// \param shared Context to share the new one with (can be nullptr)
-    ///
-    ////////////////////////////////////////////////////////////
     GlxContext(GlxContext* shared);
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
     ///
@@ -151,7 +147,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context's drawing surface
     ///
-    /// \param shared       Context to share the new one with (can be nullptr)
+    /// \param shared       Context to share the new one with (can be a null pointer)
     /// \param width        Back buffer width, in pixels
     /// \param height       Back buffer height, in pixels
     /// \param bitsPerPixel Pixel depth, in bits per pixel
@@ -170,7 +166,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
-    /// \param shared Context to share the new one with (can be nullptr)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     void createContext(GlxContext* shared);

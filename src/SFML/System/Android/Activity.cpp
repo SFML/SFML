@@ -71,7 +71,7 @@ void resetActivity(ActivityStates* initializedStates)
 
 ActivityStates& getActivity()
 {
-    ActivityStates* states = getActivityStatesPtr();
+    ActivityStates* const states = getActivityStatesPtr();
     assert(states != nullptr);
     return *states;
 }

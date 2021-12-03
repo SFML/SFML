@@ -623,7 +623,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
-    /// If one of the arguments is `nullptr`, the corresponding shader
+    /// If one of the arguments is a null pointer, the corresponding shader
     /// is not created.
     ///
     /// \param vertexShaderCode   Source code of the vertex shader

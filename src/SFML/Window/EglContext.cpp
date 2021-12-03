@@ -115,7 +115,7 @@ m_config  (nullptr)
     m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
     updateSettings();
 
-    // Note: The EGL specs say that attrib_list can be nullptr when passed to eglCreatePbufferSurface,
+    // Note: The EGL specs say that attrib_list can be a null pointer when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
     EGLint attrib_list[] = {
         EGL_WIDTH, 1,
