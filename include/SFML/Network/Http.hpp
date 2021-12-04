@@ -33,7 +33,7 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 
@@ -173,7 +173,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::unordered_map<std::string, std::string> FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data
@@ -333,7 +333,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::map<std::string, std::string> FieldTable;
+        typedef std::unordered_map<std::string, std::string> FieldTable;
 
         ////////////////////////////////////////////////////////////
         // Member data

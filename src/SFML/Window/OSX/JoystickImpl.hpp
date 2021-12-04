@@ -34,7 +34,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDKeys.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 namespace sf
@@ -116,9 +116,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    typedef long                                          Location;
-    typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
-    typedef std::vector<IOHIDElementRef>                  ButtonsVector;
+    typedef long                                                    Location;
+    typedef std::unordered_map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
+    typedef std::vector<IOHIDElementRef>                            ButtonsVector;
 
     AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
     IOHIDElementRef          m_hat;            ///< POV/Hat axis of the joystick

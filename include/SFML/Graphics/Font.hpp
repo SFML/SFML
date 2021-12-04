@@ -32,7 +32,7 @@
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -327,7 +327,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<Uint64, Glyph> GlyphTable; //!< Table mapping a codepoint to its glyph
+    typedef std::unordered_map<Uint64, Glyph> GlyphTable; //!< Table mapping a codepoint to its glyph
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a page of glyphs
@@ -387,7 +387,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::map<unsigned int, Page> PageTable; //!< Table mapping a character size to its page (texture)
+    typedef std::unordered_map<unsigned int, Page> PageTable; //!< Table mapping a character size to its page (texture)
 
     ////////////////////////////////////////////////////////////
     // Member data
