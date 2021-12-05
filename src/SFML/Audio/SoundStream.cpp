@@ -30,6 +30,7 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
+#include <cassert>
 #include <mutex>
 
 #ifdef _MSC_VER
@@ -63,17 +64,8 @@ SoundStream::~SoundStream()
 {
     // Stop the sound if it was playing
 
-    // Request the thread to join
-    {
-        std::scoped_lock lock(m_threadMutex);
-        m_isStreaming = false;
-    }
-
     // Wait for the thread to join
-    if (m_thread.has_value() && m_thread->joinable())
-    {
-        m_thread->join();
-    }
+    awaitStreamingThread();
 }
 
 
@@ -134,9 +126,7 @@ void SoundStream::play()
     }
 
     // Start updating the stream in a separate thread to avoid blocking the application
-    m_isStreaming = true;
-    m_threadStartState = Playing;
-    m_thread.emplace(&SoundStream::streamData, this);
+    launchStreamingThread(Playing);
 }
 
 
@@ -160,17 +150,8 @@ void SoundStream::pause()
 ////////////////////////////////////////////////////////////
 void SoundStream::stop()
 {
-    // Request the thread to join
-    {
-        std::scoped_lock lock(m_threadMutex);
-        m_isStreaming = false;
-    }
-
     // Wait for the thread to join
-    if (m_thread.has_value() && m_thread->joinable())
-    {
-        m_thread->join();
-    }
+    awaitStreamingThread();
 
     // Move to the beginning
     onSeek(Time::Zero);
@@ -227,9 +208,7 @@ void SoundStream::setPlayingOffset(Time timeOffset)
     if (oldStatus == Stopped)
         return;
 
-    m_isStreaming = true;
-    m_threadStartState = oldStatus;
-    m_thread.emplace(&SoundStream::streamData, this);
+    launchStreamingThread(oldStatus);
 }
 
 
@@ -502,6 +481,33 @@ void SoundStream::clearQueue()
     ALuint buffer;
     for (ALint i = 0; i < nbQueued; ++i)
         alCheck(alSourceUnqueueBuffers(m_source, 1, &buffer));
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundStream::launchStreamingThread(Status threadStartState)
+{
+    m_isStreaming = true;
+    m_threadStartState = threadStartState;
+
+    assert(!m_thread.joinable());
+    m_thread = std::thread(&SoundStream::streamData, this);
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundStream::awaitStreamingThread()
+{
+    // Request the thread to join
+    {
+        std::scoped_lock lock(m_threadMutex);
+        m_isStreaming = false;
+    }
+
+    if (m_thread.joinable())
+    {
+        m_thread.join();
+    }
 }
 
 } // namespace sf

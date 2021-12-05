@@ -72,9 +72,9 @@ if(SFML_OS_ANDROID)
 endif()
 
 # setup dependencies
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
-    target_link_libraries(sfml-system PRIVATE pthread)
-endif()
+find_package(Threads REQUIRED)
+target_link_libraries(sfml-system PRIVATE Threads::Threads)
+
 if(SFML_OS_LINUX)
     target_link_libraries(sfml-system PRIVATE rt)
 elseif(SFML_OS_WINDOWS)

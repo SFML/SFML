@@ -34,7 +34,6 @@
 #include <cstdlib>
 #include <mutex>
 #include <thread>
-#include <optional>
 
 
 namespace sf
@@ -312,6 +311,24 @@ private:
     ////////////////////////////////////////////////////////////
     void clearQueue();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Launch a new stream thread running 'streamData'
+    ///
+    /// This function is called when the stream is played or
+    /// when the playing offset is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void launchStreamingThread(Status threadStartState);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop streaming and wait for 'm_thread' to join
+    ///
+    /// This function is called when the playback is stopped or
+    /// when the sound stream is destroyed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void awaitStreamingThread();
+
     enum
     {
         BufferCount = 3,    //!< Number of audio buffers used by the streaming loop
@@ -321,7 +338,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<std::thread>   m_thread;                   //!< Thread running the background tasks
+    std::thread                  m_thread;                   //!< Thread running the background tasks
     mutable std::recursive_mutex m_threadMutex;              //!< Thread mutex
     Status                       m_threadStartState;         //!< State the thread starts in (Playing, Paused, Stopped)
     bool                         m_isStreaming;              //!< Streaming state (true = playing, false = stopped)

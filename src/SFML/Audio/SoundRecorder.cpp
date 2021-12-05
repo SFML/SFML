@@ -111,8 +111,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
         alcCaptureStart(captureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
-        m_isCapturing = true;
-        m_thread.emplace(&SoundRecorder::record, this);
+        launchCapturingThread();
 
         return true;
     }
@@ -127,12 +126,7 @@ void SoundRecorder::stop()
     // Stop the capturing thread if there is one
     if (m_isCapturing)
     {
-        m_isCapturing = false;
-
-        if (m_thread.has_value() && m_thread->joinable())
-        {
-            m_thread->join();
-        }
+        awaitCapturingThread();
 
         // Notify derived class
         onStop();
@@ -185,12 +179,7 @@ bool SoundRecorder::setDevice(const std::string& name)
     if (m_isCapturing)
     {
         // Stop the capturing thread
-        m_isCapturing = false;
-
-        if (m_thread.has_value() && m_thread->joinable())
-        {
-            m_thread->join();
-        }
+        awaitCapturingThread();
 
         // Determine the recording format
         ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
@@ -210,8 +199,7 @@ bool SoundRecorder::setDevice(const std::string& name)
         alcCaptureStart(captureDevice);
 
         // Start the capture in a new thread, to avoid blocking the main thread
-        m_isCapturing = true;
-        m_thread.emplace(&SoundRecorder::record, this);
+        launchCapturingThread();
     }
 
     return true;
@@ -333,6 +321,28 @@ void SoundRecorder::cleanup()
     // Close the device
     alcCaptureCloseDevice(captureDevice);
     captureDevice = nullptr;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundRecorder::launchCapturingThread()
+{
+    m_isCapturing = true;
+
+    assert(!m_thread.joinable());
+    m_thread = std::thread(&SoundRecorder::record, this);
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundRecorder::awaitCapturingThread()
+{
+    m_isCapturing = false;
+
+    if (m_thread.joinable())
+    {
+        m_thread.join();
+    }
 }
 
 } // namespace sf

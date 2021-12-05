@@ -34,7 +34,6 @@
 #include <vector>
 #include <string>
 #include <thread>
-#include <optional>
 
 
 namespace sf
@@ -284,9 +283,27 @@ private:
     void cleanup();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Launch a new capture thread running 'record'
+    ///
+    /// This function is called when the capture is started or
+    /// when the device is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void launchCapturingThread();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop capturing and wait for 'm_thread' to join
+    ///
+    /// This function is called when the capture is stopped or
+    /// when the device is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void awaitCapturingThread();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<std::thread> m_thread;             //!< Thread running the background recording task
+    std::thread                m_thread;             //!< Thread running the background recording task
     std::vector<Int16>         m_samples;            //!< Buffer to store captured samples
     unsigned int               m_sampleRate;         //!< Sample rate
     Time                       m_processingInterval; //!< Time period between calls to onProcessSamples
