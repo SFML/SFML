@@ -102,7 +102,7 @@ String getErrorString(DWORD errorCode)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
-WglContext(shared, ContextSettings(), 1, 1)
+WglContext(shared, ContextSettings(), 1u, 1u)
 {
 }
 
