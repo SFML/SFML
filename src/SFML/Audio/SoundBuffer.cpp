@@ -72,8 +72,8 @@ SoundBuffer::~SoundBuffer()
     sounds.swap(m_sounds);
 
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
-        (*it)->resetBuffer();
+    for (Sound* soundPtr : sounds)
+        soundPtr->resetBuffer();
 
     // Destroy the buffer
     if (m_buffer)
@@ -257,8 +257,8 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     SoundList sounds(m_sounds);
 
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
-        (*it)->resetBuffer();
+    for (Sound* soundPtr : sounds)
+        soundPtr->resetBuffer();
 
     // Fill the buffer
     ALsizei size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
@@ -268,8 +268,8 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     m_duration = seconds(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
 
     // Now reattach the buffer to the sounds that use it
-    for (SoundList::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
-        (*it)->setBuffer(*this);
+    for (Sound* soundPtr : sounds)
+        soundPtr->setBuffer(*this);
 
     return true;
 }

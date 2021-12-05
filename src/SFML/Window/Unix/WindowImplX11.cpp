@@ -1203,9 +1203,9 @@ void WindowImplX11::requestFocus()
 
     {
         std::scoped_lock lock(allWindowsMutex);
-        for (std::vector<WindowImplX11*>::iterator itr = allWindows.begin(); itr != allWindows.end(); ++itr)
+        for (sf::priv::WindowImplX11* windowPtr : allWindows)
         {
-            if ((*itr)->hasFocus())
+            if (windowPtr->hasFocus())
             {
                 sfmlWindowFocused = true;
                 break;
@@ -1736,7 +1736,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
     if (windowEvent.type == KeyRelease)
     {
         // Find the next KeyPress event with matching keycode and time
-        std::deque<XEvent>::iterator iter = std::find_if(
+        auto iter = std::find_if(
             m_events.begin(),
             m_events.end(),
             KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time)

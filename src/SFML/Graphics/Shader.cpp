@@ -554,7 +554,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
         if (location != -1)
         {
             // Store the location -> texture mapping
-            TextureTable::iterator it = m_textures.find(location);
+            auto it = m_textures.find(location);
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
@@ -902,7 +902,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
 ////////////////////////////////////////////////////////////
 void Shader::bindTextures() const
 {
-    TextureTable::const_iterator it = m_textures.begin();
+    auto it = m_textures.begin();
     for (std::size_t i = 0; i < m_textures.size(); ++i)
     {
         GLint index = static_cast<GLsizei>(i + 1);
@@ -921,8 +921,7 @@ void Shader::bindTextures() const
 int Shader::getUniformLocation(const std::string& name)
 {
     // Check the cache
-    UniformTable::const_iterator it = m_uniforms.find(name);
-    if (it != m_uniforms.end())
+    if (auto it = m_uniforms.find(name); it != m_uniforms.end())
     {
         // Already in cache, return it
         return it->second;
