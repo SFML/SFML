@@ -665,8 +665,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
+    using TextureTable = std::unordered_map<int, const Texture*>;
     using UniformTable = std::unordered_map<std::string, int>;
 
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    unsigned int m_shaderProgram;  //!< OpenGL identifier for the program
     int          m_currentTexture; //!< Location of the current texture in the shader
     TextureTable m_textures;       //!< Texture variables in the shader, mapped to their location
     UniformTable m_uniforms;       //!< Parameters location cache
