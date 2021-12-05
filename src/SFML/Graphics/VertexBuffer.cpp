@@ -29,17 +29,16 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
+#include <mutex>
 
 namespace
 {
     // A nested named namespace is used here to allow unity builds of SFML.
     namespace VertexBufferImpl
     {
-        sf::Mutex isAvailableMutex;
+        std::recursive_mutex isAvailableMutex;
 
         GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
         {
@@ -336,7 +335,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    Lock lock(VertexBufferImpl::isAvailableMutex);
+    std::scoped_lock lock(VertexBufferImpl::isAvailableMutex);
 
     static bool checked = false;
     static bool available = false;

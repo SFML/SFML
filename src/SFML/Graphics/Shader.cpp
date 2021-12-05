@@ -33,11 +33,10 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
 #include <vector>
+#include <mutex>
 
 
 #ifndef SFML_OPENGL_ES
@@ -56,8 +55,8 @@
 
 namespace
 {
-    sf::Mutex maxTextureUnitsMutex;
-    sf::Mutex isAvailableMutex;
+    std::recursive_mutex maxTextureUnitsMutex;
+    std::recursive_mutex isAvailableMutex;
 
     GLint checkMaxTextureUnits()
     {
@@ -71,7 +70,7 @@ namespace
     std::size_t getMaxTextureUnits()
     {
         // TODO: Remove this lock when it becomes unnecessary in C++11
-        sf::Lock lock(maxTextureUnitsMutex);
+        std::scoped_lock lock(maxTextureUnitsMutex);
 
         static GLint maxUnits = checkMaxTextureUnits();
 
@@ -772,7 +771,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    Lock lock(isAvailableMutex);
+    std::scoped_lock lock(isAvailableMutex);
 
     static bool checked = false;
     static bool available = false;
@@ -800,7 +799,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    Lock lock(isAvailableMutex);
+    std::scoped_lock lock(isAvailableMutex);
 
     static bool checked = false;
     static bool available = false;

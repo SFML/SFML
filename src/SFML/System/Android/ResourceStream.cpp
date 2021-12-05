@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/ResourceStream.hpp>
 #include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 
 
 namespace sf
@@ -41,7 +41,7 @@ ResourceStream::ResourceStream(const std::string& filename) :
 m_file (nullptr)
 {
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
     m_file = AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
 }
 

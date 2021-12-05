@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cstring>
 #include <cmath>
+#include <mutex>
+#include <thread>
 
 
 namespace
@@ -34,11 +36,11 @@ namespace
     };
 
     std::deque<WorkItem> workQueue;
-    std::vector<sf::Thread*> threads;
+    std::vector<std::thread> threads;
     int pendingWorkCount = 0;
     bool workPending = true;
     bool bufferUploadPending = false;
-    sf::Mutex workQueueMutex;
+    std::recursive_mutex workQueueMutex;
 
     struct Setting
     {
@@ -131,8 +133,7 @@ int main()
         // Start up our thread pool
         for (unsigned int i = 0; i < threadCount; i++)
         {
-            threads.push_back(new sf::Thread(threadFunction));
-            threads.back()->launch();
+            threads.emplace_back(threadFunction);
         }
 
         // Create our VertexBuffer with enough space to hold all the terrain geometry
@@ -207,7 +208,7 @@ int main()
         if (prerequisitesSupported)
         {
             {
-                sf::Lock lock(workQueueMutex);
+                std::scoped_lock lock(workQueueMutex);
 
                 // Don't bother updating/drawing the VertexBuffer while terrain is being regenerated
                 if (!pendingWorkCount)
@@ -244,14 +245,13 @@ int main()
 
     // Shut down our thread pool
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
         workPending = false;
     }
 
     while (!threads.empty())
     {
-        threads.back()->wait();
-        delete threads.back();
+        threads.back().join();
         threads.pop_back();
     }
 
@@ -538,7 +538,7 @@ void threadFunction()
 
         // Check if there are new work items in the queue
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (!workPending)
                 return;
@@ -561,7 +561,7 @@ void threadFunction()
         processWorkItem(vertices, workItem);
 
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             --pendingWorkCount;
         }
@@ -583,7 +583,7 @@ void generateTerrain(sf::Vertex* buffer)
     for (;;)
     {
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (workQueue.empty())
                 break;
@@ -594,7 +594,7 @@ void generateTerrain(sf::Vertex* buffer)
 
     // Queue all the new work items
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
 
         for (unsigned int i = 0; i < blockCount; i++)
         {
