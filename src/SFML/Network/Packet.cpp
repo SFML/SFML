@@ -430,7 +430,7 @@ Packet& Packet::operator <<(Uint16 data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator <<(Int32 data)
 {
-    Int32 toWrite = static_cast<Int16>(htonl(static_cast<uint32_t>(data)));
+    Int32 toWrite = static_cast<Int32>(htonl(static_cast<uint32_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
