@@ -77,7 +77,7 @@ namespace
         // Check if a RenderTarget with the given ID is active in the current context
         bool isActive(sf::Uint64 id)
         {
-            ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
+            auto iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
             if ((iter == contextRenderTargetMap.end()) || (iter->second != id))
                 return false;
@@ -433,7 +433,7 @@ bool RenderTarget::setActive(bool active)
         Uint64 contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::contextRenderTargetMap;
-        RenderTargetImpl::ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(contextId);
+        auto iter = contextRenderTargetMap.find(contextId);
 
         if (active)
         {

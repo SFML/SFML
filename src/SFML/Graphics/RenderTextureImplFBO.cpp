@@ -60,7 +60,7 @@ namespace
     {
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
-        for (std::set<std::pair<sf::Uint64, unsigned int> >::iterator iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
+        for(auto iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
         {
             if (iter->first == contextId)
             {
@@ -84,17 +84,17 @@ namespace
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
         // Destroy active frame buffer objects
-        for (std::set<std::map<sf::Uint64, unsigned int>*>::iterator frameBuffersIter = frameBuffers.begin(); frameBuffersIter != frameBuffers.end(); ++frameBuffersIter)
+        for (auto* frameBuffer : frameBuffers)
         {
-            for (std::map<sf::Uint64, unsigned int>::iterator iter = (*frameBuffersIter)->begin(); iter != (*frameBuffersIter)->end(); ++iter)
+            for (auto iter = frameBuffer->begin(); iter != frameBuffer->end(); ++iter)
             {
                 if (iter->first == contextId)
                 {
-                    GLuint frameBuffer = iter->second;
-                    glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
+                    GLuint frameBufferId = iter->second;
+                    glCheck(GLEXT_glDeleteFramebuffers(1, &frameBufferId));
 
                     // Erase the entry from the RenderTextureImplFBO's map
-                    (*frameBuffersIter)->erase(iter);
+                    frameBuffer->erase(iter);
 
                     break;
                 }
@@ -160,11 +160,11 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     }
 
     // Move all frame buffer objects to stale set
-    for (std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
-        staleFrameBuffers.emplace(iter->first, iter->second);
+    for (auto& [k, v] : m_frameBuffers)
+        staleFrameBuffers.emplace(k, v);
 
-    for (std::map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
-        staleFrameBuffers.emplace(iter->first, iter->second);
+    for (auto& [k, v] : m_multisampleFrameBuffers)
+        staleFrameBuffers.emplace(k, v);
 
     // Clean up FBOs
     destroyStaleFBOs();
@@ -594,8 +594,8 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
         Lock lock(mutex);
 
-        std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
-        std::map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);
+        auto iter = m_frameBuffers.find(contextId);
+        auto multisampleIter = m_multisampleFrameBuffers.find(contextId);
 
         if ((iter != m_frameBuffers.end()) && (multisampleIter != m_multisampleFrameBuffers.end()))
         {

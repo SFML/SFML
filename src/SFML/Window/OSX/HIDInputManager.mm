@@ -314,16 +314,19 @@ void HIDInputManager::freeUp()
 
     if (m_layoutData != 0)
         CFRelease(m_layoutData);
+
     m_layoutData = 0;
+
     // Do not release m_layout! It is owned by m_layoutData.
     if (m_manager != 0)
         CFRelease(m_manager);
+
     m_manager = 0;
 
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
     {
-        for (IOHIDElements::iterator it = m_keys[i].begin(); it != m_keys[i].end(); ++it)
-            CFRelease(*it);
+        for (IOHIDElementRef iohidElementRef : m_keys[i])
+            CFRelease(iohidElementRef);
 
         m_keys[i].clear();
     }
@@ -364,7 +367,7 @@ bool HIDInputManager::isPressed(IOHIDElements& elements)
     // state = true if at least one corresponding HID button is pressed
     bool state = false;
 
-    for (IOHIDElements::iterator it = elements.begin(); it != elements.end(); /* noop */)
+    for (auto it = elements.begin(); it != elements.end(); /* noop */)
     {
         IOHIDValueRef value = 0;
 

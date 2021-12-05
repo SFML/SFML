@@ -145,13 +145,13 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
             bool has_VK_KHR_surface = false;
             bool has_VK_KHR_platform_surface = false;
 
-            for (std::vector<VkExtensionProperties>::const_iterator iter = extensionProperties.begin(); iter != extensionProperties.end(); ++iter)
+            for (const VkExtensionProperties& properties : extensionProperties)
             {
-                if (!std::strcmp(iter->extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
+                if (!std::strcmp(properties.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
                 {
                     has_VK_KHR_surface = true;
                 }
-                else if (!std::strcmp(iter->extensionName, VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
+                else if (!std::strcmp(properties.extensionName, VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
                 {
                     has_VK_KHR_platform_surface = true;
                 }
