@@ -104,24 +104,8 @@ String getErrorString(DWORD errorCode)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
-m_window       (nullptr),
-m_pbuffer      (nullptr),
-m_deviceContext(nullptr),
-m_context      (nullptr),
-m_ownsWindow   (false)
+WglContext(shared, ContextSettings(), 1u, 1u)
 {
-    WglContextImpl::ensureInit();
-
-    // TODO: Delegate to the other constructor in C++11
-
-    // Save the creation settings
-    m_settings = ContextSettings();
-
-    // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, 1, 1, VideoMode::getDesktopMode().bitsPerPixel);
-
-    // Create the context
-    createContext(shared);
 }
 
 
