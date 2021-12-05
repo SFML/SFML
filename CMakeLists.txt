@@ -25,11 +25,6 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.9)
     cmake_policy(SET CMP0068 NEW)
 endif()
 
-# add some default value for some additional macOS variable
-# note that those variables are ignored on other systems
-if(NOT CMAKE_OSX_ARCHITECTURES)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "macOS architecture to build; 64-bit is expected" FORCE)
-endif()
 if(NOT CMAKE_OSX_SYSROOT)
     # query the path to the default SDK, will fail on non-macOS, but it's okay.
     execute_process(COMMAND xcodebuild -sdk macosx -version Path
