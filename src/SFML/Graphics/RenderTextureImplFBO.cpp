@@ -32,6 +32,8 @@
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 #include <set>
 
 
@@ -40,7 +42,7 @@ namespace
     // Set to track all active FBO mappings
     // This is used to free active FBOs while their owning
     // RenderTextureImplFBO is still alive
-    std::set<std::map<sf::Uint64, unsigned int>*> frameBuffers;
+    std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*> frameBuffers;
 
     // Set to track all stale FBOs
     // This is used to free stale FBOs after their owning
@@ -84,9 +86,9 @@ namespace
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
         // Destroy active frame buffer objects
-        for (std::set<std::map<sf::Uint64, unsigned int>*>::iterator frameBuffersIter = frameBuffers.begin(); frameBuffersIter != frameBuffers.end(); ++frameBuffersIter)
+        for (std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*>::iterator frameBuffersIter = frameBuffers.begin(); frameBuffersIter != frameBuffers.end(); ++frameBuffersIter)
         {
-            for (std::map<sf::Uint64, unsigned int>::iterator iter = (*frameBuffersIter)->begin(); iter != (*frameBuffersIter)->end(); ++iter)
+            for (std::unordered_map<sf::Uint64, unsigned int>::iterator iter = (*frameBuffersIter)->begin(); iter != (*frameBuffersIter)->end(); ++iter)
             {
                 if (iter->first == contextId)
                 {
@@ -160,10 +162,10 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     }
 
     // Move all frame buffer objects to stale set
-    for (std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
+    for (std::unordered_map<Uint64, unsigned int>::iterator iter = m_frameBuffers.begin(); iter != m_frameBuffers.end(); ++iter)
         staleFrameBuffers.emplace(iter->first, iter->second);
 
-    for (std::map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
+    for (std::unordered_map<Uint64, unsigned int>::iterator iter = m_multisampleFrameBuffers.begin(); iter != m_multisampleFrameBuffers.end(); ++iter)
         staleFrameBuffers.emplace(iter->first, iter->second);
 
     // Clean up FBOs
@@ -540,7 +542,7 @@ bool RenderTextureImplFBO::activate(bool active)
     {
         Lock lock(mutex);
 
-        std::map<Uint64, unsigned int>::iterator iter;
+        std::unordered_map<Uint64, unsigned int>::iterator iter;
 
         if (m_multisample)
         {
@@ -594,8 +596,8 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
         Lock lock(mutex);
 
-        std::map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
-        std::map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);
+        std::unordered_map<Uint64, unsigned int>::iterator iter = m_frameBuffers.find(contextId);
+        std::unordered_map<Uint64, unsigned int>::iterator multisampleIter = m_multisampleFrameBuffers.find(contextId);
 
         if ((iter != m_frameBuffers.end()) && (multisampleIter != m_multisampleFrameBuffers.end()))
         {

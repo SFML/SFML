@@ -34,7 +34,7 @@
 #include <android/native_activity.h>
 #include <android/configuration.h>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <fstream>
 
@@ -73,7 +73,7 @@ struct ActivityStates
     void (*forwardEvent)(const Event& event);
     int (*processEvent)(int fd, int events, void* data);
 
-    std::map<int, Vector2i> touchEvents;
+    std::unordered_map<int, Vector2i> touchEvents;
     Vector2i mousePosition;
     bool isButtonPressed[Mouse::ButtonCount];
 
