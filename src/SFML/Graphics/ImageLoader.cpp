@@ -41,8 +41,9 @@ namespace
     // Convert a string to lower case
     std::string toLower(std::string str)
     {
-        for (std::string::iterator i = str.begin(); i != str.end(); ++i)
-            *i = static_cast<char>(std::tolower(*i));
+        for (char& c : str)
+            c = static_cast<char>(std::tolower(c));
+
         return str;
     }
 

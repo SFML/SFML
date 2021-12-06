@@ -307,10 +307,12 @@ bool JoystickImpl::open(unsigned int index)
     std::sort(m_buttons.begin(), m_buttons.end(), JoystickButtonSortPredicate);
 
     // Retain all these objects for personal use
-    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it)
-        CFRetain(*it);
-    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
-        CFRetain(it->second);
+    for (IOHIDElementRef iohidElementRef : m_buttons)
+        CFRetain(iohidElementRef);
+
+    for (const auto& [axis, iohidElementRef] : m_axis)
+        CFRetain(iohidElementRef);
+
     if (m_hat != nullptr)
         CFRetain(m_hat);
 
@@ -329,16 +331,20 @@ bool JoystickImpl::open(unsigned int index)
 void JoystickImpl::close()
 {
     AutoreleasePool pool;
-    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it)
-        CFRelease(*it);
+
+    for (IOHIDElementRef iohidElementRef : m_buttons)
+        CFRelease(iohidElementRef);
+
     m_buttons.clear();
 
-    for (AxisMap::iterator it(m_axis.begin()); it != m_axis.end(); ++it)
-        CFRelease(it->second);
+    for (const auto& [axis, iohidElementRef] : m_axis)
+        CFRelease(iohidElementRef);
+
     m_axis.clear();
 
     if (m_hat != nullptr)
         CFRelease(m_hat);
+
     m_hat = nullptr;
 
     // And we unregister this joystick
@@ -356,8 +362,8 @@ JoystickCaps JoystickImpl::getCapabilities() const
     caps.buttonCount = m_buttons.size();
 
     // Axis:
-    for (AxisMap::const_iterator it(m_axis.begin()); it != m_axis.end(); ++it)
-        caps.axes[it->first] = true;
+    for (const auto& [axis, iohidElementRef] : m_axis)
+        caps.axes[axis] = true;
 
     if (m_hat != nullptr)
         caps.axes[Joystick::PovX] = caps.axes[Joystick::PovY] = true;
@@ -416,7 +422,7 @@ JoystickState JoystickImpl::update()
 
     // Update buttons' state
     unsigned int i = 0;
-    for (ButtonsVector::iterator it(m_buttons.begin()); it != m_buttons.end(); ++it, ++i)
+    for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it, ++i)
     {
         IOHIDValueRef value = 0;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(*it), *it, &value);
@@ -432,10 +438,10 @@ JoystickState JoystickImpl::update()
     }
 
     // Update axes' state
-    for (AxisMap::iterator it = m_axis.begin(); it != m_axis.end(); ++it)
+    for (const auto& [axis, iohidElementRef] : m_axis)
     {
         IOHIDValueRef value = 0;
-        IOHIDDeviceGetValue(IOHIDElementGetDevice(it->second), it->second, &value);
+        IOHIDDeviceGetValue(IOHIDElementGetDevice(iohidElementRef), iohidElementRef, &value);
 
         // Check for plug out.
         if (!value)
@@ -453,13 +459,13 @@ JoystickState JoystickImpl::update()
         // This method might not be very accurate (the "0 position" can be
         // slightly shift with some device) but we don't care because most
         // of devices are so sensitive that this is not relevant.
-        double  physicalMax   = IOHIDElementGetPhysicalMax(it->second);
-        double  physicalMin   = IOHIDElementGetPhysicalMin(it->second);
+        double  physicalMax   = IOHIDElementGetPhysicalMax(iohidElementRef);
+        double  physicalMin   = IOHIDElementGetPhysicalMin(iohidElementRef);
         double  scaledMin     = -100;
         double  scaledMax     =  100;
         double  physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
         float   scaledValue   = (((physicalValue - physicalMin) * (scaledMax - scaledMin)) / (physicalMax - physicalMin)) + scaledMin;
-        state.axes[it->first] = scaledValue;
+        state.axes[axis] = scaledValue;
     }
 
     // Update POV/Hat state. Assuming model described in `open`, values are:

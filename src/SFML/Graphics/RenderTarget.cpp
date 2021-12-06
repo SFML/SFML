@@ -77,9 +77,9 @@ namespace
         // Check if a RenderTarget with the given ID is active in the current context
         bool isActive(sf::Uint64 id)
         {
-            ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(sf::Context::getActiveContextId());
+            auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
-            if ((iter == contextRenderTargetMap.end()) || (iter->second != id))
+            if ((it == contextRenderTargetMap.end()) || (it->second != id))
                 return false;
 
             return true;
@@ -433,28 +433,28 @@ bool RenderTarget::setActive(bool active)
         Uint64 contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::contextRenderTargetMap;
-        RenderTargetImpl::ContextRenderTargetMap::iterator iter = contextRenderTargetMap.find(contextId);
+        auto it = contextRenderTargetMap.find(contextId);
 
         if (active)
         {
-            if (iter == contextRenderTargetMap.end())
+            if (it == contextRenderTargetMap.end())
             {
                 contextRenderTargetMap[contextId] = m_id;
 
                 m_cache.glStatesSet = false;
                 m_cache.enable = false;
             }
-            else if (iter->second != m_id)
+            else if (it->second != m_id)
             {
-                iter->second = m_id;
+                it->second = m_id;
 
                 m_cache.enable = false;
             }
         }
         else
         {
-            if (iter != contextRenderTargetMap.end())
-                contextRenderTargetMap.erase(iter);
+            if (it != contextRenderTargetMap.end())
+                contextRenderTargetMap.erase(it);
 
             m_cache.enable = false;
         }
