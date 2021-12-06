@@ -32,7 +32,7 @@
 #include <X11/keysym.h>
 #include <cassert>
 #include <cstdlib>
-#include <map>
+#include <unordered_map>
 
 
 namespace
@@ -42,7 +42,7 @@ namespace
     unsigned int referenceCount = 0;
     sf::Mutex mutex;
 
-    typedef std::map<std::string, Atom> AtomMap;
+    typedef std::unordered_map<std::string, Atom> AtomMap;
     AtomMap atoms;
 }
 

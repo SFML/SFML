@@ -36,7 +36,7 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#include <set>
+#include <unordered_map>
 #include <utility>
 #include <cstdlib>
 #include <cstring>
@@ -176,7 +176,7 @@ namespace
         // context is going to be destroyed
         // Unshareable OpenGL resources rely on this to clean up properly
         // whenever a context containing them is destroyed
-        typedef std::set<std::pair<sf::ContextDestroyCallback, void*> > ContextDestroyCallbacks;
+        typedef std::unordered_map<sf::ContextDestroyCallback, void*> ContextDestroyCallbacks;
         ContextDestroyCallbacks contextDestroyCallbacks;
 
         // This structure contains all the state necessary to
