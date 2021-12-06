@@ -105,6 +105,11 @@ endif()
 
 # Android options
 if(SFML_OS_ANDROID)
+    sfml_set_option(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK FALSE BOOL "TRUE to use an sf::Clock implementation which takes system sleep time into account (keeps advancing during suspension), FALSE to default to another available monotonic clock")
+    if (SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
+        add_definitions(-DSFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
+    endif()
+
     # avoid missing libraries when building SFML for Android with NDK r19c and later
     set(CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR};${CMAKE_FIND_ROOT_PATH}")
 
