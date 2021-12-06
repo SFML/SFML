@@ -27,23 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.hpp>
 #include <SFML/System/Err.hpp>
-#include <cctype>
+#include <SFML/System/Utils.hpp>
 #include <iterator>
 #include <sstream>
 #include <limits>
-
-
-namespace
-{
-    // Convert a string to lower case
-    std::string toLower(std::string str)
-    {
-        for (char& c : str)
-            c = static_cast<char>(std::tolower(c));
-
-        return str;
-    }
-}
 
 
 namespace sf

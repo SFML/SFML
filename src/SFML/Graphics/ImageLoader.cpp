@@ -28,25 +28,16 @@
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
-#include <cctype>
 #include <iterator>
 
 
 namespace
 {
-    // Convert a string to lower case
-    std::string toLower(std::string str)
-    {
-        for (char& c : str)
-            c = static_cast<char>(std::tolower(c));
-
-        return str;
-    }
-
     // stb_image callbacks that operate on a sf::InputStream
     int read(void* user, char* data, int size)
     {
