@@ -46,12 +46,8 @@ source_group("" FILES ${SRC})
 # add platform specific sources
 if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
-        ${SRCROOT}/Win32/ClockImpl.cpp
-        ${SRCROOT}/Win32/ClockImpl.hpp
         ${SRCROOT}/Win32/MutexImpl.cpp
         ${SRCROOT}/Win32/MutexImpl.hpp
-        ${SRCROOT}/Win32/SleepImpl.cpp
-        ${SRCROOT}/Win32/SleepImpl.hpp
         ${SRCROOT}/Win32/ThreadImpl.cpp
         ${SRCROOT}/Win32/ThreadImpl.hpp
         ${SRCROOT}/Win32/ThreadLocalImpl.cpp
@@ -60,12 +56,8 @@ if(SFML_OS_WINDOWS)
     source_group("windows" FILES ${PLATFORM_SRC})
 else()
     set(PLATFORM_SRC
-        ${SRCROOT}/Unix/ClockImpl.cpp
-        ${SRCROOT}/Unix/ClockImpl.hpp
         ${SRCROOT}/Unix/MutexImpl.cpp
         ${SRCROOT}/Unix/MutexImpl.hpp
-        ${SRCROOT}/Unix/SleepImpl.cpp
-        ${SRCROOT}/Unix/SleepImpl.hpp
         ${SRCROOT}/Unix/ThreadImpl.cpp
         ${SRCROOT}/Unix/ThreadImpl.hpp
         ${SRCROOT}/Unix/ThreadLocalImpl.cpp
@@ -79,6 +71,8 @@ else()
             ${SRCROOT}/Android/NativeActivity.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
+            ${SRCROOT}/Android/SuspendAwareClock.hpp
+            ${SRCROOT}/Android/SuspendAwareClock.cpp
         )
     endif()
 
