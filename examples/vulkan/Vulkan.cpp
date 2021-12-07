@@ -2479,7 +2479,8 @@ public:
                     swapchainOutOfDate = true;
             }
 
-            if (vulkanAvailable)
+            // Check that window was not closed before drawing to it
+            if (vulkanAvailable && window.isOpen())
             {
                 // Update the uniform buffer (matrices)
                 updateUniformBuffer(clock.getElapsedTime().asSeconds());
