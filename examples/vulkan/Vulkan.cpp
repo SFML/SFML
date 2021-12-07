@@ -473,9 +473,9 @@ public:
         instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instanceCreateInfo.pApplicationInfo = &applicationInfo;
         instanceCreateInfo.enabledLayerCount = static_cast<sf::Uint32>(validationLayers.size());
-        instanceCreateInfo.ppEnabledLayerNames = &validationLayers[0];
+        instanceCreateInfo.ppEnabledLayerNames = validationLayers.data();
         instanceCreateInfo.enabledExtensionCount = static_cast<sf::Uint32>(requiredExtentions.size());
-        instanceCreateInfo.ppEnabledExtensionNames = &requiredExtentions[0];
+        instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
         // Try to create a Vulkan instance with debug report enabled
         VkResult result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
