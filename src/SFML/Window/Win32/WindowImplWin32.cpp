@@ -376,7 +376,7 @@ void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uin
     }
 
     // Create the icon from the pixel array
-    m_icon = CreateIcon(GetModuleHandleW(nullptr), static_cast<int>(width), static_cast<int>(height), 1, 32, nullptr, &iconPixels[0]);
+    m_icon = CreateIcon(GetModuleHandleW(nullptr), static_cast<int>(width), static_cast<int>(height), 1, 32, nullptr, iconPixels.data());
 
     // Set it as both big and small icon of the window
     if (m_icon)

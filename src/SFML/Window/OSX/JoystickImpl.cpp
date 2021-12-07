@@ -46,8 +46,8 @@ namespace
         CFIndex length = CFStringGetLength(cfString);
         std::vector<char> str(length);
         CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
-        CFStringGetCString(cfString, &str[0], maxSize, kCFStringEncodingUTF8);
-        return &str[0];
+        CFStringGetCString(cfString, str.data(), maxSize, kCFStringEncodingUTF8);
+        return str.data();
     }
 
     // Get HID device property key as a string

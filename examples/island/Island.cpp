@@ -142,7 +142,7 @@ int main()
         terrainStagingBuffer.resize(resolutionX * resolutionY * 6);
 
         // Generate the initial terrain
-        generateTerrain(&terrainStagingBuffer[0]);
+        generateTerrain(terrainStagingBuffer.data());
 
         statusText.setString("Generating Terrain...");
     }
@@ -189,7 +189,7 @@ int main()
             {
                 switch (event.key.code)
                 {
-                    case sf::Keyboard::Return: generateTerrain(&terrainStagingBuffer[0]); break;
+                    case sf::Keyboard::Return: generateTerrain(terrainStagingBuffer.data()); break;
                     case sf::Keyboard::Down:   currentSetting = (currentSetting + 1) % settingCount; break;
                     case sf::Keyboard::Up:     currentSetting = (currentSetting + settingCount - 1) % settingCount; break;
                     case sf::Keyboard::Left:   *(settings[currentSetting].value) -= 0.1f; break;
@@ -215,7 +215,7 @@ int main()
                     // If there is new data pending to be uploaded to the VertexBuffer, do it now
                     if (bufferUploadPending)
                     {
-                        terrain.update(&terrainStagingBuffer[0]);
+                        terrain.update(terrainStagingBuffer.data());
                         bufferUploadPending = false;
                     }
 
@@ -513,7 +513,7 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
     }
 
     // Copy the resulting geometry from our thread-local buffer into the target buffer
-    std::memcpy(workItem.targetBuffer + (resolutionX * rowStart * 6), &vertices[0], sizeof(sf::Vertex) * resolutionX * rowCount * 6);
+    std::memcpy(workItem.targetBuffer + (resolutionX * rowStart * 6), vertices.data(), sizeof(sf::Vertex) * resolutionX * rowCount * 6);
 }
 
 

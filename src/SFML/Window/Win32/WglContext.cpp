@@ -664,7 +664,7 @@ void WglContext::createContext(WglContext* shared)
             }
 
             // Create the context
-            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, &attributes[0]);
+            m_context = wglCreateContextAttribsARB(m_deviceContext, sharedContext, attributes.data());
         }
         else
         {

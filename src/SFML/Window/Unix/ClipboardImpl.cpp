@@ -306,7 +306,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                         XA_ATOM,
                         32,
                         PropModeReplace,
-                        reinterpret_cast<unsigned char*>(&targets[0]),
+                        reinterpret_cast<unsigned char*>(targets.data()),
                         static_cast<int>(targets.size())
                     );
 

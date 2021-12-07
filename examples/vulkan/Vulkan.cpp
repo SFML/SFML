@@ -341,7 +341,7 @@ public:
             vkWaitForFences(device, 1, &fences[i], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         if (commandBuffers.size())
-            vkFreeCommandBuffers(device, commandPool, static_cast<sf::Uint32>(commandBuffers.size()), &commandBuffers[0]);
+            vkFreeCommandBuffers(device, commandPool, static_cast<sf::Uint32>(commandBuffers.size()), commandBuffers.data());
 
         commandBuffers.clear();
 
@@ -424,7 +424,7 @@ public:
 
         layers.resize(objectCount);
 
-        if (vkEnumerateInstanceLayerProperties(&objectCount, &layers[0]) != VK_SUCCESS)
+        if (vkEnumerateInstanceLayerProperties(&objectCount, layers.data()) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -486,7 +486,7 @@ public:
             requiredExtentions.pop_back();
 
             instanceCreateInfo.enabledExtensionCount = static_cast<sf::Uint32>(requiredExtentions.size());
-            instanceCreateInfo.ppEnabledExtensionNames = &requiredExtentions[0];
+            instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
             result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
         }
@@ -553,7 +553,7 @@ public:
 
         devices.resize(objectCount);
 
-        if (vkEnumeratePhysicalDevices(instance, &objectCount, &devices[0]) != VK_SUCCESS)
+        if (vkEnumeratePhysicalDevices(instance, &objectCount, devices.data()) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -575,7 +575,7 @@ public:
 
             extensions.resize(objectCount);
 
-            if (vkEnumerateDeviceExtensionProperties(devices[i], 0, &objectCount, &extensions[0]) != VK_SUCCESS)
+            if (vkEnumerateDeviceExtensionProperties(devices[i], 0, &objectCount, extensions.data()) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -659,7 +659,7 @@ public:
 
         queueFamilyProperties.resize(objectCount);
 
-        vkGetPhysicalDeviceQueueFamilyProperties(gpu, &objectCount, &queueFamilyProperties[0]);
+        vkGetPhysicalDeviceQueueFamilyProperties(gpu, &objectCount, queueFamilyProperties.data());
 
         for (std::size_t i = 0; i < queueFamilyProperties.size(); i++)
         {
@@ -730,7 +730,7 @@ public:
 
         surfaceFormats.resize(objectCount);
 
-        if (vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &objectCount, &surfaceFormats[0]) != VK_SUCCESS)
+        if (vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &objectCount, surfaceFormats.data()) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -774,7 +774,7 @@ public:
 
         presentModes.resize(objectCount);
 
-        if (vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &objectCount, &presentModes[0]) != VK_SUCCESS)
+        if (vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &objectCount, presentModes.data()) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -845,7 +845,7 @@ public:
         swapchainImages.resize(objectCount);
         swapchainImageViews.resize(objectCount);
 
-        if (vkGetSwapchainImagesKHR(device, swapchain, &objectCount, &swapchainImages[0]) != VK_SUCCESS)
+        if (vkGetSwapchainImagesKHR(device, swapchain, &objectCount, swapchainImages.data()) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -896,14 +896,14 @@ public:
 
             std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
 
-            if (file.read(&buffer[0], file.getSize()) != file.getSize())
+            if (file.read(buffer.data(), file.getSize()) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;
             }
 
             shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
-            shaderModuleCreateInfo.pCode = &buffer[0];
+            shaderModuleCreateInfo.pCode = buffer.data();
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &vertexShaderModule) != VK_SUCCESS)
             {
@@ -924,14 +924,14 @@ public:
 
             std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
 
-            if (file.read(&buffer[0], file.getSize()) != file.getSize())
+            if (file.read(buffer.data(), file.getSize()) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;
             }
 
             shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
-            shaderModuleCreateInfo.pCode = &buffer[0];
+            shaderModuleCreateInfo.pCode = buffer.data();
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &fragmentShaderModule) != VK_SUCCESS)
             {
@@ -981,22 +981,20 @@ public:
         attachmentDescriptions[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         attachmentDescriptions[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-        VkAttachmentReference attachmentReferences[2];
+        VkAttachmentReference colorAttachmentReference = {};
+        colorAttachmentReference.attachment = 0;
+        colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        attachmentReferences[0] = VkAttachmentReference();
-        attachmentReferences[0].attachment = 0;
-        attachmentReferences[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        attachmentReferences[1] = VkAttachmentReference();
-        attachmentReferences[1].attachment = 1;
-        attachmentReferences[1].layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        VkAttachmentReference depthStencilAttachmentReference = {};
+        depthStencilAttachmentReference.attachment = 1;
+        depthStencilAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         // Set up the renderpass to depend on commands that execute before the renderpass begins
         VkSubpassDescription subpassDescription = VkSubpassDescription();
         subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpassDescription.colorAttachmentCount = 1;
-        subpassDescription.pColorAttachments = &attachmentReferences[0];
-        subpassDescription.pDepthStencilAttachment = &attachmentReferences[1];
+        subpassDescription.pColorAttachments = &colorAttachmentReference;
+        subpassDescription.pDepthStencilAttachment = &depthStencilAttachmentReference;
 
         VkSubpassDependency subpassDependency = VkSubpassDependency();
         subpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -2109,11 +2107,11 @@ public:
         descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         descriptorSetAllocateInfo.descriptorPool = descriptorPool;
         descriptorSetAllocateInfo.descriptorSetCount = static_cast<uint32_t>(swapchainImages.size());
-        descriptorSetAllocateInfo.pSetLayouts = &descriptorSetLayouts[0];
+        descriptorSetAllocateInfo.pSetLayouts = descriptorSetLayouts.data();
 
         descriptorSets.resize(swapchainImages.size());
 
-        if (vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, &descriptorSets[0]) != VK_SUCCESS)
+        if (vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, descriptorSets.data()) != VK_SUCCESS)
         {
             descriptorSets.clear();
 
@@ -2175,7 +2173,7 @@ public:
         commandBufferAllocateInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
         // Allocate the command buffers from our command pool
-        if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffers[0]) != VK_SUCCESS)
+        if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, commandBuffers.data()) != VK_SUCCESS)
         {
             commandBuffers.clear();
             vulkanAvailable = false;

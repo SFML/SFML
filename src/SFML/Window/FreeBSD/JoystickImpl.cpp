@@ -292,7 +292,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
-    while (read(m_file, &m_buffer[0], m_length) == m_length)
+    while (read(m_file, m_buffer.data(), m_length) == m_length)
     {
         hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 
@@ -311,11 +311,11 @@ JoystickState JoystickImpl::JoystickImpl::update()
 
                 if (usage == HUP_BUTTON)
                 {
-                    m_state.buttons[buttonIndex++] = hid_get_data(&m_buffer[0], &item);
+                    m_state.buttons[buttonIndex++] = hid_get_data(m_buffer.data(), &item);
                 }
                 else if (usage == HUP_GENERIC_DESKTOP)
                 {
-                    int value = hid_get_data(&m_buffer[0], &item);
+                    int value = hid_get_data(m_buffer.data(), &item);
                     int axis = usageToAxis(usage);
 
                     if (usage == HUG_HAT_SWITCH)

@@ -89,7 +89,7 @@ private:
         }
 
         // Fill audio data to pass to the stream
-        data.samples     = &m_tempBuffer[0];
+        data.samples     = m_tempBuffer.data();
         data.sampleCount = m_tempBuffer.size();
 
         // Update the playing offset
