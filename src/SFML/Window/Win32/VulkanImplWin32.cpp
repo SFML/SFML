@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
+#include <SFML/System/LibraryLoader.hpp>
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -35,6 +36,7 @@
 #include <vulkan.h>
 #include <string>
 #include <map>
+#include <memory>
 #include <cstring>
 
 
@@ -42,65 +44,37 @@ namespace
 {
     struct VulkanLibraryWrapper
     {
-        VulkanLibraryWrapper() :
-        library(nullptr)
-        {
-        }
-
-        ~VulkanLibraryWrapper()
-        {
-            if (library)
-                FreeLibrary(library);
-        }
-
         // Try to load the library and all the required entry points
         bool loadLibrary()
         {
-            if (library)
+            if (libraryPtr)
                 return true;
 
-            library = LoadLibraryA("vulkan-1.dll");
+            auto localLibraryPtr = std::make_unique<sf::LibraryLoader>("vulkan-1.dll");
 
-            if (!library)
+            if (!localLibraryPtr->isLoaded())
                 return false;
 
-            if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
-            {
-                FreeLibrary(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
                 return false;
-            }
 
-            if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
-            {
-                FreeLibrary(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
                 return false;
-            }
 
-            if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
-            {
-                FreeLibrary(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
                 return false;
-            }
+
+            libraryPtr = std::move(localLibraryPtr);
 
             return true;
         }
 
-        template<typename T>
-        bool loadEntryPoint(T& entryPoint, const char* name)
-        {
-            entryPoint = reinterpret_cast<T>(reinterpret_cast<void*>(GetProcAddress(library, name)));
+        using LibraryLoaderPtr = std::unique_ptr<sf::LibraryLoader>;
+        LibraryLoaderPtr libraryPtr;
 
-            return (entryPoint != nullptr);
-        }
-
-        HMODULE library;
-
-        PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
-        PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
-        PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+        PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr = nullptr;
+        PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties = nullptr;
+        PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties = nullptr;
     };
 
     VulkanLibraryWrapper wrapper;
@@ -175,7 +149,11 @@ VulkanFunctionPointer VulkanImplWin32::getFunction(const char* name)
     if (!isAvailable(false))
         return nullptr;
 
-    return reinterpret_cast<VulkanFunctionPointer>(GetProcAddress(wrapper.library, name));
+    VulkanFunctionPointer procedureAddress = nullptr;
+    if (!wrapper.libraryPtr->getProcedureAddress(procedureAddress, name))
+        return nullptr;
+
+    return procedureAddress;
 }
 
 
