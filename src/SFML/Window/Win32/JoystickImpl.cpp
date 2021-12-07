@@ -28,12 +28,14 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/LibraryLoader.hpp>
 #include <windows.h>
 #include <tchar.h>
 #include <regstr.h>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -68,7 +70,8 @@ namespace
         const GUID GUID_RyAxis        = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
     }
 
-    HMODULE dinput8dll = nullptr;
+    using LibraryLoaderPtr = std::unique_ptr<sf::LibraryLoader>;
+    LibraryLoaderPtr dinput8LibraryPtr;
     IDirectInput8W* directInput = nullptr;
 
     struct JoystickRecord
@@ -398,35 +401,31 @@ JoystickState JoystickImpl::update()
 void JoystickImpl::initializeDInput()
 {
     // Try to load dinput8.dll
-    dinput8dll = LoadLibraryA("dinput8.dll");
+    auto localDInput8LibraryPtr = std::make_unique<LibraryLoader>("dinput8.dll");
 
-    if (dinput8dll)
+    if (!localDInput8LibraryPtr->isLoaded())
+        return;
+
+    // Try to get the address of the DirectInput8Create entry point
+    using DirectInput8CreateFunc = HRESULT (*)(HINSTANCE, DWORD, const IID &, LPVOID *, LPUNKNOWN);
+    DirectInput8CreateFunc directInput8Create = nullptr;
+
+    if (!localDInput8LibraryPtr->getProcedureAddress(directInput8Create, "DirectInput8Create"))
+        return;
+
+    // Try to acquire a DirectInput 8.x interface
+    HRESULT result = directInput8Create(GetModuleHandleW(nullptr), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), nullptr);
+
+    if (FAILED(result))
     {
-        // Try to get the address of the DirectInput8Create entry point
-        using DirectInput8CreateFunc = HRESULT (*)(HINSTANCE, DWORD, const IID &, LPVOID *, LPUNKNOWN);
-        auto directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
+        // De-initialize everything
+        directInput = nullptr;
 
-        if (directInput8Create)
-        {
-            // Try to acquire a DirectInput 8.x interface
-            HRESULT result = directInput8Create(GetModuleHandleW(nullptr), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), nullptr);
-
-            if (FAILED(result))
-            {
-                // De-initialize everything
-                directInput = nullptr;
-                FreeLibrary(dinput8dll);
-                dinput8dll = nullptr;
-
-                err() << "Failed to initialize DirectInput: " << result << std::endl;
-            }
-        }
-        else
-        {
-            // Unload dinput8.dll
-            FreeLibrary(dinput8dll);
-            dinput8dll = nullptr;
-        }
+        err() << "Failed to initialize DirectInput: " << result << std::endl;
+    }
+    else
+    {
+        dinput8LibraryPtr = std::move(localDInput8LibraryPtr);
     }
 }
 
@@ -442,8 +441,8 @@ void JoystickImpl::cleanupDInput()
     }
 
     // Unload dinput8.dll
-    if (dinput8dll)
-        FreeLibrary(dinput8dll);
+    if (dinput8LibraryPtr)
+        dinput8LibraryPtr.reset();
 }
 
 
