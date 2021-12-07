@@ -148,7 +148,7 @@ bool SoundBuffer::saveToFile(const std::string& filename) const
     if (file.openFromFile(filename, getSampleRate(), getChannelCount()))
     {
         // Write the samples to the opened file
-        file.write(&m_samples[0], m_samples.size());
+        file.write(m_samples.data(), m_samples.size());
 
         return true;
     }
@@ -162,7 +162,7 @@ bool SoundBuffer::saveToFile(const std::string& filename) const
 ////////////////////////////////////////////////////////////
 const Int16* SoundBuffer::getSamples() const
 {
-    return m_samples.empty() ? nullptr : &m_samples[0];
+    return m_samples.empty() ? nullptr : m_samples.data();
 }
 
 
@@ -224,7 +224,7 @@ bool SoundBuffer::initialize(InputSoundFile& file)
 
     // Read the samples from the provided file
     m_samples.resize(static_cast<std::size_t>(sampleCount));
-    if (file.read(&m_samples[0], sampleCount) == sampleCount)
+    if (file.read(m_samples.data(), sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
         return update(channelCount, sampleRate);
@@ -262,7 +262,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
 
     // Fill the buffer
     ALsizei size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
-    alCheck(alBufferData(m_buffer, format, &m_samples[0], size, static_cast<ALsizei>(sampleRate)));
+    alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration
     m_duration = seconds(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));

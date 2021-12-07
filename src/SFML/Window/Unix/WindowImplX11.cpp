@@ -131,7 +131,7 @@ namespace
                 buffer[offset] = 0;
 
                 // Remove the path to keep the executable name only
-                return basename(&buffer[0]);
+                return basename(buffer.data());
             }
 
             // Default fallback name
@@ -732,7 +732,7 @@ m_lastInputTime  (0)
     std::string executableName = findExecutableName();
     std::vector<char> windowInstance(executableName.size() + 1, 0);
     std::copy(executableName.begin(), executableName.end(), windowInstance.begin());
-    hint->res_name = &windowInstance[0];
+    hint->res_name = windowInstance.data();
 
     // The class name identifies a class of windows that
     // "are of the same type". We simply use the initial window name as
@@ -740,7 +740,7 @@ m_lastInputTime  (0)
     std::string ansiTitle = title.toAnsiString();
     std::vector<char> windowClass(ansiTitle.size() + 1, 0);
     std::copy(ansiTitle.begin(), ansiTitle.end(), windowClass.begin());
-    hint->res_class = &windowClass[0];
+    hint->res_class = windowClass.data();
 
     XSetClassHint(m_display, m_window, hint);
 
@@ -1051,7 +1051,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
             }
         }
     }
-    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, reinterpret_cast<char*>(&maskPixels[0]), width, height, 1, 0, 1);
+    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, reinterpret_cast<char*>(maskPixels.data()), width, height, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
     XWMHints* hints = XAllocWMHints();
@@ -1064,7 +1064,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
     std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
-    unsigned long* ptr = &icccmIconPixels[0];
+    unsigned long* ptr = icccmIconPixels.data();
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
@@ -1088,7 +1088,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                     XA_CARDINAL,
                     32,
                     PropModeReplace,
-                    reinterpret_cast<const unsigned char*>(&icccmIconPixels[0]),
+                    reinterpret_cast<const unsigned char*>(icccmIconPixels.data()),
                     static_cast<int>(2 + width * height));
 
     XFlush(m_display);
@@ -1591,7 +1591,7 @@ void WindowImplX11::setProtocols()
                         XA_ATOM,
                         32,
                         PropModeReplace,
-                        reinterpret_cast<const unsigned char*>(&atoms[0]),
+                        reinterpret_cast<const unsigned char*>(atoms.data()),
                         static_cast<int>(atoms.size()));
     }
     else

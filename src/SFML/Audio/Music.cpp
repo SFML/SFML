@@ -192,8 +192,8 @@ bool Music::onGetData(SoundStream::Chunk& data)
         toFill = static_cast<std::size_t>(loopEnd - currentOffset);
 
     // Fill the chunk parameters
-    data.samples = &m_samples[0];
-    data.sampleCount = static_cast<std::size_t>(m_file.read(&m_samples[0], toFill));
+    data.samples = m_samples.data();
+    data.sampleCount = static_cast<std::size_t>(m_file.read(m_samples.data(), toFill));
     currentOffset += data.sampleCount;
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point

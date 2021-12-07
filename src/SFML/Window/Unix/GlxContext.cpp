@@ -726,7 +726,7 @@ void GlxContext::createContext(GlxContext* shared)
             }
 
             // Create the context
-            m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, &attributes[0]);
+            m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, attributes.data());
 
             if (!m_context)
             {

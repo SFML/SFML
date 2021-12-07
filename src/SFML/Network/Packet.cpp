@@ -82,7 +82,7 @@ void Packet::clear()
 ////////////////////////////////////////////////////////////
 const void* Packet::getData() const
 {
-    return !m_data.empty() ? &m_data[0] : nullptr;
+    return !m_data.empty() ? m_data.data() : nullptr;
 }
 
 

@@ -263,7 +263,7 @@ void SFContext::createContext(SFContext* shared,
     m_settings.sRgbCapable = true;
 
     // Create the pixel format.
-    NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:&attrs[0]];
+    NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs.data()];
 
     if (pixFmt == nil)
     {

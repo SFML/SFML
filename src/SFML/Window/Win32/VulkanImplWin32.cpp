@@ -139,7 +139,7 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, &extensionProperties[0]);
+            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
             bool has_VK_KHR_surface = false;
