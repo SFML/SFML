@@ -27,10 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/WindowImpl.hpp> // included first to avoid a warning about macro redefinition
 #include <SFML/Window/Win32/WglContext.hpp>
-#include <SFML/System/ThreadLocalPtr.hpp>
-#include <SFML/System/Lock.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 #include <sstream>
 #include <vector>
 
@@ -48,7 +46,7 @@ namespace
     {
         // Some drivers are bugged and don't track the current HDC/HGLRC properly
         // In order to deactivate successfully, we need to track it ourselves as well
-        sf::ThreadLocalPtr<sf::priv::WglContext> currentContext(nullptr);
+        thread_local sf::priv::WglContext* currentContext(nullptr);
 
 
         ////////////////////////////////////////////////////////////
@@ -648,8 +646,8 @@ void WglContext::createContext(WglContext* shared)
 
             if (sharedContext)
             {
-                static Mutex mutex;
-                Lock lock(mutex);
+                static std::recursive_mutex mutex;
+                std::scoped_lock lock(mutex);
 
                 if (WglContextImpl::currentContext == shared)
                 {
@@ -718,8 +716,8 @@ void WglContext::createContext(WglContext* shared)
         if (sharedContext)
         {
             // wglShareLists doesn't seem to be thread-safe
-            static Mutex mutex;
-            Lock lock(mutex);
+            static std::recursive_mutex mutex;
+            std::scoped_lock lock(mutex);
 
             if (WglContextImpl::currentContext == shared)
             {
