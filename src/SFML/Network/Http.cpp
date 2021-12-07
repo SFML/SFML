@@ -120,9 +120,9 @@ std::string Http::Request::prepare() const
     out << "HTTP/" << m_majorVersion << "." << m_minorVersion << "\r\n";
 
     // Write fields
-    for (const auto& [k, v] : m_fields)
+    for (const auto& [fieldKey, fieldValue] : m_fields)
     {
-        out << k << ": " << v << "\r\n";
+        out << fieldKey << ": " << fieldValue << "\r\n";
     }
 
     // Use an extra \r\n to separate the header from the body
@@ -159,11 +159,9 @@ const std::string& Http::Response::getField(const std::string& field) const
     {
         return it->second;
     }
-    else
-    {
-        static const std::string empty = "";
-        return empty;
-    }
+
+    static const std::string empty;
+    return empty;
 }
 
 

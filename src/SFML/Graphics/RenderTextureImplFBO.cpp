@@ -61,18 +61,18 @@ namespace
     {
         sf::Uint64 contextId = sf::Context::getActiveContextId();
 
-        for(auto iter = staleFrameBuffers.begin(); iter != staleFrameBuffers.end();)
+        for (auto it = staleFrameBuffers.begin(); it != staleFrameBuffers.end();)
         {
-            if (iter->first == contextId)
+            if (it->first == contextId)
             {
-                GLuint frameBuffer = static_cast<GLuint>(iter->second);
+                GLuint frameBuffer = static_cast<GLuint>(it->second);
                 glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
-                staleFrameBuffers.erase(iter++);
+                staleFrameBuffers.erase(it++);
             }
             else
             {
-                ++iter;
+                ++it;
             }
         }
     }
@@ -87,15 +87,15 @@ namespace
         // Destroy active frame buffer objects
         for (auto* frameBuffer : frameBuffers)
         {
-            for (auto iter = frameBuffer->begin(); iter != frameBuffer->end(); ++iter)
+            for (auto it = frameBuffer->begin(); it != frameBuffer->end(); ++it)
             {
-                if (iter->first == contextId)
+                if (it->first == contextId)
                 {
-                    GLuint frameBufferId = iter->second;
+                    GLuint frameBufferId = it->second;
                     glCheck(GLEXT_glDeleteFramebuffers(1, &frameBufferId));
 
                     // Erase the entry from the RenderTextureImplFBO's map
-                    frameBuffer->erase(iter);
+                    frameBuffer->erase(it);
 
                     break;
                 }
@@ -161,11 +161,11 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     }
 
     // Move all frame buffer objects to stale set
-    for (auto& [k, v] : m_frameBuffers)
-        staleFrameBuffers.emplace(k, v);
+    for (auto& [contextId, frameBufferId] : m_frameBuffers)
+        staleFrameBuffers.emplace(contextId, frameBufferId);
 
-    for (auto& [k, v] : m_multisampleFrameBuffers)
-        staleFrameBuffers.emplace(k, v);
+    for (auto& [contextId, multisampleFrameBufferId] : m_multisampleFrameBuffers)
+        staleFrameBuffers.emplace(contextId, multisampleFrameBufferId);
 
     // Clean up FBOs
     destroyStaleFBOs();
@@ -541,26 +541,26 @@ bool RenderTextureImplFBO::activate(bool active)
     {
         std::scoped_lock lock(mutex);
 
-        std::unordered_map<Uint64, unsigned int>::iterator iter;
+        std::unordered_map<Uint64, unsigned int>::iterator it;
 
         if (m_multisample)
         {
-            iter = m_multisampleFrameBuffers.find(contextId);
+            it = m_multisampleFrameBuffers.find(contextId);
 
-            if (iter != m_multisampleFrameBuffers.end())
+            if (it != m_multisampleFrameBuffers.end())
             {
-                glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, iter->second));
+                glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, it->second));
 
                 return true;
             }
         }
         else
         {
-            iter = m_frameBuffers.find(contextId);
+            it = m_frameBuffers.find(contextId);
 
-            if (iter != m_frameBuffers.end())
+            if (it != m_frameBuffers.end())
             {
-                glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, iter->second));
+                glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, it->second));
 
                 return true;
             }
@@ -595,15 +595,15 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
         std::scoped_lock lock(mutex);
 
-        auto iter = m_frameBuffers.find(contextId);
-        auto multisampleIter = m_multisampleFrameBuffers.find(contextId);
+        auto frameBufferIt = m_frameBuffers.find(contextId);
+        auto multisampleIt = m_multisampleFrameBuffers.find(contextId);
 
-        if ((iter != m_frameBuffers.end()) && (multisampleIter != m_multisampleFrameBuffers.end()))
+        if ((frameBufferIt != m_frameBuffers.end()) && (multisampleIt != m_multisampleFrameBuffers.end()))
         {
             // Set up the blit target (draw framebuffer) and blit (from the read framebuffer, our multisample FBO)
-            glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, iter->second));
+            glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, frameBufferIt->second));
             glCheck(GLEXT_glBlitFramebuffer(0, 0, static_cast<GLint>(m_width), static_cast<GLint>(m_height), 0, 0, static_cast<GLint>(m_width), static_cast<GLint>(m_height), GL_COLOR_BUFFER_BIT, GL_NEAREST));
-            glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, multisampleIter->second));
+            glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, multisampleIt->second));
         }
     }
 

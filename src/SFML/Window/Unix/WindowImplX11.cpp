@@ -1736,17 +1736,17 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
     if (windowEvent.type == KeyRelease)
     {
         // Find the next KeyPress event with matching keycode and time
-        auto iter = std::find_if(
+        auto it = std::find_if(
             m_events.begin(),
             m_events.end(),
             KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time)
         );
 
-        if (iter != m_events.end())
+        if (it != m_events.end())
         {
             // If we don't want repeated events, remove the next KeyPress from the queue
             if (!m_keyRepeat)
-                m_events.erase(iter);
+                m_events.erase(it);
 
             // This KeyRelease is a repeated event and we don't want it
             return false;
