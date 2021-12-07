@@ -72,8 +72,10 @@ if(SFML_OS_ANDROID)
 endif()
 
 # setup dependencies
-find_package(Threads REQUIRED)
-target_link_libraries(sfml-system PRIVATE Threads::Threads)
+if (NOT SFML_OS_IOS) # see https://gitlab.kitware.com/cmake/cmake/-/issues/18993
+    find_package(Threads REQUIRED)
+    target_link_libraries(sfml-system PRIVATE Threads::Threads)
+endif()
 
 if(SFML_OS_LINUX)
     target_link_libraries(sfml-system PRIVATE rt)
