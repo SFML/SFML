@@ -89,8 +89,8 @@ namespace
         // Normalize
         float factor = 1.0f / std::sqrt(forward[0] * forward[0] + forward[1] * forward[1] + forward[2] * forward[2]);
 
-        for(int i = 0; i < 3; i++)
-            forward[i] = forward[i] * factor;
+        for(float& f : forward)
+            f *= factor;
 
         // Side vector (Forward cross product Up)
         Vec3 side = {
@@ -102,8 +102,8 @@ namespace
         // Normalize
         factor = 1.0f / std::sqrt(side[0] * side[0] + side[1] * side[1] + side[2] * side[2]);
 
-        for(int i = 0; i < 3; i++)
-            side[i] = side[i] * factor;
+        for(float& f : side)
+            f *= factor;
 
         result[0][0] =  side[0];
         result[0][1] =  side[1] * forward[2] - side[2] * forward[1];
@@ -266,23 +266,23 @@ public:
         cleanupSwapchain();
 
         // Vulkan teardown procedure
-        for (std::size_t i = 0; i < fences.size(); i++)
-            vkDestroyFence(device, fences[i], 0);
+        for (VkFence fence : fences)
+            vkDestroyFence(device, fence, 0);
 
-        for (std::size_t i = 0; i < renderFinishedSemaphores.size(); i++)
-            vkDestroySemaphore(device, renderFinishedSemaphores[i], 0);
+        for (VkSemaphore renderFinishedSemaphore : renderFinishedSemaphores)
+            vkDestroySemaphore(device, renderFinishedSemaphore, 0);
 
-        for (std::size_t i = 0; i < imageAvailableSemaphores.size(); i++)
-            vkDestroySemaphore(device, imageAvailableSemaphores[i], 0);
+        for (VkSemaphore imageAvailableSemaphore : imageAvailableSemaphores)
+            vkDestroySemaphore(device, imageAvailableSemaphore, 0);
 
         if (descriptorPool)
             vkDestroyDescriptorPool(device, descriptorPool, 0);
 
-        for (std::size_t i = 0; i < uniformBuffersMemory.size(); i++)
-            vkFreeMemory(device, uniformBuffersMemory[i], 0);
+        for (VkDeviceMemory i : uniformBuffersMemory)
+            vkFreeMemory(device, i, 0);
 
-        for (std::size_t i = 0; i < uniformBuffers.size(); i++)
-            vkDestroyBuffer(device, uniformBuffers[i], 0);
+        for (VkBuffer uniformBuffer : uniformBuffers)
+            vkDestroyBuffer(device, uniformBuffer, 0);
 
         if (textureSampler)
             vkDestroySampler(device, textureSampler, 0);
@@ -337,16 +337,16 @@ public:
     void cleanupSwapchain()
     {
         // Swapchain teardown procedure
-        for (std::size_t i = 0; i < fences.size(); i++)
-            vkWaitForFences(device, 1, &fences[i], VK_TRUE, std::numeric_limits<uint64_t>::max());
+        for (VkFence fence : fences)
+            vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         if (commandBuffers.size())
             vkFreeCommandBuffers(device, commandPool, static_cast<sf::Uint32>(commandBuffers.size()), commandBuffers.data());
 
         commandBuffers.clear();
 
-        for (std::size_t i = 0; i < swapchainFramebuffers.size(); i++)
-            vkDestroyFramebuffer(device, swapchainFramebuffers[i], 0);
+        for (VkFramebuffer swapchainFramebuffer : swapchainFramebuffers)
+            vkDestroyFramebuffer(device, swapchainFramebuffer, 0);
 
         swapchainFramebuffers.clear();
 
@@ -368,8 +368,8 @@ public:
         if (depthImage)
             vkDestroyImage(device, depthImage, 0);
 
-        for (std::size_t i = 0; i < swapchainImageViews.size(); i++)
-            vkDestroyImageView(device, swapchainImageViews[i], 0);
+        for (VkImageView swapchainImageView : swapchainImageViews)
+            vkDestroyImageView(device, swapchainImageView, 0);
 
         swapchainImageViews.clear();
 
@@ -433,7 +433,7 @@ public:
         // Activate the layers we are interested in
         std::vector<const char*> validationLayers;
 
-        for (std::size_t i = 0; i < layers.size(); i++)
+        for (VkLayerProperties& layer : layers)
         {
             // VK_LAYER_LUNARG_standard_validation, meta-layer for the following layers:
             // -- VK_LAYER_GOOGLE_threading
@@ -446,11 +446,11 @@ public:
             // -- VK_LAYER_GOOGLE_unique_objects
             // These layers perform error checking and warn about bad or sub-optimal Vulkan API usage
             // VK_LAYER_LUNARG_monitor appends an FPS counter to the window title
-            if (!std::strcmp(layers[i].layerName, "VK_LAYER_LUNARG_standard_validation"))
+            if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_standard_validation"))
             {
                 validationLayers.push_back("VK_LAYER_LUNARG_standard_validation");
             }
-            else if (!std::strcmp(layers[i].layerName, "VK_LAYER_LUNARG_monitor"))
+            else if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_monitor"))
             {
                 validationLayers.push_back("VK_LAYER_LUNARG_monitor");
             }
@@ -560,14 +560,14 @@ public:
         }
 
         // Look for a GPU that supports swapchains
-        for (std::size_t i = 0; i < devices.size(); i++)
+        for (VkPhysicalDevice dev : devices)
         {
             VkPhysicalDeviceProperties deviceProperties;
-            vkGetPhysicalDeviceProperties(devices[i], &deviceProperties);
+            vkGetPhysicalDeviceProperties(dev, &deviceProperties);
 
             std::vector<VkExtensionProperties> extensions;
 
-            if (vkEnumerateDeviceExtensionProperties(devices[i], 0, &objectCount, 0) != VK_SUCCESS)
+            if (vkEnumerateDeviceExtensionProperties(dev, 0, &objectCount, 0) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -575,7 +575,7 @@ public:
 
             extensions.resize(objectCount);
 
-            if (vkEnumerateDeviceExtensionProperties(devices[i], 0, &objectCount, extensions.data()) != VK_SUCCESS)
+            if (vkEnumerateDeviceExtensionProperties(dev, 0, &objectCount, extensions.data()) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -583,9 +583,9 @@ public:
 
             bool supportsSwapchain = false;
 
-            for (std::size_t j = 0; j < extensions.size(); j++)
+            for (VkExtensionProperties& extension : extensions)
             {
-                if (!std::strcmp(extensions[j].extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME))
+                if (!std::strcmp(extension.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME))
                 {
                     supportsSwapchain = true;
                     break;
@@ -598,12 +598,12 @@ public:
             // Prefer discrete over integrated GPUs if multiple are available
             if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
             {
-                gpu = devices[i];
+                gpu = dev;
                 break;
             }
             else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
             {
-                gpu = devices[i];
+                gpu = dev;
             }
         }
 
@@ -743,9 +743,9 @@ public:
         }
         else if (!surfaceFormats.empty())
         {
-            for (std::size_t i = 0; i < surfaceFormats.size(); i++)
+            for (VkSurfaceFormatKHR& surfaceFormat : surfaceFormats)
             {
-                if ((surfaceFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) && (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR))
+                if ((surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM) && (surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR))
                 {
                     swapchainFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
                     swapchainFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -783,11 +783,11 @@ public:
         // Prefer mailbox over FIFO if it is available
         VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-        for (std::size_t i = 0; i < presentModes.size(); i++)
+        for (VkPresentModeKHR& i : presentModes)
         {
-            if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
+            if (i == VK_PRESENT_MODE_MAILBOX_KHR)
             {
-                presentMode = presentModes[i];
+                presentMode = i;
                 break;
             }
         }

@@ -109,10 +109,10 @@ JoystickManager::JoystickManager()
 ////////////////////////////////////////////////////////////
 JoystickManager::~JoystickManager()
 {
-    for (int i = 0; i < Joystick::Count; ++i)
+    for (Item& item : m_joysticks)
     {
-        if (m_joysticks[i].state.connected)
-            m_joysticks[i].joystick.close();
+        if (item.state.connected)
+            item.joystick.close();
     }
 
     JoystickImpl::cleanup();

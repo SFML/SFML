@@ -575,8 +575,8 @@ Packet& Packet::operator <<(const String& data)
     // Then insert characters
     if (length > 0)
     {
-        for (String::ConstIterator c = data.begin(); c != data.end(); ++c)
-            *this << *c;
+        for (unsigned int datum : data)
+            *this << datum;
     }
 
     return *this;

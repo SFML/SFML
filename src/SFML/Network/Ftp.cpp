@@ -544,12 +544,12 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             Uint8 data[6] = {0, 0, 0, 0, 0, 0};
             std::string str = response.getMessage().substr(begin);
             std::size_t index = 0;
-            for (int i = 0; i < 6; ++i)
+            for (unsigned char& datum : data)
             {
                 // Extract the current number
                 while (isdigit(str[index]))
                 {
-                    data[i] = static_cast<Uint8>(static_cast<Uint8>(data[i] * 10) + static_cast<Uint8>(str[index] - '0'));
+                    datum = static_cast<Uint8>(static_cast<Uint8>(datum * 10) + static_cast<Uint8>(str[index] - '0'));
                     index++;
                 }
 

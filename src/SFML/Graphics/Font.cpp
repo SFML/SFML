@@ -294,7 +294,7 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Open_Args args;
     args.flags  = FT_OPEN_STREAM;
     args.stream = rec;
-    args.driver = 0;
+    args.driver = nullptr;
 
     // Load the new font face from the specified stream
     FT_Face face;
@@ -616,7 +616,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     // Convert the glyph to a bitmap (i.e. rasterize it)
     // Warning! After this line, do not read any data from glyphDesc directly, use
     // bitmapGlyph.root to access the FT_Glyph data.
-    FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, 0, 1);
+    FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, nullptr, 1);
     auto bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyphDesc);
     FT_Bitmap& bitmap = bitmapGlyph->bitmap;
 

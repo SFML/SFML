@@ -147,7 +147,7 @@ bool VertexBuffer::create(std::size_t vertexCount)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), nullptr, VertexBufferImpl::usageToGlEnum(m_usage)));
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
     m_size = vertexCount;
@@ -190,7 +190,7 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
     // Check if we need to resize or orphan the buffer
     if (vertexCount >= m_size)
     {
-        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+        glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount), nullptr, VertexBufferImpl::usageToGlEnum(m_usage)));
 
         m_size = vertexCount;
     }
@@ -234,14 +234,14 @@ bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
     }
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
-    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexBuffer.m_size), 0, VertexBufferImpl::usageToGlEnum(m_usage)));
+    glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER, static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexBuffer.m_size), nullptr, VertexBufferImpl::usageToGlEnum(m_usage)));
 
-    void* destination = 0;
+    void* destination = nullptr;
     glCheck(destination = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, vertexBuffer.m_buffer));
 
-    void* source = 0;
+    void* source = nullptr;
     glCheck(source = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_READ_ONLY));
 
     std::memcpy(destination, source, sizeof(Vertex) * vertexBuffer.m_size);

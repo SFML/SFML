@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Unix/SleepImpl.hpp>
-#include <errno.h>
-#include <time.h>
+#include <cerrno>
+#include <ctime>
 
 
 namespace sf
