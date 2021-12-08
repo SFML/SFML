@@ -133,7 +133,7 @@ public:
     /// \return Duration of the sound file
     ///
     ////////////////////////////////////////////////////////////
-    Time getDuration() const;
+    Seconds<float> getDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the read offset of the file in time
@@ -141,7 +141,7 @@ public:
     /// \return Time position
     ///
     ////////////////////////////////////////////////////////////
-    Time getTimeOffset() const;
+    Seconds<float> getTimeOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the read offset of the file in samples
@@ -182,7 +182,7 @@ public:
     /// \param timeOffset Time to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    void seek(Time timeOffset);
+    void seek(Seconds<float> timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -240,7 +240,7 @@ private:
 ///     /* error */;
 ///
 /// // Print the sound attributes
-/// std::cout << "duration: " << file.getDuration().asSeconds() << std::endl;
+/// std::cout << "duration: " << sf::Seconds<float>(file.getDuration()) << std::endl;
 /// std::cout << "channels: " << file.getChannelCount() << std::endl;
 /// std::cout << "sample rate: " << file.getSampleRate() << std::endl;
 /// std::cout << "sample count: " << file.getSampleCount() << std::endl;

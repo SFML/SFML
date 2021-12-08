@@ -278,7 +278,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Response connect(const IpAddress& server, unsigned short port = 21, Time timeout = Time::Zero);
+    Response connect(const IpAddress& server, unsigned short port = 21, Microseconds<> timeout = Microseconds<>::zero());
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the connection with the server

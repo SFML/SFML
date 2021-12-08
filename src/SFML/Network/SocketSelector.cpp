@@ -153,19 +153,21 @@ void SocketSelector::clear()
 
 
 ////////////////////////////////////////////////////////////
-bool SocketSelector::wait(Time timeout)
+bool SocketSelector::wait(Microseconds<> timeout)
 {
     // Setup the timeout
     timeval time;
-    time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
-    time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
+    const auto timeoutSeconds = duration_cast<Seconds<decltype(time.tv_sec)>>(timeout);
+    const auto timeoutMicroseconds = duration_cast<Microseconds<decltype(time.tv_usec)>>(timeout - timeoutSeconds);
+    time.tv_sec  = timeoutSeconds.count();
+    time.tv_usec = timeoutMicroseconds.count();
 
     // Initialize the set that will contain the sockets that are ready
     m_impl->socketsReady = m_impl->allSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
     // The first parameter is ignored on Windows
-    int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Time::Zero ? &time : nullptr);
+    int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Microseconds<>::zero() ? &time : nullptr);
 
     return count > 0;
 }

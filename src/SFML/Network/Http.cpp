@@ -344,7 +344,7 @@ void Http::setHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
+Http::Response Http::sendRequest(const Http::Request& request, Microseconds<> timeout)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);

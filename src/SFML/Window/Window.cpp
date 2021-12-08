@@ -37,7 +37,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Window::Window() :
 m_context       (nullptr),
-m_frameTimeLimit(Time::Zero)
+m_frameTimeLimit(Seconds<float>::zero())
 {
 
 }
@@ -46,7 +46,7 @@ m_frameTimeLimit(Time::Zero)
 ////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
 m_context       (nullptr),
-m_frameTimeLimit(Time::Zero)
+m_frameTimeLimit(Seconds<float>::zero())
 {
     Window::create(mode, title, style, settings);
 }
@@ -55,7 +55,7 @@ m_frameTimeLimit(Time::Zero)
 ////////////////////////////////////////////////////////////
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
 m_context       (nullptr),
-m_frameTimeLimit(Time::Zero)
+m_frameTimeLimit(Seconds<float>::zero())
 {
     Window::create(handle, settings);
 }
@@ -183,9 +183,9 @@ void Window::setVerticalSyncEnabled(bool enabled)
 void Window::setFramerateLimit(unsigned int limit)
 {
     if (limit > 0)
-        m_frameTimeLimit = seconds(1.f / static_cast<float>(limit));
+        m_frameTimeLimit = Seconds<float>(1.f / static_cast<float>(limit));
     else
-        m_frameTimeLimit = Time::Zero;
+        m_frameTimeLimit = Seconds<float>::zero();
 }
 
 
@@ -219,9 +219,9 @@ void Window::display()
         m_context->display();
 
     // Limit the framerate if needed
-    if (m_frameTimeLimit != Time::Zero)
+    if (m_frameTimeLimit != Seconds<float>::zero())
     {
-        sleep(m_frameTimeLimit - m_clock.getElapsedTime());
+        sleep_for(m_frameTimeLimit - m_clock.getElapsedTime());
         m_clock.restart();
     }
 }

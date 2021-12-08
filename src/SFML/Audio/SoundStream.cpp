@@ -52,7 +52,7 @@ m_format          (0),
 m_loop            (false),
 m_samplesProcessed(0),
 m_bufferSeeks     (),
-m_processingInterval(milliseconds(10))
+m_processingInterval(Milliseconds<>(10))
 {
 
 }
@@ -167,7 +167,7 @@ void SoundStream::stop()
     m_thread.wait();
 
     // Move to the beginning
-    onSeek(Time::Zero);
+    onSeek(Seconds<float>::zero());
 }
 
 
@@ -204,7 +204,7 @@ SoundStream::Status SoundStream::getStatus() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::setPlayingOffset(Time timeOffset)
+void SoundStream::setPlayingOffset(Seconds<float> timeOffset)
 {
     // Get old playing status
     Status oldStatus = getStatus();
@@ -216,7 +216,7 @@ void SoundStream::setPlayingOffset(Time timeOffset)
     onSeek(timeOffset);
 
     // Restart streaming
-    m_samplesProcessed = static_cast<Uint64>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount;
+    m_samplesProcessed = static_cast<Uint64>(timeOffset.count() * static_cast<float>(m_sampleRate)) * m_channelCount;
 
     if (oldStatus == Stopped)
         return;
@@ -228,18 +228,18 @@ void SoundStream::setPlayingOffset(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-Time SoundStream::getPlayingOffset() const
+Seconds<float> SoundStream::getPlayingOffset() const
 {
     if (m_sampleRate && m_channelCount)
     {
         ALfloat secs = 0.f;
         alCheck(alGetSourcef(m_source, AL_SEC_OFFSET, &secs));
 
-        return seconds(secs + static_cast<float>(m_samplesProcessed) / static_cast<float>(m_sampleRate) / static_cast<float>(m_channelCount));
+        return Seconds<float>(secs + static_cast<float>(m_samplesProcessed) / static_cast<float>(m_sampleRate) / static_cast<float>(m_channelCount));
     }
     else
     {
-        return Time::Zero;
+        return Seconds<float>::zero();
     }
 }
 
@@ -261,12 +261,12 @@ bool SoundStream::getLoop() const
 ////////////////////////////////////////////////////////////
 Int64 SoundStream::onLoop()
 {
-    onSeek(Time::Zero);
+    onSeek(Seconds<float>::zero());
     return 0;
 }
 
 ////////////////////////////////////////////////////////////
-void SoundStream::setProcessingInterval(Time interval)
+void SoundStream::setProcessingInterval(Milliseconds<> interval)
 {
     m_processingInterval = interval;
 }
@@ -390,7 +390,7 @@ void SoundStream::streamData()
 
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::getStatus() != Stopped)
-            sleep(m_processingInterval);
+            sleep_for(m_processingInterval);
     }
 
     // Stop the playback

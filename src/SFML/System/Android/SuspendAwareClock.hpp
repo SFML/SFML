@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <chrono>
+#include <SFML/System/Time.hpp>
 #include <type_traits>
 
 namespace sf::priv
@@ -63,7 +63,7 @@ public:
     /// https://en.cppreference.com/w/cpp/chrono/is_clock
     ///
     ////////////////////////////////////////////////////////////
-    using duration = std::chrono::nanoseconds;
+    using duration = sf::Nanoseconds<>;
     using rep = duration::rep;
     using period = duration::period;
     using time_point = std::chrono::time_point<SuspendAwareClock, duration>;

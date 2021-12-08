@@ -49,7 +49,7 @@ namespace sf
 SoundRecorder::SoundRecorder() :
 m_thread            (&SoundRecorder::record, this),
 m_sampleRate        (0),
-m_processingInterval(milliseconds(100)),
+m_processingInterval(Milliseconds<>(100)),
 m_isCapturing       (false),
 m_deviceName        (getDefaultDevice()),
 m_channelCount      (1)
@@ -252,7 +252,7 @@ bool SoundRecorder::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-void SoundRecorder::setProcessingInterval(Time interval)
+void SoundRecorder::setProcessingInterval(Milliseconds<> interval)
 {
     m_processingInterval = interval;
 }
@@ -282,7 +282,7 @@ void SoundRecorder::record()
         processCapturedSamples();
 
         // Don't bother the CPU while waiting for more captured data
-        sleep(m_processingInterval);
+        sleep_for(m_processingInterval);
     }
 
     // Capture is finished: clean up everything

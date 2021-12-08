@@ -176,7 +176,7 @@ public:
     /// \see getLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress getPublicAddress(Time timeout = Time::Zero);
+    static IpAddress getPublicAddress(Microseconds<> timeout = Microseconds<>::zero());
 
     ////////////////////////////////////////////////////////////
     // Static member data

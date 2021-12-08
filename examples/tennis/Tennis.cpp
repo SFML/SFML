@@ -101,7 +101,7 @@ int main()
 
     // Define the paddles properties
     sf::Clock AITimer;
-    const sf::Time AITime   = sf::seconds(0.1f);
+    const auto AITime       = sf::Seconds<float>(0.1f);
     const float paddleSpeed = 400.f;
     float rightPaddleSpeed  = 0.f;
     const float ballSpeed   = 400.f;
@@ -160,7 +160,7 @@ int main()
 
         if (isPlaying)
         {
-            float deltaTime = clock.restart().asSeconds();
+            float deltaTime = sf::Seconds<float>(clock.restart()).count();
 
             // Move the player's paddle
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&

@@ -28,8 +28,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
-#include <SFML/System/Time.hpp>
+#include <thread>
 
 
 namespace sf
@@ -38,13 +37,13 @@ namespace sf
 /// \ingroup system
 /// \brief Make the current thread sleep for a given duration
 ///
-/// sf::sleep is the best way to block a program or one of its
+/// sf::sleep_for is the best way to block a program or one of its
 /// threads, as it doesn't consume any CPU power.
 ///
 /// \param duration Time to sleep
 ///
 ////////////////////////////////////////////////////////////
-void SFML_SYSTEM_API sleep(Time duration);
+using std::this_thread::sleep_for;
 
 } // namespace sf
 

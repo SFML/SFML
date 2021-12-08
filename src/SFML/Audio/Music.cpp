@@ -104,7 +104,7 @@ bool Music::openFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-Time Music::getDuration() const
+Seconds<float> Music::getDuration() const
 {
     return m_file.getDuration();
 }
@@ -158,7 +158,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
 
     // Get old playing status and position
     Status oldStatus = getStatus();
-    Time oldPos = getPlayingOffset();
+    Seconds<float> oldPos = getPlayingOffset();
 
     // Unload
     stop();
@@ -167,7 +167,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
     m_loopSpan = samplePoints;
 
     // Restore
-    if (oldPos != Time::Zero)
+    if (oldPos != Seconds<float>::zero())
         setPlayingOffset(oldPos);
 
     // Resume
@@ -202,7 +202,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
 
 
 ////////////////////////////////////////////////////////////
-void Music::onSeek(Time timeOffset)
+void Music::onSeek(Seconds<float> timeOffset)
 {
     Lock lock(m_mutex);
     m_file.seek(timeOffset);
@@ -247,24 +247,24 @@ void Music::initialize()
 }
 
 ////////////////////////////////////////////////////////////
-Uint64 Music::timeToSamples(Time position) const
+Uint64 Music::timeToSamples(Microseconds<> position) const
 {
     // Always ROUND, no unchecked truncation, hence the addition in the numerator.
     // This avoids most precision errors arising from "samples => Time => samples" conversions
     // Original rounding calculation is ((Micros * Freq * Channels) / 1000000) + 0.5
     // We refactor it to keep Int64 as the data type throughout the whole operation.
-    return ((static_cast<Uint64>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
+    return ((static_cast<Uint64>(position.count()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Music::samplesToTime(Uint64 samples) const
+Microseconds<> Music::samplesToTime(Uint64 samples) const
 {
-    Time position = Time::Zero;
+    auto position = Microseconds<>::zero();
 
     // Make sure we don't divide by 0
     if (getSampleRate() != 0 && getChannelCount() != 0)
-        position = microseconds(static_cast<Int64>((samples * 1000000) / (getChannelCount() * getSampleRate())));
+        position = Microseconds<>(static_cast<Int64>((samples * 1000000) / (getChannelCount() * getSampleRate())));
 
     return position;
 }

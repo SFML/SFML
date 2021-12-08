@@ -435,7 +435,7 @@ int main()
         // Update the current example
         float x = static_cast<float>(sf::Mouse::getPosition(window).x) / static_cast<float>(window.getSize().x);
         float y = static_cast<float>(sf::Mouse::getPosition(window).y) / static_cast<float>(window.getSize().y);
-        effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
+        effects[current]->update(sf::Seconds<float>(clock.getElapsedTime()).count(), x, y);
 
         // Clear the window
         if(effects[current]->getName() == "Edge Post-effect"){

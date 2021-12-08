@@ -141,7 +141,7 @@ public:
     /// \see getPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void setPlayingOffset(Time timeOffset);
+    void setPlayingOffset(Seconds<float> timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the stream
@@ -151,7 +151,7 @@ public:
     /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time getPlayingOffset() const;
+    Seconds<float> getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
@@ -237,14 +237,14 @@ protected:
     /// \param timeOffset New playing position, relative to the beginning of the stream
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onSeek(Time timeOffset) = 0;
+    virtual void onSeek(Seconds<float> timeOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source to the beginning of the loop
     ///
     /// This function can be overridden by derived classes to
     /// allow implementation of custom loop points. Otherwise,
-    /// it just calls onSeek(Time::Zero) and returns 0.
+    /// it just calls onSeek(Seconds<float>::zero()) and returns 0.
     ///
     /// \return The seek position after looping (or -1 if there's no loop)
     ///
@@ -263,7 +263,7 @@ protected:
     /// \param interval Processing interval
     ///
     ////////////////////////////////////////////////////////////
-    void setProcessingInterval(Time interval);
+    void setProcessingInterval(Milliseconds<> interval);
 
 private:
 
@@ -320,18 +320,18 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread        m_thread;                   //!< Thread running the background tasks
-    mutable Mutex m_threadMutex;              //!< Thread mutex
-    Status        m_threadStartState;         //!< State the thread starts in (Playing, Paused, Stopped)
-    bool          m_isStreaming;              //!< Streaming state (true = playing, false = stopped)
-    unsigned int  m_buffers[BufferCount];     //!< Sound buffers used to store temporary audio data
-    unsigned int  m_channelCount;             //!< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int  m_sampleRate;               //!< Frequency (samples / second)
-    Int32         m_format;                   //!< Format of the internal sound buffers
-    bool          m_loop;                     //!< Loop flag (true to loop, false to play once)
-    Uint64        m_samplesProcessed;         //!< Number of samples processed since beginning of the stream
-    Int64         m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
-    Time          m_processingInterval;       //!< Interval for checking and filling the internal sound buffers.
+    Thread         m_thread;                   //!< Thread running the background tasks
+    mutable Mutex  m_threadMutex;              //!< Thread mutex
+    Status         m_threadStartState;         //!< State the thread starts in (Playing, Paused, Stopped)
+    bool           m_isStreaming;              //!< Streaming state (true = playing, false = stopped)
+    unsigned int   m_buffers[BufferCount];     //!< Sound buffers used to store temporary audio data
+    unsigned int   m_channelCount;             //!< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int   m_sampleRate;               //!< Frequency (samples / second)
+    Int32          m_format;                   //!< Format of the internal sound buffers
+    bool           m_loop;                     //!< Loop flag (true to loop, false to play once)
+    Uint64         m_samplesProcessed;         //!< Number of samples processed since beginning of the stream
+    Int64          m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    Milliseconds<> m_processingInterval;       //!< Interval for checking and filling the internal sound buffers.
 };
 
 } // namespace sf
@@ -402,7 +402,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     void onSeek(sf::Time timeOffset) override
+///     void onSeek(sf::Seconds<float> timeOffset) override
 ///     {
 ///         // Change the current position in the stream source
 ///         ...

@@ -102,7 +102,7 @@ int main()
         }
         else
         {
-            float time = clock.getElapsedTime().asSeconds();
+            float time = sf::Seconds<float>(clock.getElapsedTime()).count();
 
             // Clear views
             SFMLView1.clear();

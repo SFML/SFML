@@ -11,10 +11,10 @@ namespace Catch
         return string.toAnsiString();
     }
 
-    std::string toString(sf::Time time)
+    std::string toString(sf::Microseconds<> time)
     {
         std::ostringstream stream;
-        stream << time.asMicroseconds() << "us";
+        stream << time.count() << "us";
         return stream.str();
     }
 }

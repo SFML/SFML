@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+using namespace std::chrono_literals;
 
 ////////////////////////////////////////////////////////////
 /// Play a sound
@@ -20,9 +21,9 @@ void playSound()
 
     // Display sound informations
     std::cout << "killdeer.wav:" << std::endl;
-    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"       << std::endl;
-    std::cout << " " << buffer.getSampleRate()           << " samples / sec" << std::endl;
-    std::cout << " " << buffer.getChannelCount()         << " channels"      << std::endl;
+    std::cout << " " << buffer.getDuration().count() << " seconds"       << std::endl;
+    std::cout << " " << buffer.getSampleRate()       << " samples / sec" << std::endl;
+    std::cout << " " << buffer.getChannelCount()     << " channels"      << std::endl;
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
@@ -32,10 +33,10 @@ void playSound()
     while (sound.getStatus() == sf::Sound::Playing)
     {
         // Leave some CPU time for other processes
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep_for(100ms);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
+        std::cout << "\rPlaying... " << sound.getPlayingOffset().count() << " sec        ";
         std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;
@@ -55,9 +56,9 @@ void playMusic(const std::string& filename)
 
     // Display music informations
     std::cout << filename << ":" << std::endl;
-    std::cout << " " << music.getDuration().asSeconds() << " seconds"       << std::endl;
-    std::cout << " " << music.getSampleRate()           << " samples / sec" << std::endl;
-    std::cout << " " << music.getChannelCount()         << " channels"      << std::endl;
+    std::cout << " " << music.getDuration().count() << " seconds"       << std::endl;
+    std::cout << " " << music.getSampleRate()       << " samples / sec" << std::endl;
+    std::cout << " " << music.getChannelCount()     << " channels"      << std::endl;
 
     // Play it
     music.play();
@@ -66,10 +67,10 @@ void playMusic(const std::string& filename)
     while (music.getStatus() == sf::Music::Playing)
     {
         // Leave some CPU time for other processes
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep_for(100ms);
 
         // Display the playing position
-        std::cout << "\rPlaying... " << music.getPlayingOffset().asSeconds() << " sec        ";
+        std::cout << "\rPlaying... " << music.getPlayingOffset().count() << " sec        ";
         std::cout << std::flush;
     }
     std::cout << std::endl << std::endl;

@@ -39,8 +39,10 @@
 #endif
 
 
+
 namespace sf
 {
+
 namespace priv
 {
 
@@ -89,8 +91,15 @@ struct MostSuitableClockDetector
 ////////////////////////////////////////////////////////////
 class SFML_SYSTEM_API Clock
 {
-public:
+private:
+    using ClockImpl = typename priv::MostSuitableClockDetector::type;
 
+    static_assert(ClockImpl::is_steady,
+        "Provided implementation is not a monotonic clock");
+    static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
+        "Clock resolution is too low. Expecting at least a microsecond precision");
+
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -109,7 +118,7 @@ public:
     /// \return Time elapsed
     ///
     ////////////////////////////////////////////////////////////
-    Time getElapsedTime() const;
+    sf::Nanoseconds<> getElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Restart the clock
@@ -120,27 +129,9 @@ public:
     /// \return Time elapsed
     ///
     ////////////////////////////////////////////////////////////
-    Time restart();
+    sf::Nanoseconds<> restart();
 
 private:
-    using ClockImpl = typename priv::MostSuitableClockDetector::type;
-
-    static_assert(ClockImpl::is_steady,
-        "Provided implementation is not a monotonic clock");
-    static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
-        "Clock resolution is too low. Expecting at least a microsecond precision");
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Convert clock duration to Time
-    ///
-    /// This function acts as a utility for converting clock
-    /// duration type instance into sf::Time
-    ///
-    /// \return Time instance
-    ///
-    ////////////////////////////////////////////////////////////
-    static Time durationToTime(ClockImpl::duration duration);
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -169,15 +160,12 @@ private:
 /// \code
 /// sf::Clock clock;
 /// ...
-/// Time time1 = clock.getElapsedTime();
+/// auto time1 = sf::Nanoseconds<>(clock.getElapsedTime());
 /// ...
-/// Time time2 = clock.restart();
+/// auto time2 = sf::duration_cast<sf::Milliseconds<>>(clock.restart());
 /// \endcode
 ///
-/// The sf::Time value returned by the clock can then be
-/// converted to a number of seconds, milliseconds or even
-/// microseconds.
-///
-/// \see sf::Time
+/// The instance returned by the clock can then be
+/// converted to a different unit of time using <chrono>.
 ///
 ////////////////////////////////////////////////////////////

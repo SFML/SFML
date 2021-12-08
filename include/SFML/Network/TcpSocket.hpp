@@ -109,7 +109,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
+    Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Microseconds<> timeout = Microseconds<>::zero());
 
     ////////////////////////////////////////////////////////////
     /// \brief Disconnect the socket from its remote peer

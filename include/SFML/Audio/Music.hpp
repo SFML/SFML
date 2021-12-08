@@ -84,7 +84,7 @@ public:
     };
 
     // Define the relevant Span types
-    using TimeSpan = Span<Time>;
+    using TimeSpan = Span<Microseconds<>>;
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -169,7 +169,7 @@ public:
     /// \return Music duration
     ///
     ////////////////////////////////////////////////////////////
-    Time getDuration() const;
+    Seconds<float> getDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the positions of the of the sound's looping sequence
@@ -189,7 +189,7 @@ public:
     TimeSpan getLoopPoints() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the beginning and end of the sound's looping sequence using sf::Time
+    /// \brief Sets the beginning and end of the sound's looping sequence
     ///
     /// Loop points allow one to specify a pair of positions such that, when the music
     /// is enabled for looping, it will seamlessly seek to the beginning whenever it
@@ -231,7 +231,7 @@ protected:
     /// \param timeOffset New playing position, from the beginning of the music
     ///
     ////////////////////////////////////////////////////////////
-    void onSeek(Time timeOffset) override;
+    void onSeek(Seconds<float> timeOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source to the loop offset
@@ -254,24 +254,24 @@ private:
     void initialize();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to convert an sf::Time to a sample position
+    /// \brief Helper to convert time to a sample position
     ///
     /// \param position Time to convert to samples
     ///
     /// \return The number of samples elapsed at the given time
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 timeToSamples(Time position) const;
+    Uint64 timeToSamples(Microseconds<> position) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to convert a sample position to an sf::Time
+    /// \brief Helper to convert a sample position to time
     ///
-    /// \param samples Sample count to convert to Time
+    /// \param samples Sample count to convert to time
     ///
-    /// \return The Time position of the given sample
+    /// \return The time position of the given sample
     ///
     ////////////////////////////////////////////////////////////
-    Time samplesToTime(Uint64 samples) const;
+    Microseconds<> samplesToTime(Uint64 samples) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

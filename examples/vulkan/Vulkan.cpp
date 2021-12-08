@@ -2481,7 +2481,7 @@ public:
             if (vulkanAvailable && window.isOpen())
             {
                 // Update the uniform buffer (matrices)
-                updateUniformBuffer(clock.getElapsedTime().asSeconds());
+                updateUniformBuffer(sf::Seconds<float>(clock.getElapsedTime()).count());
 
                 // Render the frame
                 draw();

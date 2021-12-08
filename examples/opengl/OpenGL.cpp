@@ -284,9 +284,9 @@ int main()
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glTranslatef(x, y, -100.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 50.f, 1.f, 0.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 30.f, 0.f, 1.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 90.f, 0.f, 0.f, 1.f);
+            glRotatef(sf::Seconds<float>(clock.getElapsedTime()).count() * 50.f, 1.f, 0.f, 0.f);
+            glRotatef(sf::Seconds<float>(clock.getElapsedTime()).count() * 30.f, 0.f, 1.f, 0.f);
+            glRotatef(sf::Seconds<float>(clock.getElapsedTime()).count() * 90.f, 0.f, 0.f, 1.f);
 
             // Draw the cube
             glDrawArrays(GL_TRIANGLES, 0, 36);

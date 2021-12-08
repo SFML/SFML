@@ -317,7 +317,7 @@ static void onDestroy(ANativeActivity* activity)
     while (!states->terminated)
     {
         states->mutex.unlock();
-        sf::sleep(sf::milliseconds(20));
+        sf::sleep_for(sf::Milliseconds<>(20));
         states->mutex.lock();
     }
 
@@ -357,7 +357,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
-        sf::sleep(sf::milliseconds(10));
+        sf::sleep_for(sf::Milliseconds<>(10));
         states->mutex.lock();
     }
 }
@@ -384,7 +384,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     while(!(states->updated | states->terminated))
     {
         states->mutex.unlock();
-        sf::sleep(sf::milliseconds(10));
+        sf::sleep_for(sf::Milliseconds<>(10));
         states->mutex.lock();
     }
 }
@@ -577,7 +577,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     while (!(states->initialized | states->terminated))
     {
         states->mutex.unlock();
-        sf::sleep(sf::milliseconds(20));
+        sf::sleep_for(sf::Milliseconds<>(20));
         states->mutex.lock();
     }
 

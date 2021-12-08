@@ -261,8 +261,8 @@ void EaglContext::display()
     // therefore we fake it with a manual framerate limit
     if (m_vsyncEnabled)
     {
-        static const Time frameDuration = seconds(1.f / 60.f);
-        sleep(frameDuration - m_clock.getElapsedTime());
+        static const auto frameDuration = Seconds<float>(1.f / 60.f);
+        sleep_for(frameDuration - m_clock.getElapsedTime());
         m_clock.restart();
     }
 }

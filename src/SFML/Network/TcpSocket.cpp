@@ -116,7 +116,7 @@ unsigned short TcpSocket::getRemotePort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout)
+Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short remotePort, Microseconds<> timeout)
 {
     // Disconnect the socket if it is already connected
     disconnect();
@@ -127,7 +127,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
     // Create the remote address
     sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
 
-    if (timeout <= Time::Zero)
+    if (timeout <= Microseconds<>::zero())
     {
         // ----- We're not using a timeout: just try to connect -----
 
@@ -174,8 +174,10 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
 
             // Setup the timeout
             timeval time;
-            time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
-            time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
+            const auto timeoutSeconds = duration_cast<Seconds<decltype(time.tv_sec)>>(timeout);
+            const auto timeoutMicroseconds = duration_cast<Microseconds<decltype(time.tv_usec)>>(timeout - timeoutSeconds);
+            time.tv_sec = timeoutSeconds.count();
+            time.tv_usec = timeoutMicroseconds.count();
 
             // Wait for something to write on our socket (which means that the connection request has returned)
             if (select(static_cast<int>(getHandle() + 1), nullptr, &selector, nullptr, &time) > 0)

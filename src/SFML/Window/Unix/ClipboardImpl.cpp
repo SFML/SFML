@@ -146,7 +146,7 @@ String ClipboardImpl::getStringImpl()
     Clock clock;
 
     // Wait for a response for up to 1000ms
-    while (!m_requestResponded && (clock.getElapsedTime().asMilliseconds() < 1000))
+    while (!m_requestResponded && (clock.getElapsedTime() < sf::Milliseconds<>(1000)))
         processEvents();
 
     // If no response was received within the time period, clear our clipboard contents

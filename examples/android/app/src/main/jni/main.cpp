@@ -4,6 +4,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
+using namespace std::chrono_literals;
+
 // Do we want to showcase direct JNI/NDK interaction?
 // Undefine this to get real cross-platform code.
 // Uncomment this to try JNI access; this seems to be broken in latest NDKs
@@ -19,7 +21,7 @@
 #include <SFML/System/NativeActivity.hpp>
 
 // NDK/JNI sub example - call Java code from native code
-int vibrate(sf::Time duration)
+int vibrate(sf::Milliseconds<> duration)
 {
     // First we'll need the native activity handle
     ANativeActivity *activity = sf::getNativeActivity();
@@ -55,7 +57,7 @@ int vibrate(sf::Time duration)
     jmethodID vibrate = env->GetMethodID(vib_cls, "vibrate", "(J)V");
 
     // Determine the timeframe
-    jlong length = duration.asMilliseconds();
+    jlong length = duration.count();
 
     // Bzzz!
     env->CallVoidMethod(vib_obj, vibrate, length);
@@ -147,7 +149,7 @@ int main(int argc, char *argv[])
                     {
                         image.setPosition(event.touch.x, event.touch.y);
 #if defined(USE_JNI)
-                        vibrate(sf::milliseconds(10));
+                        vibrate(10ms);
 #endif
                     }
                     break;
@@ -162,7 +164,7 @@ int main(int argc, char *argv[])
             window.display();
         }
         else {
-            sf::sleep(sf::milliseconds(100));
+            sf::sleep_for(100ms);
         }
     }
 }

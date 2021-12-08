@@ -105,7 +105,7 @@ namespace
         bool connected;
         sf::Clock timer;
     };
-    const sf::Time connectionRefreshDelay = sf::milliseconds(500);
+    const auto connectionRefreshDelay = sf::Milliseconds<>(500);
 
     ConnectionCache connectionCache[sf::Joystick::Count];
 

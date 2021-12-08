@@ -12,6 +12,7 @@
 #include <cstring>
 #include <cmath>
 
+using namespace std::chrono_literals;
 
 namespace
 {
@@ -226,7 +227,7 @@ int main()
 
             // Update and draw the HUD text
             osstr.str("");
-            osstr << "Frame:  " << clock.restart().asMilliseconds() << "ms\n"
+            osstr << "Frame:  " << sf::duration_cast<sf::Milliseconds<>>(clock.restart()).count() << "ms\n"
                   << "perlinOctaves:  " << perlinOctaves << "\n\n"
                   << "Use the arrow keys to change the values.\nUse the return key to regenerate the terrain.\n\n";
 
@@ -553,7 +554,7 @@ void threadFunction()
         // If we didn't receive a new work item, keep looping
         if (!workItem.targetBuffer)
         {
-            sf::sleep(sf::milliseconds(10));
+            sf::sleep_for(10ms);
 
             continue;
         }
@@ -589,7 +590,7 @@ void generateTerrain(sf::Vertex* buffer)
                 break;
         }
 
-        sf::sleep(sf::milliseconds(10));
+        sf::sleep_for(10ms);
     }
 
     // Queue all the new work items

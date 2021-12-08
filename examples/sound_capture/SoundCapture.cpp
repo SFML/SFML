@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 
+using namespace std::chrono_literals;
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -45,9 +46,9 @@ int main()
 
     // Display captured sound informations
     std::cout << "Sound information:" << std::endl;
-    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"           << std::endl;
-    std::cout << " " << buffer.getSampleRate()           << " samples / seconds" << std::endl;
-    std::cout << " " << buffer.getChannelCount()         << " channels"          << std::endl;
+    std::cout << " " << buffer.getDuration().count() << " seconds"           << std::endl;
+    std::cout << " " << buffer.getSampleRate()       << " samples / seconds" << std::endl;
+    std::cout << " " << buffer.getChannelCount()     << " channels"          << std::endl;
 
     // Choose what to do with the recorded sound data
     char choice;
@@ -75,11 +76,11 @@ int main()
         while (sound.getStatus() == sf::Sound::Playing)
         {
             // Display the playing position
-            std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
+            std::cout << "\rPlaying... " << sound.getPlayingOffset().count() << " sec        ";
             std::cout << std::flush;
 
             // Leave some CPU time for other threads
-            sf::sleep(sf::milliseconds(100));
+            sf::sleep_for(100ms);
         }
     }
 

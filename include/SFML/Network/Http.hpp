@@ -393,7 +393,7 @@ public:
     /// Warning: this function waits for the server's response and may
     /// not return instantly; use a thread if you don't want to block your
     /// application, or use a timeout to limit the time to wait. A value
-    /// of Time::Zero means that the client will use the system default timeout
+    /// of Microseconds<>::zero() means that the client will use the system default timeout
     /// (which is usually pretty long).
     ///
     /// \param request Request to send
@@ -402,7 +402,7 @@ public:
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    Response sendRequest(const Request& request, Time timeout = Time::Zero);
+    Response sendRequest(const Request& request, Microseconds<> timeout = Microseconds<>::zero());
 
 private:
 

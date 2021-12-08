@@ -39,7 +39,7 @@ SuspendAwareClock::time_point SuspendAwareClock::now() noexcept
 #else
     #error "CLOCK_BOOTTIME is essential for SuspendAwareClock to work"
 #endif // CLOCK_BOOTTIME
-    return time_point(std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec));
+    return time_point(sf::Seconds<>(ts.tv_sec) + sf::Nanoseconds<>(ts.tv_nsec));
 }
 
 } // namespace sf::priv

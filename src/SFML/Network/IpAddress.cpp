@@ -141,7 +141,7 @@ IpAddress IpAddress::getLocalAddress()
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::getPublicAddress(Time timeout)
+IpAddress IpAddress::getPublicAddress(Microseconds<> timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.

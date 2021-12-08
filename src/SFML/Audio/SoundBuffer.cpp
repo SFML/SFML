@@ -194,7 +194,7 @@ unsigned int SoundBuffer::getChannelCount() const
 
 
 ////////////////////////////////////////////////////////////
-Time SoundBuffer::getDuration() const
+Seconds<float> SoundBuffer::getDuration() const
 {
     return m_duration;
 }
@@ -265,7 +265,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration
-    m_duration = seconds(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
+    m_duration = Seconds<float>(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
 
     // Now reattach the buffer to the sounds that use it
     for (Sound* soundPtr : sounds)

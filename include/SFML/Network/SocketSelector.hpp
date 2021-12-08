@@ -113,14 +113,14 @@ public:
     /// If you use a timeout and no socket is ready before the timeout
     /// is over, the function returns false.
     ///
-    /// \param timeout Maximum time to wait, (use Time::Zero for infinity)
+    /// \param timeout Maximum time to wait, (use Microseconds<>::zero() for infinity)
     ///
     /// \return True if there are sockets ready, false otherwise
     ///
     /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool wait(Time timeout = Time::Zero);
+    bool wait(Microseconds<> timeout = Microseconds<>::zero());
 
     ////////////////////////////////////////////////////////////
     /// \brief Test a socket to know if it is ready to receive data

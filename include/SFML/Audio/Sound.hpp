@@ -153,7 +153,7 @@ public:
     /// \see getPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    void setPlayingOffset(Time timeOffset);
+    void setPlayingOffset(Seconds<float> timeOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
@@ -181,7 +181,7 @@ public:
     /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time getPlayingOffset() const;
+    Seconds<float> getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the sound (stopped, paused, playing)

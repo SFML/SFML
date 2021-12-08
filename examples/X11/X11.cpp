@@ -224,8 +224,8 @@ int main()
         }
 
         // Draw something into our views
-        draw(sfmlView1, clock.getElapsedTime().asSeconds());
-        draw(sfmlView2, clock.getElapsedTime().asSeconds() * 0.3f);
+        draw(sfmlView1, sf::Seconds<float>(clock.getElapsedTime().count()));
+        draw(sfmlView2, sf::Seconds<float>(clock.getElapsedTime().count()) * 0.3f);
 
         // Display the views on screen
         sfmlView1.display();

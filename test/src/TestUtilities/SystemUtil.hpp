@@ -10,20 +10,20 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/System/Time.hpp>
 #include <sstream>
 
 // Forward declarations for non-template types
 namespace sf
 {
     class String;
-    class Time;
 }
 
 // String conversions for Catch framework
 namespace Catch
 {
     std::string toString(const sf::String& string);
-    std::string toString(sf::Time time);
+    std::string toString(sf::Microseconds<> time);
 
     template <typename T>
     std::string toString(const sf::Vector2<T>& vector)

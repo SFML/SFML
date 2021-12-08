@@ -1166,7 +1166,7 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
             }
 
             // The cursor grab failed, trying again after a small sleep
-            sf::sleep(sf::milliseconds(50));
+            sf::sleep_for(sf::Milliseconds<>(50));
         }
 
         if (!m_cursorGrabbed)
@@ -1783,7 +1783,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     }
 
                     // The cursor grab failed, trying again after a small sleep
-                    sf::sleep(sf::milliseconds(50));
+                    sf::sleep_for(sf::Milliseconds<>(50));
                 }
 
                 if (!m_cursorGrabbed)

@@ -48,7 +48,7 @@ struct SFMLmainWindow
         sf::FloatRect rect = sprite.getLocalBounds();
         sf::Vector2f size(rect.width, rect.height);
         sprite.setOrigin(size / 2.f);
-        sprite.scale(0.3, 0.3);
+        sprite.scale(0.3f, 0.3f);
 
         unsigned int ww = renderWindow.getSize().x;
         unsigned int wh = renderWindow.getSize().y;

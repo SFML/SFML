@@ -38,29 +38,21 @@ m_startTime(ClockImpl::now())
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::getElapsedTime() const
+sf::Nanoseconds<> Clock::getElapsedTime() const
 {
-    return durationToTime(ClockImpl::now() - m_startTime);
+    return ClockImpl::now() - m_startTime;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Clock::restart()
+sf::Nanoseconds<> Clock::restart()
 {
-    const ClockImpl::time_point now = ClockImpl::now();
-    Time elapsed = durationToTime(now - m_startTime);
+    const auto now = ClockImpl::now();
+    sf::Nanoseconds<> elapsed = now - m_startTime;
+    sf::duration_cast<sf::Nanoseconds<>>(now - m_startTime);
     m_startTime = now;
 
     return elapsed;
-}
-
-
-////////////////////////////////////////////////////////////
-Time Clock::durationToTime(Clock::ClockImpl::duration duration)
-{
-    using std::chrono::duration_cast;
-    using std::chrono::microseconds;
-    return sf::microseconds(duration_cast<microseconds>(duration).count());
 }
 
 } // namespace sf

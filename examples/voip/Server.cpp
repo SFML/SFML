@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iterator>
 
+using namespace std::chrono_literals;
 
 const sf::Uint8 serverAudioData   = 1;
 const sf::Uint8 serverEndOfStream = 2;
@@ -79,7 +80,7 @@ private:
 
         // No new data has arrived since last update: wait until we get some
         while ((m_offset >= m_samples.size()) && !m_hasFinished)
-            sf::sleep(sf::milliseconds(10));
+            sf::sleep_for(10ms);
 
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
@@ -102,9 +103,10 @@ private:
     /// /see SoundStream::OnSeek
     ///
     ////////////////////////////////////////////////////////////
-    void onSeek(sf::Time timeOffset) override
+    void onSeek(sf::Seconds<float> timeOffset) override
     {
-        m_offset = static_cast<std::size_t>(timeOffset.asMilliseconds()) * getSampleRate() * getChannelCount() / 1000;
+        const auto timeOffsetMilliseconds = sf::duration_cast<sf::Milliseconds<std::size_t>>(timeOffset);
+        m_offset = timeOffsetMilliseconds.count() * getSampleRate() * getChannelCount() / 1000;
     }
 
     ////////////////////////////////////////////////////////////
@@ -181,7 +183,7 @@ void doServer(unsigned short port)
     while (audioStream.getStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep_for(100ms);
     }
 
     std::cin.ignore(10000, '\n');
@@ -197,6 +199,6 @@ void doServer(unsigned short port)
     while (audioStream.getStatus() != sf::SoundStream::Stopped)
     {
         // Leave some CPU time for other threads
-        sf::sleep(sf::milliseconds(100));
+        sf::sleep_for(100ms);
     }
 }

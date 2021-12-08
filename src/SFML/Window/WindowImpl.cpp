@@ -142,7 +142,7 @@ bool WindowImpl::popEvent(Event& event, bool block)
             // events (which require polling)
             while (m_events.empty())
             {
-                sleep(milliseconds(10));
+                sleep_for(Milliseconds<>(10));
                 processJoystickEvents();
                 processSensorEvents();
                 processEvents();
