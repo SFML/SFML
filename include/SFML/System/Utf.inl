@@ -656,7 +656,7 @@ Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
+        const auto& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
         return static_cast<Uint32>(facet.widen(input));
@@ -705,7 +705,7 @@ Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const st
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
+        const auto& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
         *output++ = facet.narrow(static_cast<wchar_t>(codepoint), replacement);

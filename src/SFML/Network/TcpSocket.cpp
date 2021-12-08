@@ -328,10 +328,10 @@ Socket::Status TcpSocket::send(Packet& packet)
     // Copy the packet size and data into the block to send
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
-    std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    std::memcpy(blockToSend.data(), &packetSize, sizeof(packetSize));
     #pragma GCC diagnostic pop
     if (size > 0)
-        std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
+        std::memcpy(blockToSend.data() + sizeof(packetSize), data, size);
 
     // These warnings are ignored here for portability, as even on Windows the
     // signature of `send` might change depending on whether Win32 or MinGW is
@@ -342,7 +342,7 @@ Socket::Status TcpSocket::send(Packet& packet)
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
-    Status status = send(&blockToSend[0] + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+    Status status = send(blockToSend.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
     #pragma GCC diagnostic pop
     #pragma GCC diagnostic pop
 
@@ -406,14 +406,14 @@ Socket::Status TcpSocket::receive(Packet& packet)
         if (received > 0)
         {
             m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            char* begin = &m_pendingPacket.Data[0] + m_pendingPacket.Data.size() - received;
+            char* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
             std::memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the packet data: we can copy it to the user packet
     if (!m_pendingPacket.Data.empty())
-        packet.onReceive(&m_pendingPacket.Data[0], m_pendingPacket.Data.size());
+        packet.onReceive(m_pendingPacket.Data.data(), m_pendingPacket.Data.size());
 
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();

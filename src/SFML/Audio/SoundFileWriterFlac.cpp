@@ -113,7 +113,7 @@ void SoundFileWriterFlac::write(const Int16* samples, Uint64 count)
         m_samples32.assign(samples, samples + frames * m_channelCount);
 
         // Write them to the FLAC stream
-        FLAC__stream_encoder_process_interleaved(m_encoder, &m_samples32[0], frames);
+        FLAC__stream_encoder_process_interleaved(m_encoder, m_samples32.data(), frames);
 
         // Next chunk
         count -= m_samples32.size();

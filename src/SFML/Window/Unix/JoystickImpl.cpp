@@ -48,7 +48,7 @@ namespace
         bool plugged;
     };
 
-    typedef std::vector<JoystickRecord> JoystickList;
+    using JoystickList = std::vector<JoystickRecord>;
     JoystickList joystickList;
 
     bool isJoystick(udev_device* udevDevice)

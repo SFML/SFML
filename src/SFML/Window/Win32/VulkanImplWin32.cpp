@@ -139,7 +139,7 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, &extensionProperties[0]);
+            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
             bool has_VK_KHR_surface = false;
@@ -203,7 +203,7 @@ bool VulkanImplWin32::createVulkanSurface(const VkInstance& instance, WindowHand
     // Make a copy of the instance handle since we get it passed as a reference
     VkInstance inst = instance;
 
-    PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateWin32SurfaceKHR"));
+    auto vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateWin32SurfaceKHR"));
 
     if (!vkCreateWin32SurfaceKHR)
         return false;

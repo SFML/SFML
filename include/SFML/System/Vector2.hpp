@@ -274,7 +274,7 @@ using Vector2f = Vector2<float>;
 /// and comparisons (==, !=), for example int or float.
 ///
 /// You generally don't have to care about the templated form (sf::Vector2<T>),
-/// the most common specializations have special typedefs:
+/// the most common specializations have special type aliases:
 /// \li sf::Vector2<float> is sf::Vector2f
 /// \li sf::Vector2<int> is sf::Vector2i
 /// \li sf::Vector2<unsigned int> is sf::Vector2u

@@ -131,9 +131,9 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
     }
 
     Pixmap maskPixmap = XCreateBitmapFromData(m_display, XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(&mask[0]), size.x, size.y);
+                                              reinterpret_cast<char*>(mask.data()), size.x, size.y);
     Pixmap dataPixmap = XCreateBitmapFromData(m_display, XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(&data[0]), size.x, size.y);
+                                              reinterpret_cast<char*>(data.data()), size.x, size.y);
 
     // Define the foreground color as white and the background as black.
     XColor fg, bg;

@@ -172,7 +172,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::unordered_map<std::string, std::string> FieldTable;
+        using FieldTable = std::map<std::string, std::string>; // Use an ordered map for predictable payloads
 
         ////////////////////////////////////////////////////////////
         // Member data
@@ -332,7 +332,7 @@ public:
         ////////////////////////////////////////////////////////////
         // Types
         ////////////////////////////////////////////////////////////
-        typedef std::unordered_map<std::string, std::string> FieldTable;
+        using FieldTable = std::map<std::string, std::string>; // Use an ordered map for predictable payloads
 
         ////////////////////////////////////////////////////////////
         // Member data

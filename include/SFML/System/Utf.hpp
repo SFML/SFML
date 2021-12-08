@@ -730,10 +730,10 @@ public:
 
 #include <SFML/System/Utf.inl>
 
-// Make typedefs to get rid of the template syntax
-typedef Utf<8>  Utf8;
-typedef Utf<16> Utf16;
-typedef Utf<32> Utf32;
+// Make type aliases to get rid of the template syntax
+using Utf8 = Utf<8>;
+using Utf16 = Utf<16>;
+using Utf32 = Utf<32>;
 
 } // namespace sf
 
@@ -756,8 +756,8 @@ typedef Utf<32> Utf32;
 /// can use any character / string type for a given encoding.
 ///
 /// It has 3 specializations:
-/// \li sf::Utf<8> (typedef'd to sf::Utf8)
-/// \li sf::Utf<16> (typedef'd to sf::Utf16)
-/// \li sf::Utf<32> (typedef'd to sf::Utf32)
+/// \li sf::Utf<8> (with sf::Utf8 type alias)
+/// \li sf::Utf<16> (with sf::Utf16 type alias)
+/// \li sf::Utf<32> (with sf::Utf32 type alias)
 ///
 ////////////////////////////////////////////////////////////

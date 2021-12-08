@@ -43,11 +43,11 @@ namespace sf
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    typedef UINT_PTR SocketHandle;
+    using SocketHandle = UINT_PTR;
 
 #else
 
-    typedef int SocketHandle;
+    using SocketHandle = int;
 
 #endif
 

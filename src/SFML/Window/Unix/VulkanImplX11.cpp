@@ -137,7 +137,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, &extensionProperties[0]);
+            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
             bool has_VK_KHR_surface = false;
@@ -201,7 +201,7 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle
     // Make a copy of the instance handle since we get it passed as a reference
     VkInstance inst = instance;
 
-    PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateXlibSurfaceKHR"));
+    auto vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateXlibSurfaceKHR"));
 
     if (!vkCreateXlibSurfaceKHR)
         return false;

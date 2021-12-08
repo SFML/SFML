@@ -50,25 +50,25 @@ namespace
     // stb_image callbacks that operate on a sf::InputStream
     int read(void* user, char* data, int size)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         return static_cast<int>(stream->read(data, size));
     }
     void skip(void* user, int size)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         stream->seek(stream->tell() + size);
     }
     int eof(void* user)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         return stream->tell() >= stream->getSize();
     }
 
     // stb_image callback for constructing a buffer
     void bufferFromCallback(void* context, void* data, int size)
     {
-        sf::Uint8* source = static_cast<sf::Uint8*>(data);
-        std::vector<sf::Uint8>* dest = static_cast<std::vector<sf::Uint8>*>(context);
+        auto* source = static_cast<sf::Uint8*>(data);
+        auto* dest = static_cast<std::vector<sf::Uint8>*>(context);
         std::copy(source, source + size, std::back_inserter(*dest));
     }
 }
@@ -123,7 +123,7 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(static_cast<std::size_t>(width * height * 4));
-            memcpy(&pixels[0], ptr, pixels.size());
+            memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
@@ -154,7 +154,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         int width = 0;
         int height = 0;
         int channels = 0;
-        const unsigned char* buffer = static_cast<const unsigned char*>(data);
+        const auto* buffer = static_cast<const unsigned char*>(data);
         unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(dataSize), &width, &height, &channels, STBI_rgb_alpha);
 
         if (ptr)
@@ -167,7 +167,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
             {
                 // Copy the loaded pixels to the pixel buffer
                 pixels.resize(static_cast<std::size_t>(width * height * 4));
-                memcpy(&pixels[0], ptr, pixels.size());
+                memcpy(pixels.data(), ptr, pixels.size());
             }
 
             // Free the loaded pixels (they are now in our own pixel buffer)
@@ -222,7 +222,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(static_cast<std::size_t>(width * height * 4));
-            memcpy(&pixels[0], ptr, pixels.size());
+            memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
@@ -256,25 +256,25 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         if (extension == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp(filename.c_str(), convertedSize.x, convertedSize.y, 4, &pixels[0]))
+            if (stbi_write_bmp(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
         else if (extension == "tga")
         {
             // TGA format
-            if (stbi_write_tga(filename.c_str(), convertedSize.x, convertedSize.y, 4, &pixels[0]))
+            if (stbi_write_tga(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
         else if (extension == "png")
         {
             // PNG format
-            if (stbi_write_png(filename.c_str(), convertedSize.x, convertedSize.y, 4, &pixels[0], 0))
+            if (stbi_write_png(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
                 return true;
         }
         else if (extension == "jpg" || extension == "jpeg")
         {
             // JPG format
-            if (stbi_write_jpg(filename.c_str(), convertedSize.x, convertedSize.y, 4, &pixels[0], 90))
+            if (stbi_write_jpg(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
                 return true;
         }
     }
@@ -297,25 +297,25 @@ bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::U
         if (specified == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, &pixels[0]))
+            if (stbi_write_bmp_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
         else if (specified == "tga")
         {
             // TGA format
-            if (stbi_write_tga_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, &pixels[0]))
+            if (stbi_write_tga_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
         else if (specified == "png")
         {
             // PNG format
-            if (stbi_write_png_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, &pixels[0], 0))
+            if (stbi_write_png_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
                 return true;
         }
         else if (specified == "jpg" || specified == "jpeg")
         {
             // JPG format
-            if (stbi_write_jpg_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, &pixels[0], 90))
+            if (stbi_write_jpg_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
                 return true;
         }
     }

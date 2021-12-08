@@ -182,19 +182,19 @@ namespace sf
     using Uint8 = unsigned char;
 
     // 16 bits integer types
-    using Int16 = signed short;
+    using Int16 = short;
     using Uint16 = unsigned short;
 
     // 32 bits integer types
-    using Int32 = signed int;
+    using Int32 = int;
     using Uint32 = unsigned int;
 
     // 64 bits integer types
     #if defined(_MSC_VER)
-        using Int64 = signed __int64;
+        using Int64 = signed   __int64;
         using Uint64 = unsigned __int64;
     #else
-        using Int64 = signed long long;
+        using Int64 = long long;
         using Uint64 = unsigned long long;
     #endif
 

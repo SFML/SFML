@@ -18,7 +18,7 @@ namespace
         sf::Text value;
     };
 
-    typedef std::unordered_map<std::string, JoystickObject> Texts;
+    using Texts = std::unordered_map<std::string, JoystickObject>;
     Texts texts;
     std::ostringstream sstr;
     float threshold = 0.1f;

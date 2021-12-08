@@ -192,12 +192,12 @@ Socket::Status UdpSocket::receive(Packet& packet, IpAddress& remoteAddress, unsi
 
     // Receive the datagram
     std::size_t received = 0;
-    Status status = receive(&m_buffer[0], m_buffer.size(), received, remoteAddress, remotePort);
+    Status status = receive(m_buffer.data(), m_buffer.size(), received, remoteAddress, remotePort);
 
     // If we received valid data, we can copy it to the user packet
     packet.clear();
     if ((status == Done) && (received > 0))
-        packet.onReceive(&m_buffer[0], received);
+        packet.onReceive(m_buffer.data(), received);
 
     return status;
 }

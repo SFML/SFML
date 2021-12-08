@@ -212,7 +212,7 @@ template <typename T>
 
 #include <SFML/Graphics/Rect.inl>
 
-// Create typedefs for the most common types
+// Create type aliases for the most common types
 using IntRect = Rect<int>;
 using FloatRect = Rect<float>;
 
@@ -245,7 +245,7 @@ using FloatRect = Rect<float>;
 /// don't intersect.
 ///
 /// sf::Rect is a template and may be used with any numeric type, but
-/// for simplicity the instantiations used by SFML are typedef'd:
+/// for simplicity type aliases for the instantiations used by SFML are given:
 /// \li sf::Rect<int> is sf::IntRect
 /// \li sf::Rect<float> is sf::FloatRect
 ///

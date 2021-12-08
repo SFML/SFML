@@ -48,12 +48,12 @@
 
     #if defined(SFML_OPENGL_ES)
 
-        typedef sf::priv::EglContext ContextType;
+        using ContextType = sf::priv::EglContext;
 
     #else
 
         #include <SFML/Window/Win32/WglContext.hpp>
-        typedef sf::priv::WglContext ContextType;
+        using ContextType = sf::priv::WglContext;
 
     #endif
 
@@ -61,48 +61,48 @@
 
     #if defined(SFML_OPENGL_ES)
 
-        typedef sf::priv::EglContext ContextType;
+        using ContextType = sf::priv::EglContext;
 
     #else
 
         #include <SFML/Window/Unix/GlxContext.hpp>
-        typedef sf::priv::GlxContext ContextType;
+        using ContextType = sf::priv::GlxContext;
 
     #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Window/OSX/SFContext.hpp>
-    typedef sf::priv::SFContext ContextType;
+    using ContextType = sf::priv::SFContext;
 
 #elif defined(SFML_SYSTEM_IOS)
 
     #include <SFML/Window/iOS/EaglContext.hpp>
-    typedef sf::priv::EaglContext ContextType;
+    using ContextType = sf::priv::EaglContext;
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-    typedef sf::priv::EglContext ContextType;
+    using ContextType = sf::priv::EglContext;
 
 #endif
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    typedef void (APIENTRY *glEnableFuncType)(GLenum);
-    typedef GLenum (APIENTRY *glGetErrorFuncType)();
-    typedef void (APIENTRY *glGetIntegervFuncType)(GLenum, GLint*);
-    typedef const GLubyte* (APIENTRY *glGetStringFuncType)(GLenum);
-    typedef const GLubyte* (APIENTRY *glGetStringiFuncType)(GLenum, GLuint);
-    typedef GLboolean (APIENTRY *glIsEnabledFuncType)(GLenum);
+    using glEnableFuncType = void (APIENTRY *)(GLenum);
+    using glGetErrorFuncType = GLenum (APIENTRY *)();
+    using glGetIntegervFuncType = void (APIENTRY *)(GLenum, GLint*);
+    using glGetStringFuncType = const GLubyte* (APIENTRY *)(GLenum);
+    using glGetStringiFuncType = const GLubyte* (APIENTRY *)(GLenum, GLuint);
+    using glIsEnabledFuncType = GLboolean (APIENTRY *)(GLenum);
 
 #else
 
-    typedef void (*glEnableFuncType)(GLenum);
-    typedef GLenum (*glGetErrorFuncType)();
-    typedef void (*glGetIntegervFuncType)(GLenum, GLint*);
-    typedef const GLubyte* (*glGetStringFuncType)(GLenum);
-    typedef const GLubyte* (*glGetStringiFuncType)(GLenum, GLuint);
-    typedef GLboolean (*glIsEnabledFuncType)(GLenum);
+    using glEnableFuncType = void (*)(GLenum);
+    using glGetErrorFuncType = GLenum (*)();
+    using glGetIntegervFuncType = void (*)(GLenum, GLint*);
+    using glGetStringFuncType = const GLubyte* (*)(GLenum);
+    using glGetStringiFuncType = const GLubyte* (*)(GLenum, GLuint);
+    using glIsEnabledFuncType = GLboolean (*)(GLenum);
 
 #endif
 
@@ -176,7 +176,7 @@ namespace
         // context is going to be destroyed
         // Unshareable OpenGL resources rely on this to clean up properly
         // whenever a context containing them is destroyed
-        typedef std::unordered_map<sf::ContextDestroyCallback, void*> ContextDestroyCallbacks;
+        using ContextDestroyCallbacks = std::unordered_map<sf::ContextDestroyCallback, void *>;
         ContextDestroyCallbacks contextDestroyCallbacks;
 
         // This structure contains all the state necessary to
@@ -246,9 +246,9 @@ namespace
         {
             extensions.clear();
 
-            glGetErrorFuncType glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(sf::priv::GlContext::getFunction("glGetError"));
-            glGetIntegervFuncType glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(sf::priv::GlContext::getFunction("glGetIntegerv"));
-            glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::priv::GlContext::getFunction("glGetString"));
+            auto glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(sf::priv::GlContext::getFunction("glGetError"));
+            auto glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(sf::priv::GlContext::getFunction("glGetIntegerv"));
+            auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::priv::GlContext::getFunction("glGetString"));
 
             if (!glGetErrorFunc || !glGetIntegervFunc || !glGetStringFunc)
                 return;
@@ -257,7 +257,7 @@ namespace
             int majorVersion = 0;
             glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
 
-            glGetStringiFuncType glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
+            auto glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
 
             if (glGetErrorFunc() == GL_INVALID_ENUM || !glGetStringiFunc)
             {
@@ -761,11 +761,11 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     int minorVersion = 0;
 
     // Try the new way first
-    glGetIntegervFuncType glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(getFunction("glGetIntegerv"));
-    glGetErrorFuncType glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(getFunction("glGetError"));
-    glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
-    glEnableFuncType glEnableFunc = reinterpret_cast<glEnableFuncType>(getFunction("glEnable"));
-    glIsEnabledFuncType glIsEnabledFunc = reinterpret_cast<glIsEnabledFuncType>(getFunction("glIsEnabled"));
+    auto glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(getFunction("glGetIntegerv"));
+    auto glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(getFunction("glGetError"));
+    auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
+    auto glEnableFunc = reinterpret_cast<glEnableFuncType>(getFunction("glEnable"));
+    auto glIsEnabledFunc = reinterpret_cast<glIsEnabledFuncType>(getFunction("glIsEnabled"));
 
     if (!glGetIntegervFunc || !glGetErrorFunc || !glGetStringFunc || !glEnableFunc || !glIsEnabledFunc)
     {
@@ -844,7 +844,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         {
             m_settings.attributeFlags |= ContextSettings::Core;
 
-            glGetStringiFuncType glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
+            auto glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(getFunction("glGetStringi"));
 
             if (glGetStringiFunc)
             {
@@ -908,7 +908,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
 
-    glGetStringFuncType glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
+    auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
 
     if (!glGetStringFunc)
     {

@@ -36,37 +36,37 @@
 #if defined(SFML_SYSTEM_WINDOWS)
 
     #include <SFML/Window/Win32/WindowImplWin32.hpp>
-    typedef sf::priv::WindowImplWin32 WindowImplType;
+    using WindowImplType = sf::priv::WindowImplWin32;
 
     #include <SFML/Window/Win32/VulkanImplWin32.hpp>
-    typedef sf::priv::VulkanImplWin32 VulkanImplType;
+    using VulkanImplType = sf::priv::VulkanImplWin32;
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
     #include <SFML/Window/Unix/WindowImplX11.hpp>
-    typedef sf::priv::WindowImplX11 WindowImplType;
+    using WindowImplType = sf::priv::WindowImplX11;
 
     #include <SFML/Window/Unix/VulkanImplX11.hpp>
-    typedef sf::priv::VulkanImplX11 VulkanImplType;
+    using VulkanImplType = sf::priv::VulkanImplX11;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Window/OSX/WindowImplCocoa.hpp>
-    typedef sf::priv::WindowImplCocoa WindowImplType;
+    using WindowImplType = sf::priv::WindowImplCocoa;
 
     #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #elif defined(SFML_SYSTEM_IOS)
 
     #include <SFML/Window/iOS/WindowImplUIKit.hpp>
-    typedef sf::priv::WindowImplUIKit WindowImplType;
+    using WindowImplType = sf::priv::WindowImplUIKit;
 
     #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
     #include <SFML/Window/Android/WindowImplAndroid.hpp>
-    typedef sf::priv::WindowImplAndroid WindowImplType;
+    using WindowImplType = sf::priv::WindowImplAndroid;
 
     #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
@@ -205,7 +205,7 @@ void WindowImpl::processJoystickEvents()
             {
                 if (caps.axes[j])
                 {
-                    Joystick::Axis axis = static_cast<Joystick::Axis>(j);
+                    auto axis = static_cast<Joystick::Axis>(j);
                     float prevPos = m_previousAxes[i][axis];
                     float currPos = m_joystickStates[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
@@ -250,7 +250,7 @@ void WindowImpl::processSensorEvents()
 
     for (unsigned int i = 0; i < Sensor::Count; ++i)
     {
-        Sensor::Type sensor = static_cast<Sensor::Type>(i);
+        auto sensor = static_cast<Sensor::Type>(i);
 
         // Only process enabled sensors
         if (SensorManager::getInstance().isEnabled(sensor))

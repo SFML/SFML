@@ -41,7 +41,7 @@ namespace sf
 namespace priv
 {
 
-typedef std::vector<IOHIDElementRef> IOHIDElements;
+using IOHIDElements = std::vector<IOHIDElementRef>;
 
 ////////////////////////////////////////////////////////////
 /// \brief sf::priv::InputImpl helper

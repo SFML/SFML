@@ -137,11 +137,11 @@ public:
         m_points.setPrimitiveType(sf::Points);
         for (int i = 0; i < 40000; ++i)
         {
-            float x = static_cast<float>(std::rand() % 800);
-            float y = static_cast<float>(std::rand() % 600);
-            sf::Uint8 r = static_cast<sf::Uint8>(std::rand() % 255);
-            sf::Uint8 g = static_cast<sf::Uint8>(std::rand() % 255);
-            sf::Uint8 b = static_cast<sf::Uint8>(std::rand() % 255);
+            auto x = static_cast<float>(std::rand() % 800);
+            auto y = static_cast<float>(std::rand() % 600);
+            auto r = static_cast<sf::Uint8>(std::rand() % 255);
+            auto g = static_cast<sf::Uint8>(std::rand() % 255);
+            auto b = static_cast<sf::Uint8>(std::rand() % 255);
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 

@@ -66,7 +66,7 @@ namespace
         {
             if (it->first == contextId)
             {
-                GLuint frameBuffer = static_cast<GLuint>(it->second);
+                auto frameBuffer = static_cast<GLuint>(it->second);
                 glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
                 staleFrameBuffers.erase(it++);
