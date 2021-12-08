@@ -205,7 +205,7 @@ void WindowImpl::processJoystickEvents()
             {
                 if (caps.axes[j])
                 {
-                    Joystick::Axis axis = static_cast<Joystick::Axis>(j);
+                    auto axis = static_cast<Joystick::Axis>(j);
                     float prevPos = m_previousAxes[i][axis];
                     float currPos = m_joystickStates[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
@@ -250,7 +250,7 @@ void WindowImpl::processSensorEvents()
 
     for (unsigned int i = 0; i < Sensor::Count; ++i)
     {
-        Sensor::Type sensor = static_cast<Sensor::Type>(i);
+        auto sensor = static_cast<Sensor::Type>(i);
 
         // Only process enabled sensors
         if (SensorManager::getInstance().isEnabled(sensor))

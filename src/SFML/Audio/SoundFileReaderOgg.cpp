@@ -37,13 +37,13 @@ namespace
 {
     size_t read(void* ptr, size_t size, size_t nmemb, void* data)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(data);
+        auto* stream = static_cast<sf::InputStream*>(data);
         return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
     }
 
     int seek(void* data, ogg_int64_t offset, int whence)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(data);
+        auto* stream = static_cast<sf::InputStream*>(data);
         switch (whence)
         {
             case SEEK_SET:
@@ -59,7 +59,7 @@ namespace
 
     long tell(void* data)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(data);
+        auto* stream = static_cast<sf::InputStream*>(data);
         return static_cast<long>(stream->tell());
     }
 

@@ -83,7 +83,7 @@ private:
         if (pbase() != pptr())
         {
             // Print the contents of the write buffer into the standard error output
-            std::size_t size = static_cast<std::size_t>(pptr() - pbase());
+            auto size = static_cast<std::size_t>(pptr() - pbase());
             fwrite(pbase(), 1, size, stderr);
 
             // Reset the pointer position to the beginning of the write buffer

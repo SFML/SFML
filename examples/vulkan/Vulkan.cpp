@@ -804,7 +804,7 @@ public:
         swapchainExtent.width  = clamp<uint32_t>(window.getSize().x, surfaceCapabilities.minImageExtent.width,  surfaceCapabilities.maxImageExtent.width);
         swapchainExtent.height = clamp<uint32_t>(window.getSize().y, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
 
-        uint32_t imageCount = clamp<uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+        auto imageCount = clamp<uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
         VkSwapchainCreateInfoKHR swapchainCreateInfo = VkSwapchainCreateInfoKHR();
         swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;

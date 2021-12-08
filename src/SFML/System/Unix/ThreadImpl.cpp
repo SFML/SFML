@@ -76,7 +76,7 @@ void ThreadImpl::terminate()
 void* ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
-    Thread* owner = static_cast<Thread*>(userData);
+    auto* owner = static_cast<Thread*>(userData);
 
     #ifndef SFML_SYSTEM_ANDROID
         // Tell the thread to handle cancel requests immediately

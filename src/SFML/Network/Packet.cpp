@@ -412,7 +412,7 @@ Packet& Packet::operator <<(Uint8 data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator <<(Int16 data)
 {
-    Int16 toWrite = static_cast<Int16>(htons(static_cast<uint16_t>(data)));
+    auto toWrite = static_cast<Int16>(htons(static_cast<uint16_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
@@ -507,7 +507,7 @@ Packet& Packet::operator <<(double data)
 Packet& Packet::operator <<(const char* data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(std::strlen(data));
+    auto length = static_cast<Uint32>(std::strlen(data));
     *this << length;
 
     // Then insert characters
@@ -521,7 +521,7 @@ Packet& Packet::operator <<(const char* data)
 Packet& Packet::operator <<(const std::string& data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(data.size());
+    auto length = static_cast<Uint32>(data.size());
     *this << length;
 
     // Then insert characters
@@ -536,7 +536,7 @@ Packet& Packet::operator <<(const std::string& data)
 Packet& Packet::operator <<(const wchar_t* data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(std::wcslen(data));
+    auto length = static_cast<Uint32>(std::wcslen(data));
     *this << length;
 
     // Then insert characters
@@ -551,7 +551,7 @@ Packet& Packet::operator <<(const wchar_t* data)
 Packet& Packet::operator <<(const std::wstring& data)
 {
     // First insert string length
-    Uint32 length = static_cast<Uint32>(data.size());
+    auto length = static_cast<Uint32>(data.size());
     *this << length;
 
     // Then insert characters
@@ -569,7 +569,7 @@ Packet& Packet::operator <<(const std::wstring& data)
 Packet& Packet::operator <<(const String& data)
 {
     // First insert the string length
-    Uint32 length = static_cast<Uint32>(data.getSize());
+    auto length = static_cast<Uint32>(data.getSize());
     *this << length;
 
     // Then insert characters

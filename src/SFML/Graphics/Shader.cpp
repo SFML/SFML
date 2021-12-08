@@ -968,7 +968,7 @@ void Shader::bindTextures() const
     auto it = m_textures.begin();
     for (std::size_t i = 0; i < m_textures.size(); ++i)
     {
-        GLint index = static_cast<GLsizei>(i + 1);
+        auto index = static_cast<GLsizei>(i + 1);
         glCheck(GLEXT_glUniform1i(it->first, index));
         glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0 + static_cast<GLenum>(index)));
         Texture::bind(it->second);

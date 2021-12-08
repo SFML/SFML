@@ -124,8 +124,8 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    float width = static_cast<float>(std::abs(m_textureRect.width));
-    float height = static_cast<float>(std::abs(m_textureRect.height));
+    auto width = static_cast<float>(std::abs(m_textureRect.width));
+    auto height = static_cast<float>(std::abs(m_textureRect.height));
 
     return FloatRect(0.f, 0.f, width, height);
 }
@@ -165,7 +165,7 @@ void Sprite::updatePositions()
 ////////////////////////////////////////////////////////////
 void Sprite::updateTexCoords()
 {
-    FloatRect convertedTextureRect = FloatRect(m_textureRect);
+    FloatRect convertedTextureRect(m_textureRect);
 
     float left   = convertedTextureRect.left;
     float right  = left + convertedTextureRect.width;

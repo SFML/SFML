@@ -237,7 +237,7 @@ void Shape::updateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::updateTexCoords()
 {
-    FloatRect convertedTextureRect = FloatRect(m_textureRect);
+    FloatRect convertedTextureRect(m_textureRect);
 
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {

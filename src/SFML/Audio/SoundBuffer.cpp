@@ -261,7 +261,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         soundPtr->resetBuffer();
 
     // Fill the buffer
-    ALsizei size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
+    auto size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
     alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration

@@ -1002,7 +1002,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by XDestroyImage
-    Uint8* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
+    auto* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
     for (std::size_t i = 0; i < width * height; ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
@@ -1013,7 +1013,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // Create the icon pixmap
     Visual*      defVisual = DefaultVisual(m_display, m_screen);
-    unsigned int defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
+    auto defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
     XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), width, height, 32, 0);
     if (!iconImage)
     {

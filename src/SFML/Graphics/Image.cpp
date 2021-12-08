@@ -211,8 +211,8 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
     }
 
     // Then find the valid bounds of the destination rectangle
-    unsigned int width  = static_cast<unsigned int>(srcRect.width);
-    unsigned int height = static_cast<unsigned int>(srcRect.height);
+    auto width  = static_cast<unsigned int>(srcRect.width);
+    auto height = static_cast<unsigned int>(srcRect.height);
     if (destX + width  > m_size.x) width  = m_size.x - destX;
     if (destY + height > m_size.y) height = m_size.y - destY;
 
