@@ -59,7 +59,7 @@ int main()
     windowClass.cbWndExtra    = 0;
     windowClass.hInstance     = instance;
     windowClass.hIcon         = nullptr;
-    windowClass.hCursor       = 0;
+    windowClass.hCursor       = nullptr;
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BACKGROUND);
     windowClass.lpszMenuName  = nullptr;
     windowClass.lpszClassName = TEXT("SFML App");

@@ -49,7 +49,7 @@ Cursor::~Cursor()
 ////////////////////////////////////////////////////////////
 bool Cursor::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
-    if ((pixels == 0) || (size.x == 0) || (size.y == 0))
+    if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
         return false;
     else
         return m_impl->loadFromPixels(pixels, size, hotspot);

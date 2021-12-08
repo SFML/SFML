@@ -80,11 +80,11 @@ Vector3f SensorManager::getValue(Sensor::Type sensor) const
 ////////////////////////////////////////////////////////////
 void SensorManager::update()
 {
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (Item& item : m_sensors)
     {
         // Only process available sensors
-        if (m_sensors[i].available)
-            m_sensors[i].value = m_sensors[i].sensor.update();
+        if (item.available)
+            item.value = item.sensor.update();
     }
 }
 
@@ -114,10 +114,10 @@ SensorManager::SensorManager()
 SensorManager::~SensorManager()
 {
     // Per sensor cleanup
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (Item& item : m_sensors)
     {
-        if (m_sensors[i].available)
-            m_sensors[i].sensor.close();
+        if (item.available)
+            item.sensor.close();
     }
 
     // Global sensor cleanup

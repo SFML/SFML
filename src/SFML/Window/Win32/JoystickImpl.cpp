@@ -465,8 +465,8 @@ bool JoystickImpl::isConnectedDInput(unsigned int index)
 void JoystickImpl::updateConnectionsDInput()
 {
     // Clear plugged flags so we can determine which devices were added/removed
-    for (std::size_t i = 0; i < joystickList.size(); ++i)
-        joystickList[i].plugged = false;
+    for (JoystickRecord& record : joystickList)
+        record.plugged = false;
 
     // Enumerate devices
     HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, &JoystickImpl::deviceEnumerationCallback, nullptr, DIEDFL_ATTACHEDONLY);
@@ -511,11 +511,11 @@ bool JoystickImpl::openDInput(unsigned int index)
     // Initialize DirectInput members
     m_device = nullptr;
 
-    for (int i = 0; i < Joystick::AxisCount; ++i)
-        m_axes[i] = -1;
+    for (int& axis : m_axes)
+        axis = -1;
 
-    for (int i = 0; i < Joystick::ButtonCount; ++i)
-        m_buttons[i] = -1;
+    for (int& button : m_buttons)
+        button = -1;
 
     std::memset(&m_deviceCaps, 0, sizeof(DIDEVCAPS));
     m_deviceCaps.dwSize = sizeof(DIDEVCAPS);
@@ -706,9 +706,9 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Set device's axis mode to absolute if the device reports having at least one axis
-            for (int i = 0; i < Joystick::AxisCount; ++i)
+            for (int axis : m_axes)
             {
-                if (m_axes[i] != -1)
+                if (axis != -1)
                 {
                     std::memset(&property, 0, sizeof(property));
                     property.diph.dwSize = sizeof(property);
@@ -843,9 +843,9 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     // Count how many buttons have valid offsets
     caps.buttonCount = 0;
 
-    for (int i = 0; i < Joystick::ButtonCount; ++i)
+    for (int button : m_buttons)
     {
-        if (m_buttons[i] != -1)
+        if (button != -1)
             ++caps.buttonCount;
     }
 
@@ -1047,11 +1047,11 @@ JoystickState JoystickImpl::updateDInputPolled()
 ////////////////////////////////////////////////////////////
 BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* deviceInstance, void*)
 {
-    for (std::size_t i = 0; i < joystickList.size(); ++i)
+    for (JoystickRecord& record : joystickList)
     {
-        if (joystickList[i].guid == deviceInstance->guidInstance)
+        if (record.guid == deviceInstance->guidInstance)
         {
-            joystickList[i].plugged = true;
+            record.plugged = true;
 
             return DIENUM_CONTINUE;
         }

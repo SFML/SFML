@@ -189,7 +189,7 @@ namespace
             ////////////////////////////////////////////////////////////
             TransientContext() :
             referenceCount   (0),
-            context          (0),
+            context          (nullptr),
             sharedContextLock(),
             useSharedContext (false)
             {
@@ -286,8 +286,7 @@ namespace
                     for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
                     {
                         const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
-
-                        extensions.push_back(extensionString);
+                        extensions.emplace_back(extensionString);
                     }
                 }
             }

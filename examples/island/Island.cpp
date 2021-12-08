@@ -529,12 +529,12 @@ void threadFunction()
 
     std::vector<sf::Vertex> vertices(resolutionX * rowBlockSize * 6);
 
-    WorkItem workItem = {0, 0};
+    WorkItem workItem = {nullptr, 0};
 
     // Loop until the application exits
     for (;;)
     {
-        workItem.targetBuffer = 0;
+        workItem.targetBuffer = nullptr;
 
         // Check if there are new work items in the queue
         {

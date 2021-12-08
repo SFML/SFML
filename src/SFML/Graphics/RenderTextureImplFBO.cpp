@@ -128,7 +128,7 @@ m_sRgb              (false)
     std::scoped_lock lock(mutex);
 
     // Register the context destruction callback
-    registerContextDestroyCallback(contextDestroyCallback, 0);
+    registerContextDestroyCallback(contextDestroyCallback, nullptr);
 
     // Insert the new frame buffer mapping into the set of all active mappings
     frameBuffers.insert(&m_frameBuffers);
