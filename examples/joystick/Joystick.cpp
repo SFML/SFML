@@ -142,15 +142,15 @@ int main()
         object.value.setString("N/A");
     }
 
-    for (Texts::iterator it = texts.begin(); it != texts.end(); ++it)
+    for (auto& [label, joystickObject] : texts)
     {
-        it->second.label.setFont(font);
-        it->second.label.setCharacterSize(14);
-        it->second.label.setFillColor(sf::Color::White);
+        joystickObject.label.setFont(font);
+        joystickObject.label.setCharacterSize(14);
+        joystickObject.label.setFillColor(sf::Color::White);
 
-        it->second.value.setFont(font);
-        it->second.value.setCharacterSize(14);
-        it->second.value.setFillColor(sf::Color::White);
+        joystickObject.value.setFont(font);
+        joystickObject.value.setCharacterSize(14);
+        joystickObject.value.setFillColor(sf::Color::White);
     }
 
     // Update initially displayed joystick values if a joystick is already connected on startup
@@ -187,8 +187,8 @@ int main()
             else if (event.type == sf::Event::JoystickDisconnected)
             {
                 // Reset displayed joystick values to empty
-                for (Texts::iterator it = texts.begin(); it != texts.end(); ++it)
-                    it->second.value.setString("N/A");
+                for (auto& [label, joystickObject] : texts)
+                    joystickObject.value.setString("N/A");
 
                 texts["ID"].label.setString("<Not Connected>");
                 texts["ID"].value.setString("");
@@ -226,10 +226,10 @@ int main()
         window.clear();
 
         // Draw the label-value sf::Text objects
-        for (Texts::const_iterator it = texts.begin(); it != texts.end(); ++it)
+        for (const auto& [label, joystickObject] : texts)
         {
-            window.draw(it->second.label);
-            window.draw(it->second.value);
+            window.draw(joystickObject.label);
+            window.draw(joystickObject.value);
         }
 
         // Display things on screen

@@ -125,30 +125,30 @@ namespace
                     // Since isJoystick returned true, this has to succeed
                     const char* devnode = udev_device_get_devnode(udevDevice);
 
-                    JoystickList::iterator record;
+                    JoystickList::iterator recordIt;
 
-                    for (record = joystickList.begin(); record != joystickList.end(); ++record)
+                    for (recordIt = joystickList.begin(); recordIt != joystickList.end(); ++recordIt)
                     {
-                        if (record->deviceNode == devnode)
+                        if (recordIt->deviceNode == devnode)
                         {
                             if (std::strstr(action, "add"))
                             {
                                 // The system path might have changed so update it
                                 const char* syspath = udev_device_get_syspath(udevDevice);
 
-                                record->plugged = true;
-                                record->systemPath = syspath ? syspath : "";
+                                recordIt->plugged = true;
+                                recordIt->systemPath = syspath ? syspath : "";
                                 break;
                             }
                             else if (std::strstr(action, "remove"))
                             {
-                                record->plugged = false;
+                                recordIt->plugged = false;
                                 break;
                             }
                         }
                     }
 
-                    if (record == joystickList.end())
+                    if (recordIt == joystickList.end())
                     {
                         if (std::strstr(action, "add"))
                         {
@@ -177,8 +177,8 @@ namespace
         }
 
         // Reset the plugged status of each mapping since we are doing a full rescan
-        for (JoystickList::iterator record = joystickList.begin(); record != joystickList.end(); ++record)
-            record->plugged = false;
+        for (JoystickRecord& record : joystickList)
+            record.plugged = false;
 
         udev_enumerate* udevEnumerator = udev_enumerate_new(udevContext);
 
@@ -218,27 +218,27 @@ namespace
                 // Since isJoystick returned true, this has to succeed
                 const char* devnode = udev_device_get_devnode(newUdevDevice);
 
-                JoystickList::iterator record;
+                JoystickList::iterator recordIt;
 
                 // Check if the device node has been mapped before
-                for (record = joystickList.begin(); record != joystickList.end(); ++record)
+                for (recordIt = joystickList.begin(); recordIt != joystickList.end(); ++recordIt)
                 {
-                    if (record->deviceNode == devnode)
+                    if (recordIt->deviceNode == devnode)
                     {
-                        record->plugged = true;
+                        recordIt->plugged = true;
                         break;
                     }
                 }
 
                 // If not mapped before, map it now
-                if (record == joystickList.end())
+                if (recordIt == joystickList.end())
                 {
-                    JoystickRecord nweRecord;
-                    nweRecord.deviceNode = devnode;
-                    nweRecord.systemPath = syspath;
-                    nweRecord.plugged    = true;
+                    JoystickRecord newRecord;
+                    newRecord.deviceNode = devnode;
+                    newRecord.systemPath = syspath;
+                    newRecord.plugged    = true;
 
-                    joystickList.push_back(nweRecord);
+                    joystickList.push_back(newRecord);
                 }
             }
 

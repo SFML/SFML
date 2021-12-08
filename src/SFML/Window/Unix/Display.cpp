@@ -89,10 +89,8 @@ void CloseDisplay(Display* display)
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists)
 {
-    AtomMap::const_iterator iter = atoms.find(name);
-
-    if (iter != atoms.end())
-        return iter->second;
+    if (auto it = atoms.find(name); it != atoms.end())
+        return it->second;
 
     Display* display = OpenDisplay();
 

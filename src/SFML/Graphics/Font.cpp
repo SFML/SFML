@@ -354,8 +354,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(static_cast<FT_Face>(m_face), codePoint));
 
     // Search the glyph into the cache
-    GlyphTable::const_iterator it = glyphs.find(key);
-    if (it != glyphs.end())
+    if (auto it = glyphs.find(key); it != glyphs.end())
     {
         // Found: just return it
         return it->second;
@@ -486,9 +485,9 @@ void Font::setSmooth(bool smooth)
     {
         m_isSmooth = smooth;
 
-        for (sf::Font::PageTable::iterator page = m_pages.begin(); page != m_pages.end(); ++page)
+        for (auto& [key, page] : m_pages)
         {
-            page->second.texture.setSmooth(m_isSmooth);
+            page.texture.setSmooth(m_isSmooth);
         }
     }
 }
@@ -737,7 +736,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     // Find the line that fits well the glyph
     Row* row = nullptr;
     float bestRatio = 0;
-    for (std::vector<Row>::iterator it = page.rows.begin(); it != page.rows.end() && !row; ++it)
+    for (auto it = page.rows.begin(); it != page.rows.end() && !row; ++it)
     {
         float ratio = static_cast<float>(height) / static_cast<float>(it->height);
 
