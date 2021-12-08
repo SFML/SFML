@@ -56,7 +56,6 @@
 
 namespace
 {
-    sf::Mutex maxTextureUnitsMutex;
     sf::Mutex isAvailableMutex;
 
     GLint checkMaxTextureUnits()
@@ -70,11 +69,7 @@ namespace
     // Retrieve the maximum number of texture units available
     std::size_t getMaxTextureUnits()
     {
-        // TODO: Remove this lock when it becomes unnecessary in C++11
-        sf::Lock lock(maxTextureUnitsMutex);
-
         static GLint maxUnits = checkMaxTextureUnits();
-
         return static_cast<std::size_t>(maxUnits);
     }
 
