@@ -104,8 +104,8 @@ m_joystickThreshold(0.1f)
     }
 
     // Get the initial sensor states
-    for (unsigned int i = 0; i < Sensor::Count; ++i)
-        m_sensorValue[i] = Vector3f(0, 0, 0);
+    for (sf::Vector3f& vec : m_sensorValue)
+        vec = Vector3f(0, 0, 0);
 }
 
 

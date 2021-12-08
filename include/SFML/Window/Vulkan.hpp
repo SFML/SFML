@@ -31,7 +31,7 @@
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 
 
 using VkInstance = struct VkInstance_T*;

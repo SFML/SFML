@@ -289,8 +289,8 @@ void SoundStream::streamData()
 
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));
-    for (int i = 0; i < BufferCount; ++i)
-        m_bufferSeeks[i] = NoLoop;
+    for (Int64& bufferSeek : m_bufferSeeks)
+        bufferSeek = NoLoop;
 
     // Fill the queue
     requestStop = fillQueue();
