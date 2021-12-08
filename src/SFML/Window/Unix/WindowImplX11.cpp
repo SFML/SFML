@@ -366,9 +366,9 @@ namespace
             if (!ewmhSupported())
                 return false;
 
-            for (size_t i = 0; i < (sizeof(wmAbsPosGood) / sizeof(wmAbsPosGood[0])); i++)
+            for (const sf::String& name : wmAbsPosGood)
             {
-                if (wmAbsPosGood[i] == windowManagerName)
+                if (name == windowManagerName)
                     return true;
             }
 

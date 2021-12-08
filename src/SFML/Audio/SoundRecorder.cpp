@@ -153,7 +153,7 @@ std::vector<std::string> SoundRecorder::getAvailableDevices()
     {
         while (*deviceList)
         {
-            deviceNameList.push_back(deviceList);
+            deviceNameList.emplace_back(deviceList);
             deviceList += std::strlen(deviceList) + 1;
         }
     }

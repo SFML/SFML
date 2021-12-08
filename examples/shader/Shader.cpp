@@ -236,8 +236,8 @@ public:
         // Render the updated scene to the off-screen surface
         m_surface.clear(sf::Color::White);
         m_surface.draw(m_backgroundSprite);
-        for (std::size_t i = 0; i < m_entities.size(); ++i)
-            m_surface.draw(m_entities[i]);
+        for (const sf::Sprite& entity : m_entities)
+            m_surface.draw(entity);
         m_surface.display();
     }
 
@@ -366,8 +366,8 @@ int main()
     std::size_t current = 0;
 
     // Initialize them
-    for (std::size_t i = 0; i < effects.size(); ++i)
-        effects[i]->load();
+    for (Effect* effect : effects)
+        effect->load();
 
     // Create the messages background
     sf::Texture textBackgroundTexture;
@@ -457,8 +457,8 @@ int main()
     }
 
     // delete the effects
-    for (std::size_t i = 0; i < effects.size(); ++i)
-        delete effects[i];
+    for (Effect* effect : effects)
+        delete effect;
 
     return EXIT_SUCCESS;
 }
