@@ -29,7 +29,7 @@
 #if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
     #include <mach/mach_time.h>
 #else
-    #include <time.h>
+    #include <ctime>
 #endif
 
 

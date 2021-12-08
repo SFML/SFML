@@ -31,7 +31,7 @@
 #include <libudev.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
+#include <cerrno>
 #include <vector>
 #include <string>
 #include <cstring>
