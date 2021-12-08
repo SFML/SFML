@@ -772,9 +772,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                             entry.productId = m_identification.productId;
 
                             joystickBlacklist.push_back(entry);
-
-                            // Pre-C++11 shrink_to_fit()
-                            JoystickBlacklist(joystickBlacklist.begin(), joystickBlacklist.end()).swap(joystickBlacklist);
+                            joystickBlacklist.shrink_to_fit();
                         }
 
                         m_device->Release();
