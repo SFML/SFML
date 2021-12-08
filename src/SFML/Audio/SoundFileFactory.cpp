@@ -76,11 +76,11 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     }
 
     // Test the filename in all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const ReaderFactory& readerFactory : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (readerFactory.check(stream))
+            return readerFactory.create();
     }
 
     // No suitable reader found
@@ -100,11 +100,11 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     stream.open(data, sizeInBytes);
 
     // Test the stream for all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const ReaderFactory& readerFactory : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (readerFactory.check(stream))
+            return readerFactory.create();
     }
 
     // No suitable reader found
@@ -120,11 +120,11 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     ensureDefaultReadersWritersRegistered();
 
     // Test the stream for all the registered factories
-    for (ReaderFactoryArray::const_iterator it = s_readers.begin(); it != s_readers.end(); ++it)
+    for (const ReaderFactory& readerFactory : s_readers)
     {
         stream.seek(0);
-        if (it->check(stream))
-            return it->create();
+        if (readerFactory.check(stream))
+            return readerFactory.create();
     }
 
     // No suitable reader found
@@ -140,10 +140,10 @@ SoundFileWriter* SoundFileFactory::createWriterFromFilename(const std::string& f
     ensureDefaultReadersWritersRegistered();
 
     // Test the filename in all the registered factories
-    for (WriterFactoryArray::const_iterator it = s_writers.begin(); it != s_writers.end(); ++it)
+    for (const WriterFactory& writerFactory : s_writers)
     {
-        if (it->check(filename))
-            return it->create();
+        if (writerFactory.check(filename))
+            return writerFactory.create();
     }
 
     // No suitable writer found

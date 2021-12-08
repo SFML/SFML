@@ -451,9 +451,9 @@ void JoystickImpl::cleanupDInput()
 bool JoystickImpl::isConnectedDInput(unsigned int index)
 {
     // Check if a joystick with the given index is in the connected list
-    for (std::vector<JoystickRecord>::iterator i = joystickList.begin(); i != joystickList.end(); ++i)
+    for (const JoystickRecord& record : joystickList)
     {
-        if (i->index == index)
+        if (record.index == index)
             return true;
     }
 
@@ -472,7 +472,7 @@ void JoystickImpl::updateConnectionsDInput()
     HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, &JoystickImpl::deviceEnumerationCallback, nullptr, DIEDFL_ATTACHEDONLY);
 
     // Remove devices that were not connected during the enumeration
-    for (std::vector<JoystickRecord>::iterator i = joystickList.begin(); i != joystickList.end();)
+    for (auto i = joystickList.begin(); i != joystickList.end();)
     {
         if (!i->plugged)
             i = joystickList.erase(i);
@@ -490,14 +490,14 @@ void JoystickImpl::updateConnectionsDInput()
     // Assign unused joystick indices to devices that were newly connected
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
-        for (std::vector<JoystickRecord>::iterator j = joystickList.begin(); j != joystickList.end(); ++j)
+        for (JoystickRecord& record : joystickList)
         {
-            if (j->index == i)
+            if (record.index == i)
                 break;
 
-            if (j->index == Joystick::Count)
+            if (record.index == Joystick::Count)
             {
-                j->index = i;
+                record.index = i;
                 break;
             }
         }
@@ -523,12 +523,12 @@ bool JoystickImpl::openDInput(unsigned int index)
     m_buffered = false;
 
     // Search for a joystick with the given index in the connected list
-    for (std::vector<JoystickRecord>::iterator it = joystickList.begin(); it != joystickList.end(); ++it)
+    for (const JoystickRecord& record : joystickList)
     {
-        if (it->index == index)
+        if (record.index == index)
         {
             // Create device
-            HRESULT result = directInput->CreateDevice(it->guid, &m_device, nullptr);
+            HRESULT result = directInput->CreateDevice(record.guid, &m_device, nullptr);
 
             if (FAILED(result))
             {
@@ -552,10 +552,10 @@ bool JoystickImpl::openDInput(unsigned int index)
                 // Check if device is already blacklisted
                 if (m_identification.productId && m_identification.vendorId)
                 {
-                    for (JoystickBlacklist::const_iterator iter = joystickBlacklist.begin(); iter != joystickBlacklist.end(); ++iter)
+                    for (const JoystickBlacklistEntry& blacklistEntry : joystickBlacklist)
                     {
-                        if ((m_identification.productId == iter->productId) &&
-                            (m_identification.vendorId  == iter->vendorId))
+                        if ((m_identification.productId == blacklistEntry.productId) &&
+                            (m_identification.vendorId  == blacklistEntry.vendorId))
                         {
                             // Device is blacklisted
                             m_device->Release();

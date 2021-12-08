@@ -557,8 +557,8 @@ Packet& Packet::operator <<(const std::wstring& data)
     // Then insert characters
     if (length > 0)
     {
-        for (std::wstring::const_iterator c = data.begin(); c != data.end(); ++c)
-            *this << static_cast<Uint32>(*c);
+        for (wchar_t c : data)
+            *this << static_cast<Uint32>(c);
     }
 
     return *this;
