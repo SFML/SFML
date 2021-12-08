@@ -52,10 +52,10 @@
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
-    typedef sf::priv::EglContext ContextType;
+    using ContextType = sf::priv::EglContext;
 #else
     #include <SFML/Window/Unix/GlxContext.hpp>
-    typedef sf::priv::GlxContext ContextType;
+    using ContextType = sf::priv::GlxContext;
 #endif
 
 ////////////////////////////////////////////////////////////

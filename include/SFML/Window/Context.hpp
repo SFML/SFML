@@ -41,7 +41,7 @@ namespace priv
     class GlContext;
 }
 
-typedef void (*GlFunctionPointer)();
+using GlFunctionPointer = void (*)();
 
 ////////////////////////////////////////////////////////////
 /// \brief Class holding a valid drawing context

@@ -327,7 +327,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::unordered_map<Uint64, Glyph> GlyphTable; //!< Table mapping a codepoint to its glyph
+    using GlyphTable = std::unordered_map<Uint64, Glyph>; //!< Table mapping a codepoint to its glyph
 
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a page of glyphs
@@ -387,7 +387,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::unordered_map<unsigned int, Page> PageTable; //!< Table mapping a character size to its page (texture)
+    using PageTable = std::unordered_map<unsigned int, Page>; //!< Table mapping a character size to its page (texture)
 
     ////////////////////////////////////////////////////////////
     // Member data

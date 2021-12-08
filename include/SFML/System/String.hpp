@@ -49,8 +49,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::basic_string<Uint32>::iterator       Iterator;      //!< Iterator type
-    typedef std::basic_string<Uint32>::const_iterator ConstIterator; //!< Read-only iterator type
+    using Iterator = std::basic_string<Uint32>::iterator;      //!< Iterator type
+    using ConstIterator = std::basic_string<Uint32>::const_iterator; //!< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
     // Static member data

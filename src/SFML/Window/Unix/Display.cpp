@@ -42,7 +42,7 @@ namespace
     unsigned int referenceCount = 0;
     sf::Mutex mutex;
 
-    typedef std::unordered_map<std::string, Atom> AtomMap;
+    using AtomMap = std::unordered_map<std::string, Atom>;
     AtomMap atoms;
 }
 

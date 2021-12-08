@@ -116,9 +116,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    typedef long                                                    Location;
-    typedef std::unordered_map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
-    typedef std::vector<IOHIDElementRef>                            ButtonsVector;
+    using Location = long;
+    using AxisMap = std::unordered_map<sf::Joystick::Axis, IOHIDElementRef>;
+    using ButtonsVector = std::vector<IOHIDElementRef>;
 
     AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
     IOHIDElementRef          m_hat;            ///< POV/Hat axis of the joystick

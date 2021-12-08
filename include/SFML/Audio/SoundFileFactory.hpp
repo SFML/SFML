@@ -148,14 +148,14 @@ private:
         bool (*check)(InputStream&);
         SoundFileReader* (*create)();
     };
-    typedef std::vector<ReaderFactory> ReaderFactoryArray;
+    using ReaderFactoryArray = std::vector<ReaderFactory>;
 
     struct WriterFactory
     {
         bool (*check)(const std::string&);
         SoundFileWriter* (*create)();
     };
-    typedef std::vector<WriterFactory> WriterFactoryArray;
+    using WriterFactoryArray = std::vector<WriterFactory>;
 
     ////////////////////////////////////////////////////////////
     // Static member data

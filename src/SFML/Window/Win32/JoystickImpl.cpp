@@ -78,7 +78,7 @@ namespace
         bool plugged;
     };
 
-    typedef std::vector<JoystickRecord> JoystickList;
+    using JoystickList = std::vector<JoystickRecord>;
     JoystickList joystickList;
 
     struct JoystickBlacklistEntry
@@ -87,7 +87,7 @@ namespace
         unsigned int productId;
     };
 
-    typedef std::vector<JoystickBlacklistEntry> JoystickBlacklist;
+    using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
     JoystickBlacklist joystickBlacklist;
 
     const DWORD directInputEventBufferSize = 32;
@@ -403,7 +403,7 @@ void JoystickImpl::initializeDInput()
     if (dinput8dll)
     {
         // Try to get the address of the DirectInput8Create entry point
-        typedef HRESULT(WINAPI *DirectInput8CreateFunc)(HINSTANCE, DWORD, REFIID, LPVOID*, LPUNKNOWN);
+        using DirectInput8CreateFunc = HRESULT (*)(HINSTANCE, DWORD, const IID &, LPVOID *, LPUNKNOWN);
         DirectInput8CreateFunc directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
 
         if (directInput8Create)

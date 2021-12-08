@@ -84,7 +84,7 @@ function(set_file_warnings)
         ${CLANG_AND_GCC_WARNINGS}
         ${NON_ANDROID_GCC_WARNINGS}
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
-        # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some typedefs might vary between platforms)
+        # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some type aliases might vary between platforms)
     )
 
     # Don't enable -Wduplicated-branches for GCC < 8.1 since it will lead to false positives

@@ -48,12 +48,12 @@
 
     #if defined(SFML_OPENGL_ES)
 
-        typedef sf::priv::EglContext ContextType;
+        using ContextType = sf::priv::EglContext;
 
     #else
 
         #include <SFML/Window/Win32/WglContext.hpp>
-        typedef sf::priv::WglContext ContextType;
+        using ContextType = sf::priv::WglContext;
 
     #endif
 
@@ -61,48 +61,48 @@
 
     #if defined(SFML_OPENGL_ES)
 
-        typedef sf::priv::EglContext ContextType;
+        using ContextType = sf::priv::EglContext;
 
     #else
 
         #include <SFML/Window/Unix/GlxContext.hpp>
-        typedef sf::priv::GlxContext ContextType;
+        using ContextType = sf::priv::GlxContext;
 
     #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
     #include <SFML/Window/OSX/SFContext.hpp>
-    typedef sf::priv::SFContext ContextType;
+    using ContextType = sf::priv::SFContext;
 
 #elif defined(SFML_SYSTEM_IOS)
 
     #include <SFML/Window/iOS/EaglContext.hpp>
-    typedef sf::priv::EaglContext ContextType;
+    using ContextType = sf::priv::EaglContext;
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-    typedef sf::priv::EglContext ContextType;
+    using ContextType = sf::priv::EglContext;
 
 #endif
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    typedef void (APIENTRY *glEnableFuncType)(GLenum);
-    typedef GLenum (APIENTRY *glGetErrorFuncType)();
-    typedef void (APIENTRY *glGetIntegervFuncType)(GLenum, GLint*);
-    typedef const GLubyte* (APIENTRY *glGetStringFuncType)(GLenum);
-    typedef const GLubyte* (APIENTRY *glGetStringiFuncType)(GLenum, GLuint);
-    typedef GLboolean (APIENTRY *glIsEnabledFuncType)(GLenum);
+    using glEnableFuncType = void (APIENTRY *)(GLenum);
+    using glGetErrorFuncType = GLenum (APIENTRY *)();
+    using glGetIntegervFuncType = void (APIENTRY *)(GLenum, GLint*);
+    using glGetStringFuncType = const GLubyte* (APIENTRY *)(GLenum);
+    using glGetStringiFuncType = const GLubyte* (APIENTRY *)(GLenum, GLuint);
+    using glIsEnabledFuncType = GLboolean (APIENTRY *)(GLenum);
 
 #else
 
-    typedef void (*glEnableFuncType)(GLenum);
-    typedef GLenum (*glGetErrorFuncType)();
-    typedef void (*glGetIntegervFuncType)(GLenum, GLint*);
-    typedef const GLubyte* (*glGetStringFuncType)(GLenum);
-    typedef const GLubyte* (*glGetStringiFuncType)(GLenum, GLuint);
-    typedef GLboolean (*glIsEnabledFuncType)(GLenum);
+    using glEnableFuncType = void (*)(GLenum);
+    using glGetErrorFuncType = GLenum (*)();
+    using glGetIntegervFuncType = void (*)(GLenum, GLint*);
+    using glGetStringFuncType = const GLubyte* (*)(GLenum);
+    using glGetStringiFuncType = const GLubyte* (*)(GLenum, GLuint);
+    using glIsEnabledFuncType = GLboolean (*)(GLenum);
 
 #endif
 
@@ -176,7 +176,7 @@ namespace
         // context is going to be destroyed
         // Unshareable OpenGL resources rely on this to clean up properly
         // whenever a context containing them is destroyed
-        typedef std::unordered_map<sf::ContextDestroyCallback, void*> ContextDestroyCallbacks;
+        using ContextDestroyCallbacks = std::unordered_map<sf::ContextDestroyCallback, void *>;
         ContextDestroyCallbacks contextDestroyCallbacks;
 
         // This structure contains all the state necessary to

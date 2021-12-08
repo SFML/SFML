@@ -39,11 +39,11 @@
 #ifdef __OBJC__
 
 @class NSCursor;
-typedef NSCursor* NSCursorRef;
+using NSCursorRef = NSCursor*;
 
 #else // If C++
 
-typedef void* NSCursorRef;
+using NSCursorRef = void*;
 
 #endif
 

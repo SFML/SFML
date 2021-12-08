@@ -47,7 +47,7 @@ class UdpSocket;
 class SFML_NETWORK_API Packet
 {
     // A bool-like type that cannot be converted to integer or pointer types
-    typedef bool (Packet::*BoolType)(std::size_t);
+    using BoolType = bool (Packet::*)(std::size_t);
 
 public:
 

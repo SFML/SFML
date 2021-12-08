@@ -85,7 +85,7 @@ namespace
                 ProcessPerMonitorDpiAware = 2
             };
 
-            typedef HRESULT (WINAPI* SetProcessDpiAwarenessFuncType)(ProcessDpiAwareness);
+            using SetProcessDpiAwarenessFuncType = HRESULT (*)(ProcessDpiAwareness);
             SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
 
             if (SetProcessDpiAwarenessFunc)
@@ -113,7 +113,7 @@ namespace
 
         if (user32Dll)
         {
-            typedef BOOL (WINAPI* SetProcessDPIAwareFuncType)(void);
+            using SetProcessDPIAwareFuncType = BOOL (*)();
             SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
 
             if (SetProcessDPIAwareFunc)
