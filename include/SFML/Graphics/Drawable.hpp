@@ -100,7 +100,7 @@ protected:
 ///
 /// private:
 ///
-///     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+///     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 ///     {
 ///         // You can draw other high-level objects
 ///         target.draw(m_sprite, states);

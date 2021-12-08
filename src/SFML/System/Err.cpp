@@ -48,7 +48,7 @@ public:
         setp(buffer, buffer + size);
     }
 
-    ~DefaultErrStreamBuf()
+    ~DefaultErrStreamBuf() override
     {
         // Synchronize
         sync();
@@ -59,7 +59,7 @@ public:
 
 private:
 
-    virtual int overflow(int character)
+    int overflow(int character) override
     {
         if ((character != EOF) && (pptr() != epptr()))
         {
@@ -79,7 +79,7 @@ private:
         }
     }
 
-    virtual int sync()
+    int sync() override
     {
         // Check if there is something into the write buffer
         if (pbase() != pptr())

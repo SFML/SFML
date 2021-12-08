@@ -16,7 +16,7 @@ class Effect : public sf::Drawable
 {
 public:
 
-    virtual ~Effect()
+    ~Effect() override
     {
     }
 
@@ -41,7 +41,7 @@ public:
             onUpdate(time, x, y);
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         if (m_isLoaded)
         {

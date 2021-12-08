@@ -57,7 +57,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderTextureImplFBO();
+    ~RenderTextureImplFBO() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the system supports FBOs or not
@@ -94,7 +94,7 @@ private:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings);
+    bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an FBO in the current context
@@ -112,7 +112,7 @@ private:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
+    bool activate(bool active) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
@@ -123,7 +123,7 @@ private:
     /// \return True if the render-texture use sRGB encoding, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool isSrgb() const;
+    bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -131,7 +131,7 @@ private:
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void updateTexture(unsigned textureId);
+    void updateTexture(unsigned textureId) override;
 
     ////////////////////////////////////////////////////////////
     // Member data

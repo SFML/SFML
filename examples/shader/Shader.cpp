@@ -21,7 +21,7 @@ public:
     {
     }
 
-    bool onLoad()
+    bool onLoad() override
     {
         // Load the texture and initialize the sprite
         if (!m_texture.loadFromFile("resources/background.jpg"))
@@ -36,12 +36,12 @@ public:
         return true;
     }
 
-    void onUpdate(float, float x, float y)
+    void onUpdate(float, float x, float y) override
     {
         m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
         target.draw(m_sprite, states);
@@ -67,7 +67,7 @@ public:
     {
     }
 
-    bool onLoad()
+    bool onLoad() override
     {
         // Create the text
         m_text.setString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
@@ -99,14 +99,14 @@ public:
         return true;
     }
 
-    void onUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y) override
     {
         m_shader.setUniform("wave_phase", time);
         m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
         m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
         target.draw(m_text, states);
@@ -131,7 +131,7 @@ public:
     {
     }
 
-    bool onLoad()
+    bool onLoad() override
     {
         // Create the points
         m_points.setPrimitiveType(sf::Points);
@@ -152,7 +152,7 @@ public:
         return true;
     }
 
-    void onUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y) override
     {
         float radius = 200 + std::cos(time) * 150;
         m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
@@ -161,7 +161,7 @@ public:
         m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
         target.draw(m_points, states);
@@ -186,7 +186,7 @@ public:
     {
     }
 
-    bool onLoad()
+    bool onLoad() override
     {
         // Create the off-screen surface
         if (!m_surface.create(800, 600))
@@ -220,7 +220,7 @@ public:
         return true;
     }
 
-    void onUpdate(float time, float x, float y)
+    void onUpdate(float time, float x, float y) override
     {
         m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
 
@@ -241,7 +241,7 @@ public:
         m_surface.display();
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
         target.draw(sf::Sprite(m_surface.getTexture()), states);
@@ -271,7 +271,7 @@ public:
     {
     }
 
-    bool onLoad()
+    bool onLoad() override
     {
         // Check if geometry shaders are supported
         if (!sf::Shader::isGeometryAvailable())
@@ -301,7 +301,7 @@ public:
         return true;
     }
 
-    void onUpdate(float /*time*/, float x, float y)
+    void onUpdate(float /*time*/, float x, float y) override
     {
         // Reset our transformation matrix
         m_transform = sf::Transform::Identity;
@@ -317,7 +317,7 @@ public:
         m_shader.setUniform("size", sf::Vector2f(size, size));
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         // Prepare the render state
         states.shader = &m_shader;

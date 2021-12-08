@@ -64,7 +64,7 @@ public:
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~FileInputStream();
+    ~FileInputStream() override;
 
     ////////////////////////////////////////////////////////////
     /// Prevent copies.
@@ -95,7 +95,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 read(void* data, Int64 size);
+    Int64 read(void* data, Int64 size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -105,7 +105,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 seek(Int64 position);
+    Int64 seek(Int64 position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
@@ -113,7 +113,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 tell();
+    Int64 tell() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
@@ -121,7 +121,7 @@ public:
     /// \return The total number of bytes available in the stream, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 getSize();
+    Int64 getSize() override;
 
 private:
 
