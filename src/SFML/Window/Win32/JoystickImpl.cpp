@@ -404,7 +404,7 @@ void JoystickImpl::initializeDInput()
     {
         // Try to get the address of the DirectInput8Create entry point
         using DirectInput8CreateFunc = HRESULT (*)(HINSTANCE, DWORD, const IID &, LPVOID *, LPUNKNOWN);
-        DirectInput8CreateFunc directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
+        auto directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
 
         if (directInput8Create)
         {

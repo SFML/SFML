@@ -86,7 +86,7 @@ namespace
             };
 
             using SetProcessDpiAwarenessFuncType = HRESULT (*)(ProcessDpiAwareness);
-            SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
+            auto SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
 
             if (SetProcessDpiAwarenessFunc)
             {
@@ -114,7 +114,7 @@ namespace
         if (user32Dll)
         {
             using SetProcessDPIAwareFuncType = BOOL (*)();
-            SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
+            auto SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
 
             if (SetProcessDPIAwareFunc)
             {
@@ -658,7 +658,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // We override the returned information to remove the default limit
             // (the OS doesn't allow windows bigger than the desktop by default)
-            MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+            auto* info = reinterpret_cast<MINMAXINFO*>(lParam);
             info->ptMaxTrackSize.x = 50000;
             info->ptMaxTrackSize.y = 50000;
             break;
@@ -694,7 +694,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
                 // Get the code of the typed character
-                Uint32 character = static_cast<Uint32>(wParam);
+                auto character = static_cast<Uint32>(wParam);
 
                 // Check if it is the first part of a surrogate pair, or a regular character
                 if ((character >= 0xD800) && (character <= 0xDBFF))
@@ -765,7 +765,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             position.y = static_cast<Int16>(HIWORD(lParam));
             ScreenToClient(m_handle, &position);
 
-            Int16 delta = static_cast<Int16>(HIWORD(wParam));
+            auto delta = static_cast<Int16>(HIWORD(wParam));
 
             Event event;
 
@@ -793,7 +793,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             position.y = static_cast<Int16>(HIWORD(lParam));
             ScreenToClient(m_handle, &position);
 
-            Int16 delta = static_cast<Int16>(HIWORD(wParam));
+            auto delta = static_cast<Int16>(HIWORD(wParam));
 
             Event event;
             event.type                   = Event::MouseWheelScrolled;
@@ -991,7 +991,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
             {
                 // Some sort of device change has happened, update joystick connections if it is a device interface
-                DEV_BROADCAST_HDR* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
+                auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
 
                 if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
                     JoystickImpl::updateConnections();
@@ -1131,7 +1131,7 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     if (message == WM_CREATE)
     {
         // Get WindowImplWin32 instance (it was passed as the last argument of CreateWindow)
-        LONG_PTR window = reinterpret_cast<LONG_PTR>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
+        auto window = reinterpret_cast<LONG_PTR>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
 
         // Set as the "user data" parameter of the window
         SetWindowLongPtrW(handle, GWLP_USERDATA, window);

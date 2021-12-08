@@ -77,7 +77,7 @@ void ThreadImpl::terminate()
 unsigned int __stdcall ThreadImpl::entryPoint(void* userData)
 {
     // The Thread instance is stored in the user data
-    Thread* owner = static_cast<Thread*>(userData);
+    auto* owner = static_cast<Thread*>(userData);
 
     // Forward to the owner
     owner->run();

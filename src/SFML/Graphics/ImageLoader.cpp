@@ -50,25 +50,25 @@ namespace
     // stb_image callbacks that operate on a sf::InputStream
     int read(void* user, char* data, int size)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         return static_cast<int>(stream->read(data, size));
     }
     void skip(void* user, int size)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         stream->seek(stream->tell() + size);
     }
     int eof(void* user)
     {
-        sf::InputStream* stream = static_cast<sf::InputStream*>(user);
+        auto* stream = static_cast<sf::InputStream*>(user);
         return stream->tell() >= stream->getSize();
     }
 
     // stb_image callback for constructing a buffer
     void bufferFromCallback(void* context, void* data, int size)
     {
-        sf::Uint8* source = static_cast<sf::Uint8*>(data);
-        std::vector<sf::Uint8>* dest = static_cast<std::vector<sf::Uint8>*>(context);
+        auto* source = static_cast<sf::Uint8*>(data);
+        auto* dest = static_cast<std::vector<sf::Uint8>*>(context);
         std::copy(source, source + size, std::back_inserter(*dest));
     }
 }
@@ -154,7 +154,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         int width = 0;
         int height = 0;
         int channels = 0;
-        const unsigned char* buffer = static_cast<const unsigned char*>(data);
+        const auto* buffer = static_cast<const unsigned char*>(data);
         unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(dataSize), &width, &height, &channels, STBI_rgb_alpha);
 
         if (ptr)

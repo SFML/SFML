@@ -71,7 +71,7 @@ bool InputSoundFile::openFromFile(const std::string& filename)
         return false;
 
     // Wrap the file into a stream
-    FileInputStream* file = new FileInputStream;
+    auto* file = new FileInputStream;
     m_stream = file;
     m_streamOwned = true;
 
@@ -111,7 +111,7 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
         return false;
 
     // Wrap the memory file into a stream
-    MemoryInputStream* memory = new MemoryInputStream;
+    auto* memory = new MemoryInputStream;
     m_stream = memory;
     m_streamOwned = true;
 
