@@ -20,8 +20,8 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-    typedef float Vec3[3];
-    typedef float Matrix[4][4];
+    using Vec3 = float[3];
+    using Matrix = float[4][4];
 
     // Multiply 2 matrices
     void matrixMultiply(Matrix& result, const Matrix& left, const Matrix& right)

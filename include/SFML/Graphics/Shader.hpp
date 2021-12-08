@@ -739,8 +739,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::unordered_map<int, const Texture*> TextureTable;
-    typedef std::unordered_map<std::string, int> UniformTable;
+    using TextureTable = std::unordered_map<int, const Texture *>;
+    using UniformTable = std::unordered_map<std::string, int>;
 
     ////////////////////////////////////////////////////////////
     // Member data

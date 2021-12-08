@@ -37,19 +37,19 @@
 #ifdef __OBJC__
 
 @class NSOpenGLContext;
-typedef NSOpenGLContext* NSOpenGLContextRef;
+using NSOpenGLContextRef = NSOpenGLContext*;
 
 @class NSOpenGLView;
-typedef NSOpenGLView* NSOpenGLViewRef;
+using NSOpenGLViewRef = NSOpenGLView*;
 
 @class NSWindow;
-typedef NSWindow* NSWindowRef;
+using NSWindowRef = NSWindow*;
 
 #else // If C++
 
-typedef void* NSOpenGLContextRef;
-typedef void* NSOpenGLViewRef;
-typedef void* NSWindowRef;
+using NSOpenGLContextRef = void*;
+using NSOpenGLViewRef = void*;
+using NSWindowRef = void*;
 
 #endif
 

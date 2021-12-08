@@ -35,7 +35,7 @@
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 
 namespace {
-    typedef void (*activityOnCreatePointer)(ANativeActivity*, void*, size_t);
+    using activityOnCreatePointer = void (*)(ANativeActivity*, void*, size_t);
 }
 
 const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)

@@ -252,8 +252,8 @@ bool operator !=(const Vector3<T>& left, const Vector3<T>& right);
 #include <SFML/System/Vector3.inl>
 
 // Define the most common types
-typedef Vector3<int>   Vector3i;
-typedef Vector3<float> Vector3f;
+using Vector3i = Vector3<int>;
+using Vector3f = Vector3<float>;
 
 } // namespace sf
 
@@ -275,7 +275,7 @@ typedef Vector3<float> Vector3f;
 /// and comparisons (==, !=), for example int or float.
 ///
 /// You generally don't have to care about the templated form (sf::Vector3<T>),
-/// the most common specializations have special typedefs:
+/// the most common specializations have special type aliases:
 /// \li sf::Vector3<float> is sf::Vector3f
 /// \li sf::Vector3<int> is sf::Vector3i
 ///

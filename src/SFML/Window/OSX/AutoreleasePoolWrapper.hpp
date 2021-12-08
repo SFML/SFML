@@ -32,11 +32,11 @@
 #ifdef __OBJC__
 
 @class NSAutoreleasePool;
-typedef NSAutoreleasePool* NSAutoreleasePoolRef;
+using NSAutoreleasePoolRef = NSAutoreleasePool*;
 
 #else // If C++
 
-typedef void* NSAutoreleasePoolRef;
+using NSAutoreleasePoolRef = void*;
 
 #endif
 

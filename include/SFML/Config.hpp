@@ -178,24 +178,24 @@ namespace sf
     // we can use them without doing any kind of check
 
     // 8 bits integer types
-    typedef signed   char Int8;
-    typedef unsigned char Uint8;
+    using Int8 = signed char;
+    using Uint8 = unsigned char;
 
     // 16 bits integer types
-    typedef signed   short Int16;
-    typedef unsigned short Uint16;
+    using Int16 = short;
+    using Uint16 = unsigned short;
 
     // 32 bits integer types
-    typedef signed   int Int32;
-    typedef unsigned int Uint32;
+    using Int32 = int;
+    using Uint32 = unsigned int;
 
     // 64 bits integer types
     #if defined(_MSC_VER)
-        typedef signed   __int64 Int64;
-        typedef unsigned __int64 Uint64;
+        using Int64 = signed   __int64;
+        using Uint64 = unsigned __int64;
     #else
-        typedef signed   long long Int64;
-        typedef unsigned long long Uint64;
+        using Int64 = long long;
+        using Uint64 = unsigned long long;
     #endif
 
 } // namespace sf

@@ -39,17 +39,17 @@
 #ifdef __OBJC__
 
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
-typedef id<WindowImplDelegateProtocol,NSObject> WindowImplDelegateRef;
+using WindowImplDelegateRef = id<WindowImplDelegateProtocol,NSObject>;
 
 @class NSOpenGLContext;
-typedef NSOpenGLContext* NSOpenGLContextRef;
+using NSOpenGLContextRef = NSOpenGLContext*;
 
 #else // If C++
 
-typedef unsigned short unichar; // See NSString.h
+using unichar = unsigned short; // See NSString.h
 
-typedef void* WindowImplDelegateRef;
-typedef void* NSOpenGLContextRef;
+using WindowImplDelegateRef = void*;
+using NSOpenGLContextRef = void*;
 
 #endif
 

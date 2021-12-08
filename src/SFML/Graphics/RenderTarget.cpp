@@ -71,7 +71,7 @@ namespace
 
         // Map to help us detect whether a different RenderTarget
         // has been activated within a single context
-        typedef std::unordered_map<sf::Uint64, sf::Uint64> ContextRenderTargetMap;
+        using ContextRenderTargetMap = std::unordered_map<sf::Uint64, sf::Uint64>;
         ContextRenderTargetMap contextRenderTargetMap;
 
         // Check if a RenderTarget with the given ID is active in the current context

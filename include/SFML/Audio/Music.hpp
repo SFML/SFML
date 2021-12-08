@@ -84,7 +84,7 @@ public:
     };
 
     // Define the relevant Span types
-    typedef Span<Time> TimeSpan;
+    using TimeSpan = Span<Time>;
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

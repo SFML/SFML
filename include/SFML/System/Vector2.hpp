@@ -250,9 +250,9 @@ bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 #include <SFML/System/Vector2.inl>
 
 // Define the most common types
-typedef Vector2<int>          Vector2i;
-typedef Vector2<unsigned int> Vector2u;
-typedef Vector2<float>        Vector2f;
+using Vector2i = Vector2<int>;
+using Vector2u = Vector2<unsigned int>;
+using Vector2f = Vector2<float>;
 
 } // namespace sf
 
@@ -274,7 +274,7 @@ typedef Vector2<float>        Vector2f;
 /// and comparisons (==, !=), for example int or float.
 ///
 /// You generally don't have to care about the templated form (sf::Vector2<T>),
-/// the most common specializations have special typedefs:
+/// the most common specializations have special type aliases:
 /// \li sf::Vector2<float> is sf::Vector2f
 /// \li sf::Vector2<int> is sf::Vector2i
 /// \li sf::Vector2<unsigned int> is sf::Vector2u
