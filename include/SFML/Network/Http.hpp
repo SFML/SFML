@@ -32,6 +32,7 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/Time.hpp>
+#include <map>
 #include <unordered_map>
 #include <string>
 
