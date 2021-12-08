@@ -38,7 +38,7 @@ public:
     /// \see SoundRecorder::~SoundRecorder()
     ///
     ////////////////////////////////////////////////////////////
-    ~NetworkRecorder()
+    ~NetworkRecorder() override
     {
         // Make sure to stop the recording thread
         stop();
@@ -50,7 +50,7 @@ private:
     /// \see SoundRecorder::onStart
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onStart()
+    bool onStart() override
     {
         if (m_socket.connect(m_host, m_port) == sf::Socket::Done)
         {
@@ -67,7 +67,7 @@ private:
     /// \see SoundRecorder::onProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount)
+    bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount) override
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
@@ -82,7 +82,7 @@ private:
     /// \see SoundRecorder::onStop
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onStop()
+    void onStop() override
     {
         // Send a "end-of-stream" packet
         sf::Packet packet;

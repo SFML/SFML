@@ -102,7 +102,7 @@ public:
     /// Closes the window and frees all the resources attached to it.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Window();
+    ~Window() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -116,7 +116,7 @@ public:
     /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, Uint32 style = Style::Default);
+    void create(VideoMode mode, const String& title, Uint32 style = Style::Default) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -147,7 +147,7 @@ public:
     /// \param handle   Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(WindowHandle handle);
+    void create(WindowHandle handle) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -176,7 +176,7 @@ public:
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void close();
+    void close() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the OpenGL context of the window

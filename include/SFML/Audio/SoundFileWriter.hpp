@@ -103,14 +103,14 @@ public:
 ///         // return true if the writer can handle the format
 ///     }
 ///
-///     virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+///     bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) override
 ///     {
 ///         // open the file 'filename' for writing,
 ///         // write the given sample rate and channel count to the file header
 ///         // return true on success
 ///     }
 ///
-///     virtual void write(const sf::Int16* samples, sf::Uint64 count)
+///     void write(const sf::Int16* samples, sf::Uint64 count) override
 ///     {
 ///         // write 'count' samples stored at address 'samples',
 ///         // convert them (for example to normalized float) if the format requires it

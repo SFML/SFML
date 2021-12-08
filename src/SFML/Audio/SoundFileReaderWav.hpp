@@ -69,7 +69,7 @@ public:
     /// \param info   Structure to fill with the attributes of the loaded sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(sf::InputStream& stream, Info& info);
+    bool open(sf::InputStream& stream, Info& info) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -84,7 +84,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset);
+    void seek(Uint64 sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -95,7 +95,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount);
+    Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 private:
 

@@ -60,7 +60,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundStream();
+    ~SoundStream() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Start or resume playing the audio stream
@@ -74,7 +74,7 @@ public:
     /// \see pause, stop
     ///
     ////////////////////////////////////////////////////////////
-    void play();
+    void play() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Pause the audio stream
@@ -85,7 +85,7 @@ public:
     /// \see play, stop
     ///
     ////////////////////////////////////////////////////////////
-    void pause();
+    void pause() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop playing the audio stream
@@ -97,7 +97,7 @@ public:
     /// \see play, pause
     ///
     ////////////////////////////////////////////////////////////
-    void stop();
+    void stop() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the number of channels of the stream
@@ -126,7 +126,7 @@ public:
     /// \return Current status
     ///
     ////////////////////////////////////////////////////////////
-    Status getStatus() const;
+    Status getStatus() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position of the stream
@@ -391,7 +391,7 @@ private:
 ///
 /// private:
 ///
-///     virtual bool onGetData(Chunk& data)
+///     bool onGetData(Chunk& data) override
 ///     {
 ///         // Fill the chunk with audio data from the stream source
 ///         // (note: must not be empty if you want to continue playing)
@@ -402,7 +402,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     virtual void onSeek(sf::Time timeOffset)
+///     void onSeek(sf::Time timeOffset) override
 ///     {
 ///         // Change the current position in the stream source
 ///         ...
