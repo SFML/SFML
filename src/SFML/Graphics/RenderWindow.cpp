@@ -87,7 +87,7 @@ bool RenderWindow::setActive(bool active)
 
     // Update RenderTarget tracking
     if (result)
-        RenderTarget::setActive(active);
+        result = RenderTarget::setActive(active);
 
     // If FBOs are available, make sure none are bound when we
     // try to draw to the default framebuffer of the RenderWindow

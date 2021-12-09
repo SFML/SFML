@@ -770,7 +770,12 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             {
                 // Make the texture 2 times bigger
                 Texture newTexture;
-                newTexture.create(textureWidth * 2, textureHeight * 2);
+                if (!newTexture.create(textureWidth * 2, textureHeight * 2))
+                {
+                    err() << "Failed to create new page texture" << std::endl;
+                    return IntRect(0, 0, 2, 2);
+                }
+
                 newTexture.setSmooth(m_isSmooth);
                 newTexture.update(page.texture);
                 page.texture.swap(newTexture);
@@ -854,7 +859,11 @@ nextRow(3)
             image.setPixel(x, y, Color(255, 255, 255, 255));
 
     // Create the texture
-    texture.loadFromImage(image);
+    if (!texture.loadFromImage(image))
+    {
+        err() << "Failed to load font page texture" << std::endl;
+    }
+
     texture.setSmooth(true);
 }
 

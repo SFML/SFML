@@ -84,7 +84,7 @@ public:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
+    [[nodiscard]] bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -154,7 +154,7 @@ public:
     /// \return True if mipmap generation was successful, false if unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    bool generateMipmap();
+    [[nodiscard]] bool generateMipmap();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render-texture for rendering
@@ -171,7 +171,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setActive(bool active = true) override;
+    [[nodiscard]] bool setActive(bool active = true) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the contents of the target texture

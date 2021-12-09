@@ -10,6 +10,9 @@
 #include <SFML/Main.hpp>
 #endif
 
+#include <iostream>
+#include <cstdlib>
+
 ////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
@@ -26,7 +29,11 @@ int main()
     sf::Window window(sf::VideoMode(640, 480), "SFML window with OpenGL", sf::Style::Default, contextSettings);
 
     // Make it the active window for OpenGL calls
-    window.setActive();
+    if (!window.setActive())
+    {
+        std::cerr << "Failed to set window to active" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // Load OpenGL or OpenGL ES entry points using glad
 #ifdef SFML_OPENGL_ES
