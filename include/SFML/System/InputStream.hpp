@@ -60,7 +60,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 read(void* data, Int64 size) = 0;
+    [[nodiscard]] virtual Int64 read(void* data, Int64 size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -70,7 +70,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 seek(Int64 position) = 0;
+    [[nodiscard]] virtual Int64 seek(Int64 position) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
@@ -78,7 +78,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 tell() = 0;
+    [[nodiscard]] virtual Int64 tell() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream

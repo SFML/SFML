@@ -278,7 +278,11 @@ bool Font::loadFromStream(InputStream& stream)
     m_library = library;
 
     // Make sure that the stream's reading position is at the beginning
-    stream.seek(0);
+    if (stream.seek(0) == -1)
+    {
+        err() << "Failed to seek font stream" << std::endl;
+        return false;
+    }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     auto* rec = new FT_StreamRec;
