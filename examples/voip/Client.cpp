@@ -87,7 +87,11 @@ private:
         // Send a "end-of-stream" packet
         sf::Packet packet;
         packet << clientEndOfStream;
-        m_socket.send(packet);
+
+        if (!m_socket.send(packet))
+        {
+            std::cerr << "Failed to send end-of-stream packet" << std::endl;
+        }
 
         // Close the socket
         m_socket.disconnect();
