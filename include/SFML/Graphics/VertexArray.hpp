@@ -144,7 +144,6 @@ public:
     /// \li As points
     /// \li As lines
     /// \li As triangles
-    /// \li As quads
     /// The default primitive type is sf::Points.
     ///
     /// \param type Type of primitive

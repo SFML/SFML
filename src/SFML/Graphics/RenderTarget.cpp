@@ -42,14 +42,6 @@
 #include <unordered_map>
 
 
-// GL_QUADS is unavailable on OpenGL ES, thus we need to define GL_QUADS ourselves
-#ifndef GL_QUADS
-
-    #define GL_QUADS 0
-
-#endif // GL_QUADS
-
-
 namespace
 {
     // A nested named namespace is used here to allow unity builds of SFML.
@@ -277,15 +269,6 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount,
     if (!vertices || (vertexCount == 0))
         return;
 
-    // GL_QUADS is unavailable on OpenGL ES
-    #ifdef SFML_OPENGL_ES
-        if (type == Quads)
-        {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
-            return;
-        }
-    #endif
-
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
@@ -376,15 +359,6 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
     // Nothing to draw?
     if (!vertexCount || !vertexBuffer.getNativeHandle())
         return;
-
-    // GL_QUADS is unavailable on OpenGL ES
-    #ifdef SFML_OPENGL_ES
-        if (vertexBuffer.getPrimitiveType() == Quads)
-        {
-            err() << "sf::Quads primitive type is not supported on OpenGL ES platforms, drawing skipped" << std::endl;
-            return;
-        }
-    #endif
 
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
@@ -758,7 +732,7 @@ void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, s
 {
     // Find the OpenGL primitive type
     static const GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-                                   GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS};
+                                   GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
     GLenum mode = modes[type];
 
     // Draw the primitives
