@@ -546,86 +546,6 @@ public:
     void setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Change a float parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, float) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, float x);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 2-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, float x, float y);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 3-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, float x, float y, float z);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 4-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, float x, float y, float z, float w);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 2-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec2&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, const Vector2f& vector);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a 3-components vector parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec3&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, const Vector3f& vector);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a color parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Vec4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, const Color& color);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a matrix parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Glsl::Mat4&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, const Transform& transform);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a texture parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, const Texture&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, const Texture& texture);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Change a texture parameter of the shader
-    ///
-    /// \deprecated Use setUniform(const std::string&, CurrentTextureType) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] void setParameter(const std::string& name, CurrentTextureType);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the shader.
     ///
     /// You shouldn't need to use this function, unless you have
@@ -813,9 +733,6 @@ private:
 /// shader.setUniform("overlay", texture);                      // texture is a sf::Texture
 /// shader.setUniform("current", sf::Shader::CurrentTexture);
 /// \endcode
-///
-/// The old setParameter() overloads are deprecated and will be removed in a
-/// future version. You should use their setUniform() equivalents instead.
 ///
 /// The special Shader::CurrentTexture argument maps the
 /// given \p sampler2D uniform to the current texture of the
