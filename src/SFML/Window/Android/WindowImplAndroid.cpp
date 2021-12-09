@@ -363,10 +363,11 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
 
     // Create and send our mouse wheel event
     Event event;
-    event.type = Event::MouseWheelMoved;
-    event.mouseWheel.delta = static_cast<double>(delta);
-    event.mouseWheel.x = AMotionEvent_getX(_event, 0);
-    event.mouseWheel.y = AMotionEvent_getY(_event, 0);
+    event.type = Event::MouseWheelScrolled;
+    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+    event.mouseWheelScroll.delta = static_cast<double>(delta);
+    event.mouseWheelScroll.x = AMotionEvent_getX(_event, 0);
+    event.mouseWheelScroll.y = AMotionEvent_getY(_event, 0);
 
     forwardEvent(event);
 

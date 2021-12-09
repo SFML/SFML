@@ -100,20 +100,6 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse wheel events parameters (MouseWheelMoved)
-    ///
-    /// \deprecated This event is deprecated and potentially inaccurate.
-    ///             Use MouseWheelScrollEvent instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    struct MouseWheelEvent
-    {
-        int delta; //!< Number of ticks the wheel has moved (positive is up, negative is down)
-        int x;     //!< X position of the mouse pointer, relative to the left of the owner window
-        int y;     //!< Y position of the mouse pointer, relative to the top of the owner window
-    };
-
-    ////////////////////////////////////////////////////////////
     /// \brief Mouse wheel events parameters (MouseWheelScrolled)
     ///
     ////////////////////////////////////////////////////////////
@@ -193,7 +179,6 @@ public:
         TextEntered,            //!< A character was entered (data in event.text)
         KeyPressed,             //!< A key was pressed (data in event.key)
         KeyReleased,            //!< A key was released (data in event.key)
-        MouseWheelMoved,        //!< The mouse wheel was scrolled (data in event.mouseWheel) (deprecated)
         MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
         MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
         MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
@@ -225,7 +210,6 @@ public:
         TextEvent             text;              //!< Text event parameters (Event::TextEntered)
         MouseMoveEvent        mouseMove;         //!< Mouse move event parameters (Event::MouseMoved)
         MouseButtonEvent      mouseButton;       //!< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
-        MouseWheelEvent       mouseWheel;        //!< Mouse wheel event parameters (Event::MouseWheelMoved) (deprecated)
         MouseWheelScrollEvent mouseWheelScroll;  //!< Mouse wheel event parameters (Event::MouseWheelScrolled)
         JoystickMoveEvent     joystickMove;      //!< Joystick move event parameters (Event::JoystickMoved)
         JoystickButtonEvent   joystickButton;    //!< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)

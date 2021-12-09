@@ -769,12 +769,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             Event event;
 
-            event.type             = Event::MouseWheelMoved;
-            event.mouseWheel.delta = delta / 120;
-            event.mouseWheel.x     = position.x;
-            event.mouseWheel.y     = position.y;
-            pushEvent(event);
-
             event.type                   = Event::MouseWheelScrolled;
             event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
             event.mouseWheelScroll.delta = static_cast<float>(delta) / 120.f;

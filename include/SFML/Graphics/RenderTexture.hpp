@@ -72,28 +72,6 @@ public:
     /// Before calling this function, the render-texture is in
     /// an invalid state, thus it is mandatory to call it before
     /// doing anything with the render-texture.
-    /// The last parameter, \a depthBuffer, is useful if you want
-    /// to use the render-texture for 3D OpenGL rendering that requires
-    /// a depth buffer. Otherwise it is unnecessary, and you should
-    /// leave this parameter to false (which is its default value).
-    ///
-    /// \param width       Width of the render-texture
-    /// \param height      Height of the render-texture
-    /// \param depthBuffer Do you want this render-texture to have a depth buffer?
-    ///
-    /// \return True if creation has been successful
-    ///
-    /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    [[deprecated]] bool create(unsigned int width, unsigned int height, bool depthBuffer);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the render-texture
-    ///
-    /// Before calling this function, the render-texture is in
-    /// an invalid state, thus it is mandatory to call it before
-    /// doing anything with the render-texture.
     /// The last parameter, \a settings, is useful if you want to enable
     /// multi-sampling or use the render-texture for OpenGL rendering that
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and

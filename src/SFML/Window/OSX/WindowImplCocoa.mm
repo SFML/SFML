@@ -303,13 +303,6 @@ void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, in
 {
     Event event;
 
-    event.type = Event::MouseWheelMoved;
-    event.mouseWheel.delta = deltaY;
-    event.mouseWheel.x = x;
-    event.mouseWheel.y = y;
-    scaleOutXY(event.mouseWheel, m_delegate);
-    pushEvent(event);
-
     event.type = Event::MouseWheelScrolled;
     event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
     event.mouseWheelScroll.delta = deltaY;
