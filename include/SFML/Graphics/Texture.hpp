@@ -94,7 +94,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height);
+    [[nodiscard]] bool create(unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -125,7 +125,7 @@ public:
     /// \see loadFromMemory, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromFile(const std::string& filename, const IntRect& area = IntRect());
+    [[nodiscard]] bool loadFromFile(const std::string& filename, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -157,7 +157,7 @@ public:
     /// \see loadFromFile, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
+    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
@@ -188,7 +188,7 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
+    [[nodiscard]] bool loadFromStream(InputStream& stream, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -212,7 +212,7 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromImage(const Image& image, const IntRect& area = IntRect());
+    [[nodiscard]] bool loadFromImage(const Image& image, const IntRect& area = IntRect());
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the texture
@@ -506,7 +506,7 @@ public:
     /// \return True if mipmap generation was successful, false if unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    bool generateMipmap();
+    [[nodiscard]] bool generateMipmap();
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator

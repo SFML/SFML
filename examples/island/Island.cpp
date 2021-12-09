@@ -4,13 +4,18 @@
 ////////////////////////////////////////////////////////////
 #define STB_PERLIN_IMPLEMENTATION
 #include <stb_perlin.h>
+
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <deque>
-#include <sstream>
+
 #include <algorithm>
-#include <cstring>
+#include <deque>
+#include <iostream>
+#include <sstream>
+#include <vector>
+
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 
 
 namespace
@@ -136,7 +141,11 @@ int main()
         }
 
         // Create our VertexBuffer with enough space to hold all the terrain geometry
-        terrain.create(resolutionX * resolutionY * 6);
+        if (!terrain.create(resolutionX * resolutionY * 6))
+        {
+            std::cerr << "Failed to create vertex buffer" << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Resize the staging buffer to be able to hold all the terrain geometry
         terrainStagingBuffer.resize(resolutionX * resolutionY * 6);
@@ -215,7 +224,12 @@ int main()
                     // If there is new data pending to be uploaded to the VertexBuffer, do it now
                     if (bufferUploadPending)
                     {
-                        terrain.update(terrainStagingBuffer.data());
+                        if (!terrain.update(terrainStagingBuffer.data()))
+                        {
+                            std::cerr << "Failed to update vertex buffer" << std::endl;
+                            return EXIT_FAILURE;
+                        }
+
                         bufferUploadPending = false;
                     }
 

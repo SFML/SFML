@@ -3,6 +3,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>
@@ -57,6 +59,7 @@ int main()
         sf::Font font;
         if (!font.loadFromFile(resourcesDir() + "tuffy.ttf"))
             return EXIT_FAILURE;
+
         sf::Text text("SFML / OpenGL demo", font);
         sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
         sf::Text mipmapInstructions("Press return to toggle mipmapping", font);
@@ -75,10 +78,14 @@ int main()
         // Attempt to generate a mipmap for our cube texture
         // We don't check the return value here since
         // mipmapping is purely optional in this example
-        texture.generateMipmap();
+        (void) texture.generateMipmap();
 
         // Make the window the active window for OpenGL calls
-        window.setActive(true);
+        if (!window.setActive(true))
+        {
+            std::cerr << "Failed to set window to active" << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Load OpenGL or OpenGL ES entry points using glad
 #ifdef SFML_OPENGL_ES
@@ -174,7 +181,11 @@ int main()
         glDisableClientState(GL_COLOR_ARRAY);
 
         // Make the window no longer the active window for OpenGL calls
-        window.setActive(false);
+        if (!window.setActive(false))
+        {
+            std::cerr << "Failed to set window to inactive" << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Create a clock for measuring the time elapsed
         sf::Clock clock;
@@ -214,10 +225,8 @@ int main()
 
                         mipmapEnabled = false;
                     }
-                    else
+                    else if (texture.generateMipmap())
                     {
-                        texture.generateMipmap();
-
                         mipmapEnabled = true;
                     }
                 }
@@ -235,7 +244,11 @@ int main()
                     sf::Vector2u textureSize = backgroundTexture.getSize();
 
                     // Make the window the active window for OpenGL calls
-                    window.setActive(true);
+                    if (!window.setActive(true))
+                    {
+                        std::cerr << "Failed to set window to active" << std::endl;
+                        return EXIT_FAILURE;
+                    }
 
                     glViewport(0, 0, static_cast<GLsizei>(event.size.width), static_cast<GLsizei>(event.size.height));
                     glMatrixMode(GL_PROJECTION);
@@ -248,7 +261,11 @@ int main()
 #endif
 
                     // Make the window no longer the active window for OpenGL calls
-                    window.setActive(false);
+                    if (!window.setActive(false))
+                    {
+                        std::cerr << "Failed to set window to inactive" << std::endl;
+                        return EXIT_FAILURE;
+                    }
 
                     sf::View view;
                     view.setSize(sf::Vector2f(textureSize));
@@ -263,7 +280,11 @@ int main()
             window.popGLStates();
 
             // Make the window the active window for OpenGL calls
-            window.setActive(true);
+            if (!window.setActive(true))
+            {
+                std::cerr << "Failed to set window to active" << std::endl;
+                return EXIT_FAILURE;
+            }
 
             // Clear the depth buffer
             glClear(GL_DEPTH_BUFFER_BIT);
@@ -292,7 +313,11 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
 
             // Make the window no longer the active window for OpenGL calls
-            window.setActive(false);
+            if (!window.setActive(false))
+            {
+                std::cerr << "Failed to set window to inactive" << std::endl;
+                return EXIT_FAILURE;
+            }
 
             // Draw some text on top of our OpenGL object
             window.pushGLStates();

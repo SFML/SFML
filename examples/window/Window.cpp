@@ -12,6 +12,7 @@
 #endif
 
 #include <iostream>
+#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
