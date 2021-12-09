@@ -49,13 +49,6 @@ RenderTexture::~RenderTexture()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
-{
-    return create(width, height, ContextSettings(depthBuffer ? 32 : 0));
-}
-
-
-////////////////////////////////////////////////////////////
 bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
 {
     // Set texture to be in sRGB scale if requested
