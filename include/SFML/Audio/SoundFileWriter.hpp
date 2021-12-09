@@ -58,7 +58,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) = 0;
+    [[nodiscard]] virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file

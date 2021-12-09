@@ -73,7 +73,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(InputStream& stream, Info& info) = 0;
+    [[nodiscard]] virtual bool open(InputStream& stream, Info& info) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -99,7 +99,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount) = 0;
+    [[nodiscard]] virtual Uint64 read(Int16* samples, Uint64 maxCount) = 0;
 };
 
 } // namespace sf

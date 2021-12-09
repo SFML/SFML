@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
+#include <cstdlib>
 #include <iostream>
 
 
@@ -35,7 +36,12 @@ int main()
     sf::SoundBufferRecorder recorder;
 
     // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
-    recorder.start(sampleRate);
+    if (!recorder.start(sampleRate))
+    {
+        std::cerr << "Failed to start recorder" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Recording... press enter to stop";
     std::cin.ignore(10000, '\n');
     recorder.stop();
@@ -63,7 +69,10 @@ int main()
         std::getline(std::cin, filename);
 
         // Save the buffer
-        buffer.saveToFile(filename);
+        if (!buffer.saveToFile(filename))
+        {
+            std::cerr << "Could not save sound buffer to file" << std::endl;
+        }
     }
     else
     {

@@ -226,7 +226,7 @@ protected:
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onGetData(Chunk& data) = 0;
+    [[nodiscard]] virtual bool onGetData(Chunk& data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -290,7 +290,7 @@ private:
     /// \return True if the stream source has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
+    [[nodiscard]] bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Fill the audio buffers and put them all into the playing queue
@@ -301,7 +301,7 @@ private:
     /// \return True if the derived class has requested to stop, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool fillQueue();
+    [[nodiscard]] bool fillQueue();
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear all the audio buffers and empty the playing queue
