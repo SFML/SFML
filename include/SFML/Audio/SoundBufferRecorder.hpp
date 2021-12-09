@@ -72,7 +72,7 @@ protected:
     /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
-    bool onStart() override;
+    [[nodiscard]] bool onStart() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
@@ -83,7 +83,7 @@ protected:
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
+    [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
