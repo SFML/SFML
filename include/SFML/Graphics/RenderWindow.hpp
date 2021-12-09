@@ -255,7 +255,7 @@ private:
 ///     window.popGLStates();
 ///
 ///     // Draw a 3D object using OpenGL
-///     glBegin(GL_QUADS);
+///     glBegin(GL_TRIANGLES);
 ///         glVertex3f(...);
 ///         ...
 ///     glEnd();

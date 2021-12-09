@@ -110,7 +110,7 @@ protected:
 ///         target.draw(m_vertices, states);
 ///
 ///         // ... or draw with OpenGL directly
-///         glBegin(GL_QUADS);
+///         glBegin(GL_TRIANGLES);
 ///         ...
 ///         glEnd();
 ///     }

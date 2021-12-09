@@ -115,7 +115,7 @@ public:
 ///
 /// The vertex is the building block of drawing. Everything which
 /// is visible on screen is made of vertices. They are grouped
-/// as 2D primitives (triangles, quads, ...), and these primitives
+/// as 2D primitives (lines, triangles, ...), and these primitives
 /// are grouped to create even more complex 2D entities such as
 /// sprites, texts, etc.
 ///
@@ -132,11 +132,13 @@ public:
 ///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2f( 0,  0)),
 ///     sf::Vertex(sf::Vector2f(  0, 100), sf::Color::Red, sf::Vector2f( 0, 10)),
 ///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2f(10, 10)),
+///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2f( 0,  0)),
+///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2f(10, 10)),
 ///     sf::Vertex(sf::Vector2f(100,   0), sf::Color::Red, sf::Vector2f(10,  0))
 /// };
 ///
 /// // draw it
-/// window.draw(vertices, 4, sf::Quads);
+/// window.draw(vertices, 6, sf::Triangles);
 /// \endcode
 ///
 /// Note: although texture coordinates are supposed to be an integer
