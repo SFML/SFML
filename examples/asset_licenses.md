@@ -11,6 +11,7 @@ All assets are under public domain (CC0):
 | shader/resources/background.jpg | Arcana Dea                | [Public Domain Images][4]  |
 | shader/resources/devices.png    | Kenny.nl                  | [Game Icons Pack][5]       |
 | sound/resources/ding.flac       | Kenny.nl                  | [Interface Sounds Pack][6] |
+| sound/resources/ding.mp3        | Kenny.nl                  | [Interface Sounds Pack][6] |
 | win32/resources/image1.jpg      | Kenny.nl                  | [Toon Character Pack][7]   |
 | win32/resources/image2.jpg      | Kenny.nl                  | [Toon Character Pack][7]   |
 | sound/resources/killdeer.wav    | US National Park Services | [Bird sounds][8]           |

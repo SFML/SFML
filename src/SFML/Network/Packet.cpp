@@ -178,7 +178,7 @@ Packet& Packet::operator >>(Int32& data)
     if (checkSize(sizeof(data)))
     {
         std::memcpy(&data, &m_data[m_readPos], sizeof(data));
-        data = static_cast<Int16>(ntohl(static_cast<uint32_t>(data)));
+        data = static_cast<Int32>(ntohl(static_cast<uint32_t>(data)));
         m_readPos += sizeof(data);
     }
 

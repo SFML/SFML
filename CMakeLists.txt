@@ -25,11 +25,6 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.9)
     cmake_policy(SET CMP0068 NEW)
 endif()
 
-# add some default value for some additional macOS variable
-# note that those variables are ignored on other systems
-if(NOT CMAKE_OSX_ARCHITECTURES)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "macOS architecture to build; 64-bit is expected" FORCE)
-endif()
 if(NOT CMAKE_OSX_SYSROOT)
     # query the path to the default SDK, will fail on non-macOS, but it's okay.
     execute_process(COMMAND xcodebuild -sdk macosx -version Path
@@ -181,14 +176,14 @@ if(SFML_USE_SYSTEM_DEPS)
     foreach(DEP_FILE ${DEP_LIBS} ${DEP_BINS} ${DEP_HEADERS})
         get_filename_component(DEP_DIR ${DEP_FILE} PATH)
 
-        if(NOT DEP_DIR MATCHES "/stb_image(/|$)")
-            set(CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH} ${DEP_DIR})
+        if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
+            list(APPEND CMAKE_IGNORE_PATH "${DEP_DIR}")
         endif()
 
         get_filename_component(DEP_PARENT_DIR ${DEP_DIR} PATH)
         while(NOT DEP_PARENT_DIR STREQUAL "${CMAKE_SOURCE_DIR}/extlibs")
-            if(NOT DEP_DIR MATCHES "/stb_image(/|$)")
-                set(CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH} ${DEP_PARENT_DIR})
+            if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
+                list(APPEND CMAKE_IGNORE_PATH "${DEP_PARENT_DIR}")
             endif()
 
             get_filename_component(DEP_PARENT_DIR ${DEP_PARENT_DIR} PATH)
