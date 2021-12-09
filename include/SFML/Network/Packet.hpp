@@ -84,7 +84,7 @@ public:
     /// \see append
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getReadPosition() const;
+    [[nodiscard]] std::size_t getReadPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
@@ -109,7 +109,7 @@ public:
     /// \see getDataSize
     ///
     ////////////////////////////////////////////////////////////
-    const void* getData() const;
+    [[nodiscard]] const void* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the data contained in the packet
@@ -122,7 +122,7 @@ public:
     /// \see getData
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getDataSize() const;
+    [[nodiscard]] std::size_t getDataSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the
@@ -136,7 +136,7 @@ public:
     /// \see operator bool
     ///
     ////////////////////////////////////////////////////////////
-    bool endOfPacket() const;
+    [[nodiscard]] bool endOfPacket() const;
 
 public:
 

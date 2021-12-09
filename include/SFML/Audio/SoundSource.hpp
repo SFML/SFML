@@ -171,7 +171,7 @@ public:
     /// \see setPitch
     ///
     ////////////////////////////////////////////////////////////
-    float getPitch() const;
+    [[nodiscard]] float getPitch() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the volume of the sound
@@ -181,7 +181,7 @@ public:
     /// \see setVolume
     ///
     ////////////////////////////////////////////////////////////
-    float getVolume() const;
+    [[nodiscard]] float getVolume() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the 3D position of the sound in the audio scene
@@ -191,7 +191,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f getPosition() const;
+    [[nodiscard]] Vector3f getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the sound's position is relative to the
@@ -202,7 +202,7 @@ public:
     /// \see setRelativeToListener
     ///
     ////////////////////////////////////////////////////////////
-    bool isRelativeToListener() const;
+    [[nodiscard]] bool isRelativeToListener() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the minimum distance of the sound
@@ -212,7 +212,7 @@ public:
     /// \see setMinDistance, getAttenuation
     ///
     ////////////////////////////////////////////////////////////
-    float getMinDistance() const;
+    [[nodiscard]] float getMinDistance() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the attenuation factor of the sound
@@ -222,7 +222,7 @@ public:
     /// \see setAttenuation, getMinDistance
     ///
     ////////////////////////////////////////////////////////////
-    float getAttenuation() const;
+    [[nodiscard]] float getAttenuation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -275,7 +275,7 @@ public:
     /// \return Current status of the sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual Status getStatus() const;
+    [[nodiscard]] virtual Status getStatus() const;
 
 protected:
 

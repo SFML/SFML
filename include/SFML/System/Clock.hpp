@@ -60,7 +60,7 @@ public:
     /// \return Time elapsed
     ///
     ////////////////////////////////////////////////////////////
-    Time getElapsedTime() const;
+    [[nodiscard]] Time getElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Restart the clock

@@ -197,7 +197,7 @@ private:
     /// \return a reference to the OS-specific implementation
     ///
     ////////////////////////////////////////////////////////////
-    const priv::CursorImpl& getImpl() const;
+    [[nodiscard]] const priv::CursorImpl& getImpl() const;
 
 private:
 

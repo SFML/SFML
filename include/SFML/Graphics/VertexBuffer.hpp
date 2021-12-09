@@ -143,7 +143,7 @@ public:
     /// \return Number of vertices in the vertex buffer
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getVertexCount() const;
+    [[nodiscard]] std::size_t getVertexCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole buffer from an array of vertices
@@ -236,7 +236,7 @@ public:
     /// \return OpenGL handle of the vertex buffer or 0 if not yet created
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getNativeHandle() const;
+    [[nodiscard]] unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the type of primitives to draw
@@ -257,7 +257,7 @@ public:
     /// \return Primitive type
     ///
     ////////////////////////////////////////////////////////////
-    PrimitiveType getPrimitiveType() const;
+    [[nodiscard]] PrimitiveType getPrimitiveType() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the usage specifier of this vertex buffer
@@ -282,7 +282,7 @@ public:
     /// \return Usage specifier
     ///
     ////////////////////////////////////////////////////////////
-    Usage getUsage() const;
+    [[nodiscard]] Usage getUsage() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind a vertex buffer for rendering

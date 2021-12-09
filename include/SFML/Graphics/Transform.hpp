@@ -84,7 +84,7 @@ public:
     /// \return Pointer to a 4x4 matrix
     ///
     ////////////////////////////////////////////////////////////
-    const float* getMatrix() const;
+    [[nodiscard]] const float* getMatrix() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the inverse of the transform
@@ -95,7 +95,7 @@ public:
     /// \return A new transform which is the inverse of self
     ///
     ////////////////////////////////////////////////////////////
-    Transform getInverse() const;
+    [[nodiscard]] Transform getInverse() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
@@ -111,7 +111,7 @@ public:
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f transformPoint(const Vector2f& point) const;
+    [[nodiscard]] Vector2f transformPoint(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a rectangle
@@ -127,7 +127,7 @@ public:
     /// \return Transformed rectangle
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect transformRect(const FloatRect& rectangle) const;
+    [[nodiscard]] FloatRect transformRect(const FloatRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with another one

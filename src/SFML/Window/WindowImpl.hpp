@@ -126,7 +126,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getSystemHandle() const = 0;
+    [[nodiscard]] virtual WindowHandle getSystemHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -134,7 +134,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i getPosition() const = 0;
+    [[nodiscard]] virtual Vector2i getPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -150,7 +150,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const = 0;
+    [[nodiscard]] virtual Vector2u getSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -231,7 +231,7 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const = 0;
+    [[nodiscard]] virtual bool hasFocus() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a Vulkan rendering surface
