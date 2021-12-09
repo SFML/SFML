@@ -10,12 +10,14 @@
 #include <X11/Xlib.h>
 #include <iostream>
 #include <cmath>
-
+#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Initialize OpenGL states into the specified view
 ///
 /// \param Window Target window to initialize
+///
+/// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] bool initialize(sf::Window& window)
@@ -67,6 +69,8 @@
 ///
 /// \param window      Target window for rendering
 /// \param elapsedTime Time elapsed since the last draw
+///
+/// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] bool draw(sf::Window& window, float elapsedTime)
@@ -260,7 +264,6 @@ int main()
             std::cerr << "Failed to draw on view 2" << std::endl;
             return EXIT_FAILURE;
         }
-
 
         // Display the views on screen
         sfmlView1.display();
