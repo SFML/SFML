@@ -34,6 +34,7 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <bitset> // <X11/Xlibint.h> defines min/max as macros, so <bitset> has to come before that
 #include <X11/Xlibint.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
@@ -70,6 +71,7 @@ namespace
         std::vector<sf::priv::WindowImplX11*> allWindows;
         sf::Mutex                             allWindowsMutex;
         sf::String                            windowManagerName;
+        std::bitset<sf::Keyboard::KeyCount>   isKeyFiltered; // Maybe we should use scancodes instead of keys?
 
         sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
 
@@ -486,6 +488,45 @@ namespace
             }
 
             return sf::Keyboard::Unknown;
+        }
+
+        // Convert a XKeyEvent struct to a sf::Keyboard::Key
+        sf::Keyboard::Key xkeyToSFKey(XKeyEvent* xkey)
+        {
+            sf::Keyboard::Key key = sf::Keyboard::Unknown;
+
+            // Try each KeySym index (modifier group) until we get a match
+            for (int i = 0; i < 4; ++i)
+            {
+                // Get the SFML keyboard code from the keysym of the key that has been pressed
+                key = keysymToSF(XLookupKeysym(xkey, i));
+
+                if (key != sf::Keyboard::Unknown)
+                    break;
+            }
+
+            return key;
+        }
+
+        // Generate a KeyPressed event from a XKeyEvent struct
+        //
+        // If sfKey is not given, it calls xkeyToSFKey to try get
+        // the real sf::Keyboard::Key
+        sf::Event xkeyToKeyPressedEvent(XKeyEvent* xkey, sf::Keyboard::Key sfKey = sf::Keyboard::Unknown)
+        {
+            if(sfKey == sf::Keyboard::Unknown)
+                sfKey = xkeyToSFKey(xkey);
+
+            // Fill the event parameters
+            // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
+            sf::Event event;
+            event.type        = sf::Event::KeyPressed;
+            event.key.code    = sfKey;
+            event.key.alt     = xkey->state & Mod1Mask;
+            event.key.control = xkey->state & ControlMask;
+            event.key.shift   = xkey->state & ShiftMask;
+            event.key.system  = xkey->state & Mod4Mask;
+            return event;
         }
     }
 }
@@ -1880,37 +1921,28 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Key down event
         case KeyPress:
         {
-            Keyboard::Key key = Keyboard::Unknown;
-
-            // Try each KeySym index (modifier group) until we get a match
-            for (int i = 0; i < 4; ++i)
+            if (XFilterEvent(&windowEvent, None))
             {
-                // Get the SFML keyboard code from the keysym of the key that has been pressed
-                key = keysymToSF(XLookupKeysym(&windowEvent.xkey, i));
+                // This KeyPress was filtered by the IM
+                // Generate only a KeyPressed event
+                Keyboard::Key sfKey = xkeyToSFKey(&windowEvent.xkey);
+                pushEvent(xkeyToKeyPressedEvent(&windowEvent.xkey, sfKey));
 
-                if (key != Keyboard::Unknown)
-                    break;
+                // Set the filtered status of the key code
+                if (sfKey != Keyboard::Unknown)
+                    isKeyFiltered.set(sfKey);
             }
-
-            // Fill the event parameters
-            // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
-            Event event;
-            event.type        = Event::KeyPressed;
-            event.key.code    = key;
-            event.key.alt     = windowEvent.xkey.state & Mod1Mask;
-            event.key.control = windowEvent.xkey.state & ControlMask;
-            event.key.shift   = windowEvent.xkey.state & ShiftMask;
-            event.key.system  = windowEvent.xkey.state & Mod4Mask;
-            pushEvent(event);
-
-            // Generate a TextEntered event
-            if (!XFilterEvent(&windowEvent, None))
+            else
             {
+                // This KeyPress was not filtered by the IM
+                // Generate only a TextEntered event if it was filtered before and there's text
+                // in this event (the KeyPressed was already sent), otherwise generate a KeyPressed event
                 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
-                    Status status;
-                    Uint8  keyBuffer[64];
+                    Status        status;
+                    Uint8         keyBuffer[64];
+                    Keyboard::Key sfKey = xkeyToSFKey(&windowEvent.xkey);
 
                     int length = Xutf8LookupString(
                         m_inputContext,
@@ -1920,6 +1952,14 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         NULL,
                         &status
                     );
+
+                    // Send a KeyPressed if the key was never filtered before
+                    // (a KeyPressed would already be sent if it has been filtered)
+                    //
+                    // Some dummy IMs (like the built-in one you get by setting XMODIFIERS=@im=none)
+                    // never filter events away, and we have to take care of that
+                    if ((sfKey == Keyboard::Unknown) || (!isKeyFiltered.test(sfKey)))
+                        pushEvent(xkeyToKeyPressedEvent(&windowEvent.xkey, sfKey));
 
                     if (status == XBufferOverflow)
                         err() << "A TextEntered event has more than 64 bytes of UTF-8 input, and "
@@ -1947,6 +1987,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 else
                 #endif
                 {
+                    // Let's assume without a input context, nothing will be filtered
+                    // So just generate a KeyPressed event
+                    pushEvent(xkeyToKeyPressedEvent(&windowEvent.xkey));
+
                     static XComposeStatus status;
                     char keyBuffer[16];
                     if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), NULL, &status))
