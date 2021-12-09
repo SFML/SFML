@@ -28,6 +28,7 @@
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileReaderFlac.hpp>
 #include <SFML/Audio/SoundFileWriterFlac.hpp>
+#include <SFML/Audio/SoundFileReaderMp3.hpp>
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileReaderWav.hpp>
@@ -47,6 +48,7 @@ namespace
         {
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
+            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderMp3>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();

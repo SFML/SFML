@@ -56,6 +56,27 @@ Display* OpenDisplay();
 void CloseDisplay(Display* display);
 
 ////////////////////////////////////////////////////////////
+/// \brief Get the shared XIM context for the Display
+///
+/// This function increments the reference count of the XIM context,
+/// it must be matched with a call to CloseXIM.
+///
+/// It must be called with a display already opened.
+///
+/// \return XIM handle (a pointer) of the context
+///
+////////////////////////////////////////////////////////////
+XIM OpenXIM();
+
+////////////////////////////////////////////////////////////
+/// \brief Release a reference to the shared XIM context
+///
+/// \param xim XIM context to release
+///
+////////////////////////////////////////////////////////////
+void CloseXIM(XIM xim);
+
+////////////////////////////////////////////////////////////
 /// \brief Get the atom with the specified name
 ///
 /// \param name         Name of the atom
