@@ -18,10 +18,14 @@
 /// \param Window Target window to initialize
 ///
 ////////////////////////////////////////////////////////////
-void initialize(sf::Window& window)
+[[nodiscard]] bool initialize(sf::Window& window)
 {
     // Activate the window
-    window.setActive();
+    if (!window.setActive())
+    {
+        std::cerr << "Failed to set the window as active" << std::endl;
+        return false;
+    }
 
     // Setup OpenGL states
     // Set color and depth clear value
@@ -53,6 +57,8 @@ void initialize(sf::Window& window)
     // Enable position and texture coordinates vertex components
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+
+    return true;
 }
 
 ////////////////////////////////////////////////////////////
@@ -63,10 +69,14 @@ void initialize(sf::Window& window)
 /// \param elapsedTime Time elapsed since the last draw
 ///
 ////////////////////////////////////////////////////////////
-void draw(sf::Window& window, float elapsedTime)
+[[nodiscard]] bool draw(sf::Window& window, float elapsedTime)
 {
     // Activate the window
-    window.setActive();
+    if (!window.setActive())
+    {
+        std::cerr << "Failed to set the window as active" << std::endl;
+        return false;
+    }
 
     // Clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,6 +140,8 @@ void draw(sf::Window& window, float elapsedTime)
     glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube);
     glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube + 3);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    return true;
 }
 
 
@@ -191,7 +203,11 @@ int main()
     sf::Clock clock;
 
     // Load OpenGL or OpenGL ES entry points using glad
-    sfmlView1.setActive();
+    if (!sfmlView1.setActive())
+    {
+        std::cerr << "Failed to set view 1 as active" << std::endl;
+        return EXIT_FAILURE;
+    }
 
 #ifdef SFML_OPENGL_ES
     gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
@@ -200,8 +216,17 @@ int main()
 #endif
 
     // Initialize our views
-    initialize(sfmlView1);
-    initialize(sfmlView2);
+    if (!initialize(sfmlView1))
+    {
+        std::cerr << "Failed to initialize view 1" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (!initialize(sfmlView2))
+    {
+        std::cerr << "Failed to initialize view 2" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // Start the event loop
     bool running = true;
@@ -224,8 +249,18 @@ int main()
         }
 
         // Draw something into our views
-        draw(sfmlView1, clock.getElapsedTime().asSeconds());
-        draw(sfmlView2, clock.getElapsedTime().asSeconds() * 0.3f);
+        if (!draw(sfmlView1, clock.getElapsedTime().asSeconds()))
+        {
+            std::cerr << "Failed to draw on view 1" << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        if (!draw(sfmlView2, clock.getElapsedTime().asSeconds() * 0.3f))
+        {
+            std::cerr << "Failed to draw on view 2" << std::endl;
+            return EXIT_FAILURE;
+        }
+
 
         // Display the views on screen
         sfmlView1.display();

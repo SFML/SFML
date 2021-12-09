@@ -524,14 +524,17 @@ bool RenderTextureImplFBO::activate(bool active)
         if (!m_context)
             m_context = new Context;
 
-        m_context->setActive(true);
+        if (!m_context->setActive(true))
+        {
+            err() << "Failed to set context as active during render texture activation" << std::endl;
+            return false;
+        }
 
         contextId = Context::getActiveContextId();
 
         if (!contextId)
         {
             err() << "Impossible to activate render texture (failed to create backup context)" << std::endl;
-
             return false;
         }
     }
