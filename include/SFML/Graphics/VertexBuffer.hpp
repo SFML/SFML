@@ -134,7 +134,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(std::size_t vertexCount);
+    [[nodiscard]] bool create(std::size_t vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the vertex count
@@ -162,7 +162,7 @@ public:
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool update(const Vertex* vertices);
+    [[nodiscard]] bool update(const Vertex* vertices);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the buffer from an array of vertices
@@ -195,7 +195,7 @@ public:
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset);
+    [[nodiscard]] bool update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the contents of another buffer into this buffer
@@ -205,7 +205,7 @@ public:
     /// \return True if the copy was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool update(const VertexBuffer& vertexBuffer);
+    [[nodiscard]] bool update(const VertexBuffer& vertexBuffer);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
