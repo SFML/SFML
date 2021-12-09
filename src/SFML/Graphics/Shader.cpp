@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/System/Err.hpp"
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -106,7 +107,7 @@ namespace
 
             if (stream.seek(0) == -1)
             {
-                sf::err() << "Failed to seek shader stream" << std::endl;
+                sf::err() << "Failed to seek shader stream" << sf::errEndl;
                 return false;
             }
 

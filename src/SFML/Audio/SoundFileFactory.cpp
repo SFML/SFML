@@ -82,7 +82,7 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     {
         if (stream.seek(0) == -1)
         {
-            err() << "Failed to seek sound stream" << std::endl;
+            err() << "Failed to seek sound stream" << errEndl;
             return nullptr;
         }
 
@@ -111,7 +111,7 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     {
         if (stream.seek(0) == -1)
         {
-            err() << "Failed to seek sound stream" << std::endl;
+            err() << "Failed to seek sound stream" << errEndl;
             return nullptr;
         }
 
@@ -136,7 +136,7 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     {
         if (stream.seek(0) == -1)
         {
-            err() << "Failed to seek sound stream" << std::endl;
+            err() << "Failed to seek sound stream" << errEndl;
             return nullptr;
         }
 

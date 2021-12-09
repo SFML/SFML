@@ -240,7 +240,7 @@ void Window::initialize()
     // Activate the window
     if (!setActive())
     {
-        err() << "Failed to set window as active during initialization" << std::endl;
+        err() << "Failed to set window as active during initialization" << errEndl;
     }
 
     WindowBase::initialize();

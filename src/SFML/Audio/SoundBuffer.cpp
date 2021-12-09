@@ -60,7 +60,7 @@ m_sounds  () // don't copy the attached sounds
     // Update the internal buffer with the new samples
     if (!update(copy.getChannelCount(), copy.getSampleRate()))
     {
-        err() << "Failed to update copy-constructed sound buffer" << std::endl;
+        err() << "Failed to update copy-constructed sound buffer" << errEndl;
     }
 }
 

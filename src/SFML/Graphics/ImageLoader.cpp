@@ -59,7 +59,7 @@ namespace
 
         if (stream->seek(stream->tell() + size) == -1)
         {
-            sf::err() << "Failed to seek image loader input stream" << std::endl;
+            sf::err() << "Failed to seek image loader input stream" << sf::errEndl;
         }
     }
     int eof(void* user)
@@ -204,7 +204,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     // Make sure that the stream's reading position is at the beginning
     if (stream.seek(0) == -1)
     {
-        err() << "Failed to seek image stream" << std::endl;
+        err() << "Failed to seek image stream" << errEndl;
         return false;
     }
 

@@ -280,7 +280,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Make sure that the stream's reading position is at the beginning
     if (stream.seek(0) == -1)
     {
-        err() << "Failed to seek font stream" << std::endl;
+        err() << "Failed to seek font stream" << errEndl;
         return false;
     }
 
@@ -776,7 +776,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 Texture newTexture;
                 if (!newTexture.create(textureWidth * 2, textureHeight * 2))
                 {
-                    err() << "Failed to create new page texture" << std::endl;
+                    err() << "Failed to create new page texture" << errEndl;
                     return IntRect(0, 0, 2, 2);
                 }
 
@@ -865,7 +865,7 @@ nextRow(3)
     // Create the texture
     if (!texture.loadFromImage(image))
     {
-        err() << "Failed to load font page texture" << std::endl;
+        err() << "Failed to load font page texture" << errEndl;
     }
 
     texture.setSmooth(true);
