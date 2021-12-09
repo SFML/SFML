@@ -76,7 +76,7 @@ public:
     /// \return Value of the variable for the current thread
     ///
     ////////////////////////////////////////////////////////////
-    void* getValue() const;
+    [[nodiscard]] void* getValue() const;
 
 private:
 

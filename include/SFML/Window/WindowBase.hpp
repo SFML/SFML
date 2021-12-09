@@ -142,7 +142,7 @@ public:
     /// \return True if the window is open, false if it has been closed
     ///
     ////////////////////////////////////////////////////////////
-    bool isOpen() const;
+    [[nodiscard]] bool isOpen() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Pop the event on top of the event queue, if any, and return it
@@ -204,7 +204,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    Vector2i getPosition() const;
+    [[nodiscard]] Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -231,7 +231,7 @@ public:
     /// \see setSize
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const;
+    [[nodiscard]] Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -378,7 +378,7 @@ public:
     /// \see requestFocus
     ///
     ////////////////////////////////////////////////////////////
-    bool hasFocus() const;
+    [[nodiscard]] bool hasFocus() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -392,7 +392,7 @@ public:
     /// \return System handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    WindowHandle getSystemHandle() const;
+    [[nodiscard]] WindowHandle getSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a Vulkan rendering surface

@@ -106,7 +106,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool contains(T x, T y) const;
+    [[nodiscard]] bool contains(T x, T y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -121,7 +121,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool contains(const Vector2<T>& point) const;
+    [[nodiscard]] bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -133,7 +133,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool intersects(const Rect<T>& rectangle) const;
+    [[nodiscard]] bool intersects(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -159,7 +159,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2<T> getPosition() const;
+    [[nodiscard]] sf::Vector2<T> getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -169,7 +169,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2<T> getSize() const;
+    [[nodiscard]] sf::Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -250,7 +250,7 @@ public:
     /// \see toWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
-    std::string toAnsiString(const std::locale& locale = std::locale()) const;
+    [[nodiscard]] std::string toAnsiString(const std::locale& locale = std::locale()) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a wide string
@@ -263,7 +263,7 @@ public:
     /// \see toAnsiString, operator std::wstring
     ///
     ////////////////////////////////////////////////////////////
-    std::wstring toWideString() const;
+    [[nodiscard]] std::wstring toWideString() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-8 string
@@ -273,7 +273,7 @@ public:
     /// \see toUtf16, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint8> toUtf8() const;
+    [[nodiscard]] std::basic_string<Uint8> toUtf8() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string
@@ -283,7 +283,7 @@ public:
     /// \see toUtf8, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint16> toUtf16() const;
+    [[nodiscard]] std::basic_string<Uint16> toUtf16() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-32 string
@@ -296,7 +296,7 @@ public:
     /// \see toUtf8, toUtf16
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint32> toUtf32() const;
+    [[nodiscard]] std::basic_string<Uint32> toUtf32() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -362,7 +362,7 @@ public:
     /// \see isEmpty
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getSize() const;
+    [[nodiscard]] std::size_t getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the string is empty or not
@@ -372,7 +372,7 @@ public:
     /// \see clear, getSize
     ///
     ////////////////////////////////////////////////////////////
-    bool isEmpty() const;
+    [[nodiscard]] bool isEmpty() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Erase one or more characters from the string
@@ -410,7 +410,7 @@ public:
     /// \return Position of \a str in the string, or String::InvalidPos if not found
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t find(const String& str, std::size_t start = 0) const;
+    [[nodiscard]] std::size_t find(const String& str, std::size_t start = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Replace a substring with another string
@@ -453,7 +453,7 @@ public:
     /// \return String object containing a substring of this object
     ///
     ////////////////////////////////////////////////////////////
-    String substring(std::size_t position, std::size_t length = InvalidPos) const;
+    [[nodiscard]] String substring(std::size_t position, std::size_t length = InvalidPos) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a pointer to the C-style array of characters
@@ -466,7 +466,7 @@ public:
     /// \return Read-only pointer to the array of characters
     ///
     ////////////////////////////////////////////////////////////
-    const Uint32* getData() const;
+    [[nodiscard]] const Uint32* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
@@ -486,7 +486,7 @@ public:
     /// \see end
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator begin() const;
+    [[nodiscard]] ConstIterator begin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the end of the string
@@ -514,7 +514,7 @@ public:
     /// \see begin
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator end() const;
+    [[nodiscard]] ConstIterator end() const;
 
 private:
 

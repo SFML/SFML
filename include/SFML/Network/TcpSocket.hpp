@@ -63,7 +63,7 @@ public:
     /// \see connect, getRemotePort
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short getLocalPort() const;
+    [[nodiscard]] unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of the connected peer
@@ -76,7 +76,7 @@ public:
     /// \see getRemotePort
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress getRemoteAddress() const;
+    [[nodiscard]] IpAddress getRemoteAddress() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the port of the connected peer to which
@@ -89,7 +89,7 @@ public:
     /// \see getRemoteAddress
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short getRemotePort() const;
+    [[nodiscard]] unsigned short getRemotePort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Connect the socket to a remote peer

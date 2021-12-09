@@ -75,7 +75,7 @@ public:
     /// \return Color represented as a 32-bit unsigned integer
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 toInteger() const;
+    [[nodiscard]] Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data

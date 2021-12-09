@@ -69,7 +69,7 @@ public:
     /// \return Value of the variable for this thread
     ///
     ////////////////////////////////////////////////////////////
-    void* getValue() const;
+    [[nodiscard]] void* getValue() const;
 
 private:
 

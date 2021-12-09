@@ -156,7 +156,7 @@ public:
         /// \return String containing the request, ready to be sent
         ///
         ////////////////////////////////////////////////////////////
-        std::string prepare() const;
+        [[nodiscard]] std::string prepare() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the request defines a field
@@ -168,7 +168,7 @@ public:
         /// \return True if the field exists, false otherwise
         ///
         ////////////////////////////////////////////////////////////
-        bool hasField(const std::string& field) const;
+        [[nodiscard]] bool hasField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -254,7 +254,7 @@ public:
         /// \return Value of the field, or empty string if not found
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& getField(const std::string& field) const;
+        [[nodiscard]] const std::string& getField(const std::string& field) const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the response status code
@@ -267,7 +267,7 @@ public:
         /// \return Status code of the response
         ///
         ////////////////////////////////////////////////////////////
-        Status getStatus() const;
+        [[nodiscard]] Status getStatus() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the major HTTP version number of the response
@@ -277,7 +277,7 @@ public:
         /// \see getMinorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
-        unsigned int getMajorHttpVersion() const;
+        [[nodiscard]] unsigned int getMajorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the minor HTTP version number of the response
@@ -287,7 +287,7 @@ public:
         /// \see getMajorHttpVersion
         ///
         ////////////////////////////////////////////////////////////
-        unsigned int getMinorHttpVersion() const;
+        [[nodiscard]] unsigned int getMinorHttpVersion() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the body of the response
@@ -301,7 +301,7 @@ public:
         /// \return The response body
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& getBody() const;
+        [[nodiscard]] const std::string& getBody() const;
 
     private:
 

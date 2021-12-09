@@ -94,7 +94,7 @@ public:
     /// \return True if the video mode is valid for fullscreen mode
     ///
     ////////////////////////////////////////////////////////////
-    bool isValid() const;
+    [[nodiscard]] bool isValid() const;
 
     ////////////////////////////////////////////////////////////
     // Member data

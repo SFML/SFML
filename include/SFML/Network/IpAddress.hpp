@@ -120,7 +120,7 @@ public:
     /// \see toInteger
     ///
     ////////////////////////////////////////////////////////////
-    std::string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get an integer representation of the address
@@ -136,7 +136,7 @@ public:
     /// \see toString
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 toInteger() const;
+    [[nodiscard]] Uint32 toInteger() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's local address

@@ -57,7 +57,7 @@ public:
     /// \see asMilliseconds, asMicroseconds
     ///
     ////////////////////////////////////////////////////////////
-    float asSeconds() const;
+    [[nodiscard]] float asSeconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a number of milliseconds
@@ -67,7 +67,7 @@ public:
     /// \see asSeconds, asMicroseconds
     ///
     ////////////////////////////////////////////////////////////
-    Int32 asMilliseconds() const;
+    [[nodiscard]] Int32 asMilliseconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a number of microseconds
@@ -77,7 +77,7 @@ public:
     /// \see asSeconds, asMilliseconds
     ///
     ////////////////////////////////////////////////////////////
-    Int64 asMicroseconds() const;
+    [[nodiscard]] Int64 asMicroseconds() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data

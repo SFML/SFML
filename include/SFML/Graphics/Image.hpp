@@ -153,7 +153,7 @@ public:
     /// \see create, loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool saveToFile(const std::string& filename) const;
+    [[nodiscard]] bool saveToFile(const std::string& filename) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the image to a buffer in memory
@@ -179,7 +179,7 @@ public:
     /// \return Size of the image, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const;
+    [[nodiscard]] Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a transparency mask from a specified color-key
@@ -247,7 +247,7 @@ public:
     /// \see setPixel
     ///
     ////////////////////////////////////////////////////////////
-    Color getPixel(unsigned int x, unsigned int y) const;
+    [[nodiscard]] Color getPixel(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only pointer to the array of pixels
@@ -262,7 +262,7 @@ public:
     /// \return Read-only pointer to the array of pixels
     ///
     ////////////////////////////////////////////////////////////
-    const Uint8* getPixelsPtr() const;
+    [[nodiscard]] const Uint8* getPixelsPtr() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Flip the image horizontally (left <-> right)

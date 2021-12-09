@@ -80,7 +80,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getSystemHandle() const;
+    [[nodiscard]] virtual WindowHandle getSystemHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -88,7 +88,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i getPosition() const;
+    [[nodiscard]] virtual Vector2i getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -104,7 +104,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const;
+    [[nodiscard]] virtual Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -185,7 +185,7 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const;
+    [[nodiscard]] virtual bool hasFocus() const;
 
 protected:
 
