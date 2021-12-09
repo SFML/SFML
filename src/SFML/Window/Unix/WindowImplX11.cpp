@@ -2036,12 +2036,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             {
                 Event event;
 
-                event.type             = Event::MouseWheelMoved;
-                event.mouseWheel.delta = (button == Button4) ? 1 : -1;
-                event.mouseWheel.x     = windowEvent.xbutton.x;
-                event.mouseWheel.y     = windowEvent.xbutton.y;
-                pushEvent(event);
-
                 event.type                   = Event::MouseWheelScrolled;
                 event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
                 event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
