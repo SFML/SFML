@@ -75,7 +75,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool setActive(bool active);
+    [[nodiscard]] bool setActive(bool active);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the context

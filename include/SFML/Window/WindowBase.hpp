@@ -167,7 +167,7 @@ public:
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    bool pollEvent(Event& event);
+    [[nodiscard]] bool pollEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -194,7 +194,7 @@ public:
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    bool waitEvent(Event& event);
+    [[nodiscard]] bool waitEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -404,7 +404,7 @@ public:
     /// \return True if surface creation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator = nullptr);
+    [[nodiscard]] bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator = nullptr);
 
 protected:
 
@@ -443,7 +443,7 @@ private:
     /// \param event Event to filter
     ///
     ////////////////////////////////////////////////////////////
-    bool filterEvent(const Event& event);
+    [[nodiscard]] bool filterEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform some common internal initializations
