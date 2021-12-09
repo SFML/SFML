@@ -56,7 +56,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderTextureImplDefault();
+    ~RenderTextureImplDefault() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -79,7 +79,7 @@ private:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings);
+    bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -89,7 +89,7 @@ private:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
+    bool activate(bool active) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
@@ -100,7 +100,7 @@ private:
     /// \return True if the render-texture use sRGB encoding, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool isSrgb() const;
+    bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -108,7 +108,7 @@ private:
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void updateTexture(unsigned textureId);
+    void updateTexture(unsigned textureId) override;
 
     ////////////////////////////////////////////////////////////
     // Member data

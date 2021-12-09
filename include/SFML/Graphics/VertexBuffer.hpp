@@ -116,7 +116,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~VertexBuffer();
+    ~VertexBuffer() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the vertex buffer
@@ -327,7 +327,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void draw(RenderTarget& target, RenderStates states) const;
+    void draw(RenderTarget& target, RenderStates states) const override;
 
 private:
 

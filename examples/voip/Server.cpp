@@ -71,7 +71,7 @@ private:
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onGetData(sf::SoundStream::Chunk& data)
+    bool onGetData(sf::SoundStream::Chunk& data) override
     {
         // We have reached the end of the buffer and all audio data have been played: we can stop playback
         if ((m_offset >= m_samples.size()) && m_hasFinished)
@@ -102,7 +102,7 @@ private:
     /// /see SoundStream::OnSeek
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onSeek(sf::Time timeOffset)
+    void onSeek(sf::Time timeOffset) override
     {
         m_offset = static_cast<std::size_t>(timeOffset.asMilliseconds()) * getSampleRate() * getChannelCount() / 1000;
     }

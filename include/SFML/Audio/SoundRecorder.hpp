@@ -365,7 +365,7 @@ private:
 ///         stop();
 ///     }
 ///
-///     virtual bool onStart() // optional
+///     bool onStart() override // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts
 ///         ...
@@ -374,7 +374,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount)
+///     bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...
@@ -383,7 +383,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     virtual void onStop() // optional
+///     void onStop() override // optional
 ///     {
 ///         // Clean up whatever has to be done after the capture ends
 ///         ...

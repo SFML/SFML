@@ -514,7 +514,7 @@ private:
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     virtual const void* onSend(std::size_t& size)
+///     const void* onSend(std::size_t& size) override
 ///     {
 ///         const void* srcData = getData();
 ///         std::size_t srcSize = getDataSize();
@@ -522,7 +522,7 @@ private:
 ///         return MySuperZipFunction(srcData, srcSize, &size);
 ///     }
 ///
-///     virtual void onReceive(const void* data, std::size_t size)
+///     void onReceive(const void* data, std::size_t size) override
 ///     {
 ///         std::size_t dstSize;
 ///         const void* dstData = MySuperUnzipFunction(data, size, &dstSize);

@@ -36,7 +36,7 @@ template <typename T>
 struct ThreadFunctor : ThreadFunc
 {
     ThreadFunctor(T functor) : m_functor(functor) {}
-    virtual void run() {m_functor();}
+    void run() override {m_functor();}
     T m_functor;
 };
 
@@ -45,7 +45,7 @@ template <typename F, typename A>
 struct ThreadFunctorWithArg : ThreadFunc
 {
     ThreadFunctorWithArg(F function, A arg) : m_function(function), m_arg(arg) {}
-    virtual void run() {m_function(m_arg);}
+    void run() override {m_function(m_arg);}
     F m_function;
     A m_arg;
 };
@@ -55,7 +55,7 @@ template <typename C>
 struct ThreadMemberFunc : ThreadFunc
 {
     ThreadMemberFunc(void(C::*function)(), C* object) : m_function(function), m_object(object) {}
-    virtual void run() {(m_object->*m_function)();}
+    void run() override {(m_object->*m_function)();}
     void(C::*m_function)();
     C* m_object;
 };
