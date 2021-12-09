@@ -372,14 +372,14 @@ Image Texture::copyToImage() const
         // Then we copy the useful pixels from the temporary array to the final one
         const Uint8* src = allPixels.data();
         Uint8* dst = pixels.data();
-        unsigned int srcPitch = m_actualSize.x * 4;
+        int srcPitch = static_cast<int>(m_actualSize.x * 4);
         unsigned int dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
         {
-            src += srcPitch * (m_size.y - 1);
-            srcPitch = UINT_MAX - srcPitch + 1;
+            src += static_cast<unsigned int>(srcPitch * static_cast<int>((m_size.y - 1)));
+            srcPitch = -srcPitch;
         }
 
         for (unsigned int i = 0; i < m_size.y; ++i)
