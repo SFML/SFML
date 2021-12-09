@@ -80,7 +80,12 @@ SoundFileReader* SoundFileFactory::createReaderFromFilename(const std::string& f
     // Test the filename in all the registered factories
     for (const ReaderFactory& readerFactory : s_readers)
     {
-        stream.seek(0);
+        if (stream.seek(0) == -1)
+        {
+            err() << "Failed to seek sound stream" << std::endl;
+            return nullptr;
+        }
+
         if (readerFactory.check(stream))
             return readerFactory.create();
     }
@@ -104,7 +109,12 @@ SoundFileReader* SoundFileFactory::createReaderFromMemory(const void* data, std:
     // Test the stream for all the registered factories
     for (const ReaderFactory& readerFactory : s_readers)
     {
-        stream.seek(0);
+        if (stream.seek(0) == -1)
+        {
+            err() << "Failed to seek sound stream" << std::endl;
+            return nullptr;
+        }
+
         if (readerFactory.check(stream))
             return readerFactory.create();
     }
@@ -124,7 +134,12 @@ SoundFileReader* SoundFileFactory::createReaderFromStream(InputStream& stream)
     // Test the stream for all the registered factories
     for (const ReaderFactory& readerFactory : s_readers)
     {
-        stream.seek(0);
+        if (stream.seek(0) == -1)
+        {
+            err() << "Failed to seek sound stream" << std::endl;
+            return nullptr;
+        }
+
         if (readerFactory.check(stream))
             return readerFactory.create();
     }
