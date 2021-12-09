@@ -120,7 +120,7 @@ public:
     /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool wait(Time timeout = Time::Zero);
+    [[nodiscard]] bool wait(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Test a socket to know if it is ready to receive data

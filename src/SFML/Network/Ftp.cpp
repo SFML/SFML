@@ -150,7 +150,7 @@ const std::vector<std::string>& Ftp::ListingResponse::getListing() const
 ////////////////////////////////////////////////////////////
 Ftp::~Ftp()
 {
-    disconnect();
+    (void) disconnect();
 }
 
 

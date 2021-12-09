@@ -110,7 +110,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
+    [[nodiscard]] Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disconnect the socket from its remote peer
@@ -139,7 +139,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const void* data, std::size_t size);
+    [[nodiscard]] Status send(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to the remote peer
@@ -155,7 +155,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const void* data, std::size_t size, std::size_t& sent);
+    [[nodiscard]] Status send(const void* data, std::size_t size, std::size_t& sent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from the remote peer
@@ -173,7 +173,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(void* data, std::size_t size, std::size_t& received);
+    [[nodiscard]] Status receive(void* data, std::size_t size, std::size_t& received);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
@@ -191,7 +191,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(Packet& packet);
+    [[nodiscard]] Status send(Packet& packet);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a formatted packet of data from the remote peer
@@ -207,7 +207,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(Packet& packet);
+    [[nodiscard]] Status receive(Packet& packet);
 
 private:
 

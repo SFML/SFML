@@ -409,7 +409,7 @@ public:
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    Response sendRequest(const Request& request, Time timeout = Time::Zero);
+    [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero);
 
 private:
 
