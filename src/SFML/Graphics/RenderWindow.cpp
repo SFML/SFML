@@ -103,19 +103,6 @@ bool RenderWindow::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-Image RenderWindow::capture() const
-{
-    Vector2u windowSize = getSize();
-
-    Texture texture;
-    texture.create(windowSize.x, windowSize.y);
-    texture.update(*this);
-
-    return texture.copyToImage();
-}
-
-
-////////////////////////////////////////////////////////////
 void RenderWindow::onCreate()
 {
     if (priv::RenderTextureImplFBO::isAvailable())
