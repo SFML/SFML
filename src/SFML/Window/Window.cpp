@@ -238,7 +238,10 @@ void Window::initialize()
     m_clock.restart();
 
     // Activate the window
-    setActive();
+    if (!setActive())
+    {
+        err() << "Failed to set window as active during initialization" << std::endl;
+    }
 
     WindowBase::initialize();
 }

@@ -166,7 +166,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -182,7 +182,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSystem(Type type);
+    [[nodiscard]] bool loadFromSystem(Type type);
 
 private:
 

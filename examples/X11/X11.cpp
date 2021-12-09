@@ -25,7 +25,7 @@
     // Activate the window
     if (!window.setActive())
     {
-        std::cerr << "Failed to set window to active" << std::endl;
+        std::cerr << "Failed to set the window as active" << std::endl;
         return false;
     }
 
@@ -78,7 +78,7 @@
     // Activate the window
     if (!window.setActive())
     {
-        std::cerr << "Failed to set window to active" << std::endl;
+        std::cerr << "Failed to set the window as active" << std::endl;
         return false;
     }
 
@@ -207,7 +207,11 @@ int main()
     sf::Clock clock;
 
     // Load OpenGL or OpenGL ES entry points using glad
-    sfmlView1.setActive();
+    if (!sfmlView1.setActive())
+    {
+        std::cerr << "Failed to set view 1 as active" << std::endl;
+        return EXIT_FAILURE;
+    }
 
 #ifdef SFML_OPENGL_ES
     gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));

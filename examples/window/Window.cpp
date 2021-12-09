@@ -2,6 +2,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
+#include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>
@@ -31,7 +32,7 @@ int main()
     // Make it the active window for OpenGL calls
     if (!window.setActive())
     {
-        std::cerr << "Failed to set window to active" << std::endl;
+        std::cerr << "Failed to set the window as active" << std::endl;
         return EXIT_FAILURE;
     }
 
