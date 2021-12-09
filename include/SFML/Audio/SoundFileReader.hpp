@@ -43,7 +43,6 @@ class InputStream;
 class SFML_AUDIO_API SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Structure holding the audio properties of a sound file
     ///
@@ -136,19 +135,20 @@ public:
 ///         // return true if the reader can handle the format
 ///     }
 ///
-///     virtual bool open(sf::InputStream& stream, Info& info)
+///     bool open(sf::InputStream& stream, Info& info) override
 ///     {
 ///         // read the sound file header and fill the sound attributes
 ///         // (channel count, sample count and sample rate)
 ///         // return true on success
 ///     }
 ///
-///     virtual void seek(sf::Uint64 sampleOffset)
+///     void seek(sf::Uint64 sampleOffset) override
 ///     {
-///         // advance to the sampleOffset-th sample from the beginning of the sound
+///         // advance to the sampleOffset-th sample from the beginning of the
+///         sound
 ///     }
 ///
-///     virtual sf::Uint64 read(sf::Int16* samples, sf::Uint64 maxCount)
+///     sf::Uint64 read(sf::Int16* samples, sf::Uint64 maxCount) override
 ///     {
 ///         // read up to 'maxCount' samples into the 'samples' array,
 ///         // convert them (for example from normalized float) if they are not stored

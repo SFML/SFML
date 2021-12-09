@@ -66,6 +66,7 @@ function(set_file_warnings)
         -Wdouble-promotion # warn if float is implicit promoted to double
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
         -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement
+        -Wsuggest-override # warn when 'override' could be used on a member function overriding a virtual function
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
 
