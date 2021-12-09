@@ -189,11 +189,11 @@ int main()
             {
                 switch (event.key.code)
                 {
-                    case sf::Keyboard::Return: generateTerrain(terrainStagingBuffer.data()); break;
-                    case sf::Keyboard::Down:   currentSetting = (currentSetting + 1) % settingCount; break;
-                    case sf::Keyboard::Up:     currentSetting = (currentSetting + settingCount - 1) % settingCount; break;
-                    case sf::Keyboard::Left:   *(settings[currentSetting].value) -= 0.1f; break;
-                    case sf::Keyboard::Right:  *(settings[currentSetting].value) += 0.1f; break;
+                    case sf::Keyboard::Enter: generateTerrain(terrainStagingBuffer.data()); break;
+                    case sf::Keyboard::Down:  currentSetting = (currentSetting + 1) % settingCount; break;
+                    case sf::Keyboard::Up:    currentSetting = (currentSetting + settingCount - 1) % settingCount; break;
+                    case sf::Keyboard::Left:  *(settings[currentSetting].value) -= 0.1f; break;
+                    case sf::Keyboard::Right: *(settings[currentSetting].value) += 0.1f; break;
                     default: break;
                 }
             }
