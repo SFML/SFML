@@ -1927,7 +1927,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     if (status == XBufferOverflow)
                         err() << "A TextEntered event has more than 64 bytes of UTF-8 input, and "
                                  "has been discarded\nThis means either you have typed a very long string "
-                                 "(more than 20 chars), or your input method is broken in obscure ways." << std::endl;
+                                 "(more than 20 chars), or your input method is broken in obscure ways." << errEndl;
                     else if (status == XLookupChars)
                     {
                         // There might be more than 1 characters in this event,
