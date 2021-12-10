@@ -6,7 +6,7 @@
 #ifndef SFML_TESTUTILITIES_SYSTEM_HPP
 #define SFML_TESTUTILITIES_SYSTEM_HPP
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>

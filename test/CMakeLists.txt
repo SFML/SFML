@@ -1,7 +1,16 @@
+cmake_minimum_required(VERSION 3.14)
+
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
+include(FetchContent)
+FetchContent_Declare(Catch2
+    GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
+    GIT_TAG v2.13.7)
+FetchContent_MakeAvailable(Catch2)
+
 add_library(sfml-test-main STATIC "${SRCROOT}/CatchMain.cpp")
-target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" "${SRCROOT}/TestUtilities")
+target_include_directories(sfml-test-main PUBLIC "${SRCROOT}/TestUtilities")
+target_link_libraries(sfml-test-main PUBLIC Catch2::Catch2)
 target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
 # System is always built
