@@ -28,7 +28,12 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
+
 #include <tchar.h>
 #include <regstr.h>
 #include <algorithm>

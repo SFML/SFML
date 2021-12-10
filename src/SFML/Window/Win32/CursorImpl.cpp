@@ -29,6 +29,11 @@
 #include <SFML/System/Err.hpp>
 #include <cstring>
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
 namespace sf
 {
 namespace priv
@@ -188,7 +193,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 void CursorImpl::release()
 {
     if (m_cursor && !m_systemCursor) {
-        DestroyCursor(m_cursor);
+        DestroyCursor(static_cast<HCURSOR>(m_cursor));
         m_cursor = nullptr;
     }
 }

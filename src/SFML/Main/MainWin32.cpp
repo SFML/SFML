@@ -39,7 +39,12 @@
 
 #ifdef SFML_SYSTEM_WINDOWS
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
+
+#include <cstdlib>
 
 extern int main(int argc, char* argv[]);
 

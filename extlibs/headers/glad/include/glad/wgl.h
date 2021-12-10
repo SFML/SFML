@@ -28,6 +28,9 @@
 #ifndef SF_GLAD_WGL_H_
 #define SF_GLAD_WGL_H_
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <glad/gl.h>
 
