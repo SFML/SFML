@@ -35,7 +35,6 @@
 #include <SFML/Window/CursorImpl.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
-#include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
@@ -266,6 +265,7 @@ protected:
     virtual void processEvents() = 0;
 
 private:
+    struct JoystickStatesImpl;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events
@@ -282,11 +282,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event> m_events;                                              //!< Queue of available events
-    JoystickState     m_joystickStates[Joystick::Count];                     //!< Previous state of the joysticks
-    Vector3f          m_sensorValue[Sensor::Count];                          //!< Previous value of the sensors
-    float             m_joystickThreshold;                                   //!< Joystick threshold (minimum motion for "move" event to be generated)
-    float             m_previousAxes[Joystick::Count][Joystick::AxisCount];  //!< Position of each axis last time a move event triggered, in range [-100, 100]
+    std::queue<Event>   m_events;                                              //!< Queue of available events
+    JoystickStatesImpl* m_joystickStatesImpl;                                  //!< Previous state of the joysticks (PImpl)
+    Vector3f            m_sensorValue[Sensor::Count];                          //!< Previous value of the sensors
+    float               m_joystickThreshold;                                   //!< Joystick threshold (minimum motion for "move" event to be generated)
+    float               m_previousAxes[Joystick::Count][Joystick::AxisCount];  //!< Position of each axis last time a move event triggered, in range [-100, 100]
 };
 
 } // namespace priv

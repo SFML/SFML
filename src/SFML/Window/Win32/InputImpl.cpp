@@ -35,6 +35,10 @@
 #define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 
