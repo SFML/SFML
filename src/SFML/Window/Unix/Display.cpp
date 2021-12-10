@@ -89,7 +89,7 @@ void CloseDisplay(Display* display)
 ////////////////////////////////////////////////////////////
 XIM OpenXIM()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(sharedDisplay != nullptr);
 
@@ -127,7 +127,7 @@ XIM OpenXIM()
 ////////////////////////////////////////////////////////////
 void CloseXIM(XIM xim)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(xim == sharedXIM);
 
