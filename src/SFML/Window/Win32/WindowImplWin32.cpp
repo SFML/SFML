@@ -85,7 +85,7 @@ namespace
                 ProcessPerMonitorDpiAware = 2
             };
 
-            using SetProcessDpiAwarenessFuncType = HRESULT (*)(ProcessDpiAwareness);
+            using SetProcessDpiAwarenessFuncType = HRESULT (WINAPI *)(ProcessDpiAwareness);
             auto SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
 
             if (SetProcessDpiAwarenessFunc)
