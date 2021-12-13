@@ -40,6 +40,7 @@
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/LibraryLoader.hpp>
 #include <SFML/System/Utf.hpp>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc
@@ -71,58 +72,56 @@ namespace
 
     const GUID GUID_DEVINTERFACE_HID = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
 
+    bool trySetProcessDpiAwareShCore()
+    {
+        sf::LibraryLoader shCoreLibrary("Shcore.dll");
+
+        if (!shCoreLibrary.isLoaded())
+            return false;
+
+        enum ProcessDpiAwareness
+        {
+            ProcessDpiUnaware         = 0,
+            ProcessSystemDpiAware     = 1,
+            ProcessPerMonitorDpiAware = 2
+        };
+
+        using SetProcessDpiAwarenessFuncType = HRESULT (WINAPI *)(ProcessDpiAwareness);
+        SetProcessDpiAwarenessFuncType SetProcessDpiAwarenessFunc = nullptr;
+
+        if (!shCoreLibrary.getProcedureAddress(SetProcessDpiAwarenessFunc, "SetProcessDpiAwareness"))
+            return false;
+
+        return SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) != E_INVALIDARG;
+    }
+
+    bool trySetProcessDpiAwareUser32()
+    {
+        sf::LibraryLoader user32Library("user32.dll");
+
+        if (!user32Library.isLoaded())
+            return false;
+
+        using SetProcessDPIAwareFuncType = BOOL (WINAPI *)();
+        SetProcessDPIAwareFuncType SetProcessDPIAwareFunc = nullptr;
+
+        if (!user32Library.getProcedureAddress(SetProcessDPIAwareFunc, "SetProcessDPIAware"))
+            return false;
+
+        return SetProcessDPIAwareFunc();
+    }
+
     void setProcessDpiAware()
     {
         // Try SetProcessDpiAwareness first
-        HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
-
-        if (shCoreDll)
+        if (!trySetProcessDpiAwareShCore())
         {
-            enum ProcessDpiAwareness
+            // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
+            // is not available on this system
+            if (!trySetProcessDpiAwareUser32())
             {
-                ProcessDpiUnaware         = 0,
-                ProcessSystemDpiAware     = 1,
-                ProcessPerMonitorDpiAware = 2
-            };
-
-            using SetProcessDpiAwarenessFuncType = HRESULT (WINAPI *)(ProcessDpiAwareness);
-            auto SetProcessDpiAwarenessFunc = reinterpret_cast<SetProcessDpiAwarenessFuncType>(reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
-
-            if (SetProcessDpiAwarenessFunc)
-            {
-                // We only check for E_INVALIDARG because we would get
-                // E_ACCESSDENIED if the DPI was already set previously
-                // and S_OK means the call was successful
-                if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
-                {
-                    sf::err() << "Failed to set process DPI awareness" << std::endl;
-                }
-                else
-                {
-                    FreeLibrary(shCoreDll);
-                    return;
-                }
+                sf::err() << "Failed to set process DPI awareness" << std::endl;
             }
-
-            FreeLibrary(shCoreDll);
-        }
-
-        // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
-        // is not available on this system
-        HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
-
-        if (user32Dll)
-        {
-            using SetProcessDPIAwareFuncType = BOOL (WINAPI *)();
-            auto SetProcessDPIAwareFunc = reinterpret_cast<SetProcessDPIAwareFuncType>(reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
-
-            if (SetProcessDPIAwareFunc)
-            {
-                if (!SetProcessDPIAwareFunc())
-                    sf::err() << "Failed to set process DPI awareness" << std::endl;
-            }
-
-            FreeLibrary(user32Dll);
         }
     }
 }
