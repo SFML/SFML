@@ -30,6 +30,7 @@
 #include <SFML/Window/OSX/SFContext.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/LibraryLoader.hpp>
 #include <dlfcn.h>
 #include <stdint.h>
 
@@ -119,12 +120,18 @@ SFContext::~SFContext()
 GlFunctionPointer SFContext::getFunction(const char* name)
 {
     AutoreleasePool pool;
-    static void* image = nullptr;
+    static std::unique_ptr<LibraryLoader> openGlLibrary;
 
-    if (!image)
-        image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
+    if (!openGlLibrary)
+    {
+        auto localOpenGlLibrary = std::make_unique<LibraryLoader>("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL");
+        if (localOpenGlLibrary->isLoaded())
+        {
+            openGlLibrary = std::move(localOpenGlLibrary);
+        }
+    }
 
-    return (image ? reinterpret_cast<GlFunctionPointer>(reinterpret_cast<intptr_t>(dlsym(image, name))) : 0);
+    return (openGlLibrary ? openGlLibrary->getProcedureAddress(name) : nullptr);
 }
 
 
