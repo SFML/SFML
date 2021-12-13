@@ -27,10 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/ALCheck.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
 #include <algorithm>
+#include <mutex>
 
 
 namespace sf
@@ -179,7 +179,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
 ////////////////////////////////////////////////////////////
 bool Music::onGetData(SoundStream::Chunk& data)
 {
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     std::size_t toFill = m_samples.size();
     Uint64 currentOffset = m_file.getSampleOffset();
@@ -204,7 +204,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
 ////////////////////////////////////////////////////////////
 void Music::onSeek(Time timeOffset)
 {
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     m_file.seek(timeOffset);
 }
 
@@ -213,7 +213,7 @@ void Music::onSeek(Time timeOffset)
 Int64 Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     Uint64 currentOffset = m_file.getSampleOffset();
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset == m_loopSpan.offset + m_loopSpan.length))
     {

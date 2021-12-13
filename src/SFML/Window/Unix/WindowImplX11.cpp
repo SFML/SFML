@@ -31,10 +31,12 @@
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Sleep.hpp>
+
 #include <X11/Xlibint.h>
+#undef min // Defined by `Xlibint.h`, conflicts with standard headers
+#undef max // Defined by `Xlibint.h`, conflicts with standard headers
+
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
@@ -49,6 +51,7 @@
 #include <string>
 #include <cstring>
 #include <cassert>
+#include <mutex>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -68,7 +71,7 @@ namespace
     {
         sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
         std::vector<sf::priv::WindowImplX11*> allWindows;
-        sf::Mutex                             allWindowsMutex;
+        std::recursive_mutex                  allWindowsMutex;
         sf::String                            windowManagerName;
 
         sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
@@ -811,7 +814,7 @@ WindowImplX11::~WindowImplX11()
     CloseDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
-    Lock lock(allWindowsMutex);
+    std::scoped_lock lock(allWindowsMutex);
     allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
 }
 
@@ -1201,7 +1204,7 @@ void WindowImplX11::requestFocus()
     bool sfmlWindowFocused = false;
 
     {
-        Lock lock(allWindowsMutex);
+        std::scoped_lock lock(allWindowsMutex);
         for (sf::priv::WindowImplX11* windowPtr : allWindows)
         {
             if (windowPtr->hasFocus())
@@ -1658,7 +1661,7 @@ void WindowImplX11::initialize()
     XFlush(m_display);
 
     // Add this window to the global list of windows (required for focus request)
-    Lock lock(allWindowsMutex);
+    std::scoped_lock lock(allWindowsMutex);
     allWindows.push_back(this);
 }
 

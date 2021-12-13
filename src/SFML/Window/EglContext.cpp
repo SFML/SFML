@@ -30,8 +30,7 @@
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 #ifdef SFML_SYSTEM_ANDROID
     #include <SFML/System/Android/Activity.hpp>
 #endif
@@ -58,7 +57,7 @@ namespace
 
             // On Android, its native activity handles this for us
             sf::priv::ActivityStates& states = sf::priv::getActivity();
-            sf::Lock lock(states.mutex);
+            std::scoped_lock lock(states.mutex);
 
             return states.display;
 
@@ -144,7 +143,7 @@ m_config  (nullptr)
 
     // On Android, we must save the created context
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     states.context = this;
 

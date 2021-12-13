@@ -33,13 +33,12 @@
 #include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Window/Context.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
-#include <cassert>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <mutex>
 #include <unordered_map>
+#include <cassert>
 
 
 namespace
@@ -48,13 +47,13 @@ namespace
     namespace RenderTargetImpl
     {
         // Mutex to protect ID generation and our context-RenderTarget-map
-        sf::Mutex mutex;
+        std::recursive_mutex mutex;
 
         // Unique identifier, used for identifying RenderTargets when
         // tracking the currently active RenderTarget within a given context
         sf::Uint64 getUniqueId()
         {
-            sf::Lock lock(mutex);
+            std::scoped_lock lock(mutex);
 
             static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
 
@@ -402,7 +401,7 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        sf::Lock lock(RenderTargetImpl::mutex);
+        std::scoped_lock lock(RenderTargetImpl::mutex);
 
         Uint64 contextId = Context::getActiveContextId();
 
