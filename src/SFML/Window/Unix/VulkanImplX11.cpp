@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/VulkanImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <dlfcn.h>
+#include <SFML/System/LibraryLoader.hpp>
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
@@ -40,61 +40,33 @@ namespace
 {
     struct VulkanLibraryWrapper
     {
-        VulkanLibraryWrapper() :
-        library(nullptr)
-        {
-        }
-
-        ~VulkanLibraryWrapper()
-        {
-            if (library)
-                dlclose(library);
-        }
-
         // Try to load the library and all the required entry points
         bool loadLibrary()
         {
-            if (library)
+            if (libraryPtr)
                 return true;
 
-            library = dlopen("libvulkan.so.1", RTLD_LAZY);
+            auto localLibraryPtr = std::make_unique<sf::LibraryLoader>("libvulkan.so.1");
 
-            if (!library)
+            if (!localLibraryPtr->isLoaded())
                 return false;
 
-            if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
-            {
-                dlclose(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
                 return false;
-            }
 
-            if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
-            {
-                dlclose(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
                 return false;
-            }
 
-            if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
-            {
-                dlclose(library);
-                library = nullptr;
+            if (!localLibraryPtr->getProcedureAddress(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
                 return false;
-            }
+
+            libraryPtr = std::move(localLibraryPtr);
 
             return true;
         }
 
-        template<typename T>
-        bool loadEntryPoint(T& entryPoint, const char* name)
-        {
-            entryPoint = reinterpret_cast<T>(dlsym(library, name));
-
-            return (entryPoint != nullptr);
-        }
-
-        void* library;
+        using LibraryLoaderPtr = std::unique_ptr<sf::LibraryLoader>;
+        LibraryLoaderPtr libraryPtr;
 
         PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
         PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
@@ -171,9 +143,13 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 {
     if (!isAvailable(false))
-        return 0;
+        return nullptr;
 
-    return reinterpret_cast<VulkanFunctionPointer>(dlsym(wrapper.library, name));
+    VulkanFunctionPointer procedureAddress = nullptr;
+    if (!wrapper.libraryPtr->getProcedureAddress(procedureAddress, name))
+        return nullptr;
+
+    return procedureAddress;
 }
 
 
