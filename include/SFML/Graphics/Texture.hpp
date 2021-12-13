@@ -120,8 +120,10 @@ public:
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.loadFromFile(filename);
-    /// texture.loadFromImage(image, area);
+    /// if (!image.loadFromFile(filename))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
@@ -151,8 +153,10 @@ public:
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.loadFromMemory(data, size);
-    /// texture.loadFromImage(image, area);
+    /// if (!image.loadFromMemory(data, size))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
@@ -183,8 +187,10 @@ public:
     /// This function is a shortcut for the following code:
     /// \code
     /// sf::Image image;
-    /// image.loadFromStream(stream);
-    /// texture.loadFromImage(image, area);
+    /// if (!image.loadFromStream(stream))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
     /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle

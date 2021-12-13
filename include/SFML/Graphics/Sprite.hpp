@@ -265,7 +265,10 @@ private:
 /// \code
 /// // Declare and load a texture
 /// sf::Texture texture;
-/// texture.loadFromFile("texture.png");
+/// if (!texture.loadFromFile("texture.png"))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // Create a sprite
 /// sf::Sprite sprite(texture);
