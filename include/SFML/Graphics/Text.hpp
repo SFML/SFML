@@ -464,7 +464,10 @@ private:
 /// \code
 /// // Declare and load a font
 /// sf::Font font;
-/// font.loadFromFile("arial.ttf");
+/// if (!font.loadFromFile("arial.ttf"))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // Create a text
 /// sf::Text text(font, "hello");
