@@ -29,8 +29,8 @@
 #include <SFML/Window/WindowStyle.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 #include <android/looper.h>
 
 // Define missing constants for older API levels
@@ -65,8 +65,8 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& title, unsign
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
 {
-    priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     if (style& Style::Fullscreen)
         states.fullscreen = true;
@@ -92,7 +92,7 @@ WindowImplAndroid::~WindowImplAndroid()
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     return states.window;
 }
@@ -105,7 +105,7 @@ void WindowImplAndroid::processEvents()
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     if (m_windowBeingCreated)
     {
@@ -243,7 +243,7 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 int WindowImplAndroid::processEvent(int fd, int events, void* data)
 {
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     AInputEvent* _event = nullptr;
 
@@ -680,7 +680,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     // Initializes JNI
     jint lResult;

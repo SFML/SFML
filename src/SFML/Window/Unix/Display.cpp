@@ -26,13 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/keysym.h>
+#include <mutex>
+#include <unordered_map>
 #include <cassert>
 #include <cstdlib>
-#include <unordered_map>
 
 
 namespace
@@ -42,7 +41,7 @@ namespace
     unsigned int referenceCount = 0;
     XIM sharedXIM = NULL;
     unsigned int referenceCountXIM = 0;
-    sf::Mutex mutex;
+    std::recursive_mutex mutex;
 
     using AtomMap = std::unordered_map<std::string, Atom>;
     AtomMap atoms;
@@ -55,7 +54,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Display* OpenDisplay()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     if (referenceCount == 0)
     {
@@ -78,7 +77,7 @@ Display* OpenDisplay()
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(display == sharedDisplay);
 
@@ -90,7 +89,7 @@ void CloseDisplay(Display* display)
 ////////////////////////////////////////////////////////////
 XIM OpenXIM()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(sharedDisplay != nullptr);
 
@@ -128,7 +127,7 @@ XIM OpenXIM()
 ////////////////////////////////////////////////////////////
 void CloseXIM(XIM xim)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(xim == sharedXIM);
 
