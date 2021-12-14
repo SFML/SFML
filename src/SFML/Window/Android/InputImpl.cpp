@@ -27,8 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/InputImpl.hpp>
 #include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 #include <jni.h>
 
 
@@ -49,7 +49,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
     // todo: Check if the window is active
 
     ActivityStates& states = getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     // Initializes JNI
     jint lResult;
@@ -138,8 +138,8 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     return states.isButtonPressed[button];
 }
@@ -150,8 +150,8 @@ Vector2i InputImpl::getMousePosition()
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     return states.mousePosition;
 }
@@ -183,8 +183,8 @@ bool InputImpl::isTouchDown(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     return states.touchEvents.find(finger) != states.touchEvents.end();
 }
@@ -195,8 +195,8 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     return states.touchEvents.find(finger)->second;
 }

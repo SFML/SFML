@@ -30,10 +30,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
-#include <SFML/System/Thread.hpp>
 #include <SFML/System/Time.hpp>
 #include <vector>
 #include <string>
+#include <thread>
 
 
 namespace sf
@@ -283,15 +283,33 @@ private:
     void cleanup();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Launch a new capture thread running 'record'
+    ///
+    /// This function is called when the capture is started or
+    /// when the device is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void launchCapturingThread();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop capturing and wait for 'm_thread' to join
+    ///
+    /// This function is called when the capture is stopped or
+    /// when the device is changed.
+    ///
+    ////////////////////////////////////////////////////////////
+    void awaitCapturingThread();
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Thread             m_thread;             //!< Thread running the background recording task
-    std::vector<Int16> m_samples;            //!< Buffer to store captured samples
-    unsigned int       m_sampleRate;         //!< Sample rate
-    Time               m_processingInterval; //!< Time period between calls to onProcessSamples
-    bool               m_isCapturing;        //!< Capturing state
-    std::string        m_deviceName;         //!< Name of the audio capture device
-    unsigned int       m_channelCount;       //!< Number of recording channels
+    std::thread                m_thread;             //!< Thread running the background recording task
+    std::vector<Int16>         m_samples;            //!< Buffer to store captured samples
+    unsigned int               m_sampleRate;         //!< Sample rate
+    Time                       m_processingInterval; //!< Time period between calls to onProcessSamples
+    bool                       m_isCapturing;        //!< Capturing state
+    std::string                m_deviceName;         //!< Name of the audio capture device
+    unsigned int               m_channelCount;       //!< Number of recording channels
 };
 
 } // namespace sf

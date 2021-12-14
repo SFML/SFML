@@ -29,7 +29,7 @@
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 
 namespace sf
 {
@@ -53,7 +53,7 @@ VideoMode VideoModeImpl::getDesktopMode()
 {
     // Get the activity states
     priv::ActivityStates& states = priv::getActivity();
-    Lock lock(states.mutex);
+    std::scoped_lock lock(states.mutex);
 
     return VideoMode(states.screenSize.x, states.screenSize.y);
 }

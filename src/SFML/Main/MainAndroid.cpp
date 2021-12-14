@@ -40,13 +40,13 @@
 
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
 #include <cstring>
 #include <cassert>
+#include <mutex>
+#include <thread>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
@@ -93,7 +93,7 @@ ActivityStates* retrieveStates(ANativeActivity* activity)
 static void initializeMain(ActivityStates* states)
 {
     // Protect from concurrent access
-    Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // Prepare and share the looper to be read later
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
@@ -117,7 +117,7 @@ static void initializeMain(ActivityStates* states)
 static void terminateMain(ActivityStates* states)
 {
     // Protect from concurrent access
-    Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // The main thread has finished, we must explicitly ask the activity to finish
     states->mainOver = true;
@@ -138,7 +138,7 @@ void* main(ActivityStates* states)
     terminateMain(states);
 
     {
-        Lock lock(states->mutex);
+        std::scoped_lock lock(states->mutex);
 
         states->terminated = true;
     }
@@ -255,7 +255,7 @@ static void onResume(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    sf::Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     if (states->fullscreen)
         goToFullscreenMode(activity);
@@ -273,7 +273,7 @@ static void onPause(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    sf::Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // Send an event to warn people the activity has been paused
     sf::Event event;
@@ -298,7 +298,7 @@ static void onDestroy(ANativeActivity* activity)
 
     // Send an event to warn people the activity is being destroyed
     {
-        sf::Lock lock(states->mutex);
+        std::scoped_lock lock(states->mutex);
 
         // If the main thread hasn't yet finished, send the event and wait for
         // it to finish.
@@ -342,7 +342,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     (void) window;
 
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    sf::Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // Update the activity states
     states->window = window;
@@ -369,7 +369,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
     (void) window;
 
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    sf::Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // Update the activity states
     states->window = nullptr;
@@ -414,7 +414,7 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 
     // Attach the input queue
     {
-        sf::Lock lock(states->mutex);
+        std::scoped_lock lock(states->mutex);
 
         AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, nullptr);
         states->inputQueue = queue;
@@ -430,7 +430,7 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 
     // Detach the input queue
     {
-        sf::Lock lock(states->mutex);
+        std::scoped_lock lock(states->mutex);
 
         AInputQueue_detachLooper(queue);
         states->inputQueue = nullptr;
@@ -455,7 +455,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* rect)
 
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    sf::Lock lock(states->mutex);
+    std::scoped_lock lock(states->mutex);
 
     // Make sure the window still exists before we access the dimensions on it
     if (states->window != nullptr) {
@@ -568,8 +568,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     sf::err().rdbuf(&states->logcat);
 
     // Launch the main thread
-    sf::Thread* thread = new sf::Thread(sf::priv::main, states);
-    thread->launch();
+    std::thread(sf::priv::main, states).detach();
 
     // Wait for the main thread to be initialized
     states->mutex.lock();

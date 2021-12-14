@@ -28,9 +28,8 @@
 #include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
 #include <vector>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
@@ -48,7 +47,7 @@
 
 namespace
 {
-    sf::Mutex glxErrorMutex;
+    std::recursive_mutex glxErrorMutex;
     bool glxErrorOccurred = false;
 
 
@@ -95,9 +94,9 @@ namespace
         }
 
     private:
-        sf::Lock   m_lock;
-        ::Display* m_display;
-        int      (*m_previousHandler)(::Display*, XErrorEvent*);
+        std::scoped_lock<std::recursive_mutex> m_lock;
+        ::Display*                             m_display;
+        int                                    (*m_previousHandler)(::Display*, XErrorEvent*);
     };
 }
 
