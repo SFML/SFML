@@ -127,7 +127,10 @@ private:
 /// {
 ///     // Record some audio data
 ///     sf::SoundBufferRecorder recorder;
-///     recorder.start();
+///     if (!recorder.start())
+///     {
+///         // Handle error...
+///     }
 ///     ...
 ///     recorder.stop();
 ///
@@ -135,7 +138,10 @@ private:
 ///     const sf::SoundBuffer& buffer = recorder.getBuffer();
 ///
 ///     // Save it to a file (for example...)
-///     buffer.saveToFile("my_record.ogg");
+///     if (!buffer.saveToFile("my_record.ogg"))
+///     {
+///         // Handle error...
+///     }
 /// }
 /// \endcode
 ///

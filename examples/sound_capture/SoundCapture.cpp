@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <cstdlib>
 
 
 ////////////////////////////////////////////////////////////
@@ -70,9 +71,7 @@ int main()
 
         // Save the buffer
         if (!buffer.saveToFile(filename))
-        {
             std::cerr << "Could not save sound buffer to file" << std::endl;
-        }
     }
     else
     {

@@ -68,9 +68,7 @@ void SoundBufferRecorder::onStop()
         return;
 
     if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate()))
-    {
         err() << "Failed to stop capturing audio data" << errEndl;
-    }
 }
 
 

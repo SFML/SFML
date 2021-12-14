@@ -134,7 +134,7 @@ public:
     /// \see getAvailableDevices, getDefaultDevice
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] [[nodiscard]] bool setDevice(const std::string& name);
+    [[nodiscard]] bool setDevice(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the name of the current audio capture device
@@ -392,7 +392,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
+///     [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...

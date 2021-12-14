@@ -252,7 +252,10 @@ private:
 /// Usage example:
 /// \code
 /// sf::SoundBuffer buffer;
-/// buffer.loadFromFile("sound.wav");
+/// if (!buffer.loadFromFile("sound.wav"))
+/// {
+///     // Handle error...
+/// }
 ///
 /// sf::Sound sound;
 /// sound.setBuffer(buffer);
