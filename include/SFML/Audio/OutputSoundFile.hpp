@@ -71,7 +71,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromFile(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
+    [[nodiscard]] bool openFromFile(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file

@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBufferRecorder.hpp>
+#include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <iterator>
 
@@ -62,8 +63,11 @@ bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sam
 ////////////////////////////////////////////////////////////
 void SoundBufferRecorder::onStop()
 {
-    if (!m_samples.empty())
-        m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate());
+    if (m_samples.empty())
+        return;
+
+    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate()))
+        err() << "Failed to stop capturing audio data" << std::endl;
 }
 
 

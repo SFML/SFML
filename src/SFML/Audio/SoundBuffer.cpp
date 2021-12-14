@@ -58,7 +58,8 @@ m_sounds  () // don't copy the attached sounds
     alCheck(alGenBuffers(1, &m_buffer));
 
     // Update the internal buffer with the new samples
-    update(copy.getChannelCount(), copy.getSampleRate());
+    if (!update(copy.getChannelCount(), copy.getSampleRate()))
+        err() << "Failed to update copy-constructed sound buffer" << std::endl;
 }
 
 

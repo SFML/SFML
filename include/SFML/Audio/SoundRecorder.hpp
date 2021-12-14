@@ -74,7 +74,7 @@ public:
     /// \see stop, getAvailableDevices
     ///
     ////////////////////////////////////////////////////////////
-    bool start(unsigned int sampleRate = 44100);
+    [[nodiscard]] bool start(unsigned int sampleRate = 44100);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop the capture
@@ -134,7 +134,7 @@ public:
     /// \see getAvailableDevices, getDefaultDevice
     ///
     ////////////////////////////////////////////////////////////
-    bool setDevice(const std::string& name);
+    [[nodiscard]] bool setDevice(const std::string& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the name of the current audio capture device
@@ -240,7 +240,7 @@ protected:
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
+    [[nodiscard]] virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -392,7 +392,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
+///     [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...
