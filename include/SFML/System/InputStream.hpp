@@ -60,7 +60,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 read(void* data, Int64 size) = 0;
+    [[nodiscard]] virtual Int64 read(void* data, Int64 size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -70,7 +70,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 seek(Int64 position) = 0;
+    [[nodiscard]] virtual Int64 seek(Int64 position) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
@@ -78,7 +78,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 tell() = 0;
+    [[nodiscard]] virtual Int64 tell() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
@@ -117,15 +117,15 @@ public:
 /// {
 /// public:
 ///
-///     ZipStream(std::string archive);
+///     ZipStream(const std::string& archive);
 ///
-///     bool open(std::string filename);
+///     [[nodiscard]] bool open(const std::string& filename);
 ///
-///     Int64 read(void* data, Int64 size);
+///     [[nodiscard]] Int64 read(void* data, Int64 size);
 ///
-///     Int64 seek(Int64 position);
+///     [[nodiscard]] Int64 seek(Int64 position);
 ///
-///     Int64 tell();
+///     [[nodiscard]] Int64 tell();
 ///
 ///     Int64 getSize();
 ///
@@ -137,14 +137,30 @@ public:
 /// // now you can load textures...
 /// sf::Texture texture;
 /// ZipStream stream("resources.zip");
-/// stream.open("images/img.png");
-/// texture.loadFromStream(stream);
+///
+/// if (!stream.open("images/img.png"))
+/// {
+///     // Handle error...
+/// }
+///
+/// if (!texture.loadFromStream(stream))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // musics...
 /// sf::Music music;
 /// ZipStream stream("resources.zip");
-/// stream.open("musics/msc.ogg");
-/// music.openFromStream(stream);
+///
+/// if (!stream.open("musics/msc.ogg"))
+/// {
+///     // Handle error...
+/// }
+///
+/// if (!music.openFromStream(stream))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // etc.
 /// \endcode

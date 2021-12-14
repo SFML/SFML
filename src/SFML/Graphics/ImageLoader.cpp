@@ -56,7 +56,9 @@ namespace
     void skip(void* user, int size)
     {
         auto* stream = static_cast<sf::InputStream*>(user);
-        stream->seek(stream->tell() + size);
+
+        if (stream->seek(stream->tell() + size) == -1)
+            sf::err() << "Failed to seek image loader input stream" << std::endl;
     }
     int eof(void* user)
     {
@@ -198,7 +200,11 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     pixels.clear();
 
     // Make sure that the stream's reading position is at the beginning
-    stream.seek(0);
+    if (stream.seek(0) == -1)
+    {
+        err() << "Failed to seek image stream" << std::endl;
+        return false;
+    }
 
     // Setup the stb_image callbacks
     stbi_io_callbacks callbacks;
