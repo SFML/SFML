@@ -72,7 +72,7 @@ protected:
     /// \return True to start the capture, or false to abort it
     ///
     ////////////////////////////////////////////////////////////
-    bool onStart() override;
+    [[nodiscard]] bool onStart() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
@@ -83,7 +83,7 @@ protected:
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
+    [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -127,7 +127,10 @@ private:
 /// {
 ///     // Record some audio data
 ///     sf::SoundBufferRecorder recorder;
-///     recorder.start();
+///     if (!recorder.start())
+///     {
+///         // Handle error...
+///     }
 ///     ...
 ///     recorder.stop();
 ///
@@ -135,7 +138,10 @@ private:
 ///     const sf::SoundBuffer& buffer = recorder.getBuffer();
 ///
 ///     // Save it to a file (for example...)
-///     buffer.saveToFile("my_record.ogg");
+///     if (!buffer.saveToFile("my_record.ogg"))
+///     {
+///         // Handle error...
+///     }
 /// }
 /// \endcode
 ///
