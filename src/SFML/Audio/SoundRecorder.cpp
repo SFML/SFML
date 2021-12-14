@@ -340,9 +340,7 @@ void SoundRecorder::awaitCapturingThread()
     m_isCapturing = false;
 
     if (m_thread.joinable())
-    {
         m_thread.join();
-    }
 }
 
 } // namespace sf

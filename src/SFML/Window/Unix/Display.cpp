@@ -28,10 +28,10 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/keysym.h>
-#include <cassert>
-#include <cstdlib>
 #include <mutex>
 #include <unordered_map>
+#include <cassert>
+#include <cstdlib>
 
 
 namespace

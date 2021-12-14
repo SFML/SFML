@@ -39,6 +39,7 @@
 #include <iostream>
 #include <mutex>
 #include <unordered_map>
+#include <cassert>
 
 
 namespace

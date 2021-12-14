@@ -117,15 +117,15 @@ public:
 /// {
 /// public:
 ///
-///     ZipStream(std::string archive);
+///     ZipStream(const std::string& archive);
 ///
-///     bool open(std::string filename);
+///     [[nodiscard]] bool open(const std::string& filename);
 ///
-///     Int64 read(void* data, Int64 size);
+///     [[nodiscard]] Int64 read(void* data, Int64 size);
 ///
-///     Int64 seek(Int64 position);
+///     [[nodiscard]] Int64 seek(Int64 position);
 ///
-///     Int64 tell();
+///     [[nodiscard]] Int64 tell();
 ///
 ///     Int64 getSize();
 ///
@@ -137,14 +137,30 @@ public:
 /// // now you can load textures...
 /// sf::Texture texture;
 /// ZipStream stream("resources.zip");
-/// stream.open("images/img.png");
-/// texture.loadFromStream(stream);
+///
+/// if (!stream.open("images/img.png"))
+/// {
+///     // Handle error...
+/// }
+///
+/// if (!texture.loadFromStream(stream))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // musics...
 /// sf::Music music;
 /// ZipStream stream("resources.zip");
-/// stream.open("musics/msc.ogg");
-/// music.openFromStream(stream);
+///
+/// if (!stream.open("musics/msc.ogg"))
+/// {
+///     // Handle error...
+/// }
+///
+/// if (!music.openFromStream(stream))
+/// {
+///     // Handle error...
+/// }
 ///
 /// // etc.
 /// \endcode

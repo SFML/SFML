@@ -135,9 +135,7 @@ Int64 FileInputStream::getSize()
         Int64 size = tell();
 
         if (seek(position) == -1)
-        {
             return -1;
-        }
 
         return size;
     }

@@ -505,9 +505,7 @@ void SoundStream::awaitStreamingThread()
     }
 
     if (m_thread.joinable())
-    {
         m_thread.join();
-    }
 }
 
 } // namespace sf

@@ -58,9 +58,7 @@ namespace
         auto* stream = static_cast<sf::InputStream*>(user);
 
         if (stream->seek(stream->tell() + size) == -1)
-        {
             sf::err() << "Failed to seek image loader input stream" << sf::errEndl;
-        }
     }
     int eof(void* user)
     {

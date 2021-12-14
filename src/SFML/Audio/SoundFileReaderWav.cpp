@@ -146,9 +146,7 @@ void SoundFileReaderWav::seek(Uint64 sampleOffset)
     assert(m_stream);
 
     if (m_stream->seek(static_cast<Int64>(m_dataStart + sampleOffset * m_bytesPerSample) == -1))
-    {
         err() << "Failed to seek WAV sound stream" << errEndl;
-    }
 }
 
 
