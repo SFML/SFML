@@ -103,7 +103,13 @@ namespace
         if (size > 0)
         {
             buffer.resize(static_cast<std::size_t>(size));
-            stream.seek(0);
+
+            if (stream.seek(0) == -1)
+            {
+                sf::err() << "Failed to seek shader stream" << std::endl;
+                return false;
+            }
+
             sf::Int64 read = stream.read(buffer.data(), size);
             success = (read == size);
         }

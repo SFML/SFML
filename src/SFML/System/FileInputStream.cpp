@@ -133,7 +133,10 @@ Int64 FileInputStream::getSize()
         Int64 position = tell();
         std::fseek(m_file, 0, SEEK_END);
         Int64 size = tell();
-        seek(position);
+
+        if (seek(position) == -1)
+            return -1;
+
         return size;
     }
     else
