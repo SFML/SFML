@@ -136,7 +136,7 @@ private:
     /// \return Time instance
     ///
     ////////////////////////////////////////////////////////////
-    static Time durationToTime(ClockImpl::duration duration);
+    [[nodiscard]] static Time durationToTime(ClockImpl::duration duration);
 
     ////////////////////////////////////////////////////////////
     // Member data
