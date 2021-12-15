@@ -44,7 +44,7 @@ public:
     /// Creates a Vector2(0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    Vector2();
+    constexpr Vector2();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
@@ -53,7 +53,7 @@ public:
     /// \param Y Y coordinate
     ///
     ////////////////////////////////////////////////////////////
-    Vector2(T X, T Y);
+    constexpr Vector2(T X, T Y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -67,7 +67,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Vector2(const Vector2<U>& vector);
+    constexpr explicit Vector2(const Vector2<U>& vector);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -86,7 +86,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -102,7 +102,7 @@ Vector2<T> operator -(const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -118,7 +118,7 @@ Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -131,7 +131,7 @@ Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -144,7 +144,7 @@ Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -157,7 +157,7 @@ Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator *(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -170,7 +170,7 @@ Vector2<T> operator *(const Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(T left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator *(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -186,7 +186,7 @@ Vector2<T> operator *(T left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator *=(Vector2<T>& left, T right);
+constexpr Vector2<T>& operator *=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -199,7 +199,7 @@ Vector2<T>& operator *=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator /(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator /(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -215,7 +215,7 @@ Vector2<T> operator /(const Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator /=(Vector2<T>& left, T right);
+constexpr Vector2<T>& operator /=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -230,7 +230,7 @@ Vector2<T>& operator /=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -245,7 +245,7 @@ bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
 
