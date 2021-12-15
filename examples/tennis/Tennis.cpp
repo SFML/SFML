@@ -55,7 +55,7 @@ int main()
         return EXIT_FAILURE;
     sf::Sprite sfmlLogo;
     sfmlLogo.setTexture(sfmlLogoTexture);
-    sfmlLogo.setPosition(170, 50);
+    sfmlLogo.setPosition({170.f, 50.f});
 
     // Create the left paddle
     sf::RectangleShape leftPaddle;
@@ -79,7 +79,7 @@ int main()
     ball.setOutlineThickness(2);
     ball.setOutlineColor(sf::Color::Black);
     ball.setFillColor(sf::Color::White);
-    ball.setOrigin(ballRadius / 2, ballRadius / 2);
+    ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Load the text font
     sf::Font font;
@@ -90,7 +90,7 @@ int main()
     sf::Text pauseMessage;
     pauseMessage.setFont(font);
     pauseMessage.setCharacterSize(40);
-    pauseMessage.setPosition(170.f, 200.f);
+    pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);
 
     #ifdef SFML_SYSTEM_IOS
@@ -134,9 +134,9 @@ int main()
                     clock.restart();
 
                     // Reset the position of the paddles and ball
-                    leftPaddle.setPosition(10.f + paddleSize.x / 2.f, gameHeight / 2.f);
-                    rightPaddle.setPosition(gameWidth - 10.f - paddleSize.x / 2.f, gameHeight / 2.f);
-                    ball.setPosition(gameWidth / 2.f, gameHeight / 2.f);
+                    leftPaddle.setPosition({10.f + paddleSize.x / 2.f, gameHeight / 2.f});
+                    rightPaddle.setPosition({gameWidth - 10.f - paddleSize.x / 2.f, gameHeight / 2.f});
+                    ball.setPosition({gameWidth / 2.f, gameHeight / 2.f});
 
                     // Reset the ball angle
                     do
@@ -153,7 +153,7 @@ int main()
             {
                 sf::View view;
                 view.setSize(gameWidth, gameHeight);
-                view.setCenter(gameWidth / 2.f, gameHeight  /2.f);
+                view.setCenter({gameWidth / 2.f, gameHeight / 2.f});
                 window.setView(view);
             }
         }
@@ -166,26 +166,26 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
                (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
             {
-                leftPaddle.move(0.f, -paddleSpeed * deltaTime);
+                leftPaddle.move({0.f, -paddleSpeed * deltaTime});
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
                (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
-                leftPaddle.move(0.f, paddleSpeed * deltaTime);
+                leftPaddle.move({0.f, paddleSpeed * deltaTime});
             }
 
             if (sf::Touch::isDown(0))
             {
                 sf::Vector2i pos = sf::Touch::getPosition(0);
                 sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
-                leftPaddle.setPosition(leftPaddle.getPosition().x, mappedPos.y);
+                leftPaddle.setPosition({leftPaddle.getPosition().x, mappedPos.y});
             }
 
             // Move the computer's paddle
             if (((rightPaddleSpeed < 0.f) && (rightPaddle.getPosition().y - paddleSize.y / 2 > 5.f)) ||
                 ((rightPaddleSpeed > 0.f) && (rightPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f)))
             {
-                rightPaddle.move(0.f, rightPaddleSpeed * deltaTime);
+                rightPaddle.move({0.f, rightPaddleSpeed * deltaTime});
             }
 
             // Update the computer's paddle direction according to the ball position
@@ -202,7 +202,7 @@ int main()
 
             // Move the ball
             float factor = ballSpeed * deltaTime;
-            ball.move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
+            ball.move({std::cos(ballAngle) * factor, std::sin(ballAngle) * factor});
 
             #ifdef SFML_SYSTEM_IOS
             const std::string inputString = "Touch the screen to restart.";
@@ -225,13 +225,13 @@ int main()
             {
                 ballSound.play();
                 ballAngle = -ballAngle;
-                ball.setPosition(ball.getPosition().x, ballRadius + 0.1f);
+                ball.setPosition({ball.getPosition().x, ballRadius + 0.1f});
             }
             if (ball.getPosition().y + ballRadius > gameHeight)
             {
                 ballSound.play();
                 ballAngle = -ballAngle;
-                ball.setPosition(ball.getPosition().x, gameHeight - ballRadius - 0.1f);
+                ball.setPosition({ball.getPosition().x, gameHeight - ballRadius - 0.1f});
             }
 
             // Check the collisions between the ball and the paddles
@@ -247,7 +247,7 @@ int main()
                     ballAngle = pi - ballAngle - static_cast<float>(std::rand() % 20) * pi / 180;
 
                 ballSound.play();
-                ball.setPosition(leftPaddle.getPosition().x + ballRadius + paddleSize.x / 2 + 0.1f, ball.getPosition().y);
+                ball.setPosition({leftPaddle.getPosition().x + ballRadius + paddleSize.x / 2 + 0.1f, ball.getPosition().y});
             }
 
             // Right Paddle
@@ -262,7 +262,7 @@ int main()
                     ballAngle = pi - ballAngle - static_cast<float>(std::rand() % 20) * pi / 180;
 
                 ballSound.play();
-                ball.setPosition(rightPaddle.getPosition().x - ballRadius - paddleSize.x / 2 - 0.1f, ball.getPosition().y);
+                ball.setPosition({rightPaddle.getPosition().x - ballRadius - paddleSize.x / 2 - 0.1f, ball.getPosition().y});
             }
         }
 

@@ -114,7 +114,7 @@ int main()
     hudText.setFillColor(sf::Color::White);
     hudText.setOutlineColor(sf::Color::Black);
     hudText.setOutlineThickness(2.0f);
-    hudText.setPosition(5.0f, 5.0f);
+    hudText.setPosition({5.0f, 5.0f});
 
     // Staging buffer for our terrain data that we will upload to our VertexBuffer
     std::vector<sf::Vertex> terrainStagingBuffer;
@@ -158,7 +158,7 @@ int main()
     }
 
     // Center the status text
-    statusText.setPosition((windowWidth - statusText.getLocalBounds().width) / 2.f, (windowHeight - statusText.getLocalBounds().height) / 2.f);
+    statusText.setPosition({(windowWidth - statusText.getLocalBounds().width) / 2.f, (windowHeight - statusText.getLocalBounds().height) / 2.f});
 
     // Set up an array of pointers to our settings for arrow navigation
     Setting settings[] =

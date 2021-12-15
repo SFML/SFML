@@ -77,16 +77,9 @@ void SoundSource::setVolume(float volume)
 
 
 ////////////////////////////////////////////////////////////
-void SoundSource::setPosition(float x, float y, float z)
-{
-    alCheck(alSource3f(m_source, AL_POSITION, x, y, z));
-}
-
-
-////////////////////////////////////////////////////////////
 void SoundSource::setPosition(const Vector3f& position)
 {
-    setPosition(position.x, position.y, position.z);
+    alCheck(alSource3f(m_source, AL_POSITION, position.x, position.y, position.z));
 }
 
 

@@ -72,17 +72,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the center of the view
     ///
-    /// \param x X coordinate of the new center
-    /// \param y Y coordinate of the new center
-    ///
-    /// \see setSize, getCenter
-    ///
-    ////////////////////////////////////////////////////////////
-    void setCenter(float x, float y);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the center of the view
-    ///
     /// \param center New center
     ///
     /// \see setSize, getCenter
