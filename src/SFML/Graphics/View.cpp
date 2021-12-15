@@ -69,21 +69,13 @@ m_invTransformUpdated(false)
 
 }
 
-////////////////////////////////////////////////////////////
-void View::setCenter(float x, float y)
-{
-    m_center.x = x;
-    m_center.y = y;
-
-    m_transformUpdated    = false;
-    m_invTransformUpdated = false;
-}
-
 
 ////////////////////////////////////////////////////////////
 void View::setCenter(const Vector2f& center)
 {
-    setCenter(center.x, center.y);
+    m_center = center;
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
@@ -163,13 +155,6 @@ float View::getRotation() const
 const FloatRect& View::getViewport() const
 {
     return m_viewport;
-}
-
-
-////////////////////////////////////////////////////////////
-void View::move(float offsetX, float offsetY)
-{
-    setCenter(m_center.x + offsetX, m_center.y + offsetY);
 }
 
 

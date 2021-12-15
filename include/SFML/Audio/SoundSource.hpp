@@ -104,22 +104,6 @@ public:
     /// spatialized.
     /// The default position of a sound is (0, 0, 0).
     ///
-    /// \param x X coordinate of the position of the sound in the scene
-    /// \param y Y coordinate of the position of the sound in the scene
-    /// \param z Z coordinate of the position of the sound in the scene
-    ///
-    /// \see getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    void setPosition(float x, float y, float z);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the 3D position of the sound in the audio scene
-    ///
-    /// Only sounds with one channel (mono sounds) can be
-    /// spatialized.
-    /// The default position of a sound is (0, 0, 0).
-    ///
     /// \param position Position of the sound in the scene
     ///
     /// \see getPosition

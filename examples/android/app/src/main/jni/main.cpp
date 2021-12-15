@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
 
     sf::Sprite image(texture);
-    image.setPosition(screen.width / 2, screen.height / 2);
-    image.setOrigin(texture.getSize().x/2, texture.getSize().y/2);
+    image.setPosition({screen.width / 2.f, screen.height / 2.f});
+    image.setOrigin({texture.getSize().x / 2.f, texture.getSize().y / 2.f});
 
     sf::Font font;
     if (!font.loadFromFile("tuffy.ttf"))
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
     sf::Text text("Tap anywhere to move the logo.", font, 64);
     text.setFillColor(sf::Color::Black);
-    text.setPosition(10, 10);
+    text.setPosition({10, 10});
 
     sf::View view = window.getDefaultView();
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
                     break;
                 case sf::Event::Resized:
                     view.setSize(event.size.width, event.size.height);
-                    view.setCenter(event.size.width/2, event.size.height/2);
+                    view.setCenter({event.size.width / 2.f, event.size.height / 2.f});
                     window.setView(view);
                     break;
                 case sf::Event::LostFocus:
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
                 case sf::Event::TouchBegan:
                     if (event.touch.finger == 0)
                     {
-                        image.setPosition(event.touch.x, event.touch.y);
+                        image.setPosition({static_cast<float>(event.touch.x), static_cast<float>(event.touch.y)});
 #if defined(USE_JNI)
                         vibrate(sf::milliseconds(10));
 #endif
