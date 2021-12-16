@@ -32,8 +32,6 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include <windows.h>
-
 namespace sf
 {
 
@@ -92,8 +90,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HCURSOR m_cursor;
-    bool m_systemCursor;
+    void* m_cursor; // Type erasure via `void*` is used here to avoid depending on `windows.h`
+    bool  m_systemCursor;
 };
 
 } // namespace priv

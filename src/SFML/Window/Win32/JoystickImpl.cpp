@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
-#include <windows.h>
 #include <tchar.h>
 #include <regstr.h>
 #include <algorithm>

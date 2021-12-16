@@ -26,8 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/CursorImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
+
 
 namespace sf
 {
@@ -188,7 +190,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 void CursorImpl::release()
 {
     if (m_cursor && !m_systemCursor) {
-        DestroyCursor(m_cursor);
+        DestroyCursor(static_cast<HCURSOR>(m_cursor));
         m_cursor = nullptr;
     }
 }

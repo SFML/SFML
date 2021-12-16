@@ -25,20 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef _WIN32_WINDOWS
-    #undef _WIN32_WINDOWS
-#endif
-#ifdef _WIN32_WINNT
-    #undef _WIN32_WINNT
-#endif
-#ifdef WINVER
-    #undef WINVER
-#endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
-#define WINVER         0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utf.hpp>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
@@ -417,7 +406,7 @@ void WindowImplWin32::setMouseCursorGrabbed(bool grabbed)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setMouseCursor(const CursorImpl& cursor)
 {
-    m_lastCursor = cursor.m_cursor;
+    m_lastCursor = static_cast<HCURSOR>(cursor.m_cursor);
     SetCursor(m_cursorVisible ? m_lastCursor : nullptr);
 }
 

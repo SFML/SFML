@@ -40,6 +40,9 @@
 
     // The Visual C++ version of gl.h uses WINGDIAPI and APIENTRY but doesn't define them
     #ifdef _MSC_VER
+        #ifndef WIN32_LEAN_AND_MEAN
+            #define WIN32_LEAN_AND_MEAN
+        #endif
         #include <windows.h>
     #endif
 
@@ -67,7 +70,7 @@
 
     #include <GLES/gl.h>
     #include <GLES/glext.h>
-    
+
     // We're not using OpenGL ES 2+ yet, but we can use the sRGB extension
     #include <GLES2/gl2platform.h>
     #include <GLES2/gl2ext.h>
