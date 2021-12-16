@@ -1,5 +1,6 @@
 #include <SFML/System/Vector3.hpp>
 #include "SystemUtil.hpp"
+#include <type_traits>
 
 // Use sf::Vector3i for tests. Test coverage is given, as there are no template specializations.
 
@@ -157,5 +158,51 @@ TEST_CASE("sf::Vector3 class template", "[system]")
             CHECK(firstEqualVector != differentVector);
             CHECK_FALSE(firstEqualVector != secondEqualVector);
         }
+    }
+
+    SECTION("Structured bindings")
+    {
+        sf::Vector3i vector(1, 2, 3);
+
+        SECTION("destructure by value")
+        {
+            auto [x, y, z] = vector;
+
+            CHECK(x == 1);
+            CHECK(y == 2);
+            CHECK(z == 3);
+
+            static_assert(std::is_same_v<decltype(x), decltype(vector.x)>);
+
+            x = 3;
+
+            CHECK(x == 3);
+            CHECK(vector.x == 1);
+        }
+
+        SECTION("destructure by ref")
+        {
+            auto& [x, y, z] = vector;
+
+            CHECK(x == 1);
+            CHECK(y == 2);
+            CHECK(z == 3);
+
+            static_assert(std::is_same_v<decltype(x), decltype(vector.x)>);
+
+            x = 3;
+
+            CHECK(x == 3);
+            CHECK(vector.x == 3);
+        }
+    }
+
+    SECTION("Constexpr support")
+    {
+        constexpr sf::Vector3i vector(1, 2, 3);
+        static_assert(vector.x == 1);
+        static_assert(vector.y == 2);
+        static_assert(vector.z == 3);
+        static_assert(vector + sf::Vector3i(3, 2, 1) == sf::Vector3i(4, 4, 4));
     }
 }
