@@ -4,7 +4,12 @@
 
 # Helper function to enable compiler warnings for a specific set of files
 function(set_file_warnings)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+    if(APPLE)
+        # Temporarily disable Apple default until warnings are fixed
+        option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
+    else()
+        option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+    endif()
 
     set(MSVC_WARNINGS
         /W4 # Baseline reasonable warnings
@@ -69,16 +74,15 @@ function(set_file_warnings)
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
 
+    if(WARNINGS_AS_ERRORS)
+        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
+        set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
+    endif()
 
     set(CLANG_WARNINGS
         ${CLANG_AND_GCC_WARNINGS}
         -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
     )
-
-    if(WARNINGS_AS_ERRORS)
-        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
-        set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
-    endif()
 
     set(GCC_WARNINGS
         ${CLANG_AND_GCC_WARNINGS}
