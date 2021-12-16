@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/ClipboardImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/String.hpp>
 #include <iostream>
-#include <windows.h>
 
 
 namespace sf

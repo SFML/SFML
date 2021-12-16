@@ -2,7 +2,6 @@
 //
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,35 +22,29 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_WINDOWSHEADER_HPP
+#define SFML_WINDOWSHEADER_HPP
 
-////////////////////////////////////////////////////////////
-// Windows specific: we define the WinMain entry point,
-// so that developers can use the standard main function
-// even in a Win32 Application project, and thus keep a
-// portable code
-////////////////////////////////////////////////////////////
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#ifndef _WIN32_WINDOWS
+#define _WIN32_WINDOWS 0x0501
+#endif
 
-#ifdef SFML_SYSTEM_WINDOWS
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
 
-#include <SFML/System/Win32/WindowsHeader.hpp>
-#include <cstdlib> // for `__argc` and `__argv`
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
 
-extern int main(int argc, char* argv[]);
+#include <windows.h>
 
-////////////////////////////////////////////////////////////
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
-{
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wpedantic"
-    return main(__argc, __argv);
-    #pragma GCC diagnostic pop
-}
-
-#endif // SFML_SYSTEM_WINDOWS
-
+#endif // SFML_WINDOWSHEADER_HPP
