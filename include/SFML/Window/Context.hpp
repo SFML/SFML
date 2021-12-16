@@ -31,7 +31,6 @@
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/ContextSettings.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -47,7 +46,7 @@ using GlFunctionPointer = void (*)();
 /// \brief Class holding a valid drawing context
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Context : GlResource, NonCopyable
+class SFML_WINDOW_API Context : GlResource
 {
 public:
 
@@ -66,6 +65,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~Context();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Context(const Context&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Context& operator=(const Context&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate explicitly the context

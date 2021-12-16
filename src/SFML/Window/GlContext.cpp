@@ -180,7 +180,7 @@ namespace
 
         // This structure contains all the state necessary to
         // track TransientContext usage
-        struct TransientContext : private sf::NonCopyable
+        struct TransientContext
         {
             ////////////////////////////////////////////////////////////
             /// \brief Constructor
@@ -216,6 +216,18 @@ namespace
                 sharedContextLock.reset();
                 delete context;
             }
+
+            ////////////////////////////////////////////////////////////
+            /// \brief Deleted copy constructor
+            ///
+            ////////////////////////////////////////////////////////////
+            TransientContext(const TransientContext&) = delete;
+
+            ////////////////////////////////////////////////////////////
+            /// \brief Deleted copy assignment
+            ///
+            ////////////////////////////////////////////////////////////
+            TransientContext& operator=(const TransientContext&) = delete;
 
             ///////////////////////////////////////////////////////////
             // Member data

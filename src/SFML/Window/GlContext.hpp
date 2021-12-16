@@ -32,7 +32,6 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -45,7 +44,7 @@ class WindowImpl;
 /// \brief Abstract class representing an OpenGL context
 ///
 ////////////////////////////////////////////////////////////
-class GlContext : NonCopyable
+class GlContext
 {
 public:
 
@@ -181,6 +180,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~GlContext();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    GlContext(const GlContext&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    GlContext& operator=(const GlContext&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the context

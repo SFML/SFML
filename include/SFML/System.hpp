@@ -35,7 +35,6 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>

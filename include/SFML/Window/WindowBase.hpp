@@ -35,7 +35,6 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -53,7 +52,7 @@ class Event;
 /// \brief Window that serves as a base for other windows
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API WindowBase : NonCopyable
+class SFML_WINDOW_API WindowBase
 {
 public:
 
@@ -97,6 +96,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~WindowBase();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(const WindowBase&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase& operator=(const WindowBase&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
