@@ -45,6 +45,13 @@ class ResourceStream;
 }
 #endif
 
+namespace sf::priv
+{
+// This could be a private nested class in sf::Font, but it is not possible to
+// forward declare nested classes.
+struct FontHandles;
+}
+
 
 namespace sf
 {
@@ -401,11 +408,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void*                                 m_library;     //!< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
-    void*                                 m_face;        //!< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
-    void*                                 m_streamRec;   //!< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
-    void*                                 m_stroker;     //!< Pointer to the stroker (it is typeless to avoid exposing implementation details)
-    std::shared_ptr<int>                  m_refCount;    //!< Reference counter used by implicit sharing
+    std::shared_ptr<priv::FontHandles>    m_font;        //!< Shared information about the internal font instance
     bool                                  m_isSmooth;    //!< Status of the smooth filter
     Info                                  m_info;        //!< Information about the font
     mutable PageTable                     m_pages;       //!< Table containing the glyphs pages by character size
