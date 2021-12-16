@@ -31,7 +31,6 @@
 #include <SFML/Config.hpp>
 #include <SFML/System/Export.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <cstdio>
 #include <string>
 
@@ -52,7 +51,7 @@ namespace sf
 /// \brief Implementation of input stream based on a file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API FileInputStream : public InputStream, NonCopyable
+class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -66,6 +65,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~FileInputStream() override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream(const FileInputStream&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream& operator=(const FileInputStream&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path

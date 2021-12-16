@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/CursorImpl.hpp>
@@ -54,7 +53,7 @@ namespace priv
 /// \brief Abstract base class for OS-specific window implementation
 ///
 ////////////////////////////////////////////////////////////
-class WindowImpl : NonCopyable
+class WindowImpl
 {
 public:
 
@@ -88,6 +87,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~WindowImpl();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowImpl(const WindowImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowImpl& operator=(const WindowImpl&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the joystick threshold, i.e. the value below which

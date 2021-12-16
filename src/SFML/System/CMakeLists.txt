@@ -11,7 +11,6 @@ set(SRC
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
     ${INCROOT}/NativeActivity.hpp
-    ${INCROOT}/NonCopyable.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp
