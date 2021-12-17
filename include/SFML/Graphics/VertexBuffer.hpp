@@ -32,6 +32,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <cstddef>
 
 
 namespace sf

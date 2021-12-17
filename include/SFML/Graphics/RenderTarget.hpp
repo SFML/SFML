@@ -37,6 +37,7 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <cstddef>
 
 
 namespace sf

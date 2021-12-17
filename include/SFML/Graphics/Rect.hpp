@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
-#include <algorithm>
 
 
 namespace sf
@@ -50,7 +49,7 @@ public:
     /// Rect(0, 0, 0, 0)).
     ///
     ////////////////////////////////////////////////////////////
-    Rect();
+    constexpr Rect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from its coordinates
@@ -64,7 +63,7 @@ public:
     /// \param rectHeight Height of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight);
+    constexpr Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
@@ -76,7 +75,7 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    Rect(const Vector2<T>& position, const Vector2<T>& size);
+    constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
@@ -90,7 +89,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Rect(const Rect<U>& rectangle);
+    constexpr explicit Rect(const Rect<U>& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -106,7 +105,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool contains(T x, T y) const;
+    constexpr bool contains(T x, T y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -121,7 +120,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    bool contains(const Vector2<T>& point) const;
+    constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -133,7 +132,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool intersects(const Rect<T>& rectangle) const;
+    constexpr bool intersects(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -149,7 +148,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
+    constexpr bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the rectangle's top-left corner
@@ -159,7 +158,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2<T> getPosition() const;
+    constexpr Vector2<T> getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -169,7 +168,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    sf::Vector2<T> getSize() const;
+    constexpr Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -193,7 +192,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator ==(const Rect<T>& left, const Rect<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
@@ -208,7 +207,7 @@ bool operator ==(const Rect<T>& left, const Rect<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator !=(const Rect<T>& left, const Rect<T>& right);
 
 #include <SFML/Graphics/Rect.inl>
 
