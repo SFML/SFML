@@ -30,8 +30,10 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
-#include <cstring>
 #include <mutex>
+#include <utility>
+#include <cstddef>
+#include <cstring>
 
 namespace
 {
