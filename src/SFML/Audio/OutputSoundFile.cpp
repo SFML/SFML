@@ -81,8 +81,7 @@ void OutputSoundFile::write(const Int16* samples, Uint64 count)
 void OutputSoundFile::close()
 {
     // Destroy the reader
-    delete m_writer;
-    m_writer = nullptr;
+    m_writer.reset();
 }
 
 } // namespace sf

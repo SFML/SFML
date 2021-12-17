@@ -29,13 +29,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImpl.hpp>
-#include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <unordered_map>
+#include <memory>
 
 
 namespace sf
 {
+class Context;
+
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -142,7 +145,7 @@ private:
     unsigned int                             m_colorBuffer;             //!< Optional multisample color buffer attached to the frame buffer
     unsigned int                             m_width;                   //!< Width of the attachments
     unsigned int                             m_height;                  //!< Height of the attachments
-    Context*                                 m_context;                 //!< Backup OpenGL context, used when none already exist
+    std::unique_ptr<Context>                 m_context;                 //!< Backup OpenGL context, used when none already exist
     unsigned int                             m_textureId;               //!< The ID of the texture to attach to the FBO
     bool                                     m_multisample;             //!< Whether we have to create a multisample frame buffer as well
     bool                                     m_stencil;                 //!< Whether we have stencil attachment

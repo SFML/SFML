@@ -89,13 +89,11 @@ m_library  (nullptr),
 m_face     (nullptr),
 m_streamRec(nullptr),
 m_stroker  (nullptr),
-m_refCount (nullptr),
+m_refCount (),
 m_isSmooth (true),
 m_info     ()
 {
-    #ifdef SFML_SYSTEM_ANDROID
-        m_stream = nullptr;
-    #endif
+
 }
 
 
@@ -111,10 +109,6 @@ m_info       (copy.m_info),
 m_pages      (copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
-    #ifdef SFML_SYSTEM_ANDROID
-        m_stream = nullptr;
-    #endif
-
     // Note: as FreeType doesn't provide functions for copying/cloning,
     // we must share all the FreeType pointers
 
@@ -127,13 +121,6 @@ m_pixelBuffer(copy.m_pixelBuffer)
 Font::~Font()
 {
     cleanup();
-
-    #ifdef SFML_SYSTEM_ANDROID
-
-    if (m_stream)
-        delete static_cast<priv::ResourceStream*>(m_stream);
-
-    #endif
 }
 
 
@@ -144,7 +131,7 @@ bool Font::loadFromFile(const std::string& filename)
 
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -194,11 +181,8 @@ bool Font::loadFromFile(const std::string& filename)
 
     #else
 
-    if (m_stream)
-        delete static_cast<priv::ResourceStream*>(m_stream);
-
-    m_stream = new priv::ResourceStream(filename);
-    return loadFromStream(*static_cast<priv::ResourceStream*>(m_stream));
+    m_stream = std::make_unique<priv::ResourceStream>(filename);
+    return loadFromStream(*m_stream);
 
     #endif
 }
@@ -209,7 +193,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -264,7 +248,7 @@ bool Font::loadFromStream(InputStream& stream)
 {
     // Cleanup the previous resources
     cleanup();
-    m_refCount = new int(1);
+    m_refCount = std::make_shared<int>(1);
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -285,8 +269,8 @@ bool Font::loadFromStream(InputStream& stream)
     }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
-    auto* rec = new FT_StreamRec;
-    std::memset(rec, 0, sizeof(*rec));
+    auto rec = std::make_unique<FT_StreamRec>();
+    std::memset(rec.get(), 0, sizeof(*rec));
     rec->base               = nullptr;
     rec->size               = static_cast<unsigned long>(stream.getSize());
     rec->pos                = 0;
@@ -297,7 +281,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Setup the FreeType callbacks that will read our stream
     FT_Open_Args args;
     args.flags  = FT_OPEN_STREAM;
-    args.stream = rec;
+    args.stream = rec.get();
     args.driver = nullptr;
 
     // Load the new font face from the specified stream
@@ -305,7 +289,6 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Open_Face(static_cast<FT_Library>(m_library), &args, 0, &face) != 0)
     {
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
-        delete rec;
         return false;
     }
 
@@ -315,7 +298,6 @@ bool Font::loadFromStream(InputStream& stream)
     {
         err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
         FT_Done_Face(face);
-        delete rec;
         return false;
     }
 
@@ -325,14 +307,13 @@ bool Font::loadFromStream(InputStream& stream)
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
         FT_Done_Face(face);
         FT_Stroker_Done(stroker);
-        delete rec;
         return false;
     }
 
     // Store the loaded font in our ugly void* :)
     m_stroker = stroker;
     m_face = face;
-    m_streamRec = rec;
+    m_streamRec = rec.release();
 
     // Store the font information
     m_info.family = face->family_name ? face->family_name : std::string();
@@ -539,7 +520,7 @@ void Font::cleanup()
         if (*m_refCount == 0)
         {
             // Delete the reference counter
-            delete m_refCount;
+            m_refCount.reset();
 
             // Destroy the stroker
             if (m_stroker)

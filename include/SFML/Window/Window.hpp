@@ -31,6 +31,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <memory>
 
 
 namespace sf
@@ -276,9 +277,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::GlContext*  m_context;        //!< Platform-specific implementation of the OpenGL context
-    Clock             m_clock;          //!< Clock for measuring the elapsed time between frames
-    Time              m_frameTimeLimit; //!< Current framerate limit
+    std::unique_ptr<priv::GlContext> m_context;        //!< Platform-specific implementation of the OpenGL context
+    Clock                            m_clock;          //!< Clock for measuring the elapsed time between frames
+    Time                             m_frameTimeLimit; //!< Current framerate limit
 };
 
 } // namespace sf

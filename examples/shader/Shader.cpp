@@ -3,7 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "Effect.hpp"
-#include <vector>
+#include <array>
 #include <cmath>
 
 
@@ -357,12 +357,20 @@ int main()
     Effect::setFont(font);
 
     // Create the effects
-    std::vector<Effect*> effects;
-    effects.push_back(new Pixelate);
-    effects.push_back(new WaveBlur);
-    effects.push_back(new StormBlink);
-    effects.push_back(new Edge);
-    effects.push_back(new Geometry);
+    Pixelate pixelateEffect;
+    WaveBlur waveBlurEffect;
+    StormBlink stormBlinkEffect;
+    Edge edgeEffect;
+    Geometry geometryEffect;
+
+    const std::array<Effect*, 5> effects{
+        &pixelateEffect,
+        &waveBlurEffect,
+        &stormBlinkEffect,
+        &edgeEffect,
+        &geometryEffect
+    };
+
     std::size_t current = 0;
 
     // Initialize them
@@ -455,10 +463,6 @@ int main()
         // Finally, display the rendered frame on screen
         window.display();
     }
-
-    // delete the effects
-    for (Effect* effect : effects)
-        delete effect;
 
     return EXIT_SUCCESS;
 }

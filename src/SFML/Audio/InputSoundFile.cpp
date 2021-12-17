@@ -259,8 +259,7 @@ Uint64 InputSoundFile::read(Int16* samples, Uint64 maxCount)
 void InputSoundFile::close()
 {
     // Destroy the reader
-    delete m_reader;
-    m_reader = nullptr;
+    m_reader.reset();
 
     // Destroy the stream if we own it
     if (m_streamOwned)
