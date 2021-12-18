@@ -29,6 +29,12 @@
 #include <SFML/System/Time.hpp>
 #include <android/looper.h>
 
+#if defined(__clang__)
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 // Define missing constants
 #define ASENSOR_TYPE_GRAVITY             0x00000009
 #define ASENSOR_TYPE_LINEAR_ACCELERATION 0x0000000a
@@ -97,7 +103,7 @@ bool SensorImpl::open(Sensor::Type sensor)
     Time minimumDelay = microseconds(ASensor_getMinDelay(m_sensor));
 
     // Set the event rate (not to consume too much battery)
-    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<sf::Int32>(minimumDelay.asMicroseconds()));
+    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<Int32>(minimumDelay.asMicroseconds()));
 
     // Save the index of the sensor
     m_index = static_cast<unsigned int>(sensor);

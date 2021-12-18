@@ -139,37 +139,37 @@ Vector3f SensorImpl::update()
     {
         case Sensor::Accelerometer:
             // Acceleration is given in G, convert to m/s^2
-            value.x = manager.accelerometerData.acceleration.x * 9.81f;
-            value.y = manager.accelerometerData.acceleration.y * 9.81f;
-            value.z = manager.accelerometerData.acceleration.z * 9.81f;
+            value.x = static_cast<float>(manager.accelerometerData.acceleration.x * 9.81);
+            value.y = static_cast<float>(manager.accelerometerData.acceleration.y * 9.81);
+            value.z = static_cast<float>(manager.accelerometerData.acceleration.z * 9.81);
             break;
 
         case Sensor::Gyroscope:
             // Rotation rates are given in rad/s, convert to deg/s
-            value.x = toDegrees(manager.gyroData.rotationRate.x);
-            value.y = toDegrees(manager.gyroData.rotationRate.y);
-            value.z = toDegrees(manager.gyroData.rotationRate.z);
+            value.x = toDegrees(static_cast<float>(manager.gyroData.rotationRate.x));
+            value.y = toDegrees(static_cast<float>(manager.gyroData.rotationRate.y));
+            value.z = toDegrees(static_cast<float>(manager.gyroData.rotationRate.z));
             break;
 
         case Sensor::Magnetometer:
             // Magnetic field is given in microteslas
-            value.x = manager.magnetometerData.magneticField.x;
-            value.y = manager.magnetometerData.magneticField.y;
-            value.z = manager.magnetometerData.magneticField.z;
+            value.x = static_cast<float>(manager.magnetometerData.magneticField.x);
+            value.y = static_cast<float>(manager.magnetometerData.magneticField.y);
+            value.z = static_cast<float>(manager.magnetometerData.magneticField.z);
             break;
 
         case Sensor::UserAcceleration:
             // User acceleration is given in G, convert to m/s^2
-            value.x = manager.deviceMotion.userAcceleration.x * 9.81f;
-            value.y = manager.deviceMotion.userAcceleration.y * 9.81f;
-            value.z = manager.deviceMotion.userAcceleration.z * 9.81f;
+            value.x = static_cast<float>(manager.deviceMotion.userAcceleration.x * 9.81);
+            value.y = static_cast<float>(manager.deviceMotion.userAcceleration.y * 9.81);
+            value.z = static_cast<float>(manager.deviceMotion.userAcceleration.z * 9.81);
             break;
 
         case Sensor::Orientation:
             // Absolute rotation (Euler) angles are given in radians, convert to degrees
-            value.x = toDegrees(manager.deviceMotion.attitude.yaw);
-            value.y = toDegrees(manager.deviceMotion.attitude.pitch);
-            value.z = toDegrees(manager.deviceMotion.attitude.roll);
+            value.x = toDegrees(static_cast<float>(manager.deviceMotion.attitude.yaw));
+            value.y = toDegrees(static_cast<float>(manager.deviceMotion.attitude.pitch));
+            value.z = toDegrees(static_cast<float>(manager.deviceMotion.attitude.roll));
             break;
 
         default:

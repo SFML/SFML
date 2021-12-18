@@ -31,6 +31,16 @@
 
 #import <AppKit/AppKit.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 namespace sf {
     namespace priv {
         class WindowImplCocoa;
@@ -232,3 +242,11 @@ namespace sf {
 -(void)applyContext:(NSOpenGLContext*)context;
 
 @end
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic pop
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
+#endif

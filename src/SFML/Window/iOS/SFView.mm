@@ -31,6 +31,14 @@
 #include <QuartzCore/CAEAGLLayer.h>
 #include <cstring>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 @interface SFView()
 
 @property (nonatomic) NSMutableArray* touches;
@@ -103,7 +111,7 @@
         sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
         // notify the application delegate
-        [[SFAppDelegate getInstance] notifyTouchBegin:index atPosition:position];
+        [[SFAppDelegate getInstance] notifyTouchBegin:(static_cast<unsigned int>(index)) atPosition:position];
     }
 }
 
@@ -122,7 +130,7 @@
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
-            [[SFAppDelegate getInstance] notifyTouchMove:index atPosition:position];
+            [[SFAppDelegate getInstance] notifyTouchMove:(static_cast<unsigned int>(index)) atPosition:position];
         }
     }
 }
@@ -142,7 +150,7 @@
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
-            [[SFAppDelegate getInstance] notifyTouchEnd:index atPosition:position];
+            [[SFAppDelegate getInstance] notifyTouchEnd:(static_cast<unsigned int>(index)) atPosition:position];
 
             // remove the touch
             [self.touches replaceObjectAtIndex:index withObject:[NSNull null]];
@@ -187,7 +195,7 @@
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
-        CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
+        CAEAGLLayer* eaglLayer = static_cast<CAEAGLLayer*>(self.layer);
         eaglLayer.opaque = YES;
         eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,

@@ -97,7 +97,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
     {
         // Invalid character
         if (replacement)
-            *output++ = replacement;
+            output = std::copy(&replacement, &replacement + 1, output);
     }
     else
     {

@@ -231,8 +231,15 @@ namespace sf
         typedef signed   __int64 Int64;
         typedef unsigned __int64 Uint64;
     #else
+        #if defined(__clang__)
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wc++11-long-long"
+        #endif
         typedef signed   long long Int64;
         typedef unsigned long long Uint64;
+        #if defined(__clang__)
+            #pragma clang diagnostic pop
+        #endif
     #endif
 
 } // namespace sf
