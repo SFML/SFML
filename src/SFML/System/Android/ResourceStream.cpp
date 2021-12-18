@@ -61,7 +61,7 @@ Int64 ResourceStream::read(void *data, Int64 size)
 {
     if (m_file)
     {
-        return AAsset_read(m_file, data, size);
+        return AAsset_read(m_file, data, static_cast<size_t>(size));
     }
     else
     {
@@ -75,7 +75,7 @@ Int64 ResourceStream::seek(Int64 position)
 {
     if (m_file)
     {
-        return AAsset_seek(m_file, position, SEEK_SET);
+        return AAsset_seek(m_file, static_cast<off_t>(position), SEEK_SET);
     }
     else
     {
