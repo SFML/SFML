@@ -4,12 +4,7 @@
 
 # Helper function to enable compiler warnings for a specific set of files
 function(set_file_warnings)
-    if(APPLE)
-        # Temporarily disable Apple default until warnings are fixed
-        option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
-    else()
-        option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
-    endif()
+    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
 
     set(MSVC_WARNINGS
         /W4 # Baseline reasonable warnings

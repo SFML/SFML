@@ -42,6 +42,14 @@
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <OpenGL/OpenGL.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 ////////////////////////////////////////////////////////////
 /// SFBlackView is a simple view filled with black, nothing more
 ///
@@ -153,7 +161,7 @@
         m_window = nil;
         m_oglView = nil;
         m_requester = 0;
-        m_fullscreen = (style & sf::Style::Fullscreen);
+        m_fullscreen = ((style & sf::Style::Fullscreen) != 0) ? YES : NO;
         m_restoreResize = NO;
         m_highDpi = NO;
 
@@ -359,7 +367,7 @@
 -(void)setCursorGrabbed:(BOOL)grabbed
 {
     // Remove or restore resizeable style if needed
-    BOOL resizeable = [m_window styleMask] & NSResizableWindowMask;
+    BOOL resizeable = (([m_window styleMask] & NSResizableWindowMask) != 0) ? YES : NO;
     if (grabbed && resizeable)
     {
         m_restoreResize = YES;
@@ -403,7 +411,7 @@
     CGFloat y = screen.origin.y + [m_oglView frame].size.height;
 
     // Flip y-axis (titlebar was already taken into account above)
-    y = [self screenHeight] - y;
+    y = static_cast<double>([self screenHeight]) - y;
 
     return NSMakePoint(x, y);
 }
@@ -415,7 +423,7 @@
     NSPoint point = NSMakePoint(x, y);
 
     // Flip for SFML window coordinate system and take titlebar into account
-    point.y = [self screenHeight] - point.y + [self titlebarHeight];
+    point.y = static_cast<double>([self screenHeight]) - point.y + static_cast<double>([self titlebarHeight]);
 
     // Place the window.
     [m_window setFrameTopLeftPoint:point];
@@ -461,7 +469,7 @@
         [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
 
         // Add titlebar height.
-        height += [self titlebarHeight];
+        height += static_cast<unsigned int>([self titlebarHeight]);
 
         // Corner case: don't set the window height bigger than the screen height
         // or the view will be resized _later_ without generating a resize event.
@@ -469,11 +477,11 @@
         CGFloat maxVisibleHeight = screenFrame.size.height;
         if (height > maxVisibleHeight)
         {
-            height = maxVisibleHeight;
+            height = static_cast<unsigned int>(maxVisibleHeight);
 
             // The size is not the requested one, we fire an event
             if (m_requester != 0)
-                m_requester->windowResized(width, height - [self titlebarHeight]);
+                m_requester->windowResized(width, height - static_cast<unsigned int>([self titlebarHeight]));
         }
 
         NSRect frame = NSMakeRect([m_window frame].origin.x,
@@ -621,16 +629,16 @@
 {
     NSDictionary* deviceDescription = [[m_window screen] deviceDescription];
     NSNumber* screenNumber = [deviceDescription valueForKey:@"NSScreenNumber"];
-    CGDirectDisplayID screenID = (CGDirectDisplayID)[screenNumber intValue];
+    CGDirectDisplayID screenID = static_cast<CGDirectDisplayID>([screenNumber intValue]);
     CGFloat height = CGDisplayPixelsHigh(screenID);
-    return height;
+    return static_cast<float>(height);
 }
 
 
 ////////////////////////////////////////////////////////
 -(float)titlebarHeight
 {
-    return NSHeight([m_window frame]) - NSHeight([[m_window contentView] frame]);
+    return static_cast<float>(NSHeight([m_window frame]) - NSHeight([[m_window contentView] frame]));
 }
 
 @end

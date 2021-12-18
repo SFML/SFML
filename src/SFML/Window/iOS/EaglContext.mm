@@ -35,6 +35,14 @@
 #include <QuartzCore/CAEAGLLayer.h>
 #include <dlfcn.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 
 namespace
 {
@@ -114,8 +122,8 @@ m_clock       ()
 
 
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings,
-                         unsigned int width, unsigned int height) :
+EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */,
+                         unsigned int /* width */, unsigned int /* height */) :
 m_context     (nil),
 m_framebuffer (0),
 m_colorbuffer (0),
@@ -171,7 +179,7 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
         "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
         "OpenGLES.framework/OpenGLES"
     };
-    
+
     for (int i = 0; i < libCount; ++i)
     {
         if (!module)
@@ -179,7 +187,8 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
     }
 
     if (module)
-        return reinterpret_cast<GlFunctionPointer>(dlsym(module, name));
+        return reinterpret_cast<GlFunctionPointer>(
+            reinterpret_cast<uintptr_t>(dlsym(module, name)));
 
     return 0;
 }
@@ -205,7 +214,7 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     glGenRenderbuffersOESFunc(1, &m_colorbuffer);
     glBindRenderbufferOESFunc(GL_RENDERBUFFER_OES, m_colorbuffer);
     if (glView)
-        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(CAEAGLLayer*)glView.layer];
+        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(static_cast<CAEAGLLayer*>(glView.layer))];
     glFramebufferRenderbufferOESFunc(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
 
     // Create a depth buffer if requested
@@ -278,7 +287,7 @@ void EaglContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void EaglContext::createContext(EaglContext* shared,
                                 const WindowImplUIKit* window,
-                                unsigned int bitsPerPixel,
+                                unsigned int /* bitsPerPixel */,
                                 const ContextSettings& settings)
 {
     // Save the settings

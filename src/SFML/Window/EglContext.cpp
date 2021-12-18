@@ -138,7 +138,6 @@ m_context (EGL_NO_CONTEXT),
 m_surface (EGL_NO_SURFACE),
 m_config  (NULL)
 {
-    (void) owner;
     EglContextImpl::ensureInit();
 
 #ifdef SFML_SYSTEM_ANDROID
@@ -165,6 +164,8 @@ m_config  (NULL)
     // Create EGL surface (except on Android because the window is created
     // asynchronously, its activity manager will call it for us)
     createSurface(owner->getSystemHandle());
+#else
+    (void) owner;
 #endif
 }
 

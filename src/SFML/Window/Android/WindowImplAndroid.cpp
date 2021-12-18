@@ -318,7 +318,6 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
 {
     // Prepare the Java virtual machine
     jint lResult;
-    // jint lFlags = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;
@@ -336,30 +335,33 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
     }
 
     // Retrieve everything we need to create this MotionEvent in Java
-    sf::Int64 downTime = AMotionEvent_getDownTime(_event);
-    sf::Int64 eventTime = AMotionEvent_getEventTime(_event);
-    sf::Int32 action = AMotionEvent_getAction(_event);
+    Int64 downTime = AMotionEvent_getDownTime(_event);
+    Int64 eventTime = AMotionEvent_getEventTime(_event);
+    Int32 action = AMotionEvent_getAction(_event);
     float x = AMotionEvent_getX(_event, 0);
     float y = AMotionEvent_getY(_event, 0);
     float pressure = AMotionEvent_getPressure(_event, 0);
     float size = AMotionEvent_getSize(_event, 0);
-    sf::Int32 metaState = AMotionEvent_getMetaState(_event);
+    Int32 metaState = AMotionEvent_getMetaState(_event);
     float xPrecision = AMotionEvent_getXPrecision(_event);
     float yPrecision = AMotionEvent_getYPrecision(_event);
-    sf::Int32 deviceId = AInputEvent_getDeviceId(_event);
-    sf::Int32 edgeFlags = AMotionEvent_getEdgeFlags(_event);
+    Int32 deviceId = AInputEvent_getDeviceId(_event);
+    Int32 edgeFlags = AMotionEvent_getEdgeFlags(_event);
 
     // Create the MotionEvent object in Java trough its static constructor obtain()
     jclass ClassMotionEvent = lJNIEnv->FindClass("android/view/MotionEvent");
     jmethodID StaticMethodObtain = lJNIEnv->GetStaticMethodID(ClassMotionEvent, "obtain", "(JJIFFFFIFFII)Landroid/view/MotionEvent;");
-    // Harmless warning related to C standard compatibility
-    // varargs automatically promote floats to doubles
-    // even though the function signature declares float
-    #pragma clang diagnostic ignored "-Wdouble-promotion"
+    // Note: C standard compatibility, varargs
+    //       automatically promote floats to doubles
+    //       even though the function signature declares float
     jobject ObjectMotionEvent = lJNIEnv->CallStaticObjectMethod(
         ClassMotionEvent, StaticMethodObtain, downTime,
-        eventTime, action, x, y, pressure, size, metaState,
-        xPrecision, yPrecision, deviceId, edgeFlags);
+        eventTime, action, static_cast<double>(x),
+        static_cast<double>(y), static_cast<double>(pressure),
+        static_cast<double>(size), metaState,
+        static_cast<double>(xPrecision), static_cast<double>(yPrecision),
+        deviceId, edgeFlags
+    );
 
     // Call its getAxisValue() method to get the delta value of our wheel move event
     jmethodID MethodGetAxisValue = lJNIEnv->GetMethodID(ClassMotionEvent, "getAxisValue", "(I)F");
@@ -387,7 +389,6 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* states */)
 {
-    // int32_t device = AInputEvent_getSource(_event);
     int32_t action = AKeyEvent_getAction(_event);
 
     int32_t key = AKeyEvent_getKeyCode(_event);
@@ -409,10 +410,10 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* s
         event.type = Event::KeyReleased;
         forwardEvent(event);
 
-        if (sf::Uint32 unicode = static_cast<sf::Uint32>(getUnicode(_event)))
+        if (Uint32 unicode = static_cast<Uint32>(getUnicode(_event)))
         {
             event.type = Event::TextEntered;
-            event.text.unicode = unicode;
+            event.text.unicode = static_cast<Uint32>(unicode);
             forwardEvent(event);
         }
         return 1;
@@ -432,10 +433,10 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* s
             // https://code.google.com/p/android/issues/detail?id=33998
             return 0;
         }
-        else if (sf::Uint32 unicode = static_cast<sf::Uint32>(getUnicode(_event))) // This is a repeated sequence
+        else if (Uint32 unicode = static_cast<Uint32>(getUnicode(_event))) // This is a repeated sequence
         {
             event.type = Event::TextEntered;
-            event.text.unicode = unicode;
+            event.text.unicode = static_cast<Uint32>(unicode);
 
             int32_t repeats = AKeyEvent_getRepeatCount(_event);
             for (int32_t i = 0; i < repeats; ++i)
@@ -452,20 +453,19 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* s
 int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& states)
 {
     int32_t device = AInputEvent_getSource(_event);
-    // int32_t action = AMotionEvent_getAction(_event);
 
     Event event;
 
     if (device == AINPUT_SOURCE_MOUSE)
         event.type = Event::MouseMoved;
-    else if (static_cast<sf::Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+    else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         event.type = Event::TouchMoved;
 
     size_t pointerCount = AMotionEvent_getPointerCount(_event);
 
     for (size_t p = 0; p < pointerCount; p++)
     {
-        int id = AMotionEvent_getPointerId(_event, p);
+        int32_t id = AMotionEvent_getPointerId(_event, p);
 
         int x = static_cast<int>(AMotionEvent_getX(_event, p));
         int y = static_cast<int>(AMotionEvent_getY(_event, p));
@@ -477,7 +477,7 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& s
 
             states.mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
         }
-        else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+        else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             if (states.touchEvents[id].x == x && states.touchEvents[id].y == y)
                 continue;
@@ -543,7 +543,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             if (id >= 0 && id < Mouse::ButtonCount)
                 states.isButtonPressed[id] = false;
         }
-        else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+        else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             event.type = Event::TouchEnded;
             event.touch.finger = static_cast<unsigned int>(id);
@@ -690,7 +690,6 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
 
     // Initializes JNI
     jint lResult;
-    // jint lFlags = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;

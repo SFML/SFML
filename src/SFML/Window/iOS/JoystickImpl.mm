@@ -47,7 +47,7 @@ void JoystickImpl::cleanup()
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::isConnected(unsigned int index)
+bool JoystickImpl::isConnected(unsigned int /* index */)
 {
     // Not implemented
     return false;
@@ -55,7 +55,7 @@ bool JoystickImpl::isConnected(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::open(unsigned int index)
+bool JoystickImpl::open(unsigned int /* index */)
 {
     // Not implemented
     return false;

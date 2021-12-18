@@ -123,7 +123,7 @@ namespace
                     name += directoryEntry->d_name;
 
                     if (isJoystick(name.c_str()))
-                        plugged[joystickCount++] = name;
+                        plugged[static_cast<unsigned int>(joystickCount++)] = name;
                 }
 
                 directoryEntry = readdir(directory);
@@ -149,8 +149,8 @@ namespace
 
     void hatValueToSfml(int value, sf::priv::JoystickState& state)
     {
-        state.axes[sf::Joystick::PovX] = hatValueMap[value].first;
-        state.axes[sf::Joystick::PovY] = hatValueMap[value].second;
+        state.axes[sf::Joystick::PovX] = static_cast<float>(hatValueMap[value].first);
+        state.axes[sf::Joystick::PovY] = static_cast<float>(hatValueMap[value].second);
     }
 }
 
@@ -220,7 +220,7 @@ bool JoystickImpl::open(unsigned int index)
 
             // Then allocate a buffer for data retrieval
             m_length = hid_report_size(m_desc, hid_input, m_id);
-            m_buffer.resize(m_length);
+            m_buffer.resize(static_cast<size_t>(m_length));
 
             m_state.connected = true;
 
@@ -292,7 +292,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
-    while (read(m_file, &m_buffer[0], m_length) == m_length)
+    while (read(m_file, &m_buffer[0], static_cast<size_t>(m_length)) == m_length)
     {
         hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 
@@ -328,7 +328,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
                         int maximum = item.logical_maximum;
 
                         value = (value - minimum) * 200 / (maximum - minimum) - 100;
-                        m_state.axes[axis] = value;
+                        m_state.axes[axis] = static_cast<float>(value);
                     }
                 }
             }
