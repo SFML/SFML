@@ -20,6 +20,7 @@ endif()
 
 # System is always built
 SET(SYSTEM_SRC
+    "${SRCROOT}/System/Time.cpp"
     "${SRCROOT}/System/Vector2.cpp"
     "${SRCROOT}/System/Vector3.cpp"
     "${SRCROOT}/TestUtilities/SystemUtil.hpp"
