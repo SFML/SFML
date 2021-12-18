@@ -208,6 +208,7 @@ bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
 {
 #ifdef SFML_OPENGL_ES
 
+    (void) vertexBuffer;
     return false;
 
 #else

@@ -280,6 +280,9 @@ bool WindowImpl::createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& s
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
+    (void) instance;
+    (void) surface;
+    (void) allocator;
     return false;
 
 #else

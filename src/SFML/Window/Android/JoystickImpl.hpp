@@ -105,7 +105,6 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int m_index;                               ///< Index of the joystick
     Joystick::Identification m_identification; ///< Joystick identification
 };
 
