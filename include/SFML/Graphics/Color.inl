@@ -143,13 +143,13 @@ constexpr Color& operator -=(Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-<<<<<<< HEAD
-constexpr inline Color& operator *=(Color& left, const Color& right)
+constexpr Color& operator *=(Color& left, const Color& right)
 {
     return left = left * right;
 }
 
-constexpr inline Color::ColorInit::operator Color() const
+////////////////////////////////////////////////////////////
+constexpr Color::ColorInit::operator Color() const
 {
     return Color(r, g, b, a);
 }
@@ -157,33 +157,3 @@ constexpr inline Color::ColorInit::operator Color() const
 // Sanity check:
 static_assert(Color::Black == Color{0, 0, 0, 255});
 static_assert(Color{0, 0, 0, 255} == Color::Black);
-========
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Color.hpp>
-
-
-namespace sf
-{
-////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-const Color Color::Black(0, 0, 0);
-const Color Color::White(255, 255, 255);
-const Color Color::Red(255, 0, 0);
-const Color Color::Green(0, 255, 0);
-const Color Color::Blue(0, 0, 255);
-const Color Color::Yellow(255, 255, 0);
-const Color Color::Magenta(255, 0, 255);
-const Color Color::Cyan(0, 255, 255);
-const Color Color::Transparent(0, 0, 0, 0);
-
-} // namespace sf
->>>>>>>> dda821597b52b7e82f9c166a71023a34275a844e:src/SFML/Graphics/Color.cpp
-=======
-constexpr Color& operator *=(Color& left, const Color& right)
-{
-    return left = left * right;
-}
->>>>>>> dda821597b52b7e82f9c166a71023a34275a844e
