@@ -32,7 +32,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Window/Window.hpp>
-#include <string>
 
 
 namespace sf

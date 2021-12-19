@@ -25,21 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef _WIN32_WINDOWS
-    #undef _WIN32_WINDOWS
-#endif
-#ifdef _WIN32_WINNT
-    #undef _WIN32_WINNT
-#endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 
 namespace sf

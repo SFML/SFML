@@ -28,7 +28,6 @@
 #include <SFML/Network/Http.hpp>
 #include <SFML/System/Err.hpp>
 #include <cctype>
-#include <algorithm>
 #include <iterator>
 #include <sstream>
 #include <limits>
@@ -204,7 +203,7 @@ void Http::Response::parse(const std::string& data)
     {
         if ((version.size() >= 8) && (version[6] == '.') &&
             (toLower(version.substr(0, 5)) == "http/")   &&
-             isdigit(version[5]) && isdigit(version[7]))
+             std::isdigit(version[5]) && std::isdigit(version[7]))
         {
             m_majorVersion = static_cast<unsigned int>(version[5] - '0');
             m_minorVersion = static_cast<unsigned int>(version[7] - '0');

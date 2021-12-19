@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/Priv/Copy.hpp>
 #include <locale>
 #include <string>
 #include <cstddef>
@@ -37,6 +36,12 @@
 
 namespace sf
 {
+namespace priv
+{
+    template<class InputIt, class OutputIt>
+    OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+}
+
 template <unsigned int N>
 class Utf;
 

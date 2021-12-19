@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/String.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/CursorImpl.hpp>
 #include <SFML/Window/Event.hpp>
@@ -37,13 +36,14 @@
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/Window.hpp>
 #include <queue>
 #include <set>
 
 namespace sf
 {
+class String;
 class WindowListener;
 
 namespace priv
@@ -88,10 +88,15 @@ public:
     virtual ~WindowImpl();
 
     ////////////////////////////////////////////////////////////
-    /// Prevent copies.
+    /// \brief Deleted copy constructor
     ///
     ////////////////////////////////////////////////////////////
     WindowImpl(const WindowImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
     WindowImpl& operator=(const WindowImpl&) = delete;
 
     ////////////////////////////////////////////////////////////

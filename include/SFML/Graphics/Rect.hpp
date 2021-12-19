@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Priv/MinMax.hpp>
 
 
 namespace sf
@@ -106,7 +105,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr bool contains(T x, T y) const;
+    constexpr bool contains(T x, T y) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -121,7 +120,7 @@ public:
     /// \see intersects
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr bool contains(const Vector2<T>& point) const;
+    constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -133,7 +132,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr bool intersects(const Rect<T>& rectangle) const;
+    constexpr bool intersects(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -149,7 +148,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
+    constexpr bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the rectangle's top-left corner
@@ -159,7 +158,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr sf::Vector2<T> getPosition() const;
+    constexpr Vector2<T> getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -169,7 +168,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr sf::Vector2<T> getSize() const;
+    constexpr Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data

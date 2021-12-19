@@ -29,6 +29,7 @@
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>

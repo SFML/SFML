@@ -35,6 +35,15 @@
 
 
 ////////////////////////////////////////////////////////////
+template <typename InputIt, typename OutputIt>
+OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
+{
+    while (first != last)
+        *d_first++ = *first++;
+
+    return d_first;
+}
+
 template <typename In>
 In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {

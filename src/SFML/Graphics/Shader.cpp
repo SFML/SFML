@@ -213,10 +213,15 @@ struct Shader::UniformBinder
     }
 
     ////////////////////////////////////////////////////////////
-    /// Prevent copies.
+    /// \brief Deleted copy constructor
     ///
     ////////////////////////////////////////////////////////////
     UniformBinder(const UniformBinder&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
     UniformBinder& operator=(const UniformBinder&) = delete;
 
     TransientContextLock lock;           //!< Lock to keep context active while uniform is bound

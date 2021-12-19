@@ -24,7 +24,7 @@
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Vertex::Vertex() :
+constexpr Vertex::Vertex() :
 position (0, 0),
 color    (255, 255, 255),
 texCoords(0, 0)
@@ -33,7 +33,7 @@ texCoords(0, 0)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Vertex::Vertex(const Vector2f& thePosition) :
+constexpr Vertex::Vertex(const Vector2f& thePosition) :
 position (thePosition),
 color    (255, 255, 255),
 texCoords(0, 0)
@@ -42,7 +42,7 @@ texCoords(0, 0)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Vertex::Vertex(const Vector2f& thePosition, const Color& theColor) :
+constexpr Vertex::Vertex(const Vector2f& thePosition, const Color& theColor) :
 position (thePosition),
 color    (theColor),
 texCoords(0, 0)
@@ -51,7 +51,7 @@ texCoords(0, 0)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Vertex::Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords) :
+constexpr Vertex::Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords) :
 position (thePosition),
 color    (255, 255, 255),
 texCoords(theTexCoords)
@@ -60,7 +60,7 @@ texCoords(theTexCoords)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Vertex::Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords) :
+constexpr Vertex::Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords) :
 position (thePosition),
 color    (theColor),
 texCoords(theTexCoords)

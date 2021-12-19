@@ -91,10 +91,15 @@ protected:
         ~TransientContextLock();
 
         ////////////////////////////////////////////////////////////
-        /// Prevent copies.
+        /// \brief Deleted copy constructor
         ///
         ////////////////////////////////////////////////////////////
         TransientContextLock(const TransientContextLock&) = delete;
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Deleted copy assignment
+        ///
+        ////////////////////////////////////////////////////////////
         TransientContextLock& operator=(const TransientContextLock&) = delete;
     };
 };

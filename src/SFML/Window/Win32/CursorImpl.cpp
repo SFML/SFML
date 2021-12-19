@@ -26,13 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/CursorImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Err.hpp>
 #include <cstring>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
 
 namespace sf
 {

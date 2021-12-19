@@ -25,22 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef _WIN32_WINDOWS
-    #undef _WIN32_WINDOWS
-#endif
-#ifdef _WIN32_WINNT
-    #undef _WIN32_WINNT
-#endif
-#ifdef WINVER
-    #undef WINVER
-#endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
-#define WINVER         0x0501
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc
@@ -221,7 +210,7 @@ m_cursorGrabbed   (m_fullscreen)
     m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, nullptr, nullptr, GetModuleHandle(nullptr), this);
 
     // Register to receive device interface change notifications (used for joystick connection handling)
-    DEV_BROADCAST_DEVICEINTERFACE deviceInterface = {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, GUID_DEVINTERFACE_HID, 0};
+    DEV_BROADCAST_DEVICEINTERFACE deviceInterface = {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, GUID_DEVINTERFACE_HID, {0}};
     RegisterDeviceNotification(m_handle, &deviceInterface, DEVICE_NOTIFY_WINDOW_HANDLE);
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received

@@ -30,10 +30,56 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 #include <SFML/System/Time.hpp>
+#include <chrono>
+#include <ratio>
+#include <type_traits>
+
+#ifdef SFML_SYSTEM_ANDROID
+#include <SFML/System/SuspendAwareClock.hpp>
+#endif
 
 
 namespace sf
 {
+namespace priv
+{
+
+////////////////////////////////////////////////////////////
+/// \brief Chooses a monotonic clock of highest resolution
+///
+/// The high_resolution_clock is usually an alias for other
+/// clocks: steady_clock or system_clock, whichever has a
+/// higher precision.
+///
+/// sf::Clock, however, is aimed towards monotonic time
+/// measurements and so system_clock could never be a choice
+/// as its subject to discontinuous jumps in the system time
+/// (e.g., if the system administrator manually changes
+/// the clock), and by the incremental adjustments performed
+/// by `adjtime` and Network Time Protocol. On the other
+/// hand, monotonic clocks are unaffected by this behavior.
+///
+/// Note: Linux implementation of a monotonic clock that
+/// takes sleep time into account is represented by
+/// CLOCK_BOOTTIME. Android devices can define the macro:
+/// SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK to use a separate
+/// implementation of that clock, instead.
+///
+/// For more information on Linux clocks visit:
+/// https://linux.die.net/man/2/clock_gettime
+///
+////////////////////////////////////////////////////////////
+#if defined(SFML_SYSTEM_ANDROID) && defined(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
+    using MostSuitableClock = SuspendAwareClock;
+#else
+    using MostSuitableClock = std::conditional_t<
+        std::chrono::high_resolution_clock::is_steady,
+        std::chrono::high_resolution_clock,
+        std::chrono::steady_clock>;
+#endif
+
+} // namespace priv
+
 ////////////////////////////////////////////////////////////
 /// \brief Utility class that measures the elapsed time
 ///
@@ -74,11 +120,28 @@ public:
     Time restart();
 
 private:
+    using ClockImpl = priv::MostSuitableClock;
+
+    static_assert(ClockImpl::is_steady,
+        "Provided implementation is not a monotonic clock");
+    static_assert(std::ratio_less_equal<ClockImpl::period, std::micro>::value,
+        "Clock resolution is too low. Expecting at least a microsecond precision");
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Convert clock duration to Time
+    ///
+    /// This function acts as a utility for converting clock
+    /// duration type instance into sf::Time
+    ///
+    /// \return Time instance
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static Time durationToTime(ClockImpl::duration duration);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Time m_startTime; //!< Time of last reset, in microseconds
+    ClockImpl::time_point m_startTime; //!< Time of last reset
 };
 
 } // namespace sf

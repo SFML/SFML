@@ -24,7 +24,7 @@
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color::Color() :
+constexpr Color::Color() :
 r(0),
 g(0),
 b(0),
@@ -35,7 +35,7 @@ a(255)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
+constexpr Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
 r(red),
 g(green),
 b(blue),
@@ -46,25 +46,25 @@ a(alpha)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color::Color(Uint32 color) :
+constexpr Color::Color(Uint32 color) :
 r(static_cast<Uint8>((color & 0xff000000) >> 24)),
 g(static_cast<Uint8>((color & 0x00ff0000) >> 16)),
-b((color & 0x0000ff00) >> 8 ),
-a((color & 0x000000ff) >> 0 )
+b(static_cast<Uint8>((color & 0x0000ff00) >> 8)),
+a(static_cast<Uint8>(color & 0x000000ff))
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Uint32 Color::toInteger() const
+constexpr Uint32 Color::toInteger() const
 {
     return static_cast<Uint32>((r << 24) | (g << 16) | (b << 8) | a);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline bool operator ==(const Color& left, const Color& right)
+constexpr bool operator ==(const Color& left, const Color& right)
 {
     return (left.r == right.r) &&
            (left.g == right.g) &&
@@ -74,57 +74,76 @@ constexpr inline bool operator ==(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline bool operator !=(const Color& left, const Color& right)
+constexpr bool operator !=(const Color& left, const Color& right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color operator +(const Color& left, const Color& right)
+constexpr Color operator +(const Color& left, const Color& right)
 {
-    return Color(Uint8(priv::min(int(left.r) + right.r, 255)),
-                 Uint8(priv::min(int(left.g) + right.g, 255)),
-                 Uint8(priv::min(int(left.b) + right.b, 255)),
-                 Uint8(priv::min(int(left.a) + right.a, 255)));
+    const auto clampedAdd = [](Uint8 lhs, Uint8 rhs) -> Uint8
+    {
+        const int intResult = static_cast<int>(lhs) + static_cast<int>(rhs);
+        return static_cast<Uint8>(intResult < 255 ? intResult : 255);
+    };
+
+    return Color(clampedAdd(left.r, right.r),
+                 clampedAdd(left.g, right.g),
+                 clampedAdd(left.b, right.b),
+                 clampedAdd(left.a, right.a));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color operator -(const Color& left, const Color& right)
+constexpr Color operator -(const Color& left, const Color& right)
 {
-    return Color(Uint8(priv::max(int(left.r) - right.r, 0)),
-                 Uint8(priv::max(int(left.g) - right.g, 0)),
-                 Uint8(priv::max(int(left.b) - right.b, 0)),
-                 Uint8(priv::max(int(left.a) - right.a, 0)));
+    const auto clampedSub = [](Uint8 lhs, Uint8 rhs) -> Uint8
+    {
+        const int intResult = static_cast<int>(lhs) - static_cast<int>(rhs);
+        return static_cast<Uint8>(intResult > 0 ? intResult : 0);
+    };
+
+    return Color(clampedSub(left.r, right.r),
+                 clampedSub(left.g, right.g),
+                 clampedSub(left.b, right.b),
+                 clampedSub(left.a, right.a));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color operator *(const Color& left, const Color& right)
+constexpr Color operator *(const Color& left, const Color& right)
 {
-    return Color(Uint8(int(left.r) * right.r / 255),
-                 Uint8(int(left.g) * right.g / 255),
-                 Uint8(int(left.b) * right.b / 255),
-                 Uint8(int(left.a) * right.a / 255));
+    const auto scaledMul = [](Uint8 lhs, Uint8 rhs) -> Uint8
+    {
+        const auto uint16Result = static_cast<Uint16>(static_cast<Uint16>(lhs) * static_cast<Uint16>(rhs));
+        return static_cast<Uint8>(uint16Result / 255u);
+    };
+
+    return Color(scaledMul(left.r, right.r),
+                 scaledMul(left.g, right.g),
+                 scaledMul(left.b, right.b),
+                 scaledMul(left.a, right.a));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color& operator +=(Color& left, const Color& right)
+constexpr Color& operator +=(Color& left, const Color& right)
 {
     return left = left + right;
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr inline Color& operator -=(Color& left, const Color& right)
+constexpr Color& operator -=(Color& left, const Color& right)
 {
     return left = left - right;
 }
 
 
 ////////////////////////////////////////////////////////////
+<<<<<<< HEAD
 constexpr inline Color& operator *=(Color& left, const Color& right)
 {
     return left = left * right;
@@ -138,3 +157,33 @@ constexpr inline Color::ColorInit::operator Color() const
 // Sanity check:
 static_assert(Color::Black == Color{0, 0, 0, 255});
 static_assert(Color{0, 0, 0, 255} == Color::Black);
+========
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Color.hpp>
+
+
+namespace sf
+{
+////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+const Color Color::Black(0, 0, 0);
+const Color Color::White(255, 255, 255);
+const Color Color::Red(255, 0, 0);
+const Color Color::Green(0, 255, 0);
+const Color Color::Blue(0, 0, 255);
+const Color Color::Yellow(255, 255, 0);
+const Color Color::Magenta(255, 0, 255);
+const Color Color::Cyan(0, 255, 255);
+const Color Color::Transparent(0, 0, 0, 0);
+
+} // namespace sf
+>>>>>>>> dda821597b52b7e82f9c166a71023a34275a844e:src/SFML/Graphics/Color.cpp
+=======
+constexpr Color& operator *=(Color& left, const Color& right)
+{
+    return left = left * right;
+}
+>>>>>>> dda821597b52b7e82f9c166a71023a34275a844e

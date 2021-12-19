@@ -22,40 +22,29 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLOCKIMPLWIN32_HPP
-#define SFML_CLOCKIMPLWIN32_HPP
+#ifndef SFML_WINDOWSHEADER_HPP
+#define SFML_WINDOWSHEADER_HPP
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-#include <SFML/System/Time.hpp>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 
-namespace sf
-{
-namespace priv
-{
-////////////////////////////////////////////////////////////
-/// \brief Windows implementation of sf::Clock
-///
-////////////////////////////////////////////////////////////
-class ClockImpl
-{
-public:
+#ifndef _WIN32_WINDOWS
+#define _WIN32_WINDOWS 0x0501
+#endif
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current time
-    ///
-    /// \return Current time
-    ///
-    ////////////////////////////////////////////////////////////
-    static Time getCurrentTime();
-};
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
 
-} // namespace priv
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
 
-} // namespace sf
+#include <windows.h>
 
-
-#endif // SFML_CLOCKIMPLWIN32_HPP
+#endif // SFML_WINDOWSHEADER_HPP

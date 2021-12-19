@@ -153,7 +153,7 @@ int main()
             {
                 sf::View view;
                 view.setSize(gameWidth, gameHeight);
-                view.setCenter({gameWidth/2.f, gameHeight/2.f});
+                view.setCenter({gameWidth / 2.f, gameHeight / 2.f});
                 window.setView(view);
             }
         }
