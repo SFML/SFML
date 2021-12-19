@@ -11,8 +11,8 @@ endmacro ()
 # set the appropriate standard library on each platform for the given target
 # example: sfml_set_stdlib(sfml-system)
 function(sfml_set_stdlib target)
-    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
+    # for gcc on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
         if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
             target_link_libraries(${target} PRIVATE "-static-libgcc" "-static-libstdc++")
         elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
@@ -153,9 +153,9 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
+    # if using gcc or clang on a non-Windows platform, we must hide public symbols by default
     # (exported ones are explicitly marked)
-    if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
+    if(NOT SFML_OS_WINDOWS AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
     endif()
 
