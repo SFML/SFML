@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/ClipboardImpl.hpp>
+#include <SFML/System/String.hpp>
 
 #import <AppKit/AppKit.h>
 

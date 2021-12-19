@@ -29,11 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/String.hpp>
 
 
 namespace sf
 {
+class String;
+
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the system clipboard
 ///

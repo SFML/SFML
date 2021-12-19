@@ -29,6 +29,7 @@
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <glad/egl.h>
+#include <string>
 
 
 namespace sf

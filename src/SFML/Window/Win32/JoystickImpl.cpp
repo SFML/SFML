@@ -31,7 +31,6 @@
 #include <SFML/System/Err.hpp>
 #include <tchar.h>
 #include <regstr.h>
-#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <sstream>

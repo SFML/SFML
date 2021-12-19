@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
+#include <iostream>
 #include <streambuf>
 #include <cstdio>
 

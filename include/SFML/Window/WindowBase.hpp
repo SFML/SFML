@@ -35,12 +35,13 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
 namespace sf
 {
+class String;
+
 namespace priv
 {
     class WindowImpl;
