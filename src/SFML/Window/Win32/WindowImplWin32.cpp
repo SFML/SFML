@@ -209,7 +209,7 @@ m_cursorGrabbed   (m_fullscreen)
     m_handle = CreateWindowW(className, title.toWideString().c_str(), win32Style, left, top, width, height, nullptr, nullptr, GetModuleHandle(nullptr), this);
 
     // Register to receive device interface change notifications (used for joystick connection handling)
-    DEV_BROADCAST_DEVICEINTERFACE deviceInterface = {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, GUID_DEVINTERFACE_HID, 0};
+    DEV_BROADCAST_DEVICEINTERFACE deviceInterface = {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, GUID_DEVINTERFACE_HID, {0}};
     RegisterDeviceNotification(m_handle, &deviceInterface, DEVICE_NOTIFY_WINDOW_HANDLE);
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
