@@ -28,7 +28,6 @@
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
-#include <algorithm>
 #include <cctype>
 #include <cassert>
 

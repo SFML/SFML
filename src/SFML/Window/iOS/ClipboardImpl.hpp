@@ -25,14 +25,11 @@
 #ifndef SFML_CLIPBOARDIMPLIOS_HPP
 #define SFML_CLIPBOARDIMPLIOS_HPP
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
-
 
 namespace sf
 {
+class String;
+
 namespace priv
 {
 

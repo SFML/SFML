@@ -30,8 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
-#include <istream>
-#include <ostream>
+#include <iosfwd>
 #include <string>
 
 

@@ -30,7 +30,7 @@
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
-#include <algorithm>
+#include <cstddef>
 
 
 namespace sf

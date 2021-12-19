@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/iOS/ClipboardImpl.hpp>
+#include <SFML/System/String.hpp>
 
 #import <UIKit/UIKit.h>
 

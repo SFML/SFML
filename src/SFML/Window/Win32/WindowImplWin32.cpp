@@ -29,6 +29,7 @@
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc

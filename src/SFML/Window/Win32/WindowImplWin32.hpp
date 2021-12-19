@@ -31,11 +31,12 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
-#include <SFML/System/String.hpp>
 
 
 namespace sf
 {
+class String;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////

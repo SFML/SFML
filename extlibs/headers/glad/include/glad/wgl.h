@@ -28,7 +28,7 @@
 #ifndef SF_GLAD_WGL_H_
 #define SF_GLAD_WGL_H_
 
-#include <windows.h>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <glad/gl.h>
 
 #define SF_GLAD_WGL
