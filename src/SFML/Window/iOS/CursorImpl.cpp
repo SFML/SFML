@@ -47,7 +47,7 @@ CursorImpl::~CursorImpl()
 
 
 ////////////////////////////////////////////////////////////
-bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
+bool CursorImpl::loadFromPixels(const Uint8* /* pixels */, Vector2u /* size */, Vector2u /* hotspot */)
 {
     // Not supported
     return false;
@@ -55,7 +55,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 
 
 ////////////////////////////////////////////////////////////
-bool CursorImpl::loadFromSystem(Cursor::Type type)
+bool CursorImpl::loadFromSystem(Cursor::Type /* type */)
 {
     // Not supported
     return false;

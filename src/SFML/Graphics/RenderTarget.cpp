@@ -498,7 +498,10 @@ void RenderTarget::resetGLStates()
     // Workaround for states not being properly reset on
     // macOS unless a context switch really takes place
     #if defined(SFML_SYSTEM_MACOS)
-        setActive(false);
+        if (!setActive(false))
+        {
+            err() << "Failed to set render target inactive" << std::endl;
+        }
     #endif
 
     if (RenderTargetImpl::isActive(m_id) || setActive(true))

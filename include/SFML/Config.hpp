@@ -194,8 +194,15 @@ namespace sf
         using Int64 = signed   __int64;
         using Uint64 = unsigned __int64;
     #else
+        #if defined(__clang__)
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wc++11-long-long"
+        #endif
         using Int64 = long long;
         using Uint64 = unsigned long long;
+        #if defined(__clang__)
+            #pragma clang diagnostic pop
+        #endif
     #endif
 
 } // namespace sf

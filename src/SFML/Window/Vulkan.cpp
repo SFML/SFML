@@ -51,6 +51,7 @@ bool Vulkan::isAvailable(bool requireGraphics)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
+    (void) requireGraphics;
     return false;
 
 #else
@@ -66,6 +67,7 @@ VulkanFunctionPointer Vulkan::getFunction(const char* name)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
+    (void) name;
     return nullptr;
 
 #else

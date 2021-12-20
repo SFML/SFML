@@ -163,6 +163,8 @@ m_config  (nullptr)
     // Create EGL surface (except on Android because the window is created
     // asynchronously, its activity manager will call it for us)
     createSurface(owner->getSystemHandle());
+#else
+    (void) owner;
 #endif
 }
 

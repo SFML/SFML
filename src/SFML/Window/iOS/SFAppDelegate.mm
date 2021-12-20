@@ -171,7 +171,26 @@ namespace
     if (!self.sfWindow)
         return false;
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wold-style-cast"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wold-style-cast"
+    #endif
+#endif
+
     UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic pop
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
+#endif
+
     if (!rootViewController || ![rootViewController shouldAutorotate])
         return false;
 
@@ -189,7 +208,7 @@ namespace
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
         appFlags += UIInterfaceOrientationMaskLandscapeRight;
 
-    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & appFlags;
+    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & static_cast<unsigned long>(appFlags);
 }
 
 - (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation
@@ -244,10 +263,10 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position
 {
-    position.x *= backingScaleFactor;
-    position.y *= backingScaleFactor;
+    position.x *= static_cast<int>(backingScaleFactor);
+    position.y *= static_cast<int>(backingScaleFactor);
 
     // save the touch position
     if (index >= touchPositions.size())
@@ -268,10 +287,10 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position
 {
-    position.x *= backingScaleFactor;
-    position.y *= backingScaleFactor;
+    position.x *= static_cast<int>(backingScaleFactor);
+    position.y *= static_cast<int>(backingScaleFactor);
 
     // save the touch position
     if (index >= touchPositions.size())
@@ -292,7 +311,7 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position
 {
     // clear the touch position
     if (index < touchPositions.size())
@@ -304,8 +323,8 @@ namespace
         sf::Event event;
         event.type = sf::Event::TouchEnded;
         event.touch.finger = index;
-        event.touch.x = position.x * backingScaleFactor;
-        event.touch.y = position.y * backingScaleFactor;
+        event.touch.x = position.x * static_cast<int>(backingScaleFactor);
+        event.touch.y = position.y * static_cast<int>(backingScaleFactor);
         sfWindow->forwardEvent(event);
     }
 }

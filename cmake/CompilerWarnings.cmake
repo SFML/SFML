@@ -70,16 +70,15 @@ function(set_file_warnings)
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
 
+    if(WARNINGS_AS_ERRORS)
+        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
+        set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
+    endif()
 
     set(CLANG_WARNINGS
         ${CLANG_AND_GCC_WARNINGS}
         -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
     )
-
-    if(WARNINGS_AS_ERRORS)
-        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
-        set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
-    endif()
 
     set(GCC_WARNINGS
         ${CLANG_AND_GCC_WARNINGS}

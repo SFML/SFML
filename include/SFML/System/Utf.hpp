@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <iterator>
 #include <locale>
 #include <string>
 #include <cstdlib>

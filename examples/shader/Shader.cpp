@@ -228,8 +228,8 @@ public:
         for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
             sf::Vector2f position;
-            position.x = std::cos(0.25f * (time * static_cast<float>(i + (m_entities.size() - i)))) * 300 + 350;
-            position.y = std::sin(0.25f * (time * static_cast<float>((m_entities.size() - i) + i))) * 200 + 250;
+            position.x = std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(m_entities.size() - i))) * 300 + 350;
+            position.y = std::sin(0.25f * (time * static_cast<float>(m_entities.size() - i) + static_cast<float>(i))) * 200 + 250;
             m_entities[i].setPosition(position);
         }
 
