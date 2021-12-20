@@ -68,7 +68,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     }
 
     // Convert the application name to a C++ string and return it
-    const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
+    const size_t applicationNameLength = static_cast<size_t>(lJNIEnv->GetStringUTFLength(valueString));
     const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, nullptr);
 
     if (applicationNameLength >= 256)
@@ -77,7 +77,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
         exit(1);
     }
 
-    strncpy(name, applicationName, applicationNameLength);
+    strncpy(name, applicationName, static_cast<size_t>(applicationNameLength));
     name[applicationNameLength] = '\0';
     lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
 
@@ -141,7 +141,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // With libname being the library name such as "jpeg".
 
     // Retrieve JNI environment and JVM instance
-    JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
     // Retrieve the NativeActivity

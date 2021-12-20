@@ -32,6 +32,16 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 ////////////////////////////////////////////////////////////
 /// Predefine OBJ-C classes
 ////////////////////////////////////////////////////////////
@@ -374,5 +384,12 @@ private:
 
 } // namespace sf
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic pop
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
+#endif
 
 #endif // SFML_WINDOWIMPLCOCOA_HPP

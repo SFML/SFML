@@ -39,7 +39,7 @@ template <typename InputIt, typename OutputIt>
 OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
 {
     while (first != last)
-        *d_first++ = *first++;
+        *d_first++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
 
     return d_first;
 }
@@ -106,7 +106,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
     {
         // Invalid character
         if (replacement)
-            *output++ = replacement;
+            *output++ = static_cast<typename Out::container_type::value_type>(replacement);
     }
     else
     {

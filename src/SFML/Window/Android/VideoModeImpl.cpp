@@ -55,7 +55,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     priv::ActivityStates& states = priv::getActivity();
     std::scoped_lock lock(states.mutex);
 
-    return VideoMode(states.screenSize.x, states.screenSize.y);
+    return VideoMode(static_cast<unsigned int>(states.screenSize.x), static_cast<unsigned int>(states.screenSize.y));
 }
 
 } // namespace priv

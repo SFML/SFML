@@ -54,7 +54,7 @@ inline CGFloat getDefaultScaleFactor()
 template <class T>
 void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+    in /= static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
 }
 
 template <class T>
@@ -81,7 +81,7 @@ void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
 template <class T>
 void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+    out = out * static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
 }
 
 template <class T>
