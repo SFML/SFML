@@ -2,11 +2,11 @@
 #include <SFML/System/Vector2.hpp>
 #include "GraphicsUtil.hpp"
 
-TEST_CASE("sf::Rect class template", "[graphics]")
+TEST_CASE("sf::Rect class template - [graphics]")
 {
-    SECTION("Construction")
+    SUBCASE("Construction")
     {
-        SECTION("Default constructor")
+        SUBCASE("Default constructor")
         {
             sf::IntRect rectangle;
             CHECK(rectangle.left == 0);
@@ -15,7 +15,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
             CHECK(rectangle.height == 0);
         }
 
-        SECTION("(left, top, width, height) constructor")
+        SUBCASE("(left, top, width, height) constructor")
         {
             sf::IntRect rectangle(1, 2, 3, 4);
             CHECK(rectangle.left == 1);
@@ -24,7 +24,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
             CHECK(rectangle.height == 4);
         }
 
-        SECTION("(Vector2, Vector2) constructor")
+        SUBCASE("(Vector2, Vector2) constructor")
         {
             sf::Vector2i position(1, 2);
             sf::Vector2i dimension(3, 4);
@@ -36,7 +36,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
             CHECK(rectangle.height == 4);
         }
 
-        SECTION("Conversion constructor")
+        SUBCASE("Conversion constructor")
         {
             sf::FloatRect sourceRectangle(1.0f, 2.0f, 3.0f, 4.0f);
             sf::IntRect rectangle(sourceRectangle);
@@ -48,9 +48,9 @@ TEST_CASE("sf::Rect class template", "[graphics]")
         }
     }
 
-    SECTION("Containment")
+    SUBCASE("Containment")
     {
-        SECTION("contains(x, y)")
+        SUBCASE("contains(x, y)")
         {
             sf::IntRect rectangle(0, 0, 10, 10);
 
@@ -64,7 +64,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
             CHECK(rectangle.contains(15, 15) == false);
         }
 
-        SECTION("contains(Vector2)")
+        SUBCASE("contains(Vector2)")
         {
             sf::IntRect rectangle(0, 0, 10, 10);
 
@@ -79,9 +79,9 @@ TEST_CASE("sf::Rect class template", "[graphics]")
         }
     }
 
-    SECTION("Intersection")
+    SUBCASE("Intersection")
     {
-        SECTION("intersects(Rect)")
+        SUBCASE("intersects(Rect)")
         {
             sf::IntRect rectangle(0, 0, 10, 10);
             sf::IntRect intersectingRectangle(5, 5, 10, 10);
@@ -91,7 +91,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
             CHECK(rectangle.intersects(nonIntersectingRectangle) == false);
         }
 
-        SECTION("intersects(Rect, Rect)")
+        SUBCASE("intersects(Rect, Rect)")
         {
             sf::IntRect rectangle(0, 0, 10, 10);
             sf::IntRect intersectingRectangle(5, 5, 10, 10);
@@ -108,7 +108,7 @@ TEST_CASE("sf::Rect class template", "[graphics]")
         }
     }
 
-    SECTION("Comparison operations")
+    SUBCASE("Comparison operations")
     {
         sf::IntRect firstRectangle(1, 3, 2, 5);
         sf::IntRect secondRectangle(1, 3, 2, 5);

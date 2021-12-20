@@ -1,6 +1,6 @@
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
-add_library(sfml-test-main STATIC "${SRCROOT}/CatchMain.cpp")
+add_library(sfml-test-main STATIC "${SRCROOT}/DoctestMain.cpp")
 target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" "${SRCROOT}/TestUtilities")
 target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
