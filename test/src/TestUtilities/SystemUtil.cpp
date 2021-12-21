@@ -3,18 +3,19 @@
 #include <SFML/System/Time.hpp>
 #include <sstream>
 
-// String conversions for Catch framework
-namespace Catch
+#include <doctest.h>
+
+namespace sf
 {
-    std::string toString(const sf::String& string)
+    doctest::String toString(const sf::String& string)
     {
-        return string.toAnsiString();
+        return string.toAnsiString().c_str();
     }
 
-    std::string toString(sf::Time time)
+    doctest::String toString(sf::Time time)
     {
         std::ostringstream stream;
         stream << time.asMicroseconds() << "us";
-        return stream.str();
+        return stream.str().c_str();
     }
 }
