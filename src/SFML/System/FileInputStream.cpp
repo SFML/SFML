@@ -29,7 +29,8 @@
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
-
+#include <memory>
+#include <cstddef>
 
 namespace sf
 {
@@ -44,10 +45,7 @@ FileInputStream::FileInputStream()
 ////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream()
 {
-#ifdef SFML_SYSTEM_ANDROID
-    if (m_file)
-        delete m_file;
-#else
+#ifndef SFML_SYSTEM_ANDROID
     if (m_file)
         std::fclose(m_file);
 #endif
@@ -58,9 +56,7 @@ FileInputStream::~FileInputStream()
 bool FileInputStream::open(const std::string& filename)
 {
 #ifdef SFML_SYSTEM_ANDROID
-    if (m_file)
-        delete m_file;
-    m_file = new priv::ResourceStream(filename);
+    m_file = std::make_unique<priv::ResourceStream>(filename);
     return m_file->tell() != -1;
 #else
     if (m_file)

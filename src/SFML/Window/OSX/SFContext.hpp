@@ -83,7 +83,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     SFContext(SFContext* shared, const ContextSettings& settings,
-              const WindowImpl* owner, unsigned int bitsPerPixel);
+              const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target

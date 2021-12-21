@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <memory>
 #include <string>
 
 
@@ -104,7 +105,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileWriter* m_writer; //!< Writer that handles I/O on the file's format
+    std::unique_ptr<SoundFileWriter> m_writer; //!< Writer that handles I/O on the file's format
 };
 
 } // namespace sf

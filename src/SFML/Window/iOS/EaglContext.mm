@@ -105,7 +105,7 @@ m_clock       ()
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings,
-                         const WindowImpl* owner, unsigned int bitsPerPixel) :
+                         const WindowImpl& owner, unsigned int bitsPerPixel) :
 m_context     (nil),
 m_framebuffer (0),
 m_colorbuffer (0),
@@ -115,7 +115,7 @@ m_clock       ()
 {
     ensureInit();
 
-    const WindowImplUIKit* window = static_cast<const WindowImplUIKit*>(owner);
+    const auto& window = static_cast<const WindowImplUIKit&>(owner);
 
     createContext(shared, window, bitsPerPixel, settings);
 }
@@ -286,7 +286,7 @@ void EaglContext::setVerticalSyncEnabled(bool enabled)
 
 ////////////////////////////////////////////////////////////
 void EaglContext::createContext(EaglContext* shared,
-                                const WindowImplUIKit* window,
+                                const WindowImplUIKit& window,
                                 unsigned int /* bitsPerPixel */,
                                 const ContextSettings& settings)
 {
@@ -318,10 +318,10 @@ void EaglContext::createContext(EaglContext* shared,
     glGenFramebuffersOESFunc(1, &m_framebuffer);
 
     // Create the render buffers
-    recreateRenderBuffers(window->getGlView());
+    recreateRenderBuffers(window.getGlView());
 
     // Attach the context to the GL view for future updates
-    window->getGlView().context = this;
+    window.getGlView().context = this;
 
     // Deactivate it
     makeCurrent(false);
