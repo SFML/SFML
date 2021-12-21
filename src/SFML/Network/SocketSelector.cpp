@@ -67,6 +67,10 @@ m_impl(std::make_unique<SocketSelectorImpl>(*copy.m_impl))
 
 
 ////////////////////////////////////////////////////////////
+SocketSelector::~SocketSelector() = default;
+
+
+////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
     SocketHandle handle = socket.getHandle();
