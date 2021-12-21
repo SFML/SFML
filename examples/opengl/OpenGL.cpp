@@ -282,8 +282,9 @@ int main()
             // Make the window the active window for OpenGL calls
             if (!window.setActive(true))
             {
-                std::cerr << "Failed to set window to active" << std::endl;
-                return EXIT_FAILURE;
+                // On failure, try re-creating the window, as it is intentionally 
+                // closed when changing color space.
+                continue;
             }
 
             // Clear the depth buffer
