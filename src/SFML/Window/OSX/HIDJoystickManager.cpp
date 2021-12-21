@@ -85,7 +85,7 @@ m_joystickCount(0)
     maskArray[0] = mask0;
     maskArray[1] = mask1;
 
-    CFArrayRef mask = CFArrayCreate(nullptr, (const void**)maskArray, 2, nullptr);
+    CFArrayRef mask = CFArrayCreate(nullptr, reinterpret_cast<const void**>(maskArray), 2, nullptr);
 
     IOHIDManagerSetDeviceMatchingMultiple(m_manager, mask);
     CFRelease(mask);

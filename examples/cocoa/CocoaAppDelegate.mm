@@ -31,6 +31,14 @@
 #define GREEN   @"Green"
 #define RED     @"Red"
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 // Our PIMPL
 struct SFMLmainWindow
 {
@@ -117,7 +125,7 @@ struct SFMLmainWindow
         self.visible = YES;
 
         // Launch the timer to periodically display our stuff into the Cocoa view.
-        self.renderTimer = [NSTimer timerWithTimeInterval:1.f/60.f
+        self.renderTimer = [NSTimer timerWithTimeInterval:1.0/60.0
                                                    target:self
                                                  selector:@selector(renderMainWindow:)
                                                  userInfo:nil
@@ -148,7 +156,7 @@ struct SFMLmainWindow
     self.sfmlView           = nil;
     self.textField          = nil;
 
-    delete (SFMLmainWindow*) self.mainWindow;
+    delete static_cast<SFMLmainWindow*>(self.mainWindow);
     self.mainWindow         = 0;
     self.renderTimer        = nil;
 

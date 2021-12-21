@@ -33,6 +33,14 @@
 #import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
 #import <SFML/Window/OSX/SFSilentResponder.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 
 ////////////////////////////////////////////////////////////
 /// SFOpenGLView class: Privates Methods Declaration
@@ -214,7 +222,7 @@
     point = [self convertPointToScreen:point];
 
     // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
-    const float screenHeight = [[[self window] screen] frame].size.height;
+    const double screenHeight = [[[self window] screen] frame].size.height;
     point.y = screenHeight - point.y;
 
     return point;
@@ -239,7 +247,7 @@
     // Send a resize event if the scaling factor changed
     if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
         NSSize newSize = [self frame].size;
-        m_requester->windowResized(newSize.width, newSize.height);
+        m_requester->windowResized(static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height));
     }
 }
 
@@ -271,7 +279,7 @@
 
     // The new size
     NSSize newSize = [self frame].size;
-    m_requester->windowResized(newSize.width, newSize.height);
+    m_requester->windowResized(static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height));
 }
 
 ////////////////////////////////////////////////////////

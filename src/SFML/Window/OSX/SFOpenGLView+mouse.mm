@@ -33,6 +33,14 @@
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 
 ////////////////////////////////////////////////////////////
 /// In this file, we implement mouse handling for SFOpenGLView
@@ -137,7 +145,7 @@
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
         if (button != sf::Mouse::ButtonCount)
-            m_requester->mouseDownAt(button, loc.x, loc.y);
+            m_requester->mouseDownAt(button, static_cast<int>(loc.x), static_cast<int>(loc.y));
     }
 }
 
@@ -182,7 +190,7 @@
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
         if (button != sf::Mouse::ButtonCount)
-            m_requester->mouseUpAt(button, loc.x, loc.y);
+            m_requester->mouseUpAt(button, static_cast<int>(loc.x), static_cast<int>(loc.y));
     }
 }
 
@@ -243,7 +251,7 @@
     //  when the mouse is dragged. That would be too easy!)
     [self updateMouseState];
     if ((m_requester != 0) && m_mouseIsIn)
-        m_requester->mouseMovedAt(loc.x, loc.y);
+        m_requester->mouseMovedAt(static_cast<int>(loc.x), static_cast<int>(loc.y));
 }
 
 
@@ -291,7 +299,7 @@
 {
     NSScreen* screen = [[self window] screen];
     NSNumber* displayId = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
-    return [displayId intValue];
+    return static_cast<unsigned int>([displayId intValue]);
 }
 
 
@@ -301,7 +309,7 @@
     if (m_requester != 0)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
-        m_requester->mouseWheelScrolledAt([theEvent deltaX], [theEvent deltaY], loc.x, loc.y);
+        m_requester->mouseWheelScrolledAt(static_cast<float>([theEvent deltaX]), static_cast<float>([theEvent deltaY]), static_cast<int>(loc.x), static_cast<int>(loc.y));
     }
 
     // Transmit to non-SFML responder
@@ -397,7 +405,7 @@
     NSPoint loc = [self convertPoint:rawPos fromView:nil];
 
     // Don't forget to change to SFML coord system.
-    float h = [self frame].size.height;
+    const double h = [self frame].size.height;
     loc.y = h - loc.y;
 
     return loc;

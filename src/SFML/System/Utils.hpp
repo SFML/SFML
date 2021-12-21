@@ -22,32 +22,24 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_UTILS_HPP
+#define SFML_UTILS_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Android/ClipboardImpl.hpp>
-#include <SFML/System/Err.hpp>
-#include <SFML/System/String.hpp>
+#include <cctype>
+#include <string>
 
 
 namespace sf
 {
-namespace priv
-{
-////////////////////////////////////////////////////////////
-String ClipboardImpl::getString()
-{
-    sf::err() << "Clipboard API not implemented for Android.\n";
-    return String();
-}
-
-
-////////////////////////////////////////////////////////////
-void ClipboardImpl::setString(const String& /* text */)
-{
-    sf::err() << "Clipboard API not implemented for Android.\n";
-}
-
-} // namespace priv
-
+    [[nodiscard]] inline std::string toLower(std::string str)
+    {
+        for (char& c : str)
+            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+        return str;
+    }
 } // namespace sf
+
+#endif // SFML_UTILS_HPP

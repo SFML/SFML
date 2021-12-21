@@ -27,19 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <cassert>
 
-
-namespace
-{
-    unsigned char toLower(unsigned char character)
-    {
-        return static_cast<unsigned char>(std::tolower(character));
-    }
-}
 
 namespace sf
 {
@@ -48,8 +41,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterOgg::check(const std::string& filename)
 {
-    std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
+    const std::string extension = toLower(filename.substr(filename.find_last_of('.') + 1));
 
     return extension == "ogg";
 }
