@@ -137,7 +137,16 @@ private:
 #ifdef SFML_SYSTEM_ANDROID
     std::unique_ptr<priv::ResourceStream> m_file;
 #else
-    std::FILE* m_file; //!< stdio file stream
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleter for stdio file stream that closes the file stream
+    ///
+    ////////////////////////////////////////////////////////////
+    struct FileCloser
+    {
+        void operator()(std::FILE* file);
+    };
+
+    std::unique_ptr<std::FILE, FileCloser> m_file; //!< stdio file stream
 #endif
 };
 
