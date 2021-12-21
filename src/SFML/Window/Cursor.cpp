@@ -27,23 +27,22 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <memory>
 
 namespace sf
 {
 
 ////////////////////////////////////////////////////////////
 Cursor::Cursor() :
-m_impl(new priv::CursorImpl())
+m_impl(std::make_unique<priv::CursorImpl>())
 {
-    // That's it
+
 }
 
 
 ////////////////////////////////////////////////////////////
-Cursor::~Cursor()
-{
-    delete m_impl;
-}
+Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////

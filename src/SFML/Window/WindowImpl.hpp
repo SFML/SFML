@@ -38,6 +38,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowHandle.hpp>
+#include <memory>
 #include <queue>
 #include <set>
 
@@ -64,20 +65,20 @@ public:
     /// \param style Window style
     /// \param settings Additional settings for the underlying OpenGL context
     ///
-    /// \return Pointer to the created window (don't forget to delete it)
+    /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
+    static std::unique_ptr<WindowImpl> create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
     ///
     /// \param handle Platform-specific handle of the control
     ///
-    /// \return Pointer to the created window (don't forget to delete it)
+    /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static WindowImpl* create(WindowHandle handle);
+    static std::unique_ptr<WindowImpl> create(WindowHandle handle);
 
 public:
 
@@ -293,11 +294,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event>   m_events;                                              //!< Queue of available events
-    JoystickStatesImpl* m_joystickStatesImpl;                                  //!< Previous state of the joysticks (PImpl)
-    Vector3f            m_sensorValue[Sensor::Count];                          //!< Previous value of the sensors
-    float               m_joystickThreshold;                                   //!< Joystick threshold (minimum motion for "move" event to be generated)
-    float               m_previousAxes[Joystick::Count][Joystick::AxisCount];  //!< Position of each axis last time a move event triggered, in range [-100, 100]
+    std::queue<Event>                   m_events;                                              //!< Queue of available events
+    std::unique_ptr<JoystickStatesImpl> m_joystickStatesImpl;                                  //!< Previous state of the joysticks (PImpl)
+    Vector3f                            m_sensorValue[Sensor::Count];                          //!< Previous value of the sensors
+    float                               m_joystickThreshold;                                   //!< Joystick threshold (minimum motion for "move" event to be generated)
+    float                               m_previousAxes[Joystick::Count][Joystick::AxisCount];  //!< Position of each axis last time a move event triggered, in range [-100, 100]
 };
 
 } // namespace priv

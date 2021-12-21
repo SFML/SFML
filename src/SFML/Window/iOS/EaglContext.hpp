@@ -70,7 +70,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     EaglContext(EaglContext* shared, const ContextSettings& settings,
-                const WindowImpl* owner, unsigned int bitsPerPixel);
+                const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
@@ -149,13 +149,13 @@ private:
     /// \brief Create the context
     ///
     /// \param shared       Context to share the new one with (can be a null pointer)
-    /// \param window       Window to attach the context to (can be a null pointer)
+    /// \param window       Window to attach the context to
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
     void createContext(EaglContext* shared,
-                       const WindowImplUIKit* window,
+                       const WindowImplUIKit& window,
                        unsigned int bitsPerPixel,
                        const ContextSettings& settings);
 

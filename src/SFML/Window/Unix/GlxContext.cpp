@@ -131,7 +131,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int /*bitsPerPixel*/) :
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int /*bitsPerPixel*/) :
 m_display   (nullptr),
 m_window    (0),
 m_context   (nullptr),
@@ -148,7 +148,7 @@ m_ownsWindow(false)
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface from the owner window
-    createSurface(owner->getSystemHandle());
+    createSurface(owner.getSystemHandle());
 
     // Create the context
     createContext(shared);

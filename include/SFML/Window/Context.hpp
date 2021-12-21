@@ -31,6 +31,7 @@
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <memory>
 
 
 namespace sf
@@ -161,7 +162,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::GlContext* m_context; //!< Internal OpenGL context
+    std::unique_ptr<priv::GlContext> m_context; //!< Internal OpenGL context
 };
 
 } // namespace sf

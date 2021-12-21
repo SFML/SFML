@@ -36,7 +36,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 Window::Window() :
-m_context       (nullptr),
+m_context       (),
 m_frameTimeLimit(Time::Zero)
 {
 
@@ -45,7 +45,7 @@ m_frameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
-m_context       (nullptr),
+m_context       (),
 m_frameTimeLimit(Time::Zero)
 {
     Window::create(mode, title, style, settings);
@@ -54,7 +54,7 @@ m_frameTimeLimit(Time::Zero)
 
 ////////////////////////////////////////////////////////////
 Window::Window(WindowHandle handle, const ContextSettings& settings) :
-m_context       (nullptr),
+m_context       (),
 m_frameTimeLimit(Time::Zero)
 {
     Window::create(handle, settings);
@@ -119,7 +119,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
     m_impl = priv::WindowImpl::create(mode, title, style, settings);
 
     // Recreate the context
-    m_context = priv::GlContext::create(settings, m_impl, mode.bitsPerPixel);
+    m_context = priv::GlContext::create(settings, *m_impl, mode.bitsPerPixel);
 
     // Perform common initializations
     initialize();
@@ -143,7 +143,7 @@ void Window::create(WindowHandle handle, const ContextSettings& settings)
     WindowBase::create(handle);
 
     // Recreate the context
-    m_context = priv::GlContext::create(settings, m_impl, VideoMode::getDesktopMode().bitsPerPixel);
+    m_context = priv::GlContext::create(settings, *m_impl, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Perform common initializations
     initialize();
@@ -154,8 +154,7 @@ void Window::create(WindowHandle handle, const ContextSettings& settings)
 void Window::close()
 {
     // Delete the context
-    delete m_context;
-    m_context = nullptr;
+    m_context.reset();
 
     // Close the base window
     WindowBase::close();

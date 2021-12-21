@@ -108,7 +108,7 @@ WglContext(shared, ContextSettings(), 1u, 1u)
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel) :
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
 m_window       (nullptr),
 m_pbuffer      (nullptr),
 m_deviceContext(nullptr),
@@ -121,7 +121,7 @@ m_ownsWindow   (false)
     m_settings = settings;
 
     // Create the rendering surface from the owner window
-    createSurface(owner->getSystemHandle(), bitsPerPixel);
+    createSurface(owner.getSystemHandle(), bitsPerPixel);
 
     // Create the context
     createContext(shared);
