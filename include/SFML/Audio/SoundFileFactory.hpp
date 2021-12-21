@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -95,7 +96,7 @@ public:
     /// \see createReaderFromMemory, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::string& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
@@ -110,7 +111,7 @@ public:
     /// \see createReaderFromFilename, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromMemory(const void* data, std::size_t sizeInBytes);
+    static std::unique_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in stream
@@ -124,7 +125,7 @@ public:
     /// \see createReaderFromFilename, createReaderFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromStream(InputStream& stream);
+    static std::unique_ptr<SoundFileReader> createReaderFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right writer for the given file on disk
@@ -136,7 +137,7 @@ public:
     /// \return A new sound file writer that can write given file, or null if no writer can handle it
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileWriter* createWriterFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::string& filename);
 
 private:
 
@@ -146,14 +147,14 @@ private:
     struct ReaderFactory
     {
         bool (*check)(InputStream&);
-        SoundFileReader* (*create)();
+        std::unique_ptr<SoundFileReader> (*create)();
     };
     using ReaderFactoryArray = std::vector<ReaderFactory>;
 
     struct WriterFactory
     {
         bool (*check)(const std::string&);
-        SoundFileWriter* (*create)();
+        std::unique_ptr<SoundFileWriter> (*create)();
     };
     using WriterFactoryArray = std::vector<WriterFactory>;
 

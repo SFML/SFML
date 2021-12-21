@@ -32,6 +32,7 @@
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <algorithm>
+#include <memory>
 #include <cmath>
 
 #if defined(SFML_SYSTEM_WINDOWS)
@@ -85,22 +86,22 @@ struct WindowImpl::JoystickStatesImpl
 };
 
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+std::unique_ptr<WindowImpl> WindowImpl::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
 {
-    return new WindowImplType(mode, title, style, settings);
+    return std::make_unique<WindowImplType>(mode, title, style, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl* WindowImpl::create(WindowHandle handle)
+std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle)
 {
-    return new WindowImplType(handle);
+    return std::make_unique<WindowImplType>(handle);
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImpl::WindowImpl() :
-m_joystickStatesImpl(new JoystickStatesImpl),
+m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>()),
 m_joystickThreshold(0.1f)
 {
     // Get the initial joystick states
@@ -118,10 +119,7 @@ m_joystickThreshold(0.1f)
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl::~WindowImpl()
-{
-    delete m_joystickStatesImpl;
-}
+WindowImpl::~WindowImpl() = default;
 
 
 ////////////////////////////////////////////////////////////

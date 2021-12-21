@@ -31,8 +31,8 @@ namespace sf
 {
 namespace priv
 {
-    template <typename T> SoundFileReader* createReader() {return new T;}
-    template <typename T> SoundFileWriter* createWriter() {return new T;}
+    template <typename T> std::unique_ptr<SoundFileReader> createReader() { return std::make_unique<T>(); }
+    template <typename T> std::unique_ptr<SoundFileWriter> createWriter() { return std::make_unique<T>(); }
 }
 
 ////////////////////////////////////////////////////////////

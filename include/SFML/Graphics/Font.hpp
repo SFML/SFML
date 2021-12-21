@@ -32,10 +32,18 @@
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <unordered_map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
+
+#ifdef SFML_SYSTEM_ANDROID
+namespace sf::priv
+{
+class ResourceStream;
+}
+#endif
 
 namespace sf
 {
@@ -387,22 +395,19 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
+    class FontHandles;
     using PageTable = std::unordered_map<unsigned int, Page>; //!< Table mapping a character size to its page (texture)
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void*                      m_library;     //!< Pointer to the internal library interface (it is typeless to avoid exposing implementation details)
-    void*                      m_face;        //!< Pointer to the internal font face (it is typeless to avoid exposing implementation details)
-    void*                      m_streamRec;   //!< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
-    void*                      m_stroker;     //!< Pointer to the stroker (it is typeless to avoid exposing implementation details)
-    int*                       m_refCount;    //!< Reference counter used by implicit sharing
-    bool                       m_isSmooth;    //!< Status of the smooth filter
-    Info                       m_info;        //!< Information about the font
-    mutable PageTable          m_pages;       //!< Table containing the glyphs pages by character size
-    mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
+    std::shared_ptr<FontHandles>          m_font;        //!< Shared information about the internal font instance
+    bool                                  m_isSmooth;    //!< Status of the smooth filter
+    Info                                  m_info;        //!< Information about the font
+    mutable PageTable                     m_pages;       //!< Table containing the glyphs pages by character size
+    mutable std::vector<Uint8>            m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
     #ifdef SFML_SYSTEM_ANDROID
-    void*                      m_stream; //!< Asset file streamer (if loaded from file)
+    std::unique_ptr<priv::ResourceStream> m_stream;      //!< Asset file streamer (if loaded from file)
     #endif
 };
 
