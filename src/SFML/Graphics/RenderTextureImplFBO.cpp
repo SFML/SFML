@@ -28,12 +28,13 @@
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
-#include <utility>
+#include <mutex>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
-#include <set>
-#include <mutex>
+#include <utility>
 
 
 namespace
@@ -118,7 +119,7 @@ m_depthStencilBuffer(0),
 m_colorBuffer       (0),
 m_width             (0),
 m_height            (0),
-m_context           (nullptr),
+m_context           (),
 m_textureId         (0),
 m_multisample       (false),
 m_stencil           (false),
@@ -169,9 +170,6 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 
     // Clean up FBOs
     destroyStaleFBOs();
-
-    // Delete the backup context if we had to create one
-    delete m_context;
 }
 
 
@@ -521,7 +519,7 @@ bool RenderTextureImplFBO::activate(bool active)
     if (!contextId)
     {
         if (!m_context)
-            m_context = new Context;
+            m_context = std::make_unique<Context>();
 
         if (!m_context->setActive(true))
         {

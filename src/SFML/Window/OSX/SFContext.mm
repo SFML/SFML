@@ -63,7 +63,7 @@ m_window(0)
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
-                     const WindowImpl* owner, unsigned int bitsPerPixel) :
+                     const WindowImpl& owner, unsigned int bitsPerPixel) :
 m_context(0),
 m_view(0),
 m_window(0)
@@ -73,8 +73,8 @@ m_window(0)
     createContext(shared, bitsPerPixel, settings);
 
     // Apply context.
-    const WindowImplCocoa* ownerCocoa = static_cast<const WindowImplCocoa*>(owner);
-    ownerCocoa->applyContext(m_context);
+    const auto& ownerCocoa = static_cast<const WindowImplCocoa&>(owner);
+    ownerCocoa.applyContext(m_context);
 }
 
 

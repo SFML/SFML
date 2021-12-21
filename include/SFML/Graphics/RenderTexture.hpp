@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <memory>
 
 
 namespace sf
@@ -228,8 +229,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::RenderTextureImpl* m_impl;    //!< Platform/hardware specific implementation
-    Texture                  m_texture; //!< Target texture to draw on
+    std::unique_ptr<priv::RenderTextureImpl> m_impl;    //!< Platform/hardware specific implementation
+    Texture                                  m_texture; //!< Target texture to draw on
 };
 
 } // namespace sf

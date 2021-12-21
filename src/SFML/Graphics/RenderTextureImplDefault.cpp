@@ -29,6 +29,7 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
 #include <SFML/Window/Context.hpp>
+#include <memory>
 
 
 namespace sf
@@ -37,7 +38,7 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplDefault::RenderTextureImplDefault() :
-m_context(nullptr),
+m_context(),
 m_width  (0),
 m_height (0)
 {
@@ -46,11 +47,7 @@ m_height (0)
 
 
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::~RenderTextureImplDefault()
-{
-    // Destroy the context
-    delete m_context;
-}
+RenderTextureImplDefault::~RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -71,7 +68,7 @@ bool RenderTextureImplDefault::create(unsigned int width, unsigned int height, u
     m_height = height;
 
     // Create the in-memory OpenGL context
-    m_context = new Context(settings, width, height);
+    m_context = std::make_unique<Context>(settings, width, height);
 
     return true;
 }

@@ -30,6 +30,7 @@
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
+#include <memory>
 #include <utility>
 
 #ifdef _MSC_VER
@@ -51,7 +52,7 @@ struct SocketSelector::SocketSelectorImpl
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector() :
-m_impl(new SocketSelectorImpl)
+m_impl(std::make_unique<SocketSelectorImpl>())
 {
     clear();
 }
@@ -59,17 +60,14 @@ m_impl(new SocketSelectorImpl)
 
 ////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector(const SocketSelector& copy) :
-m_impl(new SocketSelectorImpl(*copy.m_impl))
+m_impl(std::make_unique<SocketSelectorImpl>(*copy.m_impl))
 {
 
 }
 
 
 ////////////////////////////////////////////////////////////
-SocketSelector::~SocketSelector()
-{
-    delete m_impl;
-}
+SocketSelector::~SocketSelector() = default;
 
 
 ////////////////////////////////////////////////////////////
