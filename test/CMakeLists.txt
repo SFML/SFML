@@ -13,6 +13,11 @@ target_include_directories(sfml-test-main PUBLIC "${SRCROOT}/TestUtilities")
 target_link_libraries(sfml-test-main PUBLIC Catch2::Catch2)
 target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
+# Work around MinGW struggling to process a file as large as catch.hpp
+if(MINGW)
+    target_compile_options(sfml-test-main PUBLIC -Wa,-mbig-obj)
+endif()
+
 # System is always built
 SET(SYSTEM_SRC
     "${SRCROOT}/System/Vector2.cpp"
