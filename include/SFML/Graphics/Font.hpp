@@ -401,7 +401,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<FontHandles>          m_font;        //!< Shared information about the internal font instance
+    std::shared_ptr<FontHandles>          m_fontHandles; //!< Shared information about the internal font instance
     bool                                  m_isSmooth;    //!< Status of the smooth filter
     Info                                  m_info;        //!< Information about the font
     mutable PageTable                     m_pages;       //!< Table containing the glyphs pages by character size
