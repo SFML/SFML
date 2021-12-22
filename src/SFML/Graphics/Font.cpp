@@ -106,9 +106,9 @@ public:
 
 ////////////////////////////////////////////////////////////
 Font::Font() :
-m_font     (),
-m_isSmooth (true),
-m_info     ()
+m_fontHandles(),
+m_isSmooth   (true),
+m_info       ()
 {
 
 }
@@ -116,7 +116,7 @@ m_info     ()
 
 ////////////////////////////////////////////////////////////
 Font::Font(const Font& copy) :
-m_font       (copy.m_font),
+m_fontHandles(copy.m_fontHandles),
 m_isSmooth   (copy.m_isSmooth),
 m_info       (copy.m_info),
 m_pages      (copy.m_pages),
@@ -141,7 +141,7 @@ bool Font::loadFromFile(const std::string& filename)
     // Cleanup the previous resources
     cleanup();
 
-    auto font = std::make_unique<FontHandles>();
+    auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -152,7 +152,7 @@ bool Font::loadFromFile(const std::string& filename)
         err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    font->library.reset(library);
+    fontHandles->library.reset(library);
 
     // Load the new font face from the specified file
     FT_Face face;
@@ -161,7 +161,7 @@ bool Font::loadFromFile(const std::string& filename)
         err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
         return false;
     }
-    font->face.reset(face);
+    fontHandles->face.reset(face);
 
     // Load the stroker that will be used to outline the font
     FT_Stroker stroker;
@@ -170,7 +170,7 @@ bool Font::loadFromFile(const std::string& filename)
         err() << "Failed to load font \"" << filename << "\" (failed to create the stroker)" << std::endl;
         return false;
     }
-    font->stroker.reset(stroker);
+    fontHandles->stroker.reset(stroker);
 
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
@@ -180,7 +180,7 @@ bool Font::loadFromFile(const std::string& filename)
     }
 
     // Store the loaded font handles
-    m_font = std::move(font);
+    m_fontHandles = std::move(fontHandles);
 
     // Store the font information
     m_info.family = face->family_name ? face->family_name : std::string();
@@ -202,7 +202,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     // Cleanup the previous resources
     cleanup();
 
-    auto font = std::make_unique<FontHandles>();
+    auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -213,7 +213,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
         err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    font->library.reset(library);
+    fontHandles->library.reset(library);
 
     // Load the new font face from the specified file
     FT_Face face;
@@ -222,7 +222,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
         err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
         return false;
     }
-    font->face.reset(face);
+    fontHandles->face.reset(face);
 
     // Load the stroker that will be used to outline the font
     FT_Stroker stroker;
@@ -231,7 +231,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
         err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
         return false;
     }
-    font->stroker.reset(stroker);
+    fontHandles->stroker.reset(stroker);
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
@@ -241,7 +241,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     }
 
     // Store the loaded font handles
-    m_font = std::move(font);
+    m_fontHandles = std::move(fontHandles);
 
     // Store the font information
     m_info.family = face->family_name ? face->family_name : std::string();
@@ -256,7 +256,7 @@ bool Font::loadFromStream(InputStream& stream)
     // Cleanup the previous resources
     cleanup();
 
-    auto font = std::make_unique<FontHandles>();
+    auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
     // Note: we initialize FreeType for every font instance in order to avoid having a single
@@ -267,7 +267,7 @@ bool Font::loadFromStream(InputStream& stream)
         err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
         return false;
     }
-    font->library.reset(library);
+    fontHandles->library.reset(library);
 
     // Make sure that the stream's reading position is at the beginning
     if (stream.seek(0) == -1)
@@ -277,19 +277,19 @@ bool Font::loadFromStream(InputStream& stream)
     }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
-    font->streamRec = std::make_unique<FT_StreamRec>();
-    std::memset(font->streamRec.get(), 0, sizeof(*font->streamRec));
-    font->streamRec->base               = nullptr;
-    font->streamRec->size               = static_cast<unsigned long>(stream.getSize());
-    font->streamRec->pos                = 0;
-    font->streamRec->descriptor.pointer = &stream;
-    font->streamRec->read               = &read;
-    font->streamRec->close              = &close;
+    fontHandles->streamRec = std::make_unique<FT_StreamRec>();
+    std::memset(fontHandles->streamRec.get(), 0, sizeof(*fontHandles->streamRec));
+    fontHandles->streamRec->base               = nullptr;
+    fontHandles->streamRec->size               = static_cast<unsigned long>(stream.getSize());
+    fontHandles->streamRec->pos                = 0;
+    fontHandles->streamRec->descriptor.pointer = &stream;
+    fontHandles->streamRec->read               = &read;
+    fontHandles->streamRec->close              = &close;
 
     // Setup the FreeType callbacks that will read our stream
     FT_Open_Args args;
     args.flags  = FT_OPEN_STREAM;
-    args.stream = font->streamRec.get();
+    args.stream = fontHandles->streamRec.get();
     args.driver = nullptr;
 
     // Load the new font face from the specified stream
@@ -299,7 +299,7 @@ bool Font::loadFromStream(InputStream& stream)
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
         return false;
     }
-    font->face.reset(face);
+    fontHandles->face.reset(face);
 
     // Load the stroker that will be used to outline the font
     FT_Stroker stroker;
@@ -308,7 +308,7 @@ bool Font::loadFromStream(InputStream& stream)
         err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
         return false;
     }
-    font->stroker.reset(stroker);
+    fontHandles->stroker.reset(stroker);
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
@@ -318,7 +318,7 @@ bool Font::loadFromStream(InputStream& stream)
     }
 
     // Store the loaded font handles
-    m_font = std::move(font);
+    m_fontHandles = std::move(fontHandles);
 
     // Store the font information
     m_info.family = face->family_name ? face->family_name : std::string();
@@ -341,7 +341,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
     GlyphTable& glyphs = m_pages[characterSize].glyphs;
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
-    Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(m_font->face.get(), codePoint));
+    Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
 
     // Search the glyph into the cache
     if (auto it = glyphs.find(key); it != glyphs.end())
@@ -361,7 +361,7 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 ////////////////////////////////////////////////////////////
 bool Font::hasGlyph(Uint32 codePoint) const
 {
-    return FT_Get_Char_Index(m_font->face.get(), codePoint) != 0;
+    return FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint) != 0;
 }
 
 
@@ -372,7 +372,7 @@ float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize, 
     if (first == 0 || second == 0)
         return 0.f;
 
-    auto face = m_font->face.get();
+    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -409,7 +409,7 @@ float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize, 
 ////////////////////////////////////////////////////////////
 float Font::getLineSpacing(unsigned int characterSize) const
 {
-    auto face = m_font->face.get();
+    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -425,7 +425,7 @@ float Font::getLineSpacing(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlinePosition(unsigned int characterSize) const
 {
-    auto face = m_font->face.get();
+    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -445,7 +445,7 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlineThickness(unsigned int characterSize) const
 {
-    auto face = m_font->face.get();
+    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -494,7 +494,7 @@ Font& Font::operator =(const Font& right)
 {
     Font temp(right);
 
-    std::swap(m_font,        temp.m_font);
+    std::swap(m_fontHandles, temp.m_fontHandles);
     std::swap(m_isSmooth,    temp.m_isSmooth);
     std::swap(m_info,        temp.m_info);
     std::swap(m_pages,       temp.m_pages);
@@ -512,7 +512,7 @@ Font& Font::operator =(const Font& right)
 void Font::cleanup()
 {
     // Drop ownership of shared FreeType pointers
-    m_font.reset();
+    m_fontHandles.reset();
 
     // Reset members
     m_pages.clear();
@@ -526,8 +526,12 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     // The glyph to return
     Glyph glyph;
 
-    // First, get our FT_Face
-    auto face = m_font->face.get();
+    // Stop if no font is loaded
+    if (!m_fontHandles)
+        return glyph;
+
+    // Get our FT_Face
+    auto face = m_fontHandles->face.get();
     if (!face)
         return glyph;
 
@@ -560,7 +564,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 
         if (outlineThickness != 0)
         {
-            auto stroker = m_font->stroker.get();
+            auto stroker = m_fontHandles->stroker.get();
 
             FT_Stroker_Set(stroker, static_cast<FT_Fixed>(outlineThickness * static_cast<float>(1 << 6)), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
             FT_Glyph_Stroke(&glyphDesc, stroker, true);
@@ -578,7 +582,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
     if (!outline)
     {
         if (bold)
-            FT_Bitmap_Embolden(m_font->library.get(), &bitmap, weight, weight);
+            FT_Bitmap_Embolden(m_fontHandles->library.get(), &bitmap, weight, weight);
 
         if (outlineThickness != 0)
             err() << "Failed to outline glyph (no fallback available)" << std::endl;
@@ -764,7 +768,8 @@ bool Font::setCurrentSize(unsigned int characterSize) const
     // FT_Set_Pixel_Sizes is an expensive function, so we must call it
     // only when necessary to avoid killing performances
 
-    auto face = m_font->face.get();
+    // m_fontHandles and m_fontHandles->face are checked to be non-null before calling this method
+    auto face = m_fontHandles->face.get();
     FT_UShort currentSize = face->size->metrics.x_ppem;
 
     if (currentSize != characterSize)
@@ -795,7 +800,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
         return result == FT_Err_Ok;
     }
 
-     return true;
+    return true;
 }
 
 
