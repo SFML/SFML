@@ -87,8 +87,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right reader for the given file on disk
     ///
-    /// It's up to the caller to release the returned reader
-    ///
     /// \param filename Path of the sound file
     ///
     /// \return A new sound file reader that can read the given file, or null if no reader can handle it
@@ -100,8 +98,6 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
-    ///
-    /// It's up to the caller to release the returned reader
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Total size of the file data, in bytes
@@ -116,8 +112,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in stream
     ///
-    /// It's up to the caller to release the returned reader
-    ///
     /// \param stream Source stream to read from
     ///
     /// \return A new sound file codec that can read the given file, or null if no codec can handle it
@@ -129,8 +123,6 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right writer for the given file on disk
-    ///
-    /// It's up to the caller to release the returned writer
     ///
     /// \param filename Path of the sound file
     ///

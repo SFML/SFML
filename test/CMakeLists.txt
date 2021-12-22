@@ -1,8 +1,15 @@
+cmake_minimum_required(VERSION 3.14)
+
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
 
 add_library(sfml-test-main STATIC "${SRCROOT}/DoctestMain.cpp")
 target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" "${SRCROOT}/TestUtilities")
 target_compile_features(sfml-test-main PRIVATE cxx_std_17)
+
+# Work around MinGW struggling to process a file as large as catch.hpp
+if(MINGW)
+    target_compile_options(sfml-test-main PUBLIC -Wa,-mbig-obj)
+endif()
 
 # System is always built
 SET(SYSTEM_SRC
