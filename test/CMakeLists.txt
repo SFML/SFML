@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(SRCROOT "${PROJECT_SOURCE_DIR}/test/src")
+set(SRCROOT "${PROJECT_SOURCE_DIR}/test")
 
 include(FetchContent)
 FetchContent_Declare(Catch2
