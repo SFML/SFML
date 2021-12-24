@@ -1,6 +1,6 @@
 #include <SFML/Network.hpp>
 
-#include <catch2/catch.hpp>
+#include <doctest.h>
 #include <limits>
 
 template <typename IntegerType>
@@ -13,11 +13,11 @@ static void testPacketStreamOperators(IntegerType expected)
     CHECK(expected == received);
 }
 
-TEST_CASE("sf::Packet class", "[network]")
+TEST_CASE("sf::Packet class - [network]")
 {
-    SECTION("Stream operators")
+    SUBCASE("Stream operators")
     {
-        SECTION("Int8")
+        SUBCASE("Int8")
         {
             testPacketStreamOperators(sf::Int8(0));
             testPacketStreamOperators(sf::Int8(1));
@@ -25,7 +25,7 @@ TEST_CASE("sf::Packet class", "[network]")
             testPacketStreamOperators(std::numeric_limits<sf::Int8>::max());
         }
 
-        SECTION("Int16")
+        SUBCASE("Int16")
         {
             testPacketStreamOperators(sf::Int16(0));
             testPacketStreamOperators(sf::Int16(1));
@@ -33,7 +33,7 @@ TEST_CASE("sf::Packet class", "[network]")
             testPacketStreamOperators(std::numeric_limits<sf::Int16>::max());
         }
 
-        SECTION("Int32")
+        SUBCASE("Int32")
         {
             testPacketStreamOperators(sf::Int32(0));
             testPacketStreamOperators(sf::Int32(1));
@@ -41,7 +41,7 @@ TEST_CASE("sf::Packet class", "[network]")
             testPacketStreamOperators(std::numeric_limits<sf::Int32>::max());
         }
 
-        SECTION("Int64")
+        SUBCASE("Int64")
         {
             testPacketStreamOperators(sf::Int64(0));
             testPacketStreamOperators(sf::Int64(1));
