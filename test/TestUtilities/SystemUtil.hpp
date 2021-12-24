@@ -6,11 +6,11 @@
 #ifndef SFML_TESTUTILITIES_SYSTEM_HPP
 #define SFML_TESTUTILITIES_SYSTEM_HPP
 
-#include <doctest.h>
-
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <sstream>
+
+#include <doctest.h>
 
 // String conversions for doctest framework
 namespace sf

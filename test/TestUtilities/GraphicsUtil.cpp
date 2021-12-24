@@ -1,4 +1,4 @@
-// Note: No need to increase compile time by including TestUtilities/Graphics.hpp
+// Note: No need to increase compile time by including TestUtilities/GraphicsUtil.hpp
 #include <SFML/Graphics/Color.hpp>
 #include <sstream>
 #include <doctest.h>

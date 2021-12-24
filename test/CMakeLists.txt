@@ -40,6 +40,8 @@ endif()
 if(SFML_BUILD_NETWORK)
     SET(NETWORK_SRC
         "${SRCROOT}/Network/Packet.cpp"
+        "${SRCROOT}/TestUtilities/NetworkUtil.hpp"
+        "${SRCROOT}/TestUtilities/NetworkUtil.cpp"
     )
     sfml_add_test(test-sfml-network "${NETWORK_SRC}" sfml-network)
     target_link_libraries(test-sfml-network PRIVATE sfml-test-main)

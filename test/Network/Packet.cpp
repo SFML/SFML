@@ -1,7 +1,8 @@
-#include <SFML/Network.hpp>
+#include <SFML/Network/Packet.hpp>
 
-#include <doctest.h>
 #include <limits>
+
+#include "NetworkUtil.hpp"
 
 template <typename IntegerType>
 static void testPacketStreamOperators(IntegerType expected)

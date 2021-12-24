@@ -8,6 +8,8 @@
 
 #include "WindowUtil.hpp"
 
+#include <doctest.h>
+
 namespace doctest
 {
     class String;

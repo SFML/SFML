@@ -1,4 +1,4 @@
-// Note: No need to increase compile time by including TestUtilities/System.hpp
+// Note: No need to increase compile time by including TestUtilities/SystemUtil.hpp
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 #include <sstream>
