@@ -11,6 +11,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <sstream>
+#include <string>
 
 // String conversions for doctest framework
 namespace sf
@@ -37,5 +38,31 @@ namespace sf
         return stream.str().c_str();
     }
 }
+
+// Work around GCC 8.x bug with `<filesystem>`.
+#if !defined(__GNUC__) || (__GNUC__ >= 9)
+namespace sf::Testing
+{
+    class TemporaryFile
+    {
+    private:
+        std::string m_path;
+
+    public:
+        // Create a temporary file with a randomly generated path, containing 'contents'.
+        TemporaryFile(const std::string& contents);
+
+        // Close and delete the generated file.
+        ~TemporaryFile();
+
+        // Prevent copies.
+        TemporaryFile(const TemporaryFile&) = delete;
+        TemporaryFile& operator=(const TemporaryFile&) = delete;
+
+        // Return the randomly generated path.
+        const std::string& getPath() const;
+    };
+}
+#endif // !defined(__GNUC__) || (__GNUC__ >= 9)
 
 #endif // SFML_TESTUTILITIES_SYSTEM_HPP

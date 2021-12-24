@@ -31,7 +31,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 #include <chrono>
-#include <type_traits>
 
 
 namespace sf
