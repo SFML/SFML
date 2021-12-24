@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test")
 
 add_library(sfml-test-main STATIC "${SRCROOT}/DoctestMain.cpp")
-target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" "${SRCROOT}/TestUtilities")
+target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
 target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
 # System is always built
@@ -11,8 +11,8 @@ SET(SYSTEM_SRC
     "${SRCROOT}/System/Time.cpp"
     "${SRCROOT}/System/Vector2.cpp"
     "${SRCROOT}/System/Vector3.cpp"
-    "${SRCROOT}/TestUtilities/SystemUtil.hpp"
-    "${SRCROOT}/TestUtilities/SystemUtil.cpp"
+    "${SRCROOT}/System/SystemUtil.hpp"
+    "${SRCROOT}/System/SystemUtil.cpp"
 )
 
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" sfml-system)
@@ -20,8 +20,8 @@ target_link_libraries(test-sfml-system PRIVATE sfml-test-main)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
-        "${SRCROOT}/TestUtilities/WindowUtil.hpp"
-        "${SRCROOT}/TestUtilities/WindowUtil.cpp"
+        "${SRCROOT}/Window/WindowUtil.hpp"
+        "${SRCROOT}/Window/WindowUtil.cpp"
     )
     sfml_add_test(test-sfml-window "${WINDOW_SRC}" sfml-window)
     target_link_libraries(test-sfml-window PRIVATE sfml-test-main)
@@ -30,8 +30,8 @@ endif()
 if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
         "${SRCROOT}/Graphics/Rect.cpp"
-        "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
-        "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
+        "${SRCROOT}/Graphics/GraphicsUtil.hpp"
+        "${SRCROOT}/Graphics/GraphicsUtil.cpp"
     )
     sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" sfml-graphics)
     target_link_libraries(test-sfml-graphics PRIVATE sfml-test-main)

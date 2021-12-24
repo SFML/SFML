@@ -6,7 +6,7 @@
 #ifndef SFML_TESTUTILITIES_GRAPHICS_HPP
 #define SFML_TESTUTILITIES_GRAPHICS_HPP
 
-#include "WindowUtil.hpp"
+#include <doctest.h>
 
 namespace doctest
 {

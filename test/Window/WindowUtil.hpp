@@ -6,8 +6,6 @@
 #ifndef SFML_TESTUTILITIES_WINDOW_HPP
 #define SFML_TESTUTILITIES_WINDOW_HPP
 
-#include "SystemUtil.hpp"
-
 #include <SFML/Graphics/Rect.hpp>
 
 #include <doctest.h>
