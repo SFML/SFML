@@ -11,7 +11,10 @@
 namespace sf
 {
     class Color;
+    class Transform;
+
     std::ostream& operator <<(std::ostream& os, const Color& color);
+    std::ostream& operator <<(std::ostream& os, const Transform& transform);
 }
 
 #endif // SFML_TESTUTILITIES_GRAPHICS_HPP
