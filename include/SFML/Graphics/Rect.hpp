@@ -97,22 +97,6 @@ public:
     /// This check is non-inclusive. If the point lies on the
     /// edge of the rectangle, this function will return false.
     ///
-    /// \param x X coordinate of the point to test
-    /// \param y Y coordinate of the point to test
-    ///
-    /// \return True if the point is inside, false otherwise
-    ///
-    /// \see intersects
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr bool contains(T x, T y) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a point is inside the rectangle's area
-    ///
-    /// This check is non-inclusive. If the point lies on the
-    /// edge of the rectangle, this function will return false.
-    ///
     /// \param point Point to test
     ///
     /// \return True if the point is inside, false otherwise
