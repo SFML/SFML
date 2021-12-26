@@ -73,7 +73,7 @@ height(static_cast<T>(rectangle.height))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool Rect<T>::contains(T x, T y) const
+constexpr bool Rect<T>::contains(const Vector2<T>& point) const
 {
     // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
     const auto min = [](T a, T b){ return (a < b) ? a : b; };
@@ -87,15 +87,7 @@ constexpr bool Rect<T>::contains(T x, T y) const
     const T minY = min(top, static_cast<T>(top + height));
     const T maxY = max(top, static_cast<T>(top + height));
 
-    return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-constexpr bool Rect<T>::contains(const Vector2<T>& point) const
-{
-    return contains(point.x, point.y);
+    return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) && (point.y < maxY);
 }
 
 

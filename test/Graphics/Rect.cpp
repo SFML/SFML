@@ -50,20 +50,6 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
     SUBCASE("Containment")
     {
-        SUBCASE("contains(x, y)")
-        {
-            sf::IntRect rectangle(0, 0, 10, 10);
-
-            CHECK(rectangle.contains(0, 0) == true);
-            CHECK(rectangle.contains(9, 0) == true);
-            CHECK(rectangle.contains(0, 9) == true);
-            CHECK(rectangle.contains(9, 9) == true);
-            CHECK(rectangle.contains(9, 10) == false);
-            CHECK(rectangle.contains(10, 9) == false);
-            CHECK(rectangle.contains(10, 10) == false);
-            CHECK(rectangle.contains(15, 15) == false);
-        }
-
         SUBCASE("contains(Vector2)")
         {
             sf::IntRect rectangle(0, 0, 10, 10);

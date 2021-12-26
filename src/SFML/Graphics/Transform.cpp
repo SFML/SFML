@@ -178,14 +178,14 @@ Transform& Transform::rotate(float angle)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle, float centerX, float centerY)
+Transform& Transform::rotate(float angle, const Vector2f& center)
 {
     float rad = angle * 3.141592654f / 180.f;
     float cos = std::cos(rad);
     float sin = std::sin(rad);
 
-    Transform rotation(cos, -sin, centerX * (1 - cos) + centerY * sin,
-                       sin,  cos, centerY * (1 - cos) - centerX * sin,
+    Transform rotation(cos, -sin, center.x * (1 - cos) + center.y * sin,
+                       sin,  cos, center.y * (1 - cos) - center.x * sin,
                        0,    0,   1);
 
     return combine(rotation);
@@ -193,45 +193,24 @@ Transform& Transform::rotate(float angle, float centerX, float centerY)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle, const Vector2f& center)
-{
-    return rotate(angle, center.x, center.y);
-}
-
-
-////////////////////////////////////////////////////////////
-Transform& Transform::scale(float scaleX, float scaleY)
-{
-    Transform scaling(scaleX, 0,      0,
-                      0,      scaleY, 0,
-                      0,      0,      1);
-
-    return combine(scaling);
-}
-
-
-////////////////////////////////////////////////////////////
-Transform& Transform::scale(float scaleX, float scaleY, float centerX, float centerY)
-{
-    Transform scaling(scaleX, 0,      centerX * (1 - scaleX),
-                      0,      scaleY, centerY * (1 - scaleY),
-                      0,      0,      1);
-
-    return combine(scaling);
-}
-
-
-////////////////////////////////////////////////////////////
 Transform& Transform::scale(const Vector2f& factors)
 {
-    return scale(factors.x, factors.y);
+    Transform scaling(factors.x, 0,         0,
+                      0,         factors.y, 0,
+                      0,         0,         1);
+
+    return combine(scaling);
 }
 
 
 ////////////////////////////////////////////////////////////
 Transform& Transform::scale(const Vector2f& factors, const Vector2f& center)
 {
-    return scale(factors.x, factors.y, center.x, center.y);
+    Transform scaling(factors.x, 0,         center.x * (1 - factors.x),
+                      0,         factors.y, center.y * (1 - factors.y),
+                      0,         0,         1);
+
+    return combine(scaling);
 }
 
 
