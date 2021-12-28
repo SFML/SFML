@@ -20,6 +20,7 @@ target_link_libraries(test-sfml-system PRIVATE sfml-test-main)
 
 if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
+        "${SRCROOT}/Window/VideoMode.cpp"
         "${SRCROOT}/TestUtilities/WindowUtil.hpp"
         "${SRCROOT}/TestUtilities/WindowUtil.cpp"
     )
@@ -29,6 +30,7 @@ endif()
 
 if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
+        "${SRCROOT}/Graphics/Color.cpp"
         "${SRCROOT}/Graphics/Rect.cpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"

@@ -201,4 +201,16 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(time == sf::milliseconds(1));
         }
     }
+
+    SUBCASE("Constexpr support")
+    {
+        constexpr auto result = []
+        {
+            sf::Time time = sf::milliseconds(100);
+            time %= sf::milliseconds(99);
+            return time;
+        }();
+
+        static_assert(result == sf::milliseconds(1));
+    }
 }
