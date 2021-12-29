@@ -3,6 +3,8 @@
 #include <string_view>
 #include <utility>
 
+#include <doctest.h>
+
 TEST_CASE("sf::FileInputStream class - [system]")
 {
     SUBCASE("Empty stream")

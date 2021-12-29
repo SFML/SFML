@@ -1,15 +1,15 @@
 // Header for SFML unit tests.
 //
-// For a new system module test case, include this header and not <doctest.h> directly.
+// For a new system module test case, include this header.
 // This ensures that string conversions are visible and can be used by doctest for debug output.
 
 #ifndef SFML_TESTUTILITIES_SYSTEM_HPP
 #define SFML_TESTUTILITIES_SYSTEM_HPP
 
-#include <doctest.h>
-
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -19,23 +19,21 @@ namespace sf
     class String;
     class Time;
 
-    doctest::String toString(const sf::String& string);
-    doctest::String toString(sf::Time time);
+    std::ostream& operator <<(std::ostream& os, const sf::String& string);
+    std::ostream& operator <<(std::ostream& os, sf::Time time);
 
     template <typename T>
-    doctest::String toString(const sf::Vector2<T>& vector)
+    std::ostream& operator <<(std::ostream& os, const sf::Vector2<T>& vector)
     {
-        std::ostringstream stream;
-        stream << "(" << vector.x << ", " << vector.y << ")";
-        return stream.str().c_str();
+        os << "(" << vector.x << ", " << vector.y << ")";
+        return os;
     }
 
     template <typename T>
-    doctest::String toString(const sf::Vector3<T>& vector)
+    std::ostream& operator <<(std::ostream& os, const sf::Vector3<T>& vector)
     {
-        std::ostringstream stream;
-        stream << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
-        return stream.str().c_str();
+        os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
+        return os;
     }
 }
 

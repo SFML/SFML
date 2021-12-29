@@ -2,6 +2,8 @@
 #include <SFML/System/Vector2.hpp>
 #include "GraphicsUtil.hpp"
 
+#include <doctest.h>
+
 TEST_CASE("sf::Rect class template - [graphics]")
 {
     SUBCASE("Construction")
