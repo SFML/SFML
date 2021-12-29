@@ -2,6 +2,8 @@
 #include "SystemUtil.hpp"
 #include <type_traits>
 
+#include <doctest.h>
+
 // Use sf::Vector3i for tests. Test coverage is given, as there are no template specializations.
 
 TEST_CASE("sf::Vector3 class template - [system]")

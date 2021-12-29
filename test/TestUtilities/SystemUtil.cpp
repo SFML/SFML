@@ -9,23 +9,22 @@
 #endif // !defined(__GNUC__) || (__GNUC__ >= 9)
 
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <cassert>
 
-#include <doctest.h>
-
 namespace sf
 {
-    doctest::String toString(const sf::String& string)
+    std::ostream& operator <<(std::ostream& os, const sf::String& string)
     {
-        return string.toAnsiString().c_str();
+        os << string.toAnsiString();
+        return os;
     }
 
-    doctest::String toString(sf::Time time)
+    std::ostream& operator <<(std::ostream& os, sf::Time time)
     {
-        std::ostringstream stream;
-        stream << time.asMicroseconds() << "us";
-        return stream.str().c_str();
+        os << time.asMicroseconds() << "us";
+        return os;
     }
 }
 

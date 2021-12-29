@@ -1,6 +1,8 @@
 #include <SFML/System/Time.hpp>
 #include "SystemUtil.hpp"
 
+#include <doctest.h>
+
 using doctest::Approx;
 
 TEST_CASE("sf::Time class - [system]")

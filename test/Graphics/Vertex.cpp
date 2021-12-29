@@ -1,6 +1,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include "GraphicsUtil.hpp"
 
+#include <doctest.h>
+
 TEST_CASE("sf::Vertex class - [graphics]")
 {
     SUBCASE("Construction")
