@@ -47,7 +47,7 @@ endif()
 source_group("unix" FILES ${PLATFORM_SRC})
 
 # define the sfml-system target
-sfml_add_library(sfml-system
+sfml_add_library(System
                  SOURCES ${SRC} ${PLATFORM_SRC})
 
 if(SFML_OS_ANDROID)

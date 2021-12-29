@@ -45,11 +45,11 @@ endif()
 source_group("" FILES ${SRC})
 
 # define the sfml-network target
-sfml_add_library(sfml-network
+sfml_add_library(Network
                  SOURCES ${SRC})
 
 # setup dependencies
-target_link_libraries(sfml-network PUBLIC sfml-system)
+target_link_libraries(sfml-network PUBLIC SFML::System)
 if(SFML_OS_WINDOWS)
     target_link_libraries(sfml-network PRIVATE ws2_32)
 endif()

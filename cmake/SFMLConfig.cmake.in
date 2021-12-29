@@ -4,10 +4,10 @@
 # Usage
 # -----
 #
-# When you try to locate the SFML libraries, you must specify which modules you want to use (system, window, graphics, network, audio, main).
+# When you try to locate the SFML libraries, you must specify which modules you want to use (System, Window, Graphics, Network, Audio, Main).
 # If none is given, no imported target will be created and you won't be able to link to SFML libraries.
 # example:
-#   find_package(SFML COMPONENTS graphics window system) # find the graphics, window and system modules
+#   find_package(SFML COMPONENTS Graphics Window System) # find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
 # If nothing is specified, the version won't be checked (i.e. any version will be accepted).
@@ -22,7 +22,7 @@
 # they will all be configured automatically, even if you use SFML static libraries.
 # example:
 #   set(SFML_STATIC_LIBRARIES TRUE)
-#   find_package(SFML 3 COMPONENTS network system)
+#   find_package(SFML 3 COMPONENTS Network System)
 #
 # When searching for SFML with find_package(), keep in mind that it will also find versions which are
 # in development (i.e. between two released versions), if you have them in your search path.
@@ -49,24 +49,24 @@
 # ------
 #
 # This script defines the following variables:
-# - For each specified module XXX (system, window, graphics, network, audio, main):
+# - For each specified module XXX (System, Window, Graphics, Network, Audio, Main):
 #   - SFML_XXX_FOUND:  true if either the debug or release library of the xxx module is found
 # - SFML_FOUND:        true if all the required modules are found
 #
 # And the following targets:
-# - For each specified module XXX (system, window, graphics, network, audio, main):
-#   - sfml-XXX
+# - For each specified module XXX (System, Window, Graphics, Network, Audio, Main):
+#   - SFML::XXX
 # The SFML targets are the same for both Debug and Release build configurations and will automatically provide
 # correct settings based on your currently active build configuration. The SFML targets name also do not change
 # when using dynamic or static SFML libraries.
 #
 # When linking against a SFML target, you do not need to specify indirect dependencies. For example, linking
-# against sfml-graphics will also automatically link against sfml-window and sfml-system.
+# against SFML::Graphics will also automatically link against SFML::Window and SFML::System.
 #
 # example:
-#   find_package(SFML 2 COMPONENTS graphics audio REQUIRED)
+#   find_package(SFML 3 COMPONENTS Graphics Audio REQUIRED)
 #   add_executable(myapp ...)
-#   target_link_libraries(myapp sfml-graphics sfml-audio)
+#   target_link_libraries(myapp PRIVATE SFML::Graphics SFML::Audio)
 
 if (NOT SFML_FIND_COMPONENTS)
     message(FATAL_ERROR "find_package(SFML) called with no component")
@@ -93,10 +93,10 @@ find_path(SFML_DOC_DIR SFML.tag
 # Update requested components (eg. request window component if graphics component was requested)
 set(FIND_SFML_SYSTEM_DEPENDENCIES "")
 set(FIND_SFML_MAIN_DEPENDENCIES "")
-set(FIND_SFML_AUDIO_DEPENDENCIES system)
-set(FIND_SFML_NETWORK_DEPENDENCIES system)
-set(FIND_SFML_WINDOW_DEPENDENCIES system)
-set(FIND_SFML_GRAPHICS_DEPENDENCIES window system)
+set(FIND_SFML_AUDIO_DEPENDENCIES System)
+set(FIND_SFML_NETWORK_DEPENDENCIES System)
+set(FIND_SFML_WINDOW_DEPENDENCIES System)
+set(FIND_SFML_GRAPHICS_DEPENDENCIES Window System)
 set(FIND_SFML_ADDITIONAL_COMPONENTS "")
 foreach(component ${SFML_FIND_COMPONENTS})
     string(TOUPPER "${component}" UPPER_COMPONENT)
@@ -130,7 +130,7 @@ if (EXISTS "${targets_config_file}")
 
         foreach (component ${SFML_FIND_COMPONENTS})
             string(TOUPPER "${component}" UPPER_COMPONENT)
-            if (TARGET sfml-${component})
+            if (TARGET SFML::${component})
                 set(SFML_${UPPER_COMPONENT}_FOUND TRUE)
             else()
                 set(FIND_SFML_ERROR "Found SFML but requested component '${component}' is missing in the config defined in ${SFML_DIR}.")

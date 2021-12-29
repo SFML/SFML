@@ -15,8 +15,7 @@ SET(SYSTEM_SRC
     "${SRCROOT}/TestUtilities/SystemUtil.hpp"
     "${SRCROOT}/TestUtilities/SystemUtil.cpp"
 )
-
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" sfml-system)
+sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
 target_link_libraries(test-sfml-system PRIVATE sfml-test-main)
 
 if(SFML_BUILD_WINDOW)
@@ -25,7 +24,7 @@ if(SFML_BUILD_WINDOW)
         "${SRCROOT}/TestUtilities/WindowUtil.hpp"
         "${SRCROOT}/TestUtilities/WindowUtil.cpp"
     )
-    sfml_add_test(test-sfml-window "${WINDOW_SRC}" sfml-window)
+    sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
     target_link_libraries(test-sfml-window PRIVATE sfml-test-main)
 endif()
 
@@ -38,7 +37,7 @@ if(SFML_BUILD_GRAPHICS)
         "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
     )
-    sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" sfml-graphics)
+    sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
     target_link_libraries(test-sfml-graphics PRIVATE sfml-test-main)
 endif()
 
@@ -46,7 +45,7 @@ if(SFML_BUILD_NETWORK)
     SET(NETWORK_SRC
         "${SRCROOT}/Network/Packet.cpp"
     )
-    sfml_add_test(test-sfml-network "${NETWORK_SRC}" sfml-network)
+    sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
     target_link_libraries(test-sfml-network PRIVATE sfml-test-main)
 endif()
 
