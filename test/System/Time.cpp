@@ -1,18 +1,7 @@
 #include <SFML/System/Time.hpp>
-
-#include <ostream>
-#include <doctest.h>
+#include "SystemUtil.hpp"
 
 using doctest::Approx;
-
-namespace sf
-{
-std::ostream& operator <<(std::ostream& os, const sf::Time& time)
-{
-    os << time.asMicroseconds() << "us";
-    return os;
-}
-}
 
 TEST_CASE("sf::Time class - [system]")
 {
