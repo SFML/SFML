@@ -234,9 +234,9 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # define the sfml-window target
-sfml_add_library(sfml-window
+sfml_add_library(Window
                  SOURCES ${SRC} ${PLATFORM_SRC})
-target_link_libraries(sfml-window PUBLIC sfml-system)
+target_link_libraries(sfml-window PUBLIC SFML::System)
 
 # glad sources
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
