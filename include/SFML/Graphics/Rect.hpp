@@ -52,20 +52,6 @@ public:
     constexpr Rect();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the rectangle from its coordinates
-    ///
-    /// Be careful, the last two parameters are the width
-    /// and height, not the right and bottom coordinates!
-    ///
-    /// \param rectLeft   Left coordinate of the rectangle
-    /// \param rectTop    Top coordinate of the rectangle
-    /// \param rectWidth  Width of the rectangle
-    /// \param rectHeight Height of the rectangle
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
     ///
     /// Be careful, the last parameter is the size,

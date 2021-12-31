@@ -214,7 +214,7 @@ public:
     /// \param applyAlpha Should the copy take into account the source transparency?
     ///
     ////////////////////////////////////////////////////////////
-    void copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect(0, 0, 0, 0), bool applyAlpha = false);
+    void copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect({0, 0}, {0, 0}), bool applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel

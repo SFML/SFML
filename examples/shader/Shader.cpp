@@ -208,7 +208,7 @@ public:
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity(m_entityTexture, sf::IntRect(96 * i, 0, 96, 96));
+            sf::Sprite entity(m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96}));
             m_entities.push_back(entity);
         }
 

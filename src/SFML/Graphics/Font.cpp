@@ -731,7 +731,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
                 if (!newTexture.create(textureWidth * 2, textureHeight * 2))
                 {
                     err() << "Failed to create new page texture" << std::endl;
-                    return IntRect(0, 0, 2, 2);
+                    return IntRect({0, 0}, {2, 2});
                 }
 
                 newTexture.setSmooth(m_isSmooth);
@@ -742,7 +742,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
             {
                 // Oops, we've reached the maximum texture size...
                 err() << "Failed to add a new character to the font: the maximum texture size has been reached" << std::endl;
-                return IntRect(0, 0, 2, 2);
+                return IntRect({0, 0}, {2, 2});
             }
         }
 
@@ -753,7 +753,7 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     }
 
     // Find the glyph's rectangle on the selected row
-    IntRect rect(Rect<unsigned int>(row->width, row->top, width, height));
+    IntRect rect(Rect<unsigned int>({row->width, row->top}, {width, height}));
 
     // Update the row informations
     row->width += width;
