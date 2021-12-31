@@ -37,18 +37,6 @@ height(0)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight) :
-left  (rectLeft),
-top   (rectTop),
-width (rectWidth),
-height(rectHeight)
-{
-
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
 constexpr Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
 left  (position.x),
 top   (position.y),
@@ -131,12 +119,12 @@ constexpr bool Rect<T>::intersects(const Rect<T>& rectangle, Rect<T>& intersecti
     // If the intersection is valid (positive non zero area), then there is an intersection
     if ((interLeft < interRight) && (interTop < interBottom))
     {
-        intersection = Rect<T>(interLeft, interTop, interRight - interLeft, interBottom - interTop);
+        intersection = Rect<T>({interLeft, interTop}, {interRight - interLeft, interBottom - interTop});
         return true;
     }
     else
     {
-        intersection = Rect<T>(0, 0, 0, 0);
+        intersection = Rect<T>({0, 0}, {0, 0});
         return false;
     }
 }

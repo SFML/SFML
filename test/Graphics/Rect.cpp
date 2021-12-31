@@ -17,7 +17,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
         SUBCASE("(left, top, width, height) constructor")
         {
-            sf::IntRect rectangle(1, 2, 3, 4);
+            sf::IntRect rectangle({1, 2}, {3, 4});
             CHECK(rectangle.left == 1);
             CHECK(rectangle.top == 2);
             CHECK(rectangle.width == 3);
@@ -38,7 +38,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
         SUBCASE("Conversion constructor")
         {
-            sf::FloatRect sourceRectangle(1.0f, 2.0f, 3.0f, 4.0f);
+            sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
             sf::IntRect rectangle(sourceRectangle);
 
             CHECK(rectangle.left == static_cast<int>(sourceRectangle.left));
@@ -52,7 +52,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
     {
         SUBCASE("contains(Vector2)")
         {
-            sf::IntRect rectangle(0, 0, 10, 10);
+            sf::IntRect rectangle({0, 0}, {10, 10});
 
             CHECK(rectangle.contains(sf::Vector2i(0, 0)) == true);
             CHECK(rectangle.contains(sf::Vector2i(9, 0)) == true);
@@ -69,9 +69,9 @@ TEST_CASE("sf::Rect class template - [graphics]")
     {
         SUBCASE("intersects(Rect)")
         {
-            sf::IntRect rectangle(0, 0, 10, 10);
-            sf::IntRect intersectingRectangle(5, 5, 10, 10);
-            sf::IntRect nonIntersectingRectangle(-5, -5, 5, 5);
+            sf::IntRect rectangle({0, 0}, {10, 10});
+            sf::IntRect intersectingRectangle({5, 5}, {10, 10});
+            sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
 
             CHECK(rectangle.intersects(intersectingRectangle) == true);
             CHECK(rectangle.intersects(nonIntersectingRectangle) == false);
@@ -79,9 +79,9 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
         SUBCASE("intersects(Rect, Rect)")
         {
-            sf::IntRect rectangle(0, 0, 10, 10);
-            sf::IntRect intersectingRectangle(5, 5, 10, 10);
-            sf::IntRect nonIntersectingRectangle(-5, -5, 5, 5);
+            sf::IntRect rectangle({0, 0}, {10, 10});
+            sf::IntRect intersectingRectangle({5, 5}, {10, 10});
+            sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
             sf::IntRect intersectionResult;
 
             CHECK(rectangle.intersects(intersectingRectangle, intersectionResult) == true);
@@ -96,9 +96,9 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
     SUBCASE("Comparison operations")
     {
-        sf::IntRect firstRectangle(1, 3, 2, 5);
-        sf::IntRect secondRectangle(1, 3, 2, 5);
-        sf::IntRect differentRectangle(3, 1, 5, 2);
+        sf::IntRect firstRectangle({1, 3}, {2, 5});
+        sf::IntRect secondRectangle({1, 3}, {2, 5});
+        sf::IntRect differentRectangle({3, 1}, {5, 2});
 
         CHECK(firstRectangle == secondRectangle);
         CHECK(firstRectangle != differentRectangle);

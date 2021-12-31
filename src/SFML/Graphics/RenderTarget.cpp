@@ -202,10 +202,10 @@ IntRect RenderTarget::getViewport(const View& view) const
     float height = static_cast<float>(getSize().y);
     const FloatRect& viewport = view.getViewport();
 
-    return IntRect(static_cast<int>(0.5f + width  * viewport.left),
-                   static_cast<int>(0.5f + height * viewport.top),
-                   static_cast<int>(0.5f + width  * viewport.width),
-                   static_cast<int>(0.5f + height * viewport.height));
+    return IntRect({static_cast<int>(0.5f + width  * viewport.left),
+                    static_cast<int>(0.5f + height * viewport.top)},
+                   {static_cast<int>(0.5f + width  * viewport.width),
+                    static_cast<int>(0.5f + height * viewport.height)});
 }
 
 
@@ -555,7 +555,7 @@ void RenderTarget::resetGLStates()
 void RenderTarget::initialize()
 {
     // Setup the default and current views
-    m_defaultView.reset(FloatRect(0, 0, static_cast<float>(getSize().x), static_cast<float>(getSize().y)));
+    m_defaultView.reset(FloatRect({0, 0}, Vector2f(getSize())));
     m_view = m_defaultView;
 
     // Set GL states only on first draw, so that we don't pollute user's states

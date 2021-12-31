@@ -66,7 +66,7 @@ void Shape::setTexture(const Texture* texture, bool resetRect)
     {
         // Recompute the texture area if requested, or if there was no texture & rect before
         if (resetRect || (!m_texture && (m_textureRect == IntRect())))
-            setTextureRect(IntRect(0, 0, static_cast<int>(texture->getSize().x), static_cast<int>(texture->getSize().y)));
+            setTextureRect(IntRect({0, 0}, Vector2i(texture->getSize())));
     }
 
     // Assign the new texture

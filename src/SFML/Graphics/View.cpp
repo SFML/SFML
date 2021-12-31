@@ -36,11 +36,11 @@ View::View() :
 m_center             (),
 m_size               (),
 m_rotation           (0),
-m_viewport           (0, 0, 1, 1),
+m_viewport           ({0, 0}, {1, 1}),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
-    reset(FloatRect(0, 0, 1000, 1000));
+    reset(FloatRect({0, 0}, {1000, 1000}));
 }
 
 
@@ -49,7 +49,7 @@ View::View(const FloatRect& rectangle) :
 m_center             (),
 m_size               (),
 m_rotation           (0),
-m_viewport           (0, 0, 1, 1),
+m_viewport           ({0, 0}, {1, 1}),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {
@@ -62,7 +62,7 @@ View::View(const Vector2f& center, const Vector2f& size) :
 m_center             (center),
 m_size               (size),
 m_rotation           (0),
-m_viewport           (0, 0, 1, 1),
+m_viewport           ({0, 0}, {1, 1}),
 m_transformUpdated   (false),
 m_invTransformUpdated(false)
 {

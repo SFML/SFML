@@ -130,7 +130,7 @@ FloatRect VertexArray::getBounds() const
                 bottom = position.y;
         }
 
-        return FloatRect(left, top, right - left, bottom - top);
+        return FloatRect({left, top}, {right - left, bottom - top});
     }
     else
     {
