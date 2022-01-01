@@ -586,7 +586,7 @@ m_lastInputTime  (0)
     else
     {
         windowPosition.x = (DisplayWidth(m_display, m_screen) - static_cast<int>(mode.width))  / 2;
-        windowPosition.y = (DisplayWidth(m_display, m_screen) - static_cast<int>(mode.height)) / 2;
+        windowPosition.y = (DisplayHeight(m_display, m_screen) - static_cast<int>(mode.height)) / 2;
     }
 
     unsigned int width  = mode.width;
