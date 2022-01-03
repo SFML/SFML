@@ -27,6 +27,12 @@
 
 
 ////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cstdint>
+
+
+////////////////////////////////////////////////////////////
 // Define the SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR 3
@@ -173,37 +179,21 @@
 ////////////////////////////////////////////////////////////
 namespace sf
 {
-    // All "common" platforms use the same size for char, short and int
-    // (basically there are 3 types for 3 sizes, so no other match is possible),
-    // we can use them without doing any kind of check
-
     // 8 bits integer types
-    using Int8 = signed char;
-    using Uint8 = unsigned char;
+    using Int8 = std::int8_t;
+    using Uint8 = std::uint8_t;
 
     // 16 bits integer types
-    using Int16 = short;
-    using Uint16 = unsigned short;
+    using Int16 = std::int16_t;
+    using Uint16 = std::uint16_t;
 
     // 32 bits integer types
-    using Int32 = int;
-    using Uint32 = unsigned int;
+    using Int32 = std::int32_t;
+    using Uint32 = std::uint32_t;
 
     // 64 bits integer types
-    #if defined(_MSC_VER)
-        using Int64 = signed   __int64;
-        using Uint64 = unsigned __int64;
-    #else
-        #if defined(__clang__)
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wc++11-long-long"
-        #endif
-        using Int64 = long long;
-        using Uint64 = unsigned long long;
-        #if defined(__clang__)
-            #pragma clang diagnostic pop
-        #endif
-    #endif
+    using Int64 = std::int64_t;
+    using Uint64 = std::uint64_t;
 
 } // namespace sf
 
