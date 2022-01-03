@@ -33,6 +33,7 @@ if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
         "${SRCROOT}/Graphics/Color.cpp"
         "${SRCROOT}/Graphics/Rect.cpp"
+        "${SRCROOT}/Graphics/Vertex.cpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
     )
