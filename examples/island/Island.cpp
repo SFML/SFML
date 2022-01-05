@@ -92,7 +92,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
+    if (!font.loadFromFile(RESOURCE_PATH + "tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Create all of our graphics resources
@@ -127,7 +127,7 @@ int main()
     {
         statusText.setString("Shaders and/or Vertex Buffers Unsupported");
     }
-    else if (!terrainShader.loadFromFile("resources/terrain.vert", "resources/terrain.frag"))
+    else if (!terrainShader.loadFromFile(RESOURCE_PATH + "terrain.vert", RESOURCE_PATH + "terrain.frag"))
     {
         prerequisitesSupported = false;
 

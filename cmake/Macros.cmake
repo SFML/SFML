@@ -271,6 +271,7 @@ macro(sfml_add_example target)
     endif()
 
     set_file_warnings(${target_input})
+    target_compile_definitions(${target} PRIVATE RESOURCE_PATH=std::string\(\"${CMAKE_CURRENT_SOURCE_DIR}/resources/\"\))
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)

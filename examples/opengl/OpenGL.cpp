@@ -22,7 +22,7 @@ std::string resourcesDir()
 #ifdef SFML_SYSTEM_IOS
     return "";
 #else
-    return "resources/";
+    return RESOURCE_PATH;
 #endif
 }
 

@@ -82,7 +82,7 @@ int main()
 
     // Load some textures to display
     sf::Texture texture1, texture2;
-    if (!texture1.loadFromFile("resources/image1.jpg") || !texture2.loadFromFile("resources/image2.jpg"))
+    if (!texture1.loadFromFile(RESOURCE_PATH + "image1.jpg") || !texture2.loadFromFile(RESOURCE_PATH + "image2.jpg"))
         return EXIT_FAILURE;
     sf::Sprite sprite1(texture1);
     sf::Sprite sprite2(texture2);

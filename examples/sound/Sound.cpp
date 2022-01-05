@@ -15,7 +15,7 @@ void playSound()
 {
     // Load a sound buffer from a wav file
     sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile("resources/killdeer.wav"))
+    if (!buffer.loadFromFile(RESOURCE_PATH + "killdeer.wav"))
         return;
 
     // Display sound informations
@@ -50,7 +50,7 @@ void playMusic(const std::string& filename)
 {
     // Load an ogg music file
     sf::Music music;
-    if (!music.openFromFile("resources/" + filename))
+    if (!music.openFromFile(RESOURCE_PATH + filename))
         return;
 
     // Display music informations

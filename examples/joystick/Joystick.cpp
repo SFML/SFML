@@ -92,7 +92,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
+    if (!font.loadFromFile(RESOURCE_PATH + "tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Set up our string conversion parameters

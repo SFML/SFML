@@ -889,7 +889,7 @@ public:
         {
             sf::FileInputStream file;
 
-            if (!file.open("resources/shader.vert.spv"))
+            if (!file.open(RESOURCE_PATH + "shader.vert.spv"))
             {
                 vulkanAvailable = false;
                 return;
@@ -917,7 +917,7 @@ public:
         {
             sf::FileInputStream file;
 
-            if (!file.open("resources/shader.frag.spv"))
+            if (!file.open(RESOURCE_PATH + "shader.frag.spv"))
             {
                 vulkanAvailable = false;
                 return;
@@ -1750,7 +1750,7 @@ public:
         // Load the image data
         sf::Image imageData;
 
-        if (!imageData.loadFromFile("resources/logo.png"))
+        if (!imageData.loadFromFile(RESOURCE_PATH + "logo.png"))
         {
             vulkanAvailable = false;
             return;
