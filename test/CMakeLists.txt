@@ -8,6 +8,7 @@ target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
 # System is always built
 SET(SYSTEM_SRC
+    "${SRCROOT}/System/FileInputStream.cpp"
     "${SRCROOT}/System/Time.cpp"
     "${SRCROOT}/System/Vector2.cpp"
     "${SRCROOT}/System/Vector3.cpp"
@@ -32,6 +33,7 @@ if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
         "${SRCROOT}/Graphics/Color.cpp"
         "${SRCROOT}/Graphics/Rect.cpp"
+        "${SRCROOT}/Graphics/Vertex.cpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.hpp"
         "${SRCROOT}/TestUtilities/GraphicsUtil.cpp"
     )

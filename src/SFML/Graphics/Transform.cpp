@@ -127,7 +127,7 @@ FloatRect Transform::transformRect(const FloatRect& rectangle) const
         else if (points[i].y > bottom) bottom = points[i].y;
     }
 
-    return FloatRect(left, top, right - left, bottom - top);
+    return FloatRect({left, top}, {right - left, bottom - top});
 }
 
 

@@ -1,16 +1,7 @@
 #include <SFML/Window/VideoMode.hpp>
+#include "WindowUtil.hpp"
 
 #include <doctest.h>
-#include <ostream>
-
-namespace sf
-{
-std::ostream& operator <<(std::ostream& os, const sf::VideoMode& videoMode)
-{
-    os << videoMode.width << " x " << videoMode.height << " x " << videoMode.bitsPerPixel;
-    return os;
-}
-}
 
 TEST_CASE("sf::VideoMode class - [window]")
 {
