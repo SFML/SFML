@@ -22,25 +22,31 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_SLEEPIMPLUNIX_HPP
+#define SFML_SLEEPIMPLUNIX_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
-#else
-    #include <SFML/System/Unix/SleepImpl.hpp>
-#endif
+#include <SFML/Config.hpp>
+#include <SFML/System/Time.hpp>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-void sleep(Time duration)
+namespace priv
 {
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
-}
+////////////////////////////////////////////////////////////
+/// \brief Unix implementation of sf::Sleep
+///
+/// \param time Time to sleep
+///
+////////////////////////////////////////////////////////////
+void sleepImpl(Time time);
+
+} // namespace priv
 
 } // namespace sf
+
+
+#endif // SFML_SLEEPIMPLUNIX_HPP

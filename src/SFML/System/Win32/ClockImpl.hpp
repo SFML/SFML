@@ -22,25 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_CLOCKIMPLWIN32_HPP
+#define SFML_CLOCKIMPLWIN32_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
-#else
-    #include <SFML/System/Unix/SleepImpl.hpp>
-#endif
+#include <SFML/System/Export.hpp>
+#include <chrono>
+#include <SFML/System/Time.hpp>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-void sleep(Time duration)
+namespace priv
 {
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
-}
+////////////////////////////////////////////////////////////
+/// \brief Windows implementation of sf::Clock
+///
+////////////////////////////////////////////////////////////
+class ClockImpl
+{
+public:
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current time
+    ///
+    /// \return Current time
+    ///
+    ////////////////////////////////////////////////////////////
+    static Time getCurrentTime();
+};
+
+} // namespace priv
 
 } // namespace sf
+
+
+#endif // SFML_CLOCKIMPLWIN32_HPP

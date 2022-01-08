@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,22 +25,40 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
+#include <SFML/System/Unix/ClockImpl.hpp>
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
+    #include <mach/mach_time.h>
 #else
-    #include <SFML/System/Unix/SleepImpl.hpp>
+    #include <ctime>
 #endif
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-void sleep(Time duration)
+namespace priv
 {
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
+////////////////////////////////////////////////////////////
+Time ClockImpl::getCurrentTime()
+{
+#if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
+
+    // Mac OS X specific implementation (it doesn't support clock_gettime)
+    static mach_timebase_info_data_t frequency = {0, 0};
+    if (frequency.denom == 0)
+        mach_timebase_info(&frequency);
+    Uint64 nanoseconds = mach_absolute_time() * frequency.numer / frequency.denom;
+    return sf::microseconds(nanoseconds / 1000);
+
+#else
+
+    // POSIX implementation
+    timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    return sf::microseconds(time.tv_sec * 1000000 + time.tv_nsec / 1000);
+
+#endif
 }
+
+} // namespace priv
 
 } // namespace sf
