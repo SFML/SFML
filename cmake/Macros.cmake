@@ -107,8 +107,8 @@ macro(sfml_add_library target)
         else()
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
         endif()
-        if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
-            # on Windows/gcc get rid of "lib" prefix for shared libraries,
+        if (SFML_OS_WINDOWS AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
+            # on Windows + gcc/clang get rid of "lib" prefix for shared libraries,
             # and transform the ".dll.a" suffix into ".a" for import libraries
             set_target_properties(${target} PROPERTIES PREFIX "")
             set_target_properties(${target} PROPERTIES IMPORT_SUFFIX ".a")
