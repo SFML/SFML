@@ -12,7 +12,7 @@
 #include <SFML/Main.hpp>
 #endif
 
-std::string resourcesDir()
+std::filesystem::path resourcesDir()
 {
 #ifdef SFML_SYSTEM_IOS
     return "";
@@ -44,13 +44,13 @@ int main()
 
     // Load the sounds used in the game
     sf::SoundBuffer ballSoundBuffer;
-    if (!ballSoundBuffer.loadFromFile(resourcesDir() + "ball.wav"))
+    if (!ballSoundBuffer.loadFromFile(resourcesDir() / "ball.wav"))
         return EXIT_FAILURE;
     sf::Sound ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
     sf::Texture sfmlLogoTexture;
-    if(!sfmlLogoTexture.loadFromFile(resourcesDir() + "sfml_logo.png"))
+    if(!sfmlLogoTexture.loadFromFile(resourcesDir() / "sfml_logo.png"))
         return EXIT_FAILURE;
     sf::Sprite sfmlLogo;
     sfmlLogo.setTexture(sfmlLogoTexture);
@@ -82,7 +82,7 @@ int main()
 
     // Load the text font
     sf::Font font;
-    if (!font.loadFromFile(resourcesDir() + "tuffy.ttf"))
+    if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Initialize the pause message

@@ -37,7 +37,7 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-ResourceStream::ResourceStream(const std::string& filename) :
+ResourceStream::ResourceStream(const std::filesystem::path& filename) :
 m_file (nullptr)
 {
     ActivityStates& states = getActivity();

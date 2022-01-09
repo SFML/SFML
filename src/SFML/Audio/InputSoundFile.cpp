@@ -84,7 +84,7 @@ InputSoundFile::~InputSoundFile()
 
 
 ////////////////////////////////////////////////////////////
-bool InputSoundFile::openFromFile(const std::string& filename)
+bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
 {
     // If the file is already open, first close it
     close();

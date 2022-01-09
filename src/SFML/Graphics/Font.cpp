@@ -144,7 +144,7 @@ Font& Font::operator=(Font&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromFile(const std::string& filename)
+bool Font::loadFromFile(const std::filesystem::path& filename)
 {
     #ifndef SFML_SYSTEM_ANDROID
 
@@ -166,7 +166,7 @@ bool Font::loadFromFile(const std::string& filename)
 
     // Load the new font face from the specified file
     FT_Face face;
-    if (FT_New_Face(library, filename.c_str(), 0, &face) != 0)
+    if (FT_New_Face(library, filename.string().c_str(), 0, &face) != 0)
     {
         err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
         return false;

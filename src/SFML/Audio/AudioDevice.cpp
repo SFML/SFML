@@ -109,7 +109,7 @@ AudioDevice::~AudioDevice()
 
 
 ////////////////////////////////////////////////////////////
-bool AudioDevice::isExtensionSupported(const std::string& extension)
+bool AudioDevice::isExtensionSupported(const std::filesystem::path& extension)
 {
     // Create a temporary audio device in case none exists yet.
     // This device will not be used in this function and merely
@@ -119,10 +119,10 @@ bool AudioDevice::isExtensionSupported(const std::string& extension)
     if (!audioDevice)
         device.emplace();
 
-    if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
-        return alcIsExtensionPresent(audioDevice, extension.c_str()) != AL_FALSE;
+    if ((extension.string().length() > 2) && (extension.string().substr(0, 3) == "ALC"))
+        return alcIsExtensionPresent(audioDevice, extension.string().c_str()) != AL_FALSE;
     else
-        return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
+        return alIsExtensionPresent(extension.string().c_str()) != AL_FALSE;
 }
 
 

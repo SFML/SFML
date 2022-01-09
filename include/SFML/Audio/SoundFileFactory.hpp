@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -94,7 +95,7 @@ public:
     /// \see createReaderFromMemory, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
@@ -129,7 +130,7 @@ public:
     /// \return A new sound file writer that can write given file, or null if no writer can handle it
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::filesystem::path& filename);
 
 private:
 
@@ -145,7 +146,7 @@ private:
 
     struct WriterFactory
     {
-        bool (*check)(const std::string&);
+        bool (*check)(const std::filesystem::path&);
         std::unique_ptr<SoundFileWriter> (*create)();
     };
     using WriterFactoryArray = std::vector<WriterFactory>;

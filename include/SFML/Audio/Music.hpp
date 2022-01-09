@@ -31,6 +31,7 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -116,7 +117,7 @@ public:
     /// \see openFromMemory, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromFile(const std::string& filename);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in memory

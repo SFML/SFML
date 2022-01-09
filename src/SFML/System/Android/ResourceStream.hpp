@@ -31,6 +31,7 @@
 #include <SFML/System/Export.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <android/asset_manager.h>
+#include <filesystem>
 #include <string>
 
 
@@ -52,7 +53,7 @@ public:
     /// \param filename Filename of the asset
     ///
     ////////////////////////////////////////////////////////////
-    ResourceStream(const std::string& filename);
+    ResourceStream(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

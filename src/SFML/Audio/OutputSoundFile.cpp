@@ -48,7 +48,7 @@ OutputSoundFile::~OutputSoundFile()
 
 
 ////////////////////////////////////////////////////////////
-bool OutputSoundFile::openFromFile(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // If the file is already open, first close it
     close();

@@ -60,13 +60,17 @@ FileInputStream& FileInputStream::operator=(FileInputStream&&) = default;
 
 
 ////////////////////////////////////////////////////////////
-bool FileInputStream::open(const std::string& filename)
+bool FileInputStream::open(const std::filesystem::path& filename)
 {
 #ifdef SFML_SYSTEM_ANDROID
     m_file = std::make_unique<priv::ResourceStream>(filename);
     return m_file->tell() != -1;
 #else
+#ifdef SFML_SYSTEM_WINDOWS
+    m_file.reset(_wfopen(filename.c_str(), L"rb"));
+#else
     m_file.reset(std::fopen(filename.c_str(), "rb"));
+#endif
     return m_file != nullptr;
 #endif
 }

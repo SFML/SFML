@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector3.hpp>
-#include <string>
+#include <filesystem>
 
 
 namespace sf
@@ -70,7 +70,7 @@ public:
     /// \return True if the extension is supported, false if not
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionSupported(const std::string& extension);
+    static bool isExtensionSupported(const std::filesystem::path& extension);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OpenAL format that matches the given number of channels
