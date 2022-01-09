@@ -34,6 +34,7 @@
 #include <memory>
 #include <string>
 #include <cstdio>
+#include <filesystem>
 
 #ifdef SFML_SYSTEM_ANDROID
 namespace sf::priv
@@ -96,7 +97,7 @@ public:
     /// \return True on success, false on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::string& filename);
+    [[nodiscard]] bool open(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream

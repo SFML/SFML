@@ -43,14 +43,13 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void alCheckError(const char* file, unsigned int line, const char* expression)
+void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
 {
     // Get the last error
     ALenum errorCode = alGetError();
 
     if (errorCode != AL_NO_ERROR)
     {
-        std::string fileString = file;
         std::string error = "Unknown error";
         std::string description = "No description";
 
@@ -95,7 +94,7 @@ void alCheckError(const char* file, unsigned int line, const char* expression)
 
         // Log the error
         err() << "An internal OpenAL call failed in "
-              << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line << ")."
+              << file.filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression
               << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;

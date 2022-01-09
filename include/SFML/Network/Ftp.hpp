@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/Time.hpp>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -202,14 +203,14 @@ public:
         /// \return Directory name
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& getDirectory() const;
+        const std::filesystem::path& getDirectory() const;
 
     private:
 
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        std::string m_directory; //!< Directory extracted from the response message
+        std::filesystem::path m_directory; //!< Directory extracted from the response message
     };
 
 
@@ -442,7 +443,7 @@ public:
     /// \see deleteFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response renameFile(const std::string& file, const std::string& newName);
+    [[nodiscard]] Response renameFile(const std::filesystem::path& file, const std::filesystem::path& newName);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove an existing file
@@ -459,7 +460,7 @@ public:
     /// \see renameFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response deleteFile(const std::string& name);
+    [[nodiscard]] Response deleteFile(const std::filesystem::path& name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Download a file from the server
@@ -481,7 +482,7 @@ public:
     /// \see upload
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response download(const std::string& remoteFile, const std::string& localPath, TransferMode mode = Binary);
+    [[nodiscard]] Response download(const std::filesystem::path& remoteFile, const std::filesystem::path& localPath, TransferMode mode = Binary);
 
     ////////////////////////////////////////////////////////////
     /// \brief Upload a file to the server

@@ -55,6 +55,7 @@
 #include <vector>
 #include <cassert>
 #include <cstring>
+#include <filesystem>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>
@@ -113,7 +114,7 @@ namespace
         }
 
         // Find the name of the current executable
-        std::string findExecutableName()
+        std::filesystem::path findExecutableName()
         {
             // We use /proc/self/cmdline to get the command line
             // the user used to invoke this instance of the application
@@ -737,7 +738,7 @@ m_lastInputTime  (0)
     // The instance name should be something unique to this invocation
     // of the application but is rarely if ever used these days.
     // For simplicity, we retrieve it via the base executable name.
-    std::string executableName = findExecutableName();
+    std::string executableName = findExecutableName().string();
     std::vector<char> windowInstance(executableName.size() + 1, 0);
     std::copy(executableName.begin(), executableName.end(), windowInstance.begin());
     hint->res_name = windowInstance.data();

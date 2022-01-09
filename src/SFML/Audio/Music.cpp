@@ -62,7 +62,7 @@ Music::~Music()
 
 
 ////////////////////////////////////////////////////////////
-bool Music::openFromFile(const std::string& filename)
+bool Music::openFromFile(const std::filesystem::path& filename)
 {
     // First stop the music if it was already running
     stop();

@@ -33,6 +33,7 @@
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+#include <filesystem>
 #include <iterator>
 #include <ostream>
 
@@ -96,7 +97,7 @@ ImageLoader::~ImageLoader()
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uint8>& pixels, Vector2u& size)
+bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::vector<Uint8>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
     pixels.clear();
@@ -105,7 +106,7 @@ bool ImageLoader::loadImageFromFile(const std::string& filename, std::vector<Uin
     int width = 0;
     int height = 0;
     int channels = 0;
-    unsigned char* ptr = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+    unsigned char* ptr = stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
     if (ptr)
     {
@@ -239,7 +240,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector<Uint8>& pixels, const Vector2u& size)
+bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const std::vector<Uint8>& pixels, const Vector2u& size)
 {
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
@@ -247,32 +248,31 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         // Deduce the image type from its extension
 
         // Extract the extension
-        const std::size_t dot = filename.find_last_of('.');
-        const std::string extension = dot != std::string::npos ? toLower(filename.substr(dot + 1)) : "";
+        const std::filesystem::path extension = filename.extension();
         const Vector2i convertedSize = Vector2i(size);
 
-        if (extension == "bmp")
+        if (extension == ".bmp")
         {
             // BMP format
-            if (stbi_write_bmp(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
+            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
-        else if (extension == "tga")
+        else if (extension == ".tga")
         {
             // TGA format
-            if (stbi_write_tga(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
+            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, pixels.data()))
                 return true;
         }
-        else if (extension == "png")
+        else if (extension == ".png")
         {
             // PNG format
-            if (stbi_write_png(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
+            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
                 return true;
         }
-        else if (extension == "jpg" || extension == "jpeg")
+        else if (extension == ".jpg" || extension == ".jpeg")
         {
             // JPG format
-            if (stbi_write_jpg(filename.c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
+            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
                 return true;
         }
     }

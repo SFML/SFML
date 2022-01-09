@@ -75,11 +75,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterWav::check(const std::string& filename)
+bool SoundFileWriterWav::check(const std::filesystem::path& filename)
 {
-    const std::string extension = toLower(filename.substr(filename.find_last_of('.') + 1));
-
-    return extension == "wav";
+    return toLower(filename.extension().string()) == ".wav";
 }
 
 
@@ -98,7 +96,7 @@ SoundFileWriterWav::~SoundFileWriterWav()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterWav::open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // Open the file
     m_file.open(filename.c_str(), std::ios::binary);

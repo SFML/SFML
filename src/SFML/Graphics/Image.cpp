@@ -135,7 +135,7 @@ void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::loadFromFile(const std::string& filename)
+bool Image::loadFromFile(const std::filesystem::path& filename)
 {
     #ifndef SFML_SYSTEM_ANDROID
 
@@ -165,7 +165,7 @@ bool Image::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::saveToFile(const std::string& filename) const
+bool Image::saveToFile(const std::filesystem::path& filename) const
 {
     return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_size);
 }
