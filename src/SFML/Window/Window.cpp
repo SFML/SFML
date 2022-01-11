@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/System/Time.hpp"
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
@@ -220,7 +221,14 @@ void Window::display()
     // Limit the framerate if needed
     if (m_frameTimeLimit != Time::Zero)
     {
-        sleep(m_frameTimeLimit - m_clock.getElapsedTime());
+        const sf::Time timeToWait = m_frameTimeLimit - m_clock.getElapsedTime();
+
+        if (timeToWait > milliseconds(15))
+            sleep(timeToWait);
+        else
+            while (m_clock.getElapsedTime() < timeToWait)
+                /* spinloop */;
+
         m_clock.restart();
     }
 }
