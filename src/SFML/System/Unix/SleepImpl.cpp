@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,34 +22,34 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SLEEP_HPP
-#define SFML_SLEEP_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
-#include <SFML/System/Time.hpp>
+#include <SFML/System/Unix/SleepImpl.hpp>
+#include <cerrno>
+#include <ctime>
 
 
-namespace sf
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// \ingroup system
-/// \brief Make the current thread sleep for a given duration
-///
-/// sf::sleep is the best way to block a program or one of its
-/// threads, as it doesn't consume any CPU power. Compared to
-/// the standard std::this_thread::sleep_for function, this
-/// one provides more accurate sleeping time thanks to some
-/// platform-specific tweaks.
-///
-/// \param duration Time to sleep
-///
-////////////////////////////////////////////////////////////
-void SFML_SYSTEM_API sleep(Time duration);
+void sleepImpl(Time time)
+{
+    const Int64 usecs = time.asMicroseconds();
 
-} // namespace sf
+    // Construct the time to wait
+    timespec ti;
+    ti.tv_sec = static_cast<time_t>(usecs / 1000000);
+    ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
 
+    // Wait...
+    // If nanosleep returns -1, we check errno. If it is EINTR
+    // nanosleep was interrupted and has set ti to the remaining
+    // duration. We continue sleeping until the complete duration
+    // has passed. We stop sleeping if it was due to an error.
+    while ((nanosleep(&ti, &ti) == -1) && (errno == EINTR))
+    {
+    }
+}
 
-#endif // SFML_SLEEP_HPP
+} // namespace sf::priv
