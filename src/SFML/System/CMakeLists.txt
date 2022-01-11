@@ -35,18 +35,6 @@ set(SRC
 source_group("" FILES ${SRC})
 
 # add platform specific sources
-if(SFML_OS_WINDOWS)
-    set(PLATFORM_SRC
-        ${SRCROOT}/Win32/SleepImpl.cpp
-        ${SRCROOT}/Win32/SleepImpl.hpp
-    )
-    source_group("windows" FILES ${PLATFORM_SRC})
-else()
-    set(PLATFORM_SRC
-        ${SRCROOT}/Unix/SleepImpl.cpp
-        ${SRCROOT}/Unix/SleepImpl.hpp
-    )
-
 if(SFML_OS_ANDROID)
     set(PLATFORM_SRC ${PLATFORM_SRC}
         ${SRCROOT}/Android/Activity.hpp

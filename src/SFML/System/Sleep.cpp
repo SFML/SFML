@@ -28,19 +28,38 @@
 #include <SFML/System/Sleep.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
-#else
-    #include <SFML/System/Unix/SleepImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <mmsystem.h>
 #endif
-
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 void sleep(Time duration)
 {
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
+    // The effects of invoking 'std::this_thread::sleep_for' with a negative
+    // duration are not specified in the C++ standard.
+    if (duration < Time::Zero)
+        return;
+
+    // On Windows, the timer resolution must be temporarily changed in order for
+    // the sleep time to be as accurate as possible.
+#if defined(SFML_SYSTEM_WINDOWS)
+    // Get the supported timer resolutions on this system
+    TIMECAPS tc;
+    timeGetDevCaps(&tc, sizeof(TIMECAPS));
+
+    // Set the timer resolution to the minimum for the Sleep call
+    timeBeginPeriod(tc.wPeriodMin);
+#endif
+
+    const auto time = std::chrono::duration<Int64, std::micro>(duration.asMicroseconds());
+    std::this_thread::sleep_for(time);
+
+#if defined(SFML_SYSTEM_WINDOWS)
+    // Reset the timer resolution back to the system default
+    timeEndPeriod(tc.wPeriodMin);
+#endif
 }
 
 } // namespace sf
