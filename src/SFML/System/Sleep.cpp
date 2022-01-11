@@ -33,11 +33,6 @@
     #include <SFML/System/Unix/SleepImpl.hpp>
 #endif
 
-#if defined(SFML_SYSTEM_WINDOWS)
-#include <SFML/System/Win32/WindowsHeader.hpp>
-#include <mmsystem.h>
-#endif
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
