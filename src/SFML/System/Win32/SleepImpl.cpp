@@ -34,18 +34,22 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    // Get the supported timer resolutions on this system
-    TIMECAPS tc;
-    timeGetDevCaps(&tc, sizeof(TIMECAPS));
+    // Get the minimum supported timer resolution on this system
+    static const UINT periodMin = []
+    {
+        TIMECAPS tc;
+        timeGetDevCaps(&tc, sizeof(TIMECAPS));
+        return tc.wPeriodMin;
+    }();
 
     // Set the timer resolution to the minimum for the Sleep call
-    timeBeginPeriod(tc.wPeriodMin);
+    timeBeginPeriod(periodMin);
 
     // Wait...
     ::Sleep(static_cast<DWORD>(time.asMilliseconds()));
 
     // Reset the timer resolution back to the system default
-    timeEndPeriod(tc.wPeriodMin);
+    timeEndPeriod(periodMin);
 }
 
 } // namespace sf::priv
