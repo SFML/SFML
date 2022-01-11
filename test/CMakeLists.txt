@@ -32,6 +32,7 @@ endif()
 
 if(SFML_BUILD_GRAPHICS)
     SET(GRAPHICS_SRC
+        "${SRCROOT}/Graphics/BlendMode.cpp"
         "${SRCROOT}/Graphics/Color.cpp"
         "${SRCROOT}/Graphics/Rect.cpp"
         "${SRCROOT}/Graphics/Transform.cpp"
