@@ -22,32 +22,27 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_SLEEPIMPLUNIX_HPP
+#define SFML_SLEEPIMPLUNIX_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
+#include <SFML/Config.hpp>
+#include <SFML/System/Time.hpp>
 
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
-#else
-    #include <SFML/System/Unix/SleepImpl.hpp>
-#endif
 
-#if defined(SFML_SYSTEM_WINDOWS)
-#include <SFML/System/Win32/WindowsHeader.hpp>
-#include <mmsystem.h>
-#endif
-
-namespace sf
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void sleep(Time duration)
-{
-    // Note that 'std::this_thread::sleep_for' is intentionally not used here
-    // as it results in inconsistent sleeping times under MinGW-w64.
+/// \brief Unix implementation of sf::Sleep
+///
+/// \param time Time to sleep
+///
+////////////////////////////////////////////////////////////
+void sleepImpl(Time time);
 
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
-}
+} // namespace sf::priv
 
-} // namespace sf
+
+#endif // SFML_SLEEPIMPLUNIX_HPP
