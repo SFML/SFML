@@ -26,8 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Win32/SleepImpl.hpp>
-#include <windows.h>
-
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <timeapi.h>
+#include <synchapi.h>
 
 namespace sf
 {
