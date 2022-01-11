@@ -25,25 +25,31 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
-#else
-    #include <SFML/System/Unix/SleepImpl.hpp>
-#endif
+#include <SFML/System/Unix/SleepImpl.hpp>
+#include <cerrno>
+#include <ctime>
 
 
-namespace sf
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void sleep(Time duration)
+void sleepImpl(Time time)
 {
-    // Note that 'std::this_thread::sleep_for' is intentionally not used here
-    // as it results in inconsistent sleeping times under MinGW-w64.
+    const Int64 usecs = time.asMicroseconds();
 
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
+    // Construct the time to wait
+    timespec ti;
+    ti.tv_sec = static_cast<time_t>(usecs / 1000000);
+    ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
+
+    // Wait...
+    // If nanosleep returns -1, we check errno. If it is EINTR
+    // nanosleep was interrupted and has set ti to the remaining
+    // duration. We continue sleeping until the complete duration
+    // has passed. We stop sleeping if it was due to an error.
+    while ((nanosleep(&ti, &ti) == -1) && (errno == EINTR))
+    {
+    }
 }
 
-} // namespace sf
+} // namespace sf::priv
