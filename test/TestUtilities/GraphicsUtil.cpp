@@ -1,4 +1,5 @@
 // Note: No need to increase compile time by including TestUtilities/Graphics.hpp
+#include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
@@ -6,6 +7,15 @@
 
 namespace sf
 {
+    std::ostream& operator <<(std::ostream& os, const sf::BlendMode& blendMode)
+    {
+        os << "( " << blendMode.colorSrcFactor << ", " << blendMode.colorDstFactor << ", "
+           << blendMode.colorEquation << ", " << blendMode.alphaSrcFactor << ", "
+           << blendMode.alphaDstFactor << ", " << blendMode.alphaEquation << " )";
+
+        return os;
+    }
+
     std::ostream& operator <<(std::ostream& os, const sf::Color& color)
     {
         os << "0x" << std::hex << color.toInteger() << std::dec

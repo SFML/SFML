@@ -10,9 +10,11 @@
 
 namespace sf
 {
+    class BlendMode;
     class Color;
     class Transform;
 
+    std::ostream& operator <<(std::ostream& os, const BlendMode& blendMode);
     std::ostream& operator <<(std::ostream& os, const Color& color);
     std::ostream& operator <<(std::ostream& os, const Transform& transform);
 }
