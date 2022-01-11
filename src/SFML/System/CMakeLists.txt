@@ -44,7 +44,6 @@ if(SFML_OS_ANDROID)
         ${SRCROOT}/Android/ResourceStream.cpp
         ${SRCROOT}/Android/SuspendAwareClock.cpp
     )
-    endif()
 
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()

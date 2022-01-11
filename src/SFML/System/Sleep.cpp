@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Sleep.hpp>
+#include <chrono>
+#include <thread>
 
 #if defined(SFML_SYSTEM_WINDOWS)
 #include <SFML/System/Win32/WindowsHeader.hpp>
