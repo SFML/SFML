@@ -26,8 +26,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Sleep.hpp>
-#include <chrono>
-#include <thread>
+
+#if defined(SFML_SYSTEM_WINDOWS)
+    #include <SFML/System/Win32/SleepImpl.hpp>
+#else
+    #include <SFML/System/Unix/SleepImpl.hpp>
+#endif
 
 
 namespace sf
@@ -35,8 +39,11 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void sleep(Time duration)
 {
-    const auto time = std::chrono::duration<Int64, std::micro>(duration.asMicroseconds());
-    std::this_thread::sleep_for(time);
+    // Note that 'std::this_thread::sleep_for' is intentionally not used here
+    // as it results in inconsistent sleeping times under MinGW-w64.
+
+    if (duration >= Time::Zero)
+        priv::sleepImpl(duration);
 }
 
 } // namespace sf
