@@ -7,7 +7,7 @@ set(SRC ${SRCROOT}/Island.cpp)
 # define the island target
 sfml_add_example(island GUI_APP
                  SOURCES ${SRC}
-                 DEPENDS sfml-graphics
+                 DEPENDS SFML::Graphics
                  RESOURCES_DIR resources)
 
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)

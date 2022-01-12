@@ -7,5 +7,5 @@ set(SRC ${SRCROOT}/Joystick.cpp)
 # define the joystick target
 sfml_add_example(joystick GUI_APP
                  SOURCES ${SRC}
-                 DEPENDS sfml-graphics
+                 DEPENDS SFML::Graphics
                  RESOURCES_DIR resources)

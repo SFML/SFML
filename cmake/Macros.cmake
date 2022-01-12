@@ -50,10 +50,10 @@ function(sfml_set_common_ios_properties target)
 endfunction()
 
 # add a new target which is a SFML library
-# example: sfml_add_library(sfml-graphics
+# example: sfml_add_library(Graphics
 #                           SOURCES sprite.cpp image.cpp ...
 #                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
-macro(sfml_add_library target)
+macro(sfml_add_library module)
 
     # parse the arguments
     cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
@@ -62,11 +62,13 @@ macro(sfml_add_library target)
     endif()
 
     # create the target
+    string(TOLOWER sfml-${module} target)
     if (THIS_STATIC)
         add_library(${target} STATIC ${THIS_SOURCES})
     else()
         add_library(${target} ${THIS_SOURCES})
     endif()
+    add_library(SFML::${module} ALIAS ${target})
 
     # enable C++17 support
     target_compile_features(${target} PUBLIC cxx_std_17)
@@ -77,6 +79,9 @@ macro(sfml_add_library target)
     string(REPLACE "-" "_" NAME_UPPER "${target}")
     string(TOUPPER "${NAME_UPPER}" NAME_UPPER)
     set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
+
+    # define the export name of the module
+    set_target_properties(${target} PROPERTIES EXPORT_NAME ${module})
 
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS AND NOT THIS_STATIC)
@@ -232,7 +237,7 @@ endmacro()
 # example: sfml_add_example(ftp
 #                           SOURCES ftp.cpp ...
 #                           BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
-#                           DEPENDS sfml-network
+#                           DEPENDS SFML::Network
 #                           RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
@@ -251,7 +256,7 @@ macro(sfml_add_example target)
     # create the target
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${target_input})
-        target_link_libraries(${target} PRIVATE sfml-main)
+        target_link_libraries(${target} PRIVATE SFML::Main)
     elseif(THIS_GUI_APP AND SFML_OS_IOS)
 
         # For iOS apps we need the launch screen storyboard,
@@ -265,7 +270,7 @@ macro(sfml_add_example target)
         set_target_properties(${target} PROPERTIES RESOURCE "${RESOURCES}"
                                                    MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
                                                    MACOSX_BUNDLE_ICON_FILE icon.icns)
-        target_link_libraries(${target} PRIVATE sfml-main)
+        target_link_libraries(${target} PRIVATE SFML::Main)
     else()
         add_executable(${target} ${target_input})
     endif()
@@ -298,7 +303,7 @@ endmacro()
 # add a new target which is a SFML test
 # example: sfml_add_test(sfml-test
 #                           ftp.cpp ...
-#                           sfml-network)
+#                           SFML::Network)
 function(sfml_add_test target SOURCES DEPENDS)
 
     # set a source group for the source files
@@ -447,6 +452,7 @@ function(sfml_export_targets)
 
     install(EXPORT SFMLConfigExport
             FILE ${targets_config_filename}
+            NAMESPACE SFML::
             DESTINATION ${config_package_location})
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
