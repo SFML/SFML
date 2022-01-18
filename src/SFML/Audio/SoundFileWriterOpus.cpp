@@ -113,9 +113,8 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     // Set bitrate (VBR is default)
     opus_encoder_ctl(m_opus, OPUS_SET_BITRATE(128000));
 
-    // Create opus header MAGICBYTES, C++11: init headerData with initializer_list
-    std::string magicBytes("OpusHead");
-    std::vector<unsigned char> headerData(magicBytes.begin(), magicBytes.end());
+    // Create opus header MAGICBYTES
+    std::vector<unsigned char> headerData({'O', 'p', 'u', 's', 'H', 'e', 'a', 'd'});
 
     headerData.push_back(1); // Version
     headerData.push_back(static_cast<unsigned char>(channelCount));
@@ -131,7 +130,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
 
     // Map opus header to ogg packet
     ogg_packet op;
-    op.packet = &headerData.front(); // C++11: headerData.data();
+    op.packet = headerData.data();
     op.bytes = static_cast<long>(headerData.size());
     op.b_o_s = 1;
     op.e_o_s = 0;
@@ -144,8 +143,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
 
     // Create comment header, needs to be in a new page
     // commentData initialized with magic bytes
-    magicBytes = "OpusTags";
-    std::vector<unsigned char> commentData(magicBytes.begin(), magicBytes.end()); // C++11: commentData({'O', 'p', 'u', 's', 'T', 'a', 'g', 's'});
+    std::vector<unsigned char> commentData({'O', 'p', 'u', 's', 'T', 'a', 'g', 's'});
 
     // Vendor string
     const std::string opusVersion(opus_get_version_string());
@@ -193,7 +191,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
             const Uint32 begin = frameNumber * frameSize * m_channelCount;
             std::vector<opus_int16> pad(samples + begin, samples + begin + count);
             pad.insert(pad.end(), (frameSize * m_channelCount) - pad.size(),0);
-            packetSize = opus_encode(m_opus, &pad.front(), frameSize, &buffer.front(), static_cast<opus_int32>(buffer.size())); // C++11: replace &buffer.front() with buffer.data()
+            packetSize = opus_encode(m_opus, &pad.front(), frameSize, buffer.data(), static_cast<opus_int32>(buffer.size()));
             endOfStream = 1;
             count = 0;
         }
