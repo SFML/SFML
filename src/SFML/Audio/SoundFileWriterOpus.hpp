@@ -80,7 +80,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
+    bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -89,7 +89,7 @@ public:
     /// \param count   Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    virtual void write(const Int16* samples, Uint64 count);
+    void write(const Int16* samples, Uint64 count) override;
 
 private:
 
