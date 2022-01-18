@@ -118,7 +118,7 @@ bool SoundFileReaderOpus::open(InputStream& stream, Info& info)
 
     // Retrieve the music attributes
     const OpusHead* opusHead = op_head(m_opus, -1);
-    info.channelCount = opusHead->channel_count;
+    info.channelCount = static_cast<unsigned int>(opusHead->channel_count);
     info.sampleCount = static_cast<std::size_t>(op_pcm_total(m_opus, -1) * opusHead->channel_count);
 
     // All Opus audio is encoded at 48kHz
@@ -137,7 +137,7 @@ void SoundFileReaderOpus::seek(Uint64 sampleOffset)
 {
     assert(m_opus != NULL);
 
-    op_pcm_seek(m_opus, sampleOffset / m_channelCount);
+    op_pcm_seek(m_opus, static_cast<ogg_int64_t>(sampleOffset / m_channelCount));
 }
 
 
@@ -159,15 +159,15 @@ Uint64 SoundFileReaderOpus::read(Int16* samples, Uint64 maxCount)
         }
         else
         {
-            samplesToRead = maxCount;
+            samplesToRead = static_cast<int>(maxCount);
         }
 
         // op_read returns number of SAMPLES read PER CHANNEL
-        int samplesRead = op_read(m_opus, samples, samplesToRead, NULL) * m_channelCount;
+        int samplesRead = op_read(m_opus, samples, samplesToRead, NULL) * static_cast<int>(m_channelCount);
         if (samplesRead > 0)
         {
-            maxCount -= samplesRead;
-            count    += samplesRead;
+            maxCount -= static_cast<sf::Uint64>(samplesRead);
+            count    += static_cast<sf::Uint64>(samplesRead);
             samples  += samplesRead;
         }
         else

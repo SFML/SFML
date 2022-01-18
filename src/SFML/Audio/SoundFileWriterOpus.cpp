@@ -92,7 +92,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     }
 
     int status = OPUS_INTERNAL_ERROR;
-    m_opus = opus_encoder_create(sampleRate, channelCount, OPUS_APPLICATION_AUDIO, &status);
+    m_opus = opus_encoder_create(static_cast<opus_int32>(sampleRate), static_cast<int>(channelCount), OPUS_APPLICATION_AUDIO, &status);
     if (status != OPUS_OK)
     {
         err() << "Failed to write ogg/opus file \"" << filename << "\"" << std::endl;
@@ -118,7 +118,7 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     std::vector<unsigned char> headerData(magicBytes.begin(), magicBytes.end());
 
     headerData.push_back(1); // Version
-    headerData.push_back(channelCount);
+    headerData.push_back(static_cast<unsigned char>(channelCount));
     headerData.push_back(0); // Preskip
     headerData.push_back(0);
 
@@ -132,11 +132,11 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     // Map opus header to ogg packet
     ogg_packet op;
     op.packet = &headerData.front(); // C++11: headerData.data();
-    op.bytes = headerData.size();
+    op.bytes = static_cast<long>(headerData.size());
     op.b_o_s = 1;
     op.e_o_s = 0;
     op.granulepos = 0;
-    op.packetno = m_packageNumber++;
+    op.packetno = static_cast<ogg_int64_t>(m_packageNumber++);
 
     // Write the header packet to the ogg stream
     ogg_stream_packetin(&m_ogg, &op);
@@ -151,18 +151,18 @@ bool SoundFileWriterOpus::open(const std::string& filename, unsigned int sampleR
     const std::string opusVersion(opus_get_version_string());
 
     // unsigned 32bit integer: Length of vendor string (encoding library)
-    writeUint32(commentData, opusVersion.size());
+    writeUint32(commentData, static_cast<sf::Uint32>(opusVersion.size()));
     commentData.insert(commentData.end(), opusVersion.begin(), opusVersion.end());
 
     // Length of user comments (E.g. you can add a ENCODER tag for SFML)
     writeUint32(commentData, 0);
 
     op.packet     = &commentData.front();
-    op.bytes      = commentData.size();
+    op.bytes      = static_cast<long>(commentData.size());
     op.b_o_s      = 0;
     op.e_o_s      = 0;
     op.granulepos = 0;
-    op.packetno   = m_packageNumber++;
+    op.packetno   = static_cast<ogg_int64_t>(m_packageNumber++);
     ogg_stream_packetin(&m_ogg, &op);
 
     // This ensures the actual audio data will start on a new page, as per spec
@@ -193,13 +193,13 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
             const Uint32 begin = frameNumber * frameSize * m_channelCount;
             std::vector<opus_int16> pad(samples + begin, samples + begin + count);
             pad.insert(pad.end(), (frameSize * m_channelCount) - pad.size(),0);
-            packetSize = opus_encode(m_opus, &pad.front(), frameSize, &buffer.front(), buffer.size()); // C++11: replace &buffer.front() with buffer.data()
+            packetSize = opus_encode(m_opus, &pad.front(), frameSize, &buffer.front(), static_cast<opus_int32>(buffer.size())); // C++11: replace &buffer.front() with buffer.data()
             endOfStream = 1;
             count = 0;
         }
         else
         {
-            packetSize = opus_encode(m_opus, samples + (frameNumber * frameSize * m_channelCount), frameSize, &buffer.front(), buffer.size());
+            packetSize = opus_encode(m_opus, samples + (frameNumber * frameSize * m_channelCount), frameSize, &buffer.front(), static_cast<opus_int32>(buffer.size()));
             count -= frameSize * m_channelCount;
         }
 
@@ -213,7 +213,7 @@ void SoundFileWriterOpus::write(const Int16* samples, Uint64 count)
         op.packet     = &buffer.front();
         op.bytes      = packetSize;
         op.granulepos = frameNumber * frameSize * 48000ul / m_sampleRate;
-        op.packetno   = m_packageNumber++;
+        op.packetno   = static_cast<ogg_int64_t>(m_packageNumber++);
         op.b_o_s      = 0;
         op.e_o_s      = endOfStream;
         ogg_stream_packetin(&m_ogg, &op);
