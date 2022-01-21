@@ -1,7 +1,9 @@
-// Note: No need to increase compile time by including TestUtilities/Graphics.hpp
+// Note: No need to increase compile time by including TestUtilities/GraphicsUtil.hpp
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Transform.hpp>
+
+#include <doctest.h> // doctest::Approx
 
 #include <ostream>
 
@@ -35,5 +37,20 @@ namespace sf
         os << matrix[3] << ", " << matrix[7] << ", " << matrix[15];
 
         return os;
+    }
+
+    namespace Testing
+    {
+        bool almostEqual(const sf::Transform& lhs, const sf::Transform& rhs)
+        {
+            const auto& a = lhs.getMatrix();
+            const auto& b = rhs.getMatrix();
+
+            for (std::size_t i : { 0, 1, 3, 4, 5, 7, 12, 13, 15 })
+                if (a[i] != doctest::Approx(b[i])) // default epsilon
+                    return false;
+
+            return true;
+        }
     }
 }

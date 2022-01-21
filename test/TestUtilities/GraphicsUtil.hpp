@@ -17,6 +17,11 @@ namespace sf
     std::ostream& operator <<(std::ostream& os, const BlendMode& blendMode);
     std::ostream& operator <<(std::ostream& os, const Color& color);
     std::ostream& operator <<(std::ostream& os, const Transform& transform);
+
+    namespace Testing
+    {
+        bool almostEqual(const sf::Transform& lhs, const sf::Transform& rhs);
+    }
 }
 
 #endif // SFML_TESTUTILITIES_GRAPHICS_HPP

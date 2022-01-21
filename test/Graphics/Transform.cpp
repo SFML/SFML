@@ -1,23 +1,12 @@
 #include <SFML/Graphics/Transform.hpp>
 #include "GraphicsUtil.hpp"
-#include "SystemUtil.hpp"
-#include <vector>
+#include "Array.hpp"
+#include "Approx.hpp"
 
 #include <doctest.h>
 
-using doctest::Approx;
-
-namespace std
-{
-std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector)
-{
-    out << "{ ";
-    for (size_t i = 0; i + 1 < vector.size(); ++i)
-        out << vector[i] << ", ";
-    out << vector.back() << " }";
-    return out;
-}
-}
+using sf::Testing::toArray;
+using sf::Testing::Approx;
 
 TEST_CASE("sf::Transform class - [graphics]")
 {
@@ -33,21 +22,20 @@ TEST_CASE("sf::Transform class - [graphics]")
             const sf::Transform transform(10.0f, 11.0f, 12.0f,
                                           13.0f, 14.0f, 15.0f,
                                           16.0f, 17.0f, 18.0f);
-            const std::vector<float> matrix(transform.getMatrix(), transform.getMatrix() + 16);
-            CHECK(matrix == std::vector<float>{10.0f, 13.0f, 0.0f, 16.0f,
-                                               11.0f, 14.0f, 0.0f, 17.0f,
-                                                0.0f,  0.0f, 1.0f,  0.0f,
-                                               12.0f, 15.0f, 0.0f, 18.0f});
+
+            CHECK(toArray<16>(transform.getMatrix()) == std::array{10.0f, 13.0f, 0.0f, 16.0f,
+                                                                   11.0f, 14.0f, 0.0f, 17.0f,
+                                                                    0.0f,  0.0f, 1.0f,  0.0f,
+                                                                   12.0f, 15.0f, 0.0f, 18.0f});
         }
     }
 
     SUBCASE("Identity matrix")
     {
-        const std::vector<float> matrix(sf::Transform::Identity.getMatrix(), sf::Transform::Identity.getMatrix() + 16);
-        CHECK(matrix == std::vector<float>{1.0f, 0.0f, 0.0f, 0.0f,
-                                           0.0f, 1.0f, 0.0f, 0.0f,
-                                           0.0f, 0.0f, 1.0f, 0.0f,
-                                           0.0f, 0.0f, 0.0f, 1.0f});
+        CHECK(toArray<16>(sf::Transform::Identity.getMatrix()) == std::array{1.0f, 0.0f, 0.0f, 0.0f,
+                                                                             0.0f, 1.0f, 0.0f, 0.0f,
+                                                                             0.0f, 0.0f, 1.0f, 0.0f,
+                                                                             0.0f, 0.0f, 0.0f, 1.0f});
     }
 
     SUBCASE("getInverse()")
@@ -124,30 +112,18 @@ TEST_CASE("sf::Transform class - [graphics]")
         {
             sf::Transform transform;
             transform.rotate(90);
-            CHECK(transform.getMatrix()[0] == Approx(0));
-            CHECK(transform.getMatrix()[4] == Approx(-1));
-            CHECK(transform.getMatrix()[12] == Approx(0));
-            CHECK(transform.getMatrix()[1] == Approx(1));
-            CHECK(transform.getMatrix()[5] == Approx(0));
-            CHECK(transform.getMatrix()[13] == Approx(0));
-            CHECK(transform.getMatrix()[3] == Approx(0));
-            CHECK(transform.getMatrix()[7] == Approx(0));
-            CHECK(transform.getMatrix()[15] == Approx(1));
+            CHECK(transform == Approx(sf::Transform(0.0f, -1.0f, 0.0f,
+                                                    1.0f,  0.0f, 0.0f,
+                                                    0.0f,  0.0f, 1.0f)));
         }
 
         SUBCASE("Around custom point")
         {
             sf::Transform transform;
             transform.rotate(90, {1.0f, 0.0f});
-            CHECK(transform.getMatrix()[0] == Approx(0));
-            CHECK(transform.getMatrix()[4] == Approx(-1));
-            CHECK(transform.getMatrix()[12] == Approx(1));
-            CHECK(transform.getMatrix()[1] == Approx(1));
-            CHECK(transform.getMatrix()[5] == Approx(0));
-            CHECK(transform.getMatrix()[13] == Approx(-1));
-            CHECK(transform.getMatrix()[3] == Approx(0));
-            CHECK(transform.getMatrix()[7] == Approx(0));
-            CHECK(transform.getMatrix()[15] == Approx(1));
+            CHECK(transform == Approx(sf::Transform(0.0f, -1.0f,  1.0f,
+                                                    1.0f,  0.0f, -1.0f,
+                                                    0.0f,  0.0f,  1.0f)));
         }
     }
 

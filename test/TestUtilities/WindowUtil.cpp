@@ -1,4 +1,4 @@
-// Note: No need to increase compile time by including TestUtilities/Window.hpp
+// Note: No need to increase compile time by including TestUtilities/WindowUtil.hpp
 #include <SFML/Window/VideoMode.hpp>
 #include <ostream>
 
