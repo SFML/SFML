@@ -159,3 +159,24 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T operator *(const Vector2<T>& left, const Vector2<T>& right)
+{
+    return (left.x * right.x) + (left.y * right.y);
+}
+
+////////////////////////////////////////////////////////////
+template<typename T>
+constexpr T cross(Vector2<T>& left, Vector2<T>& right)
+{
+    return (left.x*right.y) - (left.y*right.x);
+}
+
+////////////////////////////////////////////////////////////
+template<typename T>
+constexpr T dist(Vector2<T>& left, Vector2<T>& right)
+{
+    return sqrt(pow(right.x - left.x, 2) + pow(right.y - left.y ,2 ));
+}

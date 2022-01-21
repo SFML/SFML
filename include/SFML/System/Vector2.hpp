@@ -22,9 +22,9 @@
 //
 ////////////////////////////////////////////////////////////
 
+#include <cmath>
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
-
 
 namespace sf
 {
@@ -246,6 +246,55 @@ template <typename T>
 ////////////////////////////////////////////////////////////
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
+
+//Esteban Calvo start here
+//Enhancements
+//Dot product of 2 vectors
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Overload of binary operator *
+///
+/// This operator performs the cross product of two vectors,
+///
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a vector)
+///
+/// \return value of cross product of type T
+///
+////////////////////////////////////////////////////////////
+template<typename T>
+[[nodiscard]] constexpr T operator*(Vector2<T>& left, Vector2<T>& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief calculates cross product of a vector
+///
+/// This operator performs the cross product of two vectors,
+///
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a vector)
+///
+/// \return value of cross product of type T. For 2D array, cross product will give z value
+///
+////////////////////////////////////////////////////////////
+template<typename T>
+[[nodiscard]] constexpr T cross(Vector2<T>& left, Vector2<T>& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief calculates euclidian distance between 2 points
+///
+/// This operator performs the cross product of two vectors,
+///
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a vector)
+///
+/// \return value of distance between 2 points of type T
+///
+////////////////////////////////////////////////////////////
+template<typename T>
+[[nodiscard]] constexpr T dist(Vector2<T>& left, Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
 
