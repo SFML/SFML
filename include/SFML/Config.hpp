@@ -148,20 +148,8 @@
 
     #else // Linux, FreeBSD, Mac OS X
 
-        #if __GNUC__ >= 4
-
-            // GCC 4 has special keywords for showing/hidding symbols,
-            // the same keyword is used for both importing and exporting
-            #define SFML_API_EXPORT __attribute__ ((__visibility__ ("default")))
-            #define SFML_API_IMPORT __attribute__ ((__visibility__ ("default")))
-
-        #else
-
-            // GCC < 4 has no mechanism to explicitely hide symbols, everything's exported
-            #define SFML_API_EXPORT
-            #define SFML_API_IMPORT
-
-        #endif
+        #define SFML_API_EXPORT __attribute__ ((__visibility__ ("default")))
+        #define SFML_API_IMPORT __attribute__ ((__visibility__ ("default")))
 
     #endif
 
