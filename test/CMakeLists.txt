@@ -1,6 +1,14 @@
-add_library(sfml-test-main STATIC DoctestMain.cpp)
+add_library(sfml-test-main STATIC
+    DoctestMain.cpp
+    TestUtilities/SystemUtil.hpp
+    TestUtilities/SystemUtil.cpp
+    TestUtilities/WindowUtil.hpp
+    TestUtilities/WindowUtil.cpp
+    TestUtilities/GraphicsUtil.hpp
+    TestUtilities/GraphicsUtil.cpp
+)
 target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" TestUtilities)
-target_compile_features(sfml-test-main PRIVATE cxx_std_17)
+target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
 # System is always built
 SET(SYSTEM_SRC
@@ -10,8 +18,6 @@ SET(SYSTEM_SRC
     System/Time.cpp
     System/Vector2.cpp
     System/Vector3.cpp
-    TestUtilities/SystemUtil.hpp
-    TestUtilities/SystemUtil.cpp
 )
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
 
@@ -19,8 +25,6 @@ if(SFML_BUILD_WINDOW)
     SET(WINDOW_SRC
         Window/ContextSettings.cpp
         Window/VideoMode.cpp
-        TestUtilities/WindowUtil.hpp
-        TestUtilities/WindowUtil.cpp
     )
     sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 endif()
@@ -32,8 +36,6 @@ if(SFML_BUILD_GRAPHICS)
         Graphics/Rect.cpp
         Graphics/Transform.cpp
         Graphics/Vertex.cpp
-        TestUtilities/GraphicsUtil.hpp
-        TestUtilities/GraphicsUtil.cpp
     )
     sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 endif()
