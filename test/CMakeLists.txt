@@ -59,5 +59,5 @@ add_custom_target(runtests ALL
 
 add_custom_command(TARGET runtests
                    COMMENT "Run tests"
-                   POST_BUILD COMMAND ctest ARGS --output-on-failure
+                   POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
 )
