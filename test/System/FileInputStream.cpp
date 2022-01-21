@@ -16,8 +16,6 @@ TEST_CASE("sf::FileInputStream class - [system]")
         CHECK(fis.tell() == -1);
     }
 
-// Work around GCC 8.x bug with `<filesystem>`.
-#if !defined(__GNUC__) || (__GNUC__ >= 9)
     SUBCASE("Temporary file stream")
     {
         const std::string fileContents = "hello world";
@@ -40,5 +38,4 @@ TEST_CASE("sf::FileInputStream class - [system]")
             CHECK(std::string_view(buffer, 6) == std::string_view(fileContents.c_str() + 5, 6));
         }
     }
-#endif // !defined(__GNUC__) || (__GNUC__ >= 9)
 }
