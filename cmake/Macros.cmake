@@ -327,7 +327,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
 
     # link the target to its SFML dependencies
-    target_link_libraries(${target} PRIVATE ${DEPENDS})
+    target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
 
     # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
     # to make sure the linker doesn't discard unused code sections before coverage can be measured
