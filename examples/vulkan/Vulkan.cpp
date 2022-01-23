@@ -39,39 +39,42 @@ namespace
     }
 
     // Rotate a matrix around the x-axis
-    void matrixRotateX(Matrix& result, float angle)
+    void matrixRotateX(Matrix& result, sf::Angle angle)
     {
+        float rad = angle.asRadians();
         Matrix matrix = {
-            {1.f,   0.f,             0.f,             0.f},
-            {0.f,   std::cos(angle), std::sin(angle), 0.f},
-            {0.f,  -std::sin(angle), std::cos(angle), 0.f},
-            {0.f,   0.f,             0.f,             1.f}
+            {1.f,   0.f,           0.f,           0.f},
+            {0.f,   std::cos(rad), std::sin(rad), 0.f},
+            {0.f,  -std::sin(rad), std::cos(rad), 0.f},
+            {0.f,   0.f,           0.f,           1.f}
         };
 
         matrixMultiply(result, result, matrix);
     }
 
     // Rotate a matrix around the y-axis
-    void matrixRotateY(Matrix& result, float angle)
+    void matrixRotateY(Matrix& result, sf::Angle angle)
     {
+        float rad = angle.asRadians();
         Matrix matrix = {
-            { std::cos(angle), 0.f, std::sin(angle), 0.f},
-            { 0.f,             1.f, 0.f,             0.f},
-            {-std::sin(angle), 0.f, std::cos(angle), 0.f},
-            { 0.f,             0.f, 0.f,             1.f}
+            { std::cos(rad), 0.f, std::sin(rad), 0.f},
+            { 0.f,           1.f, 0.f,           0.f},
+            {-std::sin(rad), 0.f, std::cos(rad), 0.f},
+            { 0.f,           0.f, 0.f,           1.f}
         };
 
         matrixMultiply(result, result, matrix);
     }
 
     // Rotate a matrix around the z-axis
-    void matrixRotateZ(Matrix& result, float angle)
+    void matrixRotateZ(Matrix& result, sf::Angle angle)
     {
+        float rad = angle.asRadians();
         Matrix matrix = {
-            { std::cos(angle), std::sin(angle), 0.f, 0.f},
-            {-std::sin(angle), std::cos(angle), 0.f, 0.f},
-            { 0.f,             0.f,             1.f, 0.f},
-            { 0.f,             0.f,             0.f, 1.f}
+            { std::cos(rad), std::sin(rad), 0.f, 0.f},
+            {-std::sin(rad), std::cos(rad), 0.f, 0.f},
+            { 0.f,           0.f,           1.f, 0.f},
+            { 0.f,           0.f,           0.f, 1.f}
         };
 
         matrixMultiply(result, result, matrix);
@@ -128,9 +131,9 @@ namespace
     }
 
     // Construct a perspective projection matrix
-    void matrixPerspective(Matrix& result, float fov, float aspect, float nearPlane, float farPlane)
+    void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPlane, float farPlane)
     {
-        const float a = 1.f / std::tan(fov / 2.f);
+        const float a = 1.f / std::tan(fov.asRadians() / 2.f);
 
         result[0][0] = a / aspect;
         result[0][1] = 0.f;
@@ -2316,8 +2319,6 @@ public:
     // Update the matrices in our uniform buffer every frame
     void updateUniformBuffer(float elapsed)
     {
-        const float pi = 3.14159265359f;
-
         // Construct the model matrix
         Matrix model = {
             { 1.0f, 0.0f, 0.0f, 0.0f },
@@ -2326,9 +2327,9 @@ public:
             { 0.0f, 0.0f, 0.0f, 1.0f }
         };
 
-        matrixRotateX(model, elapsed * 59.0f  * pi / 180.f);
-        matrixRotateY(model, elapsed * 83.0f  * pi / 180.f);
-        matrixRotateZ(model, elapsed * 109.0f * pi / 180.f);
+        matrixRotateX(model, sf::degrees(elapsed * 59.0f));
+        matrixRotateY(model, sf::degrees(elapsed * 83.0f));
+        matrixRotateZ(model, sf::degrees(elapsed * 109.0f));
 
         // Translate the model based on the mouse position
         sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
@@ -2349,14 +2350,14 @@ public:
         matrixLookAt(view, eye, center, up);
 
         // Construct the projection matrix
-        const float fov = 45.0f;
+        const sf::Angle fov = sf::degrees(45);
         const float aspect = static_cast<float>(swapchainExtent.width) / static_cast<float>(swapchainExtent.height);
         const float nearPlane = 0.1f;
         const float farPlane = 10.0f;
 
         Matrix projection;
 
-        matrixPerspective(projection, fov * pi / 180.f, aspect, nearPlane, farPlane);
+        matrixPerspective(projection, fov, aspect, nearPlane, farPlane);
 
         char* ptr;
 

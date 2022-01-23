@@ -308,7 +308,7 @@ public:
         // Move to the center of the window
         m_transform.translate({400.f, 300.f});
         // Rotate everything based on cursor position
-        m_transform.rotate(x * 360.f);
+        m_transform.rotate(sf::degrees(x * 360.f));
 
         // Adjust billboard size to scale between 25 and 75
         float size = 25 + std::abs(y) * 50;

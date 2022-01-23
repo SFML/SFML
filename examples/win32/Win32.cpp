@@ -112,7 +112,7 @@ int main()
             SFMLView2.clear();
 
             // Draw sprite 1 on view 1
-            sprite1.setRotation(time * 100);
+            sprite1.setRotation(sf::degrees(time * 100));
             SFMLView1.draw(sprite1);
 
             // Draw sprite 2 on view 2

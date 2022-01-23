@@ -1,5 +1,6 @@
 #include "SystemUtil.hpp"
 
+#include <SFML/System/Angle.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -8,13 +9,22 @@
 #include <filesystem>
 #endif // !defined(__GNUC__) || (__GNUC__ >= 9)
 
+#include <cassert>
 #include <fstream>
+#include <iomanip>
+#include <limits>
 #include <ostream>
 #include <sstream>
-#include <cassert>
 
 namespace sf
 {
+    std::ostream& operator <<(std::ostream& os, const sf::Angle& angle)
+    {
+        os << std::fixed << std::setprecision(std::numeric_limits<float>::max_digits10);
+        os << angle.asDegrees() << " deg";
+        return os;
+    }
+
     std::ostream& operator <<(std::ostream& os, const sf::String& string)
     {
         os << string.toAnsiString();
