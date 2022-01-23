@@ -163,9 +163,9 @@ Transform& Transform::translate(const Vector2f& offset)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle)
+Transform& Transform::rotate(Angle angle)
 {
-    float rad = angle * 3.141592654f / 180.f;
+    float rad = angle.asRadians();
     float cos = std::cos(rad);
     float sin = std::sin(rad);
 
@@ -178,9 +178,9 @@ Transform& Transform::rotate(float angle)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(float angle, const Vector2f& center)
+Transform& Transform::rotate(Angle angle, const Vector2f& center)
 {
-    float rad = angle * 3.141592654f / 180.f;
+    float rad = angle.asRadians();
     float cos = std::cos(rad);
     float sin = std::sin(rad);
 

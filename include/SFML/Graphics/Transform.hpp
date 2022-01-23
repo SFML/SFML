@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Angle.hpp>
 
 
 namespace sf
@@ -156,7 +157,7 @@ public:
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.translate(sf::Vector2f(100, 200)).rotate(45);
+    /// transform.translate(sf::Vector2f(100, 200)).rotate(sf::degrees(45));
     /// \endcode
     ///
     /// \param offset Translation offset to apply
@@ -175,17 +176,17 @@ public:
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.rotate(90).translate(50, 20);
+    /// transform.rotate(sf::degrees(90)).translate(50, 20);
     /// \endcode
     ///
-    /// \param angle Rotation angle, in degrees
+    /// \param angle Rotation angle
     ///
     /// \return Reference to *this
     ///
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& rotate(float angle);
+    Transform& rotate(Angle angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -199,10 +200,10 @@ public:
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.rotate(90, sf::Vector2f(8, 3)).translate(sf::Vector2f(50, 20));
+    /// transform.rotate(sf::degrees(90), sf::Vector2f(8, 3)).translate(sf::Vector2f(50, 20));
     /// \endcode
     ///
-    /// \param angle Rotation angle, in degrees
+    /// \param angle Rotation angle
     /// \param center Center of rotation
     ///
     /// \return Reference to *this
@@ -210,7 +211,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& rotate(float angle, const Vector2f& center);
+    Transform& rotate(Angle angle, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -219,7 +220,7 @@ public:
     /// can be chained.
     /// \code
     /// sf::Transform transform;
-    /// transform.scale(sf::Vector2f(2, 1)).rotate(45);
+    /// transform.scale(sf::Vector2f(2, 1)).rotate(sf::degrees(45));
     /// \endcode
     ///
     /// \param factors Scaling factors

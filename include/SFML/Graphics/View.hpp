@@ -105,12 +105,12 @@ public:
     ///
     /// The default rotation of a view is 0 degree.
     ///
-    /// \param angle New angle, in degrees
+    /// \param angle New angle
     ///
     /// \see getRotation
     ///
     ////////////////////////////////////////////////////////////
-    void setRotation(float angle);
+    void setRotation(Angle angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the target viewport
@@ -164,12 +164,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the current orientation of the view
     ///
-    /// \return Rotation angle of the view, in degrees
+    /// \return Rotation angle of the view
     ///
     /// \see setRotation
     ///
     ////////////////////////////////////////////////////////////
-    float getRotation() const;
+    Angle getRotation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the target viewport rectangle of the view
@@ -205,12 +205,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the view relatively to its current orientation
     ///
-    /// \param angle Angle to rotate, in degrees
+    /// \param angle Angle to rotate
     ///
     /// \see setRotation, move, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void rotate(float angle);
+    void rotate(Angle angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Resize the view rectangle relatively to its current size
@@ -260,7 +260,7 @@ private:
     ////////////////////////////////////////////////////////////
     Vector2f          m_center;              //!< Center of the view, in scene coordinates
     Vector2f          m_size;                //!< Size of the view, in scene coordinates
-    float             m_rotation;            //!< Angle of rotation of the view rectangle, in degrees
+    Angle             m_rotation;            //!< Angle of rotation of the view rectangle
     FloatRect         m_viewport;            //!< Viewport rectangle, expressed as a factor of the render-target's size
     mutable Transform m_transform;           //!< Precomputed projection transform corresponding to the view
     mutable Transform m_inverseTransform;    //!< Precomputed inverse projection transform corresponding to the view
@@ -307,7 +307,7 @@ private:
 /// view.reset(sf::FloatRect(100, 100, 400, 200));
 ///
 /// // Rotate it by 45 degrees
-/// view.rotate(45);
+/// view.rotate(sf::degrees(45));
 ///
 /// // Set its target viewport to be half of the window
 /// view.setViewport(sf::FloatRect(0.f, 0.f, 0.5f, 1.f));

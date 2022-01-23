@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Angle.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 
@@ -35,7 +36,7 @@ namespace
 
     float toDegrees(float radians)
     {
-        return radians * 180.f / 3.141592654f;
+        return sf::radians(radians).asDegrees();
     }
 }
 

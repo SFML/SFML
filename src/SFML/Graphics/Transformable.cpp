@@ -35,7 +35,7 @@ namespace sf
 Transformable::Transformable() :
 m_origin                    (0, 0),
 m_position                  (0, 0),
-m_rotation                  (0),
+m_rotation                  (),
 m_scale                     (1, 1),
 m_transform                 (),
 m_transformNeedUpdate       (true),
@@ -61,11 +61,9 @@ void Transformable::setPosition(const Vector2f& position)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setRotation(float angle)
+void Transformable::setRotation(Angle angle)
 {
-    m_rotation = std::fmod(angle, 360.f);
-    if (m_rotation < 0)
-        m_rotation += 360.f;
+    m_rotation = angle.wrapUnsigned();
 
     m_transformNeedUpdate = true;
     m_inverseTransformNeedUpdate = true;
@@ -98,7 +96,7 @@ const Vector2f& Transformable::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-float Transformable::getRotation() const
+Angle Transformable::getRotation() const
 {
     return m_rotation;
 }
@@ -126,7 +124,7 @@ void Transformable::move(const Vector2f& offset)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::rotate(float angle)
+void Transformable::rotate(Angle angle)
 {
     setRotation(m_rotation + angle);
 }
@@ -145,7 +143,7 @@ const Transform& Transformable::getTransform() const
     // Recompute the combined transform if needed
     if (m_transformNeedUpdate)
     {
-        float angle  = -m_rotation * 3.141592654f / 180.f;
+        float angle  = -m_rotation.asRadians();
         float cosine = std::cos(angle);
         float sine   = std::sin(angle);
         float sxc    = m_scale.x * cosine;

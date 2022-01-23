@@ -123,7 +123,7 @@ TEST_CASE("sf::Transform class - [graphics]")
         SUBCASE("Around origin")
         {
             sf::Transform transform;
-            transform.rotate(90);
+            transform.rotate(sf::degrees(90));
             CHECK(transform.getMatrix()[0] == Approx(0));
             CHECK(transform.getMatrix()[4] == Approx(-1));
             CHECK(transform.getMatrix()[12] == Approx(0));
@@ -138,7 +138,7 @@ TEST_CASE("sf::Transform class - [graphics]")
         SUBCASE("Around custom point")
         {
             sf::Transform transform;
-            transform.rotate(90, {1.0f, 0.0f});
+            transform.rotate(sf::degrees(90), {1.0f, 0.0f});
             CHECK(transform.getMatrix()[0] == Approx(0));
             CHECK(transform.getMatrix()[4] == Approx(-1));
             CHECK(transform.getMatrix()[12] == Approx(1));

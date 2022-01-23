@@ -6,6 +6,7 @@ target_compile_features(sfml-test-main PRIVATE cxx_std_17)
 
 # System is always built
 SET(SYSTEM_SRC
+    "${SRCROOT}/System/Angle.cpp"
     "${SRCROOT}/System/Clock.cpp"
     "${SRCROOT}/System/FileInputStream.cpp"
     "${SRCROOT}/System/Time.cpp"
