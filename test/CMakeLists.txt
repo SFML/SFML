@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test")
 
 add_library(sfml-test-main STATIC "${SRCROOT}/DoctestMain.cpp")
@@ -59,5 +57,5 @@ add_custom_target(runtests ALL
 
 add_custom_command(TARGET runtests
                    COMMENT "Run tests"
-                   POST_BUILD COMMAND ctest ARGS --output-on-failure
+                   POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
 )

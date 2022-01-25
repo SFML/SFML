@@ -44,7 +44,7 @@ function(sfml_set_common_ios_properties target)
             MACOSX_BUNDLE TRUE # Bare executables are not usable on iOS, only bundle applications
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
             MACOSX_BUNDLE_BUNDLE_NAME "${target}"
-            MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+            MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}"
         )
     endif()
 endfunction()
@@ -88,7 +88,7 @@ macro(sfml_add_library module)
         if(SFML_OS_WINDOWS)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
-            set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            set_target_properties(${target} PROPERTIES SUFFIX "-${PROJECT_VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
             # fill out all variables we use to generate the .rc file
             string(TIMESTAMP RC_CURRENT_YEAR "%Y")
@@ -99,7 +99,7 @@ macro(sfml_add_library module)
             set(RC_VERSION_SUFFIX "") # Add something like the git revision short SHA-1 in the future
             set(RC_PRERELEASE "0") # Set to 1 to mark the DLL as a pre-release DLL
             set(RC_TARGET_NAME "${target}")
-            set(RC_TARGET_FILE_NAME_SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            set(RC_TARGET_FILE_NAME_SUFFIX "-${PROJECT_VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
             # generate the .rc file
             configure_file(
@@ -128,8 +128,8 @@ macro(sfml_add_library module)
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     # except for Android which strips soversion suffixes
     if(NOT SFML_OS_ANDROID)
-        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
-        set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+        set_target_properties(${target} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+        set_target_properties(${target} PROPERTIES VERSION ${PROJECT_VERSION})
     endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
@@ -172,10 +172,10 @@ macro(sfml_add_library module)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
                                   FRAMEWORK TRUE
-                                  FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                  FRAMEWORK_VERSION ${PROJECT_VERSION}
                                   MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
-                                  MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
-                                  MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+                                  MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION}
+                                  MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION})
         endif()
 
         # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
@@ -426,7 +426,7 @@ function(sfml_export_targets)
 
     include(CMakePackageConfigHelpers)
     write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
-                                     VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                     VERSION ${PROJECT_VERSION}
                                      COMPATIBILITY SameMajorVersion)
 
     if (BUILD_SHARED_LIBS)
