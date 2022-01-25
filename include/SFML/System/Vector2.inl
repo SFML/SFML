@@ -55,6 +55,128 @@ y(static_cast<T>(vector.y))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+T Vector2<T>::length() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");
+
+    return std::hypot(x, y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector2<T>::lengthSq() const
+{
+    return this->dot(*this);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::normalized() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::normalized() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    return (*this) / length();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::angleTo(const Vector2<T>& rhs) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::angleTo() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    assert(rhs != Vector2<T>());
+    return radians(std::atan2(this->cross(rhs), this->dot(rhs)));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::angle() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::angle() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    return radians(std::atan2(y, x));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::rotatedBy() is only supported for floating point types");
+   
+    // No zero vector assert, because rotating a zero vector is well-defined (yields always itself)
+    T cos = std::cos(angle.asRadians());
+    T sin = std::sin(angle.asRadians());
+
+    // Don't manipulate x and y separately, otherwise they're overwritten too early
+    return Vector2<T>(
+        cos * x - sin * y,
+        sin * x + cos * y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
+
+    assert(axis != Vector2<T>());
+    return this->dot(axis) / axis.lengthSq() * axis;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::perpendicular() const
+{
+    return Vector2<T>(-y, x);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector2<T>::dot(const Vector2<T>& rhs) const
+{
+    return x * rhs.x + y * rhs.y;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector2<T>::cross(const Vector2<T>& rhs) const
+{
+    return x * rhs.y - y * rhs.x;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
+{
+    return Vector2<T>(x * rhs.x, y * rhs.y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
+{
+    assert(rhs.x != 0);
+    assert(rhs.y != 0);
+    return Vector2<T>(x / rhs.x, y / rhs.y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 constexpr Vector2<T> operator -(const Vector2<T>& right)
 {
     return Vector2<T>(-right.x, -right.y);
@@ -159,3 +281,14 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+
+////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+
+template <typename T>
+constexpr Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
+
+template <typename T>
+constexpr Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
