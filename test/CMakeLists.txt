@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
 set(SRCROOT "${PROJECT_SOURCE_DIR}/test")
 
 add_library(sfml-test-main STATIC "${SRCROOT}/DoctestMain.cpp")
