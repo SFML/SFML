@@ -191,4 +191,40 @@ TEST_CASE("sf::Vector2 class template - [system]")
         static_assert(vector.y == 2);
         static_assert(vector + sf::Vector2i(2, 1) == sf::Vector2i(3, 3));
     }
+
+    SUBCASE("Dot Product of two Vectors")
+    {
+        sf::Vector2i firstVector(2, 5);
+        sf::Vector2i secondVector(6, 4);
+        auto result = firstVector * secondVector;
+
+        SUBCASE("vector * vector")
+        {
+            CHECK(result == 32);
+        }
+    }
+
+    SUBCASE("Cross Product of two vectors")
+    {
+        sf::Vector2i firstVector(4, 5);
+        sf::Vector2i secondVector(2, 9);
+        auto result = cross(firstVector, secondVector);
+
+        SUBCASE("vector x vector")
+        {
+            CHECK(result == 26);
+        }
+    }
+
+    SUBCASE("Distance between two vectors")
+    {
+        sf::Vector2i firstVector(4, 3);
+        sf::Vector2i secondVector(7, 7);
+        auto result = dist(firstVector, secondVector);
+
+        SUBCASE("distance between vector1 and vector2")
+        {
+            CHECK(result == 5);
+        }
+    }
 }
