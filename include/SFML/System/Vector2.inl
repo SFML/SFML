@@ -53,6 +53,55 @@ y(static_cast<T>(vector.y))
 }
 
 
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr auto Vector2<T>::mag() const
+{
+    return std::sqrt(x * x + y * y);
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr auto Vector2<T>::normalize() const
+{
+    constexpr float magnitude = mag();
+
+    if(magnitude != 0.0)
+    {
+        x /= magnitude;
+        y /= magnitude;
+    }
+
+    return magnitude;
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr auto Vector2<T>::rotate(const float angle) const {
+    float xt = (x * cosf(angle)) - (y * sinf(angle));
+    float yt = (y * cosf(angle)) + (x * sinf(angle));
+    x = xt;
+    y = yt;
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr auto Vector2<T>::cross(const Vector2<T>& vector) const
+{
+    return (x * vector.y) - (y * vector.x);
+}
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Vector2<T> operator -(const Vector2<T>& right)

@@ -25,6 +25,10 @@
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cmath>
 
 namespace sf
 {
@@ -69,12 +73,57 @@ public:
     template <typename U>
     constexpr explicit Vector2(const Vector2<U>& vector);
 
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+    /// \brief Calculate the magnitude of the vector
+    ///
+    /// \return Magnitude of the vector
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] constexpr auto mag() const;
+
+    /// \brief Normalize the vector (unit vector)
+    ///
+    /// \return Unit vector
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] constexpr auto normalize() const;
+
+    /// \brief Rotate the vector
+    ///
+    /// \param specified angle
+    ///
+    /// \return Rotated vector
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] constexpr auto rotate(const float angle) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Calculate the cross product of the vector with another
+    ///
+    /// \return Cross product
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] constexpr auto cross(const Vector2<T>& vector) const;
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     T x; //!< X coordinate of the vector
     T y; //!< Y coordinate of the vector
 };
+
+
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
