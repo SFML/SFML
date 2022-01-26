@@ -171,7 +171,7 @@ constexpr T operator *(const Vector2<T>& left, const Vector2<T>& right)
 template<typename T>
 constexpr T cross(Vector2<T>& left, Vector2<T>& right)
 {
-    return (left.x*right.y) - (left.y*right.x);
+    return (left.x * right.y) - (left.y * right.x);
 }
 
 ////////////////////////////////////////////////////////////

@@ -22,9 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#include <cmath>
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cmath>
+
 
 namespace sf
 {
@@ -247,10 +252,6 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
-//Esteban Calvo start here
-//Enhancements
-//Dot product of 2 vectors
-
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator *
@@ -260,11 +261,11 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return value of cross product of type T
+/// \return value of dot product of type T
 ///
 ////////////////////////////////////////////////////////////
 template<typename T>
-[[nodiscard]] constexpr T operator*(Vector2<T>& left, Vector2<T>& right);
+[[nodiscard]] constexpr T operator*(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -279,7 +280,7 @@ template<typename T>
 ///
 ////////////////////////////////////////////////////////////
 template<typename T>
-[[nodiscard]] constexpr T cross(Vector2<T>& left, Vector2<T>& right);
+[[nodiscard]] constexpr T cross(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -294,7 +295,7 @@ template<typename T>
 ///
 ////////////////////////////////////////////////////////////
 template<typename T>
-[[nodiscard]] constexpr T dist(Vector2<T>& left, Vector2<T>& right);
+[[nodiscard]] constexpr T dist(const Vector2<T>& left, const Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
 
