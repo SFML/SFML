@@ -25,6 +25,7 @@
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
 
+#include "math.h"
 
 namespace sf
 {
@@ -68,6 +69,124 @@ public:
     ////////////////////////////////////////////////////////////
     template <typename U>
     constexpr explicit Vector2(const Vector2<U>& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Obtain magnitude of calling vector
+    ///
+    /// This function determines the linear magnitude of a
+    /// vector using Pythagorean's theorem
+    ///
+    ///
+    /// \return Floating point value for vector magnitude
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr float mag() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Obtain the heading (direction) of calling vector
+    ///
+    /// This function determines the direction a vector is 
+    /// pointing relative to the positive x-axis.
+    ///
+    ///
+    /// \return Double representation of heading angle in radians
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr double heading() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically rotates vector by specified amount
+    ///
+    /// This function rotates a vector by specified radians
+    ///
+    /// \param vector Vector to rotate
+    /// \param rad Number of Radians to rotate vector
+    ///
+    /// \return Vector2<double> of rotated parameter vector
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr Vector2<double> rotate(const Vector2<T>& vector, float rad);
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically determine vector an angle from 
+    /// another vector
+    ///
+    /// This function determines the vector a particular
+    /// angle away from a specified vector. If none is provided
+    /// it will assume a reverence unit vector at (1, 0), at
+    /// 0 radians. 
+    ///
+    /// \param rad Number of Radians between vectors
+    /// \param vector Starting reference vector
+    ///
+    /// \return Vector2<double> of new vector at specified angle
+    /// from reference
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr Vector2<double> fromAngle(float rad, Vector2<T> vector = Vector2<T>(1,0));
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically calculates distance between two vectors
+    ///
+    /// This function determines the Euclidean distance between
+    /// two points represented by each vector
+    ///
+    /// \param vector1 First point
+    /// \param vector2 Second point
+    ///
+    /// \return Double representing linear distance between points
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr double dist(const Vector2<T>& vector1, const Vector2<T>& vector2);
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically calculates the dot-product vectors
+    ///
+    /// This function calculates the dot-product of two vectors
+    ///
+    /// \param vector1 First vector
+    /// \param vector2 Second vector
+    ///
+    /// \return Type T representing the vector dot-product
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr T dot(const Vector2<T>& vector1, const Vector2<T>& vector2);
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically determine the angle between vectors
+    ///
+    /// This function determines the angle between two vectors
+    /// in radians 
+    ///
+    /// \param vector1 First vector
+    /// \param vector2 Second vector
+    ///
+    /// \return Double representing the angle between in radians
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr double angleBetween(const Vector2<T>& vector1, const Vector2<T>& vector2);
+
+    ////////////////////////////////////////////////////////////
+    /// \relates Vector2
+    /// \brief Statically obtain the unit-vector of a vector
+    ///
+    /// This function normalizes the coordinates, obtaining the
+    /// vector's unit-vector
+    ///
+    /// \param vector Vector to normalize
+    ///
+    /// \return Vector2<double> of representing the unit-vector
+    ///
+    ////////////////////////////////////////////////////////////
+    static constexpr Vector2<double> normalize(const Vector2<T>& vector);
+
 
     ////////////////////////////////////////////////////////////
     // Member data

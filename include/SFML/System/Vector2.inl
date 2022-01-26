@@ -159,3 +159,57 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float Vector2<T>::mag() const {
+    return sqrt(x*x + y*y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector2<T>::dot(const Vector2<T>& vector1, const Vector2<T>& vector2){
+    return vector1.x*vector2.x + vector1.y*vector2.y;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr double Vector2<T>::angleBetween(const Vector2<T>& vector1, const Vector2<T>& vector2){
+    return acos((dot(vector1, vector2))/(vector1.mag() * vector2.mag()));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<double> Vector2<T>::rotate(const Vector2<T>& vector, float rad){
+    return Vector2<double>(vector.x*cos(rad) - vector.y*sin(rad), vector.x*sin(rad) + vector.y*cos(rad));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<double> Vector2<T>::normalize(const Vector2<T>& vector){
+    return Vector2<double>(vector.x/vector.mag(), vector.y/vector.mag());
+}
+
+template <typename T>
+constexpr double Vector2<T>::dist(const Vector2<T>& vector1, const Vector2<T>& vector2){
+    return Vector2<float>(vector1.x - vector2.x, vector1.y - vector2.y).mag();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr double Vector2<T>::heading() const{
+    return atan((double)y/(double)x);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<double> Vector2<T>::fromAngle(float rad, Vector2<T> vector){
+    return Vector2::rotate(vector, rad);
+}
