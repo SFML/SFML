@@ -80,15 +80,15 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API static const Color Black;       //!< Black predefined color
-    SFML_GRAPHICS_API static const Color White;       //!< White predefined color
-    SFML_GRAPHICS_API static const Color Red;         //!< Red predefined color
-    SFML_GRAPHICS_API static const Color Green;       //!< Green predefined color
-    SFML_GRAPHICS_API static const Color Blue;        //!< Blue predefined color
-    SFML_GRAPHICS_API static const Color Yellow;      //!< Yellow predefined color
-    SFML_GRAPHICS_API static const Color Magenta;     //!< Magenta predefined color
-    SFML_GRAPHICS_API static const Color Cyan;        //!< Cyan predefined color
-    SFML_GRAPHICS_API static const Color Transparent; //!< Transparent (black) predefined color
+    static const Color Black;       //!< Black predefined color
+    static const Color White;       //!< White predefined color
+    static const Color Red;         //!< Red predefined color
+    static const Color Green;       //!< Green predefined color
+    static const Color Blue;        //!< Blue predefined color
+    static const Color Yellow;      //!< Yellow predefined color
+    static const Color Magenta;     //!< Magenta predefined color
+    static const Color Cyan;        //!< Cyan predefined color
+    static const Color Transparent; //!< Transparent (black) predefined color
 
     ////////////////////////////////////////////////////////////
     // Member data
