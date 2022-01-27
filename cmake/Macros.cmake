@@ -81,7 +81,7 @@ macro(sfml_add_library module)
     set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
 
     # define the export name of the module
-    set_target_properties(${target} PROPERTIES EXPORT_NAME ${module})
+    set_target_properties(${target} PROPERTIES EXPORT_NAME SFML::${module})
 
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS AND NOT THIS_STATIC)
@@ -452,7 +452,6 @@ function(sfml_export_targets)
 
     install(EXPORT SFMLConfigExport
             FILE ${targets_config_filename}
-            NAMESPACE SFML::
             DESTINATION ${config_package_location})
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
