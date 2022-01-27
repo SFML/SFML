@@ -98,5 +98,7 @@ TEST_CASE("sf::Color class - [graphics]")
         static_assert(c.a == 4);
 
         static_assert(c + c == sf::Color(2, 4, 6, 8));
+
+        static_assert(sf::Color::Black == sf::Color(0, 0, 0, 255));
     }
 }
