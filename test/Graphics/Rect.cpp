@@ -69,31 +69,19 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
     SUBCASE("Intersection")
     {
-        SUBCASE("intersects(Rect)")
-        {
-            sf::IntRect rectangle({0, 0}, {10, 10});
-            sf::IntRect intersectingRectangle({5, 5}, {10, 10});
-            sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
+        const sf::IntRect rectangle({0, 0}, {10, 10});
+        const sf::IntRect intersectingRectangle({5, 5}, {10, 10});
 
-            CHECK(rectangle.intersects(intersectingRectangle) == true);
-            CHECK(rectangle.intersects(nonIntersectingRectangle) == false);
-        }
+        const auto intersectionResult = rectangle.findIntersection(intersectingRectangle);
+        REQUIRE(intersectionResult.has_value());
+        CHECK(intersectionResult->top == 5);
+        CHECK(intersectionResult->left == 5);
+        CHECK(intersectionResult->width == 5);
+        CHECK(intersectionResult->height == 5);
 
-        SUBCASE("intersects(Rect, Rect)")
-        {
-            sf::IntRect rectangle({0, 0}, {10, 10});
-            sf::IntRect intersectingRectangle({5, 5}, {10, 10});
-            sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
-            sf::IntRect intersectionResult;
-
-            CHECK(rectangle.intersects(intersectingRectangle, intersectionResult) == true);
-            CHECK(intersectionResult.top == 5);
-            CHECK(intersectionResult.left == 5);
-            CHECK(intersectionResult.width == 5);
-            CHECK(intersectionResult.height == 5);
-
-            CHECK(rectangle.intersects(nonIntersectingRectangle, intersectionResult) == false);
-        }
+        const sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
+        CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle).has_value());
+        CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle));
     }
 
     SUBCASE("Comparison operations")
