@@ -159,3 +159,13 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T euclDistance(const sf::Vector2<T>& v1, const sf::Vector2<T>& v2)
+{
+    T xdif = v1.x - v2.x;
+    T ydif = v1.y - v2.y;
+    T distance = std::sqrt(pow(xdif, 2) + pow(ydif, 2));
+    return distance;
+}

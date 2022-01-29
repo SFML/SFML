@@ -247,6 +247,21 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Euclidean distance
+///
+/// This function finds the Euclidean distance between two points (considering each point as a vector object)
+///
+/// \param v1 First vector (a vector)
+/// \param v2 Second vector (a vector)
+///
+/// \return Value of distance between \a v1 and \a v2
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+[[nodiscard]] constexpr T euclDistance(const sf::Vector2<T>& v1, const sf::Vector2<T>& v2);
+
 #include <SFML/System/Vector2.inl>
 
 // Define the most common types
