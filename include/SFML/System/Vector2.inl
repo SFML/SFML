@@ -43,6 +43,37 @@ y(Y)
 }
 
 
+template<typename T>
+Vector2<float> Vector2<T>::fromAngle(float angle) {
+    float radians = (angle * 3.14159265) / 180.0;
+    float x = cos(radians);
+    float y = sin(radians);
+    return Vector2<float>(x, y);
+
+}
+
+template <typename T>
+float Vector2<T>::mag(const Vector2<T>& from) {
+    return((float)sqrt(pow(from.x, 2) + pow(from.y, 2)));
+
+}
+
+template <typename T>
+float Vector2<T>::dot(const Vector2<T>& one, const Vector2<T>& two) {
+    return ((float)(one.x * two.x + one.y * two.y));
+
+}
+
+template <typename T>
+float Vector2<T>::cross(const Vector2<T>& one, const Vector2<T>& two) {
+    return ((float)(one.x * two.y - one.y * two.x));
+}
+
+template <typename T>
+float Vector2<T>::heading(const Vector2<T>& vect) {
+    return ((float)atan2f((float)vect.y, (float)vect.x)*180 / 3.14159265);
+}
+
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>

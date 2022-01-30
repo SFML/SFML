@@ -24,7 +24,7 @@
 
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
-
+#include <math.h>  
 
 namespace sf
 {
@@ -55,6 +55,22 @@ public:
     ////////////////////////////////////////////////////////////
     constexpr Vector2(T X, T Y);
 
+
+    //calculates a Vector2<float> unit vector based on the given angle in degrees
+    static Vector2<float> fromAngle(float angle);
+
+    //calculates the magnitude of a given vector and returns it as a float
+    static float mag(const Vector2<T>& from);
+
+    //calculates the dot product of two given vectors and returns the result as a float
+    static float dot(const Vector2<T>& one, const Vector2<T>& two);
+
+    //calculates the cross product of two given vectors and returns the result as a float
+    static float cross(const Vector2<T>& one, const Vector2<T>& two);
+
+    //calculates the angle of a vector
+    static float heading(const Vector2<T>& vect);
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
     ///
@@ -68,6 +84,9 @@ public:
     ////////////////////////////////////////////////////////////
     template <typename U>
     constexpr explicit Vector2(const Vector2<U>& vector);
+
+
+   
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -247,7 +266,7 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
-#include <SFML/System/Vector2.inl>
+#include <C:\Users\Preston Goren\OneDrive\Desktop\SFML\include\SFML\System\Vector2.inl>
 
 // Define the most common types
 using Vector2i = Vector2<int>;
