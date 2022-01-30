@@ -247,6 +247,65 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Finds distance between two Vector2's
+///
+///
+/// \param first  first input (a vector)
+/// \param second second input (a vector)
+///
+/// \return Float distance between the two inputs
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float dist(const Vector2<T>& first, const Vector2<T>& second);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Finds magnitude of one Vector2
+///
+///
+/// \param vec  first input (a vector)
+///
+/// \return Float magnitude of the input
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float mag(const Vector2<T>& vec);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Dot product of two vectors
+///
+/// This operator performs a dot product of \a left,
+/// and \a left.
+///
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a vector)
+///
+/// \return A float dot product of \a right and \a left
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float dot(const Vector2<T>& left, const Vector2<T>& right);
+
+////////////////////////////////////////////////////////////
+/// \relates Vector2
+/// \brief Cross product of two vectors
+///
+/// This operator performs a cross product of \a left,
+/// and \a left.
+///
+/// \param left  Left operand (a vector)
+/// \param right Right operand (a vector)
+///
+/// \return A float cross product of \a right and \a left
+///
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float cross(const Vector2<T>& left, const Vector2<T>& right);
+
 #include <SFML/System/Vector2.inl>
 
 // Define the most common types

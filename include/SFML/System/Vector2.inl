@@ -159,3 +159,38 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }
+
+
+///////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float dist(const Vector2<T>& first, const Vector2<T>& second)
+{
+    //distance formula 
+    return std::sqrt(((second.x-first.x)*(second.x-first.x)) + ((second.y-first.y)*(second.y-first.y)));
+}
+
+///////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float mag(const Vector2<T>& vec)
+{
+    //pythag theorem
+    return std::sqrt((vec.x*vec.x) + (vec.y*vec.y));
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float dot(const Vector2<T>& left, const Vector2<T>& right)
+{
+    //definition of dot product
+    return ((left.x*right.x) + (left.y*right.y));
+}
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr float cross(const Vector2<T>& left, const Vector2<T>& right)
+{
+    //note: because the vectors are 2d (in the x and y directions), the cross product 
+    //will always be a single number, either pointing into (negative) or out of (positive) 
+    //the screen, as it will be in the z direction
+    return ((left.x*right.y)-(left.y*right.x));
+}
