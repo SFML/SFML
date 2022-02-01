@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/PrimitiveInfo.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -45,7 +46,8 @@ namespace sf
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Text : public Drawable, public Transformable
+class SFML_GRAPHICS_API Text : public Drawable, public Transformable,
+                               public PrimitiveInfo
 {
 public:
 
@@ -379,6 +381,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Iterate over each primitive and call the function
+    /// 
+    /// The positions of the vertices are not transformed in any way.
+    ///
+    /// \param callback The function to call for each primitive
+    ///
+    ////////////////////////////////////////////////////////////
+    void forEachPrimitive(PrimitiveCallback callback) const override;
 
 private:
 

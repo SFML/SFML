@@ -138,6 +138,16 @@ FloatRect Sprite::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
+void Sprite::forEachPrimitive(PrimitiveCallback callback) const
+{
+    if (callback)
+    {
+        callback(m_vertices, 4, PrimitiveType::TriangleStrip);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
     if (m_texture)

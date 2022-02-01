@@ -24,6 +24,8 @@ set(SRC
     ${INCROOT}/Image.hpp
     ${SRCROOT}/ImageLoader.cpp
     ${SRCROOT}/ImageLoader.hpp
+    ${INCROOT}/PrimitiveInfo.hpp
+    ${SRCROOT}/PrimitiveInfo.cpp
     ${INCROOT}/PrimitiveType.hpp
     ${INCROOT}/Rect.hpp
     ${INCROOT}/Rect.inl

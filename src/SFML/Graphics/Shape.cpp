@@ -156,6 +156,19 @@ FloatRect Shape::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
+void Shape::forEachPrimitive(PrimitiveCallback callback) const
+{
+    if (callback)
+    {
+        m_vertices.forEachPrimitive(callback);
+
+        if (m_outlineThickness != 0)
+            m_outlineVertices.forEachPrimitive(callback);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 Shape::Shape() :
 m_texture         (nullptr),
 m_textureRect     (),

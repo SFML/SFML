@@ -141,6 +141,16 @@ FloatRect VertexArray::getBounds() const
 
 
 ////////////////////////////////////////////////////////////
+void VertexArray::forEachPrimitive(PrimitiveCallback callback) const
+{
+    if (callback)
+    {
+        callback(m_vertices.data(), m_vertices.size(), m_primitiveType);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void VertexArray::draw(RenderTarget& target, RenderStates states) const
 {
     if (!m_vertices.empty())

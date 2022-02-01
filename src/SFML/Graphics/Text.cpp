@@ -358,6 +358,21 @@ FloatRect Text::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
+void Text::forEachPrimitive(PrimitiveCallback callback) const
+{
+    if (callback)
+    {
+        ensureGeometryUpdate();
+
+        if (m_outlineThickness != 0)
+            m_outlineVertices.forEachPrimitive(callback);
+
+        m_vertices.forEachPrimitive(callback);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void Text::draw(RenderTarget& target, RenderStates states) const
 {
     if (m_font)

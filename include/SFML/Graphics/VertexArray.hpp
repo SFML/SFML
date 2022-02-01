@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/PrimitiveInfo.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -42,7 +43,7 @@ namespace sf
 /// \brief Define a set of one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API VertexArray : public Drawable
+class SFML_GRAPHICS_API VertexArray : public Drawable, public PrimitiveInfo
 {
 public:
 
@@ -169,6 +170,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getBounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Iterate over each primitive and call the function
+    ///
+    /// \param callback The function to call for each primitive
+    ///
+    ////////////////////////////////////////////////////////////
+    void forEachPrimitive(PrimitiveCallback callback) const override;
 
 private:
 
