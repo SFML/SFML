@@ -220,9 +220,9 @@ using FloatRect = Rect<float>;
 /// bool b2 = r2.contains(3, 1); // false
 ///
 /// // Test the intersection between r1 and r2
-/// sf::IntRect result;
-/// bool b3 = r1.findIntersection(r2, result); // true
-/// // result == (4, 2, 16, 3)
+/// std::optional<sf::IntRect> result = r1.findIntersection(r2);
+/// // result.has_value() == true
+/// // result.value() == (4, 2, 16, 3)
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////
