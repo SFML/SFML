@@ -82,6 +82,9 @@ endif()
 # add an option for building the test suite
 sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
 
+# add an option for enabling coverage reporting
+sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
+
 # macOS specific options
 if(SFML_OS_MACOSX)
     # add an option to build frameworks instead of dylibs (release only)
