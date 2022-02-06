@@ -35,10 +35,23 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Install Linux Dependencies
+    - name: Detect Linux Clang Version
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
+      run: clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/clang_version=\1/p' >> $GITHUB_ENV
 
+    - name: Install Linux Tools and Dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install gcovr llvm-${{ env.clang_version }} libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
+
+    - name: Install macOS Tools and Dependencies
+      if: runner.os == 'macOS'
+      run: brew install gcovr
+
+    - name: Install OpenCppCoverage and add to PATH
+      if: runner.os == 'Windows'
+      run: |
+        choco install OpenCppCoverage -y
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -48,11 +61,47 @@ jobs:
         wget -nv https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip -P $GITHUB_WORKSPACE
         unzip -qq -d $GITHUB_WORKSPACE android-ndk-r18b-linux-x86_64.zip
 
-
     - name: Configure CMake
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_ENABLE_COVERAGE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
 
     - name: Build
       shell: bash
       run: cmake --build $GITHUB_WORKSPACE/build --config Release --target install
+
+    - name: Generate OpenCppCoverage Coverage Report
+      if: matrix.platform.name == 'Windows VS2019' || matrix.platform.name == 'Windows VS2022'
+      shell: bash
+      run: cmake --build $GITHUB_WORKSPACE/build --config Debug --target runtests
+
+    - name: Generate GCC Gcov Coverage Report
+      if: matrix.platform.name == 'Linux GCC'
+      shell: bash
+      run: |
+        cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DCMAKE_BUILD_TYPE=Debug -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_ENABLE_COVERAGE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+        cmake --build $GITHUB_WORKSPACE/build --target runtests
+        gcovr -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' $GITHUB_WORKSPACE
+
+    - name: Generate Clang Gcov Coverage Report
+      if: matrix.platform.name == 'Linux Clang'
+      shell: bash
+      run: |
+        cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DCMAKE_BUILD_TYPE=Debug -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_ENABLE_COVERAGE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+        cmake --build $GITHUB_WORKSPACE/build --target runtests
+        gcovr --gcov-executable="llvm-cov-${{ env.clang_version }} gcov" -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' $GITHUB_WORKSPACE
+
+    - name: Generate Apple Clang Gcov Coverage Report
+      if: matrix.platform.name == 'MacOS XCode' && (matrix.config.name == 'Shared' || matrix.config.name == 'Static')
+      shell: bash
+      run: |
+        cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DCMAKE_BUILD_TYPE=Debug -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_ENABLE_COVERAGE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+        cmake --build $GITHUB_WORKSPACE/build --target runtests
+        gcovr -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' $GITHUB_WORKSPACE
+
+    - name: Upload Coverage Report to Codecov
+      if: matrix.platform.name == 'Windows VS2019' || matrix.platform.name == 'Windows VS2022' || matrix.platform.name == 'Linux GCC' || matrix.platform.name == 'Linux Clang' || (matrix.platform.name == 'MacOS XCode' && (matrix.config.name == 'Shared' || matrix.config.name == 'Static'))
+      uses: codecov/codecov-action@v2
+      with:
+        directory: ./build
+        files: ./build/coverage.out
+        fail_ci_if_error: true
