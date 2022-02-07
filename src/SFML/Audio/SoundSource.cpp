@@ -238,7 +238,7 @@ void SoundSource::setEffect(const SoundEffect* effect)
     if (m_effect)
     {
         m_effect->attachSoundSource(this);
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, m_effect->m_effectSlot, 0, 0));
+        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, static_cast<ALint>(m_effect->m_effectSlot), 0, 0));
     }
     else
     {
