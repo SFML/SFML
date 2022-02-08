@@ -293,7 +293,7 @@ float ChorusEffect::getDelay() const
 
 
 ////////////////////////////////////////////////////////////
-ChorusEffect& ChorusEffect::operator= (const ChorusEffect& right)
+ChorusEffect& ChorusEffect::operator= (const ChorusEffect&)
 {
     return *this;
 }

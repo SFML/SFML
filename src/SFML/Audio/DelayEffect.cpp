@@ -263,7 +263,7 @@ float DelayEffect::getSpread() const
 
 
 ////////////////////////////////////////////////////////////
-DelayEffect& DelayEffect::operator= (const DelayEffect& right)
+DelayEffect& DelayEffect::operator= (const DelayEffect&)
 {
     return *this;
 }

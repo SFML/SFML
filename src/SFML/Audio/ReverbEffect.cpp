@@ -451,7 +451,7 @@ float ReverbEffect::getRoomRolloff() const
 
 
 ////////////////////////////////////////////////////////////
-ReverbEffect& ReverbEffect::operator= (const ReverbEffect& right)
+ReverbEffect& ReverbEffect::operator= (const ReverbEffect&)
 {
     return *this;
 }
