@@ -145,7 +145,7 @@ float SoundEffect::getVolumeMultiplier() const
 void SoundEffect::setParameter(int parameter, float value)
 {
     alCheck(alEffectf(m_effect, parameter, value));
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, static_cast<ALint>(m_effect)));
 }
 
 
