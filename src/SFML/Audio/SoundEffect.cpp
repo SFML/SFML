@@ -71,7 +71,7 @@ SoundEffect::SoundEffect(int effectType)
 
     ensureEffect(effectType);
     alCheck(alEffecti(m_effect, AL_EFFECT_TYPE, effectType));
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, static_cast<ALint>(m_effect)));
 }
 
 
@@ -86,7 +86,7 @@ SoundEffect::SoundEffect(const SoundEffect& copy)
 
     //make sure we properly reference count our handle
     ensureEffect(m_type);
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, static_cast<ALint>(m_effect)));
 
     //copy properties from copy
     setVolumeMultiplier(copy.getVolumeMultiplier());
