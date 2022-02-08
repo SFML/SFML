@@ -264,5 +264,4 @@ void SoundSource::resetEffect()
         m_effect = NULL;
     }
 }
-
 } // namespace sf

@@ -46,7 +46,7 @@
 namespace
 {
     //reference counted effects object handle.
-    //this is to enables sharing of objects between effects slots
+    //this is to enable sharing of objects between effects slots
     //see ensureEffect()
     struct CountedEffect
     {
@@ -153,7 +153,7 @@ void SoundEffect::setParameter(int parameter, float value)
 void SoundEffect::setParameter(int parameter, int value)
 {
     alCheck(alEffecti(m_effect, parameter, value));
-    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, m_effect));
+    alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, static_cast<ALint>(m_effect)));
 }
 
 ////////////////////////////////////////////////////////////
