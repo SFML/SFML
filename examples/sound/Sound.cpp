@@ -42,7 +42,7 @@ void playSound(const sf::SoundEffect& effect)
         }
 
         // apply the effect
-        sound.setEffect(&effect);
+        sound.setEffect(effect);
     }
     std::cout << std::endl << std::endl;
 }
@@ -83,7 +83,7 @@ void playMusic(const std::string& filename, const sf::SoundEffect& effect)
         music.setPlayingOffset(sf::seconds(0.f));
 
         // Apply the effect the second time
-        music.setEffect(&effect);
+        music.setEffect(effect);
     }
 
     std::cout << std::endl << std::endl;
