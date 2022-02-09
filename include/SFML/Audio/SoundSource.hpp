@@ -282,31 +282,31 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set an effect to be applied to the sound source
     ///
-    /// \param effect Pointer to a SoundEffect object, or nullptr.
-    /// Setting this to nullptr will remove any currently assigned effects.
+    /// Any existing effect will first be removed. To remove
+    /// an effect completely use removeEffect()
+    /// \param effect Reference to a SoundEffect object to assign.
     /// \see SoundEffect
     ///
     ////////////////////////////////////////////////////////////
-    void setEffect(const SoundEffect* effect);
+    void setEffect(const SoundEffect& effect);
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns a pointer to the active SoundEffect.
     ///
     /// \return If a SoundEffect object has been assigned to this SoundSource
-    /// then a pointer to that object is returned, else returns nullptr
+    /// then a pointer to that object is returned, else returns NULL
     ////////////////////////////////////////////////////////////
     const SoundEffect* getEffect() const;
+
 
     ////////////////////////////////////////////////////////////
     /// \brief Reset the internal effect of the sound
     ///
-    /// This function is for internal use only, you don't have
-    /// to use it. It is called by the sf::SoundEffect that
-    /// this sound uses, when it is destroyed in order to prevent
-    /// the sound from using a dead effect.
-    ///
+    /// Removes any effect set on the SoundSource. Note that
+    /// this will also stop the SoundSource if it is playing
+    /// even if there is not effect assigned.
     ////////////////////////////////////////////////////////////
-    void resetEffect();
+    void removeEffect();
 
 protected:
 

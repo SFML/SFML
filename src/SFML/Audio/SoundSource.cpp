@@ -68,7 +68,7 @@ SoundSource::SoundSource(const SoundSource& copy)
 
     if (copy.m_effect)
     {
-        setEffect(copy.m_effect);
+        setEffect(*copy.m_effect);
     }
 }
 
@@ -201,7 +201,7 @@ SoundSource& SoundSource::operator =(const SoundSource& right)
     setRelativeToListener(right.isRelativeToListener());
     setMinDistance(right.getMinDistance());
     setAttenuation(right.getAttenuation());
-    setEffect(right.getEffect());
+    setEffect(*right.getEffect());
 
     return *this;
 }
@@ -224,7 +224,9 @@ SoundSource::Status SoundSource::getStatus() const
     return Stopped;
 }
 
-void SoundSource::setEffect(const SoundEffect* effect)
+
+////////////////////////////////////////////////////////////
+void SoundSource::setEffect(const SoundEffect& effect)
 {
     // First detach from the previous effect
     if (m_effect)
@@ -234,24 +236,23 @@ void SoundSource::setEffect(const SoundEffect* effect)
     }
 
     // Assign and use the new effect
-    m_effect = effect;
-    if (m_effect)
-    {
-        m_effect->attachSoundSource(this);
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, static_cast<ALint>(m_effect->m_effectSlot), 0, 0));
-    }
-    else
-    {
-        alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, 0));
-    }
+    m_effect = &effect;
+
+    m_effect->attachSoundSource(this);
+    alCheck(alSource3i(m_source, AL_AUXILIARY_SEND_FILTER, static_cast<ALint>(m_effect->m_effectSlot), 0, 0));
+
 }
 
+
+////////////////////////////////////////////////////////////
 const SoundEffect* SoundSource::getEffect() const
 {
     return m_effect;
 }
 
-void SoundSource::resetEffect()
+
+////////////////////////////////////////////////////////////
+void SoundSource::removeEffect()
 {
     // First stop the sound in case it is playing
     stop();

@@ -101,7 +101,7 @@ SoundEffect::~SoundEffect()
 
     for (std::set<SoundSource*>::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
     {
-        (*it)->resetEffect();
+        (*it)->removeEffect();
     }
 
     alCheck(alAuxiliaryEffectSloti(m_effectSlot, AL_EFFECTSLOT_EFFECT, AL_EFFECT_NULL));
