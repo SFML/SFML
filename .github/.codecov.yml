@@ -11,6 +11,15 @@ coverage:
         target: auto
         threshold: 100%
         base: auto
+        if_ci_failed: success
+        informational: true
+    patch:
+      default:
+        target: auto
+        threshold: 100%
+        base: auto
+        if_ci_failed: success
+        informational: true
 
 parsers:
   gcov:
