@@ -30,12 +30,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundSource.hpp>
-#include <SFML/System/Time.hpp>
 #include <cstdlib>
 
 
 namespace sf
 {
+class Time;
 class SoundBuffer;
 
 ////////////////////////////////////////////////////////////

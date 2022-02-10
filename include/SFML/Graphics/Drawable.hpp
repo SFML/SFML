@@ -29,12 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
 
 
 namespace sf
 {
 class RenderTarget;
+class RenderStates;
 
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for objects that can be drawn

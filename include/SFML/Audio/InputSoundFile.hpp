@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/Time.hpp>
 #include <memory>
 #include <string>
 #include <cstddef>
@@ -37,6 +36,7 @@
 
 namespace sf
 {
+class Time;
 class InputStream;
 class SoundFileReader;
 

@@ -37,6 +37,8 @@
 
 namespace sf
 {
+class Texture;
+
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline
 ///

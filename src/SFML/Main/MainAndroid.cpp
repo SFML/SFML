@@ -41,6 +41,7 @@
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Time.hpp>
 #include <android/window.h>
 #include <android/native_activity.h>
 #include <cstring>

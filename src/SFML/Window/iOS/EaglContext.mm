@@ -30,6 +30,7 @@
 #include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/EAGLDrawable.h>
 #include <QuartzCore/CAEAGLLayer.h>

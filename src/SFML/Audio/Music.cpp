@@ -28,6 +28,7 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Time.hpp>
 #include <fstream>
 #include <algorithm>
 #include <mutex>
