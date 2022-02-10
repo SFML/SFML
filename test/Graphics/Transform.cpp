@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Transform.hpp>
+#include <SFML/System/Angle.hpp>
 #include "GraphicsUtil.hpp"
 #include "SystemUtil.hpp"
 #include <vector>
