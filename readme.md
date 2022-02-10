@@ -38,3 +38,19 @@ There are several places to learn SFML:
 ## Contribute
 
 SFML is an open-source project, and it needs your help to go on growing and improving. If you want to get involved and suggest some additional features, file a bug report or submit a patch, please have a look at the [contribution guidelines](https://www.sfml-dev.org/contribute.php).
+
+## License
+
+The SFML libraries and source code are distributed under the [zlib/libpng license](https://opensource.org/licenses/Zlib). See [license.md](license.md). External libraries used by SFML are distributed under their own licenses.
+
+In short, SFML is free for any use (commercial or personal, proprietary or open-source). You can use SFML in your project without any restriction. You can even omit to mention that you use SFML -- although it would be appreciated.
+
+## External libraries used by SFML
+
+  * [_OpenAL-Soft_](https://github.com/kcat/openal-soft) is under the [LGPL license](https://github.com/kcat/openal-soft/blob/master/COPYING)
+  * [_stb\_image_ and _stb_image_write_](https://github.com/nothings/stb) are [public domain](https://github.com/nothings/stb/blob/master/LICENSE)
+  * [_freetype_](https://gitlab.freedesktop.org/freetype/freetype) is under the [FreeType license or the GPL license](https://gitlab.freedesktop.org/freetype/freetype/-/blob/master/LICENSE.TXT)
+  * [_libogg_](https://gitlab.xiph.org/xiph/ogg) is under the [BSD license](https://gitlab.xiph.org/xiph/ogg/-/blob/master/COPYING)
+  * [_libvorbis_](https://gitlab.xiph.org/xiph/vorbis) is under the [BSD license](https://gitlab.xiph.org/xiph/vorbis/-/blob/master/COPYING)
+  * [_libflac_](https://gitlab.xiph.org/xiph/flac) is under the [BSD license](https://gitlab.xiph.org/xiph/flac/-/blob/master/COPYING.Xiph)
+  * [_minimp3_](https://github.com/lieff/minimp3) is under the [CC0 license](https://github.com/lieff/minimp3/blob/master/LICENSE)
