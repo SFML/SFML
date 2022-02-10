@@ -31,16 +31,17 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/System/Angle.hpp>
 
 
 namespace sf
 {
+class Angle;
+
 ////////////////////////////////////////////////////////////
 /// \brief Define a 3x3 transform matrix
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Transform
+class Transform
 {
 public:
 
@@ -50,7 +51,7 @@ public:
     /// Creates an identity transform (a transform that does nothing).
     ///
     ////////////////////////////////////////////////////////////
-    Transform();
+    constexpr Transform();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a transform from a 3x3 matrix
@@ -66,9 +67,9 @@ public:
     /// \param a22 Element (2, 2) of the matrix
     ///
     ////////////////////////////////////////////////////////////
-    Transform(float a00, float a01, float a02,
-              float a10, float a11, float a12,
-              float a20, float a21, float a22);
+    constexpr Transform(float a00, float a01, float a02,
+                        float a10, float a11, float a12,
+                        float a20, float a21, float a22);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the transform as a 4x4 matrix
@@ -85,7 +86,7 @@ public:
     /// \return Pointer to a 4x4 matrix
     ///
     ////////////////////////////////////////////////////////////
-    const float* getMatrix() const;
+    constexpr const float* getMatrix() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the inverse of the transform
@@ -96,7 +97,7 @@ public:
     /// \return A new transform which is the inverse of self
     ///
     ////////////////////////////////////////////////////////////
-    Transform getInverse() const;
+    constexpr Transform getInverse() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a 2D point
@@ -112,7 +113,7 @@ public:
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f transformPoint(const Vector2f& point) const;
+    constexpr Vector2f transformPoint(const Vector2f& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a rectangle
@@ -128,7 +129,7 @@ public:
     /// \return Transformed rectangle
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect transformRect(const FloatRect& rectangle) const;
+    constexpr FloatRect transformRect(const FloatRect& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with another one
@@ -148,7 +149,7 @@ public:
     /// \return Reference to *this
     ///
     ////////////////////////////////////////////////////////////
-    Transform& combine(const Transform& transform);
+    constexpr Transform& combine(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
@@ -167,7 +168,7 @@ public:
     /// \see rotate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& translate(const Vector2f& offset);
+    constexpr Transform& translate(const Vector2f& offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -186,7 +187,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& rotate(Angle angle);
+    SFML_GRAPHICS_API Transform& rotate(Angle angle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -211,7 +212,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    Transform& rotate(Angle angle, const Vector2f& center);
+    SFML_GRAPHICS_API Transform& rotate(Angle angle, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -230,7 +231,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& scale(const Vector2f& factors);
+    constexpr Transform& scale(const Vector2f& factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -255,7 +256,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    Transform& scale(const Vector2f& factors, const Vector2f& center);
+    constexpr Transform& scale(const Vector2f& factors, const Vector2f& center);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -282,7 +283,7 @@ private:
 /// \return New combined transform
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API Transform operator *(const Transform& left, const Transform& right);
+constexpr Transform operator *(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -296,7 +297,7 @@ SFML_GRAPHICS_API Transform operator *(const Transform& left, const Transform& r
 /// \return The combined transform
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right);
+constexpr Transform& operator *=(Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -310,7 +311,7 @@ SFML_GRAPHICS_API Transform& operator *=(Transform& left, const Transform& right
 /// \return New transformed point
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& right);
+constexpr Vector2f operator *(const Transform& left, const Vector2f& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -325,7 +326,7 @@ SFML_GRAPHICS_API Vector2f operator *(const Transform& left, const Vector2f& rig
 /// \return true if the transforms are equal, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API bool operator ==(const Transform& left, const Transform& right);
+[[nodiscard]] constexpr bool operator ==(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -339,7 +340,9 @@ SFML_GRAPHICS_API bool operator ==(const Transform& left, const Transform& right
 /// \return true if the transforms are not equal, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_GRAPHICS_API bool operator !=(const Transform& left, const Transform& right);
+[[nodiscard]] constexpr bool operator !=(const Transform& left, const Transform& right);
+
+#include <SFML/Graphics/Transform.inl>
 
 } // namespace sf
 
