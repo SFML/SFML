@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/Window/ContextSettings.hpp>
 #include <memory>
 
 
@@ -40,6 +39,8 @@ namespace priv
 {
     class GlContext;
 }
+
+struct ContextSettings;
 
 using GlFunctionPointer = void (*)();
 

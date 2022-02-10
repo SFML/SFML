@@ -31,6 +31,7 @@
 #include <SFML/Window/JoystickManager.hpp>
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 #include <algorithm>
 #include <memory>
 #include <cmath>

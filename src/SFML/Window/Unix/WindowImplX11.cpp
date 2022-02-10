@@ -33,6 +33,7 @@
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 
 #include <X11/Xlibint.h>
 #undef min // Defined by `Xlibint.h`, conflicts with standard headers

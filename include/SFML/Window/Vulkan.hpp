@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/Window/WindowHandle.hpp>
 #include <vector>
 #include <cstdint>
 

@@ -29,11 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <SFML/System/Time.hpp>
 
 
 namespace sf
 {
+class Time;
+
 ////////////////////////////////////////////////////////////
 /// \ingroup system
 /// \brief Make the current thread sleep for a given duration

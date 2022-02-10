@@ -32,6 +32,7 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Time.hpp>
 #include <iostream>
 #include <algorithm>
 

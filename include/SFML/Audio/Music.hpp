@@ -31,13 +31,13 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
-#include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
 
 
 namespace sf
 {
+class Time;
 class InputStream;
 
 ////////////////////////////////////////////////////////////

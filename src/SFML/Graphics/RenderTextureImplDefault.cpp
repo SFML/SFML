@@ -29,6 +29,7 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
 #include <SFML/Window/Context.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 #include <memory>
 
 

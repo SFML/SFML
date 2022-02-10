@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <SFML/System/Time.hpp>
 #include <chrono>
 #include <ratio>
 #include <type_traits>
@@ -79,6 +78,8 @@ namespace priv
 #endif
 
 } // namespace priv
+
+class Time;
 
 ////////////////////////////////////////////////////////////
 /// \brief Utility class that measures the elapsed time

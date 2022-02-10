@@ -29,8 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/Image.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <string>
 
 
 namespace sf
@@ -40,6 +41,7 @@ class RenderTarget;
 class RenderTexture;
 class Text;
 class Window;
+class Image;
 
 ////////////////////////////////////////////////////////////
 /// \brief Image living on the graphics card that can be used for drawing
