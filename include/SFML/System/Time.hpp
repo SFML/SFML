@@ -82,7 +82,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API static const Time Zero; //!< Predefined "zero" time value
+    static const Time Zero; //!< Predefined "zero" time value
 
 private:
 

@@ -218,5 +218,4 @@ constexpr bool operator !=(const Transform& left, const Transform& right)
 
 // Note: the 'inline' keyword here is technically not required, but VS2019 fails
 // to compile with a bogus "multiple definition" error if not explicitly used.
-
 inline constexpr Transform Transform::Identity;

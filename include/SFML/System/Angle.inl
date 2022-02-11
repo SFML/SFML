@@ -257,3 +257,12 @@ constexpr Angle operator "" _rad(unsigned long long angle)
 }
 
 } // namespace Literals
+
+
+////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+
+// Note: the 'inline' keyword here is technically not required, but VS2019 fails
+// to compile with a bogus "multiple definition" error if not explicitly used.
+inline constexpr Angle Angle::Zero;

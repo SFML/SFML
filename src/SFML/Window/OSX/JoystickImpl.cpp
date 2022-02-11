@@ -384,7 +384,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     AutoreleasePool pool;
-    static const JoystickState disconnectedState; // return this if joystick was disconnected
+    static constexpr JoystickState disconnectedState; // return this if joystick was disconnected
     JoystickState state; // otherwise return that
     state.connected = true;
 

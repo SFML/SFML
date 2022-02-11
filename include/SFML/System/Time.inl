@@ -245,3 +245,12 @@ constexpr Time& operator %=(Time& left, Time right)
 {
     return left = left % right;
 }
+
+
+////////////////////////////////////////////////////////////
+// Static member data
+////////////////////////////////////////////////////////////
+
+// Note: the 'inline' keyword here is technically not required, but VS2019 fails
+// to compile with a bogus "multiple definition" error if not explicitly used.
+inline constexpr Time Time::Zero;
