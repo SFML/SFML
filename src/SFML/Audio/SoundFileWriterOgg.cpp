@@ -131,7 +131,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
 {
     // Vorbis has issues with buffers that are too large, so we ask for 64K
-    static const int bufferSize = 65536;
+    constexpr int bufferSize = 65536;
 
     // A frame contains a sample from each channel
     int frameCount = static_cast<int>(count / m_channelCount);

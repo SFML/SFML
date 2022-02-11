@@ -94,7 +94,7 @@ bool SensorImpl::open(Sensor::Type sensor)
     m_enabled = false;
 
     // Set the refresh rate (use the maximum allowed)
-    static const NSTimeInterval updateInterval = 1. / 60.;
+    constexpr NSTimeInterval updateInterval = 1. / 60.;
     switch (sensor)
     {
         case Sensor::Accelerometer:

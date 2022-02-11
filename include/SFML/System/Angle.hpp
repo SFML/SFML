@@ -72,7 +72,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Wrap to a range such that -180° <= angle < 180°
-    /// 
+    ///
     /// Similar to a modulo operation, this returns a copy of the angle
     /// constrained to the range [-180°, 180°) == [-Pi, Pi).
     /// The resulting angle represents a rotation which is equivalent to *this.
@@ -105,7 +105,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Wrap to a range such that 0° <= angle < 360°
-    /// 
+    ///
     /// Similar to a modulo operation, this returns a copy of the angle
     /// constrained to the range [0°, 360°) == [0, Tau) == [0, 2*Pi).
     /// The resulting angle represents a rotation which is equivalent to *this.
@@ -139,7 +139,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API static const Angle Zero; //!< Predefined 0 degree angle value
+    static const Angle Zero; //!< Predefined 0 degree angle value
 
 private:
 

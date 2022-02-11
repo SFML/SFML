@@ -164,7 +164,7 @@ void Window::close()
 ////////////////////////////////////////////////////////////
 const ContextSettings& Window::getSettings() const
 {
-    static const ContextSettings empty(0, 0, 0);
+    static constexpr ContextSettings empty(0, 0, 0);
 
     return m_context ? m_context->getSettings() : empty;
 }

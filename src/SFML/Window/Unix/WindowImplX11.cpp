@@ -78,14 +78,14 @@ namespace
 
         sf::String                            wmAbsPosGood[] = { "Enlightenment", "FVWM", "i3" };
 
-        static const unsigned long            eventMask = FocusChangeMask      | ButtonPressMask     |
-                                                        ButtonReleaseMask    | ButtonMotionMask    |
-                                                        PointerMotionMask    | KeyPressMask        |
-                                                        KeyReleaseMask       | StructureNotifyMask |
-                                                        EnterWindowMask      | LeaveWindowMask     |
-                                                        VisibilityChangeMask | PropertyChangeMask;
+        constexpr unsigned long        eventMask = FocusChangeMask      | ButtonPressMask     |
+                                                   ButtonReleaseMask    | ButtonMotionMask    |
+                                                   PointerMotionMask    | KeyPressMask        |
+                                                   KeyReleaseMask       | StructureNotifyMask |
+                                                   EnterWindowMask      | LeaveWindowMask     |
+                                                   VisibilityChangeMask | PropertyChangeMask;
 
-        static const unsigned int             maxTrialsCount = 5;
+        constexpr unsigned int         maxTrialsCount = 5;
 
         // Predicate we use to find key repeat events in processEvent
         struct KeyRepeatFinder
@@ -656,23 +656,23 @@ m_lastInputTime  (0)
         Atom WMHintsAtom = getAtom("_MOTIF_WM_HINTS", false);
         if (WMHintsAtom)
         {
-            static const unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
-            static const unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
+            constexpr unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
+            constexpr unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
 
-            //static const unsigned long MWM_DECOR_ALL         = 1 << 0;
-            static const unsigned long MWM_DECOR_BORDER      = 1 << 1;
-            static const unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
-            static const unsigned long MWM_DECOR_TITLE       = 1 << 3;
-            static const unsigned long MWM_DECOR_MENU        = 1 << 4;
-            static const unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
-            static const unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
+            //constexpr unsigned long MWM_DECOR_ALL         = 1 << 0;
+            constexpr unsigned long MWM_DECOR_BORDER      = 1 << 1;
+            constexpr unsigned long MWM_DECOR_RESIZEH     = 1 << 2;
+            constexpr unsigned long MWM_DECOR_TITLE       = 1 << 3;
+            constexpr unsigned long MWM_DECOR_MENU        = 1 << 4;
+            constexpr unsigned long MWM_DECOR_MINIMIZE    = 1 << 5;
+            constexpr unsigned long MWM_DECOR_MAXIMIZE    = 1 << 6;
 
-            //static const unsigned long MWM_FUNC_ALL          = 1 << 0;
-            static const unsigned long MWM_FUNC_RESIZE       = 1 << 1;
-            static const unsigned long MWM_FUNC_MOVE         = 1 << 2;
-            static const unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
-            static const unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
-            static const unsigned long MWM_FUNC_CLOSE        = 1 << 5;
+            //constexpr unsigned long MWM_FUNC_ALL          = 1 << 0;
+            constexpr unsigned long MWM_FUNC_RESIZE       = 1 << 1;
+            constexpr unsigned long MWM_FUNC_MOVE         = 1 << 2;
+            constexpr unsigned long MWM_FUNC_MINIMIZE     = 1 << 3;
+            constexpr unsigned long MWM_FUNC_MAXIMIZE     = 1 << 4;
+            constexpr unsigned long MWM_FUNC_CLOSE        = 1 << 5;
 
             struct WMHints
             {
@@ -1495,7 +1495,7 @@ void WindowImplX11::switchToFullscreen()
 
         if (netWmBypassCompositor)
         {
-            static const unsigned long bypassCompositor = 1;
+            constexpr unsigned long bypassCompositor = 1;
 
             XChangeProperty(m_display,
                             m_window,
