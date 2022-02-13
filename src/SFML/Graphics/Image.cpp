@@ -240,12 +240,19 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
                 const Uint8* src = srcPixels + j * 4;
                 Uint8*       dst = dstPixels + j * 4;
 
-                // Interpolate RGBA components using the alpha value of the source pixel
-                Uint8 alpha = src[3];
-                dst[0] = static_cast<Uint8>((src[0] * alpha + dst[0] * (255 - alpha)) / 255);
-                dst[1] = static_cast<Uint8>((src[1] * alpha + dst[1] * (255 - alpha)) / 255);
-                dst[2] = static_cast<Uint8>((src[2] * alpha + dst[2] * (255 - alpha)) / 255);
-                dst[3] = static_cast<Uint8>(alpha + dst[3] * (255 - alpha) / 255);
+                // Interpolate RGBA components using the alpha values of the destination and source pixels
+                Uint8 src_alpha = src[3];
+                Uint8 dst_alpha = dst[3];
+                Uint8 out_alpha = static_cast<Uint8>(src_alpha + dst_alpha - src_alpha * dst_alpha / 255);
+
+                dst[3] = out_alpha;
+
+                if (out_alpha)
+                    for (int k = 0; k < 3; k++)
+                        dst[k] = static_cast<Uint8>((src[k] * src_alpha + dst[k] * (out_alpha - src_alpha)) / out_alpha);
+                else
+                    for (int k = 0; k < 3; k++)
+                        dst[k] = src[k];
             }
 
             srcPixels += srcStride;
