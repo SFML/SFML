@@ -29,11 +29,13 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <memory>
 #include <mutex>
+#include <utility>
+#include <cassert>
 
 
 namespace
 {
-    // OpenAL resources counter and its mutex
+    // OpenAL resource counter and its mutex
     unsigned int count = 0;
     std::recursive_mutex mutex;
 
@@ -44,10 +46,122 @@ namespace
 }
 
 
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+/// \brief Return OpenAL resource count
+///
+////////////////////////////////////////////////////////////
+unsigned int getOpenAlResourceCount()
+{
+    std::scoped_lock lock(mutex);
+    return count;
+}
+
+}
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-AlResource::AlResource()
+AlResource::AlResource() :
+m_active(true)
+{
+    incrementResourceCounter();
+}
+
+
+////////////////////////////////////////////////////////////
+AlResource::~AlResource()
+{
+    if (m_active)
+        decrementResourceCounter();
+}
+
+
+////////////////////////////////////////////////////////////
+AlResource::AlResource(const AlResource& other) :
+m_active(other.m_active)
+{
+    if (m_active)
+        incrementResourceCounter();
+}
+
+
+////////////////////////////////////////////////////////////
+AlResource::AlResource(AlResource&& other) noexcept :
+m_active(std::exchange(other.m_active, false))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+AlResource& AlResource::operator=(const AlResource& other)
+{
+    if (&other == this)
+        return *this;
+
+    if (m_active && other.m_active)
+    {
+        // Both resources are already accounted for, nothing to do
+    }
+    else if (!m_active && other.m_active)
+    {
+        // '*this' was previously moved-from
+        m_active = true;
+        incrementResourceCounter();
+    }
+    else if (m_active && !other.m_active)
+    {
+        // 'other' was previously moved-from
+        m_active = false;
+        decrementResourceCounter();
+    }
+    else
+    {
+        // Both resources are inactive, nothing to do
+        assert(!m_active && !other.m_active);
+    }
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+AlResource& AlResource::operator=(AlResource&& other) noexcept
+{
+    if (&other == this)
+        return *this;
+
+    if (m_active && other.m_active)
+    {
+        other.m_active = false;
+        decrementResourceCounter();
+    }
+    else if (!m_active && other.m_active)
+    {
+        // '*this' was previously moved-from
+        m_active = true;
+        other.m_active = false;
+    }
+    else if (m_active && !other.m_active)
+    {
+        // 'other' was previously moved-from
+        m_active = false;
+        decrementResourceCounter();
+    }
+    else
+    {
+        // Both resources are inactive, nothing to do
+        assert(!m_active && !other.m_active);
+    }
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+void AlResource::incrementResourceCounter()
 {
     // Protect from concurrent access
     std::scoped_lock lock(mutex);
@@ -57,20 +171,20 @@ AlResource::AlResource()
         globalDevice = std::make_unique<priv::AudioDevice>();
 
     // Increment the resources counter
-    count++;
+    ++count;
 }
 
 
 ////////////////////////////////////////////////////////////
-AlResource::~AlResource()
+void AlResource::decrementResourceCounter()
 {
     // Protect from concurrent access
     std::scoped_lock lock(mutex);
 
     // Decrement the resources counter
-    count--;
+    --count;
 
-    // If there's no more resource alive, we can destroy the device
+    // If there are no more resources alive, we can destroy the device
     if (count == 0)
         globalDevice.reset();
 }

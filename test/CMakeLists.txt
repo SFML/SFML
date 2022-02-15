@@ -53,7 +53,7 @@ endif()
 
 if(SFML_BUILD_AUDIO)
     SET(AUDIO_SRC
-        "${SRCROOT}/Audio/Dummy.cpp" # TODO: Remove when there are real tests
+        "${SRCROOT}/Audio/AlResource.cpp"
     )
     sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
     target_link_libraries(test-sfml-audio PRIVATE sfml-test-main)
