@@ -34,6 +34,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 #include <memory>
+#include <utility>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
@@ -43,32 +44,94 @@
     #endif
 #endif
 
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+UniqueOpenALBufferId::UniqueOpenALBufferId(unsigned int bufferId) :
+m_bufferId(bufferId)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+UniqueOpenALBufferId::~UniqueOpenALBufferId()
+{
+    // Destroy the buffer
+    if (m_bufferId != NullBufferId)
+        alCheck(alDeleteBuffers(1, &m_bufferId));
+}
+
+
+////////////////////////////////////////////////////////////
+UniqueOpenALBufferId::UniqueOpenALBufferId(UniqueOpenALBufferId&& other) noexcept :
+m_bufferId(std::exchange(other.m_bufferId, NullBufferId))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+UniqueOpenALBufferId& UniqueOpenALBufferId::operator=(UniqueOpenALBufferId&& other) noexcept
+{
+    m_bufferId = std::exchange(other.m_bufferId, NullBufferId);
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+[[nodiscard]] unsigned int UniqueOpenALBufferId::get() const
+{
+    return m_bufferId;
+}
+
+
+////////////////////////////////////////////////////////////
+[[nodiscard]] UniqueOpenALBufferId UniqueOpenALBufferId::generate()
+{
+    // Create the buffer
+    unsigned int bufferId;
+    alCheck(alGenBuffers(1, &bufferId));
+
+    return UniqueOpenALBufferId(bufferId);
+}
+
+
+////////////////////////////////////////////////////////////
+[[nodiscard]] UniqueOpenALBufferId UniqueOpenALBufferId::null()
+{
+    return UniqueOpenALBufferId(NullBufferId);
+}
+
+}
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer() :
-m_buffer  (0),
-m_duration()
+AlResource      (),
+m_uniqueBufferId(priv::UniqueOpenALBufferId::generate()),
+m_samples       (),
+m_duration      (),
+m_sounds        ()
 {
-    // Create the buffer
-    alCheck(alGenBuffers(1, &m_buffer));
 }
 
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-m_buffer  (0),
-m_samples (copy.m_samples),
-m_duration(copy.m_duration),
-m_sounds  () // don't copy the attached sounds
+AlResource      (copy),
+m_uniqueBufferId(priv::UniqueOpenALBufferId::generate()),
+m_samples       (copy.m_samples),
+m_duration      (copy.m_duration),
+m_sounds        () // don't copy the attached sounds
 {
-    // Create the buffer
-    alCheck(alGenBuffers(1, &m_buffer));
-
     // Update the internal buffer with the new samples
     if (!update(copy.getChannelCount(), copy.getSampleRate()))
         err() << "Failed to update copy-constructed sound buffer" << std::endl;
 }
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer(SoundBuffer&& move) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -83,10 +146,6 @@ SoundBuffer::~SoundBuffer()
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
     for (Sound* soundPtr : sounds)
         soundPtr->resetBuffer();
-
-    // Destroy the buffer
-    if (m_buffer)
-        alCheck(alDeleteBuffers(1, &m_buffer));
 }
 
 
@@ -186,7 +245,7 @@ Uint64 SoundBuffer::getSampleCount() const
 unsigned int SoundBuffer::getSampleRate() const
 {
     ALint sampleRate;
-    alCheck(alGetBufferi(m_buffer, AL_FREQUENCY, &sampleRate));
+    alCheck(alGetBufferi(m_uniqueBufferId.get(), AL_FREQUENCY, &sampleRate));
 
     return static_cast<unsigned int>(sampleRate);
 }
@@ -196,7 +255,7 @@ unsigned int SoundBuffer::getSampleRate() const
 unsigned int SoundBuffer::getChannelCount() const
 {
     ALint channelCount;
-    alCheck(alGetBufferi(m_buffer, AL_CHANNELS, &channelCount));
+    alCheck(alGetBufferi(m_uniqueBufferId.get(), AL_CHANNELS, &channelCount));
 
     return static_cast<unsigned int>(channelCount);
 }
@@ -212,12 +271,34 @@ Time SoundBuffer::getDuration() const
 ////////////////////////////////////////////////////////////
 SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
 {
+    if (&right == this)
+        return *this;
+
+    AlResource::operator=(right);
+
     SoundBuffer temp(right);
 
-    std::swap(m_samples,  temp.m_samples);
-    std::swap(m_buffer,   temp.m_buffer);
-    std::swap(m_duration, temp.m_duration);
-    std::swap(m_sounds,   temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
+    std::swap(m_samples,        temp.m_samples);
+    std::swap(m_uniqueBufferId, temp.m_uniqueBufferId);
+    std::swap(m_duration,       temp.m_duration);
+    std::swap(m_sounds,         temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
+
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer& SoundBuffer::operator =(SoundBuffer&& right) noexcept
+{
+    if (&right == this)
+        return *this;
+
+    AlResource::operator=(std::move(right));
+
+    m_uniqueBufferId = std::move(right.m_uniqueBufferId);
+    m_samples        = std::move(right.m_samples);
+    m_duration       = std::move(right.m_duration);
+    m_sounds         = std::move(right.m_sounds);
 
     return *this;
 }
@@ -270,8 +351,8 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         soundPtr->resetBuffer();
 
     // Fill the buffer
-    auto size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
-    alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
+    const auto size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
+    alCheck(alBufferData(m_uniqueBufferId.get(), format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration
     m_duration = seconds(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
