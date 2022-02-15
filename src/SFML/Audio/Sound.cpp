@@ -28,6 +28,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/ALCheck.hpp>
+#include <utility>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
@@ -62,6 +63,14 @@ m_buffer   (nullptr)
     if (copy.m_buffer)
         setBuffer(*copy.m_buffer);
     setLoop(copy.getLoop());
+}
+
+
+////////////////////////////////////////////////////////////
+Sound::Sound(Sound&& other) noexcept :
+SoundSource(std::move(other)),
+m_buffer   (std::exchange(other.m_buffer, nullptr))
+{
 }
 
 
@@ -108,7 +117,7 @@ void Sound::setBuffer(const SoundBuffer& buffer)
     // Assign and use the new buffer
     m_buffer = &buffer;
     m_buffer->attachSound(this);
-    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_uniqueBufferId.get())));
 }
 
 
@@ -190,6 +199,18 @@ Sound& Sound::operator =(const Sound& right)
     return *this;
 }
 
+
+////////////////////////////////////////////////////////////
+Sound& Sound::operator =(Sound&& right) noexcept
+{
+    if (this == &right)
+        return *this;
+
+    SoundSource::operator=(std::move(right));
+    m_buffer = std::exchange(right.m_buffer, nullptr);
+
+    return *this;
+}
 
 ////////////////////////////////////////////////////////////
 void Sound::resetBuffer()

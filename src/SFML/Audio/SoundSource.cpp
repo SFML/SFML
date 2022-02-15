@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/Audio/ALCheck.hpp>
+#include <utility>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
@@ -39,7 +40,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundSource::SoundSource()
+SoundSource::SoundSource() :
+AlResource()
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
@@ -47,7 +49,8 @@ SoundSource::SoundSource()
 
 
 ////////////////////////////////////////////////////////////
-SoundSource::SoundSource(const SoundSource& copy)
+SoundSource::SoundSource(const SoundSource& copy) :
+AlResource(copy)
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
@@ -62,10 +65,18 @@ SoundSource::SoundSource(const SoundSource& copy)
 
 
 ////////////////////////////////////////////////////////////
+SoundSource::SoundSource(SoundSource&& other) noexcept :
+AlResource(std::move(other)),
+m_source(std::exchange(other.m_source, 0u /* null source */))
+{
+}
+
+
+////////////////////////////////////////////////////////////
 SoundSource::~SoundSource()
 {
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
-    alCheck(alDeleteSources(1, &m_source));
+    alCheck(alDeleteSources(1, &m_source)); // Note: deleting a null source is fine
 }
 
 
@@ -174,6 +185,11 @@ float SoundSource::getAttenuation() const
 ////////////////////////////////////////////////////////////
 SoundSource& SoundSource::operator =(const SoundSource& right)
 {
+    if (&right == this)
+        return *this;
+
+    AlResource::operator=(right);
+
     // Leave m_source untouched -- it's not necessary to destroy and
     // recreate the OpenAL sound source, hence no copy-and-swap idiom
 
@@ -188,6 +204,18 @@ SoundSource& SoundSource::operator =(const SoundSource& right)
     return *this;
 }
 
+
+////////////////////////////////////////////////////////////
+SoundSource& SoundSource::operator =(SoundSource&& right) noexcept
+{
+    if (&right == this)
+        return *this;
+
+    AlResource::operator=(std::move(right));
+
+    m_source = std::exchange(right.m_source, 0u /* null source */);
+    return *this;
+}
 
 ////////////////////////////////////////////////////////////
 SoundSource::Status SoundSource::getStatus() const
