@@ -499,7 +499,10 @@ void ensureMapping()
         if (keycodeToScancode[static_cast<KeyCode>(keycode)] == sf::Keyboard::ScanUnknown)
         {
             scancode = translateKeyCode(display, static_cast<KeyCode>(keycode));
-            scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);
+
+            if (scancode != sf::Keyboard::ScanUnknown && scancodeToKeycode[scancode] == NullKeyCode)
+                scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);
+
             keycodeToScancode[keycode] = scancode;
         }
     }
