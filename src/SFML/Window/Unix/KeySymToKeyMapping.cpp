@@ -75,6 +75,7 @@ Keyboard::Key keySymToKey(KeySym symbol)
         case XK_KP_Subtract:  return Keyboard::Subtract;
         case XK_KP_Multiply:  return Keyboard::Multiply;
         case XK_KP_Divide:    return Keyboard::Divide;
+        case XK_KP_Delete:    return Keyboard::Period;
         case XK_Pause:        return Keyboard::Pause;
         case XK_F1:           return Keyboard::F1;
         case XK_F2:           return Keyboard::F2;
