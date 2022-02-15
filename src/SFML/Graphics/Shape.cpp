@@ -209,19 +209,21 @@ void Shape::update()
 
 
 ////////////////////////////////////////////////////////////
-void Shape::draw(RenderTarget& target, RenderStates states) const
+void Shape::draw(RenderTarget& target, const RenderStates& states) const
 {
-    states.transform *= getTransform();
+    RenderStates statesCopy(states);
+
+    statesCopy.transform *= getTransform();
 
     // Render the inside
-    states.texture = m_texture;
-    target.draw(m_vertices, states);
+    statesCopy.texture = m_texture;
+    target.draw(m_vertices, statesCopy);
 
     // Render the outline
     if (m_outlineThickness != 0)
     {
-        states.texture = nullptr;
-        target.draw(m_outlineVertices, states);
+        statesCopy.texture = nullptr;
+        target.draw(m_outlineVertices, statesCopy);
     }
 }
 

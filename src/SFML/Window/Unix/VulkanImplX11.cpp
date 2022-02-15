@@ -41,7 +41,10 @@ namespace
     struct VulkanLibraryWrapper
     {
         VulkanLibraryWrapper() :
-        library(nullptr)
+        library(nullptr),
+        vkGetInstanceProcAddr(nullptr),
+        vkEnumerateInstanceLayerProperties(nullptr),
+        vkEnumerateInstanceExtensionProperties(nullptr)
         {
         }
 

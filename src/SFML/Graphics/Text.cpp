@@ -359,20 +359,22 @@ FloatRect Text::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Text::draw(RenderTarget& target, RenderStates states) const
+void Text::draw(RenderTarget& target, const RenderStates& states) const
 {
     if (m_font)
     {
         ensureGeometryUpdate();
 
-        states.transform *= getTransform();
-        states.texture = &m_font->getTexture(m_characterSize);
+        RenderStates statesCopy(states);
+
+        statesCopy.transform *= getTransform();
+        statesCopy.texture = &m_font->getTexture(m_characterSize);
 
         // Only draw the outline if there is something to draw
         if (m_outlineThickness != 0)
-            target.draw(m_outlineVertices, states);
+            target.draw(m_outlineVertices, statesCopy);
 
-        target.draw(m_vertices, states);
+        target.draw(m_vertices, statesCopy);
     }
 }
 

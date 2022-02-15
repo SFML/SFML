@@ -276,7 +276,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void draw(RenderTarget& target, RenderStates states) const override;
+    void draw(RenderTarget& target, const RenderStates& states) const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the fill vertices' color
