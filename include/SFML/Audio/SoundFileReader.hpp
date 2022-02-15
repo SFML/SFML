@@ -128,13 +128,13 @@ public:
 /// {
 /// public:
 ///
-///     static bool check(sf::InputStream& stream)
+///     [[nodiscard]] static bool check(sf::InputStream& stream)
 ///     {
 ///         // typically, read the first few header bytes and check fields that identify the format
 ///         // return true if the reader can handle the format
 ///     }
 ///
-///     bool open(sf::InputStream& stream, Info& info) override
+///     [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override
 ///     {
 ///         // read the sound file header and fill the sound attributes
 ///         // (channel count, sample count and sample rate)

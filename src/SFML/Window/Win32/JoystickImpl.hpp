@@ -91,7 +91,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool open(unsigned int index);
+    [[nodiscard]] bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick
@@ -121,7 +121,7 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState update();
+    [[nodiscard]] JoystickState update();
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the joystick module (DInput)
@@ -159,7 +159,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool openDInput(unsigned int index);
+    [[nodiscard]] bool openDInput(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick (DInput)
@@ -181,7 +181,7 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState updateDInputBuffered();
+    [[nodiscard]] JoystickState updateDInputBuffered();
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state (DInput, Polled)
@@ -189,7 +189,7 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState updateDInputPolled();
+    [[nodiscard]] JoystickState updateDInputPolled();
 
 private:
 

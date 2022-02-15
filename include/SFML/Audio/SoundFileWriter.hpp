@@ -97,13 +97,13 @@ public:
 /// {
 /// public:
 ///
-///     static bool check(const std::string& filename)
+///     [[nodiscard]] static bool check(const std::string& filename)
 ///     {
 ///         // typically, check the extension
 ///         // return true if the writer can handle the format
 ///     }
 ///
-///     bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) override
+///     [[nodiscard]] bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) override
 ///     {
 ///         // open the file 'filename' for writing,
 ///         // write the given sample rate and channel count to the file header
