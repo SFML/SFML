@@ -544,8 +544,14 @@ KeyCode keyToKeyCode(sf::Keyboard::Key key)
         Display* display = sf::priv::OpenDisplay();
         KeyCode keycode = XKeysymToKeycode(display, keysym);
         sf::priv::CloseDisplay(display);
-        return keycode;
+
+        if (keycode != NullKeyCode)
+            return keycode;
     }
+
+    // Fallback for when XKeysymToKeycode cannot tell the KeyCode for XK_Alt_R
+    if (key == sf::Keyboard::RAlt)
+        return scancodeToKeycode[sf::Keyboard::ScanRAlt];
 
     return NullKeyCode;
 }
