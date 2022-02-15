@@ -396,7 +396,7 @@ private:
 /// {
 /// public:
 ///
-///     bool open(const std::string& location)
+///     [[nodiscard]] bool open(const std::string& location)
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
@@ -405,6 +405,7 @@ private:
 ///
 ///         // Initialize the stream -- important!
 ///         initialize(channelCount, sampleRate);
+///         return true;
 ///     }
 ///
 /// private:
@@ -414,9 +415,9 @@ private:
 ///         // Fill the chunk with audio data from the stream source
 ///         // (note: must not be empty if you want to continue playing)
 ///         data.samples = ...;
-///         data.sampleCount = ...;
 ///
 ///         // Return true to continue playing
+///         data.sampleCount = ...;
 ///         return true;
 ///     }
 ///
