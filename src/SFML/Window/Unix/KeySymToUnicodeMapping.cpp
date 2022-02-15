@@ -405,28 +405,32 @@ Uint32 keysymToUnicode(KeySym keysym)
         case 0x01ff: return 0x02d9; // abovedot
         case 0x01b2: return 0x02db; // ogonek
         case 0x01bd: return 0x02dd; // doubleacute
-        case 0x1ef2: return 0x0300; // combining_grave
-        case 0xfe50: return 0x0300; // dead_grave
-        case 0x1ef3: return 0x0301; // combining_acute
-        case 0xfe51: return 0x0301; // dead_acute
-        case 0xfe52: return 0x0302; // dead_circumflex
-        case 0x1e9f: return 0x0303; // combining_tilde
-        case 0xfe53: return 0x0303; // dead_tilde
-        case 0xfe54: return 0x0304; // dead_macron
-        case 0xfe55: return 0x0306; // dead_breve
-        case 0xfe56: return 0x0307; // dead_abovedot
-        case 0xfe57: return 0x0308; // dead_diaeresis
+
+        // Edited to map dead keys to non-combining characters when possible.
+        // The original combining diacritical marks are shown in comments.
+        case 0x1ef2: return 0x0060; // combining_grave  (0x0300)
+        case 0xfe50: return 0x0060; // dead_grave       (0x0300)
+        case 0x1ef3: return 0x00b4; // combining_acute  (0x0301)
+        case 0xfe51: return 0x00b4; // dead_acute       (0x0301)
+        case 0xfe52: return 0x005e; // dead_circumflex  (0x0302)
+        case 0x1e9f: return 0x007e; // combining_tilde  (0x0303)
+        case 0xfe53: return 0x007e; // dead_tilde       (0x0303)
+        case 0xfe54: return 0x00af; // dead_macron      (0x0304)
+        case 0xfe55: return 0x02d8; // dead_breve       (0x0306)
+        case 0xfe56: return 0x02d9; // dead_abovedot    (0x0307)
+        case 0xfe57: return 0x00a8; // dead_diaeresis   (0x0308)
         case 0x1efe: return 0x0309; // combining_hook
         case 0xfe61: return 0x0309; // dead_hook
-        case 0xfe58: return 0x030a; // dead_abovering
-        case 0xfe59: return 0x030b; // dead_doubleacute
-        case 0xfe5a: return 0x030c; // dead_caron
+        case 0xfe58: return 0x02da; // dead_abovering   (0x030a)
+        case 0xfe59: return 0x02dd; // dead_doubleacute (0x030b)
+        case 0xfe5a: return 0x02c7; // dead_caron       (0x030c)
         case 0xfe62: return 0x031b; // dead_horn
         case 0x1eff: return 0x0323; // combining_belowdot
         case 0xfe60: return 0x0323; // dead_belowdot
-        case 0xfe5b: return 0x0327; // dead_cedilla
-        case 0xfe5c: return 0x0328; // dead_ogonek
-        case 0xfe5d: return 0x0345; // dead_iota
+        case 0xfe5b: return 0x00b8; // dead_cedilla     (0x0327)
+        case 0xfe5c: return 0x02db; // dead_ogonek      (0x0328)
+        case 0xfe5d: return 0x037a; // dead_iota        (0x0345)
+
         case 0x07ae: return 0x0385; // Greek_accentdieresis
         case 0x07a1: return 0x0386; // Greek_ALPHAaccent
         case 0x07a2: return 0x0388; // Greek_EPSILONaccent
