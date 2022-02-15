@@ -54,6 +54,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
+AlResource          (),
 m_thread            (),
 m_sampleRate        (0),
 m_processingInterval(milliseconds(100)),
