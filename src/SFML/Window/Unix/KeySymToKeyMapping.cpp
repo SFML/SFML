@@ -43,6 +43,7 @@ Keyboard::Key keySymToKey(KeySym symbol)
         case XK_Control_L:    return Keyboard::LControl;
         case XK_Control_R:    return Keyboard::RControl;
         case XK_Alt_L:        return Keyboard::LAlt;
+        case XK_ISO_Level3_Shift:
         case XK_Alt_R:        return Keyboard::RAlt;
         case XK_Super_L:      return Keyboard::LSystem;
         case XK_Super_R:      return Keyboard::RSystem;
