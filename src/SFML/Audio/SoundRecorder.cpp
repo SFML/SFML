@@ -303,7 +303,7 @@ void SoundRecorder::processCapturedSamples()
     if (samplesAvailable > 0)
     {
         // Get the recorded samples
-        m_samples.resize(static_cast<unsigned int>(samplesAvailable) * getChannelCount());
+        m_samples.resize(static_cast<std::size_t>(samplesAvailable) * getChannelCount());
         alcCaptureSamples(captureDevice, m_samples.data(), samplesAvailable);
 
         // Forward them to the derived class

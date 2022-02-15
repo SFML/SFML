@@ -66,7 +66,7 @@ protected:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void draw(RenderTarget& target, RenderStates states) const = 0;
+    virtual void draw(RenderTarget& target, const RenderStates& states) const = 0;
 };
 
 } // namespace sf
@@ -100,14 +100,15 @@ protected:
 ///
 /// private:
 ///
-///     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+///     void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override
 ///     {
 ///         // You can draw other high-level objects
 ///         target.draw(m_sprite, states);
 ///
 ///         // ... or use the low-level API
-///         states.texture = &m_texture;
-///         target.draw(m_vertices, states);
+///         sf::RenderStates statesCopy(states);
+///         statesCopy.texture = &m_texture;
+///         target.draw(m_vertices, statesCopy);
 ///
 ///         // ... or draw with OpenGL directly
 ///         glBegin(GL_TRIANGLES);

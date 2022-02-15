@@ -58,7 +58,7 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
     if (width && height)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(width * height * 4);
+        std::vector<Uint8> newPixels(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
 
         // Fill it with the specified color
         Uint8* ptr = newPixels.data();

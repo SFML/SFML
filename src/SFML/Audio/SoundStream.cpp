@@ -82,7 +82,11 @@ void SoundStream::initialize(unsigned int channelCount, unsigned int sampleRate)
     m_channelCount = channelCount;
     m_sampleRate = sampleRate;
     m_samplesProcessed = 0;
-    m_isStreaming = false;
+
+    {
+        std::scoped_lock lock(m_threadMutex);
+        m_isStreaming = false;
+    }
 
     // Deduce the format from the number of channels
     m_format = priv::AudioDevice::getFormatFromChannelCount(channelCount);
@@ -494,8 +498,11 @@ void SoundStream::clearQueue()
 ////////////////////////////////////////////////////////////
 void SoundStream::launchStreamingThread(Status threadStartState)
 {
-    m_isStreaming = true;
-    m_threadStartState = threadStartState;
+    {
+        std::scoped_lock lock(m_threadMutex);
+        m_isStreaming = true;
+        m_threadStartState = threadStartState;
+    }
 
     assert(!m_thread.joinable());
     m_thread = std::thread(&SoundStream::streamData, this);

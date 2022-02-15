@@ -1009,8 +1009,8 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by XDestroyImage
-    auto* iconPixels = static_cast<Uint8*>(std::malloc(width * height * 4));
-    for (std::size_t i = 0; i < width * height; ++i)
+    auto* iconPixels = static_cast<Uint8*>(std::malloc(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(width) * static_cast<std::size_t>(height); ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
         iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
@@ -1079,7 +1079,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     *ptr++ = height;
     #pragma GCC diagnostic pop
 
-    for (std::size_t i = 0; i < width * height; ++i)
+    for (std::size_t i = 0; i < static_cast<std::size_t>(width) * static_cast<std::size_t>(height); ++i)
     {
         *ptr++ = static_cast<unsigned long>((pixels[i * 4 + 2] << 0 ) |
                                             (pixels[i * 4 + 1] << 8 ) |

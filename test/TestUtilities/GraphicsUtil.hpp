@@ -10,7 +10,7 @@
 
 namespace sf
 {
-    class BlendMode;
+    struct BlendMode;
     class Color;
     class Transform;
 

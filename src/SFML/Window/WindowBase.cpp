@@ -73,7 +73,7 @@ m_size(0, 0)
 ////////////////////////////////////////////////////////////
 WindowBase::~WindowBase()
 {
-    close();
+    WindowBase::close();
 }
 
 
