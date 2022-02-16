@@ -175,9 +175,9 @@ bool Texture::create(unsigned int width, unsigned int height)
 
         if (!warned)
         {
-            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
-            err() << "Artifacts may occur along texture edges" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << '\n'
+                  << "Artifacts may occur along texture edges" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
             warned = true;
         }
@@ -192,9 +192,9 @@ bool Texture::create(unsigned int width, unsigned int height)
         if (!warned)
         {
 #ifndef SFML_OPENGL_ES
-            err() << "OpenGL extension EXT_texture_sRGB unavailable" << std::endl;
+            err() << "OpenGL extension EXT_texture_sRGB unavailable" << '\n';
 #else
-            err() << "OpenGL ES extension EXT_sRGB unavailable" << std::endl;
+            err() << "OpenGL ES extension EXT_sRGB unavailable" << '\n';
 #endif
             err() << "Automatic sRGB to linear conversion disabled" << std::endl;
 
@@ -668,9 +668,9 @@ void Texture::setRepeated(bool repeated)
 
                 if (!warned)
                 {
-                    err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << std::endl;
-                    err() << "Artifacts may occur along texture edges" << std::endl;
-                    err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+                    err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << '\n'
+                          << "Artifacts may occur along texture edges" << '\n'
+                          << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
                     warned = true;
                 }

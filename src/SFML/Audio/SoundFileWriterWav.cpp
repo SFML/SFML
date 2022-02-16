@@ -111,7 +111,7 @@ bool SoundFileWriterWav::open(const std::string& filename, unsigned int sampleRa
     // Write the header
     if (!writeHeader(sampleRate, channelCount))
     {
-        err() << "Failed to write header of WAV sound file \"" << filename << "\"" << std::endl;
+        err() << "Failed to write header of WAV sound file \"" << filename << '"' << std::endl;
         return false;
     }
 

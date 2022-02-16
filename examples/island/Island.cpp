@@ -246,7 +246,7 @@ int main()
                   << "Use the arrow keys to change the values.\nUse the return key to regenerate the terrain.\n\n";
 
             for (int i = 0; i < settingCount; ++i)
-                osstr << ((i == currentSetting) ? ">>  " : "       ") << settings[i].name << ":  " << *(settings[i].value) << "\n";
+                osstr << ((i == currentSetting) ? ">>  " : "       ") << settings[i].name << ":  " << *(settings[i].value) << '\n';
 
             hudText.setString(osstr.str());
 
