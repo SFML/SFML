@@ -277,7 +277,7 @@ bool ImageLoader::saveImageToFile(const std::string& filename, const std::vector
         }
     }
 
-    err() << "Failed to save image \"" << filename << "\"" << std::endl;
+    err() << "Failed to save image \"" << filename << '"' << std::endl;
     return false;
 }
 
@@ -318,7 +318,7 @@ bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::U
         }
     }
 
-    err() << "Failed to save image with format \"" << format << "\"" << std::endl;
+    err() << "Failed to save image with format \"" << format << '"' << std::endl;
     return false;
 }
 

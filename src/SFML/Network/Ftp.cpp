@@ -497,7 +497,7 @@ Ftp::Response Ftp::getResponse()
 
                             // Append it to the current message
                             std::ostringstream out;
-                            out << code << separator << line << "\n";
+                            out << code << separator << line << '\n';
                             message += out.str();
                         }
                     }

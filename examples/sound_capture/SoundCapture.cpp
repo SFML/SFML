@@ -50,10 +50,10 @@ int main()
     const sf::SoundBuffer& buffer = recorder.getBuffer();
 
     // Display captured sound informations
-    std::cout << "Sound information:" << std::endl;
-    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"           << std::endl;
-    std::cout << " " << buffer.getSampleRate()           << " samples / seconds" << std::endl;
-    std::cout << " " << buffer.getChannelCount()         << " channels"          << std::endl;
+    std::cout << "Sound information:" << '\n'
+              << " " << buffer.getDuration().asSeconds() << " seconds"           << '\n'
+              << " " << buffer.getSampleRate()           << " samples / seconds" << '\n'
+              << " " << buffer.getChannelCount()         << " channels"          << std::endl;
 
     // Choose what to do with the recorded sound data
     char choice;
@@ -91,7 +91,7 @@ int main()
     }
 
     // Finished!
-    std::cout << std::endl << "Done!" << std::endl;
+    std::cout << '\n' << "Done!" << std::endl;
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

@@ -59,19 +59,19 @@ int main()
     do
     {
         // Main FTP menu
-        std::cout << std::endl;
-        std::cout << "Choose an action:"                      << std::endl;
-        std::cout << "1. Print working directory"             << std::endl;
-        std::cout << "2. Print contents of working directory" << std::endl;
-        std::cout << "3. Change directory"                    << std::endl;
-        std::cout << "4. Create directory"                    << std::endl;
-        std::cout << "5. Delete directory"                    << std::endl;
-        std::cout << "6. Rename file"                         << std::endl;
-        std::cout << "7. Remove file"                         << std::endl;
-        std::cout << "8. Download file"                       << std::endl;
-        std::cout << "9. Upload file"                         << std::endl;
-        std::cout << "0. Disconnect"                          << std::endl;
-        std::cout << std::endl;
+        std::cout << '\n'
+                  << "Choose an action:\n"
+                  << "1. Print working directory\n"
+                  << "2. Print contents of working directory\n"
+                  << "3. Change directory\n"
+                  << "4. Create directory\n"
+                  << "5. Delete directory\n"
+                  << "6. Rename file\n"
+                  << "7. Remove file\n"
+                  << "8. Download file\n"
+                  << "9. Upload file\n"
+                  << "0. Disconnect\n"
+                  << std::endl;
 
         std::cout << "Your choice: ";
         std::cin  >> choice;
@@ -92,8 +92,8 @@ int main()
             {
                 // Print the current server directory
                 sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
-                std::cout << response << std::endl;
-                std::cout << "Current directory is " << response.getDirectory() << std::endl;
+                std::cout << response << '\n'
+                          << "Current directory is " << response.getDirectory() << std::endl;
                 break;
             }
 
@@ -101,9 +101,10 @@ int main()
             {
                 // Print the contents of the current server directory
                 sf::Ftp::ListingResponse response = server.getDirectoryListing();
-                std::cout << response << std::endl;
+                std::cout << response << '\n';
                 for (const std::string& name : response.getListing())
-                    std::cout << name << std::endl;
+                    std::cout << name << '\n';
+                std::cout.flush();
                 break;
             }
 
@@ -193,8 +194,8 @@ int main()
     } while (choice != 0);
 
     // Disconnect from the server
-    std::cout << "Disconnecting from server..." << std::endl;
-    std::cout << server.disconnect() << std::endl;
+    std::cout << "Disconnecting from server...\n"
+              << server.disconnect() << '\n';
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;

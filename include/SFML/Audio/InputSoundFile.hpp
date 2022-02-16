@@ -272,10 +272,10 @@ private:
 ///     /* error */;
 ///
 /// // Print the sound attributes
-/// std::cout << "duration: " << file.getDuration().asSeconds() << std::endl;
-/// std::cout << "channels: " << file.getChannelCount() << std::endl;
-/// std::cout << "sample rate: " << file.getSampleRate() << std::endl;
-/// std::cout << "sample count: " << file.getSampleCount() << std::endl;
+/// std::cout << "duration: " << file.getDuration().asSeconds() << '\n'
+///           << "channels: " << file.getChannelCount() << '\n'
+///           << "sample rate: " << file.getSampleRate() << '\n'
+///           << "sample count: " << file.getSampleCount() << std::endl;
 ///
 /// // Read and process batches of samples until the end of file is reached
 /// sf::Int16 samples[1024];

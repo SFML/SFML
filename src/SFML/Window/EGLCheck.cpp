@@ -155,8 +155,8 @@ void eglCheckError(const char* file, unsigned int line, const char* expression)
         // Log the error
         err() << "An internal EGL call failed in "
               << fileString.substr(fileString.find_last_of("\\/") + 1) << " (" << line << ") : "
-            << "\nExpression:\n   " << expression
-            << "\nError description:\n   " << error << "\n   " << description << "\n"
+              << "\nExpression:\n   " << expression
+              << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
     }
 }

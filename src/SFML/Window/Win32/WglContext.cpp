@@ -414,7 +414,7 @@ void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
 
     if (bestFormat == 0)
     {
-        err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+        err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << '\n'
               << "Cannot create OpenGL context" << std::endl;
         return;
     }
@@ -428,7 +428,7 @@ void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
     // Set the chosen pixel format
     if (SetPixelFormat(m_deviceContext, bestFormat, &actualFormat) == FALSE)
     {
-        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << std::endl
+        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << '\n'
               << "Cannot create OpenGL context" << std::endl;
         return;
     }

@@ -128,9 +128,9 @@ namespace
             static bool warned = false;
             if (!warned)
             {
-                sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << std::endl;
-                sf::err() << "Some blending equations will fallback to sf::BlendMode::Add" << std::endl;
-                sf::err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+                sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << '\n'
+                          << "Some blending equations will fallback to sf::BlendMode::Add" << '\n'
+                          << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
                 warned = true;
             }
@@ -631,8 +631,8 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 #else
             err() << "OpenGL extension EXT_blend_minmax and EXT_blend_subtract unavailable" << std::endl;
 #endif
-            err() << "Selecting a blend equation not possible" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "Selecting a blend equation not possible" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
             warned = true;
         }

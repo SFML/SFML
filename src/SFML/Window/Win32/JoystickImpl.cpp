@@ -754,7 +754,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     if (FAILED(result))
                     {
                         err() << "Failed to verify DirectInput device axis mode for device \""
-                            << m_identification.name.toAnsiString() << "\": " << result << std::endl;
+                              << m_identification.name.toAnsiString() << "\": " << result << std::endl;
 
                         m_device->Release();
                         m_device = nullptr;
