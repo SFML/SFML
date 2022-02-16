@@ -29,6 +29,7 @@
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Err.hpp>
 #include <mutex>
+#include <ostream>
 #include <jni.h>
 
 

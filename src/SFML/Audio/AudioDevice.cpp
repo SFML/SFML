@@ -30,6 +30,7 @@
 #include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Err.hpp>
 #include <optional>
+#include <ostream>
 
 #if defined(__APPLE__)
     #if defined(__clang__)

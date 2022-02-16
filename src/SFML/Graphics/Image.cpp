@@ -32,6 +32,7 @@
     #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
+#include <ostream>
 #include <cstring>
 
 

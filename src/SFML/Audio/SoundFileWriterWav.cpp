@@ -28,6 +28,7 @@
 #include <SFML/Audio/SoundFileWriterWav.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
+#include <ostream>
 #include <cassert>
 
 

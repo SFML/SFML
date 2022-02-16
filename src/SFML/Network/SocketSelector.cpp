@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <memory>
+#include <ostream>
 #include <utility>
 
 #ifdef _MSC_VER

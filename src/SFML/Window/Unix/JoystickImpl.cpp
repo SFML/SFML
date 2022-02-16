@@ -31,9 +31,10 @@
 #include <libudev.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <cerrno>
-#include <vector>
 #include <string>
+#include <vector>
+#include <ostream>
+#include <cerrno>
 #include <cstring>
 
 namespace

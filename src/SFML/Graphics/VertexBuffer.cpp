@@ -32,6 +32,7 @@
 #include <SFML/System/Err.hpp>
 #include <mutex>
 #include <utility>
+#include <ostream>
 #include <cstddef>
 #include <cstring>
 

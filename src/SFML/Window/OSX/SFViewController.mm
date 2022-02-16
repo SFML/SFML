@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+#include <ostream>
 
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>

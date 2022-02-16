@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/System/Err.hpp>
+#include <ostream>
 
 
 namespace sf

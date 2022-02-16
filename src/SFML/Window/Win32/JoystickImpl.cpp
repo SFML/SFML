@@ -32,11 +32,12 @@
 #include <SFML/System/Time.hpp>
 #include <tchar.h>
 #include <regstr.h>
-#include <cmath>
-#include <cstring>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
+#include <cstring>
 
 
 

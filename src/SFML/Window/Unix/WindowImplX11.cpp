@@ -49,11 +49,12 @@
 #include <libgen.h>
 #include <fcntl.h>
 #include <algorithm>
-#include <vector>
-#include <string>
-#include <cstring>
-#include <cassert>
 #include <mutex>
+#include <ostream>
+#include <string>
+#include <vector>
+#include <cassert>
+#include <cstring>
 
 #ifdef SFML_OPENGL_ES
     #include <SFML/Window/EglContext.hpp>

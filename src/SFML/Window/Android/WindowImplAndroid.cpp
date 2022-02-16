@@ -31,6 +31,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Err.hpp>
 #include <mutex>
+#include <ostream>
 #include <android/looper.h>
 
 // Define missing constants for older API levels

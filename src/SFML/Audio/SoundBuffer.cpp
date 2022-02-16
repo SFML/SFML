@@ -34,6 +34,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 #include <memory>
+#include <ostream>
 
 #if defined(__APPLE__)
     #if defined(__clang__)

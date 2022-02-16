@@ -30,6 +30,7 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Err.hpp>
+#include <ostream>
 #include <cstring>
 #include <cassert>
 

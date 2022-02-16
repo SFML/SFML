@@ -32,6 +32,7 @@
 #include <SFML/System/Err.hpp>
 #include <dlfcn.h>
 #include <stdint.h>
+#include <ostream>
 
 #if defined(__APPLE__)
     #if defined(__clang__)

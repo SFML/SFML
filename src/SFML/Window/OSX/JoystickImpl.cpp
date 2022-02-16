@@ -31,6 +31,7 @@
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/HIDJoystickManager.hpp>
 #include <SFML/System/Err.hpp>
+#include <ostream>
 
 
 namespace

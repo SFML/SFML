@@ -37,6 +37,7 @@
 #include <fstream>
 #include <vector>
 #include <mutex>
+#include <ostream>
 
 
 #ifndef SFML_OPENGL_ES

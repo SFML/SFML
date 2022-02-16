@@ -29,6 +29,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <cassert>
+#include <ostream>
 
 
 namespace
