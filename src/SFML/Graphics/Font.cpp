@@ -40,6 +40,7 @@
 #include FT_BITMAP_H
 #include FT_STROKER_H
 #include <type_traits>
+#include <ostream>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>

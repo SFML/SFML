@@ -28,6 +28,7 @@
 #include <SFML/Window/Win32/CursorImpl.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Err.hpp>
+#include <ostream>
 #include <cstring>
 
 

@@ -29,6 +29,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 #include <algorithm>
+#include <ostream>
 #include <cctype>
 #include <cstdlib>
 #include <cassert>

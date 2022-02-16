@@ -35,7 +35,9 @@
 // expects lowercase, and a native compile on windows, whether via msvc
 // or mingw-w64 addresses files in a case insensitive manner.
 #include <dbt.h>
+#include <ostream>
 #include <vector>
+
 #include <cstring>
 
 // MinGW lacks the definition of some Win32 constants

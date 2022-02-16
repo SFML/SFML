@@ -28,6 +28,7 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <string>
+#include <ostream>
 
 
 namespace sf

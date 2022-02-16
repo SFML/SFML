@@ -30,6 +30,7 @@
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
+#include <ostream>
 
 namespace sf
 {

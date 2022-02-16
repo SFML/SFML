@@ -30,6 +30,7 @@
 #include <SFML/System/Err.hpp>
 #include <cctype>
 #include <cassert>
+#include <ostream>
 
 
 namespace

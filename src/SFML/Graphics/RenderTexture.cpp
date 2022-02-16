@@ -30,6 +30,7 @@
 #include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/System/Err.hpp>
 #include <memory>
+#include <ostream>
 
 
 namespace sf

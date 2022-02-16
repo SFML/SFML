@@ -29,6 +29,7 @@
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/System/Err.hpp>
 #include <mutex>
+#include <ostream>
 #include <sstream>
 #include <vector>
 

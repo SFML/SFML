@@ -30,6 +30,7 @@
 #include <SFML/System/Err.hpp>
 #include <glad/egl.h>
 #include <string>
+#include <ostream>
 
 
 namespace sf

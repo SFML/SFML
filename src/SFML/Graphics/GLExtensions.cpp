@@ -37,6 +37,8 @@
 #include <glad/gl.h>
 #endif
 
+#include <ostream>
+
 #if !defined(GL_MAJOR_VERSION)
     #define GL_MAJOR_VERSION 0x821B
 #endif

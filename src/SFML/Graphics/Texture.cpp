@@ -36,6 +36,7 @@
 #include <cstring>
 #include <climits>
 #include <mutex>
+#include <ostream>
 
 
 namespace

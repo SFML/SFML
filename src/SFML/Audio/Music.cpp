@@ -32,6 +32,7 @@
 #include <fstream>
 #include <algorithm>
 #include <mutex>
+#include <ostream>
 
 #if defined(__APPLE__)
     #if defined(__clang__)

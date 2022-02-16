@@ -31,6 +31,7 @@
 #include <iterator>
 #include <sstream>
 #include <limits>
+#include <ostream>
 
 
 namespace sf

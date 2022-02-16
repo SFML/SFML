@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cassert>
+#include <ostream>
 
 
 namespace sf

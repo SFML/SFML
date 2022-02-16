@@ -35,6 +35,8 @@
 #include <OpenGLES/EAGLDrawable.h>
 #include <QuartzCore/CAEAGLLayer.h>
 #include <dlfcn.h>
+#include <ostream>
+
 
 #if defined(__APPLE__)
     #if defined(__clang__)

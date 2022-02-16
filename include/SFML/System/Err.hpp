@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <ostream>
+#include <iosfwd>
 
 
 namespace sf

@@ -30,6 +30,7 @@
 #include <X11/keysym.h>
 #include <mutex>
 #include <unordered_map>
+#include <ostream>
 #include <cassert>
 #include <cstdlib>
 

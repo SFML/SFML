@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 #include <mutex>
 #include <vector>
+#include <ostream>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.

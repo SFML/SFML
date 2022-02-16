@@ -28,6 +28,7 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <string>
+#include <ostream>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
