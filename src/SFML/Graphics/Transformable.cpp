@@ -151,9 +151,11 @@ const Transform& Transformable::getTransform() const
         float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
         float ty     =  m_origin.x * sxs - m_origin.y * syc + m_position.y;
 
+        // clang-format off
         m_transform = Transform( sxc, sys, tx,
                                 -sxs, syc, ty,
                                  0.f, 0.f, 1.f);
+        // clang-format on
         m_transformNeedUpdate = false;
     }
 

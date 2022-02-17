@@ -43,12 +43,15 @@ namespace
     void matrixRotateX(Matrix& result, sf::Angle angle)
     {
         float rad = angle.asRadians();
+
+        // clang-format off
         Matrix matrix = {
             {1.f,   0.f,           0.f,           0.f},
             {0.f,   std::cos(rad), std::sin(rad), 0.f},
             {0.f,  -std::sin(rad), std::cos(rad), 0.f},
             {0.f,   0.f,           0.f,           1.f}
         };
+        // clang-format on
 
         matrixMultiply(result, result, matrix);
     }
@@ -57,12 +60,15 @@ namespace
     void matrixRotateY(Matrix& result, sf::Angle angle)
     {
         float rad = angle.asRadians();
+
+        // clang-format off
         Matrix matrix = {
             { std::cos(rad), 0.f, std::sin(rad), 0.f},
             { 0.f,           1.f, 0.f,           0.f},
             {-std::sin(rad), 0.f, std::cos(rad), 0.f},
             { 0.f,           0.f, 0.f,           1.f}
         };
+        // clang-format on
 
         matrixMultiply(result, result, matrix);
     }
@@ -71,12 +77,15 @@ namespace
     void matrixRotateZ(Matrix& result, sf::Angle angle)
     {
         float rad = angle.asRadians();
+
+        // clang-format off
         Matrix matrix = {
             { std::cos(rad), std::sin(rad), 0.f, 0.f},
             {-std::sin(rad), std::cos(rad), 0.f, 0.f},
             { 0.f,           0.f,           1.f, 0.f},
             { 0.f,           0.f,           0.f, 1.f}
         };
+        // clang-format on
 
         matrixMultiply(result, result, matrix);
     }
@@ -85,11 +94,13 @@ namespace
     void matrixLookAt(Matrix& result, const Vec3& eye, const Vec3& center, const Vec3& up)
     {
         // Forward-looking vector
+        // clang-format off
         Vec3 forward = {
             center[0] - eye[0],
             center[1] - eye[1],
             center[2] - eye[2]
         };
+        // clang-format on
 
         // Normalize
         float factor = 1.0f / std::sqrt(forward[0] * forward[0] + forward[1] * forward[1] + forward[2] * forward[2]);
@@ -98,11 +109,13 @@ namespace
             f *= factor;
 
         // Side vector (Forward cross product Up)
+        // clang-format off
         Vec3 side = {
             forward[1] * up[2] - forward[2] * up[1],
             forward[2] * up[0] - forward[0] * up[2],
             forward[0] * up[1] - forward[1] * up[0]
         };
+        // clang-format on
 
         // Normalize
         factor = 1.0f / std::sqrt(side[0] * side[0] + side[1] * side[1] + side[2] * side[2]);
@@ -1371,6 +1384,7 @@ public:
     // Create our vertex buffer and upload its data
     void setupVertexBuffer()
     {
+        // clang-format off
         constexpr std::array vertexData = {
             // X      Y      Z     R     G     B     A     U     V
             -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
@@ -1403,6 +1417,7 @@ public:
              0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f
         };
+        // clang-format on
 
         // Create a staging buffer that is writable by the CPU
         VkBuffer stagingBuffer = 0;
@@ -1465,6 +1480,7 @@ public:
     // Create our index buffer and upload its data
     void setupIndexBuffer()
     {
+        // clang-format off
         constexpr std::array<std::uint16_t, 36> indexData = {
             0,  1,  2,
             2,  3,  0,
@@ -1484,6 +1500,7 @@ public:
             20, 21, 22,
             22, 23, 20
         };
+        // clang-format on
 
         // Create a staging buffer that is writable by the CPU
         VkBuffer stagingBuffer = 0;

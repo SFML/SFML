@@ -403,6 +403,7 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
 {
     // Some usage key doesn't have any corresponding virtual
     // code or it was not found (return 0xff).
+    // clang-format off
     switch (usage)
     {
         case kHIDUsage_KeyboardErrorRollOver:       return 0xff;
@@ -602,12 +603,14 @@ UInt8 HIDInputManager::usageToVirtualCode(UInt32 usage)
         case kHIDUsage_Keyboard_Reserved:           return 0xff;
         default:                                    return 0xff;
     }
+    // clang-format on
 }
 
 
 ////////////////////////////////////////////////////////
 Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
 {
+    // clang-format off
     switch (ch)
     {
         case 'a':
@@ -691,6 +694,7 @@ Keyboard::Key HIDInputManager::localizedKeys(UniChar ch)
             // The key is not 'localized'.
         default:                    return sf::Keyboard::Unknown;
     }
+    // clang-format on
 }
 
 
@@ -699,6 +703,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 {
     // (Some) 0x code based on https://forums.macrumors.com/showthread.php?t=780577
     // Some sf::Keyboard::Key are present twice.
+    // clang-format off
     switch (virtualKeycode)
     {
             // These cases should not be used but anyway...
@@ -864,6 +869,7 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
             // An unknown key.
         default:                        return sf::Keyboard::Unknown;
     }
+    // clang-format on
 }
 
 

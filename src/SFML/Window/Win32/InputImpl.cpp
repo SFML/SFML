@@ -38,6 +38,8 @@ namespace priv
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     int vkey = 0;
+
+    // clang-format off
     switch (key)
     {
         default:                   vkey = 0;             break;
@@ -143,6 +145,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::F15:        vkey = VK_F15;        break;
         case Keyboard::Pause:      vkey = VK_PAUSE;      break;
     }
+    // clang-format on
 
     return (GetAsyncKeyState(vkey) & 0x8000) != 0;
 }

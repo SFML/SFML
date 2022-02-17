@@ -94,6 +94,7 @@
     glRotatef(elapsedTime * 18.f, 0.f, 0.f, 1.f);
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
+    // clang-format off
     constexpr std::array<GLfloat, 216> cube =
     {
         // positions    // colors
@@ -139,6 +140,7 @@
          50, -50,  50,  0, 1, 1,
          50,  50,  50,  0, 1, 1
     };
+    // clang-format on
 
     // Draw the cube
     glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube.data());

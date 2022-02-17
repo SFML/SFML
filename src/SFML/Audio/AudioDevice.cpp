@@ -139,6 +139,8 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
 
     // Find the good format according to the number of channels
     int format = 0;
+
+    // clang-format off
     switch (channelCount)
     {
         case 1:  format = AL_FORMAT_MONO16;                    break;
@@ -149,6 +151,7 @@ int AudioDevice::getFormatFromChannelCount(unsigned int channelCount)
         case 8:  format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
         default: format = 0;                                   break;
     }
+    // clang-format on
 
     // Fixes a bug on OS X
     if (format == -1)

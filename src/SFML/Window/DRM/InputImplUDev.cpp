@@ -176,6 +176,7 @@ namespace
     {
         switch (code)
         {
+            // clang-format off
             case KEY_ESC:           return sf::Keyboard::Escape;
             case KEY_1:             return sf::Keyboard::Num1;
             case KEY_2:             return sf::Keyboard::Num2;
@@ -286,6 +287,7 @@ namespace
             case KEY_SCROLLLOCK:
             default:
                return sf::Keyboard::Unknown;
+            // clang-format on
         }
     }
 

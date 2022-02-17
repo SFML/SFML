@@ -165,6 +165,8 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     release();
 
     unsigned int shape;
+
+    // clang-format off
     switch (type)
     {
         default: return false;
@@ -188,6 +190,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::Help:            shape = XC_question_arrow;      break;
         case Cursor::NotAllowed:      shape = XC_X_cursor;            break;
     }
+    // clang-format on
 
     m_cursor = XCreateFontCursor(m_display, shape);
     return true;
