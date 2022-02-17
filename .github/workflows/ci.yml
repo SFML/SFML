@@ -94,3 +94,30 @@ jobs:
         directory: ./build
         files: ./build/coverage.out
         fail_ci_if_error: true
+
+  format:
+    name: Formatting on ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows, os: windows-2022,  executable: clang-format }
+        - { name: Linux,   os: ubuntu-latest, executable: clang-format-12 }
+        - { name: macOS,   os: macos-12,      executable: clang-format }
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install macOS Dependencies
+      if: runner.os == 'macOS'
+      run: brew install clang-format
+
+    - name: Format Code
+      shell: bash
+      run: cmake -DCLANG_FORMAT_EXECUTABLE=${{ matrix.platform.executable }} -P $GITHUB_WORKSPACE/cmake/Format.cmake
+
+    - name: Check Formatting
+      run: git diff --exit-code

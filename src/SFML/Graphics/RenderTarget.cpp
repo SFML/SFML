@@ -80,6 +80,7 @@ namespace
         // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
         sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
         {
+            // clang-format off
             switch (blendFactor)
             {
                 case sf::BlendMode::Zero:             return GL_ZERO;
@@ -93,6 +94,7 @@ namespace
                 case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
                 case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
             }
+            // clang-format on
 
             sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
             assert(false);

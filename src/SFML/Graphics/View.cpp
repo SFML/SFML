@@ -188,9 +188,11 @@ const Transform& View::getTransform() const
         float d = -b * m_center.y;
 
         // Rebuild the projection matrix
+        // clang-format off
         m_transform = Transform( a * cosine, a * sine,   a * tx + c,
                                 -b * sine,   b * cosine, b * ty + d,
                                  0.f,        0.f,        1.f);
+        // clang-format on
         m_transformUpdated = true;
     }
 

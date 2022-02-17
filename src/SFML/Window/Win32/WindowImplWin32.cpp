@@ -992,6 +992,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 ////////////////////////////////////////////////////////////
 Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
 {
+    // clang-format off
     switch (key)
     {
         // Check the scancode to distinguish between left and right shift
@@ -1105,6 +1106,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case '8':           return Keyboard::Num8;
         case '9':           return Keyboard::Num9;
     }
+    // clang-format on
 
     return Keyboard::Unknown;
 }

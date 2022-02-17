@@ -49,7 +49,9 @@ struct SFMLmainWindow;
 }
 
 @property (retain) IBOutlet NSWindow*       window;
+
 @property (assign) IBOutlet NSView*         sfmlView;
+
 @property (assign) IBOutlet NSTextField*    textField;
 
 -(IBAction)colorChanged:(NSPopUpButton*)sender;

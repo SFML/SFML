@@ -564,6 +564,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
 ////////////////////////////////////////////////////////////
 Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
 {
+    // clang-format off
     switch (key)
     {
         case AKEYCODE_UNKNOWN:
@@ -680,6 +681,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_BUTTON_MODE:
         default:                          return Keyboard::Unknown;
     }
+    // clang-format on
 }
 
 

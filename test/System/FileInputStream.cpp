@@ -48,6 +48,7 @@ public:
 
     // Prevent copies.
     TemporaryFile(const TemporaryFile&) = delete;
+
     TemporaryFile& operator=(const TemporaryFile&) = delete;
 
     // Return the randomly generated path.
