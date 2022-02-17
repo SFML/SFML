@@ -31,8 +31,8 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("Conversion constructor")
         {
-            sf::Vector2f sourceVector(1.0f, 2.0f);
-            sf::Vector2i vector(sourceVector);
+            const sf::Vector2f sourceVector(1.0f, 2.0f);
+            const sf::Vector2i vector(sourceVector);
 
             CHECK(vector.x == static_cast<int>(sourceVector.x));
             CHECK(vector.y == static_cast<int>(sourceVector.y));
@@ -43,8 +43,8 @@ TEST_CASE("sf::Vector2 class template - [system]")
     {
         SUBCASE("-vector")
         {
-            sf::Vector2i vector(1, 2);
-            sf::Vector2i negatedVector = -vector;
+            const sf::Vector2i vector(1, 2);
+            const sf::Vector2i negatedVector = -vector;
 
             CHECK(negatedVector.x == -1);
             CHECK(negatedVector.y == -2);
@@ -54,7 +54,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
     SUBCASE("Arithmetic operations between two vectors")
     {
         sf::Vector2i firstVector(2, 5);
-        sf::Vector2i secondVector(8, 3);
+        const sf::Vector2i secondVector(8, 3);
 
         SUBCASE("vector += vector")
         {
@@ -74,7 +74,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("vector + vector")
         {
-            sf::Vector2i result = firstVector + secondVector;
+            const sf::Vector2i result = firstVector + secondVector;
 
             CHECK(result.x == 10);
             CHECK(result.y == 8);
@@ -82,7 +82,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("vector - vector")
         {
-            sf::Vector2i result = firstVector - secondVector;
+            const sf::Vector2i result = firstVector - secondVector;
 
             CHECK(result.x == -6);
             CHECK(result.y == 2);
@@ -96,7 +96,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("vector * scalar")
         {
-            sf::Vector2i result = vector * scalar;
+            const sf::Vector2i result = vector * scalar;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -104,7 +104,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("scalar * vector")
         {
-            sf::Vector2i result = scalar * vector;
+            const sf::Vector2i result = scalar * vector;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -120,7 +120,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("vector / scalar")
         {
-            sf::Vector2i result = vector / scalar;
+            const sf::Vector2i result = vector / scalar;
 
             CHECK(result.x == 13);
             CHECK(result.y == 6);
@@ -137,9 +137,9 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Comparison operations (two equal and one different vector)")
     {
-        sf::Vector2i firstEqualVector(1, 5);
-        sf::Vector2i secondEqualVector(1, 5);
-        sf::Vector2i differentVector(6, 9);
+        const sf::Vector2i firstEqualVector(1, 5);
+        const sf::Vector2i secondEqualVector(1, 5);
+        const sf::Vector2i differentVector(6, 9);
 
         SUBCASE("vector == vector")
         {
@@ -191,13 +191,13 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Length and normalization")
     {
-        sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.0f);
 
         CHECK(v.length() == Approx(3.84187));
         CHECK(v.lengthSq() == Approx(14.7599650969));
         CHECK(v.normalized() == ApproxVec(0.624695, 0.780869));
 
-        sf::Vector2f w(-0.7f, -2.2f);
+        const sf::Vector2f w(-0.7f, -2.2f);
         
         CHECK(w.length() == Approx(2.30868));
         CHECK(w.lengthSq() == Approx(5.3300033));
@@ -206,13 +206,13 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Rotations and angles")
     {
-        sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.0f);
         
         CHECK(v.angle() == ApproxDeg(51.3402));
         CHECK(sf::Vector2f::UnitX.angleTo(v) == ApproxDeg(51.3402));
         CHECK(sf::Vector2f::UnitY.angleTo(v) == ApproxDeg(-38.6598));
 
-        sf::Vector2f w(-0.7f, -2.2f);
+        const sf::Vector2f w(-0.7f, -2.2f);
 
         CHECK(w.angle() == ApproxDeg(-107.65));
         CHECK(sf::Vector2f::UnitX.angleTo(w) == ApproxDeg(-107.65));
@@ -221,7 +221,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(v.angleTo(w) == ApproxDeg(-158.9902));
         CHECK(w.angleTo(v) == ApproxDeg(158.9902));
 
-        float ratio = w.length() / v.length();
+        const float ratio = w.length() / v.length();
         CHECK(v.rotatedBy(-158.9902_deg) * ratio  == ApproxVec(w));
         CHECK(w.rotatedBy(158.9902_deg) / ratio == ApproxVec(v));
 
@@ -235,8 +235,8 @@ TEST_CASE("sf::Vector2 class template - [system]")
     
     SUBCASE("Products and quotients")
     {
-        sf::Vector2f v(2.4f, 3.0f);
-        sf::Vector2f w(-0.7f, -2.2f);
+        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f w(-0.7f, -2.2f);
 
         CHECK(v.dot(w) == Approx(-8.28));
         CHECK(w.dot(v) == Approx(-8.28));
@@ -252,8 +252,8 @@ TEST_CASE("sf::Vector2 class template - [system]")
     
     SUBCASE("Projection")
     {
-        sf::Vector2f v(2.4f, 3.0f);
-        sf::Vector2f w(-0.7f, -2.2f);
+        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f w(-0.7f, -2.2f);
         
         CHECK(v.projectedOnto(w) == ApproxVec(1.087430, 3.417636));
         CHECK(v.projectedOnto(w) == ApproxVec(-1.55347f * w));
