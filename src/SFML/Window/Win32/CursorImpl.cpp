@@ -146,6 +146,8 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     release();
 
     LPCTSTR shape = nullptr;
+
+    // clang-format off
     switch (type)
     {
         case Cursor::Arrow:                  shape = IDC_ARROW;       break;
@@ -170,6 +172,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::Help:                   shape = IDC_HELP;        break;
         case Cursor::NotAllowed:             shape = IDC_NO;          break;
     }
+    // clang-format on
 
     // Get the shared system cursor and make sure not to destroy it
     m_cursor = LoadCursor(nullptr, shape);

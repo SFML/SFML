@@ -95,6 +95,7 @@ Socket::Status SocketImpl::getErrorStatus()
     if ((errno == EAGAIN) || (errno == EINPROGRESS))
         return Socket::NotReady;
 
+    // clang-format off
     switch (errno)
     {
         case EWOULDBLOCK:  return Socket::NotReady;
@@ -106,6 +107,7 @@ Socket::Status SocketImpl::getErrorStatus()
         case EPIPE:        return Socket::Disconnected;
         default:           return Socket::Error;
     }
+    // clang-format on
 }
 
 } // namespace priv

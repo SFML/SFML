@@ -25,7 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+
+// clang-format off
 #include <SFML/Window/Unix/WindowImplX11.hpp> // important to be included first (conflict with None)
+// clang-format on
+
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Err.hpp>

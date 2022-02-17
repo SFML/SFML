@@ -47,6 +47,7 @@ OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
 template <typename In>
 In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {
+    // clang-format off
     // Some useful precomputed data
     static constexpr int trailing[256] =
     {
@@ -59,16 +60,20 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
     };
+
     static constexpr Uint32 offsets[6] =
     {
         0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080
     };
+    // clang-format on
 
     // decode the character
     int trailingBytes = trailing[static_cast<Uint8>(*begin)];
     if (begin + trailingBytes < end)
     {
         output = 0;
+
+        // clang-format off
         switch (trailingBytes)
         {
             case 5: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
@@ -78,6 +83,8 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
             case 1: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
             case 0: output += static_cast<Uint8>(*begin++);
         }
+        // clang-format on
+
         output -= offsets[trailingBytes];
     }
     else
@@ -114,13 +121,18 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
 
         // Get the number of bytes to write
         std::size_t bytestoWrite = 1;
+
+        // clang-format off
         if      (input <  0x80)       bytestoWrite = 1;
         else if (input <  0x800)      bytestoWrite = 2;
         else if (input <  0x10000)    bytestoWrite = 3;
         else if (input <= 0x0010FFFF) bytestoWrite = 4;
+        // clang-format on
 
         // Extract the bytes to write
         Uint8 bytes[4];
+
+        // clang-format off
         switch (bytestoWrite)
         {
             case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
@@ -128,6 +140,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
             case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
             case 1: bytes[0] = static_cast<Uint8> (input | firstBytes[bytestoWrite]);
         }
+        // clang-format on
 
         // Add them to the output
         output = priv::copy(bytes, bytes + bytestoWrite, output);

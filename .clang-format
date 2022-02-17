@@ -1,0 +1,165 @@
+---
+# Project
+Language: Cpp
+Standard: c++17
+ColumnLimit: 120
+
+# Indentation
+AccessModifierOffset: -4
+BitFieldColonSpacing: Both
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentCaseBlocks: false
+IndentExternBlock: Indent
+IndentPPDirectives: None
+IndentRequires: true
+IndentWidth: 4
+IndentWrappedFunctionNames: true
+TabWidth: 4
+UseTab: Never
+
+# Alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: true
+
+# Allow
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: true
+AllowShortLambdasOnASingleLine: Empty
+
+# Break
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeConceptDeclarations: true
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakBeforeBinaryOperators: None
+BreakInheritanceList: AfterColon
+BreakStringLiterals: true
+
+# Initializers & arguments
+BinPackArguments: false
+BinPackParameters: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 0
+Cpp11BracedListStyle: true
+
+# Braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: Always
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterStruct: true
+    AfterUnion: true
+    AfterExternBlock: true
+    BeforeCatch: false
+    BeforeElse: true
+    BeforeLambdaBody: false
+    BeforeWhile: false
+    IndentBraces: false
+    SplitEmptyFunction: true
+    SplitEmptyRecord: true
+    SplitEmptyNamespace: true
+
+# Namespaces
+CompactNamespaces: false
+FixNamespaceComments: true
+NamespaceIndentation: None
+
+# Derive
+DeriveLineEnding: false
+DerivePointerAlignment: false
+
+# Empty lines
+EmptyLineBeforeAccessModifier: Always
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 2
+
+# Sorting
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Priority: 1
+    Regex: '^<SFML\/(.+)\/Export.hpp>$'
+  - Priority: 2
+    Regex: '^<SFML\/'
+  - Priority: 3
+    Regex: '^<(glad|gl|X11|jni|android|stb_|GLES2|vorbis)'
+  - Priority: 4
+    Regex: '^<(.+)>$'
+SortIncludes: true
+SortUsingDeclarations: true
+
+# Penalties
+PenaltyBreakAssignment: 1000
+PenaltyBreakBeforeFirstCallParameter: 1000
+PenaltyBreakComment: 200
+PenaltyBreakFirstLessLess: 100
+PenaltyBreakString: 1
+PenaltyBreakTemplateDeclaration: 0
+PenaltyExcessCharacter: 5
+PenaltyIndentedWhitespace: 1
+PenaltyReturnTypeOnItsOwnLine: 100
+
+# Pointer alignment
+PointerAlignment: Left
+
+# Comments
+ReflowComments: false
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceAroundPointerQualifiers: Default
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Line endings
+UseCRLF: false
+
+---
+Language: ObjC
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterObjCDeclaration: true
+
+ObjCBinPackProtocolList: Never
+ObjCBlockIndentWidth: 4
+ObjCBreakBeforeNestedBlockParam: true
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: false
+
+...

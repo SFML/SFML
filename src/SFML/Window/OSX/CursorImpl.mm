@@ -93,6 +93,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     AutoreleasePool pool;
     NSCursor* newCursor = nil;
 
+    // clang-format off
     switch (type)
     {
         default: return false;
@@ -129,6 +130,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
             break;
 #pragma clang diagnostic pop
     }
+    // clang-format on
 
     if (newCursor)
     {

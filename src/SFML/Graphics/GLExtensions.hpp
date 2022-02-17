@@ -31,6 +31,7 @@
 #include <SFML/Config.hpp>
 #include <glad/gl.h>
 
+// clang-format off
 #ifdef SFML_OPENGL_ES
 
     // SFML requires at a bare minimum OpenGL ES 1.0 capability
@@ -330,6 +331,7 @@
     #define GLEXT_GL_VERSION_4_4                      SF_GLAD_GL_VERSION_4_4
     #define GLEXT_GL_VERSION_4_5                      SF_GLAD_GL_VERSION_4_5
     #define GLEXT_GL_VERSION_4_6                      SF_GLAD_GL_VERSION_4_6
+// clang-format on
 
 namespace sf
 {

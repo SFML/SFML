@@ -71,6 +71,7 @@ void SocketImpl::setBlocking(SocketHandle sock, bool block)
 ////////////////////////////////////////////////////////////
 Socket::Status SocketImpl::getErrorStatus()
 {
+    // clang-format off
     switch (WSAGetLastError())
     {
         case WSAEWOULDBLOCK:  return Socket::NotReady;
@@ -83,6 +84,7 @@ Socket::Status SocketImpl::getErrorStatus()
         case WSAEISCONN:      return Socket::Done; // when connecting a non-blocking socket
         default:              return Socket::Error;
     }
+    // clang-format on
 }
 
 

@@ -124,6 +124,7 @@ int main()
         sf::Texture::bind(&texture);
 
         // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
+        // clang-format off
         static const GLfloat cube[] =
         {
             // positions    // texture coordinates
@@ -169,6 +170,7 @@ int main()
              20, -20,  20,  1, 0,
              20,  20,  20,  1, 1
         };
+        // clang-format on
 
         // Enable position and texture coordinates vertex components
         glEnableClientState(GL_VERTEX_ARRAY);

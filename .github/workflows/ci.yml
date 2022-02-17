@@ -91,3 +91,25 @@ jobs:
         directory: ./build
         files: ./build/coverage.out
         fail_ci_if_error: true
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install clang-format-12
+
+    - name: Format Code
+      run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-12 -P $GITHUB_WORKSPACE/cmake/Scripts/format.cmake
+
+    - name: Check Formatting
+      run: |
+        git diff
+        exit `git status --porcelain | wc -l`
+      continue-on-error: true # TODO: change in a future PR, after the whole codebase passes

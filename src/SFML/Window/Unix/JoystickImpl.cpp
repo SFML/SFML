@@ -612,6 +612,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
     ioctl(m_file, JSIOCGAXES, &axesCount);
     for (int i = 0; i < axesCount; ++i)
     {
+        // clang-format off
         switch (m_mapping[i])
         {
             case ABS_X:        caps.axes[Joystick::X]    = true; break;
@@ -624,8 +625,9 @@ JoystickCaps JoystickImpl::getCapabilities() const
             case ABS_RY:       caps.axes[Joystick::V]    = true; break;
             case ABS_HAT0X:    caps.axes[Joystick::PovX] = true; break;
             case ABS_HAT0Y:    caps.axes[Joystick::PovY] = true; break;
-            default:           break;
+            default:                                             break;
         }
+        // clang-format on
     }
 
     return caps;

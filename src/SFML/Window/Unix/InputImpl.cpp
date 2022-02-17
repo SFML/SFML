@@ -25,7 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+
+// clang-format off
 #include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
+// clang-format on
+
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/Xlib.h>
@@ -41,6 +45,8 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     // Get the corresponding X11 keysym
     KeySym keysym = 0;
+
+    // clang-format off
     switch (key)
     {
         case Keyboard::LShift:     keysym = XK_Shift_L;      break;
@@ -146,6 +152,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         case Keyboard::Num9:       keysym = XK_9;            break;
         default:                   keysym = 0;               break;
     }
+    // clang-format on
 
     // Sanity checks
     if (key < 0 || key >= sf::Keyboard::KeyCount)
@@ -202,6 +209,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     // Close the connection with the X server
     CloseDisplay(display);
 
+    // clang-format off
     switch (button)
     {
         case Mouse::Left:     return buttons & Button1Mask;
@@ -211,6 +219,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
         case Mouse::XButton2: return false; // not supported by X
         default:              return false;
     }
+    // clang-format on
 
     return false;
 }

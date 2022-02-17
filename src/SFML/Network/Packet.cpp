@@ -225,6 +225,8 @@ Packet& Packet::operator >>(Int64& data)
         // to network byte order (big endian) manually
         Uint8 bytes[sizeof(data)];
         std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
+
+        // clang-format off
         data = (static_cast<Int64>(bytes[0]) << 56) |
                (static_cast<Int64>(bytes[1]) << 48) |
                (static_cast<Int64>(bytes[2]) << 40) |
@@ -233,6 +235,8 @@ Packet& Packet::operator >>(Int64& data)
                (static_cast<Int64>(bytes[5]) << 16) |
                (static_cast<Int64>(bytes[6]) <<  8) |
                (static_cast<Int64>(bytes[7])      );
+        // clang-format on
+
         m_readPos += sizeof(data);
     }
 
@@ -249,6 +253,8 @@ Packet& Packet::operator >>(Uint64& data)
         // to network byte order (big endian) manually
         Uint8 bytes[sizeof(data)];
         std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
+
+        // clang-format off
         data = (static_cast<Uint64>(bytes[0]) << 56) |
                (static_cast<Uint64>(bytes[1]) << 48) |
                (static_cast<Uint64>(bytes[2]) << 40) |
@@ -257,6 +263,8 @@ Packet& Packet::operator >>(Uint64& data)
                (static_cast<Uint64>(bytes[5]) << 16) |
                (static_cast<Uint64>(bytes[6]) <<  8) |
                (static_cast<Uint64>(bytes[7])      );
+        // clang-format on
+
         m_readPos += sizeof(data);
     }
 
@@ -466,6 +474,8 @@ Packet& Packet::operator <<(Int64 data)
 {
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
+
+    // clang-format off
     Uint8 toWrite[] =
     {
         static_cast<Uint8>((data >> 56) & 0xFF),
@@ -477,6 +487,8 @@ Packet& Packet::operator <<(Int64 data)
         static_cast<Uint8>((data >>  8) & 0xFF),
         static_cast<Uint8>((data      ) & 0xFF)
     };
+    // clang-format on
+
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
@@ -487,6 +499,8 @@ Packet& Packet::operator <<(Uint64 data)
 {
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
+
+    // clang-format off
     Uint8 toWrite[] =
     {
         static_cast<Uint8>((data >> 56) & 0xFF),
@@ -498,6 +512,8 @@ Packet& Packet::operator <<(Uint64 data)
         static_cast<Uint8>((data >>  8) & 0xFF),
         static_cast<Uint8>((data      ) & 0xFF)
     };
+    // clang-format on
+
     append(&toWrite, sizeof(toWrite));
     return *this;
 }

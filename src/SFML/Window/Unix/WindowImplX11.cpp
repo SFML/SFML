@@ -25,7 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+
+// clang-format off
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+// clang-format on
+
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
@@ -386,6 +390,7 @@ namespace
 
         sf::Keyboard::Key keysymToSF(KeySym symbol)
         {
+            // clang-format off
             switch (symbol)
             {
                 case XK_Shift_L:      return sf::Keyboard::LShift;
@@ -491,6 +496,7 @@ namespace
                 case XK_8:            return sf::Keyboard::Num8;
                 case XK_9:            return sf::Keyboard::Num9;
             }
+            // clang-format on
 
             return sf::Keyboard::Unknown;
         }
@@ -2015,6 +2021,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 event.type          = Event::MouseButtonPressed;
                 event.mouseButton.x = windowEvent.xbutton.x;
                 event.mouseButton.y = windowEvent.xbutton.y;
+
+                // clang-format off
                 switch(button)
                 {
                     case Button1: event.mouseButton.button = Mouse::Left;     break;
@@ -2023,6 +2031,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     case 8:       event.mouseButton.button = Mouse::XButton1; break;
                     case 9:       event.mouseButton.button = Mouse::XButton2; break;
                 }
+                // clang-format on
+
                 pushEvent(event);
             }
 
