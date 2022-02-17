@@ -10,7 +10,7 @@ if(SFML_OS_MACOSX)
         $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/Resources
         $ENV{HOME}/Applications/Developer/Doxygen.app/Contents/MacOS)
 
-    set(CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH} ${ADDITIONAL_PATHS})
+    list(APPEND CMAKE_PROGRAM_PATH ${ADDITIONAL_PATHS})
 endif()
 
 find_package(Doxygen REQUIRED)
