@@ -134,7 +134,7 @@ void HIDJoystickManager::update()
 void HIDJoystickManager::pluggedIn(void* context, IOReturn, void*, IOHIDDeviceRef)
 {
     HIDJoystickManager* manager = static_cast<HIDJoystickManager*>(context);
-    manager->m_joystickCount++;
+    ++manager->m_joystickCount;
 }
 
 
@@ -142,7 +142,7 @@ void HIDJoystickManager::pluggedIn(void* context, IOReturn, void*, IOHIDDeviceRe
 void HIDJoystickManager::pluggedOut(void* context, IOReturn, void*, IOHIDDeviceRef)
 {
     HIDJoystickManager* manager = static_cast<HIDJoystickManager*>(context);
-    manager->m_joystickCount--;
+    --manager->m_joystickCount;
 }
 
 

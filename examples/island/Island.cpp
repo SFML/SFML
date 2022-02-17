@@ -136,7 +136,7 @@ int main()
     else
     {
         // Start up our thread pool
-        for (unsigned int i = 0; i < threadCount; i++)
+        for (unsigned int i = 0; i < threadCount; ++i)
         {
             threads.emplace_back(threadFunction);
         }
@@ -284,7 +284,7 @@ float getElevation(float x, float y)
 
     float elevation = 0.0f;
 
-    for (int i = 0; i < perlinOctaves; i++)
+    for (int i = 0; i < perlinOctaves; ++i)
     {
         elevation += stb_perlin_noise3(
             x * perlinFrequency * static_cast<float>(std::pow(perlinFrequencyBase, i)),
@@ -467,9 +467,9 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
     const float scalingFactorX = static_cast<float>(windowWidth) / static_cast<float>(resolutionX);
     const float scalingFactorY = static_cast<float>(windowHeight) / static_cast<float>(resolutionY);
 
-    for (unsigned int y = rowStart; y < rowEnd; y++)
+    for (unsigned int y = rowStart; y < rowEnd; ++y)
     {
-        for (unsigned int x = 0; x < resolutionX; x++)
+        for (unsigned int x = 0; x < resolutionX; ++x)
         {
             unsigned int arrayIndexBase = ((y - rowStart) * resolutionX + x) * 6;
 
@@ -610,7 +610,7 @@ void generateTerrain(sf::Vertex* buffer)
     {
         std::scoped_lock lock(workQueueMutex);
 
-        for (unsigned int i = 0; i < blockCount; i++)
+        for (unsigned int i = 0; i < blockCount; ++i)
         {
             WorkItem workItem = {buffer, i};
             workQueue.push_back(workItem);

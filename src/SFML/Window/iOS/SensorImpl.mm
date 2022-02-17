@@ -220,11 +220,11 @@ void SensorImpl::setEnabled(bool enabled)
             {
                 if (deviceMotionEnabledCount == 0)
                     [[SFAppDelegate getInstance].motionManager startDeviceMotionUpdates];
-                deviceMotionEnabledCount++;
+                ++deviceMotionEnabledCount;
             }
             else
             {
-                deviceMotionEnabledCount--;
+                --deviceMotionEnabledCount;
                 if (deviceMotionEnabledCount == 0)
                     [[SFAppDelegate getInstance].motionManager stopDeviceMotionUpdates];
             }

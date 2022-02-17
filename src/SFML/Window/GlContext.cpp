@@ -275,7 +275,7 @@ namespace
                     const char* extension = extensionString;
 
                     while (*extensionString && (*extensionString != ' '))
-                        extensionString++;
+                        ++extensionString;
 
                     extensions.emplace_back(extension, extensionString);
                 }
@@ -343,7 +343,7 @@ void GlContext::initResource()
         if (sharedContext)
         {
             // Increment the resources counter
-            resourceCount++;
+            ++resourceCount;
 
             return;
         }
@@ -360,7 +360,7 @@ void GlContext::initResource()
     }
 
     // Increment the resources counter
-    resourceCount++;
+    ++resourceCount;
 }
 
 
@@ -375,7 +375,7 @@ void GlContext::cleanupResource()
     std::scoped_lock lock(mutex);
 
     // Decrement the resources counter
-    resourceCount--;
+    --resourceCount;
 
     // If there's no more resource alive, we can trigger the global context cleanup
     if (resourceCount == 0)
@@ -412,7 +412,7 @@ void GlContext::acquireTransientContext()
         transientContext = std::make_unique<TransientContext>();
 
     // Increase the reference count
-    transientContext->referenceCount++;
+    ++transientContext->referenceCount;
 }
 
 
@@ -429,7 +429,7 @@ void GlContext::releaseTransientContext()
     assert(transientContext);
 
     // Decrease the reference count
-    transientContext->referenceCount--;
+    --transientContext->referenceCount;
 
     // If this is the last TransientContextLock that is released
     // destroy the state object

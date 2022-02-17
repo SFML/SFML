@@ -57,7 +57,7 @@ AlResource::AlResource()
         globalDevice = std::make_unique<priv::AudioDevice>();
 
     // Increment the resources counter
-    count++;
+    ++count;
 }
 
 
@@ -68,7 +68,7 @@ AlResource::~AlResource()
     std::scoped_lock lock(mutex);
 
     // Decrement the resources counter
-    count--;
+    --count;
 
     // If there's no more resource alive, we can destroy the device
     if (count == 0)

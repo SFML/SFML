@@ -465,7 +465,7 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& s
 
     size_t pointerCount = AMotionEvent_getPointerCount(_event);
 
-    for (size_t p = 0; p < pointerCount; p++)
+    for (size_t p = 0; p < pointerCount; ++p)
     {
         int32_t id = AMotionEvent_getPointerId(_event, p);
 

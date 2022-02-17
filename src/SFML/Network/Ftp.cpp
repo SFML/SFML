@@ -563,11 +563,11 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
                 while (isdigit(str[index]))
                 {
                     datum = static_cast<Uint8>(static_cast<Uint8>(datum * 10) + static_cast<Uint8>(str[index] - '0'));
-                    index++;
+                    ++index;
                 }
 
                 // Skip separator
-                index++;
+                ++index;
             }
 
             // Reconstruct connection port and address

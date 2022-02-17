@@ -55,7 +55,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     // Loop on each mode and convert it into a sf::VideoMode object.
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
-    for (CFIndex i = 0; i < modesCount; i++)
+    for (CFIndex i = 0; i < modesCount; ++i)
     {
         CGDisplayModeRef cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes, i)));
 

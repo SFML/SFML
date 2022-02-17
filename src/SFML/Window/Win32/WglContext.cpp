@@ -683,14 +683,14 @@ void WglContext::createContext(WglContext* shared)
             else if (m_settings.minorVersion > 0)
             {
                 // If the minor version is not 0, we decrease it and try again
-                m_settings.minorVersion--;
+                --m_settings.minorVersion;
 
                 m_settings.attributeFlags = settings.attributeFlags;
             }
             else
             {
                 // If the minor version is 0, we decrease the major version
-                m_settings.majorVersion--;
+                --m_settings.majorVersion;
                 m_settings.minorVersion = 9;
 
                 m_settings.attributeFlags = settings.attributeFlags;

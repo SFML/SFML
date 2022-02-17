@@ -282,7 +282,7 @@ public:
             return false;
 
         // Move the points in the point cloud to random positions
-        for (std::size_t i = 0; i < 10000; i++)
+        for (std::size_t i = 0; i < 10000; ++i)
         {
             // Spread the coordinates from -480 to +480
             // So they'll always fill the viewport at 800x600
@@ -427,7 +427,7 @@ int main()
                         if (current == 0)
                             current = effects.size() - 1;
                         else
-                            current--;
+                            --current;
                         description.setString("Current effect: " + effects[current]->getName());
                         break;
 
@@ -436,7 +436,7 @@ int main()
                         if (current == effects.size() - 1)
                             current = 0;
                         else
-                            current++;
+                            ++current;
                         description.setString("Current effect: " + effects[current]->getName());
                         break;
 
