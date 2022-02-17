@@ -143,7 +143,7 @@ namespace
                 {
                     // If there's room in the output buffer, copy the sample there
                     *data->buffer++ = sample;
-                    data->remaining--;
+                    --data->remaining;
                 }
                 else
                 {

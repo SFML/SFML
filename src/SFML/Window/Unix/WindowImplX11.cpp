@@ -1372,7 +1372,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     bool modeFound = false;
     RRMode xRandMode;
 
-    for (int i = 0; (i < res->nmode) && !modeFound; i++)
+    for (int i = 0; (i < res->nmode) && !modeFound; ++i)
     {
         if (crtcInfo->rotation == RR_Rotate_90 || crtcInfo->rotation == RR_Rotate_270)
             std::swap(res->modes[i].height, res->modes[i].width);

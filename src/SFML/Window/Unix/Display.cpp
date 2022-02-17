@@ -70,7 +70,7 @@ Display* OpenDisplay()
         }
     }
 
-    referenceCount++;
+    ++referenceCount;
     return sharedDisplay;
 }
 
@@ -82,7 +82,7 @@ void CloseDisplay(Display* display)
 
     assert(display == sharedDisplay);
 
-    referenceCount--;
+    --referenceCount;
     if (referenceCount == 0)
         XCloseDisplay(display);
 }
@@ -120,7 +120,7 @@ XIM OpenXIM()
             XSetLocaleModifiers(prevXLoc.c_str());
     }
 
-    referenceCountXIM++;
+    ++referenceCountXIM;
 
     return sharedXIM;
 }
@@ -132,7 +132,7 @@ void CloseXIM(XIM xim)
 
     assert(xim == sharedXIM);
 
-    referenceCountXIM--;
+    --referenceCountXIM;
 
     if ((referenceCountXIM == 0) && (xim != nullptr))
         XCloseIM(xim);

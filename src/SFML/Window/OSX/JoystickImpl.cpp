@@ -128,7 +128,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         for (unsigned int i(0); i < sf::Joystick::Count; ++i)
         {
             if (m_locationIDs[i] != 0)
-                openedCount++;
+                ++openedCount;
         }
 
 

@@ -508,7 +508,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     states->inputQueue = nullptr;
     states->config     = nullptr;
 
-    for (unsigned int i = 0; i < sf::Mouse::ButtonCount; i++)
+    for (unsigned int i = 0; i < sf::Mouse::ButtonCount; ++i)
         states->isButtonPressed[i] = false;
 
     gladLoaderLoadEGL(EGL_DEFAULT_DISPLAY);

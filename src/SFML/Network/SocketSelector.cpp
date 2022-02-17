@@ -91,7 +91,7 @@ void SocketSelector::add(Socket& socket)
         if (FD_ISSET(handle, &m_impl->allSockets))
             return;
 
-        m_impl->socketCount++;
+        ++m_impl->socketCount;
 
 #else
 
@@ -125,7 +125,7 @@ void SocketSelector::remove(Socket& socket)
         if (!FD_ISSET(handle, &m_impl->allSockets))
             return;
 
-        m_impl->socketCount--;
+        --m_impl->socketCount;
 
 #else
 

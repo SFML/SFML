@@ -29,9 +29,9 @@ namespace
     {
         Matrix temp;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; ++i)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; ++j)
                 temp[i][j] = left[0][j] * right[i][0] + left[1][j] * right[i][1] + left[2][j] * right[i][2] + left[3][j] * right[i][3];
         }
 
@@ -665,7 +665,7 @@ public:
 
         vkGetPhysicalDeviceQueueFamilyProperties(gpu, &objectCount, queueFamilyProperties.data());
 
-        for (std::size_t i = 0; i < queueFamilyProperties.size(); i++)
+        for (std::size_t i = 0; i < queueFamilyProperties.size(); ++i)
         {
             VkBool32 surfaceSupported = VK_FALSE;
 
@@ -870,7 +870,7 @@ public:
         imageViewCreateInfo.subresourceRange.layerCount = 1;
 
         // Create an image view for each swapchain image
-        for (std::size_t i = 0; i < swapchainImages.size(); i++)
+        for (std::size_t i = 0; i < swapchainImages.size(); ++i)
         {
             imageViewCreateInfo.image = swapchainImages[i];
 
@@ -1220,7 +1220,7 @@ public:
         framebufferCreateInfo.height = swapchainExtent.height;
         framebufferCreateInfo.layers = 1;
 
-        for (std::size_t i = 0; i < swapchainFramebuffers.size(); i++)
+        for (std::size_t i = 0; i < swapchainFramebuffers.size(); ++i)
         {
             // Each framebuffer consists of a corresponding swapchain image and the shared depth image
             VkImageView attachments[] = {swapchainImageViews[i], depthImageView};
@@ -1277,7 +1277,7 @@ public:
 
         uint32_t memoryType = 0;
 
-        for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
+        for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
         {
             if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
@@ -1546,7 +1546,7 @@ public:
     void setupUniformBuffers()
     {
         // Create a uniform buffer for every frame that might be in flight to prevent clobbering
-        for (size_t i = 0; i < swapchainImages.size(); i++)
+        for (size_t i = 0; i < swapchainImages.size(); ++i)
         {
             uniformBuffers.push_back(0);
             uniformBuffersMemory.push_back(0);
@@ -1599,7 +1599,7 @@ public:
 
         uint32_t memoryType = 0;
 
-        for (; memoryType < memoryProperties.memoryTypeCount; memoryType++)
+        for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
         {
             if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
                 ((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
@@ -2124,7 +2124,7 @@ public:
         }
 
         // For every descriptor set, set up the bindings to our uniform buffer and texture sampler
-        for (std::size_t i = 0; i < descriptorSets.size(); i++)
+        for (std::size_t i = 0; i < descriptorSets.size(); ++i)
         {
             VkWriteDescriptorSet writeDescriptorSets[2];
 
@@ -2218,7 +2218,7 @@ public:
         commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
         // Set up the command buffers for each frame in flight
-        for (std::size_t i = 0; i < commandBuffers.size(); i++)
+        for (std::size_t i = 0; i < commandBuffers.size(); ++i)
         {
             // Begin the command buffer
             if (vkBeginCommandBuffer(commandBuffers[i], &commandBufferBeginInfo) != VK_SUCCESS)
@@ -2268,7 +2268,7 @@ public:
         semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
         // Create a semaphore to track when an swapchain image is available for each frame in flight
-        for (std::size_t i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
             imageAvailableSemaphores.push_back(0);
 
@@ -2281,7 +2281,7 @@ public:
         }
 
         // Create a semaphore to track when rendering is complete for each frame in flight
-        for (std::size_t i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
             renderFinishedSemaphores.push_back(0);
 
@@ -2303,7 +2303,7 @@ public:
         fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
         // Create a fence to track when queue submission is complete for each frame in flight
-        for (std::size_t i = 0; i < maxFramesInFlight; i++)
+        for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
             fences.push_back(0);
 

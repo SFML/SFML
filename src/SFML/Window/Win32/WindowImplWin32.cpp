@@ -233,7 +233,7 @@ m_cursorGrabbed   (m_fullscreen)
         switchToFullscreen(mode);
 
     // Increment window count
-    windowCount++;
+    ++windowCount;
 }
 
 
@@ -262,7 +262,7 @@ WindowImplWin32::~WindowImplWin32()
             DestroyWindow(m_handle);
 
         // Decrement the window count
-        windowCount--;
+        --windowCount;
 
         // Unregister window class if we were the last window
         if (windowCount == 0)

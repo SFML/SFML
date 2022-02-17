@@ -256,7 +256,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
             if (usage == HUP_BUTTON)
             {
-                caps.buttonCount++;
+                ++caps.buttonCount;
                 break;
             }
             else if (usage == HUP_GENERIC_DESKTOP)

@@ -7559,7 +7559,7 @@ static int glad_gl_get_extensions( int version, const char **out_exts, unsigned 
         if (exts_i == NULL) {
             return 0;
         }
-        for(index = 0; index < num_exts_i; index++) {
+        for(index = 0; index < num_exts_i; ++index) {
             const char *gl_str_tmp = (const char*) glad_glGetStringi(GL_EXTENSIONS, index);
             size_t len = strlen(gl_str_tmp) + 1;
 
@@ -7580,7 +7580,7 @@ static int glad_gl_get_extensions( int version, const char **out_exts, unsigned 
 static void glad_gl_free_extensions(char **exts_i, unsigned int num_exts_i) {
     if (exts_i != NULL) {
         unsigned int index;
-        for(index = 0; index < num_exts_i; index++) {
+        for(index = 0; index < num_exts_i; ++index) {
             free((void *) (exts_i[index]));
         }
         free((void *)exts_i);
@@ -7610,7 +7610,7 @@ static int glad_gl_has_extension(int version, const char *exts, unsigned int num
         }
     } else {
         unsigned int index;
-        for(index = 0; index < num_exts_i; index++) {
+        for(index = 0; index < num_exts_i; ++index) {
             const char *e = exts_i[index];
             if(strcmp(e, ext) == 0) {
                 return 1;
@@ -7682,7 +7682,7 @@ static int glad_gl_find_core_gl(void) {
     };
     version = (const char*) glad_glGetString(GL_VERSION);
     if (!version) return 0;
-    for (i = 0;  prefixes[i];  i++) {
+    for (i = 0;  prefixes[i];  ++i) {
         const size_t length = strlen(prefixes[i]);
         if (strncmp(version, prefixes[i], length) == 0) {
             version += length;
@@ -7783,7 +7783,7 @@ static int glad_gl_find_core_gles1(void) {
     };
     version = (const char*) glad_glGetString(GL_VERSION);
     if (!version) return 0;
-    for (i = 0;  prefixes[i];  i++) {
+    for (i = 0;  prefixes[i];  ++i) {
         const size_t length = strlen(prefixes[i]);
         if (strncmp(version, prefixes[i], length) == 0) {
             version += length;
@@ -7830,7 +7830,7 @@ int gladLoadGLES1( GLADloadfunc load) {
 
 
 
- 
+
 
 
 #endif /* GLAD_GL_IMPLEMENTATION */
