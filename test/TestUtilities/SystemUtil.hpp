@@ -39,6 +39,33 @@ namespace sf
     }
 }
 
+// Utilities for approximate equality
+struct ApproxVec
+{
+    ApproxVec(double x, double y)
+        : vector(static_cast<float>(x), static_cast<float>(y)) {}
+
+    explicit ApproxVec(const sf::Vector2f& v)
+        : vector(v) {}
+
+    sf::Vector2f vector;
+};
+
+// Utilities for approximate equality
+struct ApproxDeg
+{
+    ApproxDeg(double degrees)
+        : degrees(static_cast<float>(degrees)) {}
+
+    float degrees;
+};
+
+bool operator==(const sf::Vector2f& lhs, const ApproxVec& rhs);
+bool operator==(const sf::Angle& lhs, const ApproxDeg& rhs);
+
+std::ostream& operator <<(std::ostream& os, const ApproxVec& approx);
+std::ostream& operator <<(std::ostream& os, const ApproxDeg& approx);
+
 namespace sf::Testing
 {
     class TemporaryFile
