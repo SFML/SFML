@@ -41,7 +41,7 @@ using VkSurfaceKHR = struct VkSurfaceKHR_T*;
 
 #else
 
-using VkSurfaceKHR = uint64_t;
+using VkSurfaceKHR = std::uint64_t;
 
 #endif
 
