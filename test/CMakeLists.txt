@@ -35,6 +35,7 @@ if(SFML_BUILD_GRAPHICS)
         Graphics/Color.cpp
         Graphics/Rect.cpp
         Graphics/Transform.cpp
+        Graphics/Transformable.cpp
         Graphics/Vertex.cpp
     )
     sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
