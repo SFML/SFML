@@ -56,11 +56,13 @@ namespace priv
     // If in debug mode, perform a test on every call
     // The do-while loop is needed so that alCheck can be used as a single statement in if/else branches
     #define alCheck(expr) do { expr; sf::priv::alCheckError(__FILE__, __LINE__, #expr); } while (false)
+    #define alGetLastError sf::priv::alGetLastErrorImpl
 
 #else
 
     // Else, we don't add any overhead
     #define alCheck(expr) (expr)
+    #define alGetLastError alGetError
 
 #endif
 
@@ -74,6 +76,15 @@ namespace priv
 ///
 ////////////////////////////////////////////////////////////
 void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
+
+
+////////////////////////////////////////////////////////////
+/// Get the last OpenAL error on this thread
+///
+/// \return The last OpenAL error on this thread
+///
+////////////////////////////////////////////////////////////
+ALenum alGetLastErrorImpl();
 
 } // namespace priv
 

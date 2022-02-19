@@ -38,6 +38,15 @@
     #endif
 #endif
 
+namespace
+{
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace AlCheckImpl
+    {
+        thread_local ALenum lastError(AL_NO_ERROR);
+    }
+}
+
 namespace sf
 {
 namespace priv
@@ -50,6 +59,8 @@ void alCheckError(const std::filesystem::path& file, unsigned int line, const ch
 
     if (errorCode != AL_NO_ERROR)
     {
+        AlCheckImpl::lastError = errorCode;
+
         std::string error = "Unknown error";
         std::string description = "No description";
 
@@ -99,6 +110,13 @@ void alCheckError(const std::filesystem::path& file, unsigned int line, const ch
               << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+ALenum alGetLastErrorImpl()
+{
+    return std::exchange(AlCheckImpl::lastError, AL_NO_ERROR);
 }
 
 } // namespace priv
