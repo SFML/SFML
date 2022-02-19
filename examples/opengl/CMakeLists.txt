@@ -1,9 +1,4 @@
-
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/opengl)
-
 # all source files
-set(SRC ${SRCROOT}/OpenGL.cpp)
-
 if (SFML_OS_IOS)
     set(RESOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/background.jpg
@@ -13,10 +8,10 @@ endif()
 
 # define the opengl target
 sfml_add_example(opengl GUI_APP
-                 SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
                  DEPENDS SFML::Graphics
                  RESOURCES_DIR resources)
+target_sources(opengl PRIVATE OpenGL.cpp)
 
 # external dependency headers
 target_include_directories(opengl SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/opengl)

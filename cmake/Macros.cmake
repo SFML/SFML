@@ -51,12 +51,11 @@ endfunction()
 
 # add a new target which is a SFML library
 # example: sfml_add_library(Graphics
-#                           SOURCES sprite.cpp image.cpp ...
 #                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
 macro(sfml_add_library module)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
+    cmake_parse_arguments(THIS "STATIC" "" "" ${ARGN})
     if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_library: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
@@ -64,9 +63,9 @@ macro(sfml_add_library module)
     # create the target
     string(TOLOWER sfml-${module} target)
     if (THIS_STATIC)
-        add_library(${target} STATIC ${THIS_SOURCES})
+        add_library(${target} STATIC)
     else()
-        add_library(${target} ${THIS_SOURCES})
+        add_library(${target})
     endif()
     add_library(SFML::${module} ALIAS ${target})
 
@@ -84,7 +83,7 @@ macro(sfml_add_library module)
         endif()
     endif()
 
-    set_file_warnings(${THIS_SOURCES})
+    set_file_warnings(${target})
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
@@ -246,22 +245,17 @@ endmacro()
 
 # add a new target which is a SFML example
 # example: sfml_add_example(ftp
-#                           SOURCES ftp.cpp ...
 #                           BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
 #                           DEPENDS SFML::Network
 #                           RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "GUI_APP" "RESOURCES_DIR" "SOURCES;BUNDLE_RESOURCES;DEPENDS" ${ARGN})
-
-    # set a source group for the source files
-    source_group("" FILES ${THIS_SOURCES})
+    cmake_parse_arguments(THIS "GUI_APP" "RESOURCES_DIR" "BUNDLE_RESOURCES;DEPENDS" ${ARGN})
 
     # check whether resources must be added in target
-    set(target_input ${THIS_SOURCES})
     if(THIS_BUNDLE_RESOURCES)
-        set(target_input ${target_input} ${THIS_BUNDLE_RESOURCES})
+        set(target_input ${THIS_BUNDLE_RESOURCES})
     endif()
 
     # create the target
@@ -286,7 +280,7 @@ macro(sfml_add_example target)
         add_executable(${target} ${target_input})
     endif()
 
-    set_file_warnings(${target_input})
+    set_file_warnings(${target})
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
@@ -312,16 +306,11 @@ macro(sfml_add_example target)
 endmacro()
 
 # add a new target which is a SFML test
-# example: sfml_add_test(sfml-test
-#                           ftp.cpp ...
-#                           SFML::Network)
-function(sfml_add_test target SOURCES DEPENDS)
-
-    # set a source group for the source files
-    source_group("" FILES ${SOURCES})
+# example: sfml_add_test(sfml-test SFML::Network)
+function(sfml_add_test target DEPENDS)
 
     # create the target
-    add_executable(${target} ${SOURCES})
+    add_executable(${target})
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")

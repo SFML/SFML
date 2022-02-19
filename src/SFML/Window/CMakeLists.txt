@@ -1,9 +1,11 @@
+# define the sfml-window target
+sfml_add_library(Window)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Window)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Window)
 
 # all source files
-set(SRC
+target_sources(sfml-window PRIVATE
     ${INCROOT}/Clipboard.hpp
     ${SRCROOT}/Clipboard.cpp
     ${SRCROOT}/ClipboardImpl.hpp
@@ -54,11 +56,10 @@ set(SRC
     ${SRCROOT}/WindowImpl.hpp
     ${INCROOT}/WindowStyle.hpp
 )
-source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
-    set(PLATFORM_SRC
+    target_sources(sfml-window PRIVATE
         ${SRCROOT}/Win32/CursorImpl.hpp
         ${SRCROOT}/Win32/CursorImpl.cpp
         ${SRCROOT}/Win32/ClipboardImpl.hpp
@@ -77,12 +78,11 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
-    source_group("windows" FILES ${PLATFORM_SRC})
 
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    set(PLATFORM_SRC
+    target_sources(sfml-window PRIVATE
         ${SRCROOT}/Unix/CursorImpl.hpp
         ${SRCROOT}/Unix/CursorImpl.cpp
         ${SRCROOT}/Unix/ClipboardImpl.hpp
@@ -100,41 +100,35 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         ${SRCROOT}/Unix/WindowImplX11.hpp
     )
     if(NOT SFML_OS_ANDROID)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        target_sources(sfml-window PRIVATE
             ${SRCROOT}/Unix/GlxContext.cpp
             ${SRCROOT}/Unix/GlxContext.hpp
         )
     endif()
     if(SFML_OS_LINUX)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        target_sources(sfml-window PRIVATE
             ${SRCROOT}/Unix/JoystickImpl.cpp
             ${SRCROOT}/Unix/JoystickImpl.hpp
         )
     elseif(SFML_OS_FREEBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        target_sources(sfml-window PRIVATE
             ${SRCROOT}/FreeBSD/JoystickImpl.cpp
             ${SRCROOT}/FreeBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_OPENBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        target_sources(sfml-window PRIVATE
             ${SRCROOT}/OpenBSD/JoystickImpl.cpp
             ${SRCROOT}/OpenBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_NETBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        target_sources(sfml-window PRIVATE
             ${SRCROOT}/NetBSD/JoystickImpl.cpp
             ${SRCROOT}/NetBSD/JoystickImpl.hpp
         )
 
     endif()
-    source_group("unix" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_MACOSX)
-    set(PLATFORM_SRC
+    target_sources(sfml-window PRIVATE
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
@@ -185,9 +179,8 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.hpp
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )
-    source_group("mac" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_IOS)
-    set(PLATFORM_SRC
+    target_sources(sfml-window PRIVATE
         ${SRCROOT}/iOS/CursorImpl.hpp
         ${SRCROOT}/iOS/CursorImpl.cpp
         ${SRCROOT}/iOS/ClipboardImpl.mm
@@ -213,9 +206,8 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/SFMain.hpp
         ${SRCROOT}/iOS/SFMain.mm
     )
-    source_group("ios" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_ANDROID)
-    set(PLATFORM_SRC
+    target_sources(sfml-window PRIVATE
         ${SRCROOT}/Android/CursorImpl.hpp
         ${SRCROOT}/Android/CursorImpl.cpp
         ${SRCROOT}/Android/ClipboardImpl.hpp
@@ -230,12 +222,8 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/SensorImpl.hpp
         ${SRCROOT}/Android/SensorImpl.cpp
     )
-    source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
-# define the sfml-window target
-sfml_add_library(Window
-                 SOURCES ${SRC} ${PLATFORM_SRC})
 target_link_libraries(sfml-window PUBLIC SFML::System)
 
 # glad sources

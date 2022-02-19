@@ -1,9 +1,11 @@
+# define the sfml-network target
+sfml_add_library(Network)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Network)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Network)
 
 # all source files
-set(SRC
+target_sources(sfml-network PRIVATE
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Ftp.cpp
     ${INCROOT}/Ftp.hpp
@@ -29,24 +31,16 @@ set(SRC
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
-    set(SRC
-        ${SRC}
+    target_sources(sfml-network PRIVATE
         ${SRCROOT}/Win32/SocketImpl.cpp
         ${SRCROOT}/Win32/SocketImpl.hpp
     )
 else()
-    set(SRC
-        ${SRC}
+    target_sources(sfml-network PRIVATE
         ${SRCROOT}/Unix/SocketImpl.cpp
         ${SRCROOT}/Unix/SocketImpl.hpp
     )
 endif()
-
-source_group("" FILES ${SRC})
-
-# define the sfml-network target
-sfml_add_library(Network
-                 SOURCES ${SRC})
 
 # setup dependencies
 target_link_libraries(sfml-network PUBLIC SFML::System)

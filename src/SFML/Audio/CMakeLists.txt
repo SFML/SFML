@@ -1,9 +1,11 @@
+# define the sfml-audio target
+sfml_add_library(Audio)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Audio)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
 # all source files
-set(SRC
+target_sources(sfml-audio PRIVATE
     ${SRCROOT}/ALCheck.cpp
     ${SRCROOT}/ALCheck.hpp
     ${SRCROOT}/AlResource.cpp
@@ -32,9 +34,8 @@ set(SRC
     ${SRCROOT}/SoundStream.cpp
     ${INCROOT}/SoundStream.hpp
 )
-source_group("" FILES ${SRC})
 
-set(CODECS_SRC
+target_sources(sfml-audio PRIVATE
     ${SRCROOT}/SoundFileFactory.cpp
     ${INCROOT}/SoundFileFactory.hpp
     ${INCROOT}/SoundFileFactory.inl
@@ -55,7 +56,6 @@ set(CODECS_SRC
     ${SRCROOT}/SoundFileWriterWav.hpp
     ${SRCROOT}/SoundFileWriterWav.cpp
 )
-source_group("codecs" FILES ${CODECS_SRC})
 
 # let CMake know about our additional audio libraries paths (on Windows and OSX)
 if(SFML_OS_WINDOWS)
@@ -75,10 +75,6 @@ sfml_find_package(FLAC INCLUDE "FLAC_INCLUDE_DIR" LINK "FLAC_LIBRARY")
 # avoids warnings in vorbisfile.h
 target_compile_definitions(VORBIS INTERFACE "OV_EXCLUDE_STATIC_CALLBACKS")
 target_compile_definitions(FLAC INTERFACE "FLAC__NO_DLL")
-
-# define the sfml-audio target
-sfml_add_library(Audio
-                 SOURCES ${SRC} ${CODECS_SRC})
 
 # setup dependencies
 target_link_libraries(sfml-audio PRIVATE OpenAL)

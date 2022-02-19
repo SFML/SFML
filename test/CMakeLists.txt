@@ -12,7 +12,8 @@ target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
 # System is always built
-SET(SYSTEM_SRC
+sfml_add_test(test-sfml-system SFML::System)
+target_sources(test-sfml-system PRIVATE
     System/Angle.cpp
     System/Clock.cpp
     System/FileInputStream.cpp
@@ -20,18 +21,18 @@ SET(SYSTEM_SRC
     System/Vector2.cpp
     System/Vector3.cpp
 )
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
 
 if(SFML_BUILD_WINDOW)
-    SET(WINDOW_SRC
+    sfml_add_test(test-sfml-window SFML::Window)
+    target_sources(test-sfml-window PRIVATE
         Window/ContextSettings.cpp
         Window/VideoMode.cpp
     )
-    sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 endif()
 
 if(SFML_BUILD_GRAPHICS)
-    SET(GRAPHICS_SRC
+    sfml_add_test(test-sfml-graphics SFML::Graphics)
+    target_sources(test-sfml-graphics PRIVATE
         Graphics/BlendMode.cpp
         Graphics/Color.cpp
         Graphics/Rect.cpp
@@ -40,21 +41,20 @@ if(SFML_BUILD_GRAPHICS)
         Graphics/Vertex.cpp
         Graphics/VertexArray.cpp
     )
-    sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 endif()
 
 if(SFML_BUILD_NETWORK)
-    SET(NETWORK_SRC
+    sfml_add_test(test-sfml-network SFML::Network)
+    target_sources(test-sfml-network PRIVATE
         Network/Packet.cpp
     )
-    sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 endif()
 
 if(SFML_BUILD_AUDIO)
-    SET(AUDIO_SRC
+    sfml_add_test(test-sfml-audio SFML::Audio)
+    target_sources(test-sfml-audio PRIVATE
         Audio/Dummy.cpp # TODO: Remove when there are real tests
     )
-    sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 endif()
 
 # Automatically run the tests at the end of the build

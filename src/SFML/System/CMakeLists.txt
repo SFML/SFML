@@ -1,9 +1,11 @@
+# define the sfml-system target
+sfml_add_library(System)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/System)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/System)
 
 # all source files
-set(SRC
+target_sources(sfml-system PRIVATE
     ${INCROOT}/Angle.hpp
     ${INCROOT}/Angle.inl
     ${SRCROOT}/Clock.cpp
@@ -32,23 +34,21 @@ set(SRC
     ${INCROOT}/MemoryInputStream.hpp
     ${INCROOT}/SuspendAwareClock.hpp
 )
-source_group("" FILES ${SRC})
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
-    set(PLATFORM_SRC
+    target_sources(sfml-system PRIVATE
         ${SRCROOT}/Win32/SleepImpl.cpp
         ${SRCROOT}/Win32/SleepImpl.hpp
     )
-    source_group("windows" FILES ${PLATFORM_SRC})
 else()
-    set(PLATFORM_SRC
+    target_sources(sfml-system PRIVATE
         ${SRCROOT}/Unix/SleepImpl.cpp
         ${SRCROOT}/Unix/SleepImpl.hpp
     )
 
     if(SFML_OS_ANDROID)
-        set(PLATFORM_SRC ${PLATFORM_SRC}
+        target_sources(sfml-system PRIVATE
             ${SRCROOT}/Android/Activity.hpp
             ${SRCROOT}/Android/Activity.cpp
             ${SRCROOT}/Android/NativeActivity.cpp
@@ -57,13 +57,7 @@ else()
             ${SRCROOT}/Android/SuspendAwareClock.cpp
         )
     endif()
-
-    source_group("unix" FILES ${PLATFORM_SRC})
 endif()
-
-# define the sfml-system target
-sfml_add_library(System
-                 SOURCES ${SRC} ${PLATFORM_SRC})
 
 if(SFML_OS_ANDROID)
     # glad sources

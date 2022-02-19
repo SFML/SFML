@@ -1,20 +1,19 @@
+# define the sfml-main target
+sfml_add_library(Main STATIC)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Main)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Main)
 
 # sources
 if(SFML_OS_WINDOWS)
-    set(SRC ${SRC} ${SRCROOT}/MainWin32.cpp)
+    target_sources(sfml-main PRIVATE ${SRCROOT}/MainWin32.cpp)
 elseif(SFML_OS_IOS)
-    set(SRC ${SRC} ${SRCROOT}/MainiOS.mm)
+    target_sources(sfml-main PRIVATE ${SRCROOT}/MainiOS.mm)
 elseif(SFML_OS_ANDROID)
-    set(SRC ${SRC} ${SRCROOT}/MainAndroid.cpp)
+    target_sources(sfml-main PRIVATE ${SRCROOT}/MainAndroid.cpp)
 else()
     return()
 endif()
-
-# define the sfml-main target
-sfml_add_library(Main STATIC SOURCES ${SRC})
 
 if(SFML_OS_ANDROID)
     # glad sources
@@ -32,5 +31,6 @@ set_target_properties(sfml-main PROPERTIES
 # from depending on shared libraries), we need a boostrap activity which
 # will load our shared libraries manually
 if(SFML_OS_ANDROID)
-    sfml_add_library(Activity SOURCES ${SRCROOT}/SFMLActivity.cpp)
+    sfml_add_library(Activity)
+    target_sources(sfml-activity PRIVATE ${SRCROOT}/SFMLActivity.cpp)
 endif()

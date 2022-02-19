@@ -1,9 +1,11 @@
+# define the sfml-graphics target
+sfml_add_library(Graphics)
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Graphics)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 
 # all source files
-set(SRC
+target_sources(sfml-graphics PRIVATE
     ${SRCROOT}/BlendMode.cpp
     ${INCROOT}/BlendMode.hpp
     ${INCROOT}/Color.hpp
@@ -50,10 +52,9 @@ set(SRC
     ${INCROOT}/Vertex.hpp
     ${INCROOT}/Vertex.inl
 )
-source_group("" FILES ${SRC})
 
 # drawables sources
-set(DRAWABLES_SRC
+target_sources(sfml-graphics PRIVATE
     ${INCROOT}/Drawable.hpp
     ${SRCROOT}/Shape.cpp
     ${INCROOT}/Shape.hpp
@@ -72,10 +73,9 @@ set(DRAWABLES_SRC
     ${SRCROOT}/VertexBuffer.cpp
     ${INCROOT}/VertexBuffer.hpp
 )
-source_group("drawables" FILES ${DRAWABLES_SRC})
 
 # render-texture sources
-set(RENDER_TEXTURE_SRC
+target_sources(sfml-graphics PRIVATE
     ${SRCROOT}/RenderTextureImpl.cpp
     ${SRCROOT}/RenderTextureImpl.hpp
     ${SRCROOT}/RenderTextureImplFBO.cpp
@@ -83,12 +83,6 @@ set(RENDER_TEXTURE_SRC
     ${SRCROOT}/RenderTextureImplDefault.cpp
     ${SRCROOT}/RenderTextureImplDefault.hpp
 )
-source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
-
-
-# define the sfml-graphics target
-sfml_add_library(Graphics
-                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC} ${STB_SRC})
 
 # setup dependencies
 target_link_libraries(sfml-graphics PUBLIC SFML::Window)

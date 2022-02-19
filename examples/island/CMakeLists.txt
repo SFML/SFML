@@ -1,14 +1,8 @@
-
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/island)
-
-# all source files
-set(SRC ${SRCROOT}/Island.cpp)
-
 # define the island target
 sfml_add_example(island GUI_APP
-                 SOURCES ${SRC}
                  DEPENDS SFML::Graphics
                  RESOURCES_DIR resources)
+target_sources(island PRIVATE Island.cpp)
 
 # external dependency headers
 target_include_directories(island SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/island)
