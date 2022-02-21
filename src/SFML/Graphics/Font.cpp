@@ -56,7 +56,7 @@ namespace
         if (stream->seek(convertedOffset) == convertedOffset)
         {
             if (count > 0)
-                return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), static_cast<sf::Int64>(count)));
+                return static_cast<unsigned long>(stream->read(sf::asWritableBytes(sf::Span(buffer, count))));
             else
                 return 0;
         }
@@ -207,7 +207,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
+bool Font::loadFromMemory(Span<const std::byte> data)
 {
     // Cleanup the previous resources
     cleanup();
@@ -227,7 +227,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 
     // Load the new font face from the specified file
     FT_Face face;
-    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
+    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(data.data()), static_cast<FT_Long>(data.size()), 0, &face) != 0)
     {
         err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
         return false;
@@ -687,7 +687,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
         unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
         unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
-        page.texture.update(m_pixelBuffer.data(), w, h, x, y);
+        page.texture.update(m_pixelBuffer, w, h, x, y);
     }
 
     // Delete the FT glyph

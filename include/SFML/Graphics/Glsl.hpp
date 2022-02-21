@@ -217,7 +217,7 @@ namespace Glsl
 /// The components are stored in member variables called
 /// x, y, z, and w.
 ///
-/// All matrix types support a constructor with a float*
+/// All matrix types support a constructor with a \ref sf::Span<const float>
 /// parameter that points to a float array of the appropriate
 /// size (that is, 9 in a 3x3 matrix, 16 in a 4x4 matrix).
 /// Furthermore, they can be converted from sf::Transform

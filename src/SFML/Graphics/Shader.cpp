@@ -111,7 +111,7 @@ namespace
                 return false;
             }
 
-            sf::Int64 read = stream.read(buffer.data(), size);
+            sf::Int64 read = stream.read(sf::asWritableBytes(sf::Span(buffer)));
             success = (read == size);
         }
         buffer.push_back('\0');
@@ -120,12 +120,12 @@ namespace
 
     // Transforms an array of 2D vectors into a contiguous array of scalars
     template <typename T>
-    std::vector<T> flatten(const sf::Vector2<T>* vectorArray, std::size_t length)
+    std::vector<T> flatten(sf::Span<const sf::Vector2<T>> vectorArray)
     {
         const std::size_t vectorSize = 2;
 
-        std::vector<T> contiguous(vectorSize * length);
-        for (std::size_t i = 0; i < length; ++i)
+        std::vector<T> contiguous(vectorSize * vectorArray.size());
+        for (std::size_t i = 0; i < vectorArray.size(); ++i)
         {
             contiguous[vectorSize * i]     = vectorArray[i].x;
             contiguous[vectorSize * i + 1] = vectorArray[i].y;
@@ -136,12 +136,12 @@ namespace
 
     // Transforms an array of 3D vectors into a contiguous array of scalars
     template <typename T>
-    std::vector<T> flatten(const sf::Vector3<T>* vectorArray, std::size_t length)
+    std::vector<T> flatten(sf::Span<const sf::Vector3<T>> vectorArray)
     {
         const std::size_t vectorSize = 3;
 
-        std::vector<T> contiguous(vectorSize * length);
-        for (std::size_t i = 0; i < length; ++i)
+        std::vector<T> contiguous(vectorSize * vectorArray.size());
+        for (std::size_t i = 0; i < vectorArray.size(); ++i)
         {
             contiguous[vectorSize * i]     = vectorArray[i].x;
             contiguous[vectorSize * i + 1] = vectorArray[i].y;
@@ -153,12 +153,12 @@ namespace
 
     // Transforms an array of 4D vectors into a contiguous array of scalars
     template <typename T>
-    std::vector<T> flatten(const sf::priv::Vector4<T>* vectorArray, std::size_t length)
+    std::vector<T> flatten(sf::Span<const sf::priv::Vector4<T>> vectorArray)
     {
         const std::size_t vectorSize = 4;
 
-        std::vector<T> contiguous(vectorSize * length);
-        for (std::size_t i = 0; i < length; ++i)
+        std::vector<T> contiguous(vectorSize * vectorArray.size());
+        for (std::size_t i = 0; i < vectorArray.size(); ++i)
         {
             contiguous[vectorSize * i]     = vectorArray[i].x;
             contiguous[vectorSize * i + 1] = vectorArray[i].y;
@@ -540,7 +540,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
 {
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array.data()));
 }
 
 
@@ -549,7 +549,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 {
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array.data()));
 }
 
 
@@ -601,74 +601,74 @@ void Shader::setUniform(const std::string& name, CurrentTextureType)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const float* scalarArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const float> scalarArray)
 {
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform1fv(binder.location, static_cast<GLsizei>(length), scalarArray));
+        glCheck(GLEXT_glUniform1fv(binder.location, static_cast<GLsizei>(scalarArray.size()), scalarArray.data()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const Glsl::Vec2* vectorArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const Glsl::Vec2> vectorArray)
 {
-    std::vector<float> contiguous = flatten(vectorArray, length);
+    std::vector<float> contiguous = flatten(vectorArray);
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform2fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
+        glCheck(GLEXT_glUniform2fv(binder.location, static_cast<GLsizei>(vectorArray.size()), contiguous.data()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const Glsl::Vec3* vectorArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const Glsl::Vec3> vectorArray)
 {
-    std::vector<float> contiguous = flatten(vectorArray, length);
+    std::vector<float> contiguous = flatten(vectorArray);
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform3fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
+        glCheck(GLEXT_glUniform3fv(binder.location, static_cast<GLsizei>(vectorArray.size()), contiguous.data()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const Glsl::Vec4> vectorArray)
 {
-    std::vector<float> contiguous = flatten(vectorArray, length);
+    std::vector<float> contiguous = flatten(vectorArray);
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniform4fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
+        glCheck(GLEXT_glUniform4fv(binder.location, static_cast<GLsizei>(vectorArray.size()), contiguous.data()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const Glsl::Mat3> matrixArray)
 {
     const std::size_t matrixSize = 3 * 3;
 
-    std::vector<float> contiguous(matrixSize * length);
-    for (std::size_t i = 0; i < length; ++i)
-        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+    std::vector<float> contiguous(matrixSize * matrixArray.size());
+    for (std::size_t i = 0; i < matrixArray.size(); ++i)
+        priv::copyMatrix(matrixArray[i].array, contiguous.data() + matrixSize * i);
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(matrixArray.size()), GL_FALSE, contiguous.data()));
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length)
+void Shader::setUniformArray(const std::string& name, Span<const Glsl::Mat4> matrixArray)
 {
     const std::size_t matrixSize = 4 * 4;
 
-    std::vector<float> contiguous(matrixSize * length);
-    for (std::size_t i = 0; i < length; ++i)
-        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+    std::vector<float> contiguous(matrixSize * matrixArray.size());
+    for (std::size_t i = 0; i < matrixArray.size(); ++i)
+        priv::copyMatrix(matrixArray[i].array, contiguous.data() + matrixSize * i);
 
     UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(matrixArray.size()), GL_FALSE, contiguous.data()));
 }
 
 
@@ -1136,37 +1136,37 @@ void Shader::setUniform(const std::string& /* name */, CurrentTextureType)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const float* /* scalarArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const float> /* scalarArray */)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const Glsl::Vec2* /* vectorArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const Glsl::Vec2> /* vectorArray */)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const Glsl::Vec3* /* vectorArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const Glsl::Vec3> /* vectorArray */)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const Glsl::Vec4* /* vectorArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const Glsl::Vec4> /* vectorArray */)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const Glsl::Mat3* /* matrixArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const Glsl::Mat3> /* matrixArray */)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniformArray(const std::string& /* name */, const Glsl::Mat4* /* matrixArray */, std::size_t /* length */)
+void Shader::setUniformArray(const std::string& /* name */, Span<const Glsl::Mat4> /* matrixArray */)
 {
 }
 

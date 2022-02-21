@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Span.hpp>
 #include <SFML/System/Vector2.hpp>
 
 
@@ -83,10 +84,10 @@ public:
     /// glLoadMatrixf(transform.getMatrix());
     /// \endcode
     ///
-    /// \return Pointer to a 4x4 matrix
+    /// \return View to a 4x4 matrix
     ///
     ////////////////////////////////////////////////////////////
-    constexpr const float* getMatrix() const;
+    constexpr Span<const float, 16> getMatrix() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the inverse of the transform
@@ -268,7 +269,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float m_matrix[16]; //!< 4x4 matrix defining the transformation
+    std::array<float, 16> m_matrix; //!< 4x4 matrix defining the transformation
 };
 
 ////////////////////////////////////////////////////////////

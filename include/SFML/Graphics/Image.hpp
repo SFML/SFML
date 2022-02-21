@@ -31,6 +31,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Span.hpp>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -109,7 +110,7 @@ public:
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    void create(unsigned int width, unsigned int height, const Uint8* pixels);
+    void create(unsigned int width, unsigned int height, Span<const Uint8> pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -136,15 +137,14 @@ public:
     /// like progressive jpeg.
     /// If this function fails, the image is left unchanged.
     ///
-    /// \param data Pointer to the file data in memory
-    /// \param size Size of the data to load, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return True if loading was successful
     ///
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size);
+    [[nodiscard]] bool loadFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a custom stream
@@ -196,7 +196,7 @@ public:
     /// \see create, loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const;
+    [[nodiscard]] bool saveToMemory(std::vector<std::byte>& output, const std::string& format) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image
@@ -275,19 +275,19 @@ public:
     Color getPixel(unsigned int x, unsigned int y) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a read-only pointer to the array of pixels
+    /// \brief Get a read-only view to the array of pixels
     ///
-    /// The returned value points to an array of RGBA pixels made of
-    /// 8 bits integers components. The size of the array is
+    /// The returned span points to an array of RGBA pixels made of
+    /// 8 bits integers components. The size of the span is
     /// width * height * 4 (getSize().x * getSize().y * 4).
-    /// Warning: the returned pointer may become invalid if you
+    /// Warning: the returned span may become invalid if you
     /// modify the image, so you should never store it for too long.
-    /// If the image is empty, a null pointer is returned.
+    /// If the image is empty, an empty span is returned.
     ///
-    /// \return Read-only pointer to the array of pixels
+    /// \return Read-only view to the array of pixels
     ///
     ////////////////////////////////////////////////////////////
-    const Uint8* getPixelsPtr() const;
+    Span<const Uint8> getPixels() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Flip the image horizontally (left <-> right)

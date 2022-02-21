@@ -33,6 +33,7 @@
 #endif
 #include <algorithm>
 #include <ostream>
+#include <cassert>
 #include <cstring>
 
 
@@ -108,12 +109,14 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
+void Image::create(unsigned int width, unsigned int height, Span<const Uint8> pixels)
 {
-    if (pixels && width && height)
+    assert(pixels.size() == 4 * width * height);
+
+    if (pixels.data() && pixels.size())
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(pixels, pixels + width * height * 4);
+        std::vector<Uint8> newPixels(pixels.begin(), pixels.end());
 
         // Commit the new pixel buffer
         m_pixels.swap(newPixels);
@@ -151,9 +154,9 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::loadFromMemory(const void* data, std::size_t size)
+bool Image::loadFromMemory(Span<const std::byte> data)
 {
-    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, m_pixels, m_size);
+    return priv::ImageLoader::getInstance().loadImageFromMemory(data, m_pixels, m_size);
 }
 
 
@@ -170,8 +173,9 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
     return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_size);
 }
 
+
 ////////////////////////////////////////////////////////////
-bool Image::saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const
+bool Image::saveToMemory(std::vector<std::byte>& output, const std::string& format) const
 {
     return priv::ImageLoader::getInstance().saveImageToMemory(format, output, m_pixels, m_size);
 }
@@ -302,17 +306,9 @@ Color Image::getPixel(unsigned int x, unsigned int y) const
 
 
 ////////////////////////////////////////////////////////////
-const Uint8* Image::getPixelsPtr() const
+Span<const Uint8> Image::getPixels() const
 {
-    if (!m_pixels.empty())
-    {
-        return m_pixels.data();
-    }
-    else
-    {
-        err() << "Trying to access the pixels of an empty image" << std::endl;
-        return nullptr;
-    }
+    return !m_pixels.empty() ? m_pixels : Span<const Uint8>();
 }
 
 

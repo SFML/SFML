@@ -144,7 +144,7 @@ FloatRect VertexArray::getBounds() const
 void VertexArray::draw(RenderTarget& target, const RenderStates& states) const
 {
     if (!m_vertices.empty())
-        target.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);
+        target.draw(m_vertices, m_primitiveType, states);
 }
 
 } // namespace sf

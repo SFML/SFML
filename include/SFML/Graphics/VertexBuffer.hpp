@@ -32,6 +32,7 @@
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <SFML/System/Span.hpp>
 #include <cstddef>
 
 
@@ -158,12 +159,12 @@ public:
     /// This function does nothing if \a vertices is null or if the
     /// buffer was not previously created.
     ///
-    /// \param vertices Array of vertices to copy to the buffer
+    /// \param vertices View to the array of vertices to copy to the buffer
     ///
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(const Vertex* vertices);
+    [[nodiscard]] bool update(Span<const Vertex> vertices);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the buffer from an array of vertices
@@ -171,32 +172,31 @@ public:
     /// \p offset is specified as the number of vertices to skip
     /// from the beginning of the buffer.
     ///
-    /// If \p offset is 0 and \p vertexCount is equal to the size of
+    /// If \p offset is 0 and \p vertices.size() is equal to the size of
     /// the currently created buffer, its whole contents are replaced.
     ///
-    /// If \p offset is 0 and \p vertexCount is greater than the
+    /// If \p offset is 0 and \p vertices.size() is greater than the
     /// size of the currently created buffer, a new buffer is created
     /// containing the vertex data.
     ///
-    /// If \p offset is 0 and \p vertexCount is less than the size of
+    /// If \p offset is 0 and \p vertices.size() is less than the size of
     /// the currently created buffer, only the corresponding region
     /// is updated.
     ///
-    /// If \p offset is not 0 and \p offset + \p vertexCount is greater
+    /// If \p offset is not 0 and \p offset + \p vertices.size() is greater
     /// than the size of the currently created buffer, the update fails.
     ///
     /// No additional check is performed on the size of the vertex
     /// array, passing invalid arguments will lead to undefined
     /// behavior.
     ///
-    /// \param vertices    Array of vertices to copy to the buffer
-    /// \param vertexCount Number of vertices to copy
-    /// \param offset      Offset in the buffer to copy to
+    /// \param vertices View to the array of vertices to copy to the buffer
+    /// \param offset   Offset in the buffer to copy to
     ///
     /// \return True if the update was successful
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset);
+    [[nodiscard]] bool update(Span<const Vertex> vertices, unsigned int offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the contents of another buffer into this buffer

@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Span.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -137,15 +138,14 @@ public:
     /// valid until the sf::Font object loads a new font or
     /// is destroyed.
     ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool loadFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the font from a custom stream

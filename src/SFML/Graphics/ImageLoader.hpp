@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/System/Span.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <filesystem>
 #include <string>
@@ -72,15 +73,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a file in memory
     ///
-    /// \param data     Pointer to the file data in memory
-    /// \param dataSize Size of the data to load, in bytes
-    /// \param pixels   Array of pixels to fill with loaded image
-    /// \param size     Size of loaded image, in pixels
+    /// \param data   View to the file data in memory
+    /// \param pixels Array of pixels to fill with loaded image
+    /// \param size   Size of loaded image, in pixels
     ///
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<Uint8>& pixels, Vector2u& size);
+    bool loadImageFromMemory(Span<const std::byte> data, std::vector<Uint8>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a custom stream
@@ -117,7 +117,7 @@ public:
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size);
+    bool saveImageToMemory(const std::string& format, std::vector<std::byte>& output, const std::vector<Uint8>& pixels, const Vector2u& size);
 
 private:
 

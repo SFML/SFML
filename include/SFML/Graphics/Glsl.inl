@@ -37,7 +37,7 @@ void SFML_GRAPHICS_API copyMatrix(const Transform& source, Matrix<4, 4>& dest);
 /// <algorithm> and MSVC's annoying 4996 warning in header
 ///
 ////////////////////////////////////////////////////////////
-void SFML_GRAPHICS_API copyMatrix(const float* source, std::size_t elements, float* dest);
+void SFML_GRAPHICS_API copyMatrix(Span<const float> source, float* dest);
 
 ////////////////////////////////////////////////////////////
 /// \brief Helper functions to copy sf::Color to sf::Glsl::Vec4/Ivec4
@@ -57,14 +57,13 @@ struct Matrix
     ////////////////////////////////////////////////////////////
     /// \brief Construct from raw data
     ///
-    /// \param pointer Points to the beginning of an array that
-    ///                has the size of the matrix. The elements
-    ///                are copied to the instance.
+    /// \param matrix Points to an array that has the size of the matrix.
+    ///               The elements are copied to the instance.
     ///
     ////////////////////////////////////////////////////////////
-    explicit Matrix(const float* pointer)
+    explicit Matrix(Span<const float, Columns * Rows> matrix)
     {
-        copyMatrix(pointer, Columns * Rows, array);
+        copyMatrix(matrix, array.data());
     }
 
     ////////////////////////////////////////////////////////////
@@ -81,7 +80,7 @@ struct Matrix
         copyMatrix(transform, *this);
     }
 
-    float array[Columns * Rows]; //!< Array holding matrix data
+    std::array<float, Columns * Rows> array; //!< Array holding matrix data
 };
 
 ////////////////////////////////////////////////////////////

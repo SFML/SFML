@@ -47,7 +47,7 @@ constexpr Transform::Transform(float a00, float a01, float a02,
 
 
 ////////////////////////////////////////////////////////////
-constexpr const float* Transform::getMatrix() const
+constexpr Span<const float, 16> Transform::getMatrix() const
 {
     return m_matrix;
 }
@@ -122,8 +122,8 @@ constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 ////////////////////////////////////////////////////////////
 constexpr Transform& Transform::combine(const Transform& transform)
 {
-    const float* a = m_matrix;
-    const float* b = transform.m_matrix;
+    const auto& a = m_matrix;
+    const auto& b = transform.m_matrix;
 
     *this = Transform(a[0] * b[0]  + a[4] * b[1]  + a[12] * b[3],
                       a[0] * b[4]  + a[4] * b[5]  + a[12] * b[7],
@@ -196,8 +196,8 @@ constexpr Vector2f operator *(const Transform& left, const Vector2f& right)
 ////////////////////////////////////////////////////////////
 constexpr bool operator ==(const Transform& left, const Transform& right)
 {
-    const float* a = left.getMatrix();
-    const float* b = right.getMatrix();
+    const auto& a = left.getMatrix();
+    const auto& b = right.getMatrix();
 
     return ((a[0]  == b[0])  && (a[1]  == b[1])  && (a[3]  == b[3]) &&
             (a[4]  == b[4])  && (a[5]  == b[5])  && (a[7]  == b[7]) &&

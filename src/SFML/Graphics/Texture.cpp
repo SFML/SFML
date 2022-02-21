@@ -228,10 +228,10 @@ bool Texture::loadFromFile(const std::filesystem::path& filename, const IntRect&
 
 
 ////////////////////////////////////////////////////////////
-bool Texture::loadFromMemory(const void* data, std::size_t size, const IntRect& area)
+bool Texture::loadFromMemory(Span<const std::byte> data, const IntRect& area)
 {
     Image image;
-    return image.loadFromMemory(data, size) && loadFromImage(image, area);
+    return image.loadFromMemory(data) && loadFromImage(image, area);
 }
 
 
@@ -286,7 +286,7 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
             priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
-            const Uint8* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
+            const Uint8* pixels = image.getPixels().data() + 4 * (rectangle.left + (width * rectangle.top));
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
             for (int i = 0; i < rectangle.height; ++i)
             {
@@ -394,14 +394,14 @@ Image Texture::copyToImage() const
 
     // Create the image
     Image image;
-    image.create(m_size.x, m_size.y, pixels.data());
+    image.create(m_size.x, m_size.y, pixels);
 
     return image;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels)
+void Texture::update(Span<const Uint8> pixels)
 {
     // Update the whole texture
     update(pixels, m_size.x, m_size.y, 0, 0);
@@ -409,12 +409,13 @@ void Texture::update(const Uint8* pixels)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels, unsigned int width, unsigned int height, unsigned int x, unsigned int y)
+void Texture::update(Span<const Uint8> pixels, unsigned int width, unsigned int height, unsigned int x, unsigned int y)
 {
+    assert(pixels.size() == 4 * width * height);
     assert(x + width <= m_size.x);
     assert(y + height <= m_size.y);
 
-    if (pixels && m_texture)
+    if (pixels.data() && m_texture)
     {
         TransientContextLock lock;
 
@@ -423,7 +424,7 @@ void Texture::update(const Uint8* pixels, unsigned int width, unsigned int heigh
 
         // Copy pixels from the given array to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-        glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height), GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y), static_cast<GLsizei>(width), static_cast<GLsizei>(height), GL_RGBA, GL_UNSIGNED_BYTE, pixels.data()));
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap = false;
         m_pixelsFlipped = false;
@@ -549,14 +550,14 @@ void Texture::update(const Texture& texture, unsigned int x, unsigned int y)
 void Texture::update(const Image& image)
 {
     // Update the whole texture
-    update(image.getPixelsPtr(), image.getSize().x, image.getSize().y, 0, 0);
+    update(image.getPixels(), image.getSize().x, image.getSize().y, 0, 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Texture::update(const Image& image, unsigned int x, unsigned int y)
 {
-    update(image.getPixelsPtr(), image.getSize().x, image.getSize().y, x, y);
+    update(image.getPixels(), image.getSize().x, image.getSize().y, x, y);
 }
 
 

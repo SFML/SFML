@@ -38,8 +38,8 @@ namespace priv
     ////////////////////////////////////////////////////////////
     void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
     {
-        const float* from = source.getMatrix(); // 4x4
-        float* to = dest.array;                 // 3x3
+        const auto& from = source.getMatrix(); // 4x4
+        auto& to = dest.array;                 // 3x3
 
         // Use only left-upper 3x3 block (for a 2D transform)
         to[0] = from[ 0]; to[1] = from[ 1]; to[2] = from[ 3];
@@ -52,14 +52,14 @@ namespace priv
     void copyMatrix(const Transform& source, Matrix<4, 4>& dest)
     {
         // Adopt 4x4 matrix as-is
-        copyMatrix(source.getMatrix(), 4 * 4, dest.array);
+        copyMatrix(source.getMatrix(), dest.array.data());
     }
 
 
     ////////////////////////////////////////////////////////////
-    void copyMatrix(const float* source, std::size_t elements, float* dest)
+    void copyMatrix(Span<const float> source, float* dest)
     {
-        std::copy(source, source + elements, dest);
+        std::copy(source.begin(), source.end(), dest);
     }
 
 
