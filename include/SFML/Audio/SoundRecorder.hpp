@@ -31,6 +31,7 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Span.hpp>
 #include <vector>
 #include <string>
 #include <thread>
@@ -234,13 +235,12 @@ protected:
     /// whatever it wants with it (storing it, playing it, sending
     /// it over the network, etc.).
     ///
-    /// \param samples     Pointer to the new chunk of recorded samples
-    /// \param sampleCount Number of samples pointed by \a samples
+    /// \param samples View to the new chunk of recorded samples
     ///
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
+    [[nodiscard]] virtual bool onProcessSamples(Span<const Int16> samples) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -392,7 +392,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
+///     [[nodiscard]] bool onProcessSamples(sf::Span<const sf::Int16> samples) override
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...

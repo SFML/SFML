@@ -38,7 +38,7 @@ namespace
     {
         auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-        sf::Int64 count = data->stream->read(buffer, static_cast<sf::Int64>(*bytes));
+        sf::Int64 count = data->stream->read(sf::asWritableBytes(sf::Span(buffer, *bytes)));
         if (count > 0)
         {
             *bytes = static_cast<std::size_t>(count);
@@ -110,8 +110,8 @@ namespace
 
         // Reserve memory if we're going to use the leftovers buffer
         unsigned int frameSamples = frame->header.blocksize * frame->header.channels;
-        if (data->remaining < frameSamples)
-            data->leftovers.reserve(static_cast<std::size_t>(frameSamples - data->remaining));
+        if (data->buffer.size() < frameSamples)
+            data->leftovers.reserve(static_cast<std::size_t>(frameSamples - data->buffer.size()));
 
         // Decode the samples
         for (unsigned i = 0; i < frame->header.blocksize; ++i)
@@ -139,11 +139,11 @@ namespace
                         break;
                 }
 
-                if (data->buffer && data->remaining > 0)
+                if (data->buffer.data() && !data->buffer.empty())
                 {
                     // If there's room in the output buffer, copy the sample there
-                    *data->buffer++ = sample;
-                    --data->remaining;
+                    data->buffer.front() = sample;
+                    data->buffer = data->buffer.subspan(1);
                 }
                 else
                 {
@@ -256,8 +256,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
     assert(m_decoder);
 
     // Reset the callback data (the "write" callback will be called)
-    m_clientData.buffer = nullptr;
-    m_clientData.remaining = 0;
+    m_clientData.buffer = Span<Int16>();
     m_clientData.leftovers.clear();
 
     // FLAC decoder expects absolute sample offset, so we take the channel count out
@@ -280,7 +279,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderFlac::read(Span<Int16> samples)
 {
     assert(m_decoder);
 
@@ -288,28 +287,27 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
     std::size_t left = m_clientData.leftovers.size();
     if (left > 0)
     {
-        if (left > maxCount)
+        if (left > samples.size())
         {
             // There are more leftovers than needed
-            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(maxCount), samples);
-            std::vector<Int16> leftovers(m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(maxCount), m_clientData.leftovers.end());
+            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(samples.size()), samples.begin());
+            std::vector<Int16> leftovers(m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(samples.size()), m_clientData.leftovers.end());
             m_clientData.leftovers.swap(leftovers);
-            return maxCount;
+            return samples.size();
         }
         else
         {
             // We can use all the leftovers and decode new frames
-            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.end(), samples);
+            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.end(), samples.begin());
         }
     }
 
     // Reset the data that will be used in the callback
-    m_clientData.buffer = samples + left;
-    m_clientData.remaining = maxCount - left;
+    m_clientData.buffer = Span(samples).subspan(left);
     m_clientData.leftovers.clear();
 
     // Decode frames one by one until we reach the requested sample count, the end of file or an error
-    while (m_clientData.remaining > 0)
+    while (!m_clientData.buffer.empty())
     {
         // Everything happens in the "write" callback
         // This will break on any fatal error (does not include EOF)
@@ -321,7 +319,7 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
             break;
     }
 
-    return maxCount - m_clientData.remaining;
+    return samples.size() - m_clientData.buffer.size();
 }
 
 

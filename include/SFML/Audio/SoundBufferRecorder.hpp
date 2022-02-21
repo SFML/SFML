@@ -77,13 +77,12 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Process a new chunk of recorded samples
     ///
-    /// \param samples     Pointer to the new chunk of recorded samples
-    /// \param sampleCount Number of samples pointed by \a samples
+    /// \param samples View to the new chunk of recorded samples
     ///
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override;
+    [[nodiscard]] bool onProcessSamples(Span<const Int16> samples) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data

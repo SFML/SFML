@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/System/Span.hpp>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -97,13 +98,12 @@ public:
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
     /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
     ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool openFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from a custom stream for reading
@@ -205,13 +205,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
     ///
-    /// \param samples  Pointer to the sample array to fill
-    /// \param maxCount Maximum number of samples to read
+    /// \param samples View to the sample array to fill
     ///
-    /// \return Number of samples actually read (may be less than \a maxCount)
+    /// \return Number of samples actually read (may be less than \a samples.size())
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] Uint64 read(Span<Int16> samples);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -283,7 +282,7 @@ private:
 /// sf::Uint64 count;
 /// do
 /// {
-///     count = file.read(samples, 1024);
+///     count = file.read(samples);
 ///
 ///     // process, analyze, play, convert, or whatever
 ///     // you want to do with the samples...

@@ -79,13 +79,13 @@ bool Music::openFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool Music::openFromMemory(const void* data, std::size_t sizeInBytes)
+bool Music::openFromMemory(Span<const std::byte> data)
 {
     // First stop the music if it was already running
     stop();
 
     // Open the underlying sound file
-    if (!m_file.openFromMemory(data, sizeInBytes))
+    if (!m_file.openFromMemory(data))
         return false;
 
     // Perform common initializations
@@ -129,7 +129,7 @@ Music::TimeSpan Music::getLoopPoints() const
 ////////////////////////////////////////////////////////////
 void Music::setLoopPoints(TimeSpan timePoints)
 {
-    Span<Uint64> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
+    MusicSpan<Uint64> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
 
     // Check our state. This averts a divide-by-zero. GetChannelCount() is cheap enough to use often
     if (getChannelCount() == 0 || m_file.getSampleCount() == 0)
@@ -186,27 +186,26 @@ void Music::setLoopPoints(TimeSpan timePoints)
 
 
 ////////////////////////////////////////////////////////////
-bool Music::onGetData(SoundStream::Chunk& data)
+bool Music::onGetData(Span<const Int16>& data)
 {
     std::scoped_lock lock(m_mutex);
 
-    std::size_t toFill = m_samples.size();
+    auto chunk = Span(m_samples);
     Uint64 currentOffset = m_file.getSampleOffset();
     Uint64 loopEnd = m_loopSpan.offset + m_loopSpan.length;
 
     // If the loop end is enabled and imminent, request less data.
     // This will trip an "onLoop()" call from the underlying SoundStream,
     // and we can then take action.
-    if (getLoop() && (m_loopSpan.length != 0) && (currentOffset <= loopEnd) && (currentOffset + toFill > loopEnd))
-        toFill = static_cast<std::size_t>(loopEnd - currentOffset);
+    if (getLoop() && (m_loopSpan.length != 0) && (currentOffset <= loopEnd) && (currentOffset + chunk.size() > loopEnd))
+        chunk = chunk.first(static_cast<std::size_t>(loopEnd - currentOffset));
 
     // Fill the chunk parameters
-    data.samples = m_samples.data();
-    data.sampleCount = static_cast<std::size_t>(m_file.read(m_samples.data(), toFill));
-    currentOffset += data.sampleCount;
+    data = chunk.first(static_cast<std::size_t>(m_file.read(chunk)));
+    currentOffset += data.size();
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point
-    return (data.sampleCount != 0) && (currentOffset < m_file.getSampleCount()) && !(currentOffset == loopEnd && m_loopSpan.length != 0);
+    return (!data.empty()) && (currentOffset < m_file.getSampleCount()) && !(currentOffset == loopEnd && m_loopSpan.length != 0);
 }
 
 

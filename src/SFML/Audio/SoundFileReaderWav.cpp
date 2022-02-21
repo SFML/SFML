@@ -42,49 +42,61 @@ namespace
 
     bool decode(sf::InputStream& stream, sf::Uint8& value)
     {
-         return static_cast<std::size_t>(stream.read(&value, sizeof(value))) == sizeof(value);
+        sf::Span<std::byte> byte = sf::asWritableBytes(sf::Span<sf::Uint8>(&value, 1));
+        return stream.read(byte) == static_cast<sf::Int64>(byte.size());
     }
 
     bool decode(sf::InputStream& stream, sf::Int16& value)
     {
-        unsigned char bytes[sizeof(value)];
-        if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
+        std::array<std::byte, sizeof(value)> bytes;
+        if (stream.read(bytes) != static_cast<sf::Int64>(bytes.size()))
             return false;
 
-        value = static_cast<sf::Uint8>(bytes[0] | (bytes[1] << 8));
+        using T = sf::Int16;
+        value = static_cast<T>(std::to_integer<T>(bytes[0])     ) |
+                static_cast<T>(std::to_integer<T>(bytes[1]) << 8);
 
         return true;
     }
 
     bool decode(sf::InputStream& stream, sf::Uint16& value)
     {
-        unsigned char bytes[sizeof(value)];
-        if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
+        std::array<std::byte, sizeof(value)> bytes;
+        if (stream.read(bytes) != static_cast<sf::Int64>(bytes.size()))
             return false;
 
-        value = static_cast<sf::Uint16>(bytes[0] | (bytes[1] << 8));
+        using T = sf::Uint16;
+        value = static_cast<T>(std::to_integer<T>(bytes[0])     ) |
+                static_cast<T>(std::to_integer<T>(bytes[1]) << 8);
 
         return true;
     }
 
     bool decode24bit(sf::InputStream& stream, sf::Uint32& value)
     {
-        unsigned char bytes[3];
-        if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
+        std::array<std::byte, 3> bytes;
+        if (stream.read(bytes) != static_cast<sf::Int64>(bytes.size()))
             return false;
 
-        value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
+        using T = sf::Uint32;
+        value = static_cast<T>(std::to_integer<T>(bytes[0])      ) |
+                static_cast<T>(std::to_integer<T>(bytes[1]) <<  8) |
+                static_cast<T>(std::to_integer<T>(bytes[2]) << 16);
 
         return true;
     }
 
     bool decode(sf::InputStream& stream, sf::Uint32& value)
     {
-        unsigned char bytes[sizeof(value)];
-        if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
+        std::array<std::byte, sizeof(value)> bytes;
+        if (stream.read(bytes) != static_cast<sf::Int64>(bytes.size()))
             return false;
 
-        value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
+        using T = sf::Uint32;
+        value = static_cast<T>(std::to_integer<T>(bytes[0])      ) |
+                static_cast<T>(std::to_integer<T>(bytes[1]) <<  8) |
+                static_cast<T>(std::to_integer<T>(bytes[2]) << 16) |
+                static_cast<T>(std::to_integer<T>(bytes[3]) << 24);
 
         return true;
     }
@@ -95,9 +107,12 @@ namespace
 
     const sf::Uint16 waveFormatExtensible= 65534;
 
-    const char* waveSubformatPcm =
-        "\x01\x00\x00\x00\x00\x00\x10\x00"
-        "\x80\x00\x00\xAA\x00\x38\x9B\x71";
+    constexpr auto waveSubformatPcm = std::array{
+        std::byte(0x01), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+        std::byte(0x00), std::byte(0x00), std::byte(0x10), std::byte(0x00),
+        std::byte(0x80), std::byte(0x00), std::byte(0x00), std::byte(0xAA),
+        std::byte(0x00), std::byte(0x38), std::byte(0x9B), std::byte(0x71)
+    };
 }
 
 namespace sf
@@ -107,12 +122,15 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderWav::check(InputStream& stream)
 {
-    char header[mainChunkSize];
-    if (stream.read(header, sizeof(header)) < static_cast<Int64>(sizeof(header)))
+    constexpr auto RIFF = std::array{std::byte('R'), std::byte('I'), std::byte('F'), std::byte('F')};
+    constexpr auto WAVE = std::array{std::byte('W'), std::byte('A'), std::byte('V'), std::byte('E')};
+
+    std::array<std::byte, mainChunkSize> header;
+    if (stream.read(header) < static_cast<Int64>(header.size()))
         return false;
 
-    return (header[0] == 'R') && (header[1] == 'I') && (header[2] == 'F') && (header[3] == 'F')
-        && (header[8] == 'W') && (header[9] == 'A') && (header[10] == 'V') && (header[11] == 'E');
+    return std::equal(RIFF.begin(), RIFF.end(), header.begin()) &&
+           std::equal(WAVE.begin(), WAVE.end(), header.begin() + 8);
 }
 
 
@@ -152,16 +170,18 @@ void SoundFileReaderWav::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderWav::read(Span<Int16> samples)
 {
     assert(m_stream);
 
     Uint64 count = 0;
-    auto startPos = static_cast<Uint64>(m_stream->tell());
+    const auto startPos = static_cast<Uint64>(m_stream->tell());
 
     // Tracking of m_dataEnd is important to prevent sf::Music from reading
     // data until EOF, as WAV files may have metadata at the end.
-    while ((count < maxCount) && (startPos + count * m_bytesPerSample < m_dataEnd))
+    const auto remainingSamples = static_cast<std::size_t>((m_dataEnd - startPos) / m_bytesPerSample);
+
+    for (auto& outputSample : samples.first(std::min(samples.size(), remainingSamples)))
     {
         switch (m_bytesPerSample)
         {
@@ -169,7 +189,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint8 sample = 0;
                 if (decode(*m_stream, sample))
-                    *samples++ = static_cast<Int16>((static_cast<Int16>(sample) - 128) << 8);
+                    outputSample = static_cast<Int16>((static_cast<Int16>(sample) - 128) << 8);
                 else
                     return count;
                 break;
@@ -179,7 +199,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Int16 sample = 0;
                 if (decode(*m_stream, sample))
-                    *samples++ = sample;
+                    outputSample = sample;
                 else
                     return count;
                 break;
@@ -189,7 +209,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint32 sample = 0;
                 if (decode24bit(*m_stream, sample))
-                    *samples++ = static_cast<Int16>(sample >> 8);
+                    outputSample = static_cast<Int16>(sample >> 8);
                 else
                     return count;
                 break;
@@ -199,7 +219,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
             {
                 Uint32 sample = 0;
                 if (decode(*m_stream, sample))
-                    *samples++ = static_cast<Int16>(sample >> 16);
+                    outputSample = static_cast<Int16>(sample >> 16);
                 else
                     return count;
                 break;
@@ -226,8 +246,8 @@ bool SoundFileReaderWav::parseHeader(Info& info)
 
     // If we are here, it means that the first part of the header
     // (the format) has already been checked
-    char mainChunk[mainChunkSize];
-    if (static_cast<std::size_t>(m_stream->read(mainChunk, static_cast<Int64>(sizeof(mainChunk)))) != sizeof(mainChunk))
+    std::array<std::byte, mainChunkSize> mainChunk;
+    if (m_stream->read(mainChunk) != static_cast<Int64>(mainChunk.size()))
         return false;
 
     // Parse all the sub-chunks
@@ -235,8 +255,8 @@ bool SoundFileReaderWav::parseHeader(Info& info)
     while (!dataChunkFound)
     {
         // Parse the sub-chunk id and size
-        char subChunkId[4];
-        if (static_cast<std::size_t>(m_stream->read(subChunkId, static_cast<Int64>(sizeof(subChunkId)))) != sizeof(subChunkId))
+        std::array<std::byte, 4> subChunkId;
+        if (m_stream->read(subChunkId) != static_cast<Int64>(subChunkId.size()))
             return false;
         Uint32 subChunkSize = 0;
         if (!decode(*m_stream, subChunkSize))
@@ -246,7 +266,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             return false;
 
         // Check which chunk it is
-        if ((subChunkId[0] == 'f') && (subChunkId[1] == 'm') && (subChunkId[2] == 't') && (subChunkId[3] == ' '))
+        if (subChunkId == std::array{std::byte('f'), std::byte('m'), std::byte('t'), std::byte(' ')})
         {
             // "fmt" chunk
 
@@ -308,11 +328,11 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                     return false;
 
                 // Subformat
-                char subformat[16];
-                if (static_cast<std::size_t>(m_stream->read(subformat, static_cast<Int64>(sizeof(subformat)))) != sizeof(subformat))
+                std::array<std::byte, 16> subformat;
+                if (m_stream->read(subformat) != static_cast<Int64>(subformat.size()))
                     return false;
 
-                if (std::memcmp(subformat, waveSubformatPcm, sizeof(subformat)) != 0)
+                if (subformat != waveSubformatPcm)
                 {
                     err() << "Unsupported format: extensible format with non-PCM subformat" << std::endl;
                     return false;
@@ -330,7 +350,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             if (m_stream->seek(subChunkStart + subChunkSize) == -1)
                 return false;
         }
-        else if ((subChunkId[0] == 'd') && (subChunkId[1] == 'a') && (subChunkId[2] == 't') && (subChunkId[3] == 'a'))
+        else if (subChunkId == std::array{std::byte('d'), std::byte('a'), std::byte('t'), std::byte('a')})
         {
             // "data" chunk
 

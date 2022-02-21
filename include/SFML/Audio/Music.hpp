@@ -54,13 +54,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    struct Span
+    struct MusicSpan
     {
         ////////////////////////////////////////////////////////////
         /// \brief Default constructor
         ///
         ////////////////////////////////////////////////////////////
-        Span()
+        MusicSpan()
         {
 
         }
@@ -72,7 +72,7 @@ public:
         /// \param len Initial Length
         ///
         ////////////////////////////////////////////////////////////
-        Span(T off, T len):
+        MusicSpan(T off, T len):
         offset(off),
         length(len)
         {
@@ -83,8 +83,8 @@ public:
         T length; //!< The length of the time range
     };
 
-    // Define the relevant Span types
-    using TimeSpan = Span<Time>;
+    // Define the relevant MusicSpan types
+    using TimeSpan = MusicSpan<Time>;
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -132,15 +132,14 @@ public:
     /// the sf::Music object loads a new music or is destroyed. That is,
     /// you can't deallocate the buffer right after calling this function.
     ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see openFromFile, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool openFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in a custom stream
@@ -223,7 +222,7 @@ protected:
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool onGetData(Chunk& data) override;
+    [[nodiscard]] bool onGetData(Span<const Int16>& data) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -279,7 +278,7 @@ private:
     InputSoundFile       m_file;     //!< The streamed music file
     std::vector<Int16>   m_samples;  //!< Temporary buffer of samples
     std::recursive_mutex m_mutex;    //!< Mutex protecting the data
-    Span<Uint64>         m_loopSpan; //!< Loop Range Specifier
+    MusicSpan<Uint64>    m_loopSpan; //!< Loop Range Specifier
 };
 
 } // namespace sf

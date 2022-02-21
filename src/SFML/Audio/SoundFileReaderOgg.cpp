@@ -38,7 +38,7 @@ namespace
     size_t read(void* ptr, size_t size, size_t nmemb, void* data)
     {
         auto* stream = static_cast<sf::InputStream*>(data);
-        return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
+        return static_cast<std::size_t>(stream->read({static_cast<std::byte*>(ptr), size * nmemb}));
     }
 
     int seek(void* data, ogg_int64_t offset, int whence)
@@ -136,21 +136,21 @@ void SoundFileReaderOgg::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderOgg::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderOgg::read(Span<Int16> samples)
 {
     assert(m_vorbis.datasource);
 
     // Try to read the requested number of samples, stop only on error or end of file
     Uint64 count = 0;
-    while (count < maxCount)
+    while (!samples.empty())
     {
-        int bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(Int16));
-        long bytesRead = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
+        int bytesToRead = static_cast<int>(samples.size_bytes());
+        long bytesRead = ov_read(&m_vorbis, reinterpret_cast<char*>(samples.data()), bytesToRead, 0, 2, 1, nullptr);
         if (bytesRead > 0)
         {
             long samplesRead = bytesRead / static_cast<long>(sizeof(Int16));
             count += static_cast<Uint64>(samplesRead);
-            samples += samplesRead;
+            samples = samples.subspan(static_cast<std::size_t>(samplesRead));
         }
         else
         {

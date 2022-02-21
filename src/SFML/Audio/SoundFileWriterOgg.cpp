@@ -127,29 +127,28 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
+void SoundFileWriterOgg::write(Span<const Int16> samples)
 {
     // Vorbis has issues with buffers that are too large, so we ask for 64K
-    constexpr int bufferSize = 65536;
+    constexpr std::size_t bufferFrames = 65536;
 
     // A frame contains a sample from each channel
-    int frameCount = static_cast<int>(count / m_channelCount);
-
-    while (frameCount > 0)
+    while (samples.size() >= m_channelCount)
     {
         // Prepare a buffer to hold our samples
-        float** buffer = vorbis_analysis_buffer(&m_state, bufferSize);
+        float** buffer = vorbis_analysis_buffer(&m_state, bufferFrames);
         assert(buffer);
 
         // Write the samples to the buffer, converted to float
-        for (int i = 0; i < std::min(frameCount, bufferSize); ++i)
+        const auto outputFrames = std::min(samples.size() / m_channelCount, bufferFrames);
+        for (std::size_t i = 0; i < outputFrames; ++i)
             for (unsigned int j = 0; j < m_channelCount; ++j)
-                buffer[j][i] = *samples++ / 32767.0f;
+                buffer[j][i] = samples[i * m_channelCount + j] / 32767.0f;
 
         // Tell the library how many samples we've written
-        vorbis_analysis_wrote(&m_state, std::min(frameCount, bufferSize));
+        vorbis_analysis_wrote(&m_state, static_cast<int>(outputFrames));
 
-        frameCount -= bufferSize;
+        samples = samples.subspan(outputFrames * m_channelCount);
 
         // Flush any produced block
         flushBlocks();

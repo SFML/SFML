@@ -31,6 +31,7 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Span.hpp>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -92,15 +93,14 @@ public:
     /// See the documentation of sf::InputSoundFile for the list
     /// of supported formats.
     ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return True if loading succeeded, false if it failed
     ///
     /// \see loadFromFile, loadFromStream, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool loadFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
@@ -123,8 +123,7 @@ public:
     /// The assumed format of the audio samples is 16 bits signed integer
     /// (sf::Int16).
     ///
-    /// \param samples      Pointer to the array of samples in memory
-    /// \param sampleCount  Number of samples in the array
+    /// \param samples      View to the array of samples in memory
     /// \param channelCount Number of channels (1 = mono, 2 = stereo, ...)
     /// \param sampleRate   Sample rate (number of samples to play per second)
     ///
@@ -133,7 +132,7 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    [[nodiscard]] bool loadFromSamples(Span<const Int16> samples, unsigned int channelCount, unsigned int sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -154,28 +153,12 @@ public:
     /// \brief Get the array of audio samples stored in the buffer
     ///
     /// The format of the returned samples is 16 bits signed integer
-    /// (sf::Int16). The total number of samples in this array
-    /// is given by the getSampleCount() function.
+    /// (sf::Int16).
     ///
-    /// \return Read-only pointer to the array of sound samples
-    ///
-    /// \see getSampleCount
+    /// \return Read-only view to the array of sound samples
     ///
     ////////////////////////////////////////////////////////////
-    const Int16* getSamples() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the number of samples stored in the buffer
-    ///
-    /// The array of samples can be accessed with the getSamples()
-    /// function.
-    ///
-    /// \return Number of samples
-    ///
-    /// \see getSamples
-    ///
-    ////////////////////////////////////////////////////////////
-    Uint64 getSampleCount() const;
+    Span<const Int16> getSamples() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound

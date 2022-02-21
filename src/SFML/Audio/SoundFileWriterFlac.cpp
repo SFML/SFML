@@ -93,22 +93,21 @@ bool SoundFileWriterFlac::open(const std::filesystem::path& filename, unsigned i
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterFlac::write(const Int16* samples, Uint64 count)
+void SoundFileWriterFlac::write(Span<const Int16> samples)
 {
-    while (count > 0)
+    while (!samples.empty())
     {
         // Make sure that we don't process too many samples at once
-        unsigned int frames = std::min(static_cast<unsigned int>(count / m_channelCount), 10000u);
+        unsigned int frames = std::min(static_cast<unsigned int>(samples.size() / m_channelCount), 10000u);
 
         // Convert the samples to 32-bits
-        m_samples32.assign(samples, samples + frames * m_channelCount);
+        m_samples32.assign(samples.begin(), samples.begin() + frames * m_channelCount);
 
         // Write them to the FLAC stream
         FLAC__stream_encoder_process_interleaved(m_encoder, m_samples32.data(), frames);
 
         // Next chunk
-        count -= m_samples32.size();
-        samples += m_samples32.size();
+        samples = samples.subspan(m_samples32.size());
     }
 }
 

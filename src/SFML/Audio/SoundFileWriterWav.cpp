@@ -118,12 +118,12 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterWav::write(const Int16* samples, Uint64 count)
+void SoundFileWriterWav::write(Span<const Int16> samples)
 {
     assert(m_file.good());
 
-    while (count--)
-        encode(m_file, *samples++);
+    for (auto sample : samples)
+        encode(m_file, sample);
 }
 
 

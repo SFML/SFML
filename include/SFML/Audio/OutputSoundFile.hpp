@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/System/Span.hpp>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -89,11 +90,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
     ///
-    /// \param samples     Pointer to the sample array to write
-    /// \param count       Number of samples to write
+    /// \param samples View to the sample array to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count);
+    void write(Span<const Int16> samples);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -137,7 +137,7 @@ private:
 ///     std::vector<sf::Int16> samples = ...;
 ///
 ///     // Write them to the file
-///     file.write(samples.data(), samples.size());
+///     file.write(samples);
 /// }
 /// \endcode
 ///

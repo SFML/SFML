@@ -31,6 +31,7 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Span.hpp>
 #include <cstdlib>
 #include <mutex>
 #include <thread>
@@ -45,16 +46,6 @@ namespace sf
 class SFML_AUDIO_API SoundStream : public SoundSource
 {
 public:
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Structure defining a chunk of audio data to stream
-    ///
-    ////////////////////////////////////////////////////////////
-    struct Chunk
-    {
-        const Int16* samples;     //!< Pointer to the audio samples
-        std::size_t  sampleCount; //!< Number of samples pointed by Samples
-    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -226,7 +217,7 @@ protected:
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual bool onGetData(Chunk& data) = 0;
+    [[nodiscard]] virtual bool onGetData(Span<const Int16>& data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -410,14 +401,13 @@ private:
 ///
 /// private:
 ///
-///     bool onGetData(Chunk& data) override
+///     bool onGetData(sf::Span<const sf::Int16>& data) override
 ///     {
 ///         // Fill the chunk with audio data from the stream source
 ///         // (note: must not be empty if you want to continue playing)
-///         data.samples = ...;
+///         data = ...;
 ///
 ///         // Return true to continue playing
-///         data.sampleCount = ...;
 ///         return true;
 ///     }
 ///

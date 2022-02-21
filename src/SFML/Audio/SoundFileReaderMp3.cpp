@@ -56,7 +56,7 @@ namespace
 std::size_t readCallback(void* ptr, std::size_t size, void* data)
 {
     sf::InputStream* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size)));
+    return static_cast<std::size_t>(stream->read({static_cast<std::byte*>(ptr), size}));
 }
 
 int seekCallback(std::uint64_t offset, void* data)
@@ -66,9 +66,16 @@ int seekCallback(std::uint64_t offset, void* data)
     return position < 0 ? -1 : 0;
 }
 
-bool hasValidId3Tag(const sf::Uint8* header)
+bool hasValidId3Tag(sf::Span<const std::byte, 10> header)
 {
-    return std::memcmp(header, "ID3", 3) == 0 && !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
+    constexpr auto ID3 = std::array{std::byte('I'), std::byte('D'), std::byte('3')};
+
+    return std::equal(ID3.begin(), ID3.end(), header.begin()) &&
+           (header[5] & std::byte(0x0f)) == std::byte(0) &&
+           (header[6] & std::byte(0x80)) == std::byte(0) &&
+           (header[7] & std::byte(0x80)) == std::byte(0) &&
+           (header[8] & std::byte(0x80)) == std::byte(0) &&
+           (header[9] & std::byte(0x80)) == std::byte(0);
 }
 }
 
@@ -79,15 +86,15 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderMp3::check(InputStream& stream)
 {
-    Uint8 header[10];
+    std::array<std::byte, 10> header;
 
-    if (static_cast<std::size_t>(stream.read(header, static_cast<Int64>(sizeof(header)))) < sizeof(header))
+    if (stream.read(header) < static_cast<Int64>(header.size()))
         return false;
 
     if (hasValidId3Tag(header))
         return true;
 
-    if (hdr_valid(header))
+    if (hdr_valid(reinterpret_cast<const Uint8*>(header.data())))
         return true;
 
     return false;
@@ -144,10 +151,10 @@ void SoundFileReaderMp3::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderMp3::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderMp3::read(Span<Int16> samples)
 {
-    Uint64 toRead = std::min(maxCount, m_numSamples - m_position);
-    toRead = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
+    Uint64 toRead = std::min(samples.size(), static_cast<std::size_t>(m_numSamples - m_position));
+    toRead = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples.data(), static_cast<std::size_t>(toRead)));
     m_position += toRead;
     return toRead;
 }

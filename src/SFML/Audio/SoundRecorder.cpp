@@ -308,7 +308,7 @@ void SoundRecorder::processCapturedSamples()
         alcCaptureSamples(captureDevice, m_samples.data(), samplesAvailable);
 
         // Forward them to the derived class
-        if (!onProcessSamples(m_samples.data(), m_samples.size()))
+        if (!onProcessSamples(m_samples))
         {
             // The user wants to stop the capture
             m_isCapturing = false;

@@ -98,14 +98,14 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromMemory(const void* data, std::size_t sizeInBytes)
+std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromMemory(Span<const std::byte> data)
 {
     // Register the built-in readers/writers on first call
     ensureDefaultReadersWritersRegistered();
 
     // Wrap the memory file into a file stream
     MemoryInputStream stream;
-    stream.open(data, sizeInBytes);
+    stream.open(data);
 
     // Test the stream for all the registered factories
     for (const ReaderFactory& readerFactory : s_readers)

@@ -70,10 +70,10 @@ bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsign
 
 
 ////////////////////////////////////////////////////////////
-void OutputSoundFile::write(const Int16* samples, Uint64 count)
+void OutputSoundFile::write(Span<const Int16> samples)
 {
-    if (m_writer && samples && count)
-        m_writer->write(samples, count);
+    if (m_writer && samples.data() && !samples.empty())
+        m_writer->write(samples);
 }
 
 

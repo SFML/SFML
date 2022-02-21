@@ -84,11 +84,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
     ///
-    /// \param samples Pointer to the sample array to write
-    /// \param count   Number of samples to write
+    /// \param samples View to the sample array to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count) override;
+    void write(Span<const Int16> samples) override;
 
 private:
 

@@ -53,9 +53,9 @@ bool SoundBufferRecorder::onStart()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sampleCount)
+bool SoundBufferRecorder::onProcessSamples(Span<const Int16> samples)
 {
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
+    std::copy(samples.begin(), samples.end(), std::back_inserter(m_samples));
 
     return true;
 }
@@ -67,7 +67,7 @@ void SoundBufferRecorder::onStop()
     if (m_samples.empty())
         return;
 
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate()))
+    if (!m_buffer.loadFromSamples(m_samples, getChannelCount(), getSampleRate()))
         err() << "Failed to stop capturing audio data" << std::endl;
 }
 

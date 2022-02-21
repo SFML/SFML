@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <SFML/System/Span.hpp>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -100,15 +101,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
     ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Total size of the file data, in bytes
+    /// \param data View to the file data in memory
     ///
     /// \return A new sound file codec that can read the given file, or null if no codec can handle it
     ///
     /// \see createReaderFromFilename, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
+    static std::unique_ptr<SoundFileReader> createReaderFromMemory(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in stream

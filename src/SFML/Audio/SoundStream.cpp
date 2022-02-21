@@ -411,14 +411,14 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
     bool requestStop = false;
 
     // Acquire audio data, also address EOF and error cases if they occur
-    Chunk data = {nullptr, 0};
+    auto data = Span<const Int16>();
     for (Uint32 retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
     {
         // Check if the stream must loop or stop
         if (!m_loop)
         {
             // Not looping: Mark this buffer as ending with 0 and request stop
-            if (data.samples != nullptr && data.sampleCount != 0)
+            if (data.data() && !data.empty())
                 m_bufferSeeks[bufferNum] = 0;
             requestStop = true;
             break;
@@ -429,7 +429,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
         m_bufferSeeks[bufferNum] = onLoop();
 
         // If we got data, break and process it, else try to fill the buffer once again
-        if (data.samples != nullptr && data.sampleCount != 0)
+        if (data.data() && !data.empty())
             break;
 
         // If immediateLoop is specified, we have to immediately adjust the sample count
@@ -444,13 +444,13 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
     }
 
     // Fill the buffer if some data was returned
-    if (data.samples && data.sampleCount)
+    if (data.data() && !data.empty())
     {
         unsigned int buffer = m_buffers[bufferNum];
 
         // Fill the buffer
-        auto size = static_cast<ALsizei>(data.sampleCount * sizeof(Int16));
-        alCheck(alBufferData(buffer, m_format, data.samples, size, static_cast<ALsizei>(m_sampleRate)));
+        auto size = static_cast<ALsizei>(data.size_bytes());
+        alCheck(alBufferData(buffer, m_format, data.data(), size, static_cast<ALsizei>(m_sampleRate)));
 
         // Push it into the sound queue
         alCheck(alSourceQueueBuffers(m_source, 1, &buffer));

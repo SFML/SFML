@@ -120,13 +120,13 @@ bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
+bool InputSoundFile::openFromMemory(Span<const std::byte> data)
 {
     // If the file is already open, first close it
     close();
 
     // Find a suitable reader for the file type
-    auto reader = SoundFileFactory::createReaderFromMemory(data, sizeInBytes);
+    auto reader = SoundFileFactory::createReaderFromMemory(data);
     if (!reader)
         return false;
 
@@ -134,7 +134,7 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     auto memory = std::make_unique<MemoryInputStream>();
 
     // Open it
-    memory->open(data, sizeInBytes);
+    memory->open(data);
 
     // Pass the stream to the reader
     SoundFileReader::Info info;
@@ -261,11 +261,11 @@ void InputSoundFile::seek(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 InputSoundFile::read(Int16* samples, Uint64 maxCount)
+Uint64 InputSoundFile::read(Span<Int16> samples)
 {
     Uint64 readSamples = 0;
-    if (m_reader && samples && maxCount)
-        readSamples = m_reader->read(samples, maxCount);
+    if (m_reader && samples.data() && !samples.empty())
+        readSamples = m_reader->read(samples);
     m_sampleOffset += readSamples;
     return readSamples;
 }

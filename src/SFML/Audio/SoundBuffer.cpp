@@ -103,10 +103,10 @@ bool SoundBuffer::loadFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
+bool SoundBuffer::loadFromMemory(Span<const std::byte> data)
 {
     InputSoundFile file;
-    if (file.openFromMemory(data, sizeInBytes))
+    if (file.openFromMemory(data))
         return initialize(file);
     else
         return false;
@@ -125,12 +125,12 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate)
+bool SoundBuffer::loadFromSamples(Span<const Int16> samples, unsigned int channelCount, unsigned int sampleRate)
 {
-    if (samples && sampleCount && channelCount && sampleRate)
+    if (samples.data() && !samples.empty() && channelCount && sampleRate)
     {
         // Copy the new audio samples
-        m_samples.assign(samples, samples + sampleCount);
+        m_samples.assign(samples.begin(), samples.end());
 
         // Update the internal buffer with the new samples
         return update(channelCount, sampleRate);
@@ -139,10 +139,10 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsi
     {
         // Error...
         err() << "Failed to load sound buffer from samples ("
-              << "array: "      << samples      << ", "
-              << "count: "      << sampleCount  << ", "
-              << "channels: "   << channelCount << ", "
-              << "samplerate: " << sampleRate   << ")"
+              << "array: "      << samples.data() << ", "
+              << "count: "      << samples.size() << ", "
+              << "channels: "   << channelCount   << ", "
+              << "samplerate: " << sampleRate     << ")"
               << std::endl;
 
         return false;
@@ -158,7 +158,7 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
     if (file.openFromFile(filename, getSampleRate(), getChannelCount()))
     {
         // Write the samples to the opened file
-        file.write(m_samples.data(), m_samples.size());
+        file.write(m_samples);
 
         return true;
     }
@@ -170,16 +170,9 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 
 
 ////////////////////////////////////////////////////////////
-const Int16* SoundBuffer::getSamples() const
+Span<const Int16> SoundBuffer::getSamples() const
 {
-    return m_samples.empty() ? nullptr : m_samples.data();
-}
-
-
-////////////////////////////////////////////////////////////
-Uint64 SoundBuffer::getSampleCount() const
-{
-    return m_samples.size();
+    return !m_samples.empty() ? m_samples : Span<const Int16>();
 }
 
 
@@ -234,7 +227,7 @@ bool SoundBuffer::initialize(InputSoundFile& file)
 
     // Read the samples from the provided file
     m_samples.resize(static_cast<std::size_t>(sampleCount));
-    if (file.read(m_samples.data(), sampleCount) == sampleCount)
+    if (file.read(m_samples) == sampleCount)
     {
         // Update the internal buffer with the new samples
         return update(channelCount, sampleRate);
