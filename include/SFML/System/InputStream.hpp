@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 #include <SFML/System/Export.hpp>
+#include <SFML/System/Span.hpp>
 
 
 namespace sf
@@ -55,12 +56,11 @@ public:
     /// advanced by the amount of bytes read.
     ///
     /// \param data Buffer where to copy the read data
-    /// \param size Desired number of bytes to read
     ///
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual Int64 read(void* data, Int64 size) = 0;
+    [[nodiscard]] virtual Int64 read(Span<std::byte> data) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -121,7 +121,7 @@ public:
 ///
 ///     [[nodiscard]] bool open(const std::filesystem::path& filename);
 ///
-///     [[nodiscard]] Int64 read(void* data, Int64 size);
+///     [[nodiscard]] Int64 read(sf::Span<std::byte> data);
 ///
 ///     [[nodiscard]] Int64 seek(Int64 position);
 ///

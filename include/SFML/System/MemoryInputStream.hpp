@@ -53,11 +53,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from its data
     ///
-    /// \param data        Pointer to the data in memory
-    /// \param sizeInBytes Size of the data, in bytes
+    /// \param data View to the data in memory
     ///
     ////////////////////////////////////////////////////////////
-    void open(const void* data, std::size_t sizeInBytes);
+    void open(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -66,12 +65,11 @@ public:
     /// advanced by the amount of bytes read.
     ///
     /// \param data Buffer where to copy the read data
-    /// \param size Desired number of bytes to read
     ///
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Int64 read(void* data, Int64 size) override;
+    [[nodiscard]] Int64 read(Span<std::byte> data) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -104,9 +102,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const char* m_data;   //!< Pointer to the data in memory
-    Int64       m_size;   //!< Total size of the data
-    Int64       m_offset; //!< Current reading position
+    Span<const std::byte> m_data;   //!< View to the data in memory
+    std::size_t           m_offset; //!< Current reading position
 };
 
 } // namespace sf
@@ -139,7 +136,7 @@ private:
 /// void process(InputStream& stream);
 ///
 /// MemoryInputStream stream;
-/// stream.open(thePtr, theSize);
+/// stream.open(Span(thePtr, theSize));
 /// process(stream);
 /// \endcode
 ///

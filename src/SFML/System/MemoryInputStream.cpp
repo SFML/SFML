@@ -33,69 +33,67 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 MemoryInputStream::MemoryInputStream() :
-m_data  (nullptr),
-m_size  (0),
+m_data(),
 m_offset(0)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
+void MemoryInputStream::open(Span<const std::byte> data)
 {
-    m_data = static_cast<const char*>(data);
-    m_size = static_cast<Int64>(sizeInBytes);
+    m_data = data;
     m_offset = 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-Int64 MemoryInputStream::read(void* data, Int64 size)
+Int64 MemoryInputStream::read(Span<std::byte> data)
 {
-    if (!m_data)
+    if (!m_data.data())
         return -1;
 
-    Int64 endPosition = m_offset + size;
-    Int64 count = endPosition <= m_size ? size : m_size - m_offset;
+    auto endPosition = m_offset + data.size();
+    auto count = endPosition <= m_data.size() ? data.size() : m_data.size() - m_offset;
 
     if (count > 0)
     {
-        std::memcpy(data, m_data + m_offset, static_cast<std::size_t>(count));
+        std::memcpy(data.data(), m_data.data() + m_offset, count);
         m_offset += count;
     }
 
-    return count;
+    return static_cast<Int64>(count);
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 MemoryInputStream::seek(Int64 position)
 {
-    if (!m_data)
+    if (!m_data.data())
         return -1;
 
-    m_offset = position < m_size ? position : m_size;
-    return m_offset;
+    m_offset = static_cast<std::size_t>(position) < m_data.size() ? static_cast<std::size_t>(position) : m_data.size();
+    return static_cast<Int64>(m_offset);
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 MemoryInputStream::tell()
 {
-    if (!m_data)
+    if (!m_data.data())
         return -1;
 
-    return m_offset;
+    return static_cast<Int64>(m_offset);
 }
 
 
 ////////////////////////////////////////////////////////////
 Int64 MemoryInputStream::getSize()
 {
-    if (!m_data)
+    if (!m_data.data())
         return -1;
 
-    return m_size;
+    return static_cast<Int64>(m_data.size());
 }
 
 } // namespace sf

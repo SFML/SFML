@@ -77,13 +77,13 @@ bool FileInputStream::open(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-Int64 FileInputStream::read(void* data, Int64 size)
+Int64 FileInputStream::read(Span<std::byte> data)
 {
 #ifdef SFML_SYSTEM_ANDROID
-    return m_file->read(data, size);
+    return m_file->read(data);
 #else
     if (m_file)
-        return static_cast<Int64>(std::fread(data, 1, static_cast<std::size_t>(size), m_file.get()));
+        return static_cast<Int64>(std::fread(data.data(), 1, data.size(), m_file.get()));
     else
         return -1;
 #endif

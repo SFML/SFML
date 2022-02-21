@@ -65,12 +65,11 @@ public:
     /// \brief Read data from the asset
     ///
     /// \param data Buffer where the asset data is copied
-    /// \param size Number of bytes read
     ///
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 read(void *data, Int64 size) override;
+    Int64 read(Span<std::byte> data) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position in the asset file

@@ -106,12 +106,11 @@ public:
     /// advanced by the amount of bytes read.
     ///
     /// \param data Buffer where to copy the read data
-    /// \param size Desired number of bytes to read
     ///
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Int64 read(void* data, Int64 size) override;
+    [[nodiscard]] Int64 read(Span<std::byte> data) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position

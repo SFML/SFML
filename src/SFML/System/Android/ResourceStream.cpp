@@ -57,11 +57,11 @@ ResourceStream::~ResourceStream()
 
 
 ////////////////////////////////////////////////////////////
-Int64 ResourceStream::read(void *data, Int64 size)
+Int64 ResourceStream::read(Span<std::byte> data)
 {
     if (m_file)
     {
-        return AAsset_read(m_file, data, static_cast<size_t>(size));
+        return AAsset_read(m_file, data.data(), data.size());
     }
     else
     {
