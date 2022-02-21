@@ -15,6 +15,8 @@ set(SRC
     ${INCROOT}/NativeActivity.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
+    ${INCROOT}/Span.hpp
+    ${INCROOT}/detail/span.hpp
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
     ${INCROOT}/String.inl

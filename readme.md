@@ -54,3 +54,4 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
   * [_libvorbis_](https://gitlab.xiph.org/xiph/vorbis) is under the [BSD license](https://gitlab.xiph.org/xiph/vorbis/-/blob/master/COPYING)
   * [_libflac_](https://gitlab.xiph.org/xiph/flac) is under the [BSD license](https://gitlab.xiph.org/xiph/flac/-/blob/master/COPYING.Xiph)
   * [_minimp3_](https://github.com/lieff/minimp3) is under the [CC0 license](https://github.com/lieff/minimp3/blob/master/LICENSE)
+  * [_span_](https://github.com/tcbrindle/span) is under the [BSL license](https://github.com/tcbrindle/span/blob/master/LICENSE_1_0.txt)
