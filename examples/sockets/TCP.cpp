@@ -28,17 +28,17 @@ void runTcpServer(unsigned short port)
     std::cout << "Client connected: " << socket.getRemoteAddress() << std::endl;
 
     // Send a message to the connected client
-    const char out[] = "Hi, I'm the server";
-    if (socket.send(out, sizeof(out)) != sf::Socket::Done)
+    std::string_view out = "Hi, I'm the server";
+    if (socket.send(sf::asBytes(sf::Span(out))) != sf::Socket::Done)
         return;
     std::cout << "Message sent to the client: \"" << out << '"' << std::endl;
 
     // Receive a message back from the client
     char in[128];
     std::size_t received;
-    if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
+    if (socket.receive(sf::asWritableBytes(sf::Span(in)), received) != sf::Socket::Done)
         return;
-    std::cout << "Answer received from the client: \"" << in << '"' << std::endl;
+    std::cout << "Answer received from the client: \"" << std::string_view(in, received) << '"' << std::endl;
 }
 
 
@@ -69,13 +69,13 @@ void runTcpClient(unsigned short port)
     // Receive a message from the server
     char in[128];
     std::size_t received;
-    if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
+    if (socket.receive(sf::asWritableBytes(sf::Span(in)), received) != sf::Socket::Done)
         return;
-    std::cout << "Message received from the server: \"" << in << '"' << std::endl;
+    std::cout << "Message received from the server: \"" << std::string_view(in, received) << '"' << std::endl;
 
     // Send an answer to the server
-    const char out[] = "Hi, I'm a client";
-    if (socket.send(out, sizeof(out)) != sf::Socket::Done)
+    std::string_view out = "Hi, I'm a client";
+    if (socket.send(sf::asBytes(sf::Span(out))) != sf::Socket::Done)
         return;
     std::cout << "Message sent to the server: \"" << out << '"' << std::endl;
 }

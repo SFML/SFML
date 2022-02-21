@@ -67,12 +67,12 @@ private:
     /// \see SoundRecorder::onProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount) override
+    bool onProcessSamples(sf::Span<const sf::Int16> samples) override
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
         packet << clientAudioData;
-        packet.append(samples, sampleCount * sizeof(sf::Int16));
+        packet.append(sf::asBytes(samples));
 
         // Send the audio packet to the server
         return m_socket.send(packet) == sf::Socket::Done;

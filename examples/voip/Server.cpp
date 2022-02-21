@@ -71,7 +71,7 @@ private:
     /// /see SoundStream::OnGetData
     ///
     ////////////////////////////////////////////////////////////
-    bool onGetData(sf::SoundStream::Chunk& data) override
+    bool onGetData(sf::Span<const sf::Int16>& data) override
     {
         // We have reached the end of the buffer and all audio data have been played: we can stop playback
         if ((m_offset >= m_samples.size()) && m_hasFinished)
@@ -89,8 +89,7 @@ private:
         }
 
         // Fill audio data to pass to the stream
-        data.samples     = m_tempBuffer.data();
-        data.sampleCount = m_tempBuffer.size();
+        data = m_tempBuffer;
 
         // Update the playing offset
         m_offset += m_tempBuffer.size();
@@ -127,7 +126,7 @@ private:
             if (id == serverAudioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(sf::Int16);
+                std::size_t sampleCount = (packet.getData().size() - 1) / sizeof(sf::Int16);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
@@ -135,7 +134,7 @@ private:
                     std::scoped_lock lock(m_mutex);
                     std::size_t oldSize = m_samples.size();
                     m_samples.resize(oldSize + sampleCount);
-                    std::memcpy(&(m_samples[oldSize]), static_cast<const char*>(packet.getData()) + 1, sampleCount * sizeof(sf::Int16));
+                    std::memcpy(&(m_samples[oldSize]), packet.getData().data() + 1, sampleCount * sizeof(sf::Int16));
                 }
             }
             else if (id == serverEndOfStream)

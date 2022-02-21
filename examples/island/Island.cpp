@@ -225,7 +225,7 @@ int main()
                     // If there is new data pending to be uploaded to the VertexBuffer, do it now
                     if (bufferUploadPending)
                     {
-                        if (!terrain.update(terrainStagingBuffer.data()))
+                        if (!terrain.update(terrainStagingBuffer))
                         {
                             std::cerr << "Failed to update vertex buffer" << std::endl;
                             return EXIT_FAILURE;
