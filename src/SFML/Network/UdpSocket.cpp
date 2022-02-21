@@ -98,13 +98,13 @@ void UdpSocket::unbind()
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort)
+Socket::Status UdpSocket::send(Span<const std::byte> data, const IpAddress& remoteAddress, unsigned short remotePort)
 {
     // Create the internal socket if it doesn't exist
     create();
 
     // Make sure that all the data will fit in one datagram
-    if (size > MaxDatagramSize)
+    if (data.size() > MaxDatagramSize)
     {
         err() << "Cannot send data over the network "
               << "(the number of bytes to send is greater than sf::UdpSocket::MaxDatagramSize)" << std::endl;
@@ -117,7 +117,7 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Send the data (unlike TCP, all the data is always sent in one call)
-    int sent = static_cast<int>(sendto(getHandle(), static_cast<const char*>(data), static_cast<priv::SocketImpl::Size>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address)));
+    int sent = static_cast<int>(sendto(getHandle(), reinterpret_cast<const char*>(data.data()), static_cast<priv::SocketImpl::Size>(data.size()), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address)));
     #pragma GCC diagnostic pop
 
     // Check for errors
@@ -129,7 +129,7 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort)
+Socket::Status UdpSocket::receive(Span<std::byte> data, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort)
 {
     // First clear the variables to fill
     received      = 0;
@@ -137,7 +137,7 @@ Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& rec
     remotePort    = 0;
 
     // Check the destination buffer
-    if (!data)
+    if (!data.data())
     {
         err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
         return Error;
@@ -150,7 +150,7 @@ Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& rec
     #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
     priv::SocketImpl::AddrLength addressSize = sizeof(address);
-    int sizeReceived = static_cast<int>(recvfrom(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize));
+    int sizeReceived = static_cast<int>(recvfrom(getHandle(), reinterpret_cast<char*>(data.data()), static_cast<priv::SocketImpl::Size>(data.size()), 0, reinterpret_cast<sockaddr*>(&address), &addressSize));
     #pragma GCC diagnostic pop
 
     // Check for errors
@@ -178,11 +178,10 @@ Socket::Status UdpSocket::send(Packet& packet, const IpAddress& remoteAddress, u
     // to the packet's data.
 
     // Get the data to send from the packet
-    std::size_t size = 0;
-    const void* data = packet.onSend(size);
+    Span<const std::byte> data = packet.onSend();
 
     // Send it
-    return send(data, size, remoteAddress, remotePort);
+    return send(data, remoteAddress, remotePort);
 }
 
 
@@ -193,12 +192,12 @@ Socket::Status UdpSocket::receive(Packet& packet, IpAddress& remoteAddress, unsi
 
     // Receive the datagram
     std::size_t received = 0;
-    Status status = receive(m_buffer.data(), m_buffer.size(), received, remoteAddress, remotePort);
+    Status status = receive(m_buffer, received, remoteAddress, remotePort);
 
     // If we received valid data, we can copy it to the user packet
     packet.clear();
     if ((status == Done) && (received > 0))
-        packet.onReceive(m_buffer.data(), received);
+        packet.onReceive(Span(m_buffer).first(received));
 
     return status;
 }

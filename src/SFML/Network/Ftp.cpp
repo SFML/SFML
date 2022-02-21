@@ -375,7 +375,7 @@ Ftp::Response Ftp::sendCommand(const std::string& command, const std::string& pa
         commandStr = command + "\r\n";
 
     // Send it to the server
-    if (m_commandSocket.send(commandStr.c_str(), commandStr.length()) != Socket::Done)
+    if (m_commandSocket.send(asBytes(Span(commandStr))) != Socket::Done)
         return Response(Response::ConnectionClosed);
 
     // Get the response
@@ -396,23 +396,23 @@ Ftp::Response Ftp::getResponse()
     for (;;)
     {
         // Receive the response from the server
-        char buffer[1024];
+        std::array<char, 1024> buffer;
         std::size_t length;
 
         if (m_receiveBuffer.empty())
         {
-            if (m_commandSocket.receive(buffer, sizeof(buffer), length) != Socket::Done)
+            if (m_commandSocket.receive(asWritableBytes(Span(buffer)), length) != Socket::Done)
                 return Response(Response::ConnectionClosed);
         }
         else
         {
-            std::copy(m_receiveBuffer.begin(), m_receiveBuffer.end(), buffer);
+            std::copy(m_receiveBuffer.begin(), m_receiveBuffer.end(), buffer.begin());
             length = m_receiveBuffer.size();
             m_receiveBuffer.clear();
         }
 
         // There can be several lines inside the received buffer, extract them all
-        std::istringstream in(std::string(buffer, length), std::ios_base::binary);
+        std::istringstream in(std::string(buffer.begin(), buffer.begin() + length), std::ios_base::binary);
         while (in)
         {
             // Try to extract the code
@@ -466,7 +466,7 @@ Ftp::Response Ftp::getResponse()
                         }
 
                         // Save the remaining data for the next time getResponse() is called
-                        m_receiveBuffer.assign(buffer + static_cast<std::size_t>(in.tellg()), length - static_cast<std::size_t>(in.tellg()));
+                        m_receiveBuffer.assign(buffer.begin() + in.tellg(), buffer.begin() + length);
 
                         // Return the response code and message
                         return Response(static_cast<Response::Status>(code), message);
@@ -598,11 +598,12 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
 void Ftp::DataChannel::receive(std::ostream& stream)
 {
     // Receive data
-    char buffer[1024];
+    std::array<char, 1024> buffer;
     std::size_t received;
-    while (m_dataSocket.receive(buffer, sizeof(buffer), received) == Socket::Done)
+
+    while (m_dataSocket.receive(asWritableBytes(Span(buffer)), received) == Socket::Done)
     {
-        stream.write(buffer, static_cast<std::streamsize>(received));
+        stream.write(buffer.data(), static_cast<std::streamsize>(received));
 
         if (!stream.good())
         {
@@ -620,13 +621,13 @@ void Ftp::DataChannel::receive(std::ostream& stream)
 void Ftp::DataChannel::send(std::istream& stream)
 {
     // Send data
-    char buffer[1024];
+    std::array<char, 1024> buffer;
     std::size_t count;
 
     for (;;)
     {
         // read some data from the stream
-        stream.read(buffer, sizeof(buffer));
+        stream.read(buffer.data(), buffer.size());
 
         if (!stream.good() && !stream.eof())
         {
@@ -639,7 +640,7 @@ void Ftp::DataChannel::send(std::istream& stream)
         if (count > 0)
         {
             // we could read more data from the stream: send them
-            if (m_dataSocket.send(buffer, count) != Socket::Done)
+            if (m_dataSocket.send(asBytes(Span(buffer).first(count))) != Socket::Done)
                 break;
         }
         else

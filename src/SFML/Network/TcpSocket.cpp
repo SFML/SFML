@@ -221,22 +221,22 @@ void TcpSocket::disconnect()
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::send(const void* data, std::size_t size)
+Socket::Status TcpSocket::send(Span<const std::byte> data)
 {
     if (!isBlocking())
         err() << "Warning: Partial sends might not be handled properly." << std::endl;
 
     std::size_t sent;
 
-    return send(data, size, sent);
+    return send(data, sent);
 }
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& sent)
+Socket::Status TcpSocket::send(Span<const std::byte> data, std::size_t& sent)
 {
     // Check the parameters
-    if (!data || (size == 0))
+    if (!data.data() || data.empty())
     {
         err() << "Cannot send data over the network (no data to send)" << std::endl;
         return Error;
@@ -244,12 +244,12 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
 
     // Loop until every byte has been sent
     int result = 0;
-    for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
+    for (sent = 0; sent < data.size(); sent += static_cast<std::size_t>(result))
     {
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wuseless-cast"
         // Send a chunk of data
-        result = static_cast<int>(::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
+        result = static_cast<int>(::send(getHandle(), reinterpret_cast<const char*>(data.data()) + sent, static_cast<priv::SocketImpl::Size>(data.size() - sent), flags));
         #pragma GCC diagnostic pop
 
         // Check for errors
@@ -269,13 +269,13 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& received)
+Socket::Status TcpSocket::receive(Span<std::byte> data, std::size_t& received)
 {
     // First clear the variables to fill
     received = 0;
 
     // Check the destination buffer
-    if (!data)
+    if (!data.data())
     {
         err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
         return Error;
@@ -284,7 +284,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
-    int sizeReceived = static_cast<int>(recv(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
+    int sizeReceived = static_cast<int>(recv(getHandle(), reinterpret_cast<char*>(data.data()), static_cast<priv::SocketImpl::Size>(data.size()), flags));
     #pragma GCC diagnostic pop
 
     // Check the number of bytes received
@@ -317,35 +317,25 @@ Socket::Status TcpSocket::send(Packet& packet)
     // data corruption on the receiving end.
 
     // Get the data to send from the packet
-    std::size_t size = 0;
-    const void* data = packet.onSend(size);
+    Span<const std::byte> data = packet.onSend();
 
     // First convert the packet size to network byte order
-    Uint32 packetSize = htonl(static_cast<Uint32>(size));
+    Uint32 packetSize = htonl(static_cast<Uint32>(data.size()));
 
     // Allocate memory for the data block to send
-    std::vector<char> blockToSend(sizeof(packetSize) + size);
+    std::vector<std::byte> blockToSend(sizeof(packetSize) + data.size());
 
     // Copy the packet size and data into the block to send
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
     std::memcpy(blockToSend.data(), &packetSize, sizeof(packetSize));
     #pragma GCC diagnostic pop
-    if (size > 0)
-        std::memcpy(blockToSend.data() + sizeof(packetSize), data, size);
+    if (!data.empty())
+        std::memcpy(blockToSend.data() + sizeof(packetSize), data.data(), data.size());
 
-    // These warnings are ignored here for portability, as even on Windows the
-    // signature of `send` might change depending on whether Win32 or MinGW is
-    // being used.
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wuseless-cast"
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
-    Status status = send(blockToSend.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
-    #pragma GCC diagnostic pop
-    #pragma GCC diagnostic pop
+    Status status = send(Span(blockToSend).subspan(packet.m_sendPos), sent);
 
     // In the case of a partial send, record the location to resume from
     if (status == Partial)
@@ -376,8 +366,8 @@ Socket::Status TcpSocket::receive(Packet& packet)
         // (even a 4 byte variable may be received in more than one call)
         while (m_pendingPacket.SizeReceived < sizeof(m_pendingPacket.Size))
         {
-            char* data = reinterpret_cast<char*>(&m_pendingPacket.Size) + m_pendingPacket.SizeReceived;
-            Status status = receive(data, sizeof(m_pendingPacket.Size) - m_pendingPacket.SizeReceived, received);
+            Span<std::byte> data = asWritableBytes(Span(&m_pendingPacket.Size, 1)).subspan(m_pendingPacket.SizeReceived);
+            Status status = receive(data, received);
             m_pendingPacket.SizeReceived += received;
 
             if (status != Done)
@@ -394,27 +384,23 @@ Socket::Status TcpSocket::receive(Packet& packet)
     }
 
     // Loop until we receive all the packet data
-    char buffer[1024];
+    std::array<std::byte, 1024> buffer;
     while (m_pendingPacket.Data.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
-        Status status = receive(buffer, sizeToGet, received);
+        std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), buffer.size());
+        Status status = receive(Span(buffer).first(sizeToGet), received);
         if (status != Done)
             return status;
 
         // Append it into the packet
         if (received > 0)
-        {
-            m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            char* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
-            std::memcpy(begin, buffer, received);
-        }
+            m_pendingPacket.Data.insert(m_pendingPacket.Data.end(), buffer.begin(), buffer.begin() + received);
     }
 
     // We have received all the packet data: we can copy it to the user packet
     if (!m_pendingPacket.Data.empty())
-        packet.onReceive(m_pendingPacket.Data.data(), m_pendingPacket.Data.size());
+        packet.onReceive(m_pendingPacket.Data);
 
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();

@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 #include <SFML/Network/IpAddress.hpp>
+#include <SFML/System/Span.hpp>
 #include <vector>
 
 
@@ -115,12 +116,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to a remote peer
     ///
-    /// Make sure that \a size is not greater than
+    /// Make sure that \a data.size() is not greater than
     /// UdpSocket::MaxDatagramSize, otherwise this function will
     /// fail and no data will be sent.
     ///
-    /// \param data          Pointer to the sequence of bytes to send
-    /// \param size          Number of bytes to send
+    /// \param data          View to the sequence of bytes to send
     /// \param remoteAddress Address of the receiver
     /// \param remotePort    Port of the receiver to send the data to
     ///
@@ -129,7 +129,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
+    [[nodiscard]] Status send(Span<const std::byte> data, const IpAddress& remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from a remote peer
@@ -141,8 +141,7 @@ public:
     /// then an error will be returned and *all* the data will
     /// be lost.
     ///
-    /// \param data          Pointer to the array to fill with the received bytes
-    /// \param size          Maximum number of bytes that can be received
+    /// \param data          View to the array to fill with the received bytes
     /// \param received      This variable is filled with the actual number of bytes received
     /// \param remoteAddress Address of the peer that sent the data
     /// \param remotePort    Port of the peer that sent the data
@@ -152,7 +151,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status receive(void* data, std::size_t size, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
+    [[nodiscard]] Status receive(Span<std::byte> data, std::size_t& received, IpAddress& remoteAddress, unsigned short& remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to a remote peer
@@ -194,7 +193,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_buffer; //!< Temporary buffer holding the received data in Receive(Packet)
+    std::vector<std::byte> m_buffer; //!< Temporary buffer holding the received data in Receive(Packet)
 };
 
 } // namespace sf
@@ -258,15 +257,15 @@ private:
 ///
 /// // Send a message to 192.168.1.50 on port 55002
 /// std::string message = "Hi, I am " + sf::IpAddress::getLocalAddress().toString();
-/// socket.send(message.c_str(), message.size() + 1, "192.168.1.50", 55002);
+/// socket.send(sf::asBytes(sf::Span(message)), "192.168.1.50", 55002);
 ///
 /// // Receive an answer (most likely from 192.168.1.50, but could be anyone else)
 /// char buffer[1024];
 /// std::size_t received = 0;
 /// sf::IpAddress sender;
 /// unsigned short port;
-/// socket.receive(buffer, sizeof(buffer), received, sender, port);
-/// std::cout << sender.ToString() << " said: " << buffer << std::endl;
+/// socket.receive(sf::asWritableBytes(sf::Span(buffer)), received, sender, port);
+/// std::cout << sender.ToString() << " said: " << std::string_view(buffer, received) << std::endl;
 ///
 /// // ----- The server -----
 ///
@@ -279,12 +278,12 @@ private:
 /// std::size_t received = 0;
 /// sf::IpAddress sender;
 /// unsigned short port;
-/// socket.receive(buffer, sizeof(buffer), received, sender, port);
-/// std::cout << sender.ToString() << " said: " << buffer << std::endl;
+/// socket.receive(sf::asWritableBytes(sf::Span(buffer)), received, sender, port);
+/// std::cout << sender.ToString() << " said: " << std::string_view(buffer, received) << std::endl;
 ///
 /// // Send an answer
-/// std::string message = "Welcome " + sender.toString();
-/// socket.send(message.c_str(), message.size() + 1, sender, port);
+/// std::string answer = "Welcome " + sender.toString();
+/// socket.send(sf::asBytes(sf::Span(answer)), sender, port);
 /// \endcode
 ///
 /// \see sf::Socket, sf::TcpSocket, sf::Packet

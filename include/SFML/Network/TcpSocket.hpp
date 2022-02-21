@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Span.hpp>
 
 
 namespace sf
@@ -126,27 +127,25 @@ public:
     /// \brief Send raw data to the remote peer
     ///
     /// To be able to handle partial sends over non-blocking
-    /// sockets, use the send(const void*, std::size_t, std::size_t&)
+    /// sockets, use the send(Span<const std::byte>, std::size_t&)
     /// overload instead.
     /// This function will fail if the socket is not connected.
     ///
-    /// \param data Pointer to the sequence of bytes to send
-    /// \param size Number of bytes to send
+    /// \param data View to the sequence of bytes to send
     ///
     /// \return Status code
     ///
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status send(const void* data, std::size_t size);
+    [[nodiscard]] Status send(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to the remote peer
     ///
     /// This function will fail if the socket is not connected.
     ///
-    /// \param data Pointer to the sequence of bytes to send
-    /// \param size Number of bytes to send
+    /// \param data View to the sequence of bytes to send
     /// \param sent The number of bytes sent will be written here
     ///
     /// \return Status code
@@ -154,7 +153,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status send(const void* data, std::size_t size, std::size_t& sent);
+    [[nodiscard]] Status send(Span<const std::byte> data, std::size_t& sent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from the remote peer
@@ -163,8 +162,7 @@ public:
     /// bytes are actually received.
     /// This function will fail if the socket is not connected.
     ///
-    /// \param data     Pointer to the array to fill with the received bytes
-    /// \param size     Maximum number of bytes that can be received
+    /// \param data     View to the array to fill with the received bytes
     /// \param received This variable is filled with the actual number of bytes received
     ///
     /// \return Status code
@@ -172,7 +170,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status receive(void* data, std::size_t size, std::size_t& received);
+    [[nodiscard]] Status receive(Span<std::byte> data, std::size_t& received);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
@@ -220,9 +218,9 @@ private:
     {
         PendingPacket();
 
-        Uint32            Size;         //!< Data of packet size
-        std::size_t       SizeReceived; //!< Number of size bytes received so far
-        std::vector<char> Data;         //!< Data of the packet
+        Uint32                 Size;         //!< Data of packet size
+        std::size_t            SizeReceived; //!< Number of size bytes received so far
+        std::vector<std::byte> Data;         //!< Data of the packet
     };
 
     ////////////////////////////////////////////////////////////
@@ -281,13 +279,13 @@ private:
 ///
 /// // Send a message to the connected host
 /// std::string message = "Hi, I am a client";
-/// socket.send(message.c_str(), message.size() + 1);
+/// socket.send(sf::asBytes(sf::Span(message)));
 ///
 /// // Receive an answer from the server
 /// char buffer[1024];
 /// std::size_t received = 0;
-/// socket.receive(buffer, sizeof(buffer), received);
-/// std::cout << "The server said: " << buffer << std::endl;
+/// socket.receive(sf::asWritableBytes(sf::Span(buffer)), received);
+/// std::cout << "The server said: " << std::string_view(buffer, received) << std::endl;
 ///
 /// // ----- The server -----
 ///
@@ -303,12 +301,12 @@ private:
 /// // Receive a message from the client
 /// char buffer[1024];
 /// std::size_t received = 0;
-/// socket.receive(buffer, sizeof(buffer), received);
-/// std::cout << "The client said: " << buffer << std::endl;
+/// socket.receive(sf::asWritableBytes(sf::Span(buffer)), received);
+/// std::cout << "The client said: " << std::string_view(buffer, received) << std::endl;
 ///
 /// // Send an answer
 /// std::string message = "Welcome, client";
-/// socket.send(message.c_str(), message.size() + 1);
+/// socket.send(sf::asBytes(sf::Span(message)));
 /// \endcode
 ///
 /// \see sf::Socket, sf::UdpSocket, sf::Packet

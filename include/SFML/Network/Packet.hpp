@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
+#include <SFML/System/Span.hpp>
 #include <string>
 #include <vector>
 #include <cstddef>
@@ -90,14 +91,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Append data to the end of the packet
     ///
-    /// \param data        Pointer to the sequence of bytes to append
-    /// \param sizeInBytes Number of bytes to append
+    /// \param data View to the sequence of bytes to append
     ///
     /// \see clear
     /// \see getReadPosition
     ///
     ////////////////////////////////////////////////////////////
-    void append(const void* data, std::size_t sizeInBytes);
+    void append(Span<const std::byte> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the packet
@@ -122,32 +122,17 @@ public:
     void clear();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get a pointer to the data contained in the packet
+    /// \brief Get a view to the data contained in the packet
     ///
-    /// Warning: the returned pointer may become invalid after
+    /// Warning: the returned span may become invalid after
     /// you append data to the packet, therefore it should never
     /// be stored.
-    /// The return pointer is a null pointer if the packet is empty.
+    /// The returned span is empty if the packet is empty.
     ///
-    /// \return Pointer to the data
-    ///
-    /// \see getDataSize
+    /// \return View to the data
     ///
     ////////////////////////////////////////////////////////////
-    const void* getData() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the data contained in the packet
-    ///
-    /// This function returns the number of bytes pointed to by
-    /// what getData returns.
-    ///
-    /// \return Data size, in bytes
-    ///
-    /// \see getData
-    ///
-    ////////////////////////////////////////////////////////////
-    std::size_t getDataSize() const;
+    Span<const std::byte> getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the reading position has reached the
@@ -378,19 +363,16 @@ protected:
     /// This function can be defined by derived classes to
     /// transform the data before it is sent; this can be
     /// used for compression, encryption, etc.
-    /// The function must return a pointer to the modified data,
-    /// as well as the number of bytes pointed.
+    /// The function must return a view to the modified data.
     /// The default implementation provides the packet's data
     /// without transforming it.
     ///
-    /// \param size Variable to fill with the size of data to send
-    ///
-    /// \return Pointer to the array of bytes to send
+    /// \return View to the array of bytes to send
     ///
     /// \see onReceive
     ///
     ////////////////////////////////////////////////////////////
-    virtual const void* onSend(std::size_t& size);
+    virtual Span<const std::byte> onSend();
 
     ////////////////////////////////////////////////////////////
     /// \brief Called after the packet is received over the network
@@ -398,18 +380,17 @@ protected:
     /// This function can be defined by derived classes to
     /// transform the data after it is received; this can be
     /// used for decompression, decryption, etc.
-    /// The function receives a pointer to the received data,
+    /// The function receives a view to the received data,
     /// and must fill the packet with the transformed bytes.
     /// The default implementation fills the packet directly
     /// without transforming the data.
     ///
-    /// \param data Pointer to the received bytes
-    /// \param size Number of bytes
+    /// \param data View to the received bytes
     ///
     /// \see onSend
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onReceive(const void* data, std::size_t size);
+    virtual void onReceive(Span<const std::byte> data);
 
 private:
 
@@ -435,10 +416,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_data;    //!< Data stored in the packet
-    std::size_t       m_readPos; //!< Current reading position in the packet
-    std::size_t       m_sendPos; //!< Current send position in the packet (for handling partial sends)
-    bool              m_isValid; //!< Reading state of the packet
+    std::vector<std::byte> m_data;    //!< Data stored in the packet
+    std::size_t            m_readPos; //!< Current reading position in the packet
+    std::size_t            m_sendPos; //!< Current send position in the packet (for handling partial sends)
+    bool                   m_isValid; //!< Reading state of the packet
 };
 
 } // namespace sf
@@ -539,20 +520,18 @@ private:
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     const void* onSend(std::size_t& size) override
+///     sf::Span<const std::byte> onSend() override
 ///     {
-///         const void* srcData = getData();
-///         std::size_t srcSize = getDataSize();
+///         sf::Span<conts std::byte> srcData = getData();
 ///
-///         return MySuperZipFunction(srcData, srcSize, &size);
+///         return MySuperZipFunction(srcData);
 ///     }
 ///
-///     void onReceive(const void* data, std::size_t size) override
+///     void onReceive(sf::Span<const std::byte> data) override
 ///     {
-///         std::size_t dstSize;
-///         const void* dstData = MySuperUnzipFunction(data, size, &dstSize);
+///         sf::Span<const std::byte> dstData = MySuperUnzipFunction(data);
 ///
-///         append(dstData, dstSize);
+///         append(dstData);
 ///     }
 /// };
 ///
