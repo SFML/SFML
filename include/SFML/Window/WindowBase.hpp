@@ -33,6 +33,7 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Span.hpp>
 #include <memory>
 
 
@@ -273,16 +274,15 @@ public:
     ///
     /// The OS default icon is used by default.
     ///
-    /// \param width  Icon's width, in pixels
-    /// \param height Icon's height, in pixels
     /// \param pixels Pointer to the array of pixels in memory. The
     ///               pixels are copied, so you need not keep the
     ///               source alive after calling this function.
+    /// \param size   Width and height of the icon in pixels
     ///
     /// \see setTitle
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    void setIcon(Span<const Uint8> pixels, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

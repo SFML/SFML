@@ -28,6 +28,7 @@
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cassert>
 #include <memory>
 
 namespace sf
@@ -46,12 +47,14 @@ Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Cursor::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
+bool Cursor::loadFromPixels(Span<const Uint8> pixels, Vector2u size, Vector2u hotspot)
 {
-    if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
+    assert(pixels.size() == 4 * size.x * size.y);
+
+    if ((pixels.data() == nullptr) || (size.x == 0) || (size.y == 0))
         return false;
     else
-        return m_impl->loadFromPixels(pixels, size, hotspot);
+        return m_impl->loadFromPixels(pixels.data(), size, hotspot);
 }
 
 

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+#include <SFML/System/Span.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 
@@ -172,7 +173,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] bool loadFromPixels(Span<const Uint8> pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor

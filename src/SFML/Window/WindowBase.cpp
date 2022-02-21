@@ -29,6 +29,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <cassert>
 #include <ostream>
 
 
@@ -235,10 +236,12 @@ void WindowBase::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowBase::setIcon(Span<const Uint8> pixels, Vector2u size)
 {
+    assert(pixels.size() == 4 * size.x * size.y);
+
     if (m_impl)
-        m_impl->setIcon(width, height, pixels);
+        m_impl->setIcon(size.x, size.y, pixels.data());
 }
 
 
