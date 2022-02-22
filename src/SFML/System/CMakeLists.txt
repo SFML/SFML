@@ -16,7 +16,7 @@ set(SRC
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${INCROOT}/Span.hpp
-    ${INCROOT}/detail/span.hpp
+    ${INCROOT}/Span.inl
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
     ${INCROOT}/String.inl

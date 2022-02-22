@@ -26,18 +26,81 @@
 #define SFML_SYSTEM_SPAN_HPP
 
 ////////////////////////////////////////////////////////////
-// Include <span> if C++20 or greater is used.
-// Otherwise, use an alternative implementation for older compilers.
+// Headers
 ////////////////////////////////////////////////////////////
-#if __cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <type_traits>
+#include <cassert>
 
-    #include <span>
 
-#else
+namespace sf
+{
+////////////////////////////////////////////////////////////
+/// \relates Span
+/// \brief Constant to differentiate Span of static or dynamic extent
+///
+/// \see https://en.cppreference.com/w/cpp/container/span/dynamic_extent
+///
+////////////////////////////////////////////////////////////
+inline constexpr std::size_t DynamicExtent = SIZE_MAX;
 
-    #define TCB_SPAN_NAMESPACE_NAME std
-    #include <SFML/System/detail/span.hpp>
+////////////////////////////////////////////////////////////
+/// \brief Utility class to refer to a contiguous sequence of objects
+///
+////////////////////////////////////////////////////////////
+template <typename ElementType, std::size_t Extent = DynamicExtent>
+class Span;
 
-#endif
+////////////////////////////////////////////////////////////
+/// \relates Span
+/// \brief Convert a span into a read-only view of its underlying bytes
+///
+/// \see asWritableBytes
+/// \see https://en.cppreference.com/w/cpp/container/span/as_bytes
+///
+////////////////////////////////////////////////////////////
+template <typename ElementType, std::size_t Extent>
+Span<const std::byte, ((Extent == DynamicExtent) ? DynamicExtent
+                                                 : sizeof(ElementType) * Extent)>
+asBytes(Span<ElementType, Extent> s) noexcept;
+
+////////////////////////////////////////////////////////////
+/// \relates Span
+/// \brief Convert a span into a writable view of its underlying bytes
+///
+/// \see asBytes
+/// \see https://en.cppreference.com/w/cpp/container/span/as_bytes
+///
+////////////////////////////////////////////////////////////
+template <
+    class ElementType, std::size_t Extent,
+    typename std::enable_if<!std::is_const<ElementType>::value, int>::type = 0>
+Span<std::byte, ((Extent == DynamicExtent) ? DynamicExtent
+                                           : sizeof(ElementType) * Extent)>
+asWritableBytes(Span<ElementType, Extent> s) noexcept;
+
+#include <SFML/System/Span.inl>
+
+} // namespace sf
+
 
 #endif // SFML_SYSTEM_SPAN_HPP
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::Span
+/// \ingroup system
+///
+/// A span is a non-owning view over a contiguous sequence of objects.
+/// It can have a \em static extent, defined at compile-time, or a \em dynamic extent.
+///
+/// \c std::span is part of C++20 standard library, but SFML supports C++17,
+/// so this alternative implementation is used instead.
+/// It is based on [Tristan Brindle's span library](https://github.com/tcbrindle/span).
+///
+/// \see https://en.cppreference.com/w/cpp/container/span
+/// \see https://github.com/tcbrindle/span
+///
+////////////////////////////////////////////////////////////
