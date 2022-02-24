@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
 #include <cassert>
+#include <cmath>
 
 
 namespace sf
@@ -474,6 +474,54 @@ namespace Literals
 [[nodiscard]] constexpr Angle operator "" _rad(unsigned long long int angle);
 
 } // namespace Literals
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Angle
+/// \brief Sine function
+///
+/// \param angle Angle
+///
+/// \return Sine of \a angle
+///
+/// \see cos, tan
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] inline float sin(const Angle& angle)
+{
+    return std::sin(angle.asRadians());
+}
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Angle
+/// \brief Cosine function
+///
+/// \param angle Angle
+///
+/// \return Cosine of \a angle
+///
+/// \see sin, tan
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] inline float cos(const Angle& angle)
+{
+    return std::cos(angle.asRadians());
+}
+
+////////////////////////////////////////////////////////////
+/// \relates sf::Angle
+/// \brief Tangent function
+///
+/// \param angle Angle
+///
+/// \return Tangent of \a angle
+///
+/// \see sin, cos
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] inline float tan(const Angle& angle)
+{
+    return std::tan(angle.asRadians());
+}
 
 #include <SFML/System/Angle.inl>
 

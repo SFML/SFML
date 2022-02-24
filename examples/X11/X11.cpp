@@ -47,7 +47,7 @@
     // Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    float extent = std::tan(sf::degrees(45).asRadians());
+    float extent = sf::tan(sf::degrees(45));
 
 #ifdef SFML_OPENGL_ES
     glFrustumf(-extent, extent, -extent, extent, 1.0f, 500.0f);

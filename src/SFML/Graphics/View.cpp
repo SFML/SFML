@@ -184,9 +184,8 @@ const Transform& View::getTransform() const
     if (!m_transformUpdated)
     {
         // Rotation components
-        float angle  = m_rotation.asRadians();
-        float cosine = std::cos(angle);
-        float sine   = std::sin(angle);
+        float cosine = cos(m_rotation);
+        float sine   = sin(m_rotation);
         float tx     = -m_center.x * cosine - m_center.y * sine + m_center.x;
         float ty     =  m_center.x * sine - m_center.y * cosine + m_center.y;
 

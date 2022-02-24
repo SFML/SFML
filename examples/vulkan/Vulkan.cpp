@@ -41,12 +41,11 @@ namespace
     // Rotate a matrix around the x-axis
     void matrixRotateX(Matrix& result, sf::Angle angle)
     {
-        float rad = angle.asRadians();
         Matrix matrix = {
-            {1.f,   0.f,           0.f,           0.f},
-            {0.f,   std::cos(rad), std::sin(rad), 0.f},
-            {0.f,  -std::sin(rad), std::cos(rad), 0.f},
-            {0.f,   0.f,           0.f,           1.f}
+            {1.f,   0.f,        0.f,        0.f},
+            {0.f,   cos(angle), sin(angle), 0.f},
+            {0.f,  -sin(angle), cos(angle), 0.f},
+            {0.f,   0.f,        0.f,        1.f}
         };
 
         matrixMultiply(result, result, matrix);
@@ -55,12 +54,11 @@ namespace
     // Rotate a matrix around the y-axis
     void matrixRotateY(Matrix& result, sf::Angle angle)
     {
-        float rad = angle.asRadians();
         Matrix matrix = {
-            { std::cos(rad), 0.f, std::sin(rad), 0.f},
-            { 0.f,           1.f, 0.f,           0.f},
-            {-std::sin(rad), 0.f, std::cos(rad), 0.f},
-            { 0.f,           0.f, 0.f,           1.f}
+            { cos(angle), 0.f, sin(angle), 0.f},
+            { 0.f,        1.f, 0.f,        0.f},
+            {-sin(angle), 0.f, cos(angle), 0.f},
+            { 0.f,        0.f, 0.f,        1.f}
         };
 
         matrixMultiply(result, result, matrix);
@@ -69,12 +67,11 @@ namespace
     // Rotate a matrix around the z-axis
     void matrixRotateZ(Matrix& result, sf::Angle angle)
     {
-        float rad = angle.asRadians();
         Matrix matrix = {
-            { std::cos(rad), std::sin(rad), 0.f, 0.f},
-            {-std::sin(rad), std::cos(rad), 0.f, 0.f},
-            { 0.f,           0.f,           1.f, 0.f},
-            { 0.f,           0.f,           0.f, 1.f}
+            { cos(angle), sin(angle), 0.f, 0.f},
+            {-sin(angle), cos(angle), 0.f, 0.f},
+            { 0.f,        0.f,        1.f, 0.f},
+            { 0.f,        0.f,        0.f, 1.f}
         };
 
         matrixMultiply(result, result, matrix);
@@ -133,7 +130,7 @@ namespace
     // Construct a perspective projection matrix
     void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPlane, float farPlane)
     {
-        const float a = 1.f / std::tan(fov.asRadians() / 2.f);
+        const float a = 1.f / sf::tan(fov / 2.f);
 
         result[0][0] = a / aspect;
         result[0][1] = 0.f;

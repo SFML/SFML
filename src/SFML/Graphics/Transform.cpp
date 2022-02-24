@@ -35,9 +35,8 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Transform& Transform::rotate(Angle angle)
 {
-    float rad = angle.asRadians();
-    float cos = std::cos(rad);
-    float sin = std::sin(rad);
+    float cos = sf::cos(angle);
+    float sin = sf::sin(angle);
 
     Transform rotation(cos, -sin, 0,
                        sin,  cos, 0,
@@ -50,9 +49,8 @@ Transform& Transform::rotate(Angle angle)
 ////////////////////////////////////////////////////////////
 Transform& Transform::rotate(Angle angle, const Vector2f& center)
 {
-    float rad = angle.asRadians();
-    float cos = std::cos(rad);
-    float sin = std::sin(rad);
+    float cos = sf::cos(angle);
+    float sin = sf::sin(angle);
 
     Transform rotation(cos, -sin, center.x * (1 - cos) + center.y * sin,
                        sin,  cos, center.y * (1 - cos) - center.x * sin,

@@ -143,7 +143,7 @@ int main()
                         // Make sure the ball initial angle is not too much vertical
                         ballAngle = sf::degrees(static_cast<float>(std::rand() % 360));
                     }
-                    while (std::abs(std::cos(ballAngle.asRadians())) < 0.7f);
+                    while (std::abs(sf::cos(ballAngle)) < 0.7f);
                 }
             }
 
@@ -201,7 +201,7 @@ int main()
 
             // Move the ball
             float factor = ballSpeed * deltaTime;
-            ball.move({std::cos(ballAngle.asRadians()) * factor, std::sin(ballAngle.asRadians()) * factor});
+            ball.move({sf::cos(ballAngle) * factor, sf::sin(ballAngle) * factor});
 
             #ifdef SFML_SYSTEM_IOS
             const std::string inputString = "Touch the screen to restart.";

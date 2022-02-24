@@ -143,9 +143,8 @@ const Transform& Transformable::getTransform() const
     // Recompute the combined transform if needed
     if (m_transformNeedUpdate)
     {
-        float angle  = -m_rotation.asRadians();
-        float cosine = std::cos(angle);
-        float sine   = std::sin(angle);
+        float cosine = cos(-m_rotation);
+        float sine   = sin(-m_rotation);
         float sxc    = m_scale.x * cosine;
         float syc    = m_scale.y * cosine;
         float sxs    = m_scale.x * sine;

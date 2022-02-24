@@ -299,4 +299,39 @@ TEST_CASE("sf::Angle class - [system]")
 
         static_assert(result == sf::degrees(1));
     }
+
+    SUBCASE("sin()")
+    {
+        using namespace sf::Literals;
+        CHECK(sf::sin(0_deg) == 0);
+        CHECK(sf::sin(90_deg) == 1);
+        CHECK(sf::sin(180_deg) == Approx(0));
+        CHECK(sf::sin(270_deg) == -1);
+        CHECK(sf::sin(360_deg) == Approx(0));
+    }
+
+    SUBCASE("cos()")
+    {
+        using namespace sf::Literals;
+        CHECK(sf::cos(0_deg) == 1);
+        CHECK(sf::cos(90_deg) == Approx(0));
+        CHECK(sf::cos(180_deg) == -1);
+        CHECK(sf::cos(270_deg) == Approx(0));
+        CHECK(sf::cos(360_deg) == 1);
+    }
+
+    SUBCASE("tan()")
+    {
+        using namespace sf::Literals;
+        CHECK(sf::tan(0_deg) == 0);
+        CHECK(sf::tan(45_deg) == 1);
+        CHECK(sf::tan(89_deg) == Approx(57.289962));
+        CHECK(sf::tan(91_deg) == Approx(-57.289962));
+        CHECK(sf::tan(135_deg) == -1);
+        CHECK(sf::tan(180_deg) == Approx(0));
+        CHECK(sf::tan(225_deg) == Approx(1));
+        CHECK(sf::tan(269_deg) == Approx(57.289962));
+        CHECK(sf::tan(271_deg) == Approx(-57.289962));
+        CHECK(sf::tan(360_deg) == Approx(0));
+    }
 }
