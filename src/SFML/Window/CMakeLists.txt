@@ -247,7 +247,7 @@ if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
 endif()
 
 # Vulkan headers
-target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
+target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
 
 # find and setup usage for external libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
@@ -281,7 +281,7 @@ if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
     include(CheckIncludeFile)
     check_include_file(dinput.h DINPUT_H_FOUND)
     if(NOT DINPUT_H_FOUND)
-        target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/mingw")
+        target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/mingw")
     endif()
 endif()
 

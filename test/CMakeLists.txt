@@ -7,7 +7,8 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
 )
-target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" TestUtilities)
+target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
+target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
 # System is always built
