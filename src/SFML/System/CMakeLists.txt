@@ -1,60 +1,29 @@
 # define the sfml-system target
 sfml_add_library(System)
 
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/System)
-set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/System)
-
 # all source files
 target_sources(sfml-system PRIVATE
-    ${INCROOT}/Angle.hpp
-    ${INCROOT}/Angle.inl
-    ${SRCROOT}/Clock.cpp
-    ${INCROOT}/Clock.hpp
-    ${SRCROOT}/Err.cpp
-    ${INCROOT}/Err.hpp
-    ${INCROOT}/Export.hpp
-    ${INCROOT}/InputStream.hpp
-    ${INCROOT}/NativeActivity.hpp
-    ${SRCROOT}/Sleep.cpp
-    ${INCROOT}/Sleep.hpp
-    ${SRCROOT}/String.cpp
-    ${INCROOT}/String.hpp
-    ${INCROOT}/String.inl
-    ${INCROOT}/Time.hpp
-    ${INCROOT}/Time.inl
-    ${INCROOT}/Utf.hpp
-    ${INCROOT}/Utf.inl
-    ${INCROOT}/Vector2.hpp
-    ${INCROOT}/Vector2.inl
-    ${INCROOT}/Vector3.hpp
-    ${INCROOT}/Vector3.inl
-    ${SRCROOT}/FileInputStream.cpp
-    ${INCROOT}/FileInputStream.hpp
-    ${SRCROOT}/MemoryInputStream.cpp
-    ${INCROOT}/MemoryInputStream.hpp
-    ${INCROOT}/SuspendAwareClock.hpp
+    Clock.cpp
+    Err.cpp
+    Sleep.cpp
+    String.cpp
+    FileInputStream.cpp
+    MemoryInputStream.cpp
 )
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
-    target_sources(sfml-system PRIVATE
-        ${SRCROOT}/Win32/SleepImpl.cpp
-        ${SRCROOT}/Win32/SleepImpl.hpp
-    )
+    target_sources(sfml-system PRIVATE Win32/SleepImpl.cpp)
 else()
-    target_sources(sfml-system PRIVATE
-        ${SRCROOT}/Unix/SleepImpl.cpp
-        ${SRCROOT}/Unix/SleepImpl.hpp
-    )
+    target_sources(sfml-system PRIVATE Unix/SleepImpl.cpp)
 
     if(SFML_OS_ANDROID)
         target_sources(sfml-system PRIVATE
-            ${SRCROOT}/Android/Activity.hpp
-            ${SRCROOT}/Android/Activity.cpp
-            ${SRCROOT}/Android/NativeActivity.cpp
-            ${SRCROOT}/Android/ResourceStream.cpp
-            ${SRCROOT}/Android/ResourceStream.cpp
-            ${SRCROOT}/Android/SuspendAwareClock.cpp
+            Android/Activity.cpp
+            Android/NativeActivity.cpp
+            Android/ResourceStream.cpp
+            Android/ResourceStream.cpp
+            Android/SuspendAwareClock.cpp
         )
     endif()
 endif()

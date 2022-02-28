@@ -1,87 +1,44 @@
 # define the sfml-graphics target
 sfml_add_library(Graphics)
 
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Graphics)
-set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
-
 # all source files
 target_sources(sfml-graphics PRIVATE
-    ${SRCROOT}/BlendMode.cpp
-    ${INCROOT}/BlendMode.hpp
-    ${INCROOT}/Color.hpp
-    ${INCROOT}/Color.inl
-    ${INCROOT}/Export.hpp
-    ${SRCROOT}/Font.cpp
-    ${INCROOT}/Font.hpp
-    ${SRCROOT}/Glsl.cpp
-    ${INCROOT}/Glsl.hpp
-    ${INCROOT}/Glsl.inl
-    ${INCROOT}/Glyph.hpp
-    ${SRCROOT}/GLCheck.cpp
-    ${SRCROOT}/GLCheck.hpp
-    ${SRCROOT}/GLExtensions.hpp
-    ${SRCROOT}/GLExtensions.cpp
-    ${SRCROOT}/Image.cpp
-    ${INCROOT}/Image.hpp
-    ${SRCROOT}/ImageLoader.cpp
-    ${SRCROOT}/ImageLoader.hpp
-    ${INCROOT}/PrimitiveType.hpp
-    ${INCROOT}/Rect.hpp
-    ${INCROOT}/Rect.inl
-    ${SRCROOT}/RenderStates.cpp
-    ${INCROOT}/RenderStates.hpp
-    ${SRCROOT}/RenderTexture.cpp
-    ${INCROOT}/RenderTexture.hpp
-    ${SRCROOT}/RenderTarget.cpp
-    ${INCROOT}/RenderTarget.hpp
-    ${SRCROOT}/RenderWindow.cpp
-    ${INCROOT}/RenderWindow.hpp
-    ${SRCROOT}/Shader.cpp
-    ${INCROOT}/Shader.hpp
-    ${SRCROOT}/Texture.cpp
-    ${INCROOT}/Texture.hpp
-    ${SRCROOT}/TextureSaver.cpp
-    ${SRCROOT}/TextureSaver.hpp
-    ${SRCROOT}/Transform.cpp
-    ${INCROOT}/Transform.hpp
-    ${INCROOT}/Transform.inl
-    ${SRCROOT}/Transformable.cpp
-    ${INCROOT}/Transformable.hpp
-    ${SRCROOT}/View.cpp
-    ${INCROOT}/View.hpp
-    ${INCROOT}/Vertex.hpp
-    ${INCROOT}/Vertex.inl
+    BlendMode.cpp
+    Font.cpp
+    Glsl.cpp
+    GLCheck.cpp
+    GLExtensions.cpp
+    Image.cpp
+    ImageLoader.cpp
+    RenderStates.cpp
+    RenderTexture.cpp
+    RenderTarget.cpp
+    RenderWindow.cpp
+    Shader.cpp
+    Texture.cpp
+    TextureSaver.cpp
+    Transform.cpp
+    Transformable.cpp
+    View.cpp
 )
 
 # drawables sources
 target_sources(sfml-graphics PRIVATE
-    ${INCROOT}/Drawable.hpp
-    ${SRCROOT}/Shape.cpp
-    ${INCROOT}/Shape.hpp
-    ${SRCROOT}/CircleShape.cpp
-    ${INCROOT}/CircleShape.hpp
-    ${SRCROOT}/RectangleShape.cpp
-    ${INCROOT}/RectangleShape.hpp
-    ${SRCROOT}/ConvexShape.cpp
-    ${INCROOT}/ConvexShape.hpp
-    ${SRCROOT}/Sprite.cpp
-    ${INCROOT}/Sprite.hpp
-    ${SRCROOT}/Text.cpp
-    ${INCROOT}/Text.hpp
-    ${SRCROOT}/VertexArray.cpp
-    ${INCROOT}/VertexArray.hpp
-    ${SRCROOT}/VertexBuffer.cpp
-    ${INCROOT}/VertexBuffer.hpp
+    Shape.cpp
+    CircleShape.cpp
+    RectangleShape.cpp
+    ConvexShape.cpp
+    Sprite.cpp
+    Text.cpp
+    VertexArray.cpp
+    VertexBuffer.cpp
 )
 
 # render-texture sources
 target_sources(sfml-graphics PRIVATE
-    ${SRCROOT}/RenderTextureImpl.cpp
-    ${SRCROOT}/RenderTextureImpl.hpp
-    ${SRCROOT}/RenderTextureImplFBO.cpp
-    ${SRCROOT}/RenderTextureImplFBO.hpp
-    ${SRCROOT}/RenderTextureImplDefault.cpp
-    ${SRCROOT}/RenderTextureImplDefault.hpp
+    RenderTextureImpl.cpp
+    RenderTextureImplFBO.cpp
+    RenderTextureImplDefault.cpp
 )
 
 # setup dependencies
@@ -127,5 +84,5 @@ target_compile_definitions(sfml-graphics PRIVATE "STBI_FAILURE_USERMSG")
 # ImageLoader.cpp must be compiled with the -fno-strict-aliasing
 # when gcc is used; otherwise saving PNGs may crash in stb_image_write
 if(SFML_COMPILER_GCC)
-    set_source_files_properties(${SRCROOT}/ImageLoader.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
+    set_source_files_properties(ImageLoader.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 endif()

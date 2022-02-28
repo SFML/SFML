@@ -1,16 +1,13 @@
 # define the sfml-main target
 sfml_add_library(Main STATIC)
 
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Main)
-set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Main)
-
 # sources
 if(SFML_OS_WINDOWS)
-    target_sources(sfml-main PRIVATE ${SRCROOT}/MainWin32.cpp)
+    target_sources(sfml-main PRIVATE MainWin32.cpp)
 elseif(SFML_OS_IOS)
-    target_sources(sfml-main PRIVATE ${SRCROOT}/MainiOS.mm)
+    target_sources(sfml-main PRIVATE MainiOS.mm)
 elseif(SFML_OS_ANDROID)
-    target_sources(sfml-main PRIVATE ${SRCROOT}/MainAndroid.cpp)
+    target_sources(sfml-main PRIVATE MainAndroid.cpp)
 else()
     return()
 endif()
@@ -32,5 +29,5 @@ set_target_properties(sfml-main PROPERTIES
 # will load our shared libraries manually
 if(SFML_OS_ANDROID)
     sfml_add_library(Activity)
-    target_sources(sfml-activity PRIVATE ${SRCROOT}/SFMLActivity.cpp)
+    target_sources(sfml-activity PRIVATE SFMLActivity.cpp)
 endif()

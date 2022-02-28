@@ -1,60 +1,32 @@
 # define the sfml-audio target
 sfml_add_library(Audio)
 
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Audio)
-set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
-
 # all source files
 target_sources(sfml-audio PRIVATE
-    ${SRCROOT}/ALCheck.cpp
-    ${SRCROOT}/ALCheck.hpp
-    ${SRCROOT}/AlResource.cpp
-    ${INCROOT}/AlResource.hpp
-    ${SRCROOT}/AudioDevice.cpp
-    ${SRCROOT}/AudioDevice.hpp
-    ${INCROOT}/Export.hpp
-    ${SRCROOT}/Listener.cpp
-    ${INCROOT}/Listener.hpp
-    ${SRCROOT}/Music.cpp
-    ${INCROOT}/Music.hpp
-    ${SRCROOT}/Sound.cpp
-    ${INCROOT}/Sound.hpp
-    ${SRCROOT}/SoundBuffer.cpp
-    ${INCROOT}/SoundBuffer.hpp
-    ${SRCROOT}/SoundBufferRecorder.cpp
-    ${INCROOT}/SoundBufferRecorder.hpp
-    ${SRCROOT}/InputSoundFile.cpp
-    ${INCROOT}/InputSoundFile.hpp
-    ${SRCROOT}/OutputSoundFile.cpp
-    ${INCROOT}/OutputSoundFile.hpp
-    ${SRCROOT}/SoundRecorder.cpp
-    ${INCROOT}/SoundRecorder.hpp
-    ${SRCROOT}/SoundSource.cpp
-    ${INCROOT}/SoundSource.hpp
-    ${SRCROOT}/SoundStream.cpp
-    ${INCROOT}/SoundStream.hpp
+    ALCheck.cpp
+    AlResource.cpp
+    AudioDevice.cpp
+    Listener.cpp
+    Music.cpp
+    Sound.cpp
+    SoundBuffer.cpp
+    SoundBufferRecorder.cpp
+    InputSoundFile.cpp
+    OutputSoundFile.cpp
+    SoundRecorder.cpp
+    SoundSource.cpp
+    SoundStream.cpp
 )
 
 target_sources(sfml-audio PRIVATE
-    ${SRCROOT}/SoundFileFactory.cpp
-    ${INCROOT}/SoundFileFactory.hpp
-    ${INCROOT}/SoundFileFactory.inl
-    ${INCROOT}/SoundFileReader.hpp
-    ${SRCROOT}/SoundFileReaderFlac.hpp
-    ${SRCROOT}/SoundFileReaderFlac.cpp
-    ${SRCROOT}/SoundFileReaderMp3.hpp
-    ${SRCROOT}/SoundFileReaderMp3.cpp
-    ${SRCROOT}/SoundFileReaderOgg.hpp
-    ${SRCROOT}/SoundFileReaderOgg.cpp
-    ${SRCROOT}/SoundFileReaderWav.hpp
-    ${SRCROOT}/SoundFileReaderWav.cpp
-    ${INCROOT}/SoundFileWriter.hpp
-    ${SRCROOT}/SoundFileWriterFlac.hpp
-    ${SRCROOT}/SoundFileWriterFlac.cpp
-    ${SRCROOT}/SoundFileWriterOgg.hpp
-    ${SRCROOT}/SoundFileWriterOgg.cpp
-    ${SRCROOT}/SoundFileWriterWav.hpp
-    ${SRCROOT}/SoundFileWriterWav.cpp
+    SoundFileFactory.cpp
+    SoundFileReaderFlac.cpp
+    SoundFileReaderMp3.cpp
+    SoundFileReaderOgg.cpp
+    SoundFileReaderWav.cpp
+    SoundFileWriterFlac.cpp
+    SoundFileWriterOgg.cpp
+    SoundFileWriterWav.cpp
 )
 
 # let CMake know about our additional audio libraries paths (on Windows and OSX)

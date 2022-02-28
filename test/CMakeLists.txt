@@ -1,10 +1,7 @@
 add_library(sfml-test-main STATIC
     DoctestMain.cpp
-    TestUtilities/SystemUtil.hpp
     TestUtilities/SystemUtil.cpp
-    TestUtilities/WindowUtil.hpp
     TestUtilities/WindowUtil.cpp
-    TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
 )
 target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
