@@ -67,7 +67,7 @@ sfml_add_library(System
 
 if(SFML_OS_ANDROID)
     # glad sources
-    target_include_directories(sfml-system PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+    target_include_directories(sfml-system PRIVATE "${PROJECT_SOURCE_DIR}/external/headers/glad/include")
 endif()
 
 # setup dependencies

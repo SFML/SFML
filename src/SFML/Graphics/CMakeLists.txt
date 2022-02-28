@@ -94,21 +94,21 @@ sfml_add_library(Graphics
 target_link_libraries(sfml-graphics PUBLIC SFML::Window)
 
 # stb_image sources
-target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/stb_image")
+target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/external/headers/stb_image")
 
 # glad sources
-target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/external/headers/glad/include")
 
 # let CMake know about our additional graphics libraries paths
 if(SFML_OS_WINDOWS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
+    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/external/headers/freetype2")
 elseif(SFML_OS_MACOSX)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
-    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
+    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/external/headers/freetype2")
+    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/external/libs-osx/Frameworks")
 elseif(SFML_OS_IOS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
+    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/external/headers/freetype2")
 elseif(SFML_OS_ANDROID)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
+    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/external/headers/freetype2")
 endif()
 
 # find external libraries

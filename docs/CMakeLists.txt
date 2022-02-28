@@ -38,11 +38,11 @@ endif()
 
 # configure the source Doxyfile by copying it and replacing all @variables@
 set(DOXYGEN_CONFIGURED_INPUT ${DOXYGEN_OUTPUT_DIR}/doxyfile)
-configure_file(${DOXYGEN_INPUT_DIR}/doc/doxyfile.in ${DOXYGEN_CONFIGURED_INPUT} @ONLY)
-configure_file(${DOXYGEN_INPUT_DIR}/doc/header.html.in ${DOXYGEN_OUTPUT_DIR}/header.html @ONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/docs/doxyfile.in ${DOXYGEN_CONFIGURED_INPUT} @ONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/docs/header.html.in ${DOXYGEN_OUTPUT_DIR}/header.html @ONLY)
 
 # copy the files needed by the documentation
-configure_file(${DOXYGEN_INPUT_DIR}/doc/doxygen.css ${DOXYGEN_OUTPUT_DIR}/html/doxygen.css COPYONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/docs/doxygen.css ${DOXYGEN_OUTPUT_DIR}/html/doxygen.css COPYONLY)
 
 # target setup
 add_custom_target(doc ALL

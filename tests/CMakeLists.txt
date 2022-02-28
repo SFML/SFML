@@ -7,7 +7,7 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
 )
-target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers" TestUtilities)
+target_include_directories(sfml-test-main PUBLIC "${PROJECT_SOURCE_DIR}/external/headers" TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
 # System is always built
@@ -68,9 +68,9 @@ if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
 
     foreach (BINARY ${BINARIES})
         if(ARCH_32BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x86/${BINARY}")
+            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/external/bin/x86/${BINARY}")
         elseif(ARCH_64BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x64/${BINARY}")
+            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/external/bin/x64/${BINARY}")
         endif()
     endforeach()
 

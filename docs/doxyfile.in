@@ -866,7 +866,7 @@ EXCLUDE_SYMLINKS       = NO
 # exclude all test directories for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = .git \
-                         extlibs \
+                         external \
                          src \
                          examples \
                          install \

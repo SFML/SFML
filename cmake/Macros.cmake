@@ -361,8 +361,8 @@ endfunction()
 # link specifications and include directories to be used by dependees.
 # The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
 # Usage: sfml_add_external(target_name
-#                          [INCLUDE "extlibs/include"]
-#                          [LINK "extlibs/libfoo/libfoo.a"])
+#                          [INCLUDE "external/include"]
+#                          [LINK "external/libfoo/libfoo.a"])
 function(sfml_add_external)
     list(GET ARGN 0 target)
     list(REMOVE_AT ARGN 0)
