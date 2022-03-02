@@ -38,6 +38,7 @@ if(SFML_BUILD_GRAPHICS)
         Graphics/Transform.cpp
         Graphics/Transformable.cpp
         Graphics/Vertex.cpp
+        Graphics/VertexArray.cpp
     )
     sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 endif()
