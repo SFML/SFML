@@ -137,8 +137,7 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     m_file.write(mainChunkId, sizeof(mainChunkId));
 
     // Write the main chunk header
-    Uint32 mainChunkSize = 0; // placeholder, will be written later
-    encode(m_file, mainChunkSize);
+    encode(m_file, static_cast<Uint32>(0)); // 0 is a placeholder, will be written later
     char mainChunkFormat[4] = {'W', 'A', 'V', 'E'};
     m_file.write(mainChunkFormat, sizeof(mainChunkFormat));
 
@@ -182,12 +181,10 @@ void SoundFileWriterWav::close()
 
         // Update the main chunk size and data sub-chunk size
         Uint32 fileSize = static_cast<Uint32>(m_file.tellp());
-        Uint32 mainChunkSize = fileSize - 8;  // 8 bytes RIFF header
-        Uint32 dataChunkSize = fileSize - 44; // 44 bytes RIFF + WAVE headers
         m_file.seekp(4);
-        encode(m_file, mainChunkSize);
+        encode(m_file, fileSize - 8); // 8 bytes RIFF header
         m_file.seekp(40);
-        encode(m_file, dataChunkSize);
+        encode(m_file, fileSize - 44); // 44 bytes RIFF + WAVE headers
 
         m_file.close();
     }
