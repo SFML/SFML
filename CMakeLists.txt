@@ -13,8 +13,6 @@ endmacro()
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
 
-# Suppress Mac OS X RPATH warnings and adopt new related behaviors
-cmake_policy(SET CMP0042 NEW)
 if (NOT CMAKE_VERSION VERSION_LESS 3.9)
     cmake_policy(SET CMP0068 NEW)
 endif()
