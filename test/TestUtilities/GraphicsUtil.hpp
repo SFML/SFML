@@ -9,6 +9,8 @@
 #include "WindowUtil.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
+#include <iomanip>
+#include <limits>
 
 namespace sf
 {
@@ -23,7 +25,10 @@ namespace sf
     template <typename T>
     std::ostream& operator <<(std::ostream& os, const sf::Rect<T>& rect)
     {
+        const auto flags = os.flags();
+        os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
         os << "(left=" << rect.left << ", top=" << rect.top << ", width=" << rect.width << ", height=" << rect.height << ")";
+        os.flags(flags);
         return os;
     }
 }
