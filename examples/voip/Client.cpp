@@ -88,7 +88,7 @@ private:
         sf::Packet packet;
         packet << clientEndOfStream;
 
-        if (!m_socket.send(packet))
+        if (m_socket.send(packet) != sf::Socket::Done)
         {
             std::cerr << "Failed to send end-of-stream packet" << std::endl;
         }
