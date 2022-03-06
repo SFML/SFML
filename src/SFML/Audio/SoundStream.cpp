@@ -136,6 +136,12 @@ void SoundStream::play()
         // If the sound is playing, stop it and continue as if it was stopped
         stop();
     }
+    else if (!isStreaming && m_thread.joinable())
+    {
+        // If the streaming thread reached its end, let it join so it can be restarted.
+        // Also reset the playing offset at the beginning.
+        stop();
+    }
 
     // Start updating the stream in a separate thread to avoid blocking the application
     launchStreamingThread(Playing);
