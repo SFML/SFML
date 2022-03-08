@@ -53,8 +53,8 @@ public:
         Left,       //!< The left mouse button
         Right,      //!< The right mouse button
         Middle,     //!< The middle (wheel) mouse button
-        XButton1,   //!< The first extra mouse button
-        XButton2,   //!< The second extra mouse button
+        XButton1,   //!< The first extra mouse button (not available on Linux)
+        XButton2,   //!< The second extra mouse button (not available on Linux)
 
         ButtonCount //!< Keep last -- the total number of mouse buttons
     };
@@ -171,6 +171,8 @@ public:
 /// // set mouse position relative to a window
 /// sf::Mouse::setPosition(sf::Vector2i(100, 200), window);
 /// \endcode
+///
+/// \warning sf::Mouse::XButton1 and sf::Mouse::XButton2 are not available on Linux.
 ///
 /// \see sf::Joystick, sf::Keyboard, sf::Touch
 ///
