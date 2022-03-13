@@ -149,23 +149,23 @@ public:
     constexpr Span(element_type (&arr)[N]) noexcept : storage_(arr, N)
     {}
 
-    template <std::size_t N, std::size_t E = Extent,
+    template <typename T, std::size_t N, std::size_t E = Extent,
               typename std::enable_if<
                   (E == DynamicExtent || N == E) &&
                       priv::is_container_element_type_compatible<
-                          std::array<value_type, N>&, ElementType>::value,
+                          std::array<T, N>&, ElementType>::value,
                   int>::type = 0>
-    constexpr Span(std::array<value_type, N>& arr) noexcept
+    constexpr Span(std::array<T, N>& arr) noexcept
         : storage_(arr.data(), N)
     {}
 
-    template <std::size_t N, std::size_t E = Extent,
+    template <typename T, std::size_t N, std::size_t E = Extent,
               typename std::enable_if<
                   (E == DynamicExtent || N == E) &&
                       priv::is_container_element_type_compatible<
-                          const std::array<value_type, N>&, ElementType>::value,
+                          const std::array<T, N>&, ElementType>::value,
                   int>::type = 0>
-    constexpr Span(const std::array<value_type, N>& arr) noexcept
+    constexpr Span(const std::array<T, N>& arr) noexcept
         : storage_(arr.data(), N)
     {}
 
@@ -326,7 +326,8 @@ template <class T, std::size_t N>
 Span(const std::array<T, N>&)->Span<const T, N>;
 
 template <class Container>
-Span(Container&)->Span<typename Container::value_type>;
+Span(Container&)->Span<typename std::remove_reference<
+    decltype(*std::data(std::declval<Container&>()))>::type>;
 
 template <class Container>
 Span(const Container&)->Span<const typename Container::value_type>;
