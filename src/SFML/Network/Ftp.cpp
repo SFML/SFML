@@ -466,7 +466,7 @@ Ftp::Response Ftp::getResponse()
                         }
 
                         // Save the remaining data for the next time getResponse() is called
-                        m_receiveBuffer.assign(buffer.begin() + in.tellg(), buffer.begin() + length);
+                        m_receiveBuffer.assign(buffer.begin() + static_cast<std::size_t>(in.tellg()), buffer.begin() + length);
 
                         // Return the response code and message
                         return Response(static_cast<Response::Status>(code), message);
