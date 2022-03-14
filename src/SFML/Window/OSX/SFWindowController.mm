@@ -631,8 +631,7 @@
     NSDictionary* deviceDescription = [[m_window screen] deviceDescription];
     NSNumber* screenNumber = [deviceDescription valueForKey:@"NSScreenNumber"];
     CGDirectDisplayID screenID = static_cast<CGDirectDisplayID>([screenNumber intValue]);
-    CGFloat height = CGDisplayPixelsHigh(screenID);
-    return static_cast<float>(height);
+    return static_cast<float>(CGDisplayPixelsHigh(screenID));
 }
 
 
