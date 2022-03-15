@@ -17,7 +17,7 @@ std::filesystem::path resourcesDir()
 #ifdef SFML_SYSTEM_IOS
     return "";
 #else
-    return "resources/";
+    return "resources";
 #endif
 }
 
