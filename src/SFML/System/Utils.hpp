@@ -29,17 +29,28 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cctype>
+#include <filesystem>
+#include <sstream>
 #include <string>
 
 
 namespace sf
 {
-    [[nodiscard]] inline std::string toLower(std::string str)
-    {
-        for (char& c : str)
-            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-        return str;
-    }
+[[nodiscard]] inline std::string toLower(std::string str)
+{
+    for (char& c : str)
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    return str;
+}
+
+[[nodiscard]] inline std::string formatDebugPathInfo(const std::filesystem::path& path)
+{
+    std::ostringstream stream;
+    stream << "    Provided path: " << path << '\n';
+    stream << "    Absolute path: " << std::filesystem::absolute(path);
+    return stream.str();
+}
+
 } // namespace sf
 
 #endif // SFML_UTILS_HPP

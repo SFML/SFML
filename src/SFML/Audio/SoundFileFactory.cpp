@@ -36,6 +36,7 @@
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
 #include <ostream>
 
 
@@ -74,7 +75,7 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
     // Wrap the input file into a file stream
     FileInputStream stream;
     if (!stream.open(filename)) {
-        err() << "Failed to open sound file " << filename << " (couldn't open stream)" << std::endl;
+        err() << "Failed to open sound file (couldn't open stream)\n" << formatDebugPathInfo(filename) << std::endl;
         return nullptr;
     }
 
@@ -92,7 +93,7 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
     }
 
     // No suitable reader found
-    err() << "Failed to open sound file " << filename << " (format not supported)" << std::endl;
+    err() << "Failed to open sound file (format not supported)\n" << formatDebugPathInfo(filename) << std::endl;
     return nullptr;
 }
 
@@ -165,7 +166,7 @@ std::unique_ptr<SoundFileWriter> SoundFileFactory::createWriterFromFilename(cons
     }
 
     // No suitable writer found
-    err() << "Failed to open sound file " << filename << " (format not supported)" << std::endl;
+    err() << "Failed to open sound file (format not supported)\n" << formatDebugPathInfo(filename) << std::endl;
     return nullptr;
 }
 
