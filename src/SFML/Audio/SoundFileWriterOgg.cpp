@@ -79,7 +79,7 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     int status = vorbis_encode_init_vbr(&m_vorbis, static_cast<long>(channelCount), static_cast<long>(sampleRate), 0.4f);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file " << filename << " (unsupported bitrate)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (unsupported bitrate)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -89,7 +89,7 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     m_file.open(filename.c_str(), std::ios::binary);
     if (!m_file)
     {
-        err() << "Failed to write ogg/vorbis file " << filename << " (cannot open file)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot open file)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -104,7 +104,7 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     vorbis_comment_clear(&comment);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file " << filename << " (cannot generate the headers)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot generate the headers)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }

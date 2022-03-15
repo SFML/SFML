@@ -130,7 +130,7 @@ bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image " << filename << ". Reason: " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image\n" << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -278,7 +278,7 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const s
         }
     }
 
-    err() << "Failed to save image " << filename << std::endl;
+    err() << "Failed to save image\n" << formatDebugPathInfo(filename) << std::endl;
     return false;
 }
 

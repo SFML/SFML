@@ -68,7 +68,7 @@ bool SoundFileWriterFlac::open(const std::filesystem::path& filename, unsigned i
     m_encoder = FLAC__stream_encoder_new();
     if (!m_encoder)
     {
-        err() << "Failed to write flac file " << filename << " (failed to allocate encoder)" << std::endl;
+        err() << "Failed to write flac file (failed to allocate encoder)\n" << formatDebugPathInfo(filename) << std::endl;
         return false;
     }
 
@@ -80,7 +80,7 @@ bool SoundFileWriterFlac::open(const std::filesystem::path& filename, unsigned i
     // Initialize the output stream
     if (FLAC__stream_encoder_init_file(m_encoder, filename.string().c_str(), nullptr, nullptr) != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
     {
-        err() << "Failed to write flac file " << filename << " (failed to open the file)" << std::endl;
+        err() << "Failed to write flac file (failed to open the file)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }

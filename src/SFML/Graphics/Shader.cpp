@@ -34,6 +34,7 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
 #include <fstream>
 #include <iomanip>
 #include <vector>
@@ -260,7 +261,7 @@ bool Shader::loadFromFile(const std::filesystem::path& filename, Type type)
     std::vector<char> shader;
     if (!getFileContents(filename, shader))
     {
-        err() << "Failed to open shader file " << filename << std::endl;
+        err() << "Failed to open shader file\n" << formatDebugPathInfo(filename) << std::endl;
         return false;
     }
 
