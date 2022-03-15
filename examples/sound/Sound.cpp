@@ -46,11 +46,11 @@ void playSound()
 /// Play a music
 ///
 ////////////////////////////////////////////////////////////
-void playMusic(const std::string& filename)
+void playMusic(const std::filesystem::path& filename)
 {
     // Load an ogg music file
     sf::Music music;
-    if (!music.openFromFile("resources/" + filename))
+    if (!music.openFromFile("resources" / filename))
         return;
 
     // Display music informations
