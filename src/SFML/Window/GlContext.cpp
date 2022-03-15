@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 #include <glad/gl.h>
 #include <algorithm>
+#include <iomanip>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -805,7 +806,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
                 !parseVersionString(version, "OpenGL ES ",    m_settings.majorVersion, m_settings.minorVersion) &&
                 !parseVersionString(version, "",              m_settings.majorVersion, m_settings.minorVersion))
             {
-                err() << "Unable to parse OpenGL version string: \"" << version << "\", defaulting to 1.1" << std::endl;
+                err() << "Unable to parse OpenGL version string: " << std::quoted(version) << ", defaulting to 1.1" << std::endl;
             }
         }
         else
