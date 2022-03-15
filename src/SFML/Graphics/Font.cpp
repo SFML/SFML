@@ -159,7 +159,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to initialize FreeType)" << std::endl;
+        err() << "Failed to load font " << filename << " (failed to initialize FreeType)" << std::endl;
         return false;
     }
     fontHandles->library.reset(library);
@@ -168,7 +168,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Face face;
     if (FT_New_Face(library, filename.string().c_str(), 0, &face) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to create the font face)" << std::endl;
+        err() << "Failed to load font " << filename << " (failed to create the font face)" << std::endl;
         return false;
     }
     fontHandles->face.reset(face);
@@ -177,7 +177,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Stroker stroker;
     if (FT_Stroker_New(library, &stroker) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to create the stroker)" << std::endl;
+        err() << "Failed to load font " << filename << " (failed to create the stroker)" << std::endl;
         return false;
     }
     fontHandles->stroker.reset(stroker);
@@ -185,7 +185,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font \"" << filename << "\" (failed to set the Unicode character set)" << std::endl;
+        err() << "Failed to load font " << filename << " (failed to set the Unicode character set)" << std::endl;
         return false;
     }
 
