@@ -34,6 +34,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 #include <filesystem>
+#include <iomanip>
 #include <iterator>
 #include <ostream>
 
@@ -318,7 +319,7 @@ bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::U
         }
     }
 
-    err() << "Failed to save image with format \"" << format << '"' << std::endl;
+    err() << "Failed to save image with format " << std::quoted(format) << std::endl;
     return false;
 }
 

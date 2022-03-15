@@ -35,6 +35,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <fstream>
+#include <iomanip>
 #include <vector>
 #include <mutex>
 #include <ostream>
@@ -571,7 +572,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
                 // New entry, make sure there are enough texture units
                 if (m_textures.size() + 1 >= getMaxTextureUnits())
                 {
-                    err() << "Impossible to use texture \"" << name << "\" for shader: all available texture units are used" << std::endl;
+                    err() << "Impossible to use texture " << std::quoted(name) << " for shader: all available texture units are used" << std::endl;
                     return;
                 }
 
@@ -944,7 +945,7 @@ int Shader::getUniformLocation(const std::string& name)
         m_uniforms.emplace(name, location);
 
         if (location == -1)
-            err() << "Uniform \"" << name << "\" not found in shader" << std::endl;
+            err() << "Uniform " << std::quoted(name) << " not found in shader" << std::endl;
 
         return location;
     }

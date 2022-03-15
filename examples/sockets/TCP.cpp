@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network.hpp>
+#include <iomanip>
 #include <iostream>
 
 
@@ -31,14 +32,14 @@ void runTcpServer(unsigned short port)
     const char out[] = "Hi, I'm the server";
     if (socket.send(out, sizeof(out)) != sf::Socket::Done)
         return;
-    std::cout << "Message sent to the client: \"" << out << '"' << std::endl;
+    std::cout << "Message sent to the client: " << std::quoted(out) << std::endl;
 
     // Receive a message back from the client
     char in[128];
     std::size_t received;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
         return;
-    std::cout << "Answer received from the client: \"" << in << '"' << std::endl;
+    std::cout << "Answer received from the client: " << std::quoted(in) << std::endl;
 }
 
 
@@ -71,11 +72,11 @@ void runTcpClient(unsigned short port)
     std::size_t received;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
         return;
-    std::cout << "Message received from the server: \"" << in << '"' << std::endl;
+    std::cout << "Message received from the server: " << std::quoted(in) << std::endl;
 
     // Send an answer to the server
     const char out[] = "Hi, I'm a client";
     if (socket.send(out, sizeof(out)) != sf::Socket::Done)
         return;
-    std::cout << "Message sent to the server: \"" << out << '"' << std::endl;
+    std::cout << "Message sent to the server: " << std::quoted(out) << std::endl;
 }
