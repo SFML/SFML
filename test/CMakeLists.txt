@@ -31,6 +31,7 @@ SET(GRAPHICS_SRC
     Graphics/BlendMode.cpp
     Graphics/Color.cpp
     Graphics/Rect.cpp
+    Graphics/Shape.cpp
     Graphics/Transform.cpp
     Graphics/Transformable.cpp
     Graphics/Vertex.cpp
