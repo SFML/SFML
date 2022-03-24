@@ -11,7 +11,6 @@ target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/e
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
-# System is always built
 SET(SYSTEM_SRC
     System/Angle.cpp
     System/Clock.cpp
@@ -22,40 +21,32 @@ SET(SYSTEM_SRC
 )
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
 
-if(SFML_BUILD_WINDOW)
-    SET(WINDOW_SRC
-        Window/ContextSettings.cpp
-        Window/VideoMode.cpp
-    )
-    sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
-endif()
+SET(WINDOW_SRC
+    Window/ContextSettings.cpp
+    Window/VideoMode.cpp
+)
+sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
-if(SFML_BUILD_GRAPHICS)
-    SET(GRAPHICS_SRC
-        Graphics/BlendMode.cpp
-        Graphics/Color.cpp
-        Graphics/Rect.cpp
-        Graphics/Transform.cpp
-        Graphics/Transformable.cpp
-        Graphics/Vertex.cpp
-        Graphics/VertexArray.cpp
-    )
-    sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
-endif()
+SET(GRAPHICS_SRC
+    Graphics/BlendMode.cpp
+    Graphics/Color.cpp
+    Graphics/Rect.cpp
+    Graphics/Transform.cpp
+    Graphics/Transformable.cpp
+    Graphics/Vertex.cpp
+    Graphics/VertexArray.cpp
+)
+sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
-if(SFML_BUILD_NETWORK)
-    SET(NETWORK_SRC
-        Network/Packet.cpp
-    )
-    sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
-endif()
+SET(NETWORK_SRC
+    Network/Packet.cpp
+)
+sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
-if(SFML_BUILD_AUDIO)
-    SET(AUDIO_SRC
-        Audio/Dummy.cpp # TODO: Remove when there are real tests
-    )
-    sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
-endif()
+SET(AUDIO_SRC
+    Audio/Dummy.cpp # TODO: Remove when there are real tests
+)
+sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 
 # Automatically run the tests at the end of the build
 add_custom_target(runtests ALL
