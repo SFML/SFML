@@ -69,11 +69,10 @@ public:
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -152,12 +151,11 @@ private:
     /// \brief Create the context's drawing surface
     ///
     /// \param shared       Context to share the new one with (can be a null pointer)
-    /// \param width        Back buffer width, in pixels
-    /// \param height       Back buffer height, in pixels
+    /// \param size         Back buffer width and height, in pixels
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(GlxContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel);
+    void createSurface(GlxContext* shared, const Vector2u& size, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context's drawing surface from an existing window

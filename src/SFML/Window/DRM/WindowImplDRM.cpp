@@ -48,7 +48,7 @@ m_size(0, 0)
 
 ////////////////////////////////////////////////////////////
 WindowImplDRM::WindowImplDRM(VideoMode mode, const String& /*title*/, unsigned long /*style*/, const ContextSettings& /*settings*/) :
-m_size(mode.width, mode.height)
+m_size(mode.size)
 {
     sf::priv::InputImpl::setTerminalConfig();
 }
@@ -101,7 +101,7 @@ void WindowImplDRM::setTitle(const String& /*title*/)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplDRM::setIcon(unsigned int /*width*/, unsigned int /*height*/, const Uint8* /*pixels*/)
+void WindowImplDRM::setIcon(const Vector2u& /*size*/, const Uint8* /*pixels*/)
 {
 }
 

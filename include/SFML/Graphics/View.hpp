@@ -83,17 +83,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the view
     ///
-    /// \param width  New width of the view
-    /// \param height New height of the view
-    ///
-    /// \see setCenter, getCenter
-    ///
-    ////////////////////////////////////////////////////////////
-    void setSize(float width, float height);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the size of the view
-    ///
     /// \param size New size
     ///
     /// \see setCenter, getCenter
@@ -181,17 +170,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const FloatRect& getViewport() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move the view relatively to its current position
-    ///
-    /// \param offsetX X coordinate of the move offset
-    /// \param offsetY Y coordinate of the move offset
-    ///
-    /// \see setCenter, rotate, zoom
-    ///
-    ////////////////////////////////////////////////////////////
-    void move(float offsetX, float offsetY);
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the view relatively to its current position

@@ -247,7 +247,7 @@
     // Send a resize event if the scaling factor changed
     if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
         NSSize newSize = [self frame].size;
-        m_requester->windowResized(static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height));
+        m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
     }
 }
 
@@ -279,7 +279,7 @@
 
     // The new size
     NSSize newSize = [self frame].size;
-    m_requester->windowResized(static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height));
+    m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
 }
 
 ////////////////////////////////////////////////////////

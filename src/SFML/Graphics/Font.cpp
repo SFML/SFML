@@ -630,7 +630,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         Page& page = loadPage(characterSize);
 
         // Find a good position for the new glyph into the texture
-        glyph.textureRect = findGlyphRect(page, width, height);
+        glyph.textureRect = findGlyphRect(page, {width, height});
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
@@ -695,7 +695,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
         unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
         unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
-        page.texture.update(m_pixelBuffer.data(), w, h, x, y);
+        page.texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
     }
 
     // Delete the FT glyph
@@ -707,21 +707,21 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 
 
 ////////////////////////////////////////////////////////////
-IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height) const
+IntRect Font::findGlyphRect(Page& page, const Vector2u& size) const
 {
     // Find the line that fits well the glyph
     Row* row = nullptr;
     float bestRatio = 0;
     for (auto it = page.rows.begin(); it != page.rows.end() && !row; ++it)
     {
-        float ratio = static_cast<float>(height) / static_cast<float>(it->height);
+        float ratio = static_cast<float>(size.y) / static_cast<float>(it->height);
 
         // Ignore rows that are either too small or too high
         if ((ratio < 0.7f) || (ratio > 1.f))
             continue;
 
         // Check if there's enough horizontal space left in the row
-        if (width > page.texture.getSize().x - it->width)
+        if (size.x > page.texture.getSize().x - it->width)
             continue;
 
         // Make sure that this new row is the best found so far
@@ -736,17 +736,16 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     // If we didn't find a matching row, create a new one (10% taller than the glyph)
     if (!row)
     {
-        unsigned int rowHeight = height + height / 10;
-        while ((page.nextRow + rowHeight >= page.texture.getSize().y) || (width >= page.texture.getSize().x))
+        unsigned int rowHeight = size.y + size.y / 10;
+        while ((page.nextRow + rowHeight >= page.texture.getSize().y) || (size.x >= page.texture.getSize().x))
         {
             // Not enough space: resize the texture if possible
-            unsigned int textureWidth  = page.texture.getSize().x;
-            unsigned int textureHeight = page.texture.getSize().y;
-            if ((textureWidth * 2 <= Texture::getMaximumSize()) && (textureHeight * 2 <= Texture::getMaximumSize()))
+            Vector2u textureSize  = page.texture.getSize();
+            if ((textureSize.x * 2 <= Texture::getMaximumSize()) && (textureSize.y * 2 <= Texture::getMaximumSize()))
             {
                 // Make the texture 2 times bigger
                 Texture newTexture;
-                if (!newTexture.create(textureWidth * 2, textureHeight * 2))
+                if (!newTexture.create(textureSize * 2u))
                 {
                     err() << "Failed to create new page texture" << std::endl;
                     return IntRect({0, 0}, {2, 2});
@@ -771,10 +770,10 @@ IntRect Font::findGlyphRect(Page& page, unsigned int width, unsigned int height)
     }
 
     // Find the glyph's rectangle on the selected row
-    IntRect rect(Rect<unsigned int>({row->width, row->top}, {width, height}));
+    IntRect rect(Rect<unsigned int>({row->width, row->top}, size));
 
     // Update the row informations
-    row->width += width;
+    row->width += size.x;
 
     return rect;
 }
@@ -828,12 +827,12 @@ nextRow(3)
 {
     // Make sure that the texture is initialized by default
     sf::Image image;
-    image.create(128, 128, Color(255, 255, 255, 0));
+    image.create({128, 128}, Color(255, 255, 255, 0));
 
     // Reserve a 2x2 white square for texturing underlines
     for (unsigned int x = 0; x < 2; ++x)
         for (unsigned int y = 0; y < 2; ++y)
-            image.setPixel(x, y, Color(255, 255, 255, 255));
+            image.setPixel({x, y}, Color(255, 255, 255, 255));
 
     // Create the texture
     if (!texture.loadFromImage(image))

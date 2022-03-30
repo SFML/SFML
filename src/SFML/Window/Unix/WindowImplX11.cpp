@@ -592,12 +592,12 @@ m_lastInputTime  (0)
     }
     else
     {
-        windowPosition.x = (DisplayWidth(m_display, m_screen) - static_cast<int>(mode.width))  / 2;
-        windowPosition.y = (DisplayHeight(m_display, m_screen) - static_cast<int>(mode.height)) / 2;
+        const Vector2i displaySize(DisplayWidth(m_display, m_screen), DisplayHeight(m_display, m_screen));
+        windowPosition = displaySize - Vector2i(mode.size) / 2;
     }
 
-    unsigned int width  = mode.width;
-    unsigned int height = mode.height;
+    unsigned int width  = mode.size.x;
+    unsigned int height = mode.size.y;
 
     Visual* visual = nullptr;
     int depth = 0;
@@ -1007,12 +1007,12 @@ void WindowImplX11::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplX11::setIcon(const Vector2u& size, const Uint8* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by XDestroyImage
-    auto* iconPixels = static_cast<Uint8*>(std::malloc(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4));
-    for (std::size_t i = 0; i < static_cast<std::size_t>(width) * static_cast<std::size_t>(height); ++i)
+    auto* iconPixels = static_cast<Uint8*>(std::malloc(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
         iconPixels[i * 4 + 1] = pixels[i * 4 + 1];
@@ -1023,7 +1023,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     // Create the icon pixmap
     Visual*      defVisual = DefaultVisual(m_display, m_screen);
     auto defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
-    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), width, height, 32, 0);
+    XImage* iconImage = XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0);
     if (!iconImage)
     {
         err() << "Failed to set the window's icon" << std::endl;
@@ -1036,31 +1036,31 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
     if (m_iconMaskPixmap)
         XFreePixmap(m_display, m_iconMaskPixmap);
 
-    m_iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), width, height, defDepth);
+    m_iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), size.x, size.y, defDepth);
     XGCValues values;
     GC iconGC = XCreateGC(m_display, m_iconPixmap, 0, &values);
-    XPutImage(m_display, m_iconPixmap, iconGC, iconImage, 0, 0, 0, 0, width, height);
+    XPutImage(m_display, m_iconPixmap, iconGC, iconImage, 0, 0, 0, 0, size.x, size.y);
     XFreeGC(m_display, iconGC);
     XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
-    std::size_t pitch = (width + 7) / 8;
-    std::vector<Uint8> maskPixels(pitch * height, 0);
-    for (std::size_t j = 0; j < height; ++j)
+    std::size_t pitch = (size.x + 7) / 8;
+    std::vector<Uint8> maskPixels(pitch * size.y, 0);
+    for (std::size_t j = 0; j < size.y; ++j)
     {
         for (std::size_t i = 0; i < pitch; ++i)
         {
             for (std::size_t k = 0; k < 8; ++k)
             {
-                if (i * 8 + k < width)
+                if (i * 8 + k < size.x)
                 {
-                    Uint8 opacity = (pixels[(i * 8 + k + j * width) * 4 + 3] > 0) ? 1 : 0;
+                    Uint8 opacity = (pixels[(i * 8 + k + j * size.x) * 4 + 3] > 0) ? 1 : 0;
                     maskPixels[i + j * pitch] |= static_cast<Uint8>(opacity << k);
                 }
             }
         }
     }
-    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, reinterpret_cast<char*>(maskPixels.data()), width, height, 1, 0, 1);
+    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display, m_window, reinterpret_cast<char*>(maskPixels.data()), size.x, size.y, 1, 0, 1);
 
     // Send our new icon to the window through the WMHints
     XWMHints* hints = XAllocWMHints();
@@ -1072,16 +1072,16 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
-    std::vector<unsigned long> icccmIconPixels(2 + width * height, 0);
+    std::vector<unsigned long> icccmIconPixels(2 + size.x * size.y, 0);
     unsigned long* ptr = icccmIconPixels.data();
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
-    *ptr++ = width;
-    *ptr++ = height;
+    *ptr++ = size.x;
+    *ptr++ = size.y;
     #pragma GCC diagnostic pop
 
-    for (std::size_t i = 0; i < static_cast<std::size_t>(width) * static_cast<std::size_t>(height); ++i)
+    for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
     {
         *ptr++ = static_cast<unsigned long>((pixels[i * 4 + 2] << 0 ) |
                                             (pixels[i * 4 + 1] << 8 ) |
@@ -1098,7 +1098,7 @@ void WindowImplX11::setIcon(unsigned int width, unsigned int height, const Uint8
                     32,
                     PropModeReplace,
                     reinterpret_cast<const unsigned char*>(icccmIconPixels.data()),
-                    static_cast<int>(2 + width * height));
+                    static_cast<int>(2 + size.x * size.y));
 
     XFlush(m_display);
 }
@@ -1379,8 +1379,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
             std::swap(res->modes[i].height, res->modes[i].width);
 
         // Check if screen size match
-        if ((res->modes[i].width == mode.width) &&
-            (res->modes[i].height == mode.height))
+        if ((res->modes[i].width == mode.size.x) &&
+            (res->modes[i].height == mode.size.y))
         {
             xRandMode = res->modes[i].id;
             modeFound = true;

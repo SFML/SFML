@@ -128,13 +128,12 @@ public:
     /// to use according to the OS.
     ///
     /// \param settings Creation parameters
-    /// \param width    Back buffer width
-    /// \param height   Back buffer height
+    /// \param size     Back buffer width and height
     ///
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<GlContext> create(const ContextSettings& settings, unsigned int width, unsigned int height);
+    static std::unique_ptr<GlContext> create(const ContextSettings& settings, const Vector2u& size);
 
 public:
     ////////////////////////////////////////////////////////////

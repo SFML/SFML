@@ -62,7 +62,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         VideoMode mode = convertCGModeToSFMode(cgmode);
 
         // Skip if bigger than desktop as we currently don't perform hard resolution switch
-        if ((mode.width > desktop.width) || (mode.height > desktop.height))
+        if ((mode.size.x > desktop.size.x) || (mode.size.y > desktop.size.y))
             continue;
 
         // If not yet listed we add it to our modes array.

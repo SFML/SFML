@@ -78,22 +78,13 @@ void View::setCenter(const Vector2f& center)
     m_invTransformUpdated = false;
 }
 
-
-////////////////////////////////////////////////////////////
-void View::setSize(float width, float height)
-{
-    m_size.x = width;
-    m_size.y = height;
-
-    m_transformUpdated    = false;
-    m_invTransformUpdated = false;
-}
-
-
 ////////////////////////////////////////////////////////////
 void View::setSize(const Vector2f& size)
 {
-    setSize(size.x, size.y);
+    m_size = size;
+
+    m_transformUpdated    = false;
+    m_invTransformUpdated = false;
 }
 
 
@@ -173,7 +164,7 @@ void View::rotate(Angle angle)
 ////////////////////////////////////////////////////////////
 void View::zoom(float factor)
 {
-    setSize(m_size.x * factor, m_size.y * factor);
+    setSize(m_size * factor);
 }
 
 

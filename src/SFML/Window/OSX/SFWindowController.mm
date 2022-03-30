@@ -183,7 +183,7 @@
     // Create a screen-sized window on the main display
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     sf::priv::scaleInWidthHeight(desktop, nil);
-    NSRect windowRect = NSMakeRect(0, 0, desktop.width, desktop.height);
+    NSRect windowRect = NSMakeRect(0, 0, desktop.size.x, desktop.size.y);
     m_window = [[SFWindow alloc] initWithContentRect:windowRect
                                            styleMask:NSBorderlessWindowMask
                                              backing:NSBackingStoreBuffered
@@ -223,10 +223,10 @@
     }
 
     // Create our OpenGL view size and the view
-    CGFloat width = std::min(mode.width, desktop.width);
-    CGFloat height = std::min(mode.height, desktop.height);
-    CGFloat x = (desktop.width - width) / 2.0;
-    CGFloat y = (desktop.height - height) / 2.0;
+    CGFloat width = std::min(mode.size.x, desktop.size.x);
+    CGFloat height = std::min(mode.size.y, desktop.size.y);
+    CGFloat x = (desktop.size.x - width) / 2.0;
+    CGFloat y = (desktop.size.y - height) / 2.0;
     NSRect oglRect = NSMakeRect(x, y, width, height);
 
     m_oglView = [[SFOpenGLView alloc] initWithFrame:oglRect
@@ -253,7 +253,7 @@
     // We know that style & sf::Style::Fullscreen is false.
 
     // Create our window size.
-    NSRect rect = NSMakeRect(0, 0, mode.width, mode.height);
+    NSRect rect = NSMakeRect(0, 0, mode.size.x, mode.size.y);
 
     // Convert the SFML window style to Cocoa window style.
     unsigned int nsStyle = NSBorderlessWindowMask;
@@ -451,11 +451,11 @@
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
         sf::priv::scaleInWidthHeight(desktop, nil);
 
-        width = std::min(width, desktop.width);
-        height = std::min(height, desktop.height);
+        width = std::min(width, desktop.size.x);
+        height = std::min(height, desktop.size.y);
 
-        CGFloat x = (desktop.width - width) / 2.0;
-        CGFloat y = (desktop.height - height) / 2.0;
+        CGFloat x = (desktop.size.x - width) / 2.0;
+        CGFloat y = (desktop.size.y - height) / 2.0;
         NSRect oglRect = NSMakeRect(x, y, width, height);
 
         [m_oglView setFrame:oglRect];
@@ -482,7 +482,7 @@
 
             // The size is not the requested one, we fire an event
             if (m_requester != 0)
-                m_requester->windowResized(width, height - static_cast<unsigned int>([self titlebarHeight]));
+                m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
         }
 
         NSRect frame = NSMakeRect([m_window frame].origin.x,

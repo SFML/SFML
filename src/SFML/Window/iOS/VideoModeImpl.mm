@@ -41,7 +41,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     // Return both portrait and landscape resolutions
     std::vector<VideoMode> modes;
     modes.push_back(desktop);
-    modes.emplace_back(desktop.height, desktop.width, desktop.bitsPerPixel);
+    modes.emplace_back(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel);
     return modes;
 }
 
@@ -51,7 +51,7 @@ VideoMode VideoModeImpl::getDesktopMode()
 {
     CGRect bounds = [[UIScreen mainScreen] bounds];
     double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
-    return VideoMode(static_cast<unsigned int>(bounds.size.width * backingScale), static_cast<unsigned int>(bounds.size.height * backingScale));
+    return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale), static_cast<unsigned int>(bounds.size.height * backingScale)});
 }
 
 } // namespace priv

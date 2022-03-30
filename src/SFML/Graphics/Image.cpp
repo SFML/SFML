@@ -70,12 +70,12 @@ Image& Image::operator=(Image&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-void Image::create(unsigned int width, unsigned int height, const Color& color)
+void Image::create(const Vector2u& size, const Color& color)
 {
-    if (width && height)
+    if (size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
+        std::vector<Uint8> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
 
         // Fill it with the specified color
         Uint8* ptr = newPixels.data();
@@ -92,8 +92,7 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
         m_pixels.swap(newPixels);
 
         // Assign the new size
-        m_size.x = width;
-        m_size.y = height;
+        m_size = size;
     }
     else
     {
@@ -108,19 +107,18 @@ void Image::create(unsigned int width, unsigned int height, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Image::create(unsigned int width, unsigned int height, const Uint8* pixels)
+void Image::create(const Vector2u& size, const Uint8* pixels)
 {
-    if (pixels && width && height)
+    if (pixels && size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(pixels, pixels + width * height * 4);
+        std::vector<Uint8> newPixels(pixels, pixels + size.x * size.y * 4);
 
         // Commit the new pixel buffer
         m_pixels.swap(newPixels);
 
         // Assign the new size
-        m_size.x = width;
-        m_size.y = height;
+        m_size = size;
     }
     else
     {
@@ -204,7 +202,7 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 
 
 ////////////////////////////////////////////////////////////
-void Image::copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect, bool applyAlpha)
+void Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if ((source.m_size.x == 0) || (source.m_size.y == 0) || (m_size.x == 0) || (m_size.y == 0))
@@ -230,8 +228,8 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
     // Then find the valid bounds of the destination rectangle
     auto width  = static_cast<unsigned int>(srcRect.width);
     auto height = static_cast<unsigned int>(srcRect.height);
-    if (destX + width  > m_size.x) width  = m_size.x - destX;
-    if (destY + height > m_size.y) height = m_size.y - destY;
+    if (dest.x + width  > m_size.x) width  = m_size.x - dest.x;
+    if (dest.y + height > m_size.y) height = m_size.y - dest.y;
 
     // Make sure the destination area is valid
     if ((width <= 0) || (height <= 0))
@@ -243,7 +241,7 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
     int          srcStride = static_cast<int>(source.m_size.x) * 4;
     int          dstStride = static_cast<int>(m_size.x) * 4;
     const Uint8* srcPixels = source.m_pixels.data() + (static_cast<unsigned int>(srcRect.left) + static_cast<unsigned int>(srcRect.top) * source.m_size.x) * 4;
-    Uint8*       dstPixels = m_pixels.data() + (destX + destY * m_size.x) * 4;
+    Uint8*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)
@@ -290,9 +288,9 @@ void Image::copy(const Image& source, unsigned int destX, unsigned int destY, co
 
 
 ////////////////////////////////////////////////////////////
-void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
+void Image::setPixel(const Vector2u& coords, const Color& color)
 {
-    Uint8* pixel = &m_pixels[(x + y * m_size.x) * 4];
+    Uint8* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
     *pixel++ = color.r;
     *pixel++ = color.g;
     *pixel++ = color.b;
@@ -301,9 +299,9 @@ void Image::setPixel(unsigned int x, unsigned int y, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-Color Image::getPixel(unsigned int x, unsigned int y) const
+Color Image::getPixel(const Vector2u& coords) const
 {
-    const Uint8* pixel = &m_pixels[(x + y * m_size.x) * 4];
+    const Uint8* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
     return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 

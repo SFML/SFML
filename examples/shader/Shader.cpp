@@ -192,7 +192,7 @@ public:
     bool onLoad() override
     {
         // Create the off-screen surface
-        if (!m_surface.create(800, 600))
+        if (!m_surface.create({800, 600}))
             return false;
         m_surface.setSmooth(true);
 
@@ -352,7 +352,7 @@ private:
 int main()
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Shader",
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Shader",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 

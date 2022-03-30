@@ -204,8 +204,7 @@ m_config     (nullptr),
 m_currentBO  (nullptr),
 m_nextBO     (nullptr),
 m_gbmSurface (nullptr),
-m_width      (0),
-m_height     (0),
+m_size       (0, 0),
 m_shown      (false),
 m_scanOut    (false)
 {
@@ -222,9 +221,9 @@ m_scanOut    (false)
     createContext(shared);
 
     if (shared)
-        createSurface(shared->m_width, shared->m_height, VideoMode::getDesktopMode().bitsPerPixel, false);
+        createSurface(shared->m_size, VideoMode::getDesktopMode().bitsPerPixel, false);
     else // create a surface to force the GL to initialize (seems to be required for glGetString() etc )
-        createSurface(1, 1, VideoMode::getDesktopMode().bitsPerPixel, false);
+        createSurface({1, 1}, VideoMode::getDesktopMode().bitsPerPixel, false);
 }
 
 
@@ -237,8 +236,7 @@ m_config     (nullptr),
 m_currentBO  (nullptr),
 m_nextBO     (nullptr),
 m_gbmSurface (nullptr),
-m_width      (0),
-m_height     (0),
+m_size       (0, 0),
 m_shown      (false),
 m_scanOut    (false)
 {
@@ -255,12 +253,12 @@ m_scanOut    (false)
     createContext(shared);
 
     Vector2u size = owner.getSize();
-    createSurface(size.x, size.y, bitsPerPixel, true);
+    createSurface(size, bitsPerPixel, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size) :
 m_display    (EGL_NO_DISPLAY),
 m_context    (EGL_NO_CONTEXT),
 m_surface    (EGL_NO_SURFACE),
@@ -268,8 +266,7 @@ m_config     (nullptr),
 m_currentBO  (nullptr),
 m_nextBO     (nullptr),
 m_gbmSurface (nullptr),
-m_width      (0),
-m_height     (0),
+m_size       (0, 0),
 m_shown      (false),
 m_scanOut    (false)
 {
@@ -284,7 +281,7 @@ m_scanOut    (false)
 
     // Create EGL context
     createContext(shared);
-    createSurface(width, height, VideoMode::getDesktopMode().bitsPerPixel, false);
+    createSurface(size, VideoMode::getDesktopMode().bitsPerPixel, false);
 }
 
 
@@ -431,7 +428,7 @@ void DRMContext::createContext(DRMContext* shared)
 
 
 ////////////////////////////////////////////////////////////
-void DRMContext::createSurface(unsigned int width, unsigned int height, unsigned int /*bpp*/, bool scanout)
+void DRMContext::createSurface(const Vector2u& size, unsigned int /*bpp*/, bool scanout)
 {
     sf::Uint32 flags = GBM_BO_USE_RENDERING;
 
@@ -441,8 +438,8 @@ void DRMContext::createSurface(unsigned int width, unsigned int height, unsigned
 
     m_gbmSurface = gbm_surface_create(
         gbmDevice,
-        width,
-        height,
+        size.x,
+        size.y,
         GBM_FORMAT_ARGB8888,
         flags);
 
@@ -452,8 +449,7 @@ void DRMContext::createSurface(unsigned int width, unsigned int height, unsigned
         return;
     }
 
-    m_width = width;
-    m_height = height;
+    m_size = size;
 
     m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), nullptr));
 

@@ -155,7 +155,7 @@ Vector2i InputImpl::getMousePosition()
     AutoreleasePool pool;
     // Reverse Y axis to match SFML coord.
     NSPoint pos = [NSEvent mouseLocation];
-    pos.y = sf::VideoMode::getDesktopMode().height - pos.y;
+    pos.y = sf::VideoMode::getDesktopMode().size.y - pos.y;
 
     int scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
     return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y)) * scale;

@@ -60,8 +60,8 @@ void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
 template <class T>
 void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleIn(in.width, delegate);
-    scaleIn(in.height, delegate);
+    scaleIn(in.size.x, delegate);
+    scaleIn(in.size.y, delegate);
 }
 
 template <class T>
@@ -85,10 +85,10 @@ void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 }
 
 template <class T>
-void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
+void scaleOutWidthHeight(T& width, T& height, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleOut(out.width, delegate);
-    scaleOut(out.height, delegate);
+    scaleOut(width, delegate);
+    scaleOut(height, delegate);
 }
 
 template <class T>

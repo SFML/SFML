@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/GlResource.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <memory>
 
 
@@ -156,7 +157,7 @@ public:
     /// \param height   Back buffer height
     ///
     ////////////////////////////////////////////////////////////
-    Context(const ContextSettings& settings, unsigned int width, unsigned int height);
+    Context(const ContextSettings& settings, const Vector2u& size);
 
 private:
 

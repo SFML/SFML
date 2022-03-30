@@ -187,7 +187,7 @@ class VulkanExample
 public:
     // Constructor
     VulkanExample() :
-    window(sf::VideoMode(800, 600), "SFML window with Vulkan", sf::Style::Default),
+    window(sf::VideoMode({800, 600}), "SFML window with Vulkan", sf::Style::Default),
     vulkanAvailable(sf::Vulkan::isAvailable()),
     maxFramesInFlight(2),
     currentFrame(0),
