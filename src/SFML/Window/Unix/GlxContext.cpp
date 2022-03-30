@@ -124,7 +124,7 @@ m_ownsWindow(false)
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, 1, 1, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, {1, 1}, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);
@@ -157,7 +157,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size) :
 m_display   (nullptr),
 m_window    (0),
 m_context   (nullptr),
@@ -174,7 +174,7 @@ m_ownsWindow(false)
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, width, height, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, size, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);
@@ -472,7 +472,7 @@ void GlxContext::updateSettingsFromWindow()
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel)
+void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigned int bitsPerPixel)
 {
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = selectBestVisual(m_display, bitsPerPixel, m_settings);
@@ -521,8 +521,8 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
             {
                 int attributes[] =
                 {
-                    GLX_PBUFFER_WIDTH,  static_cast<int>(width),
-                    GLX_PBUFFER_HEIGHT, static_cast<int>(height),
+                    GLX_PBUFFER_WIDTH,  static_cast<int>(size.x),
+                    GLX_PBUFFER_HEIGHT, static_cast<int>(size.y),
                     0,                  0
                 };
 
@@ -553,7 +553,7 @@ void GlxContext::createSurface(GlxContext* shared, unsigned int width, unsigned 
     m_window = XCreateWindow(m_display,
                              RootWindow(m_display, screen),
                              0, 0,
-                             width, height,
+                             size.x, size.y,
                              0,
                              DefaultDepth(m_display, screen),
                              InputOutput,

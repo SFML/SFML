@@ -44,13 +44,13 @@ RenderTexture::~RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
+bool RenderTexture::create(const Vector2u& size, const ContextSettings& settings)
 {
     // Set texture to be in sRGB scale if requested
     m_texture.setSrgb(settings.sRgbCapable);
 
     // Create the texture
-    if (!m_texture.create(width, height))
+    if (!m_texture.create(size))
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
@@ -75,7 +75,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, const Contex
     }
 
     // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, settings))
+    if (!m_impl->create(size, m_texture.m_texture, settings))
         return false;
 
     // We can now initialize the render target part

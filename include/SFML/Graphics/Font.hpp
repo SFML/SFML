@@ -395,14 +395,13 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph
     ///
-    /// \param page   Page of glyphs to search in
-    /// \param width  Width of the rectangle
-    /// \param height Height of the rectangle
+    /// \param page Page of glyphs to search in
+    /// \param size Width and height of the rectangle
     ///
     /// \return Found rectangle within the texture
     ///
     ////////////////////////////////////////////////////////////
-    IntRect findGlyphRect(Page& page, unsigned int width, unsigned int height) const;
+    IntRect findGlyphRect(Page& page, const Vector2u& size) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Make sure that the given size is the current one

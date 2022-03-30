@@ -273,8 +273,7 @@ public:
     ///
     /// The OS default icon is used by default.
     ///
-    /// \param width  Icon's width, in pixels
-    /// \param height Icon's height, in pixels
+    /// \param size   Icon's width and height, in pixels
     /// \param pixels Pointer to the array of pixels in memory. The
     ///               pixels are copied, so you need not keep the
     ///               source alive after calling this function.
@@ -282,7 +281,7 @@ public:
     /// \see setTitle
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    void setIcon(const Vector2u& size, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

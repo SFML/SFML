@@ -87,7 +87,7 @@ void generateTerrain(sf::Vertex* vertexBuffer);
 int main()
 {
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "SFML Island",
+    sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 

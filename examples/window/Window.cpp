@@ -27,7 +27,7 @@ int main()
     contextSettings.depthBits = 24;
 
     // Create the main window
-    sf::Window window(sf::VideoMode(640, 480), "SFML window with OpenGL", sf::Style::Default, contextSettings);
+    sf::Window window(sf::VideoMode({640, 480}), "SFML window with OpenGL", sf::Style::Default, contextSettings);
 
     // Make it the active window for OpenGL calls
     if (!window.setActive())

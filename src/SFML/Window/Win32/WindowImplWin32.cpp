@@ -164,7 +164,7 @@ m_cursorVisible   (true), // might need to call GetCursorInfo
 m_lastCursor      (LoadCursor(nullptr, IDC_ARROW)),
 m_icon            (nullptr),
 m_keyRepeatEnabled(true),
-m_lastSize        (mode.width, mode.height),
+m_lastSize        (mode.size),
 m_resizing        (false),
 m_surrogate       (0),
 m_mouseInside     (false),
@@ -180,10 +180,10 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Compute position and size
     HDC screenDC = GetDC(nullptr);
-    int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.width))  / 2;
-    int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.height)) / 2;
-    int width  = static_cast<int>(mode.width);
-    int height = static_cast<int>(mode.height);
+    int left   = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x))  / 2;
+    int top    = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
+    int width  = static_cast<int>(mode.size.x);
+    int height = static_cast<int>(mode.size.y);
     ReleaseDC(nullptr, screenDC);
 
     // Choose the window style according to the Style parameter
@@ -226,7 +226,7 @@ m_cursorGrabbed   (m_fullscreen)
 
     // By default, the OS limits the size of the window the the desktop size,
     // we have to resize it after creation to apply the real size
-    setSize(Vector2u(mode.width, mode.height));
+    setSize(mode.size);
 
     // Switch to fullscreen if requested
     if (m_fullscreen)
@@ -351,14 +351,14 @@ void WindowImplWin32::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplWin32::setIcon(const Vector2u& size, const Uint8* pixels)
 {
     // First destroy the previous one
     if (m_icon)
         DestroyIcon(m_icon);
 
     // Windows wants BGRA pixels: swap red and blue channels
-    std::vector<Uint8> iconPixels(width * height * 4);
+    std::vector<Uint8> iconPixels(size.x * size.y * 4);
     for (std::size_t i = 0; i < iconPixels.size() / 4; ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
@@ -368,7 +368,7 @@ void WindowImplWin32::setIcon(unsigned int width, unsigned int height, const Uin
     }
 
     // Create the icon from the pixel array
-    m_icon = CreateIcon(GetModuleHandleW(nullptr), static_cast<int>(width), static_cast<int>(height), 1, 32, nullptr, iconPixels.data());
+    m_icon = CreateIcon(GetModuleHandleW(nullptr), static_cast<int>(size.x), static_cast<int>(size.y), 1, 32, nullptr, iconPixels.data());
 
     // Set it as both big and small icon of the window
     if (m_icon)
@@ -479,8 +479,8 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
 {
     DEVMODE devMode;
     devMode.dmSize       = sizeof(devMode);
-    devMode.dmPelsWidth  = mode.width;
-    devMode.dmPelsHeight = mode.height;
+    devMode.dmPelsWidth  = mode.size.x;
+    devMode.dmPelsHeight = mode.size.y;
     devMode.dmBitsPerPel = mode.bitsPerPixel;
     devMode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 
@@ -496,7 +496,7 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     SetWindowLongPtr(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 
     // Resize the window so that it fits the entire screen
-    SetWindowPos(m_handle, HWND_TOP, 0, 0, static_cast<int>(mode.width), static_cast<int>(mode.height), SWP_FRAMECHANGED);
+    SetWindowPos(m_handle, HWND_TOP, 0, 0, static_cast<int>(mode.size.x), static_cast<int>(mode.size.y), SWP_FRAMECHANGED);
     ShowWindow(m_handle, SW_SHOW);
 
     // Set "this" as the current fullscreen window

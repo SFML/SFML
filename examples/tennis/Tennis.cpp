@@ -38,7 +38,7 @@ int main()
     float ballRadius = 10.f;
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight), 32), "SFML Tennis",
+    sf::RenderWindow window(sf::VideoMode({static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight)}, 32), "SFML Tennis",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
@@ -151,7 +151,7 @@ int main()
             if (event.type == sf::Event::Resized)
             {
                 sf::View view;
-                view.setSize(gameWidth, gameHeight);
+                view.setSize({gameWidth, gameHeight});
                 view.setCenter({gameWidth / 2.f, gameHeight / 2.f});
                 window.setView(view);
             }

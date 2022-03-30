@@ -501,7 +501,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         // Re-create our shared context as a core context
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
-        sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, 1, 1);
+        sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
@@ -530,7 +530,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, unsigned int width, unsigned int height)
+std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, const Vector2u& size)
 {
     using GlContextImpl::mutex;
     using GlContextImpl::resourceCount;
@@ -553,7 +553,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, un
         // Re-create our shared context as a core context
         ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
-        sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, 1, 1);
+        sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->initialize(sharedSettings);
 
         // Reload our extensions vector
@@ -569,7 +569,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, un
         sharedContext->setActive(true);
 
         // Create the context
-        context = std::make_unique<ContextType>(sharedContext.get(), settings, width, height);
+        context = std::make_unique<ContextType>(sharedContext.get(), settings, size);
 
         sharedContext->setActive(false);
     }

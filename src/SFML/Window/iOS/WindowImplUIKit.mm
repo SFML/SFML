@@ -64,7 +64,7 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (style & Style::Fullscreen);
 
     // Set the orientation according to the requested size
-    if (mode.width > mode.height)
+    if (mode.size.x > mode.size.y)
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft];
     else
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
@@ -180,7 +180,7 @@ void WindowImplUIKit::setTitle(const String& /* title */)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setIcon(unsigned int /* width */, unsigned int /* height */, const Uint8* /* pixels */)
+void WindowImplUIKit::setIcon(const Vector2u& /* size */, const Uint8* /* pixels */)
 {
     // Not applicable
 }

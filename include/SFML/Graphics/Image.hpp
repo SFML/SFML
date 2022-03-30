@@ -89,12 +89,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create the image and fill it with a unique color
     ///
-    /// \param width  Width of the image
-    /// \param height Height of the image
-    /// \param color  Fill color
+    /// \param size  Width and height of the image
+    /// \param color Fill color
     ///
     ////////////////////////////////////////////////////////////
-    void create(unsigned int width, unsigned int height, const Color& color = Color(0, 0, 0));
+    void create(const Vector2u& size, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the image from an array of pixels
@@ -104,12 +103,11 @@ public:
     /// an undefined behavior.
     /// If \a pixels is null, an empty image is created.
     ///
-    /// \param width  Width of the image
-    /// \param height Height of the image
+    /// \param size   Width and height of the image
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    void create(unsigned int width, unsigned int height, const Uint8* pixels);
+    void create(const Vector2u& size, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -237,13 +235,12 @@ public:
     /// details on the \b over operator.
     ///
     /// \param source     Source image to copy
-    /// \param destX      X coordinate of the destination position
-    /// \param destY      Y coordinate of the destination position
+    /// \param dest       Coordinates of the destination position
     /// \param sourceRect Sub-rectangle of the source image to copy
     /// \param applyAlpha Should the copy take into account the source transparency?
     ///
     ////////////////////////////////////////////////////////////
-    void copy(const Image& source, unsigned int destX, unsigned int destY, const IntRect& sourceRect = IntRect({0, 0}, {0, 0}), bool applyAlpha = false);
+    void copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect = IntRect({0, 0}, {0, 0}), bool applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel
@@ -252,14 +249,13 @@ public:
     /// coordinates, using out-of-range values will result in
     /// an undefined behavior.
     ///
-    /// \param x     X coordinate of pixel to change
-    /// \param y     Y coordinate of pixel to change
-    /// \param color New color of the pixel
+    /// \param coords Coordinates of pixel to change
+    /// \param color  New color of the pixel
     ///
     /// \see getPixel
     ///
     ////////////////////////////////////////////////////////////
-    void setPixel(unsigned int x, unsigned int y, const Color& color);
+    void setPixel(const Vector2u& coords, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the color of a pixel
@@ -268,15 +264,14 @@ public:
     /// coordinates, using out-of-range values will result in
     /// an undefined behavior.
     ///
-    /// \param x X coordinate of pixel to get
-    /// \param y Y coordinate of pixel to get
+    /// \param coords Coordinates of pixel to change
     ///
-    /// \return Color of the pixel at coordinates (x, y)
+    /// \return Color of the pixel at given coordinates
     ///
     /// \see setPixel
     ///
     ////////////////////////////////////////////////////////////
-    Color getPixel(unsigned int x, unsigned int y) const;
+    Color getPixel(const Vector2u& coords) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only pointer to the array of pixels

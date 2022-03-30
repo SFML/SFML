@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
 
     sf::Sprite image(texture);
-    image.setPosition({screen.width / 2.f, screen.height / 2.f});
-    image.setOrigin({texture.getSize().x / 2.f, texture.getSize().y / 2.f});
+    image.setPosition(sf::Vector2f(screen.size) / 2.f);
+    image.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 
     sf::Font font;
     if (!font.loadFromFile("tuffy.ttf"))
@@ -123,8 +123,8 @@ int main(int argc, char *argv[])
                         window.close();
                     break;
                 case sf::Event::Resized:
-                    view.setSize(event.size.width, event.size.height);
-                    view.setCenter({event.size.width / 2.f, event.size.height / 2.f});
+                    view.setSize(sf::Vector2f(event.size.width, event.size.height));
+                    view.setCenter(sf::Vector2f(event.size.width, event.size.height) / 2.f);
                     window.setView(view);
                     break;
                 case sf::Event::LostFocus:

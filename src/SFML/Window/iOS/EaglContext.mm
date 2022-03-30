@@ -126,7 +126,7 @@ m_clock       ()
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */,
-                         unsigned int /* width */, unsigned int /* height */) :
+                         const Vector2u& /* size */) :
 m_context     (nil),
 m_framebuffer (0),
 m_colorbuffer (0),

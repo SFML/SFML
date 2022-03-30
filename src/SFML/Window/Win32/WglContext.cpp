@@ -103,7 +103,7 @@ String getErrorString(DWORD errorCode)
 
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) :
-WglContext(shared, ContextSettings(), 1u, 1u)
+WglContext(shared, ContextSettings(), {1u, 1u})
 {
 }
 
@@ -130,7 +130,7 @@ m_ownsWindow   (false)
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height) :
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const Vector2u& size) :
 m_window       (nullptr),
 m_pbuffer      (nullptr),
 m_deviceContext(nullptr),
@@ -143,7 +143,7 @@ m_ownsWindow   (false)
     m_settings = settings;
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, width, height, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, size, VideoMode::getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);
@@ -523,7 +523,7 @@ void WglContext::updateSettingsFromPixelFormat()
 
 
 ////////////////////////////////////////////////////////////
-void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel)
+void WglContext::createSurface(WglContext* shared, const Vector2u& size, unsigned int bitsPerPixel)
 {
     // Check if the shared context already exists and pbuffers are supported
     if (shared && shared->m_deviceContext && SF_GLAD_WGL_ARB_pbuffer)
@@ -534,7 +534,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         {
             int attributes[] = {0, 0};
 
-            m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext, bestFormat, static_cast<int>(width), static_cast<int>(height), attributes);
+            m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext, bestFormat, static_cast<int>(size.x), static_cast<int>(size.y), attributes);
 
             if (m_pbuffer)
             {
@@ -563,7 +563,7 @@ void WglContext::createSurface(WglContext* shared, unsigned int width, unsigned 
         // with other contexts and thus wglShareLists would always fail
 
         // Create the hidden window
-        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, static_cast<int>(width), static_cast<int>(height), nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
+        m_window = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y), nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
         ShowWindow(m_window, SW_HIDE);
         m_deviceContext = GetDC(m_window);
 

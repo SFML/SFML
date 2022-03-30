@@ -219,13 +219,13 @@ void WindowImplCocoa::windowClosed(void)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::windowResized(unsigned int width, unsigned int height)
+void WindowImplCocoa::windowResized(const Vector2u& size)
 {
     Event event;
     event.type = Event::Resized;
-    event.size.width  = width;
-    event.size.height = height;
-    scaleOutWidthHeight(event.size, m_delegate);
+    event.size.width  = size.x;
+    event.size.height = size.y;
+    scaleOutWidthHeight(event.size.width, event.size.height, m_delegate);
 
     pushEvent(event);
 }
@@ -455,10 +455,10 @@ void WindowImplCocoa::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplCocoa::setIcon(const Vector2u& size, const Uint8* pixels)
 {
     AutoreleasePool pool;
-    [m_delegate setIconTo:width by:height with:pixels];
+    [m_delegate setIconTo:size.x by:size.y with:pixels];
 }
 
 

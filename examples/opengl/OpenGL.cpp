@@ -45,7 +45,7 @@ int main()
         contextSettings.sRgbCapable = sRgb;
 
         // Create the main window
-        sf::RenderWindow window(sf::VideoMode(800, 600), "SFML graphics with OpenGL", sf::Style::Default, contextSettings);
+        sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML graphics with OpenGL", sf::Style::Default, contextSettings);
         window.setVerticalSyncEnabled(true);
 
         // Create a sprite for the background

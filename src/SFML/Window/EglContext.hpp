@@ -71,11 +71,10 @@ public:
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    EglContext(EglContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

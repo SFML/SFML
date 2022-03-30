@@ -61,7 +61,7 @@ WindowImplAndroid::WindowImplAndroid(WindowHandle /* handle */)
 
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(VideoMode mode, const String& /* title */, unsigned long style, const ContextSettings& /* settings */)
-: m_size(mode.width, mode.height)
+: m_size(mode.size)
 , m_windowBeingCreated(false)
 , m_windowBeingDestroyed(false)
 , m_hasFocus(false)
@@ -160,7 +160,7 @@ void WindowImplAndroid::setTitle(const String& /* title */)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::setIcon(unsigned int /* width */, unsigned int /* height */, const Uint8* /* pixels */)
+void WindowImplAndroid::setIcon(const Vector2u& /* size */, const Uint8* /* pixels */)
 {
     // Not applicable
 }

@@ -47,8 +47,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     {
         for (int i = 0; i < conn->count_modes; i++)
             modes.push_back(
-                VideoMode(conn->modes[i].hdisplay,
-                    conn->modes[i].vdisplay));
+                VideoMode({conn->modes[i].hdisplay, conn->modes[i].vdisplay}));
     }
     else
         modes.push_back(getDesktopMode());
@@ -63,9 +62,9 @@ VideoMode VideoModeImpl::getDesktopMode()
     drm* drm = sf::priv::DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm->mode;
     if (ptr)
-        return VideoMode(ptr->hdisplay, ptr->vdisplay);
+        return VideoMode({ptr->hdisplay, ptr->vdisplay});
     else
-        return VideoMode(0, 0);
+        return VideoMode({0, 0});
 }
 
 } // namespace priv

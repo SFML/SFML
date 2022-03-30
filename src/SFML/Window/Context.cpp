@@ -118,8 +118,8 @@ GlFunctionPointer Context::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-Context::Context(const ContextSettings& settings, unsigned int width, unsigned int height)
-: m_context(priv::GlContext::create(settings, width, height))
+Context::Context(const ContextSettings& settings, const Vector2u& size)
+: m_context(priv::GlContext::create(settings, size))
 {
     if (!setActive(true))
     {

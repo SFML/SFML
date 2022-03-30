@@ -81,7 +81,7 @@ m_window(0)
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings,
-                     unsigned int width, unsigned int height) :
+                     const Vector2u& size) :
 m_context(0),
 m_view(0),
 m_window(0)
@@ -94,11 +94,11 @@ m_window(0)
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
 
     // Create a dummy window/view pair (hidden) and assign it our context.
-    m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
+    m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, size.x, size.y)
                                            styleMask:NSBorderlessWindowMask
                                              backing:NSBackingStoreBuffered
                                                defer:NO]; // Don't defer it!
-    m_view = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
+    m_view = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, size.x, size.y)];
     [m_window setContentView:m_view];
     [m_view setOpenGLContext:m_context];
     [m_context setView:m_view];

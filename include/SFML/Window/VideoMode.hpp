@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <vector>
 
 
@@ -53,12 +54,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the video mode with its attributes
     ///
-    /// \param modeWidth        Width in pixels
-    /// \param modeHeight       Height in pixels
+    /// \param modeSize         Width and height in pixels
     /// \param modeBitsPerPixel Pixel depths in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode(unsigned int modeWidth, unsigned int modeHeight, unsigned int modeBitsPerPixel = 32);
+    explicit VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode
@@ -99,8 +99,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int width;        //!< Video mode width, in pixels
-    unsigned int height;       //!< Video mode height, in pixels
+    Vector2u size;             //!< Video mode width and height, in pixels
     unsigned int bitsPerPixel; //!< Video mode pixel depth, in bits per pixels
 };
 
