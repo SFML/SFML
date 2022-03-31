@@ -206,11 +206,10 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
 
 
 ////////////////////////////////////////////////////////////
-bool VertexBuffer::update(const VertexBuffer& vertexBuffer)
+bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
 {
 #ifdef SFML_OPENGL_ES
 
-    (void) vertexBuffer;
     return false;
 
 #else

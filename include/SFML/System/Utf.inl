@@ -645,7 +645,7 @@ Out Utf<32>::toUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
+Uint32 Utf<32>::decodeAnsi(In input, [[maybe_unused]] const std::locale& locale)
 {
     // On Windows, GCC's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -655,8 +655,6 @@ Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
     #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
-
-        (void)locale; // to avoid warnings
 
         wchar_t character = 0;
         mbtowc(&character, &input, 1);
@@ -690,7 +688,7 @@ Uint32 Utf<32>::decodeWide(In input)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const std::locale& locale)
+Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, [[maybe_unused]] const std::locale& locale)
 {
     // On Windows, gcc's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -700,8 +698,6 @@ Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const st
     #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
-
-        (void)locale; // to avoid warnings
 
         char character = 0;
         if (wctomb(&character, static_cast<wchar_t>(codepoint)) >= 0)
