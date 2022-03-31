@@ -123,7 +123,7 @@ void processLeftRightModifiers(NSUInteger modifiers,
 
 
 ////////////////////////////////////////////////////////
-void initialiseKeyboardHelper(void)
+void initialiseKeyboardHelper()
 {
     if (isStateInitialized) return;
 

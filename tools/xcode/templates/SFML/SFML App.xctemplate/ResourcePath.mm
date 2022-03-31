@@ -31,7 +31,7 @@
 #include <filesystem>
 
 ////////////////////////////////////////////////////////////
-std::filesystem::path resourcePath(void)
+std::filesystem::path resourcePath()
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
