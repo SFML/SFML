@@ -78,11 +78,6 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [SFAppDelegate getInstance].sfWindow = this;
 
     CGRect viewRect = frame;
-    // if UI-orientation doesn't match window-layout, swap the view size and notify the window about it
-    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
-    if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
-        if ((mode.width > mode.height) != (frame.size.width > frame.size.height))
-            std::swap(viewRect.size.width, viewRect.size.height);
 
     // Create the view
     m_view = [[SFView alloc] initWithFrame:viewRect andContentScaleFactor:(static_cast<double>(m_backingScale))];
@@ -156,10 +151,6 @@ void WindowImplUIKit::setPosition(const Vector2i& /* position */)
 Vector2u WindowImplUIKit::getSize() const
 {
     CGRect physicalFrame = m_window.frame;
-    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
-    if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
-        && UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
-        std::swap(physicalFrame.size.width, physicalFrame.size.height);
     return Vector2u(static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)), static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale)));
 }
 
