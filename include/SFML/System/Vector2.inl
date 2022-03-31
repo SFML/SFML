@@ -67,7 +67,7 @@ T Vector2<T>::length() const
 template <typename T>
 constexpr T Vector2<T>::lengthSq() const
 {
-    return this->dot(*this);
+    return dot(*this);
 }
 
 
@@ -90,7 +90,7 @@ Angle Vector2<T>::angleTo(const Vector2<T>& rhs) const
 
     assert(*this != Vector2<T>());
     assert(rhs != Vector2<T>());
-    return radians(std::atan2(this->cross(rhs), this->dot(rhs)));
+    return radians(std::atan2(cross(rhs), dot(rhs)));
 }
 
 
@@ -129,7 +129,7 @@ constexpr Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
     static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
 
     assert(axis != Vector2<T>());
-    return this->dot(axis) / axis.lengthSq() * axis;
+    return dot(axis) / axis.lengthSq() * axis;
 }
 
 
