@@ -79,7 +79,7 @@ namespace
     bool shiftDown() { return (keyMap[sf::Keyboard::LShift] || keyMap[sf::Keyboard::RShift]); }
     bool systemDown() { return (keyMap[sf::Keyboard::LSystem] || keyMap[sf::Keyboard::RSystem]); }
 
-    void uninitFileDescriptors(void)
+    void uninitFileDescriptors()
     {
         for (std::vector<int>::iterator itr = fileDescriptors.begin(); itr != fileDescriptors.end(); ++itr)
             close(*itr);

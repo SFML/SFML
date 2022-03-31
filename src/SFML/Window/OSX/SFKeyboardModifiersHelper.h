@@ -49,7 +49,7 @@ namespace sf {
 /// It needs to be called before any event, e.g. in the window constructor.
 ///
 ////////////////////////////////////////////////////////////
-void initialiseKeyboardHelper(void);
+void initialiseKeyboardHelper();
 
 
 ////////////////////////////////////////////////////////////
