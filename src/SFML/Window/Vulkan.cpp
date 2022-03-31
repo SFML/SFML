@@ -55,11 +55,10 @@ using VulkanImplType = sf::priv::VulkanImplWin32;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+bool Vulkan::isAvailable([[maybe_unused]] bool requireGraphics)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    (void) requireGraphics;
     return false;
 
 #else
@@ -71,11 +70,10 @@ bool Vulkan::isAvailable(bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
+VulkanFunctionPointer Vulkan::getFunction([[maybe_unused]] const char* name)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    (void) name;
     return nullptr;
 
 #else
