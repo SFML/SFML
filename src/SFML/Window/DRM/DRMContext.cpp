@@ -48,12 +48,9 @@ namespace
     EGLDisplay display = EGL_NO_DISPLAY;
     int waitingForFlip = 0;
 
-    static void pageFlipHandler(int fd, unsigned int frame,
-        unsigned int sec, unsigned int usec, void* data)
+    static void pageFlipHandler(int /* fd */, unsigned int /* frame */,
+        unsigned int /* sec */, unsigned int /* usec */, void* data)
     {
-        // suppress unused param warning
-        (void)fd, (void)frame, (void)sec, (void)usec;
-
         int* temp = static_cast<int*>(data);
         *temp = 0;
     }
