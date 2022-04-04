@@ -25,8 +25,6 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(time.asMicroseconds() == 123'000'000);
 
             CHECK(sf::seconds(1'000.0f).asMicroseconds() == 1'000'000'000);
-            CHECK(sf::seconds(0.000002f).asMicroseconds() == Approx(2).epsilon(1.f));
-            CHECK(sf::seconds(0.000001f).asMicroseconds() == Approx(1).epsilon(1.f));
             CHECK(sf::seconds(0.0000009f).asMicroseconds() == 0);
             CHECK(sf::seconds(0.0000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(0.00000001f).asMicroseconds() == 0);
@@ -35,8 +33,6 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(sf::seconds(-0.00000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(-0.0000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(-0.0000009f).asMicroseconds() == 0);
-            CHECK(sf::seconds(-0.000001f).asMicroseconds() == Approx(-1).epsilon(1.f));
-            CHECK(sf::seconds(-0.000002f).asMicroseconds() == Approx(-2).epsilon(1.f));
             CHECK(sf::seconds(-1'000.0f).asMicroseconds() == -1'000'000'000);
         }
 
@@ -153,11 +149,11 @@ TEST_CASE("sf::Time class - [system]")
 
         SUBCASE("operator*=")
         {
-            sf::Time time = sf::milliseconds(420);
+            sf::Time time = sf::milliseconds(1'000);
             time *= static_cast<sf::Int64>(10);
-            CHECK(time == sf::milliseconds(4'200));
+            CHECK(time == sf::milliseconds(10'000));
             time *= 0.1f;
-            CHECK(time.asMicroseconds() == Approx(420'000).epsilon(0.1f));
+            CHECK(time.asMilliseconds() == 1'000);
         }
 
         SUBCASE("operator/")
@@ -167,16 +163,16 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(sf::seconds(1) / static_cast<sf::Int64>(2) == sf::seconds(0.5f));
             CHECK(sf::seconds(42) / static_cast<sf::Int64>(2) == sf::seconds(21));
             CHECK(sf::seconds(1) / sf::seconds(1) == 1.0f);
-            CHECK(sf::milliseconds(10) / sf::microseconds(1) == Approx(10'000.0f).epsilon(1e-6f));
+            CHECK(sf::milliseconds(10) / sf::microseconds(1) == Approx(10'000.0).epsilon(1e-6));
         }
 
         SUBCASE("operator/=")
         {
-            sf::Time time = sf::milliseconds(420);
-            time /= static_cast<sf::Int64>(42);
-            CHECK(time == sf::milliseconds(10));
-            time /= 10.0f;
-            CHECK(time.asMicroseconds() == Approx(1'000).epsilon(0.1f));
+            sf::Time time = sf::milliseconds(1'000);
+            time /= static_cast<sf::Int64>(2);
+            CHECK(time == sf::milliseconds(500));
+            time /= 0.5f;
+            CHECK(time.asMilliseconds() == 1'000);
         }
 
         SUBCASE("operator%")

@@ -54,8 +54,8 @@ struct ApproxVec
 // Utilities for approximate equality
 struct ApproxDeg
 {
-    ApproxDeg(double degrees)
-        : degrees(static_cast<float>(degrees)) {}
+    ApproxDeg(double deg)
+        : degrees(static_cast<float>(deg)) {}
 
     float degrees;
 };

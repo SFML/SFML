@@ -329,6 +329,8 @@ function(sfml_add_test target SOURCES DEPENDS)
     # link the target to its SFML dependencies
     target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
 
+    set_target_warnings(${target})
+
     # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
     # to make sure the linker doesn't discard unused code sections before coverage can be measured
     if (SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC AND NOT BUILD_SHARED_LIBS)
