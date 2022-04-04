@@ -84,7 +84,7 @@ macro(sfml_add_library module)
         endif()
     endif()
 
-    set_file_warnings(${THIS_SOURCES})
+    set_target_warnings(${target})
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
@@ -286,7 +286,7 @@ macro(sfml_add_example target)
         add_executable(${target} ${target_input})
     endif()
 
-    set_file_warnings(${target_input})
+    set_target_warnings(${target})
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
