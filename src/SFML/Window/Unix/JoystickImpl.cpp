@@ -29,6 +29,7 @@
 #include <SFML/System/Err.hpp>
 #include <linux/joystick.h>
 #include <libudev.h>
+#include <poll.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string>
@@ -254,13 +255,9 @@ namespace
         // This will not fail since we make sure udevMonitor is valid
         int monitorFd = udev_monitor_get_fd(udevMonitor);
 
-        fd_set descriptorSet;
-        FD_ZERO(&descriptorSet);
-        FD_SET(monitorFd, &descriptorSet);
-        timeval timeout = {0, 0};
+        pollfd fds{ monitorFd, POLLIN, 0 };
 
-        return (select(monitorFd + 1, &descriptorSet, nullptr, nullptr, &timeout) > 0) &&
-               FD_ISSET(monitorFd, &descriptorSet);
+        return (poll(&fds, 1, 0) > 0) && ((fds.revents & POLLIN) != 0);
     }
 
     // Get a property value from a udev device
