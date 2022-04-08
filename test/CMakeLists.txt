@@ -68,6 +68,7 @@ set(GRAPHICS_SRC
     Graphics/Font.test.cpp
     Graphics/Glyph.test.cpp
     Graphics/Image.test.cpp
+    Graphics/LineShape.test.cpp
     Graphics/Rect.test.cpp
     Graphics/RectangleShape.test.cpp
     Graphics/RenderStates.test.cpp
