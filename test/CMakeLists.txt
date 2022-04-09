@@ -31,6 +31,7 @@ sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
 SET(GRAPHICS_SRC
     Graphics/BlendMode.cpp
+    Graphics/CircleShape.cpp
     Graphics/Color.cpp
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
