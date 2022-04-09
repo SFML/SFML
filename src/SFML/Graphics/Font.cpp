@@ -688,6 +688,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
         unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
         page.texture.update(m_pixelBuffer.data(), w, h, x, y);
+        page.texture.setSmooth(m_isSmooth);
     }
 
     // Delete the FT glyph
