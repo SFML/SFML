@@ -80,10 +80,10 @@ bool CursorImpl::loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u
     const std::size_t numPixels = size.x * size.y;
     for (std::size_t pixelIndex = 0; pixelIndex < numPixels; ++pixelIndex)
     {
-        cursorImage->pixels[pixelIndex] = static_cast<Uint8>(pixels[pixelIndex * 4 + 2] +
-                                                            (pixels[pixelIndex * 4 + 1] << 8) +
-                                                            (pixels[pixelIndex * 4 + 0] << 16) +
-                                                            (pixels[pixelIndex * 4 + 3] << 24));
+        cursorImage->pixels[pixelIndex] = static_cast<Uint32>(pixels[pixelIndex * 4 + 2] +
+                                                              (pixels[pixelIndex * 4 + 1] << 8) +
+                                                              (pixels[pixelIndex * 4 + 0] << 16) +
+                                                              (pixels[pixelIndex * 4 + 3] << 24));
     }
 
     // Create the cursor.
