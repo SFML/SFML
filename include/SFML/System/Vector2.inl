@@ -288,7 +288,7 @@ constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right)
 ////////////////////////////////////////////////////////////
 
 template <typename T>
-constexpr Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
+const Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
 
 template <typename T>
-constexpr Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
+const Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
