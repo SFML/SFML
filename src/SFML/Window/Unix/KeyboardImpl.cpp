@@ -500,7 +500,7 @@ void ensureMapping()
         {
             scancode = translateKeyCode(display, static_cast<KeyCode>(keycode));
 
-            if (scancode != sf::Keyboard::ScanUnknown && scancodeToKeycode[scancode] == NullKeyCode)
+            if (scancode != sf::Keyboard::Scan::Unknown && scancodeToKeycode[scancode] == NullKeyCode)
                 scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);
 
             keycodeToScancode[keycode] = scancode;
@@ -554,7 +554,7 @@ KeyCode keyToKeyCode(sf::Keyboard::Key key)
 
     // Fallback for when XKeysymToKeycode cannot tell the KeyCode for XK_Alt_R
     if (key == sf::Keyboard::RAlt)
-        return scancodeToKeycode[sf::Keyboard::ScanRAlt];
+        return scancodeToKeycode[sf::Keyboard::Scan::RAlt];
 
     return NullKeyCode;
 }
