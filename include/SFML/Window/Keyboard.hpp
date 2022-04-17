@@ -178,6 +178,16 @@ public:
     ////////////////////////////////////////////////////////////
     struct Scan
     {
+        // TODO: replace with enum class in SFML 3.
+        // Clang warns us rightfully that Scancode names shadow Key names.
+        // A safer solution would be to use a C++11 scoped enumeration (enum class),
+        // but it is not possible in SFML 2 which uses C++03.
+        // For now, we just ignore those warnings.
+        #if defined(__clang__)
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wshadow"
+        #endif
+
         enum Scancode
         {
             Unknown = -1,       //!< Represents any scancode not present in this enum
@@ -336,6 +346,10 @@ public:
 
             ScancodeCount       //!< Keep last -- the total number of scancodes
         };
+
+        #if defined(__clang__)
+            #pragma clang diagnostic pop
+        #endif
     };
 
     typedef Scan::Scancode Scancode;
