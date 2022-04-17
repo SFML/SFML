@@ -201,7 +201,17 @@ SoundSource& SoundSource::operator =(const SoundSource& right)
     setRelativeToListener(right.isRelativeToListener());
     setMinDistance(right.getMinDistance());
     setAttenuation(right.getAttenuation());
-    setEffect(*right.getEffect());
+
+
+    if (m_effect)
+    {
+        m_effect->detachSoundSource(this);
+    }
+
+    if (right.m_effect)
+    {
+        setEffect(*right.getEffect());
+    }
 
     return *this;
 }
