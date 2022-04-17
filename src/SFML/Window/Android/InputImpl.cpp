@@ -58,7 +58,7 @@ Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
 Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
 {
     // Not applicable
-    return Keyboard::ScanUnknown;
+    return Keyboard::Scan::Unknown;
 }
 
 String InputImpl::getDescription(Keyboard::Scancode /* code */)
