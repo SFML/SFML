@@ -334,7 +334,7 @@ public:
             LaunchMail,         //!< Keyboard Launch Mail key
             LaunchMediaSelect,  //!< Keyboard Launch Media Select key
 
-            ScancodeCount           //!< Keep last -- the total number of scancodes
+            ScancodeCount       //!< Keep last -- the total number of scancodes
         };
     };
 
