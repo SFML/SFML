@@ -565,7 +565,8 @@ void InputImpl::ensureMappings()
         Keyboard::Scancode scan = static_cast<Keyboard::Scancode>(i);
         UINT virtualKey = sfScanToVirtualKey(scan);
         Keyboard::Key key = virtualKeyToSfKey(virtualKey);
-        m_keyToScancodeMapping[key] = scan;
+        if (key != Keyboard::Unknown && m_keyToScancodeMapping[key] == Keyboard::Scan::Unknown)
+            m_keyToScancodeMapping[key] = scan;
         m_scancodeToKeyMapping[scan] = key;
     }
 
