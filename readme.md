@@ -33,7 +33,13 @@ There are several places to learn SFML:
 -   The [official tutorials](https://www.sfml-dev.org/tutorials/)
 -   The [online API documentation](https://www.sfml-dev.org/documentation/)
 -   The [community wiki](https://github.com/SFML/SFML/wiki/)
--   The [community forum](https://en.sfml-dev.org/forums/) ([French](https://fr.sfml-dev.org/forums/))
+
+## Community
+
+Here are some useful community links:
+-   [Discord](https://discord.gg/nr4X7Fh)
+-   [Twitter](https://twitter.com/sfmldev)
+-   [Forum](https://en.sfml-dev.org/forums/) ([French](https://fr.sfml-dev.org/forums/))
 
 ## Contribute
 
