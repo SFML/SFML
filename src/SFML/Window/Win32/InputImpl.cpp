@@ -459,6 +459,7 @@ WORD sfScanToWinScanExtended(Keyboard::Scancode code)
         case Keyboard::Scan::Up:                 return 72  | 0xE100;
         case Keyboard::Scan::NumLock:            return 69  | 0xE100;
         case Keyboard::Scan::NumpadEnter:        return 28  | 0xE100;
+        case Keyboard::Scan::NumpadDivide:       return 53  | 0xE100;
         case Keyboard::Scan::Help:               return 97  | 0xE100;
         case Keyboard::Scan::Menu:               return 93  | 0xE100;
         case Keyboard::Scan::Select:             return 30  | 0xE100;
