@@ -374,7 +374,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
 
         case Keyboard::Scan::NumpadDivide:   return 0xE035;
         case Keyboard::Scan::NumpadMultiply: return 0x37;
-        case Keyboard::Scan::NumpadMinus:    return 0xA4;
+        case Keyboard::Scan::NumpadMinus:    return 0x4A;
         case Keyboard::Scan::NumpadPlus:     return 0x4E;
         case Keyboard::Scan::NumpadEqual:    return 0x7E;
         case Keyboard::Scan::NumpadEnter:    return 0xE01C;
