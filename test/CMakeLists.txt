@@ -14,6 +14,7 @@ target_link_libraries(sfml-test-main PUBLIC SFML::System)
 SET(SYSTEM_SRC
     System/Angle.cpp
     System/Clock.cpp
+    System/Err.cpp
     System/FileInputStream.cpp
     System/Time.cpp
     System/Vector2.cpp
