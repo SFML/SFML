@@ -349,7 +349,7 @@ const Font::Info& Font::getInfo() const
 const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // Get the page corresponding to the character size
-    GlyphTable& glyphs = m_pages[characterSize].glyphs;
+    GlyphTable& glyphs = loadPage(characterSize).glyphs;
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
     Uint64 key = combine(outlineThickness, bold, FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
@@ -476,7 +476,7 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 const Texture& Font::getTexture(unsigned int characterSize) const
 {
-    return m_pages[characterSize].texture;
+    return loadPage(characterSize).texture;
 }
 
 ////////////////////////////////////////////////////////////
@@ -528,6 +528,18 @@ void Font::cleanup()
     // Reset members
     m_pages.clear();
     std::vector<Uint8>().swap(m_pixelBuffer);
+}
+
+
+////////////////////////////////////////////////////////////
+Font::Page& Font::loadPage(unsigned int characterSize) const
+{
+    // TODO: Remove this method and use try_emplace instead when updating to C++17
+    PageTable::iterator pageIterator = m_pages.find(characterSize);
+    if (pageIterator == m_pages.end())
+        pageIterator = m_pages.insert(std::make_pair(characterSize, Page(m_isSmooth))).first;
+
+    return pageIterator->second;
 }
 
 
@@ -620,7 +632,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         height += 2 * padding;
 
         // Get the glyphs page corresponding to the character size
-        Page& page = m_pages[characterSize];
+        Page& page = loadPage(characterSize);
 
         // Find a good position for the new glyph into the texture
         glyph.textureRect = findGlyphRect(page, width, height);
@@ -816,7 +828,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Font::Page::Page() :
+Font::Page::Page(bool smooth) :
 nextRow(3)
 {
     // Make sure that the texture is initialized by default
@@ -834,7 +846,7 @@ nextRow(3)
         err() << "Failed to load font page texture" << std::endl;
     }
 
-    texture.setSmooth(true);
+    texture.setSmooth(smooth);
 }
 
 } // namespace sf
