@@ -228,9 +228,13 @@ public:
     /// kind of feature in real-time you'd better use sf::RenderTexture.
     ///
     /// If \a sourceRect is empty, the whole image is copied.
-    /// If \a applyAlpha is set to true, the transparency of
-    /// source pixels is applied. If it is false, the pixels are
-    /// copied unchanged with their alpha value.
+    /// If \a applyAlpha is set to true, alpha blending is
+    /// applied from the source pixels to the destination pixels
+    /// using the \b over operator. If it is false, the source
+    /// pixels are copied unchanged with their alpha value.
+    ///
+    /// See https://en.wikipedia.org/wiki/Alpha_compositing for
+    /// details on the \b over operator.
     ///
     /// \param source     Source image to copy
     /// \param destX      X coordinate of the destination position
