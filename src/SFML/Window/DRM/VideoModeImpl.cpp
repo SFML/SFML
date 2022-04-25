@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2020 Andrew Mickelson
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,29 +22,52 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPL_HPP
-#define SFML_CURSORIMPL_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/Window/Win32/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-    #if defined(SFML_USE_DRM)
-        #include <SFML/Window/DRM/CursorImpl.hpp>
-    #else
-        #include <SFML/Window/Unix/CursorImpl.hpp>
-    #endif
-#elif defined(SFML_SYSTEM_MACOS)
-    #include <SFML/Window/OSX/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_IOS)
-    #include <SFML/Window/iOS/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_ANDROID)
-    #include <SFML/Window/Android/CursorImpl.hpp>
-#endif
+#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/DRM/DRMContext.hpp>
+#include <SFML/System/Err.hpp>
+#include <drm-common.h>
 
 
-#endif // SFML_CURSORIMPL_HPP
+namespace sf
+{
+namespace priv
+{
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+{
+    std::vector<VideoMode> modes;
+
+    drm* drm = sf::priv::DRMContext::getDRM();
+    drmModeConnectorPtr conn = drm->saved_connector;
+
+    if (conn)
+    {
+        for (int i = 0; i < conn->count_modes; i++)
+            modes.push_back(
+                VideoMode(conn->modes[i].hdisplay,
+                    conn->modes[i].vdisplay));
+    }
+    else
+        modes.push_back(getDesktopMode());
+
+    return modes;
+}
+
+
+////////////////////////////////////////////////////////////
+VideoMode VideoModeImpl::getDesktopMode()
+{
+    drm* drm = sf::priv::DRMContext::getDRM();
+    drmModeModeInfoPtr ptr = drm->mode;
+    if (ptr)
+        return VideoMode(ptr->hdisplay, ptr->vdisplay);
+    else
+        return VideoMode(0, 0);
+}
+
+} // namespace priv
+
+} // namespace sf

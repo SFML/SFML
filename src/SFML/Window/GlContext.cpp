@@ -63,6 +63,11 @@
 
         typedef sf::priv::EglContext ContextType;
 
+    #elif defined(SFML_USE_DRM)
+
+        #include <SFML/Window/DRM/DRMContext.hpp>
+        typedef sf::priv::DRMContext ContextType;
+
     #else
 
         #include <SFML/Window/Unix/GlxContext.hpp>

@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2020 Andrew Mickelson
+//               2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,27 +23,32 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EGLCONTEXT_HPP
-#define SFML_EGLCONTEXT_HPP
+#ifndef SFML_DRMCONTEXT_HPP
+#define SFML_DRMCONTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
-#include <glad/egl.h>
-#if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
-    #include <X11/Xlib.h>
-#endif
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/OpenGL.hpp>
+#include <drm-common.h>
+#define EGL_NO_X11
+#define MESA_EGL_NO_X11_HEADERS
+#include <EGL/egl.h>
+#include <gbm.h>
+#include <xf86drmMode.h>
+
 
 namespace sf
 {
 namespace priv
 {
-class EglContext : public GlContext
+class WindowImplDRM;
+
+class DRMContext : public GlContext
 {
 public:
 
@@ -52,7 +58,7 @@ public:
     /// \param shared Context to share the new one with (can be NULL)
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared);
+    DRMContext(DRMContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window
@@ -63,11 +69,10 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
-    /// \warning This constructor is currently not implemented; use a different overload.
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
@@ -75,23 +80,13 @@ public:
     /// \param height   Back buffer height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    DRMContext(DRMContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~EglContext();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the address of an OpenGL function
-    ///
-    /// \param name Name of the function to get the address of
-    ///
-    /// \return Address of the OpenGL function, 0 on failure
-    ///
-    ////////////////////////////////////////////////////////////
-    static GlFunctionPointer getFunction(const char* name);
+    ~DRMContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -124,25 +119,25 @@ public:
     virtual void setVerticalSyncEnabled(bool enabled);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the context
+    /// \brief Create the EGL context
     ///
     /// \param shared       Context to share the new one with (can be NULL)
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(EglContext* shared);
+    void createContext(DRMContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL surface
     ///
-    /// This function must be called when the activity (re)start, or
-    /// when the orientation change.
-    ///
-    /// \param window: The native window type
+    /// \param width   Back buffer width, in pixels
+    /// \param height  Back buffer height, in pixels
+    /// \param bpp     Pixel depth, in bits per pixel
+    /// \param scanout True to present the surface to the screen
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(EGLNativeWindowType window);
+    void createSurface(unsigned int width, unsigned int height, unsigned int bpp, bool scanout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destroy the EGL surface
@@ -165,35 +160,50 @@ public:
     ////////////////////////////////////////////////////////////
     static EGLConfig getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
-#if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
     ////////////////////////////////////////////////////////////
-    /// \brief Select the best EGL visual for a given set of settings
+    /// \brief Get the address of an OpenGL function
     ///
-    /// \param display      X display
-    /// \param bitsPerPixel Pixel depth, in bits per pixel
-    /// \param settings     Requested context settings
+    /// \param name Name of the function to get the address of
     ///
-    /// \return The best visual
+    /// \return Address of the OpenGL function, 0 on failure
     ///
     ////////////////////////////////////////////////////////////
-    static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
-#endif
+    static GlFunctionPointer getFunction(const char* name);
+
+protected:
+
+    friend class VideoModeImpl;
+    friend class WindowImplDRM;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get Direct Rendering Manager pointer
+    ///
+    ////////////////////////////////////////////////////////////
+    static drm* getDRM();
 
 private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Helper to copy the picked EGL configuration
+    ///
     ////////////////////////////////////////////////////////////
     void updateSettings();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EGLDisplay  m_display; //!< The internal EGL display
-    EGLContext  m_context; //!< The internal EGL context
-    EGLSurface  m_surface; //!< The internal EGL surface
-    EGLConfig   m_config;  //!< The internal EGL config
+    EGLDisplay  m_display; ///< The internal EGL display
+    EGLContext  m_context; ///< The internal EGL context
+    EGLSurface  m_surface; ///< The internal EGL surface
+    EGLConfig   m_config;  ///< The internal EGL config
 
+    gbm_bo* m_currentBO;
+    gbm_bo* m_nextBO;
+    gbm_surface* m_gbmSurface;
+    unsigned int m_width;
+    unsigned int m_height;
+    bool m_shown;
+    bool m_scanOut;
 };
 
 } // namespace priv
@@ -201,4 +211,4 @@ private:
 } // namespace sf
 
 
-#endif // SFML_EGLCONTEXT_HPP
+#endif // SFML_DRMCONTEXT_HPP
