@@ -43,11 +43,22 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
-    #include <SFML/Window/Unix/WindowImplX11.hpp>
-    typedef sf::priv::WindowImplX11 WindowImplType;
+    #if defined(SFML_USE_DRM)
 
-    #include <SFML/Window/Unix/VulkanImplX11.hpp>
-    typedef sf::priv::VulkanImplX11 VulkanImplType;
+        #include <SFML/Window/DRM/WindowImplDRM.hpp>
+        typedef sf::priv::WindowImplDRM WindowImplType;
+
+        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+
+    #else
+
+        #include <SFML/Window/Unix/WindowImplX11.hpp>
+        typedef sf::priv::WindowImplX11 WindowImplType;
+
+        #include <SFML/Window/Unix/VulkanImplX11.hpp>
+        typedef sf::priv::VulkanImplX11 VulkanImplType;
+
+    #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
@@ -77,6 +88,7 @@ namespace sf
 {
 namespace priv
 {
+
 ////////////////////////////////////////////////////////////
 WindowImpl* WindowImpl::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
 {

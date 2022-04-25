@@ -82,28 +82,44 @@ if(SFML_OS_WINDOWS)
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    set(PLATFORM_SRC
-        ${SRCROOT}/Unix/CursorImpl.hpp
-        ${SRCROOT}/Unix/CursorImpl.cpp
-        ${SRCROOT}/Unix/ClipboardImpl.hpp
-        ${SRCROOT}/Unix/ClipboardImpl.cpp
-        ${SRCROOT}/Unix/Display.cpp
-        ${SRCROOT}/Unix/Display.hpp
-        ${SRCROOT}/Unix/InputImpl.cpp
-        ${SRCROOT}/Unix/InputImpl.hpp
-        ${SRCROOT}/Unix/SensorImpl.cpp
-        ${SRCROOT}/Unix/SensorImpl.hpp
-        ${SRCROOT}/Unix/VideoModeImpl.cpp
-        ${SRCROOT}/Unix/VulkanImplX11.cpp
-        ${SRCROOT}/Unix/VulkanImplX11.hpp
-        ${SRCROOT}/Unix/WindowImplX11.cpp
-        ${SRCROOT}/Unix/WindowImplX11.hpp
-    )
-    if(NOT SFML_OS_ANDROID)
+    if(SFML_USE_DRM)
+        add_definitions(-DSFML_USE_DRM)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
+            ${SRCROOT}/DRM/CursorImpl.hpp
+            ${SRCROOT}/DRM/CursorImpl.cpp
+            ${SRCROOT}/DRM/ClipboardImpl.hpp
+            ${SRCROOT}/DRM/ClipboardImpl.cpp
+            ${SRCROOT}/Unix/SensorImpl.cpp
+            ${SRCROOT}/Unix/SensorImpl.hpp
+            ${SRCROOT}/DRM/InputImplUDev.cpp
+            ${SRCROOT}/DRM/InputImplUDev.hpp
+            ${SRCROOT}/DRM/VideoModeImpl.cpp
+            ${SRCROOT}/DRM/DRMContext.cpp
+            ${SRCROOT}/DRM/DRMContext.hpp
+            ${SRCROOT}/DRM/WindowImplDRM.cpp
+            ${SRCROOT}/DRM/WindowImplDRM.hpp
+        )
+    else()
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/Unix/CursorImpl.hpp
+            ${SRCROOT}/Unix/CursorImpl.cpp
+            ${SRCROOT}/Unix/ClipboardImpl.hpp
+            ${SRCROOT}/Unix/ClipboardImpl.cpp
+            ${SRCROOT}/Unix/InputImpl.cpp
+            ${SRCROOT}/Unix/InputImpl.hpp
+            ${SRCROOT}/Unix/SensorImpl.cpp
+            ${SRCROOT}/Unix/SensorImpl.hpp
+            ${SRCROOT}/Unix/Display.cpp
+            ${SRCROOT}/Unix/Display.hpp
             ${SRCROOT}/Unix/GlxContext.cpp
             ${SRCROOT}/Unix/GlxContext.hpp
+            ${SRCROOT}/Unix/VideoModeImpl.cpp
+            ${SRCROOT}/Unix/VulkanImplX11.cpp
+            ${SRCROOT}/Unix/VulkanImplX11.hpp
+            ${SRCROOT}/Unix/WindowImplX11.cpp
+            ${SRCROOT}/Unix/WindowImplX11.hpp
         )
     endif()
     if(SFML_OS_LINUX)
@@ -236,6 +252,21 @@ endif()
 # define the sfml-window target
 sfml_add_library(sfml-window
                  SOURCES ${SRC} ${PLATFORM_SRC})
+# DRM libraries
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
+    if(SFML_USE_DRM)
+        target_sources(sfml-window PRIVATE $<TARGET_OBJECTS:drm-common>)
+        sfml_find_package(DRM INCLUDE "DRM_INCLUDE_DIR" LINK "DRM_LIBRARY")
+        target_include_directories(sfml-window PRIVATE ${PROJECT_SOURCE_DIR}/extlibs/headers/drm ${DRM_INCLUDE_DIR}/libdrm)
+        sfml_find_package(GBM INCLUDE "GBM_INCLUDE_DIR" LINK "GBM_LIBRARY")
+        target_link_libraries(sfml-window PRIVATE drm gbm EGL)
+        add_library(drm-common OBJECT ${PROJECT_SOURCE_DIR}/extlibs/headers/drm/drm-common.c)
+        target_include_directories(drm-common PRIVATE ${PROJECT_SOURCE_DIR}/extlibs/headers/drm ${DRM_INCLUDE_DIR}/libdrm)
+    else()
+        sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB" "X11_Xcursor_LIB")
+        target_link_libraries(sfml-window PRIVATE X11)
+    endif()
+endif()
 target_link_libraries(sfml-window PUBLIC sfml-system)
 
 # glad sources
@@ -248,12 +279,6 @@ endif()
 
 # Vulkan headers
 target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
-
-# find and setup usage for external libraries
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    sfml_find_package(X11 INCLUDE "X11_INCLUDE_DIR" LINK "X11_X11_LIB" "X11_Xrandr_LIB" "X11_Xcursor_LIB")
-    target_link_libraries(sfml-window PRIVATE X11)
-endif()
 
 # CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability
 # (unless the OpenGL_GL_PREFERENCE was explicitly set)
@@ -268,7 +293,6 @@ if(SFML_OS_IOS)
     target_link_libraries(sfml-window PRIVATE GLES)
 elseif(SFML_OS_ANDROID)
     sfml_find_package(GLES INCLUDE "GLES_INCLUDE_DIR" LINK "GLES_LIBRARY")
-    
     sfml_find_package(EGL INCLUDE "EGL_INCLUDE_DIR" LINK "EGL_LIBRARY")
     target_link_libraries(sfml-window PRIVATE EGL)
     target_link_libraries(sfml-window PRIVATE GLES)
