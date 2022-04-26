@@ -22,84 +22,55 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_CLIPBOARDIMPLDRM_HPP
+#define SFML_CLIPBOARDIMPLDRM_HPP
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Vulkan.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-using VulkanImplType = sf::priv::VulkanImplWin32;
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-
-    #if defined(SFML_USE_DRM)
-
-        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
-
-    #else
-
-		#include <SFML/Window/Unix/VulkanImplX11.hpp>
-		using VulkanImplType = sf::priv::VulkanImplX11;
-
-    #endif
-
-#else
-
-#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
-
-#endif
+#include <SFML/System/String.hpp>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+namespace priv
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
-
-    (void) requireGraphics;
-    return false;
-
-#else
-
-    return VulkanImplType::isAvailable(requireGraphics);
-
-#endif
-}
-
-
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
-{
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
-
-    (void) name;
-    return nullptr;
-
-#else
-
-    return VulkanImplType::getFunction(name);
-
-#endif
-}
-
-
+/// \brief Give access to the system clipboard
+///
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
+class ClipboardImpl
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
+public:
 
-    static const std::vector<const char*> empty;
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the content of the clipboard as string data
+    ///
+    /// This function returns the content of the clipboard
+    /// as a string. If the clipboard does not contain string
+    /// it returns an empty sf::String object.
+    ///
+    /// \return Current content of the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    static String getString();
 
-    return empty;
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the content of the clipboard as string data
+    ///
+    /// This function sets the content of the clipboard as a
+    /// string.
+    ///
+    /// \param text sf::String object containing the data to be sent
+    /// to the clipboard
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setString(const String& text);
+};
 
-#else
-
-    return VulkanImplType::getGraphicsRequiredInstanceExtensions();
-
-#endif
-}
+} // namespace priv
 
 } // namespace sf
+
+
+#endif // SFML_CLIPBOARDIMPLDRM_HPP

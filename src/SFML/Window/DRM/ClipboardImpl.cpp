@@ -22,29 +22,28 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPL_HPP
-#define SFML_CURSORIMPL_HPP
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/Window/Win32/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-    #if defined(SFML_USE_DRM)
-        #include <SFML/Window/DRM/CursorImpl.hpp>
-    #else
-        #include <SFML/Window/Unix/CursorImpl.hpp>
-    #endif
-#elif defined(SFML_SYSTEM_MACOS)
-    #include <SFML/Window/OSX/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_IOS)
-    #include <SFML/Window/iOS/CursorImpl.hpp>
-#elif defined(SFML_SYSTEM_ANDROID)
-    #include <SFML/Window/Android/CursorImpl.hpp>
-#endif
+#include <SFML/Window/DRM/ClipboardImpl.hpp>
 
 
-#endif // SFML_CURSORIMPL_HPP
+namespace sf
+{
+namespace priv
+{
+////////////////////////////////////////////////////////////
+String ClipboardImpl::getString()
+{
+    return "";
+}
+
+
+////////////////////////////////////////////////////////////
+void ClipboardImpl::setString(const String& /*text*/)
+{
+}
+
+} // namespace priv
+
+} // namespace sf

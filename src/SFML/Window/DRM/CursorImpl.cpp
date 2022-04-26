@@ -25,81 +25,66 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Vulkan.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-using VulkanImplType = sf::priv::VulkanImplWin32;
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
-
-    #if defined(SFML_USE_DRM)
-
-        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
-
-    #else
-
-		#include <SFML/Window/Unix/VulkanImplX11.hpp>
-		using VulkanImplType = sf::priv::VulkanImplX11;
-
-    #endif
-
-#else
-
-#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
-
-#endif
+#include <SFML/Window/DRM/CursorImpl.hpp>
+#include <vector>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+namespace priv
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
+////////////////////////////////////////////////////////////
+CursorImpl::CursorImpl()
+{
+}
 
-    (void) requireGraphics;
+
+////////////////////////////////////////////////////////////
+CursorImpl::~CursorImpl()
+{
+}
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::loadFromPixels(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
+{
     return false;
-
-#else
-
-    return VulkanImplType::isAvailable(requireGraphics);
-
-#endif
 }
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
+bool CursorImpl::loadFromPixelsARGB(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
-
-    (void) name;
-    return nullptr;
-
-#else
-
-    return VulkanImplType::getFunction(name);
-
-#endif
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
+bool CursorImpl::loadFromPixelsMonochrome(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
-#if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
-
-    static const std::vector<const char*> empty;
-
-    return empty;
-
-#else
-
-    return VulkanImplType::getGraphicsRequiredInstanceExtensions();
-
-#endif
+    return false;
 }
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::loadFromSystem(Cursor::Type /*type*/)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool CursorImpl::isColorCursorSupported()
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+void CursorImpl::release()
+{
+}
+
+} // namespace priv
 
 } // namespace sf
