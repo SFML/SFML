@@ -52,7 +52,7 @@ public:
     constexpr Vector2();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the vector from its coordinates
+    /// \brief Construct the vector from cartesian coordinates
     ///
     /// \param X X coordinate
     /// \param Y Y coordinate
@@ -73,6 +73,22 @@ public:
     ////////////////////////////////////////////////////////////
     template <typename U>
     constexpr explicit Vector2(const Vector2<U>& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the vector from polar coordinates
+    ///
+    /// \param r   Length of vector (can be negative)
+    /// \param phi Angle from X axis
+    ///
+    /// Note that this constructor is lossy: calling length() and angle()
+    /// may return values different to those provided in this constructor.
+    ///
+    /// In particular, these transforms can be applied:
+    /// * Vector2(r, phi) == Vector2(-r, phi + 180_deg)
+    /// * Vector2(r, phi) == Vector2(r, phi + n * 360_deg)
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2(T r, Angle phi);
     
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
@@ -103,7 +119,7 @@ public:
     /// 
     /// \return The smallest angle which rotates \c *this in positive
     /// or negative direction, until it has the same direction as \c rhs.
-    /// The result has a sign and lies in the range [-180, 180°).
+    /// The result has a sign and lies in the range [-180, 180) degrees.
     /// \pre Neither \c *this nor \c rhs is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
@@ -114,7 +130,7 @@ public:
     /// 
     /// For example, the vector (1,0) corresponds to 0 degrees, (0,1) corresponds to 90 degrees.
     /// 
-    /// \return Angle in the range [-180°, 180°).
+    /// \return Angle in the range [-180, 180) degrees.
     /// \pre This vector is no zero vector.
     ///
     ////////////////////////////////////////////////////////////

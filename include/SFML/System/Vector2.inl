@@ -55,6 +55,16 @@ y(static_cast<T>(vector.y))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+Vector2<T>::Vector2(T r, Angle phi) :
+x(r * static_cast<T>(std::cos(phi.asRadians()))),
+y(r * static_cast<T>(std::sin(phi.asRadians())))
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::Vector2(T, Angle) is only supported for floating point types");
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 T Vector2<T>::length() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");

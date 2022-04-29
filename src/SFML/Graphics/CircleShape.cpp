@@ -73,11 +73,7 @@ std::size_t CircleShape::getPointCount() const
 Vector2f CircleShape::getPoint(std::size_t index) const
 {
     Angle angle = static_cast<float>(index) / static_cast<float>(m_pointCount) * sf::degrees(360) - sf::degrees(90);
-    float rad = angle.asRadians();
-    float x = std::cos(rad) * m_radius;
-    float y = std::sin(rad) * m_radius;
-
-    return Vector2f(m_radius + x, m_radius + y);
+    return Vector2f(m_radius, m_radius) + Vector2f(m_radius, angle);
 }
 
 } // namespace sf
