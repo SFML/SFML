@@ -200,8 +200,7 @@ int main()
             }
 
             // Move the ball
-            float factor = ballSpeed * deltaTime;
-            ball.move({std::cos(ballAngle.asRadians()) * factor, std::sin(ballAngle.asRadians()) * factor});
+            ball.move({ballSpeed * deltaTime, ballAngle});
 
             #ifdef SFML_SYSTEM_IOS
             const std::string inputString = "Touch the screen to restart.";

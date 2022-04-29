@@ -37,6 +37,57 @@ TEST_CASE("sf::Vector2 class template - [system]")
             CHECK(vector.x == static_cast<int>(sourceVector.x));
             CHECK(vector.y == static_cast<int>(sourceVector.y));
         }
+
+        SUBCASE("Length and angle constructor")
+        {
+            CHECK(sf::Vector2f(0, sf::degrees(0)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(45)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(90)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(135)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(180)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(270)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(360)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(-90)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(-180)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(-270)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, sf::degrees(-360)) == sf::Vector2f(0, 0));
+
+            CHECK(sf::Vector2f(1, sf::degrees(0)) == sf::Vector2f(1, 0));
+            CHECK(sf::Vector2f(1, sf::degrees(45)) == ApproxVec2(std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(1, sf::degrees(90)) == ApproxVec2(0, 1));
+            CHECK(sf::Vector2f(1, sf::degrees(135)) == ApproxVec2(-std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(1, sf::degrees(180)) == ApproxVec2(-1, 0));
+            CHECK(sf::Vector2f(1, sf::degrees(270)) == ApproxVec2(0, -1));
+            CHECK(sf::Vector2f(1, sf::degrees(360)) == ApproxVec2(1, 0));
+            CHECK(sf::Vector2f(1, sf::degrees(-90)) == ApproxVec2(0, -1));
+            CHECK(sf::Vector2f(1, sf::degrees(-180)) == ApproxVec2(-1, 0));
+            CHECK(sf::Vector2f(1, sf::degrees(-270)) == ApproxVec2(0, 1));
+            CHECK(sf::Vector2f(1, sf::degrees(-360)) == ApproxVec2(1, 0));
+
+            CHECK(sf::Vector2f(-1, sf::degrees(0)) == sf::Vector2f(-1, 0));
+            CHECK(sf::Vector2f(-1, sf::degrees(45)) == ApproxVec2(-std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(-1, sf::degrees(90)) == ApproxVec2(0, -1));
+            CHECK(sf::Vector2f(-1, sf::degrees(135)) == ApproxVec2(std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(-1, sf::degrees(180)) == ApproxVec2(1, 0));
+            CHECK(sf::Vector2f(-1, sf::degrees(270)) == ApproxVec2(0, 1));
+            CHECK(sf::Vector2f(-1, sf::degrees(360)) == ApproxVec2(-1, 0));
+            CHECK(sf::Vector2f(-1, sf::degrees(-90)) == ApproxVec2(0, 1));
+            CHECK(sf::Vector2f(-1, sf::degrees(-180)) == ApproxVec2(1, 0));
+            CHECK(sf::Vector2f(-1, sf::degrees(-270)) == ApproxVec2(0, -1));
+            CHECK(sf::Vector2f(-1, sf::degrees(-360)) == ApproxVec2(-1, 0));
+
+            CHECK(sf::Vector2f(4.2f, sf::degrees(0)) == sf::Vector2f(4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(45)) == ApproxVec2(4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(90)) == ApproxVec2(0, 4.2f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(135)) == ApproxVec2(-4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(180)) == ApproxVec2(-4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(270)) == ApproxVec2(0, -4.2f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(360)) == ApproxVec2(4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(-90)) == ApproxVec2(0, -4.2f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(-180)) == ApproxVec2(-4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(-270)) == ApproxVec2(0, 4.2f));
+            CHECK(sf::Vector2f(4.2f, sf::degrees(-360)) == ApproxVec2(4.2f, 0));
+        }
     }
 
     SUBCASE("Unary operations")
