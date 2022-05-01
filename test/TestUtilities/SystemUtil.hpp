@@ -9,6 +9,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 
+#include <iomanip>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -27,6 +28,7 @@ namespace sf
     template <typename T>
     std::ostream& operator <<(std::ostream& os, const sf::Vector2<T>& vector)
     {
+        os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
         os << "(" << vector.x << ", " << vector.y << ")";
         return os;
     }
