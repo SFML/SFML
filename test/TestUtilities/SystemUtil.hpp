@@ -42,8 +42,8 @@ namespace sf
 // Utilities for approximate equality
 struct ApproxVec
 {
-    ApproxVec(double x, double y)
-        : vector(static_cast<float>(x), static_cast<float>(y)) {}
+    ApproxVec(float x, float y)
+        : vector(x, y) {}
 
     explicit ApproxVec(const sf::Vector2f& v)
         : vector(v) {}
@@ -54,8 +54,8 @@ struct ApproxVec
 // Utilities for approximate equality
 struct ApproxDeg
 {
-    ApproxDeg(double deg)
-        : degrees(static_cast<float>(deg)) {}
+    ApproxDeg(float deg)
+        : degrees(deg) {}
 
     float degrees;
 };
