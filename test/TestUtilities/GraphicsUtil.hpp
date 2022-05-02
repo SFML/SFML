@@ -33,4 +33,6 @@ namespace sf
     }
 }
 
+bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs);
+
 #endif // SFML_TESTUTILITIES_GRAPHICS_HPP

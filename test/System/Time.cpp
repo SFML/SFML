@@ -3,8 +3,6 @@
 
 #include <doctest.h>
 
-using doctest::Approx;
-
 TEST_CASE("sf::Time class - [system]")
 {
     SUBCASE("Construction")
@@ -163,7 +161,7 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(sf::seconds(1) / static_cast<sf::Int64>(2) == sf::seconds(0.5f));
             CHECK(sf::seconds(42) / static_cast<sf::Int64>(2) == sf::seconds(21));
             CHECK(sf::seconds(1) / sf::seconds(1) == 1.0f);
-            CHECK(sf::milliseconds(10) / sf::microseconds(1) == Approx(10'000.0).epsilon(1e-6));
+            CHECK(sf::milliseconds(10) / sf::microseconds(1) == doctest::Approx(10'000.0).epsilon(1e-6));
         }
 
         SUBCASE("operator/=")

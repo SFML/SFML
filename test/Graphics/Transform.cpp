@@ -6,8 +6,6 @@
 
 #include <doctest.h>
 
-using doctest::Approx;
-
 namespace std
 {
 std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector)
@@ -125,30 +123,18 @@ TEST_CASE("sf::Transform class - [graphics]")
         {
             sf::Transform transform;
             transform.rotate(sf::degrees(90));
-            CHECK(transform.getMatrix()[0] == Approx(0));
-            CHECK(transform.getMatrix()[4] == Approx(-1));
-            CHECK(transform.getMatrix()[12] == Approx(0));
-            CHECK(transform.getMatrix()[1] == Approx(1));
-            CHECK(transform.getMatrix()[5] == Approx(0));
-            CHECK(transform.getMatrix()[13] == Approx(0));
-            CHECK(transform.getMatrix()[3] == Approx(0));
-            CHECK(transform.getMatrix()[7] == Approx(0));
-            CHECK(transform.getMatrix()[15] == Approx(1));
+            CHECK(transform == Approx(sf::Transform(0, -1,  0,
+                                                    1,  0,  0,
+                                                    0,  0,  1)));
         }
 
         SUBCASE("Around custom point")
         {
             sf::Transform transform;
             transform.rotate(sf::degrees(90), {1.0f, 0.0f});
-            CHECK(transform.getMatrix()[0] == Approx(0));
-            CHECK(transform.getMatrix()[4] == Approx(-1));
-            CHECK(transform.getMatrix()[12] == Approx(1));
-            CHECK(transform.getMatrix()[1] == Approx(1));
-            CHECK(transform.getMatrix()[5] == Approx(0));
-            CHECK(transform.getMatrix()[13] == Approx(-1));
-            CHECK(transform.getMatrix()[3] == Approx(0));
-            CHECK(transform.getMatrix()[7] == Approx(0));
-            CHECK(transform.getMatrix()[15] == Approx(1));
+            CHECK(transform == Approx(sf::Transform(0, -1,  1,
+                                                    1,  0, -1,
+                                                    0,  0,  1)));
         }
     }
 

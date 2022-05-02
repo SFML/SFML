@@ -4,8 +4,6 @@
 
 #include <doctest.h>
 
-using doctest::Approx;
-
 // Use sf::Vector3i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
 
@@ -206,9 +204,9 @@ TEST_CASE("sf::Vector3 class template - [system]")
     {
         const sf::Vector3f v(2.4f, 3.0f, 5.2f);
 
-        CHECK(v.length() == Approx(6.46529));
-        CHECK(v.lengthSq() == Approx(41.79997));
-        CHECK(v.normalized() == ApproxVec3(0.37121f, 0.46401f, 0.80429f));
+        CHECK(v.length() == Approx(6.46529f));
+        CHECK(v.lengthSq() == Approx(41.79997f));
+        CHECK(v.normalized() == Approx(sf::Vector3f(0.37121f, 0.46401f, 0.80429f)));
     }
 
     SUBCASE("Products and quotients")
@@ -216,16 +214,16 @@ TEST_CASE("sf::Vector3 class template - [system]")
         const sf::Vector3f v(2.4f, 3.0f, 5.2f);
         const sf::Vector3f w(-0.7f, -2.2f, -4.8f);
 
-        CHECK(v.dot(w) == Approx(-33.24));
-        CHECK(w.dot(v) == Approx(-33.24));
+        CHECK(v.dot(w) == Approx(-33.24f));
+        CHECK(w.dot(v) == Approx(-33.24f));
 
-        CHECK(v.cross(w) == ApproxVec3(-2.96f, 7.88f, -3.18f));
-        CHECK(w.cross(v) == ApproxVec3(2.96f, -7.88f, 3.18f));
+        CHECK(v.cross(w) == Approx(sf::Vector3f(-2.96f, 7.88f, -3.18f)));
+        CHECK(w.cross(v) == Approx(sf::Vector3f(2.96f, -7.88f, 3.18f)));
 
-        CHECK(v.cwiseMul(w) == ApproxVec3(-1.68f, -6.6f, -24.96f));
-        CHECK(w.cwiseMul(v) == ApproxVec3(-1.68f, -6.6f, -24.96f));
-        CHECK(v.cwiseDiv(w) == ApproxVec3(-3.428571f, -1.363636f, -1.0833333f));
-        CHECK(w.cwiseDiv(v) == ApproxVec3(-0.291666f, -0.733333f, -0.9230769f));
+        CHECK(v.cwiseMul(w) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(w.cwiseMul(v) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(v.cwiseDiv(w) == Approx(sf::Vector3f(-3.428571f, -1.363636f, -1.0833333f)));
+        CHECK(w.cwiseDiv(v) == Approx(sf::Vector3f(-0.291666f, -0.733333f, -0.9230769f)));
     }
 
     SUBCASE("Constexpr support")

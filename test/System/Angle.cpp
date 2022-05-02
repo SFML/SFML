@@ -3,8 +3,6 @@
 
 #include <doctest.h>
 
-using doctest::Approx;
-
 TEST_CASE("sf::Angle class - [system]")
 {
     SUBCASE("Construction")
@@ -52,30 +50,30 @@ TEST_CASE("sf::Angle class - [system]")
         {
             const sf::Angle angle = sf::degrees(15);
             CHECK(angle == sf::degrees(15));
-            CHECK(angle.asRadians() == Approx(0.26179939));
+            CHECK(angle.asRadians() == Approx(0.26179939f));
 
             const sf::Angle bigAngle = sf::degrees(1000);
             CHECK(bigAngle == sf::degrees(1000));
-            CHECK(bigAngle.asRadians() == Approx(17.453293));
+            CHECK(bigAngle.asRadians() == Approx(17.453293f));
 
             const sf::Angle bigNegativeAngle = sf::degrees(-4321);
             CHECK(bigNegativeAngle == sf::degrees(-4321));
-            CHECK(bigNegativeAngle.asRadians() == Approx(-75.415677));
+            CHECK(bigNegativeAngle.asRadians() == Approx(-75.415677f));
         }
 
         SUBCASE("radians()")
         {
             const sf::Angle angle = sf::radians(1);
-            CHECK(angle.asDegrees() == Approx(57.2957795));
-            CHECK(angle.asRadians() == Approx(1.0));
+            CHECK(angle.asDegrees() == Approx(57.2957795f));
+            CHECK(angle.asRadians() == Approx(1.f));
 
             const sf::Angle bigAngle = sf::radians(72);
-            CHECK(bigAngle.asDegrees() == Approx(4125.29612));
-            CHECK(bigAngle.asRadians() == Approx(72.0));
+            CHECK(bigAngle.asDegrees() == Approx(4125.29612f));
+            CHECK(bigAngle.asRadians() == Approx(72.f));
 
             const sf::Angle bigNegativeAngle = sf::radians(-200);
-            CHECK(bigNegativeAngle.asDegrees() == Approx(-11459.1559));
-            CHECK(bigNegativeAngle.asRadians() == Approx(-200.0));
+            CHECK(bigNegativeAngle.asDegrees() == Approx(-11459.1559f));
+            CHECK(bigNegativeAngle.asRadians() == Approx(-200.f));
         }
     }
 
@@ -228,7 +226,7 @@ TEST_CASE("sf::Angle class - [system]")
 
             CHECK(sf::Angle::Zero / sf::degrees(1) == 0);
             CHECK(sf::degrees(10) / sf::degrees(10) == 1);
-            CHECK(sf::radians(10) / sf::radians(2) == Approx(5.0));
+            CHECK(sf::radians(10) / sf::radians(2) == Approx(5.f));
         }
 
         SUBCASE("operator/=")
