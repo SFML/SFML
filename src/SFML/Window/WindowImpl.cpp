@@ -46,11 +46,22 @@
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
-    #include <SFML/Window/Unix/WindowImplX11.hpp>
-    using WindowImplType = sf::priv::WindowImplX11;
+    #if defined(SFML_USE_DRM)
 
-    #include <SFML/Window/Unix/VulkanImplX11.hpp>
-    using VulkanImplType = sf::priv::VulkanImplX11;
+        #include <SFML/Window/DRM/WindowImplDRM.hpp>
+        using WindowImplType = sf::priv::WindowImplDRM;
+
+        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+
+    #else
+
+        #include <SFML/Window/Unix/WindowImplX11.hpp>
+		using WindowImplType = sf::priv::WindowImplX11;
+
+        #include <SFML/Window/Unix/VulkanImplX11.hpp>
+        using VulkanImplType = sf::priv::VulkanImplX11;
+
+    #endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
@@ -80,6 +91,7 @@ namespace sf
 {
 namespace priv
 {
+
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
