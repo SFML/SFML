@@ -41,45 +41,28 @@ namespace sf
     }
 }
 
-// Utilities for approximate equality
-struct ApproxVec2
+////////////////////////////////////////////////////////////
+/// Class template for creating custom approximate comparisons.
+/// To register a new type, simply implement a custom operator==
+/// overload for that type.
+////////////////////////////////////////////////////////////
+template <typename T>
+struct Approx
 {
-    ApproxVec2(float x, float y)
-        : vector(x, y) {}
-
-    explicit ApproxVec2(const sf::Vector2f& v)
-        : vector(v) {}
-
-    sf::Vector2f vector;
+    explicit Approx(const T& t) : value(t) {}
+    const T& value;
 };
 
-struct ApproxVec3
+bool operator==(const float& lhs, const Approx<float>& rhs);
+bool operator==(const sf::Vector2f& lhs, const Approx<sf::Vector2f>& rhs);
+bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs);
+bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs);
+
+template <typename T>
+std::ostream& operator <<(std::ostream& os, const Approx<T>& approx)
 {
-    ApproxVec3(float x, float y, float z)
-        : vector(x, y, z) {}
-
-    explicit ApproxVec3(const sf::Vector3f& v)
-        : vector(v) {}
-
-    sf::Vector3f vector;
-};
-
-// Utilities for approximate equality
-struct ApproxDeg
-{
-    ApproxDeg(float deg)
-        : degrees(deg) {}
-
-    float degrees;
-};
-
-bool operator==(const sf::Vector2f& lhs, const ApproxVec2& rhs);
-bool operator==(const sf::Vector3f& lhs, const ApproxVec3& rhs);
-bool operator==(const sf::Angle& lhs, const ApproxDeg& rhs);
-
-std::ostream& operator <<(std::ostream& os, const ApproxVec2& approx);
-std::ostream& operator <<(std::ostream& os, const ApproxVec3& approx);
-std::ostream& operator <<(std::ostream& os, const ApproxDeg& approx);
+    return os << approx.value;
+}
 
 namespace sf::Testing
 {

@@ -35,37 +35,24 @@ namespace sf
     }
 }
 
-bool operator==(const sf::Vector2f& lhs, const ApproxVec2& rhs)
+bool operator==(const float& lhs, const Approx<float>& rhs)
 {
-    return static_cast<double>((lhs - rhs.vector).length()) == doctest::Approx(0.0);
+    return static_cast<double>(lhs) == doctest::Approx(static_cast<double>(rhs.value));
 }
 
-bool operator==(const sf::Vector3f& lhs, const ApproxVec3& rhs)
+bool operator==(const sf::Vector2f& lhs, const Approx<sf::Vector2f>& rhs)
 {
-    return static_cast<double>((lhs - rhs.vector).length()) == doctest::Approx(0.0);
+    return (lhs - rhs.value).length() == Approx(0.f);
 }
 
-bool operator==(const sf::Angle& lhs, const ApproxDeg& rhs)
+bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs)
 {
-    return static_cast<double>(lhs.asDegrees()) == doctest::Approx(static_cast<double>(rhs.degrees));
+    return (lhs - rhs.value).length() == Approx(0.f);
 }
 
-std::ostream& operator <<(std::ostream& os, const ApproxVec2& approx)
+bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs)
 {
-    os << approx.vector;
-    return os;
-}
-
-std::ostream& operator <<(std::ostream& os, const ApproxVec3& approx)
-{
-    os << approx.vector;
-    return os;
-}
-
-std::ostream& operator <<(std::ostream& os, const ApproxDeg& approx)
-{
-    os << sf::degrees(approx.degrees);
-    return os;
+    return lhs.asDegrees() == Approx(rhs.value.asDegrees());
 }
 
 namespace sf::Testing

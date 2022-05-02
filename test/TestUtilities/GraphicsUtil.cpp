@@ -1,4 +1,5 @@
-// Note: No need to increase compile time by including TestUtilities/Graphics.hpp
+#include "GraphicsUtil.hpp"
+
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -36,4 +37,17 @@ namespace sf
 
         return os;
     }
+}
+
+bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
+{
+    return lhs.getMatrix()[0]  == Approx(rhs.value.getMatrix()[0])
+        && lhs.getMatrix()[4]  == Approx(rhs.value.getMatrix()[4])
+        && lhs.getMatrix()[12] == Approx(rhs.value.getMatrix()[12])
+        && lhs.getMatrix()[1]  == Approx(rhs.value.getMatrix()[1])
+        && lhs.getMatrix()[5]  == Approx(rhs.value.getMatrix()[5])
+        && lhs.getMatrix()[13] == Approx(rhs.value.getMatrix()[13])
+        && lhs.getMatrix()[3]  == Approx(rhs.value.getMatrix()[3])
+        && lhs.getMatrix()[7]  == Approx(rhs.value.getMatrix()[7])
+        && lhs.getMatrix()[15] == Approx(rhs.value.getMatrix()[15]);
 }

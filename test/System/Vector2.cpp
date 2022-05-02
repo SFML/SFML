@@ -5,7 +5,6 @@
 #include <doctest.h>
 
 using namespace sf::Literals;
-using doctest::Approx;
 
 // Use sf::Vector2i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
@@ -40,53 +39,53 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("Length and angle constructor")
         {
-            CHECK(sf::Vector2f(0, sf::degrees(0)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(45)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(90)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(135)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(180)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(270)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(360)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(-90)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(-180)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(-270)) == sf::Vector2f(0, 0));
-            CHECK(sf::Vector2f(0, sf::degrees(-360)) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 0_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 45_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 90_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 135_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 180_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 270_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, 360_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, -90_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, -180_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, -270_deg) == sf::Vector2f(0, 0));
+            CHECK(sf::Vector2f(0, -360_deg) == sf::Vector2f(0, 0));
 
-            CHECK(sf::Vector2f(1, sf::degrees(0)) == sf::Vector2f(1, 0));
-            CHECK(sf::Vector2f(1, sf::degrees(45)) == ApproxVec2(std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(1, sf::degrees(90)) == ApproxVec2(0, 1));
-            CHECK(sf::Vector2f(1, sf::degrees(135)) == ApproxVec2(-std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(1, sf::degrees(180)) == ApproxVec2(-1, 0));
-            CHECK(sf::Vector2f(1, sf::degrees(270)) == ApproxVec2(0, -1));
-            CHECK(sf::Vector2f(1, sf::degrees(360)) == ApproxVec2(1, 0));
-            CHECK(sf::Vector2f(1, sf::degrees(-90)) == ApproxVec2(0, -1));
-            CHECK(sf::Vector2f(1, sf::degrees(-180)) == ApproxVec2(-1, 0));
-            CHECK(sf::Vector2f(1, sf::degrees(-270)) == ApproxVec2(0, 1));
-            CHECK(sf::Vector2f(1, sf::degrees(-360)) == ApproxVec2(1, 0));
+            CHECK(sf::Vector2f(1, 0_deg) == sf::Vector2f(1, 0));
+            CHECK(sf::Vector2f(1, 45_deg) == Approx(sf::Vector2f(std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(1, 90_deg) == Approx(sf::Vector2f(0, 1)));
+            CHECK(sf::Vector2f(1, 135_deg) == Approx(sf::Vector2f(-std::sqrt(2.f) / 2.f, std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(1, 180_deg) == Approx(sf::Vector2f(-1, 0)));
+            CHECK(sf::Vector2f(1, 270_deg) == Approx(sf::Vector2f(0, -1)));
+            CHECK(sf::Vector2f(1, 360_deg) == Approx(sf::Vector2f(1, 0)));
+            CHECK(sf::Vector2f(1, -90_deg) == Approx(sf::Vector2f(0, -1)));
+            CHECK(sf::Vector2f(1, -180_deg) == Approx(sf::Vector2f(-1, 0)));
+            CHECK(sf::Vector2f(1, -270_deg) == Approx(sf::Vector2f(0, 1)));
+            CHECK(sf::Vector2f(1, -360_deg) == Approx(sf::Vector2f(1, 0)));
 
-            CHECK(sf::Vector2f(-1, sf::degrees(0)) == sf::Vector2f(-1, 0));
-            CHECK(sf::Vector2f(-1, sf::degrees(45)) == ApproxVec2(-std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(-1, sf::degrees(90)) == ApproxVec2(0, -1));
-            CHECK(sf::Vector2f(-1, sf::degrees(135)) == ApproxVec2(std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(-1, sf::degrees(180)) == ApproxVec2(1, 0));
-            CHECK(sf::Vector2f(-1, sf::degrees(270)) == ApproxVec2(0, 1));
-            CHECK(sf::Vector2f(-1, sf::degrees(360)) == ApproxVec2(-1, 0));
-            CHECK(sf::Vector2f(-1, sf::degrees(-90)) == ApproxVec2(0, 1));
-            CHECK(sf::Vector2f(-1, sf::degrees(-180)) == ApproxVec2(1, 0));
-            CHECK(sf::Vector2f(-1, sf::degrees(-270)) == ApproxVec2(0, -1));
-            CHECK(sf::Vector2f(-1, sf::degrees(-360)) == ApproxVec2(-1, 0));
+            CHECK(sf::Vector2f(-1, 0_deg) == sf::Vector2f(-1, 0));
+            CHECK(sf::Vector2f(-1, 45_deg) == Approx(sf::Vector2f(-std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(-1, 90_deg) == Approx(sf::Vector2f(0, -1)));
+            CHECK(sf::Vector2f(-1, 135_deg) == Approx(sf::Vector2f(std::sqrt(2.f) / 2.f, -std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(-1, 180_deg) == Approx(sf::Vector2f(1, 0)));
+            CHECK(sf::Vector2f(-1, 270_deg) == Approx(sf::Vector2f(0, 1)));
+            CHECK(sf::Vector2f(-1, 360_deg) == Approx(sf::Vector2f(-1, 0)));
+            CHECK(sf::Vector2f(-1, -90_deg) == Approx(sf::Vector2f(0, 1)));
+            CHECK(sf::Vector2f(-1, -180_deg) == Approx(sf::Vector2f(1, 0)));
+            CHECK(sf::Vector2f(-1, -270_deg) == Approx(sf::Vector2f(0, -1)));
+            CHECK(sf::Vector2f(-1, -360_deg) == Approx(sf::Vector2f(-1, 0)));
 
-            CHECK(sf::Vector2f(4.2f, sf::degrees(0)) == sf::Vector2f(4.2f, 0));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(45)) == ApproxVec2(4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(90)) == ApproxVec2(0, 4.2f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(135)) == ApproxVec2(-4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(180)) == ApproxVec2(-4.2f, 0));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(270)) == ApproxVec2(0, -4.2f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(360)) == ApproxVec2(4.2f, 0));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(-90)) == ApproxVec2(0, -4.2f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(-180)) == ApproxVec2(-4.2f, 0));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(-270)) == ApproxVec2(0, 4.2f));
-            CHECK(sf::Vector2f(4.2f, sf::degrees(-360)) == ApproxVec2(4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, 0_deg) == sf::Vector2f(4.2f, 0));
+            CHECK(sf::Vector2f(4.2f, 45_deg) == Approx(sf::Vector2f(4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(4.2f, 90_deg) == Approx(sf::Vector2f(0, 4.2f)));
+            CHECK(sf::Vector2f(4.2f, 135_deg) == Approx(sf::Vector2f(-4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(4.2f, 180_deg) == Approx(sf::Vector2f(-4.2f, 0)));
+            CHECK(sf::Vector2f(4.2f, 270_deg) == Approx(sf::Vector2f(0, -4.2f)));
+            CHECK(sf::Vector2f(4.2f, 360_deg) == Approx(sf::Vector2f(4.2f, 0)));
+            CHECK(sf::Vector2f(4.2f, -90_deg) == Approx(sf::Vector2f(0, -4.2f)));
+            CHECK(sf::Vector2f(4.2f, -180_deg) == Approx(sf::Vector2f(-4.2f, 0)));
+            CHECK(sf::Vector2f(4.2f, -270_deg) == Approx(sf::Vector2f(0, 4.2f)));
+            CHECK(sf::Vector2f(4.2f, -360_deg) == Approx(sf::Vector2f(4.2f, 0)));
         }
     }
 
@@ -244,44 +243,44 @@ TEST_CASE("sf::Vector2 class template - [system]")
     {
         const sf::Vector2f v(2.4f, 3.0f);
 
-        CHECK(v.length() == Approx(3.84187));
-        CHECK(v.lengthSq() == Approx(14.7599650969));
-        CHECK(v.normalized() == ApproxVec2(0.624695f, 0.780869f));
+        CHECK(v.length() == Approx(3.84187f));
+        CHECK(v.lengthSq() == Approx(14.7599650969f));
+        CHECK(v.normalized() == Approx(sf::Vector2f(0.624695f, 0.780869f)));
 
         const sf::Vector2f w(-0.7f, -2.2f);
         
-        CHECK(w.length() == Approx(2.30868));
-        CHECK(w.lengthSq() == Approx(5.3300033));
-        CHECK(w.normalized() == ApproxVec2(-0.303204f, -0.952926f));
+        CHECK(w.length() == Approx(2.30868f));
+        CHECK(w.lengthSq() == Approx(5.3300033f));
+        CHECK(w.normalized() == Approx(sf::Vector2f(-0.303204f, -0.952926f)));
     }
 
     SUBCASE("Rotations and angles")
     {
         const sf::Vector2f v(2.4f, 3.0f);
         
-        CHECK(v.angle() == ApproxDeg(51.3402f));
-        CHECK(sf::Vector2f::UnitX.angleTo(v) == ApproxDeg(51.3402f));
-        CHECK(sf::Vector2f::UnitY.angleTo(v) == ApproxDeg(-38.6598f));
+        CHECK(v.angle() == Approx(51.3402_deg));
+        CHECK(sf::Vector2f::UnitX.angleTo(v) == Approx(51.3402_deg));
+        CHECK(sf::Vector2f::UnitY.angleTo(v) == Approx(-38.6598_deg));
 
         const sf::Vector2f w(-0.7f, -2.2f);
 
-        CHECK(w.angle() == ApproxDeg(-107.65f));
-        CHECK(sf::Vector2f::UnitX.angleTo(w) == ApproxDeg(-107.65f));
-        CHECK(sf::Vector2f::UnitY.angleTo(w) == ApproxDeg(162.35f));
+        CHECK(w.angle() == Approx(-107.65_deg));
+        CHECK(sf::Vector2f::UnitX.angleTo(w) == Approx(-107.65_deg));
+        CHECK(sf::Vector2f::UnitY.angleTo(w) == Approx(162.35_deg));
 
-        CHECK(v.angleTo(w) == ApproxDeg(-158.9902f));
-        CHECK(w.angleTo(v) == ApproxDeg(158.9902f));
+        CHECK(v.angleTo(w) == Approx(-158.9902_deg));
+        CHECK(w.angleTo(v) == Approx(158.9902_deg));
 
         const float ratio = w.length() / v.length();
-        CHECK(v.rotatedBy(-158.9902_deg) * ratio  == ApproxVec2(w));
-        CHECK(w.rotatedBy(158.9902_deg) / ratio == ApproxVec2(v));
+        CHECK(v.rotatedBy(-158.9902_deg) * ratio  == Approx(w));
+        CHECK(w.rotatedBy(158.9902_deg) / ratio == Approx(v));
 
         CHECK(v.perpendicular() == sf::Vector2f(-3.0f, 2.4f));
         CHECK(v.perpendicular().perpendicular().perpendicular().perpendicular() == v);
 
-        CHECK(v.rotatedBy(90_deg) == ApproxVec2(-3.0f, 2.4f));
-        CHECK(v.rotatedBy(27.14_deg) == ApproxVec2(0.767248f, 3.76448f));
-        CHECK(v.rotatedBy(-36.11_deg) == ApproxVec2(3.70694f, 1.00925f));
+        CHECK(v.rotatedBy(90_deg) == Approx(sf::Vector2f(-3.0f, 2.4f)));
+        CHECK(v.rotatedBy(27.14_deg) == Approx(sf::Vector2f(0.767248f, 3.76448f)));
+        CHECK(v.rotatedBy(-36.11_deg) == Approx(sf::Vector2f(3.70694f, 1.00925f)));
     }
     
     SUBCASE("Products and quotients")
@@ -289,16 +288,16 @@ TEST_CASE("sf::Vector2 class template - [system]")
         const sf::Vector2f v(2.4f, 3.0f);
         const sf::Vector2f w(-0.7f, -2.2f);
 
-        CHECK(v.dot(w) == Approx(-8.28));
-        CHECK(w.dot(v) == Approx(-8.28));
+        CHECK(v.dot(w) == Approx(-8.28f));
+        CHECK(w.dot(v) == Approx(-8.28f));
 
-        CHECK(v.cross(w) == Approx(-3.18));
-        CHECK(w.cross(v) == Approx(+3.18));
+        CHECK(v.cross(w) == Approx(-3.18f));
+        CHECK(w.cross(v) == Approx(+3.18f));
         
-        CHECK(v.cwiseMul(w) == ApproxVec2(-1.68f, -6.6f));
-        CHECK(w.cwiseMul(v) == ApproxVec2(-1.68f, -6.6f));
-        CHECK(v.cwiseDiv(w) == ApproxVec2(-3.428571f, -1.363636f));
-        CHECK(w.cwiseDiv(v) == ApproxVec2(-0.291666f, -0.733333f));
+        CHECK(v.cwiseMul(w) == Approx(sf::Vector2f(-1.68f, -6.6f)));
+        CHECK(w.cwiseMul(v) == Approx(sf::Vector2f(-1.68f, -6.6f)));
+        CHECK(v.cwiseDiv(w) == Approx(sf::Vector2f(-3.428571f, -1.363636f)));
+        CHECK(w.cwiseDiv(v) == Approx(sf::Vector2f(-0.291666f, -0.733333f)));
     }
     
     SUBCASE("Projection")
@@ -306,14 +305,14 @@ TEST_CASE("sf::Vector2 class template - [system]")
         const sf::Vector2f v(2.4f, 3.0f);
         const sf::Vector2f w(-0.7f, -2.2f);
         
-        CHECK(v.projectedOnto(w) == ApproxVec2(1.087430f, 3.417636f));
-        CHECK(v.projectedOnto(w) == ApproxVec2(-1.55347f * w));
+        CHECK(v.projectedOnto(w) == Approx(sf::Vector2f(1.087430f, 3.417636f)));
+        CHECK(v.projectedOnto(w) == Approx(sf::Vector2f(-1.55347f * w)));
 
-        CHECK(w.projectedOnto(v) == ApproxVec2(-1.346342f, -1.682927f));
-        CHECK(w.projectedOnto(v) == ApproxVec2(-0.560976f * v));
+        CHECK(w.projectedOnto(v) == Approx(sf::Vector2f(-1.346342f, -1.682927f)));
+        CHECK(w.projectedOnto(v) == Approx(sf::Vector2f(-0.560976f * v)));
 
-        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == ApproxVec2(2.4f, 0.0f));
-        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == ApproxVec2(0.0f, 3.0f));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == Approx(sf::Vector2f(2.4f, 0.0f)));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == Approx(sf::Vector2f(0.0f, 3.0f)));
     }
 
     SUBCASE("Constexpr support")
