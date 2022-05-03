@@ -534,7 +534,7 @@ void Font::cleanup()
 ////////////////////////////////////////////////////////////
 Font::Page& Font::loadPage(unsigned int characterSize) const
 {
-    return m_pages.try_emplace(characterSize, Page(m_isSmooth)).first->second;
+    return m_pages.try_emplace(characterSize, m_isSmooth).first->second;
 }
 
 
