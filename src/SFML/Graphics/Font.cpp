@@ -534,12 +534,7 @@ void Font::cleanup()
 ////////////////////////////////////////////////////////////
 Font::Page& Font::loadPage(unsigned int characterSize) const
 {
-    // TODO: Remove this method and use try_emplace instead when updating to C++17
-    PageTable::iterator pageIterator = m_pages.find(characterSize);
-    if (pageIterator == m_pages.end())
-        pageIterator = m_pages.insert(std::make_pair(characterSize, Page(m_isSmooth))).first;
-
-    return pageIterator->second;
+    return m_pages.try_emplace(characterSize, Page(m_isSmooth)).first->second;
 }
 
 
