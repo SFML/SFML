@@ -195,13 +195,13 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         CHECK(v.length() == Approx(3.84187));
         CHECK(v.lengthSq() == Approx(14.7599650969));
-        CHECK(v.normalized() == ApproxVec(0.624695f, 0.780869f));
+        CHECK(v.normalized() == ApproxVec2(0.624695f, 0.780869f));
 
         const sf::Vector2f w(-0.7f, -2.2f);
         
         CHECK(w.length() == Approx(2.30868));
         CHECK(w.lengthSq() == Approx(5.3300033));
-        CHECK(w.normalized() == ApproxVec(-0.303204f, -0.952926f));
+        CHECK(w.normalized() == ApproxVec2(-0.303204f, -0.952926f));
     }
 
     SUBCASE("Rotations and angles")
@@ -222,15 +222,15 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(w.angleTo(v) == ApproxDeg(158.9902f));
 
         const float ratio = w.length() / v.length();
-        CHECK(v.rotatedBy(-158.9902_deg) * ratio  == ApproxVec(w));
-        CHECK(w.rotatedBy(158.9902_deg) / ratio == ApproxVec(v));
+        CHECK(v.rotatedBy(-158.9902_deg) * ratio  == ApproxVec2(w));
+        CHECK(w.rotatedBy(158.9902_deg) / ratio == ApproxVec2(v));
 
         CHECK(v.perpendicular() == sf::Vector2f(-3.0f, 2.4f));
         CHECK(v.perpendicular().perpendicular().perpendicular().perpendicular() == v);
 
-        CHECK(v.rotatedBy(90_deg) == ApproxVec(-3.0f, 2.4f));
-        CHECK(v.rotatedBy(27.14_deg) == ApproxVec(0.767248f, 3.76448f));
-        CHECK(v.rotatedBy(-36.11_deg) == ApproxVec(3.70694f, 1.00925f));
+        CHECK(v.rotatedBy(90_deg) == ApproxVec2(-3.0f, 2.4f));
+        CHECK(v.rotatedBy(27.14_deg) == ApproxVec2(0.767248f, 3.76448f));
+        CHECK(v.rotatedBy(-36.11_deg) == ApproxVec2(3.70694f, 1.00925f));
     }
     
     SUBCASE("Products and quotients")
@@ -244,10 +244,10 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(v.cross(w) == Approx(-3.18));
         CHECK(w.cross(v) == Approx(+3.18));
         
-        CHECK(v.cwiseMul(w) == ApproxVec(-1.68f, -6.6f));
-        CHECK(w.cwiseMul(v) == ApproxVec(-1.68f, -6.6f));
-        CHECK(v.cwiseDiv(w) == ApproxVec(-3.428571f, -1.363636f));
-        CHECK(w.cwiseDiv(v) == ApproxVec(-0.291666f, -0.733333f));
+        CHECK(v.cwiseMul(w) == ApproxVec2(-1.68f, -6.6f));
+        CHECK(w.cwiseMul(v) == ApproxVec2(-1.68f, -6.6f));
+        CHECK(v.cwiseDiv(w) == ApproxVec2(-3.428571f, -1.363636f));
+        CHECK(w.cwiseDiv(v) == ApproxVec2(-0.291666f, -0.733333f));
     }
     
     SUBCASE("Projection")
@@ -255,14 +255,14 @@ TEST_CASE("sf::Vector2 class template - [system]")
         const sf::Vector2f v(2.4f, 3.0f);
         const sf::Vector2f w(-0.7f, -2.2f);
         
-        CHECK(v.projectedOnto(w) == ApproxVec(1.087430f, 3.417636f));
-        CHECK(v.projectedOnto(w) == ApproxVec(-1.55347f * w));
+        CHECK(v.projectedOnto(w) == ApproxVec2(1.087430f, 3.417636f));
+        CHECK(v.projectedOnto(w) == ApproxVec2(-1.55347f * w));
 
-        CHECK(w.projectedOnto(v) == ApproxVec(-1.346342f, -1.682927f));
-        CHECK(w.projectedOnto(v) == ApproxVec(-0.560976f * v));
+        CHECK(w.projectedOnto(v) == ApproxVec2(-1.346342f, -1.682927f));
+        CHECK(w.projectedOnto(v) == ApproxVec2(-0.560976f * v));
 
-        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == ApproxVec(2.4f, 0.0f));
-        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == ApproxVec(0.0f, 3.0f));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == ApproxVec2(2.4f, 0.0f));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == ApproxVec2(0.0f, 3.0f));
     }
 
     SUBCASE("Constexpr support")

@@ -40,15 +40,26 @@ namespace sf
 }
 
 // Utilities for approximate equality
-struct ApproxVec
+struct ApproxVec2
 {
-    ApproxVec(float x, float y)
+    ApproxVec2(float x, float y)
         : vector(x, y) {}
 
-    explicit ApproxVec(const sf::Vector2f& v)
+    explicit ApproxVec2(const sf::Vector2f& v)
         : vector(v) {}
 
     sf::Vector2f vector;
+};
+
+struct ApproxVec3
+{
+    ApproxVec3(float x, float y, float z)
+        : vector(x, y, z) {}
+
+    explicit ApproxVec3(const sf::Vector3f& v)
+        : vector(v) {}
+
+    sf::Vector3f vector;
 };
 
 // Utilities for approximate equality
@@ -60,10 +71,12 @@ struct ApproxDeg
     float degrees;
 };
 
-bool operator==(const sf::Vector2f& lhs, const ApproxVec& rhs);
+bool operator==(const sf::Vector2f& lhs, const ApproxVec2& rhs);
+bool operator==(const sf::Vector3f& lhs, const ApproxVec3& rhs);
 bool operator==(const sf::Angle& lhs, const ApproxDeg& rhs);
 
-std::ostream& operator <<(std::ostream& os, const ApproxVec& approx);
+std::ostream& operator <<(std::ostream& os, const ApproxVec2& approx);
+std::ostream& operator <<(std::ostream& os, const ApproxVec3& approx);
 std::ostream& operator <<(std::ostream& os, const ApproxDeg& approx);
 
 namespace sf::Testing
