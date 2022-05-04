@@ -58,6 +58,74 @@ z(static_cast<T>(vector.z))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+T Vector3<T>::length() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector3::length() is only supported for floating point types");
+
+    return std::hypot(x, y, z);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector3<T>::lengthSq() const
+{
+    return dot(*this);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector3<T> Vector3<T>::normalized() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector3::normalized() is only supported for floating point types");
+
+    assert(*this != Vector3<T>());
+    return (*this) / length();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Vector3<T>::dot(const Vector3<T>& rhs) const
+{
+    return x * rhs.x + y * rhs.y + z * rhs.z;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector3<T> Vector3<T>::cross(const Vector3<T>& rhs) const
+{
+    return Vector3<T>(
+        (y * rhs.z) - (z * rhs.y),
+        (z * rhs.x) - (x * rhs.z),
+        (x * rhs.y) - (y * rhs.x)
+    );
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector3<T> Vector3<T>::cwiseMul(const Vector3<T>& rhs) const
+{
+    return Vector3<T>(x * rhs.x, y * rhs.y, z * rhs.z);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector3<T> Vector3<T>::cwiseDiv(const Vector3<T>& rhs) const
+{
+    assert(rhs.x != 0);
+    assert(rhs.y != 0);
+    assert(rhs.z != 0);
+    return Vector3<T>(x / rhs.x, y / rhs.y, z / rhs.z);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 constexpr Vector3<T> operator -(const Vector3<T>& left)
 {
     return Vector3<T>(-left.x, -left.y, -left.z);

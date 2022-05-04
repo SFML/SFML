@@ -4,7 +4,10 @@
 
 #include <doctest.h>
 
-// Use sf::Vector3i for tests. Test coverage is given, as there are no template specializations.
+using doctest::Approx;
+
+// Use sf::Vector3i for tests (except for float vector algebra).
+// Test coverage is given, as there are no template specializations.
 
 TEST_CASE("sf::Vector3 class template - [system]")
 {
@@ -197,6 +200,32 @@ TEST_CASE("sf::Vector3 class template - [system]")
             CHECK(x == 3);
             CHECK(vector.x == 3);
         }
+    }
+
+    SUBCASE("Length and normalization")
+    {
+        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
+
+        CHECK(v.length() == Approx(6.46529));
+        CHECK(v.lengthSq() == Approx(41.79997));
+        CHECK(v.normalized() == ApproxVec3(0.37121f, 0.46401f, 0.80429f));
+    }
+
+    SUBCASE("Products and quotients")
+    {
+        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
+        const sf::Vector3f w(-0.7f, -2.2f, -4.8f);
+
+        CHECK(v.dot(w) == Approx(-33.24));
+        CHECK(w.dot(v) == Approx(-33.24));
+
+        CHECK(v.cross(w) == ApproxVec3(-2.96f, 7.88f, -3.18f));
+        CHECK(w.cross(v) == ApproxVec3(2.96f, -7.88f, 3.18f));
+
+        CHECK(v.cwiseMul(w) == ApproxVec3(-1.68f, -6.6f, -24.96f));
+        CHECK(w.cwiseMul(v) == ApproxVec3(-1.68f, -6.6f, -24.96f));
+        CHECK(v.cwiseDiv(w) == ApproxVec3(-3.428571f, -1.363636f, -1.0833333f));
+        CHECK(w.cwiseDiv(v) == ApproxVec3(-0.291666f, -0.733333f, -0.9230769f));
     }
 
     SUBCASE("Constexpr support")

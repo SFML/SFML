@@ -431,7 +431,7 @@ template <typename T>
 ///
 /// float s = v.dot(w);
 ///
-/// bool different = (v2 != v3);
+/// bool different = (v != u);
 /// \endcode
 ///
 /// Note: for 3-dimensional vectors, see sf::Vector3.
