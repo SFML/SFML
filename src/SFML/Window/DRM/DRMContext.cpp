@@ -43,7 +43,7 @@ namespace
     drm drmNode;
     drmEventContext drmEventCtx;
     pollfd pollFD;
-    gbm_device* gbmDevice = NULL;
+    gbm_device* gbmDevice = nullptr;
     int contextCount = 0;
     EGLDisplay display = EGL_NO_DISPLAY;
     int waitingForFlip = 0;
@@ -104,7 +104,7 @@ namespace
         display = EGL_NO_DISPLAY;
 
         gbm_device_destroy(gbmDevice);
-        gbmDevice = NULL;
+        gbmDevice = nullptr;
 
         close(drmNode.fd);
 
@@ -124,12 +124,12 @@ namespace
         if (initialized)
             return;
 
-        // Use environment variable "SFML_DRM_DEVICE" (or NULL if not set)
+        // Use environment variable "SFML_DRM_DEVICE" (or nullptr if not set)
         char* deviceString = std::getenv("SFML_DRM_DEVICE");
         if (deviceString && !*deviceString)
-            deviceString = NULL;
+            deviceString = nullptr;
 
-        // Use environment variable "SFML_DRM_MODE" (or NULL if not set)
+        // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
         char* modeString = std::getenv("SFML_DRM_MODE");
 
         // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
@@ -200,10 +200,10 @@ DRMContext::DRMContext(DRMContext* shared) :
 m_display    (EGL_NO_DISPLAY),
 m_context    (EGL_NO_CONTEXT),
 m_surface    (EGL_NO_SURFACE),
-m_config     (NULL),
-m_currentBO  (NULL),
-m_nextBO     (NULL),
-m_gbmSurface (NULL),
+m_config     (nullptr),
+m_currentBO  (nullptr),
+m_nextBO     (nullptr),
+m_gbmSurface (nullptr),
 m_width      (0),
 m_height     (0),
 m_shown      (false),
@@ -233,10 +233,10 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 m_display    (EGL_NO_DISPLAY),
 m_context    (EGL_NO_CONTEXT),
 m_surface    (EGL_NO_SURFACE),
-m_config     (NULL),
-m_currentBO  (NULL),
-m_nextBO     (NULL),
-m_gbmSurface (NULL),
+m_config     (nullptr),
+m_currentBO  (nullptr),
+m_nextBO     (nullptr),
+m_gbmSurface (nullptr),
 m_width      (0),
 m_height     (0),
 m_shown      (false),
@@ -264,10 +264,10 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, unsi
 m_display    (EGL_NO_DISPLAY),
 m_context    (EGL_NO_CONTEXT),
 m_surface    (EGL_NO_SURFACE),
-m_config     (NULL),
-m_currentBO  (NULL),
-m_nextBO     (NULL),
-m_gbmSurface (NULL),
+m_config     (nullptr),
+m_currentBO  (nullptr),
+m_nextBO     (nullptr),
+m_gbmSurface (nullptr),
 m_width      (0),
 m_height     (0),
 m_shown      (false),
@@ -350,7 +350,7 @@ void DRMContext::display()
     }
 
     // Handle display of buffer to the screen
-    drm_fb* fb = NULL;
+    drm_fb* fb = nullptr;
 
     if (!waitForFlip(-1))
         return;
@@ -358,7 +358,7 @@ void DRMContext::display()
     if (m_currentBO)
     {
         gbm_surface_release_buffer(m_gbmSurface, m_currentBO);
-        m_currentBO = NULL;
+        m_currentBO = nullptr;
     }
 
     eglCheck(eglSwapBuffers(m_display, m_surface));
@@ -455,7 +455,7 @@ void DRMContext::createSurface(unsigned int width, unsigned int height, unsigned
     m_width = width;
     m_height = height;
 
-    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), NULL));
+    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), nullptr));
 
     if (m_surface == EGL_NO_SURFACE)
     {
@@ -471,7 +471,7 @@ void DRMContext::destroySurface()
     m_surface = EGL_NO_SURFACE;
 
     gbm_surface_destroy(m_gbmSurface);
-    m_gbmSurface = NULL;
+    m_gbmSurface = nullptr;
 
     // Ensure that this context is no longer active since our surface is now destroyed
     setActive(false);

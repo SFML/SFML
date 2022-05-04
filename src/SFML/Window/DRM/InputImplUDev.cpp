@@ -504,7 +504,7 @@ namespace
         fd_set readFDSet;
         FD_ZERO(&readFDSet);
         FD_SET(STDIN_FILENO, &readFDSet);
-        int ready = select(STDIN_FILENO + 1, &readFDSet, NULL, NULL, &timeout);
+        int ready = select(STDIN_FILENO + 1, &readFDSet, nullptr, nullptr, &timeout);
 
         if (ready > 0 && FD_ISSET(STDIN_FILENO, &readFDSet))
             bytesRead = read(STDIN_FILENO, &code, 1);
@@ -516,7 +516,7 @@ namespace
             // Suppress ANSI escape sequences
             FD_ZERO(&readFDSet);
             FD_SET(STDIN_FILENO, &readFDSet);
-            ready = select(STDIN_FILENO + 1, &readFDSet, NULL, NULL, &timeout);
+            ready = select(STDIN_FILENO + 1, &readFDSet, nullptr, nullptr, &timeout);
             if (ready > 0 && FD_ISSET(STDIN_FILENO, &readFDSet))
             {
                 unsigned char tempBuffer[16];

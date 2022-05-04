@@ -40,7 +40,7 @@ namespace
     // The shared display and its reference counter
     Display* sharedDisplay = nullptr;
     unsigned int referenceCount = 0;
-    XIM sharedXIM = NULL;
+    XIM sharedXIM = nullptr;
     unsigned int referenceCountXIM = 0;
     std::recursive_mutex mutex;
 
