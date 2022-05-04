@@ -37,12 +37,12 @@ namespace sf
 
 bool operator==(const sf::Vector2f& lhs, const ApproxVec& rhs)
 {
-    return (lhs - rhs.vector).length() == doctest::Approx(0.0);
+    return static_cast<double>((lhs - rhs.vector).length()) == doctest::Approx(0.0);
 }
 
 bool operator==(const sf::Angle& lhs, const ApproxDeg& rhs)
 {
-    return lhs.asDegrees() == doctest::Approx(rhs.degrees);
+    return static_cast<double>(lhs.asDegrees()) == doctest::Approx(static_cast<double>(rhs.degrees));
 }
 
 std::ostream& operator <<(std::ostream& os, const ApproxVec& approx)

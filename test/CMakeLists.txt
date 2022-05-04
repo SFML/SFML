@@ -10,6 +10,7 @@ add_library(sfml-test-main STATIC
 target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
+set_target_warnings(sfml-test-main)
 
 SET(SYSTEM_SRC
     System/Angle.cpp
