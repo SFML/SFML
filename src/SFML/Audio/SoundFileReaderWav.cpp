@@ -50,7 +50,7 @@ namespace
         if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
             return false;
 
-        value = static_cast<sf::Uint8>(bytes[0] | (bytes[1] << 8));
+        value = static_cast<sf::Int16>(bytes[0] | (bytes[1] << 8));
 
         return true;
     }
