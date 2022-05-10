@@ -113,12 +113,15 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
 
     // Build the target address
     sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
-
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
     // Send the data (unlike TCP, all the data is always sent in one call)
     int sent = static_cast<int>(sendto(getHandle(), static_cast<const char*>(data), static_cast<priv::SocketImpl::Size>(size), 0, reinterpret_cast<sockaddr*>(&address), sizeof(address)));
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic pop
+#endif
 
     // Check for errors
     if (sent < 0)
@@ -146,13 +149,16 @@ Socket::Status UdpSocket::receive(void* data, std::size_t size, std::size_t& rec
     // Data that will be filled with the other computer's address
     sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, 0);
 
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
     // Receive a chunk of bytes
     priv::SocketImpl::AddrLength addressSize = sizeof(address);
     int sizeReceived = static_cast<int>(recvfrom(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), 0, reinterpret_cast<sockaddr*>(&address), &addressSize));
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic pop
-
+#endif
     // Check for errors
     if (sizeReceived < 0)
         return priv::SocketImpl::getErrorStatus();

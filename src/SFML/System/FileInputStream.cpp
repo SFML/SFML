@@ -67,7 +67,12 @@ bool FileInputStream::open(const std::filesystem::path& filename)
     return m_file->tell() != -1;
 #else
 #ifdef SFML_SYSTEM_WINDOWS
-    m_file.reset(_wfopen(filename.c_str(), L"rb"));
+	FILE* fileptr = NULL;
+	const errno_t result = _wfopen_s(&fileptr,filename.c_str(), L"rb");
+	if (result == 0)
+		m_file.reset(fileptr);
+	else 
+		m_file.reset();
 #else
     m_file.reset(std::fopen(filename.c_str(), "rb"));
 #endif

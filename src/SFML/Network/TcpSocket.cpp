@@ -246,11 +246,15 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     int result = 0;
     for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
     {
+#if !(defined(_MSC_VER) && defined(__clang__))
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
         // Send a chunk of data
         result = static_cast<int>(::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
-        #pragma GCC diagnostic pop
+#if !(defined(_MSC_VER) && defined(__clang__))
+    #pragma GCC diagnostic pop
+#endif
 
         // Check for errors
         if (result < 0)
@@ -281,12 +285,15 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
         return Error;
     }
 
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
     // Receive a chunk of bytes
     int sizeReceived = static_cast<int>(recv(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic pop
-
+#endif
     // Check the number of bytes received
     if (sizeReceived > 0)
     {
@@ -337,14 +344,18 @@ Socket::Status TcpSocket::send(Packet& packet)
     // These warnings are ignored here for portability, as even on Windows the
     // signature of `send` might change depending on whether Win32 or MinGW is
     // being used.
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
     Status status = send(blockToSend.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+#if !(defined(_MSC_VER) && defined(__clang__))
     #pragma GCC diagnostic pop
+#endif
     #pragma GCC diagnostic pop
 
     // In the case of a partial send, record the location to resume from

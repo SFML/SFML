@@ -91,7 +91,10 @@ std::string IpAddress::toString() const
     in_addr address;
     address.s_addr = m_address;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     return inet_ntoa(address);
+#pragma GCC diagnostic pop
 }
 
 
@@ -183,7 +186,10 @@ void IpAddress::resolve(const std::string& address)
     else
     {
         // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         Uint32 ip = inet_addr(address.c_str());
+#pragma GCC diagnostic pop
         if (ip != INADDR_NONE)
         {
             m_address = ip;
