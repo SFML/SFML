@@ -189,11 +189,11 @@ public:
     TimeSpan getLoopPoints() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the beginning and end of the sound's looping sequence using sf::Time
+    /// \brief Sets the beginning and duration of the sound's looping sequence using sf::Time
     ///
-    /// Loop points allow one to specify a pair of positions such that, when the music
+    /// setLoopPoints() allows for specifying the beginning offset and the duration of the loop such that, when the music
     /// is enabled for looping, it will seamlessly seek to the beginning whenever it
-    /// encounters the end. Valid ranges for timePoints.offset and timePoints.length are
+    /// encounters the end of the duration. Valid ranges for timePoints.offset and timePoints.length are
     /// [0, Dur) and (0, Dur-offset] respectively, where Dur is the value returned by getDuration().
     /// Note that the EOF "loop point" from the end to the beginning of the stream is still honored,
     /// in case the caller seeks to a point after the end of the loop range. This function can be
