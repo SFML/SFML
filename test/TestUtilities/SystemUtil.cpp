@@ -37,7 +37,7 @@ namespace sf
 
 bool operator==(const sf::Vector2f& lhs, const ApproxVec2& rhs)
 {
-    return (lhs - rhs.vector).length() == doctest::Approx(0.0);
+    return static_cast<double>((lhs - rhs.vector).length()) == doctest::Approx(0.0);
 }
 
 bool operator==(const sf::Vector3f& lhs, const ApproxVec3& rhs)
