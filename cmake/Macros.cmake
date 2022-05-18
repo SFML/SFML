@@ -171,11 +171,10 @@ macro(sfml_add_library module)
         endif()
     endif()
 
-    # if using gcc or clang on a non-Windows platform, we must hide public symbols by default
-    # (exported ones are explicitly marked)
-    if(NOT SFML_OS_WINDOWS AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
-    endif()
+    # ensure public symbols are hidden by default (exported ones are explicitly marked)
+    set_target_properties(${target} PROPERTIES
+                          CXX_VISIBILITY_PRESET hidden
+                          VISIBILITY_INLINES_HIDDEN YES)
 
     # build frameworks or dylibs
     if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
