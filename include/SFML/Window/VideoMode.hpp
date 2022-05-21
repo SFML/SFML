@@ -58,7 +58,7 @@ public:
     /// \param modeBitsPerPixel Pixel depths in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    explicit VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel = 32);
+    VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode
@@ -221,7 +221,7 @@ SFML_WINDOW_API bool operator >=(const VideoMode& left, const VideoMode& right);
 ///
 /// // Create a window with the same pixel depth as the desktop
 /// sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-/// window.create(sf::VideoMode(1024, 768, desktop.bitsPerPixel), "SFML window");
+/// window.create(sf::VideoMode({1024, 768}, desktop.bitsPerPixel), "SFML window");
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

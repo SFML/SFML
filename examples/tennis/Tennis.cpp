@@ -37,7 +37,7 @@ int main()
     float ballRadius = 10.f;
 
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode({static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight)}, 32), "SFML Tennis",
+    sf::RenderWindow window({{static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight)}, 32}, "SFML Tennis",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
