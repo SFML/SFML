@@ -41,6 +41,7 @@ SET(GRAPHICS_SRC
     Graphics/Transformable.cpp
     Graphics/Vertex.cpp
     Graphics/VertexArray.cpp
+    Graphics/View.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
