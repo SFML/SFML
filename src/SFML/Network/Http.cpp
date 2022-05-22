@@ -263,7 +263,7 @@ void Http::Response::parse(const std::string& data)
             for (std::size_t i = 0; ((i < length) && (it != itEnd)); i++)
             {
                 m_body.push_back(*it);
-                ++it;
+                ++it; // Iterate in separate expression to work around false positive -Wnull-dereference warning in GCC 12.1.0
             }
         }
 
