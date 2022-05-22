@@ -33,6 +33,7 @@ SET(GRAPHICS_SRC
     Graphics/BlendMode.cpp
     Graphics/CircleShape.cpp
     Graphics/Color.cpp
+    Graphics/Glyph.cpp
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
     Graphics/Shape.cpp
