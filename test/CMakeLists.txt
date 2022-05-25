@@ -37,6 +37,7 @@ SET(GRAPHICS_SRC
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
     Graphics/Shape.cpp
+    Graphics/RenderStates.cpp
     Graphics/Transform.cpp
     Graphics/Transformable.cpp
     Graphics/Vertex.cpp
