@@ -246,7 +246,10 @@ void Http::Response::parse(const std::string& data)
             std::istreambuf_iterator<char> it(in);
             std::istreambuf_iterator<char> itEnd;
             for (std::size_t i = 0; ((i < length) && (it != itEnd)); ++i)
-                m_body.push_back(*it++);
+            {
+                m_body.push_back(*it);
+                ++it; // Iterate in separate expression to work around false positive -Wnull-dereference warning in GCC 12.1.0
+            }
         }
 
         // Drop the rest of the line (chunk-extension)
