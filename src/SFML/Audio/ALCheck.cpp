@@ -29,6 +29,7 @@
 #include <SFML/System/Err.hpp>
 #include <string>
 #include <ostream>
+#include <utility>
 
 #if defined(__APPLE__)
     #if defined(__clang__)
