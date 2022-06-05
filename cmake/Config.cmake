@@ -107,6 +107,11 @@ if(MSVC)
     elseif(MSVC_VERSION LESS_EQUAL 1939)
         set(SFML_MSVC_VERSION 17)
     endif()
+	
+	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		set(SFML_COMPILER_CLANG_CL 1)
+	endif()
+	
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(SFML_COMPILER_CLANG 1)
 
