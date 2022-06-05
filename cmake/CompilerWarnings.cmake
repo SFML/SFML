@@ -68,7 +68,13 @@ function(set_file_warnings)
         # -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement (disabled until better compiler support for explicit fallthrough is available)
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
-
+    
+    # For now if we're using MSVC-like clang interface on Windows
+    # we'll disable warnings as errors 
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_CLANG_CL)
+        set(WARNINGS_AS_ERRORS FALSE)
+    endif()
+    
     if(WARNINGS_AS_ERRORS)
         set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
