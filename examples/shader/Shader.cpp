@@ -406,8 +406,7 @@ int main()
     while (window.isOpen())
     {
         // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Close window: exit
             if (event.type == sf::Event::Closed)

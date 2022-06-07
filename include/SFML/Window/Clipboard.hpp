@@ -97,8 +97,7 @@ public:
 /// sf::String string = sf::Clipboard::getString();
 ///
 /// // or use it in the event loop
-/// sf::Event event;
-/// while(window.pollEvent(event))
+/// for (sf::Event event; window.pollEvent(event);)
 /// {
 ///     if(event.type == sf::Event::Closed)
 ///         window.close();
