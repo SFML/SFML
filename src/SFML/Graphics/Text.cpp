@@ -323,7 +323,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
     // Precompute the variables needed by the algorithm
     bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance;
+    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
     float letterSpacing   = ( whitespaceWidth / 3.f ) * ( m_letterSpacingFactor - 1.f );
     whitespaceWidth      += letterSpacing;
     float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
@@ -342,9 +342,9 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         // Handle special characters
         switch (curChar)
         {
-            case ' ':  position.x += whitespaceWidth;             continue;
-            case '\t': position.x += whitespaceWidth * 4;         continue;
-            case '\n': position.y += lineSpacing; position.x = 0; continue;
+            case U' ':  position.x += whitespaceWidth;             continue;
+            case U'\t': position.x += whitespaceWidth * 4;         continue;
+            case U'\n': position.y += lineSpacing; position.x = 0; continue;
         }
 
         // For regular characters, add the advance offset of the glyph
@@ -431,11 +431,11 @@ void Text::ensureGeometryUpdate() const
     // Compute the location of the strike through dynamically
     // We use the center point of the lowercase 'x' glyph as the reference
     // We reuse the underline thickness as the thickness of the strike through as well
-    FloatRect xBounds = m_font->getGlyph(L'x', m_characterSize, isBold).bounds;
+    FloatRect xBounds = m_font->getGlyph(U'x', m_characterSize, isBold).bounds;
     float strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float whitespaceWidth = m_font->getGlyph(L' ', m_characterSize, isBold).advance;
+    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
     float letterSpacing   = ( whitespaceWidth / 3.f ) * ( m_letterSpacingFactor - 1.f );
     whitespaceWidth      += letterSpacing;
     float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
@@ -453,14 +453,14 @@ void Text::ensureGeometryUpdate() const
         Uint32 curChar = m_string[i];
 
         // Skip the \r char to avoid weird graphical issues
-        if (curChar == L'\r')
+        if (curChar == U'\r')
             continue;
 
         // Apply the kerning offset
         x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
 
         // If we're using the underlined style and there's a new line, draw a line
-        if (isUnderlined && (curChar == L'\n' && prevChar != L'\n'))
+        if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
 
@@ -469,7 +469,7 @@ void Text::ensureGeometryUpdate() const
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
-        if (isStrikeThrough && (curChar == L'\n' && prevChar != L'\n'))
+        if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
             addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
@@ -480,7 +480,7 @@ void Text::ensureGeometryUpdate() const
         prevChar = curChar;
 
         // Handle special characters
-        if ((curChar == L' ') || (curChar == L'\n') || (curChar == L'\t'))
+        if ((curChar == U' ') || (curChar == U'\n') || (curChar == U'\t'))
         {
             // Update the current bounds (min coordinates)
             minX = std::min(minX, x);
@@ -488,9 +488,9 @@ void Text::ensureGeometryUpdate() const
 
             switch (curChar)
             {
-                case L' ':  x += whitespaceWidth;     break;
-                case L'\t': x += whitespaceWidth * 4; break;
-                case L'\n': y += lineSpacing; x = 0;  break;
+                case U' ':  x += whitespaceWidth;     break;
+                case U'\t': x += whitespaceWidth * 4; break;
+                case U'\n': y += lineSpacing; x = 0;  break;
             }
 
             // Update the current bounds (max coordinates)
