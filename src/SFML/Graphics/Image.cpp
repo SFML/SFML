@@ -66,7 +66,7 @@ void Image::create(const Vector2u& size, const Color& color)
     else
     {
         // Dump the pixel buffer
-        std::vector<Uint8>().swap(m_pixels);
+        m_pixels = {};
 
         // Assign the new size
         m_size.x = 0;
@@ -92,7 +92,7 @@ void Image::create(const Vector2u& size, const Uint8* pixels)
     else
     {
         // Dump the pixel buffer
-        std::vector<Uint8>().swap(m_pixels);
+        m_pixels = {};
 
         // Assign the new size
         m_size.x = 0;

@@ -527,7 +527,7 @@ void Font::cleanup()
 
     // Reset members
     m_pages.clear();
-    std::vector<Uint8>().swap(m_pixelBuffer);
+    m_pixelBuffer = {};
 }
 
 
