@@ -109,9 +109,7 @@ int main(int argc, char *argv[])
 
     while (window.isOpen())
     {
-        sf::Event event;
-
-        while (active ? window.pollEvent(event) : window.waitEvent(event))
+        for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
         {
             switch (event.type)
             {

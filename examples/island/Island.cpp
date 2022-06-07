@@ -183,8 +183,7 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Window closed or escape key pressed: exit
             if ((event.type == sf::Event::Closed) ||
