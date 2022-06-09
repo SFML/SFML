@@ -204,11 +204,11 @@ TEST_CASE("sf::Angle class - [system]")
         {
             CHECK(sf::radians(0) * 10 == sf::Angle::Zero);
             CHECK(sf::degrees(10) * 2.5f == sf::degrees(25));
-            CHECK(sf::degrees(100) * 10.0f == sf::degrees(1000));
+            CHECK(sf::degrees(100) * 10.f == sf::degrees(1000));
 
             CHECK(10 * sf::radians(0) == sf::Angle::Zero);
             CHECK(2.5f * sf::degrees(10) == sf::degrees(25));
-            CHECK(10.0f * sf::degrees(100) == sf::degrees(1000));
+            CHECK(10.f * sf::degrees(100) == sf::degrees(1000));
         }
 
         SUBCASE("operator*=")

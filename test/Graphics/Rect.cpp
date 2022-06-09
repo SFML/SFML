@@ -40,7 +40,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
         SUBCASE("Conversion constructor")
         {
-            sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
+            sf::FloatRect sourceRectangle({1.f, 2.f}, {3.f, 4.f});
             sf::IntRect rectangle(sourceRectangle);
 
             CHECK(rectangle.left == static_cast<int>(sourceRectangle.left));

@@ -12,7 +12,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
             const sf::VertexArray vertexArray;
             CHECK(vertexArray.getVertexCount() == 0);
             CHECK(vertexArray.getPrimitiveType() == sf::PrimitiveType::Points);
-            CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
+            CHECK(vertexArray.getBounds() == sf::FloatRect({0.f, 0.f}, {0.f, 0.f}));
         }
 
         SUBCASE("Explicit constructor with default argument")
@@ -20,7 +20,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
             const sf::VertexArray vertexArray(sf::PrimitiveType::Lines);
             CHECK(vertexArray.getVertexCount() == 0);
             CHECK(vertexArray.getPrimitiveType() == sf::PrimitiveType::Lines);
-            CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
+            CHECK(vertexArray.getBounds() == sf::FloatRect({0.f, 0.f}, {0.f, 0.f}));
         }
 
         SUBCASE("Explicit constructor")
@@ -28,7 +28,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
             const sf::VertexArray vertexArray(sf::PrimitiveType::Lines, 10);
             CHECK(vertexArray.getVertexCount() == 10);
             CHECK(vertexArray.getPrimitiveType() == sf::PrimitiveType::Lines);
-            CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
+            CHECK(vertexArray.getBounds() == sf::FloatRect({0.f, 0.f}, {0.f, 0.f}));
             for (std::size_t i = 0; i < vertexArray.getVertexCount(); ++i)
             {
                 CHECK(vertexArray[i].position == sf::Vertex().position);
@@ -62,7 +62,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
     SUBCASE("Append to array")
     {
         sf::VertexArray vertexArray;
-        const sf::Vertex vertex({1, 2}, {3, 4, 5, 6}, {7, 8});
+        const sf::Vertex vertex({1.f, 2.f}, {3, 4, 5, 6}, {7.f, 8.f});
         vertexArray.append(vertex);
         CHECK(vertexArray.getVertexCount() == 1);
         CHECK(vertexArray[0].position == vertex.position);
@@ -74,7 +74,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
     {
         sf::VertexArray vertexArray;
         vertexArray.resize(10);
-        const sf::Vertex otherVertex({2, 3}, {4, 5, 6, 7}, {8, 9});
+        const sf::Vertex otherVertex({2.f, 3.f}, {4, 5, 6, 7}, {8.f, 9.f});
         vertexArray[9] = otherVertex;
         CHECK(vertexArray[9].position == otherVertex.position);
         CHECK(vertexArray[9].color == otherVertex.color);
@@ -91,14 +91,14 @@ TEST_CASE("sf::VertexArray class - [graphics]")
     SUBCASE("Get bounds")
     {
         sf::VertexArray vertexArray;
-        vertexArray.append(sf::Vertex({1, 1}));
-        vertexArray.append(sf::Vertex({2, 2}));
-        CHECK(vertexArray.getBounds() == sf::FloatRect({1, 1}, {1, 1}));
-        vertexArray[0] = sf::Vertex({0, 0});
-        CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {2, 2}));
-        vertexArray[0] = sf::Vertex({5, 5});
-        CHECK(vertexArray.getBounds() == sf::FloatRect({2, 2}, {3, 3}));
-        vertexArray.append(sf::Vertex({10, 10}));
-        CHECK(vertexArray.getBounds() == sf::FloatRect({2, 2}, {8, 8}));
+        vertexArray.append(sf::Vertex({1.f, 1.f}));
+        vertexArray.append(sf::Vertex({2.f, 2.f}));
+        CHECK(vertexArray.getBounds() == sf::FloatRect({1.f, 1.f}, {1.f, 1.f}));
+        vertexArray[0] = sf::Vertex({0.f, 0.f});
+        CHECK(vertexArray.getBounds() == sf::FloatRect({0.f, 0.f}, {2.f, 2.f}));
+        vertexArray[0] = sf::Vertex({5.f, 5.f});
+        CHECK(vertexArray.getBounds() == sf::FloatRect({2.f, 2.f}, {3.f, 3.f}));
+        vertexArray.append(sf::Vertex({10.f, 10.f}));
+        CHECK(vertexArray.getBounds() == sf::FloatRect({2.f, 2.f}, {8.f, 8.f}));
     }
 }

@@ -29,63 +29,63 @@ TEST_CASE("sf::Transform class - [graphics]")
 
         SUBCASE("3x3 matrix constructor")
         {
-            const sf::Transform transform(10.0f, 11.0f, 12.0f,
-                                          13.0f, 14.0f, 15.0f,
-                                          16.0f, 17.0f, 18.0f);
+            const sf::Transform transform(10.f, 11.f, 12.f,
+                                          13.f, 14.f, 15.f,
+                                          16.f, 17.f, 18.f);
             const std::vector<float> matrix(transform.getMatrix(), transform.getMatrix() + 16);
-            CHECK(matrix == std::vector<float>{10.0f, 13.0f, 0.0f, 16.0f,
-                                               11.0f, 14.0f, 0.0f, 17.0f,
-                                                0.0f,  0.0f, 1.0f,  0.0f,
-                                               12.0f, 15.0f, 0.0f, 18.0f});
+            CHECK(matrix == std::vector<float>{10.f, 13.f, 0.f, 16.f,
+                                               11.f, 14.f, 0.f, 17.f,
+                                                0.f,  0.f, 1.f,  0.f,
+                                               12.f, 15.f, 0.f, 18.f});
         }
     }
 
     SUBCASE("Identity matrix")
     {
         const std::vector<float> matrix(sf::Transform::Identity.getMatrix(), sf::Transform::Identity.getMatrix() + 16);
-        CHECK(matrix == std::vector<float>{1.0f, 0.0f, 0.0f, 0.0f,
-                                           0.0f, 1.0f, 0.0f, 0.0f,
-                                           0.0f, 0.0f, 1.0f, 0.0f,
-                                           0.0f, 0.0f, 0.0f, 1.0f});
+        CHECK(matrix == std::vector<float>{1.f, 0.f, 0.f, 0.f,
+                                           0.f, 1.f, 0.f, 0.f,
+                                           0.f, 0.f, 1.f, 0.f,
+                                           0.f, 0.f, 0.f, 1.f});
     }
 
     SUBCASE("getInverse()")
     {
         CHECK(sf::Transform::Identity.getInverse() == sf::Transform::Identity);
-        CHECK(sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f).getInverse() == sf::Transform::Identity);
-        CHECK(sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f).getInverse() == sf::Transform(0.375f, -0.5f, 0.875f, -1.0f, 1.0f, -1.0f, 0.875f, -0.5f, 0.375f));
+        CHECK(sf::Transform(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f).getInverse() == sf::Transform::Identity);
+        CHECK(sf::Transform(1.f, 2.f, 3.f, 4.f, 5.f, 4.f, 3.f, 2.f, 1.f).getInverse() == sf::Transform(0.375f, -0.5f, 0.875f, -1.f, 1.f, -1.f, 0.875f, -0.5f, 0.375f));
     }
 
     SUBCASE("transformPoint()")
     {
-        CHECK(sf::Transform::Identity.transformPoint({-10.0f, -10.0f}) == sf::Vector2f(-10.0f, -10.0f));
-        CHECK(sf::Transform::Identity.transformPoint({-1.0f, -1.0f}) == sf::Vector2f(-1.0f, -1.0f));
-        CHECK(sf::Transform::Identity.transformPoint({-1.0f, 0.0f}) == sf::Vector2f(-1.0f, 0.0f));
-        CHECK(sf::Transform::Identity.transformPoint({0.0f, 0.0f}) == sf::Vector2f(0.0f, 0.0f));
-        CHECK(sf::Transform::Identity.transformPoint({0.0f, 1.0f}) == sf::Vector2f(0.0f, 1.0f));
-        CHECK(sf::Transform::Identity.transformPoint({1.0f, 1.0f}) == sf::Vector2f(1.0f, 1.0f));
-        CHECK(sf::Transform::Identity.transformPoint({10.0f, 10.0f}) == sf::Vector2f(10.0f, 10.0f));
+        CHECK(sf::Transform::Identity.transformPoint({-10.f, -10.f}) == sf::Vector2f(-10.f, -10.f));
+        CHECK(sf::Transform::Identity.transformPoint({-1.f, -1.f}) == sf::Vector2f(-1.f, -1.f));
+        CHECK(sf::Transform::Identity.transformPoint({-1.f, 0.f}) == sf::Vector2f(-1.f, 0.f));
+        CHECK(sf::Transform::Identity.transformPoint({0.f, 0.f}) == sf::Vector2f(0.f, 0.f));
+        CHECK(sf::Transform::Identity.transformPoint({0.f, 1.f}) == sf::Vector2f(0.f, 1.f));
+        CHECK(sf::Transform::Identity.transformPoint({1.f, 1.f}) == sf::Vector2f(1.f, 1.f));
+        CHECK(sf::Transform::Identity.transformPoint({10.f, 10.f}) == sf::Vector2f(10.f, 10.f));
 
-        const sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                      4.0f, 5.0f, 4.0f,
-                                      3.0f, 2.0f, 1.0f);
-        CHECK(transform.transformPoint({-1.0f, -1.0f}) == sf::Vector2f(0.0f, -5.0f));
-        CHECK(transform.transformPoint({0.0f, 0.0f}) == sf::Vector2f(3.0f, 4.0f));
-        CHECK(transform.transformPoint({1.0f, 1.0f}) == sf::Vector2f(6.0f, 13.0f));
+        const sf::Transform transform(1.f, 2.f, 3.f,
+                                      4.f, 5.f, 4.f,
+                                      3.f, 2.f, 1.f);
+        CHECK(transform.transformPoint({-1.f, -1.f}) == sf::Vector2f(0.f, -5.f));
+        CHECK(transform.transformPoint({0.f, 0.f}) == sf::Vector2f(3.f, 4.f));
+        CHECK(transform.transformPoint({1.f, 1.f}) == sf::Vector2f(6.f, 13.f));
     }
 
     SUBCASE("transformRect()")
     {
-        CHECK(sf::Transform::Identity.transformRect({{-200.0f, -200.0f}, {-100.0f, -100.0f}}) == sf::FloatRect({-300.0f, -300.0f}, {100.0f, 100.0f}));
-        CHECK(sf::Transform::Identity.transformRect({{0.0f, 0.0f}, {0.0f, 0.0f}}) == sf::FloatRect({0.0f, 0.0f}, {0.0f, 0.0f}));
-        CHECK(sf::Transform::Identity.transformRect({{100.0f, 100.0f}, {200.0f, 200.0f}}) == sf::FloatRect({100.0f, 100.0f}, {200.0f, 200.0f}));
+        CHECK(sf::Transform::Identity.transformRect({{-200.f, -200.f}, {-100.f, -100.f}}) == sf::FloatRect({-300.f, -300.f}, {100.f, 100.f}));
+        CHECK(sf::Transform::Identity.transformRect({{0.f, 0.f}, {0.f, 0.f}}) == sf::FloatRect({0.f, 0.f}, {0.f, 0.f}));
+        CHECK(sf::Transform::Identity.transformRect({{100.f, 100.f}, {200.f, 200.f}}) == sf::FloatRect({100.f, 100.f}, {200.f, 200.f}));
 
-        const sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                      4.0f, 5.0f, 4.0f,
-                                      3.0f, 2.0f, 1.0f);
-        CHECK(transform.transformRect({{-100.0f, -100.0f}, {200.0f, 200.0f}}) == sf::FloatRect({-297.0f, -896.0f}, {600.0f, 1800.0f}));
-        CHECK(transform.transformRect({{0.0f, 0.0f}, {0.0f, 0.0f}}) == sf::FloatRect({3.0f, 4.0f}, {0.0f, 0.0f}));
-        CHECK(transform.transformRect({{100.0f, 100.0f}, {200.0f, 200.0f}}) == sf::FloatRect({303.0f, 904.0f}, {600.0f, 1800.0f}));
+        const sf::Transform transform(1.f, 2.f, 3.f,
+                                      4.f, 5.f, 4.f,
+                                      3.f, 2.f, 1.f);
+        CHECK(transform.transformRect({{-100.f, -100.f}, {200.f, 200.f}}) == sf::FloatRect({-297.f, -896.f}, {600.f, 1800.f}));
+        CHECK(transform.transformRect({{0.f, 0.f}, {0.f, 0.f}}) == sf::FloatRect({3.f, 4.f}, {0.f, 0.f}));
+        CHECK(transform.transformRect({{100.f, 100.f}, {200.f, 200.f}}) == sf::FloatRect({303.f, 904.f}, {600.f, 1800.f}));
     }
 
     SUBCASE("combine()")
@@ -94,27 +94,27 @@ TEST_CASE("sf::Transform class - [graphics]")
         CHECK(identity.combine(sf::Transform::Identity) == sf::Transform::Identity);
         CHECK(identity.combine(sf::Transform::Identity).combine(sf::Transform::Identity) == sf::Transform::Identity);
 
-        sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                4.0f, 5.0f, 4.0f,
-                                3.0f, 2.0f, 1.0f);
+        sf::Transform transform(1.f, 2.f, 3.f,
+                                4.f, 5.f, 4.f,
+                                3.f, 2.f, 1.f);
         CHECK(identity.combine(transform) == transform);
         CHECK(transform.combine(sf::Transform::Identity) == transform);
-        CHECK(transform.combine(transform) == sf::Transform(18.0f, 18.0f, 14.0f,
-                                                            36.0f, 41.0f, 36.0f,
-                                                            14.0f, 18.0f, 18.0f));
-        CHECK(transform.combine(sf::Transform(10.0f,  2.0f,  3.0f,
-                                               4.0f, 50.0f, 40.0f,
-                                              30.0f, 20.0f, 10.0f))
-            == sf::Transform( 672.0f, 1216.0f,  914.0f,
-                             1604.0f, 2842.0f, 2108.0f,
-                              752.0f, 1288.0f,  942.0f));
+        CHECK(transform.combine(transform) == sf::Transform(18.f, 18.f, 14.f,
+                                                            36.f, 41.f, 36.f,
+                                                            14.f, 18.f, 18.f));
+        CHECK(transform.combine(sf::Transform(10.f,  2.f,  3.f,
+                                               4.f, 50.f, 40.f,
+                                              30.f, 20.f, 10.f))
+            == sf::Transform( 672.f, 1216.f,  914.f,
+                             1604.f, 2842.f, 2108.f,
+                              752.f, 1288.f,  942.f));
     }
 
     SUBCASE("translate()")
     {
-        sf::Transform transform(9, 8, 7, 6, 5, 4, 3, 2, 1);
-        CHECK(transform.translate({10.0f, 20.0f}) == sf::Transform(9, 8, 257, 6, 5, 164, 3, 2, 71));
-        CHECK(transform.translate({10.0f, 20.0f}) == sf::Transform(9, 8, 507, 6, 5, 324, 3, 2, 141));
+        sf::Transform transform(9.f, 8.f, 7.f, 6.f, 5.f, 4.f, 3.f, 2.f, 1.f);
+        CHECK(transform.translate({10.f, 20.f}) == sf::Transform(9.f, 8.f, 257.f, 6.f, 5.f, 164.f, 3.f, 2.f, 71.f));
+        CHECK(transform.translate({10.f, 20.f}) == sf::Transform(9.f, 8.f, 507.f, 6.f, 5.f, 324.f, 3.f, 2.f, 141.f));
     }
 
     SUBCASE("rotate()")
@@ -123,18 +123,18 @@ TEST_CASE("sf::Transform class - [graphics]")
         {
             sf::Transform transform;
             transform.rotate(sf::degrees(90));
-            CHECK(transform == Approx(sf::Transform(0, -1,  0,
-                                                    1,  0,  0,
-                                                    0,  0,  1)));
+            CHECK(transform == Approx(sf::Transform(0.f, -1.f,  0.f,
+                                                    1.f,  0.f,  0.f,
+                                                    0.f,  0.f,  1.f)));
         }
 
         SUBCASE("Around custom point")
         {
             sf::Transform transform;
-            transform.rotate(sf::degrees(90), {1.0f, 0.0f});
-            CHECK(transform == Approx(sf::Transform(0, -1,  1,
-                                                    1,  0, -1,
-                                                    0,  0,  1)));
+            transform.rotate(sf::degrees(90), {1.f, 0.f});
+            CHECK(transform == Approx(sf::Transform(0.f, -1.f,  1.f,
+                                                    1.f,  0.f, -1.f,
+                                                    0.f,  0.f,  1.f)));
         }
     }
 
@@ -142,17 +142,17 @@ TEST_CASE("sf::Transform class - [graphics]")
     {
         SUBCASE("About origin")
         {
-            sf::Transform transform(1, 2, 3, 4, 5, 4, 3, 2, 1);
-            CHECK(transform.scale({2.0f, 4.0f}) == sf::Transform(2, 8, 3, 8, 20, 4, 6, 8, 1));
-            CHECK(transform.scale({0.0f, 0.0f}) == sf::Transform(0, 0, 3, 0, 0, 4, 0, 0, 1));
-            CHECK(transform.scale({10.0f, 10.0f}) == sf::Transform(0, 0, 3, 0, 0, 4, 0, 0, 1));
+            sf::Transform transform(1.f, 2.f, 3.f, 4.f, 5.f, 4.f, 3.f, 2.f, 1.f);
+            CHECK(transform.scale({2.f, 4.f}) == sf::Transform(2.f, 8.f, 3.f, 8.f, 20.f, 4.f, 6.f, 8.f, 1.f));
+            CHECK(transform.scale({0.f, 0.f}) == sf::Transform(0.f, 0.f, 3.f, 0.f, 0.f, 4.f, 0.f, 0.f, 1.f));
+            CHECK(transform.scale({10.f, 10.f}) == sf::Transform(0.f, 0.f, 3.f, 0.f, 0.f, 4.f, 0.f, 0.f, 1.f));
         }
 
         SUBCASE("About custom point")
         {
-            sf::Transform transform(1, 2, 3, 4, 5, 4, 3, 2, 1);
-            CHECK(transform.scale({1.0f, 2.0f}, {1.0f, 0.0f}) == sf::Transform(1, 4, 3, 4, 10, 4, 3, 4, 1));
-            CHECK(transform.scale({0.0f, 0.0f}, {1.0f, 0.0f}) == sf::Transform(0, 0, 4, 0, 0, 8, 0, 0, 4));
+            sf::Transform transform(1.f, 2.f, 3.f, 4.f, 5.f, 4.f, 3.f, 2.f, 1.f);
+            CHECK(transform.scale({1.f, 2.f}, {1.f, 0.f}) == sf::Transform(1.f, 4.f, 3.f, 4.f, 10.f, 4.f, 3.f, 4.f, 1.f));
+            CHECK(transform.scale({0.f, 0.f}, {1.f, 0.f}) == sf::Transform(0.f, 0.f, 4.f, 0.f, 0.f, 8.f, 0.f, 0.f, 4.f));
         }
     }
 
@@ -163,89 +163,89 @@ TEST_CASE("sf::Transform class - [graphics]")
             CHECK(sf::Transform::Identity * sf::Transform::Identity == sf::Transform::Identity);
             CHECK(sf::Transform::Identity * sf::Transform::Identity * sf::Transform::Identity == sf::Transform::Identity);
 
-            const sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                          4.0f, 5.0f, 4.0f,
-                                          3.0f, 2.0f, 1.0f);
+            const sf::Transform transform(1.f, 2.f, 3.f,
+                                          4.f, 5.f, 4.f,
+                                          3.f, 2.f, 1.f);
             CHECK(sf::Transform::Identity * transform == transform);
             CHECK(transform * sf::Transform::Identity == transform);
-            CHECK(transform * transform == sf::Transform(18.0f, 18.0f, 14.0f,
-                                                         36.0f, 41.0f, 36.0f,
-                                                         14.0f, 18.0f, 18.0f));
-            CHECK(transform * sf::Transform(10.0f,  2.0f,  3.0f,
-                                             4.0f, 50.0f, 40.0f,
-                                            30.0f, 20.0f, 10.0f)
-                == sf::Transform(108.0f, 162.0f, 113.0f,
-                                 180.0f, 338.0f, 252.0f,
-                                  68.0f, 126.0f,  99.0f));
+            CHECK(transform * transform == sf::Transform(18.f, 18.f, 14.f,
+                                                         36.f, 41.f, 36.f,
+                                                         14.f, 18.f, 18.f));
+            CHECK(transform * sf::Transform(10.f,  2.f,  3.f,
+                                             4.f, 50.f, 40.f,
+                                            30.f, 20.f, 10.f)
+                == sf::Transform(108.f, 162.f, 113.f,
+                                 180.f, 338.f, 252.f,
+                                  68.f, 126.f,  99.f));
         }
 
         SUBCASE("operator*=")
         {
-            sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                    4.0f, 5.0f, 4.0f,
-                                    3.0f, 2.0f, 1.0f);
+            sf::Transform transform(1.f, 2.f, 3.f,
+                                    4.f, 5.f, 4.f,
+                                    3.f, 2.f, 1.f);
             transform *= sf::Transform::Identity;
-            CHECK(transform == sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f));
+            CHECK(transform == sf::Transform(1.f, 2.f, 3.f, 4.f, 5.f, 4.f, 3.f, 2.f, 1.f));
             transform *= transform;
-            CHECK(transform == sf::Transform(18.0f, 18.0f, 14.0f,
-                                             36.0f, 41.0f, 36.0f,
-                                             14.0f, 18.0f, 18.0f));
-            transform *= sf::Transform(10.0f,  2.0f,  3.0f,
-                                        4.0f, 50.0f, 40.0f,
-                                       30.0f, 20.0f, 10.0f);
-            CHECK(transform == sf::Transform( 672.0f, 1216.0f,  914.0f,
-                                             1604.0f, 2842.0f, 2108.0f,
-                                              752.0f, 1288.0f,  942.0f));
+            CHECK(transform == sf::Transform(18.f, 18.f, 14.f,
+                                             36.f, 41.f, 36.f,
+                                             14.f, 18.f, 18.f));
+            transform *= sf::Transform(10.f,  2.f,  3.f,
+                                        4.f, 50.f, 40.f,
+                                       30.f, 20.f, 10.f);
+            CHECK(transform == sf::Transform( 672.f, 1216.f,  914.f,
+                                             1604.f, 2842.f, 2108.f,
+                                              752.f, 1288.f,  942.f));
         }
 
         SUBCASE("operator* with vector")
         {
-            CHECK(sf::Transform::Identity * sf::Vector2f(-10.0f, -10.0f) == sf::Vector2f(-10.0f, -10.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(-1.0f, -1.0f) == sf::Vector2f(-1.0f, -1.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(-1.0f, 0.0f) == sf::Vector2f(-1.0f, 0.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(0.0f, 0.0f) == sf::Vector2f(0.0f, 0.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(0.0f, 1.0f) == sf::Vector2f(0.0f, 1.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(1.0f, 1.0f) == sf::Vector2f(1.0f, 1.0f));
-            CHECK(sf::Transform::Identity * sf::Vector2f(10.0f, 10.0f) == sf::Vector2f(10.0f, 10.0f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(-10.f, -10.f) == sf::Vector2f(-10.f, -10.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(-1.f, -1.f) == sf::Vector2f(-1.f, -1.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(-1.f, 0.f) == sf::Vector2f(-1.f, 0.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(0.f, 0.f) == sf::Vector2f(0.f, 0.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(0.f, 1.f) == sf::Vector2f(0.f, 1.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(1.f, 1.f) == sf::Vector2f(1.f, 1.f));
+            CHECK(sf::Transform::Identity * sf::Vector2f(10.f, 10.f) == sf::Vector2f(10.f, 10.f));
 
-            const sf::Transform transform(1.0f, 2.0f, 3.0f,
-                                          4.0f, 5.0f, 4.0f,
-                                          3.0f, 2.0f, 1.0f);
-            CHECK(transform * sf::Vector2f(-1.0f, -1.0f) == sf::Vector2f(0.0f, -5.0f));
-            CHECK(transform * sf::Vector2f(0.0f, 0.0f) == sf::Vector2f(3.0f, 4.0f));
-            CHECK(transform * sf::Vector2f(1.0f, 1.0f) == sf::Vector2f(6.0f, 13.0f));
+            const sf::Transform transform(1.f, 2.f, 3.f,
+                                          4.f, 5.f, 4.f,
+                                          3.f, 2.f, 1.f);
+            CHECK(transform * sf::Vector2f(-1.f, -1.f) == sf::Vector2f(0.f, -5.f));
+            CHECK(transform * sf::Vector2f(0.f, 0.f) == sf::Vector2f(3.f, 4.f));
+            CHECK(transform * sf::Vector2f(1.f, 1.f) == sf::Vector2f(6.f, 13.f));
         }
 
         SUBCASE("operator==")
         {
             CHECK(sf::Transform::Identity == sf::Transform::Identity);
             CHECK(sf::Transform() == sf::Transform());
-            CHECK(sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0) == sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f) == sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
             CHECK(sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f)
                == sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f));
-            CHECK(sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f)
-               == sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f));
+            CHECK(sf::Transform(1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f)
+               == sf::Transform(1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f));
         }
 
         SUBCASE("operator!=")
         {
             CHECK_FALSE(sf::Transform::Identity != sf::Transform::Identity);
             CHECK_FALSE(sf::Transform() != sf::Transform());
-            CHECK_FALSE(sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
+            CHECK_FALSE(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
             CHECK_FALSE(sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f)
                      != sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f));
-            CHECK_FALSE(sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f)
-                     != sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f));
+            CHECK_FALSE(sf::Transform(1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f)
+                     != sf::Transform(1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f, 1000.f));
 
-            CHECK(sf::Transform(1, 0, 0, 0, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 1, 0, 0, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 1, 0, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 1, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 0, 1, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 0, 0, 1, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 0, 0, 0, 1, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 0, 0, 0, 0, 1, 0) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            CHECK(sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 1) != sf::Transform(0, 0, 0, 0, 0, 0, 0, 0, 0));
+            CHECK(sf::Transform(1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
+            CHECK(sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f) != sf::Transform(0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f));
         }
     }
 }

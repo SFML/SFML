@@ -30,7 +30,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         SUBCASE("Conversion constructor")
         {
-            const sf::Vector2f sourceVector(1.0f, 2.0f);
+            const sf::Vector2f sourceVector(1.f, 2.f);
             const sf::Vector2i vector(sourceVector);
 
             CHECK(vector.x == static_cast<int>(sourceVector.x));
@@ -241,7 +241,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Length and normalization")
     {
-        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.f);
 
         CHECK(v.length() == Approx(3.84187f));
         CHECK(v.lengthSq() == Approx(14.7599650969f));
@@ -256,7 +256,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Rotations and angles")
     {
-        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.f);
         
         CHECK(v.angle() == Approx(51.3402_deg));
         CHECK(sf::Vector2f::UnitX.angleTo(v) == Approx(51.3402_deg));
@@ -275,17 +275,17 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(v.rotatedBy(-158.9902_deg) * ratio  == Approx(w));
         CHECK(w.rotatedBy(158.9902_deg) / ratio == Approx(v));
 
-        CHECK(v.perpendicular() == sf::Vector2f(-3.0f, 2.4f));
+        CHECK(v.perpendicular() == sf::Vector2f(-3.f, 2.4f));
         CHECK(v.perpendicular().perpendicular().perpendicular().perpendicular() == v);
 
-        CHECK(v.rotatedBy(90_deg) == Approx(sf::Vector2f(-3.0f, 2.4f)));
+        CHECK(v.rotatedBy(90_deg) == Approx(sf::Vector2f(-3.f, 2.4f)));
         CHECK(v.rotatedBy(27.14_deg) == Approx(sf::Vector2f(0.767248f, 3.76448f)));
         CHECK(v.rotatedBy(-36.11_deg) == Approx(sf::Vector2f(3.70694f, 1.00925f)));
     }
     
     SUBCASE("Products and quotients")
     {
-        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.f);
         const sf::Vector2f w(-0.7f, -2.2f);
 
         CHECK(v.dot(w) == Approx(-8.28f));
@@ -302,7 +302,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
     
     SUBCASE("Projection")
     {
-        const sf::Vector2f v(2.4f, 3.0f);
+        const sf::Vector2f v(2.4f, 3.f);
         const sf::Vector2f w(-0.7f, -2.2f);
         
         CHECK(v.projectedOnto(w) == Approx(sf::Vector2f(1.087430f, 3.417636f)));
@@ -311,8 +311,8 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(w.projectedOnto(v) == Approx(sf::Vector2f(-1.346342f, -1.682927f)));
         CHECK(w.projectedOnto(v) == Approx(sf::Vector2f(-0.560976f * v)));
 
-        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == Approx(sf::Vector2f(2.4f, 0.0f)));
-        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == Approx(sf::Vector2f(0.0f, 3.0f)));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitX) == Approx(sf::Vector2f(2.4f, 0.f)));
+        CHECK(v.projectedOnto(sf::Vector2f::UnitY) == Approx(sf::Vector2f(0.f, 3.f)));
     }
 
     SUBCASE("Constexpr support")

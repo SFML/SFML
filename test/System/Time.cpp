@@ -10,7 +10,7 @@ TEST_CASE("sf::Time class - [system]")
         SUBCASE("Default constructor")
         {
             const sf::Time time;
-            CHECK(time.asSeconds() == 0.0f);
+            CHECK(time.asSeconds() == 0.f);
             CHECK(time.asMilliseconds() == 0);
             CHECK(time.asMicroseconds() == 0);
         }
@@ -18,11 +18,11 @@ TEST_CASE("sf::Time class - [system]")
         SUBCASE("Construct from seconds")
         {
             const sf::Time time = sf::seconds(123);
-            CHECK(time.asSeconds() == 123.0f);
+            CHECK(time.asSeconds() == 123.f);
             CHECK(time.asMilliseconds() == 123'000);
             CHECK(time.asMicroseconds() == 123'000'000);
 
-            CHECK(sf::seconds(1'000.0f).asMicroseconds() == 1'000'000'000);
+            CHECK(sf::seconds(1'000.f).asMicroseconds() == 1'000'000'000);
             CHECK(sf::seconds(0.0000009f).asMicroseconds() == 0);
             CHECK(sf::seconds(0.0000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(0.00000001f).asMicroseconds() == 0);
@@ -31,7 +31,7 @@ TEST_CASE("sf::Time class - [system]")
             CHECK(sf::seconds(-0.00000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(-0.0000001f).asMicroseconds() == 0);
             CHECK(sf::seconds(-0.0000009f).asMicroseconds() == 0);
-            CHECK(sf::seconds(-1'000.0f).asMicroseconds() == -1'000'000'000);
+            CHECK(sf::seconds(-1'000.f).asMicroseconds() == -1'000'000'000);
         }
 
         SUBCASE("Construct from milliseconds")
@@ -53,7 +53,7 @@ TEST_CASE("sf::Time class - [system]")
 
     SUBCASE("Zero time")
     {
-        CHECK(sf::Time::Zero.asSeconds() == 0.0f);
+        CHECK(sf::Time::Zero.asSeconds() == 0.f);
         CHECK(sf::Time::Zero.asMilliseconds() == 0);
         CHECK(sf::Time::Zero.asMicroseconds() == 0);
     }
@@ -135,11 +135,11 @@ TEST_CASE("sf::Time class - [system]")
 
         SUBCASE("operator*")
         {
-            CHECK(sf::seconds(1) * 2.0f == sf::seconds(2));
+            CHECK(sf::seconds(1) * 2.f == sf::seconds(2));
             CHECK(sf::seconds(12) * 0.5f == sf::seconds(6));
             CHECK(sf::seconds(1) * static_cast<sf::Int64>(2) == sf::seconds(2));
             CHECK(sf::seconds(42) * static_cast<sf::Int64>(2) == sf::seconds(84));
-            CHECK(2.0f * sf::seconds(1) == sf::seconds(2));
+            CHECK(2.f * sf::seconds(1) == sf::seconds(2));
             CHECK(0.5f * sf::seconds(12) == sf::seconds(6));
             CHECK(static_cast<sf::Int64>(2) * sf::seconds(1) == sf::seconds(2));
             CHECK(static_cast<sf::Int64>(2) * sf::seconds(42) == sf::seconds(84));
@@ -156,11 +156,11 @@ TEST_CASE("sf::Time class - [system]")
 
         SUBCASE("operator/")
         {
-            CHECK(sf::seconds(1) / 2.0f == sf::seconds(0.5f));
+            CHECK(sf::seconds(1) / 2.f == sf::seconds(0.5f));
             CHECK(sf::seconds(12) / 0.5f == sf::seconds(24));
             CHECK(sf::seconds(1) / static_cast<sf::Int64>(2) == sf::seconds(0.5f));
             CHECK(sf::seconds(42) / static_cast<sf::Int64>(2) == sf::seconds(21));
-            CHECK(sf::seconds(1) / sf::seconds(1) == 1.0f);
+            CHECK(sf::seconds(1) / sf::seconds(1) == 1.f);
             CHECK(sf::milliseconds(10) / sf::microseconds(1) == doctest::Approx(10'000.0).epsilon(1e-6));
         }
 

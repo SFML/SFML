@@ -29,7 +29,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
         SUBCASE("Conversion constructor")
         {
-            sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
+            sf::Vector3f sourceVector(1.f, 2.f, 3.f);
             sf::Vector3i vector(sourceVector);
 
             CHECK(vector.x == static_cast<int>(sourceVector.x));
@@ -202,7 +202,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
     SUBCASE("Length and normalization")
     {
-        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
+        const sf::Vector3f v(2.4f, 3.f, 5.2f);
 
         CHECK(v.length() == Approx(6.46529f));
         CHECK(v.lengthSq() == Approx(41.79997f));
@@ -211,7 +211,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
     SUBCASE("Products and quotients")
     {
-        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
+        const sf::Vector3f v(2.4f, 3.f, 5.2f);
         const sf::Vector3f w(-0.7f, -2.2f, -4.8f);
 
         CHECK(v.dot(w) == Approx(-33.24f));
