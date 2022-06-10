@@ -91,13 +91,6 @@ ImageLoader::ImageLoader()
 
 
 ////////////////////////////////////////////////////////////
-ImageLoader::~ImageLoader()
-{
-    // Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
 bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::vector<Uint8>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
