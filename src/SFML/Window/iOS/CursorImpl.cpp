@@ -40,13 +40,6 @@ CursorImpl::CursorImpl()
 
 
 ////////////////////////////////////////////////////////////
-CursorImpl::~CursorImpl()
-{
-    // Nothing.
-}
-
-
-////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const Uint8* /* pixels */, Vector2u /* size */, Vector2u /* hotspot */)
 {
     // Not supported
