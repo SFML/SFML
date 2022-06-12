@@ -4,8 +4,14 @@
 ////////////////////////////////////////////////////////////
 #include "Effect.hpp"
 #include <array>
-#include <cmath>
+#include <random>
 
+
+namespace
+{
+    std::random_device rd;
+    std::mt19937 rng(rd());
+}
 
 const sf::Font* Effect::s_font = nullptr;
 
@@ -135,15 +141,19 @@ public:
 
     bool onLoad() override
     {
+        std::uniform_real_distribution<float> x_distribution(0, 800);
+        std::uniform_real_distribution<float> y_distribution(0, 600);
+        std::uniform_int_distribution<sf::Uint16> color_distribution(0, 255);
+
         // Create the points
         m_points.setPrimitiveType(sf::Points);
         for (int i = 0; i < 40000; ++i)
         {
-            auto x = static_cast<float>(std::rand() % 800);
-            auto y = static_cast<float>(std::rand() % 600);
-            auto r = static_cast<sf::Uint8>(std::rand() % 255);
-            auto g = static_cast<sf::Uint8>(std::rand() % 255);
-            auto b = static_cast<sf::Uint8>(std::rand() % 255);
+            auto x = x_distribution(rng);
+            auto y = y_distribution(rng);
+            auto r = static_cast<sf::Uint8>(color_distribution(rng));
+            auto g = static_cast<sf::Uint8>(color_distribution(rng));
+            auto b = static_cast<sf::Uint8>(color_distribution(rng));
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
