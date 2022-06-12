@@ -4,9 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <cmath>
-#include <ctime>
-#include <cstdlib>
+#include <random>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
@@ -29,7 +27,8 @@ std::filesystem::path resourcesDir()
 ////////////////////////////////////////////////////////////
 int main()
 {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    std::random_device rd;
+    std::mt19937 rng(rd());
 
     // Define some constants
     const float gameWidth = 800;
@@ -140,7 +139,7 @@ int main()
                     do
                     {
                         // Make sure the ball initial angle is not too much vertical
-                        ballAngle = sf::degrees(static_cast<float>(std::rand() % 360));
+                        ballAngle = sf::degrees(std::uniform_real_distribution<float>(0, 360)(rng));
                     }
                     while (std::abs(std::cos(ballAngle.asRadians())) < 0.7f);
                 }
@@ -231,6 +230,8 @@ int main()
                 ball.setPosition({ball.getPosition().x, gameHeight - ballRadius - 0.1f});
             }
 
+            std::uniform_real_distribution<float> dist(0, 20);
+
             // Check the collisions between the ball and the paddles
             // Left Paddle
             if (ball.getPosition().x - ballRadius < leftPaddle.getPosition().x + paddleSize.x / 2 &&
@@ -239,9 +240,9 @@ int main()
                 ball.getPosition().y - ballRadius <= leftPaddle.getPosition().y + paddleSize.y / 2)
             {
                 if (ball.getPosition().y > leftPaddle.getPosition().y)
-                    ballAngle = sf::degrees(180) - ballAngle + sf::degrees(static_cast<float>(std::rand() % 20));
+                    ballAngle = sf::degrees(180) - ballAngle + sf::degrees(dist(rng));
                 else
-                    ballAngle = sf::degrees(180) - ballAngle - sf::degrees(static_cast<float>(std::rand() % 20));
+                    ballAngle = sf::degrees(180) - ballAngle - sf::degrees(dist(rng));
 
                 ballSound.play();
                 ball.setPosition({leftPaddle.getPosition().x + ballRadius + paddleSize.x / 2 + 0.1f, ball.getPosition().y});
@@ -254,9 +255,9 @@ int main()
                 ball.getPosition().y - ballRadius <= rightPaddle.getPosition().y + paddleSize.y / 2)
             {
                 if (ball.getPosition().y > rightPaddle.getPosition().y)
-                    ballAngle = sf::degrees(180) - ballAngle + sf::degrees(static_cast<float>(std::rand() % 20));
+                    ballAngle = sf::degrees(180) - ballAngle + sf::degrees(dist(rng));
                 else
-                    ballAngle = sf::degrees(180) - ballAngle - sf::degrees(static_cast<float>(std::rand() % 20));
+                    ballAngle = sf::degrees(180) - ballAngle - sf::degrees(dist(rng));
 
                 ballSound.play();
                 ball.setPosition({rightPaddle.getPosition().x - ballRadius - paddleSize.x / 2 - 0.1f, ball.getPosition().y});
