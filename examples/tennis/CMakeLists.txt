@@ -1,8 +1,5 @@
-
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/tennis)
-
 # all source files
-set(SRC ${SRCROOT}/Tennis.cpp)
+set(SRC Tennis.cpp)
 if (SFML_OS_IOS)
     set(RESOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/ball.wav

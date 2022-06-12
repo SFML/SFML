@@ -1,8 +1,5 @@
-
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/opengl)
-
 # all source files
-set(SRC ${SRCROOT}/OpenGL.cpp)
+set(SRC OpenGL.cpp)
 
 if (SFML_OS_IOS)
     set(RESOURCES

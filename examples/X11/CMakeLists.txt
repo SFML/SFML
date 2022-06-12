@@ -1,8 +1,5 @@
-
-set(SRCROOT ${PROJECT_SOURCE_DIR}/examples/X11)
-
 # all source files
-set(SRC ${SRCROOT}/X11.cpp)
+set(SRC X11.cpp)
 
 # define the X11 target
 sfml_add_example(X11Example GUI_APP
