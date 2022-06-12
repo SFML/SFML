@@ -8,6 +8,7 @@
 #include <gl.h>
 
 #include <X11/Xlib.h>
+#include <array>
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
@@ -93,7 +94,7 @@
     glRotatef(elapsedTime * 18.f, 0.f, 0.f, 1.f);
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-    static const GLfloat cube[] =
+    constexpr std::array<GLfloat, 216> cube =
     {
         // positions    // colors
         -50, -50, -50,  1, 1, 0,
@@ -140,8 +141,8 @@
     };
 
     // Draw the cube
-    glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube);
-    glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube + 3);
+    glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube.data());
+    glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube.data() + 3);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     return true;
