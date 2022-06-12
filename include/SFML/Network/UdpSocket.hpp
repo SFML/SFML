@@ -270,7 +270,7 @@ private:
 /// std::size_t received = 0;
 /// std::optional<sf::IpAddress> sender;
 /// unsigned short port;
-/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Done)
+/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Status::Done)
 ///     std::cout << sender->toString() << " said: " << buffer << std::endl;
 ///
 /// // ----- The server -----
@@ -284,7 +284,7 @@ private:
 /// std::size_t received = 0;
 /// std::optional<sf::IpAddress> sender;
 /// unsigned short port;
-/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Done)
+/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Status::Done)
 ///     std::cout << sender->toString() << " said: " << buffer << std::endl;
 ///
 /// // Send an answer

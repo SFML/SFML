@@ -59,7 +59,7 @@ public:
         /// \brief Enumerate the available HTTP methods for a request
         ///
         ////////////////////////////////////////////////////////////
-        enum Method
+        enum class Method
         {
             Get,   //!< Request in get mode, standard method to retrieve a page
             Post,  //!< Request in post mode, usually to send data to a page
@@ -79,7 +79,7 @@ public:
         /// \param body   Content of the request's body
         ///
         ////////////////////////////////////////////////////////////
-        Request(const std::string& uri = "/", Method method = Get, const std::string& body = "");
+        Request(const std::string& uri = "/", Method method = Method::Get, const std::string& body = "");
 
         ////////////////////////////////////////////////////////////
         /// \brief Set the value of a field
@@ -101,7 +101,7 @@ public:
         ///
         /// See the Method enumeration for a complete list of all
         /// the availale methods.
-        /// The method is Http::Request::Get by default.
+        /// The method is Http::Request::Method::Get by default.
         ///
         /// \param method Method to use for the request
         ///
@@ -196,7 +196,7 @@ public:
         /// \brief Enumerate all the valid status codes for a response
         ///
         ////////////////////////////////////////////////////////////
-        enum Status
+        enum class Status
         {
             // 2xx: success
             Ok        = 200, //!< Most common code returned when operation was successful
@@ -477,7 +477,7 @@ private:
 ///
 /// // Check the status code and display the result
 /// sf::Http::Response::Status status = response.getStatus();
-/// if (status == sf::Http::Response::Ok)
+/// if (status == sf::Http::Response::Status::Ok)
 /// {
 ///     std::cout << response.getBody() << std::endl;
 /// }

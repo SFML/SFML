@@ -93,19 +93,19 @@ Socket::Status SocketImpl::getErrorStatus()
     // so we have to make a special case for them in order
     // to avoid having double values in the switch case
     if ((errno == EAGAIN) || (errno == EINPROGRESS))
-        return Socket::NotReady;
+        return Socket::Status::NotReady;
 
     // clang-format off
     switch (errno)
     {
-        case EWOULDBLOCK:  return Socket::NotReady;
-        case ECONNABORTED: return Socket::Disconnected;
-        case ECONNRESET:   return Socket::Disconnected;
-        case ETIMEDOUT:    return Socket::Disconnected;
-        case ENETRESET:    return Socket::Disconnected;
-        case ENOTCONN:     return Socket::Disconnected;
-        case EPIPE:        return Socket::Disconnected;
-        default:           return Socket::Error;
+        case EWOULDBLOCK:  return Socket::Status::NotReady;
+        case ECONNABORTED: return Socket::Status::Disconnected;
+        case ECONNRESET:   return Socket::Status::Disconnected;
+        case ETIMEDOUT:    return Socket::Status::Disconnected;
+        case ENETRESET:    return Socket::Status::Disconnected;
+        case ENOTCONN:     return Socket::Status::Disconnected;
+        case EPIPE:        return Socket::Status::Disconnected;
+        default:           return Socket::Status::Error;
     }
     // clang-format on
 }
