@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <array>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -23,7 +24,7 @@ namespace
     float threshold = 0.1f;
 
     // Axes labels in as C strings
-    const char* axislabels[] = {"X", "Y", "Z", "R", "U", "V", "PovX", "PovY"};
+    constexpr std::array axislabels = {"X", "Y", "Z", "R", "U", "V", "PovX", "PovY"};
 
     // Helper to set text entries to a specified value
     template<typename T>

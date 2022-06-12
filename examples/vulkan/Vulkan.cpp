@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Window.hpp>
+#include <array>
 #include <iostream>
 #include <limits>
 #include <vector>
@@ -1370,7 +1371,7 @@ public:
     // Create our vertex buffer and upload its data
     void setupVertexBuffer()
     {
-        float vertexData[] = {
+        constexpr std::array vertexData = {
             // X      Y      Z     R     G     B     A     U     V
             -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
              0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -1432,7 +1433,7 @@ public:
         }
 
         // Copy the vertex data into the buffer
-        std::memcpy(ptr, vertexData, sizeof(vertexData));
+        std::memcpy(ptr, vertexData.data(), sizeof(vertexData));
 
         // Unmap the buffer
         vkUnmapMemory(device, stagingBufferMemory);
@@ -1464,7 +1465,7 @@ public:
     // Create our index buffer and upload its data
     void setupIndexBuffer()
     {
-        uint16_t indexData[] = {
+        constexpr std::array<std::uint16_t, 36> indexData = {
             0,  1,  2,
             2,  3,  0,
 
@@ -1513,7 +1514,7 @@ public:
         }
 
         // Copy the index data into the buffer
-        std::memcpy(ptr, indexData, sizeof(indexData));
+        std::memcpy(ptr, indexData.data(), sizeof(indexData));
 
         // Unmap the buffer
         vkUnmapMemory(device, stagingBufferMemory);

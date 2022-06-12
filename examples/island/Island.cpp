@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <algorithm>
+#include <array>
 #include <deque>
 #include <iostream>
 #include <mutex>
@@ -161,8 +162,8 @@ int main()
     statusText.setPosition({(windowWidth - statusText.getLocalBounds().width) / 2.f, (windowHeight - statusText.getLocalBounds().height) / 2.f});
 
     // Set up an array of pointers to our settings for arrow navigation
-    Setting settings[] =
-    {
+    constexpr std::array<Setting, 9> settings =
+    {{
         {"perlinFrequency",     &perlinFrequency},
         {"perlinFrequencyBase", &perlinFrequencyBase},
         {"heightBase",          &heightBase},
@@ -172,10 +173,9 @@ int main()
         {"heightFactor",        &heightFactor},
         {"heightFlatten",       &heightFlatten},
         {"lightFactor",         &lightFactor}
-    };
+    }};
 
-    const int settingCount = 9;
-    int currentSetting = 0;
+    std::size_t currentSetting = 0;
 
     std::ostringstream osstr;
     sf::Clock clock;
@@ -199,8 +199,8 @@ int main()
                 switch (event.key.code)
                 {
                     case sf::Keyboard::Enter: generateTerrain(terrainStagingBuffer.data()); break;
-                    case sf::Keyboard::Down:  currentSetting = (currentSetting + 1) % settingCount; break;
-                    case sf::Keyboard::Up:    currentSetting = (currentSetting + settingCount - 1) % settingCount; break;
+                    case sf::Keyboard::Down:  currentSetting = (currentSetting + 1) % settings.size(); break;
+                    case sf::Keyboard::Up:    currentSetting = (currentSetting + settings.size() - 1) % settings.size(); break;
                     case sf::Keyboard::Left:  *(settings[currentSetting].value) -= 0.1f; break;
                     case sf::Keyboard::Right: *(settings[currentSetting].value) += 0.1f; break;
                     default: break;
@@ -244,7 +244,7 @@ int main()
                   << "perlinOctaves:  " << perlinOctaves << "\n\n"
                   << "Use the arrow keys to change the values.\nUse the return key to regenerate the terrain.\n\n";
 
-            for (int i = 0; i < settingCount; ++i)
+            for (std::size_t i = 0; i < settings.size(); ++i)
                 osstr << ((i == currentSetting) ? ">>  " : "       ") << settings[i].name << ":  " << *(settings[i].value) << '\n';
 
             hudText.setString(osstr.str());

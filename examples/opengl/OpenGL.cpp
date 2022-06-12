@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+#include <array>
 #include <iostream>
 #include <cstdlib>
 
@@ -124,7 +125,7 @@ int main()
         sf::Texture::bind(&texture);
 
         // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-        static const GLfloat cube[] =
+        constexpr std::array<GLfloat, 180> cube =
         {
             // positions    // texture coordinates
             -20, -20, -20,  0, 0,
@@ -173,8 +174,8 @@ int main()
         // Enable position and texture coordinates vertex components
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), cube);
-        glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), cube + 3);
+        glVertexPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), cube.data());
+        glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), cube.data() + 3);
 
         // Disable normal and color vertex components
         glDisableClientState(GL_NORMAL_ARRAY);

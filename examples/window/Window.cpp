@@ -11,6 +11,7 @@
 #include <SFML/Main.hpp>
 #endif
 
+#include <array>
 #include <iostream>
 #include <cstdlib>
 
@@ -73,7 +74,7 @@ int main()
 #endif
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-    GLfloat cube[] =
+    constexpr std::array<GLfloat, 252> cube =
     {
         // positions    // colors (r, g, b, a)
         -50, -50, -50,  0, 0, 1, 1,
@@ -122,8 +123,8 @@ int main()
     // Enable position and color vertex components
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), cube);
-    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), cube + 3);
+    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), cube.data());
+    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), cube.data() + 3);
 
     // Disable normal and texture coordinates vertex components
     glDisableClientState(GL_NORMAL_ARRAY);
