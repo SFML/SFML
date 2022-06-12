@@ -50,7 +50,7 @@ public:
     /// \brief Status codes that may be returned by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    enum Status
+    enum class Status
     {
         Done,         //!< The socket has sent / received the data
         NotReady,     //!< The socket is not ready to send / receive data yet
@@ -121,7 +121,7 @@ protected:
     /// \brief Types of protocols that the socket can use
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type
     {
         Tcp, //!< TCP protocol
         Udp  //!< UDP protocol
@@ -214,7 +214,7 @@ private:
 /// In non-blocking mode, all the socket functions will
 /// return immediately. If the socket is not ready to complete
 /// the requested operation, the function simply returns
-/// the proper status code (Socket::NotReady).
+/// the proper status code (Socket::Status::NotReady).
 ///
 /// The default mode, which is blocking, is the one that is
 /// generally used, in combination with threads or selectors.

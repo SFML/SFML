@@ -223,7 +223,7 @@ private:
 ///         {
 ///             // The listener is ready: there is a pending connection
 ///             auto client = std::make_unique<sf::TcpSocket>();
-///             if (listener.accept(*client) == sf::Socket::Done)
+///             if (listener.accept(*client) == sf::Socket::Status::Done)
 ///             {
 ///                 // Add the new client to the selector so that we will
 ///                 // be notified when he sends something
@@ -247,7 +247,7 @@ private:
 ///                 {
 ///                     // The client has sent some data, we can receive it
 ///                     sf::Packet packet;
-///                     if (client.receive(packet) == sf::Socket::Done)
+///                     if (client.receive(packet) == sf::Socket::Status::Done)
 ///                     {
 ///                         ...
 ///                     }

@@ -75,15 +75,15 @@ Socket::Status SocketImpl::getErrorStatus()
     // clang-format off
     switch (WSAGetLastError())
     {
-        case WSAEWOULDBLOCK:  return Socket::NotReady;
-        case WSAEALREADY:     return Socket::NotReady;
-        case WSAECONNABORTED: return Socket::Disconnected;
-        case WSAECONNRESET:   return Socket::Disconnected;
-        case WSAETIMEDOUT:    return Socket::Disconnected;
-        case WSAENETRESET:    return Socket::Disconnected;
-        case WSAENOTCONN:     return Socket::Disconnected;
-        case WSAEISCONN:      return Socket::Done; // when connecting a non-blocking socket
-        default:              return Socket::Error;
+        case WSAEWOULDBLOCK:  return Socket::Status::NotReady;
+        case WSAEALREADY:     return Socket::Status::NotReady;
+        case WSAECONNABORTED: return Socket::Status::Disconnected;
+        case WSAECONNRESET:   return Socket::Status::Disconnected;
+        case WSAETIMEDOUT:    return Socket::Status::Disconnected;
+        case WSAENETRESET:    return Socket::Status::Disconnected;
+        case WSAENOTCONN:     return Socket::Status::Disconnected;
+        case WSAEISCONN:      return Socket::Status::Done; // when connecting a non-blocking socket
+        default:              return Socket::Status::Error;
     }
     // clang-format on
 }

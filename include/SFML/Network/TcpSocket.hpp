@@ -179,7 +179,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
     ///
-    /// In non-blocking mode, if this function returns sf::Socket::Partial,
+    /// In non-blocking mode, if this function returns sf::Socket::Status::Partial,
     /// you \em must retry sending the same unmodified packet before sending
     /// anything else in order to guarantee the packet arrives at the remote
     /// peer uncorrupted.

@@ -79,7 +79,7 @@ void Socket::create()
     // Don't create the socket if it already exists
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
-        SocketHandle handle = socket(PF_INET, m_type == Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+        SocketHandle handle = socket(PF_INET, m_type == Type::Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
 
         if (handle == priv::SocketImpl::invalidSocket())
         {
@@ -104,7 +104,7 @@ void Socket::create(SocketHandle handle)
         // Set the current blocking state
         setBlocking(m_isBlocking);
 
-        if (m_type == Tcp)
+        if (m_type == Type::Tcp)
         {
             // Disable the Nagle algorithm (i.e. removes buffering of TCP packets)
             int yes = 1;

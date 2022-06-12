@@ -53,7 +53,7 @@ public:
     /// \brief Enumeration of transfer modes
     ///
     ////////////////////////////////////////////////////////////
-    enum TransferMode
+    enum class TransferMode
     {
         Binary, //!< Binary mode (file is transfered as a sequence of bytes)
         Ascii,  //!< Text mode using ASCII encoding
@@ -71,7 +71,7 @@ public:
         /// \brief Status codes possibly returned by a FTP response
         ///
         ////////////////////////////////////////////////////////////
-        enum Status
+        enum class Status
         {
             // 1xx: the requested action is being initiated,
             // expect another reply before proceeding with a new command
@@ -143,7 +143,7 @@ public:
         /// \param message Response message
         ///
         ////////////////////////////////////////////////////////////
-        explicit Response(Status code = InvalidResponse, const std::string& message = "");
+        explicit Response(Status code = Status::InvalidResponse, const std::string& message = "");
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the status code means a success
@@ -479,7 +479,7 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response download(const std::filesystem::path& remoteFile,
                                     const std::filesystem::path& localPath,
-                                    TransferMode                 mode = Binary);
+                                    TransferMode                 mode = TransferMode::Binary);
 
     ////////////////////////////////////////////////////////////
     /// \brief Upload a file to the server
@@ -504,7 +504,7 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response upload(const std::string& localFile,
                                   const std::string& remotePath,
-                                  TransferMode       mode   = Binary,
+                                  TransferMode       mode   = TransferMode::Binary,
                                   bool               append = false);
 
     ////////////////////////////////////////////////////////////
@@ -616,7 +616,7 @@ private:
 ///     std::cout << "Created new directory" << std::endl;
 ///
 /// // Upload a file to this new directory
-/// response = ftp.upload("local-path/file.txt", "files", sf::Ftp::Ascii);
+/// response = ftp.upload("local-path/file.txt", "files", sf::Ftp::TransferMode::Ascii);
 /// if (response.isOk())
 ///     std::cout << "File uploaded" << std::endl;
 ///

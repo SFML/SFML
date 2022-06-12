@@ -53,7 +53,7 @@ const int flags = 0;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-TcpSocket::TcpSocket() : Socket(Tcp)
+TcpSocket::TcpSocket() : Socket(Type::Tcp)
 {
 }
 
@@ -136,7 +136,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             return priv::SocketImpl::getErrorStatus();
 
         // Connection succeeded
-        return Done;
+        return Status::Done;
     }
     else
     {
@@ -154,7 +154,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
         {
             // We got instantly connected! (it may no happen a lot...)
             setBlocking(blocking);
-            return Done;
+            return Status::Done;
         }
 
         // Get the error status
@@ -165,7 +165,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             return status;
 
         // Otherwise, wait until something happens to our socket (success, timeout or error)
-        if (status == Socket::NotReady)
+        if (status == Socket::Status::NotReady)
         {
             // Setup the selector
             fd_set selector;
@@ -185,7 +185,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
                 if (getRemoteAddress().has_value())
                 {
                     // Connection accepted
-                    status = Done;
+                    status = Status::Done;
                 }
                 else
                 {
@@ -238,7 +238,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     if (!data || (size == 0))
     {
         err() << "Cannot send data over the network (no data to send)" << std::endl;
-        return Error;
+        return Status::Error;
     }
 
     // Loop until every byte has been sent
@@ -257,14 +257,14 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
         {
             Status status = priv::SocketImpl::getErrorStatus();
 
-            if ((status == NotReady) && sent)
-                return Partial;
+            if ((status == Status::NotReady) && sent)
+                return Status::Partial;
 
             return status;
         }
     }
 
-    return Done;
+    return Status::Done;
 }
 
 
@@ -278,7 +278,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     if (!data)
     {
         err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
-        return Error;
+        return Status::Error;
     }
 
 #pragma GCC diagnostic push
@@ -292,11 +292,11 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     if (sizeReceived > 0)
     {
         received = static_cast<std::size_t>(sizeReceived);
-        return Done;
+        return Status::Done;
     }
     else if (sizeReceived == 0)
     {
-        return Socket::Disconnected;
+        return Socket::Status::Disconnected;
     }
     else
     {
@@ -351,11 +351,11 @@ Socket::Status TcpSocket::send(Packet& packet)
 #pragma GCC diagnostic pop
 
     // In the case of a partial send, record the location to resume from
-    if (status == Partial)
+    if (status == Status::Partial)
     {
         packet.m_sendPos += sent;
     }
-    else if (status == Done)
+    else if (status == Status::Done)
     {
         packet.m_sendPos = 0;
     }
@@ -383,7 +383,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
             Status status = receive(data, sizeof(m_pendingPacket.Size) - m_pendingPacket.SizeReceived, received);
             m_pendingPacket.SizeReceived += received;
 
-            if (status != Done)
+            if (status != Status::Done)
                 return status;
         }
 
@@ -403,7 +403,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
         // Receive a chunk of data
         std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
         Status      status    = receive(buffer, sizeToGet, received);
-        if (status != Done)
+        if (status != Status::Done)
             return status;
 
         // Append it into the packet
@@ -422,7 +422,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();
 
-    return Done;
+    return Status::Done;
 }
 
 
