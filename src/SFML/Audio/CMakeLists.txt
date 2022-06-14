@@ -81,7 +81,9 @@ sfml_add_library(Audio
                  SOURCES ${SRC} ${CODECS_SRC})
 
 # setup dependencies
-target_link_libraries(sfml-audio PRIVATE OpenAL)
+target_link_libraries(sfml-audio
+                      PUBLIC SFML::System
+                      PRIVATE OpenAL VORBIS FLAC)
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")
@@ -89,7 +91,3 @@ target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extl
 if(SFML_OS_ANDROID)
     target_link_libraries(sfml-audio PRIVATE android OpenSLES)
 endif()
-
-target_link_libraries(sfml-audio
-                      PUBLIC SFML::System
-                      PRIVATE VORBIS FLAC)
