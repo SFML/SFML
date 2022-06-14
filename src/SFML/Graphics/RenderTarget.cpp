@@ -45,6 +45,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 
 
 namespace
@@ -293,11 +294,11 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, Primiti
         // coordinates we need to set up the pointers to the vertices' components
         if (!m_cache.enable || !useVertexCache || !m_cache.useVertexCache)
         {
-            const char* data = reinterpret_cast<const char*>(vertices);
+            const auto* data = reinterpret_cast<const std::byte*>(vertices);
 
             // If we pre-transform the vertices, we must use our internal vertex cache
             if (useVertexCache)
-                data = reinterpret_cast<const char*>(m_cache.vertexCache);
+                data = reinterpret_cast<const std::byte*>(m_cache.vertexCache);
 
             glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), data + 0));
             glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + 8));
@@ -307,7 +308,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, Primiti
         else if (enableTexCoordsArray && !m_cache.texCoordsArrayEnabled)
         {
             // If we enter this block, we are already using our internal vertex cache
-            const char* data = reinterpret_cast<const char*>(m_cache.vertexCache);
+            const auto* data = reinterpret_cast<const std::byte*>(m_cache.vertexCache);
 
             glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + 12));
         }

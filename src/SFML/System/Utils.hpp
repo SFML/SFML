@@ -51,4 +51,15 @@ namespace sf
     return stream.str();
 }
 
+// Convert byte sequence into integer
+// toInteger<int>(0x12, 0x34, 0x56) == 0x563412
+template <typename IntegerType, typename... Bytes>
+[[nodiscard]] constexpr IntegerType toInteger(Bytes... byte)
+{
+    static_assert(sizeof(IntegerType) >= sizeof...(Bytes), "IntegerType not large enough to contain bytes");
+
+    IntegerType integer = 0;
+    std::size_t index   = 0;
+    return ((integer |= static_cast<IntegerType>(static_cast<IntegerType>(byte) << 8 * index++)), ...);
+}
 } // namespace sf

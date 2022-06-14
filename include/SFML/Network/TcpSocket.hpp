@@ -35,6 +35,8 @@
 
 #include <optional>
 
+#include <cstddef>
+
 
 namespace sf
 {
@@ -219,16 +221,16 @@ private:
     ////////////////////////////////////////////////////////////
     struct PendingPacket
     {
-        std::uint32_t     Size{};         //!< Data of packet size
-        std::size_t       SizeReceived{}; //!< Number of size bytes received so far
-        std::vector<char> Data;           //!< Data of the packet
+        std::uint32_t          Size{};         //!< Data of packet size
+        std::size_t            SizeReceived{}; //!< Number of size bytes received so far
+        std::vector<std::byte> Data;           //!< Data of the packet
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    PendingPacket     m_pendingPacket;     //!< Temporary data of the packet currently being received
-    std::vector<char> m_blockToSendBuffer; //!< Buffer used to prepare data being sent from the socket
+    PendingPacket          m_pendingPacket;     //!< Temporary data of the packet currently being received
+    std::vector<std::byte> m_blockToSendBuffer; //!< Buffer used to prepare data being sent from the socket
 };
 
 } // namespace sf

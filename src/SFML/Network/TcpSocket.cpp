@@ -412,7 +412,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
         if (received > 0)
         {
             m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            char* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
+            std::byte* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
             std::memcpy(begin, buffer, received);
         }
     }

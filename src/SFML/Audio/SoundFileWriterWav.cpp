@@ -33,6 +33,7 @@
 #include <ostream>
 
 #include <cassert>
+#include <cstddef>
 
 
 namespace
@@ -42,23 +43,23 @@ namespace
 
 void encode(std::ostream& stream, std::int16_t value)
 {
-    unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
+    const std::byte bytes[] = {static_cast<std::byte>(value & 0xFF), static_cast<std::byte>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
 
 void encode(std::ostream& stream, std::uint16_t value)
 {
-    unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
+    const std::byte bytes[] = {static_cast<std::byte>(value & 0xFF), static_cast<std::byte>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
 
 void encode(std::ostream& stream, std::uint32_t value)
 {
-    unsigned char bytes[] = {
-        static_cast<unsigned char>(value & 0x000000FF),
-        static_cast<unsigned char>((value & 0x0000FF00) >> 8),
-        static_cast<unsigned char>((value & 0x00FF0000) >> 16),
-        static_cast<unsigned char>((value & 0xFF000000) >> 24),
+    const std::byte bytes[] = {
+        static_cast<std::byte>(value & 0x000000FF),
+        static_cast<std::byte>((value & 0x0000FF00) >> 8),
+        static_cast<std::byte>((value & 0x00FF0000) >> 16),
+        static_cast<std::byte>((value & 0xFF000000) >> 24),
     };
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
