@@ -33,6 +33,7 @@
 
 #include <SFML/System/InputStream.hpp>
 
+#include <cstddef>
 #include <cstdlib>
 
 
@@ -104,9 +105,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const char*  m_data{};   //!< Pointer to the data in memory
-    std::int64_t m_size{};   //!< Total size of the data
-    std::int64_t m_offset{}; //!< Current reading position
+    const std::byte* m_data{};   //!< Pointer to the data in memory
+    std::int64_t     m_size{};   //!< Total size of the data
+    std::int64_t     m_offset{}; //!< Current reading position
 };
 
 } // namespace sf

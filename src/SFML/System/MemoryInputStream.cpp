@@ -39,7 +39,7 @@ MemoryInputStream::MemoryInputStream() = default;
 ////////////////////////////////////////////////////////////
 void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
 {
-    m_data   = static_cast<const char*>(data);
+    m_data   = static_cast<const std::byte*>(data);
     m_size   = static_cast<std::int64_t>(sizeInBytes);
     m_offset = 0;
 }

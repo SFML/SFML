@@ -127,15 +127,15 @@ Out Utf<8>::encode(std::uint32_t input, Out output, std::uint8_t replacement)
         // clang-format on
 
         // Extract the bytes to write
-        std::uint8_t bytes[4];
+        std::byte bytes[4];
 
         // clang-format off
         switch (bytestoWrite)
         {
-            case 4: bytes[3] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 3: bytes[2] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 2: bytes[1] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 1: bytes[0] = static_cast<std::uint8_t> (input | firstBytes[bytestoWrite]);
+            case 4: bytes[3] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 3: bytes[2] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 2: bytes[1] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 1: bytes[0] = static_cast<std::byte> (input | firstBytes[bytestoWrite]);
         }
         // clang-format on
 

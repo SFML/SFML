@@ -29,12 +29,14 @@
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
+#include <SFML/System/Utils.hpp>
 
 #include <algorithm>
 #include <ostream>
 
 #include <cassert>
 #include <cctype>
+#include <cstddef>
 #include <cstring>
 
 
@@ -50,44 +52,44 @@ bool decode(sf::InputStream& stream, std::uint8_t& value)
 
 bool decode(sf::InputStream& stream, std::int16_t& value)
 {
-    unsigned char bytes[sizeof(value)];
+    std::byte bytes[sizeof(value)];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<std::int64_t>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<std::int16_t>(bytes[0] | (bytes[1] << 8));
+    value = sf::toInteger<std::int16_t>(bytes[0], bytes[1]);
 
     return true;
 }
 
 bool decode(sf::InputStream& stream, std::uint16_t& value)
 {
-    unsigned char bytes[sizeof(value)];
+    std::byte bytes[sizeof(value)];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<std::int64_t>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<std::uint16_t>(bytes[0] | (bytes[1] << 8));
+    value = sf::toInteger<std::uint16_t>(bytes[0], bytes[1]);
 
     return true;
 }
 
 bool decode24bit(sf::InputStream& stream, std::uint32_t& value)
 {
-    unsigned char bytes[3];
+    std::byte bytes[3];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<std::int64_t>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<std::uint32_t>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
+    value = sf::toInteger<std::uint32_t>(bytes[0], bytes[1], bytes[2]);
 
     return true;
 }
 
 bool decode(sf::InputStream& stream, std::uint32_t& value)
 {
-    unsigned char bytes[sizeof(value)];
+    std::byte bytes[sizeof(value)];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<std::int64_t>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<std::uint32_t>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
+    value = sf::toInteger<std::uint32_t>(bytes[0], bytes[1], bytes[2], bytes[3]);
 
     return true;
 }
