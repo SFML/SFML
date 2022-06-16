@@ -32,21 +32,21 @@ constexpr Time::Time() : m_microseconds(0)
 ////////////////////////////////////////////////////////////
 constexpr float Time::asSeconds() const
 {
-    return static_cast<float>(static_cast<double>(m_microseconds) / 1000000.0);
+    return std::chrono::duration<float>(m_microseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Int32 Time::asMilliseconds() const
 {
-    return static_cast<Int32>(m_microseconds / 1000);
+    return std::chrono::duration_cast<std::chrono::duration<Int32, std::milli>>(m_microseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Int64 Time::asMicroseconds() const
 {
-    return m_microseconds;
+    return m_microseconds.count();
 }
 
 
