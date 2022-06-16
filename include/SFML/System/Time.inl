@@ -30,6 +30,13 @@ constexpr Time::Time() : m_microseconds(0)
 
 
 ////////////////////////////////////////////////////////////
+template <typename Rep, typename Period>
+constexpr Time::Time(const std::chrono::duration<Rep, Period>& duration) : m_microseconds(duration)
+{
+}
+
+
+////////////////////////////////////////////////////////////
 constexpr float Time::asSeconds() const
 {
     return std::chrono::duration<float>(m_microseconds).count();
@@ -51,29 +58,38 @@ constexpr Int64 Time::asMicroseconds() const
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time::Time(Int64 microseconds) : m_microseconds(microseconds)
+constexpr std::chrono::microseconds Time::toDuration() const
 {
+    return m_microseconds;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename Rep, typename Period>
+constexpr Time::operator std::chrono::duration<Rep, Period>() const
+{
+    return m_microseconds;
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time seconds(float amount)
 {
-    return Time(static_cast<Int64>(amount * 1000000));
+    return Time(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount)));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time milliseconds(Int32 amount)
 {
-    return Time(static_cast<Int64>(amount) * 1000);
+    return Time(std::chrono::milliseconds(amount));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time microseconds(Int64 amount)
 {
-    return Time(amount);
+    return Time(std::chrono::microseconds(amount));
 }
 
 

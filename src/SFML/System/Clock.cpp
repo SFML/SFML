@@ -60,7 +60,7 @@ Time Clock::durationToTime(Clock::ClockImpl::duration duration)
 {
     using std::chrono::duration_cast;
     using std::chrono::microseconds;
-    return sf::microseconds(duration_cast<microseconds>(duration).count());
+    return duration_cast<microseconds>(duration);
 }
 
 } // namespace sf
