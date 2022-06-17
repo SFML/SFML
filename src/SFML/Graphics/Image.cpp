@@ -177,6 +177,11 @@ void Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourc
     if ((source.m_size.x == 0) || (source.m_size.y == 0) || (m_size.x == 0) || (m_size.y == 0))
         return;
 
+    // Make sure the sourceRect left & top  and the {left, top} + {width, height} within bounds
+    if (static_cast<unsigned int>(sourceRect.left) >= source.m_size.x || static_cast<unsigned int>(sourceRect.left + sourceRect.width) > source.m_size.x ||
+        static_cast<unsigned int>(sourceRect.top) >= source.m_size.y || static_cast<unsigned int>(sourceRect.top + sourceRect.height) > source.m_size.y)
+        return;
+
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
     if (srcRect.width == 0 || (srcRect.height == 0))
