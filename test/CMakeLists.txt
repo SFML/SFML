@@ -49,6 +49,7 @@ SET(GRAPHICS_SRC
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
 SET(NETWORK_SRC
+    Network/IpAddress.cpp
     Network/Packet.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
