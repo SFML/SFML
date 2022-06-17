@@ -35,6 +35,7 @@ SET(GRAPHICS_SRC
     Graphics/Color.cpp
     Graphics/ConvexShape.cpp
     Graphics/Glyph.cpp
+    Graphics/Image.cpp
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
     Graphics/Shape.cpp
