@@ -44,26 +44,18 @@ const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress() :
-m_address(0),
-m_valid  (false)
-{
-}
+IpAddress::IpAddress() = default;
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const std::string& address) :
-m_address(0),
-m_valid  (false)
+IpAddress::IpAddress(const std::string& address)
 {
     resolve(address);
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const char* address) :
-m_address(0),
-m_valid  (false)
+IpAddress::IpAddress(const char* address)
 {
     resolve(address);
 }
@@ -71,16 +63,14 @@ m_valid  (false)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))),
-m_valid  (true)
+m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint32 address) :
-m_address(htonl(address)),
-m_valid  (true)
+m_address(htonl(address))
 {
 }
 
@@ -89,7 +79,7 @@ m_valid  (true)
 std::string IpAddress::toString() const
 {
     in_addr address;
-    address.s_addr = m_address;
+    address.s_addr = m_address.value_or(0);
 
     return inet_ntoa(address);
 }
@@ -98,7 +88,7 @@ std::string IpAddress::toString() const
 ////////////////////////////////////////////////////////////
 Uint32 IpAddress::toInteger() const
 {
-    return ntohl(m_address);
+    return ntohl(m_address.value_or(0));
 }
 
 
@@ -165,20 +155,17 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
 ////////////////////////////////////////////////////////////
 void IpAddress::resolve(const std::string& address)
 {
-    m_address = 0;
-    m_valid = false;
+    m_address = std::nullopt;
 
     if (address == "255.255.255.255")
     {
         // The broadcast address needs to be handled explicitly,
         // because it is also the value returned by inet_addr on error
         m_address = INADDR_BROADCAST;
-        m_valid = true;
     }
     else if (address == "0.0.0.0")
     {
         m_address = INADDR_ANY;
-        m_valid = true;
     }
     else
     {
@@ -187,7 +174,6 @@ void IpAddress::resolve(const std::string& address)
         if (ip != INADDR_NONE)
         {
             m_address = ip;
-            m_valid = true;
         }
         else
         {
@@ -205,7 +191,6 @@ void IpAddress::resolve(const std::string& address)
                     ip = sin.sin_addr.s_addr;
                     freeaddrinfo(result);
                     m_address = ip;
-                    m_valid = true;
                 }
             }
         }
@@ -230,7 +215,7 @@ bool operator !=(const IpAddress& left, const IpAddress& right)
 ////////////////////////////////////////////////////////////
 bool operator <(const IpAddress& left, const IpAddress& right)
 {
-    return std::make_pair(left.m_valid, left.m_address) < std::make_pair(right.m_valid, right.m_address);
+    return left.m_address < right.m_address;
 }
 
 

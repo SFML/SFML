@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
 #include <iosfwd>
+#include <optional>
 #include <string>
 
 
@@ -200,8 +201,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint32 m_address; //!< Address stored as an unsigned 32 bits integer
-    bool   m_valid;   //!< Is the address valid?
+    std::optional<Uint32> m_address; //!< Address stored as an unsigned 32 bits integer
 };
 
 ////////////////////////////////////////////////////////////
