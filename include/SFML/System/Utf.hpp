@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <algorithm>
+#include <iterator>
 #include <locale>
 #include <string>
 #include <cstdlib>
@@ -37,6 +37,12 @@
 
 namespace sf
 {
+namespace priv
+{
+    template<class InputIt, class OutputIt>
+    OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+}
+
 template <unsigned int N>
 class Utf;
 
@@ -730,10 +736,10 @@ public:
 
 #include <SFML/System/Utf.inl>
 
-// Make typedefs to get rid of the template syntax
-typedef Utf<8>  Utf8;
-typedef Utf<16> Utf16;
-typedef Utf<32> Utf32;
+// Make type aliases to get rid of the template syntax
+using Utf8 = Utf<8>;
+using Utf16 = Utf<16>;
+using Utf32 = Utf<32>;
 
 } // namespace sf
 
@@ -756,8 +762,8 @@ typedef Utf<32> Utf32;
 /// can use any character / string type for a given encoding.
 ///
 /// It has 3 specializations:
-/// \li sf::Utf<8> (typedef'd to sf::Utf8)
-/// \li sf::Utf<16> (typedef'd to sf::Utf16)
-/// \li sf::Utf<32> (typedef'd to sf::Utf32)
+/// \li sf::Utf<8> (with sf::Utf8 type alias)
+/// \li sf::Utf<16> (with sf::Utf16 type alias)
+/// \li sf::Utf<32> (with sf::Utf32 type alias)
 ///
 ////////////////////////////////////////////////////////////

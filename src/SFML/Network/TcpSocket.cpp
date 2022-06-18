@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,7 @@
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
+#include <ostream>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -175,10 +176,10 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             // Setup the timeout
             timeval time;
             time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
-            time.tv_usec = static_cast<long>(timeout.asMicroseconds() % 1000000);
+            time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
 
             // Wait for something to write on our socket (which means that the connection request has returned)
-            if (select(static_cast<int>(getHandle() + 1), NULL, &selector, NULL, &time) > 0)
+            if (select(static_cast<int>(getHandle() + 1), nullptr, &selector, nullptr, &time) > 0)
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
@@ -243,10 +244,13 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
 
     // Loop until every byte has been sent
     int result = 0;
-    for (sent = 0; sent < size; sent += result)
+    for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
     {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wuseless-cast"
         // Send a chunk of data
-        result = ::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<int>(size - sent), flags);
+        result = static_cast<int>(::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
+        #pragma GCC diagnostic pop
 
         // Check for errors
         if (result < 0)
@@ -277,8 +281,11 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
         return Error;
     }
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
-    int sizeReceived = recv(getHandle(), static_cast<char*>(data), static_cast<int>(size), flags);
+    int sizeReceived = static_cast<int>(recv(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
+    #pragma GCC diagnostic pop
 
     // Check the number of bytes received
     if (sizeReceived > 0)
@@ -320,13 +327,25 @@ Socket::Status TcpSocket::send(Packet& packet)
     std::vector<char> blockToSend(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the block to send
-    std::memcpy(&blockToSend[0], &packetSize, sizeof(packetSize));
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
+    std::memcpy(blockToSend.data(), &packetSize, sizeof(packetSize));
+    #pragma GCC diagnostic pop
     if (size > 0)
-        std::memcpy(&blockToSend[0] + sizeof(packetSize), data, size);
+        std::memcpy(blockToSend.data() + sizeof(packetSize), data, size);
 
+    // These warnings are ignored here for portability, as even on Windows the
+    // signature of `send` might change depending on whether Win32 or MinGW is
+    // being used.
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wuseless-cast"
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
-    Status status = send(&blockToSend[0] + packet.m_sendPos, blockToSend.size() - packet.m_sendPos, sent);
+    Status status = send(blockToSend.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+    #pragma GCC diagnostic pop
+    #pragma GCC diagnostic pop
 
     // In the case of a partial send, record the location to resume from
     if (status == Partial)
@@ -379,7 +398,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
     while (m_pendingPacket.Data.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t sizeToGet = std::min(static_cast<std::size_t>(packetSize - m_pendingPacket.Data.size()), sizeof(buffer));
+        std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
         Status status = receive(buffer, sizeToGet, received);
         if (status != Done)
             return status;
@@ -388,14 +407,14 @@ Socket::Status TcpSocket::receive(Packet& packet)
         if (received > 0)
         {
             m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            char* begin = &m_pendingPacket.Data[0] + m_pendingPacket.Data.size() - received;
+            char* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
             std::memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the packet data: we can copy it to the user packet
     if (!m_pendingPacket.Data.empty())
-        packet.onReceive(&m_pendingPacket.Data[0], m_pendingPacket.Data.size());
+        packet.onReceive(m_pendingPacket.Data.data(), m_pendingPacket.Data.size());
 
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();

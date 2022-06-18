@@ -35,7 +35,7 @@
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 
 namespace {
-    typedef void (*activityOnCreatePointer)(ANativeActivity*, void*, size_t);
+    using activityOnCreatePointer = void (*)(ANativeActivity*, void*, size_t);
 }
 
 const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
@@ -61,15 +61,15 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
 
     // No meta-data "sfml.app.lib_name" was found so we abort and inform the user
-    if (valueString == NULL)
+    if (valueString == nullptr)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
         exit(1);
     }
 
     // Convert the application name to a C++ string and return it
-    const jsize applicationNameLength = lJNIEnv->GetStringUTFLength(valueString);
-    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, NULL);
+    const size_t applicationNameLength = static_cast<size_t>(lJNIEnv->GetStringUTFLength(valueString));
+    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, nullptr);
 
     if (applicationNameLength >= 256)
     {
@@ -77,7 +77,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
         exit(1);
     }
 
-    strncpy(name, applicationName, applicationNameLength);
+    strncpy(name, applicationName, static_cast<size_t>(applicationNameLength));
     name[applicationNameLength] = '\0';
     lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
 
@@ -109,7 +109,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     // Get the library absolute path and convert it
     jmethodID MethodGetPath = lJNIEnv->GetMethodID(ClassFile, "getPath", "()Ljava/lang/String;");
     jstring javaLibraryPath = static_cast<jstring>(lJNIEnv->CallObjectMethod(ObjectFile, MethodGetPath));
-    const char* libraryPath = lJNIEnv->GetStringUTFChars(javaLibraryPath, NULL);
+    const char* libraryPath = lJNIEnv->GetStringUTFChars(javaLibraryPath, nullptr);
 
     // Manually load the library
     void * handle = dlopen(libraryPath, RTLD_NOW | RTLD_GLOBAL);
@@ -141,7 +141,6 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // With libname being the library name such as "jpeg".
 
     // Retrieve JNI environment and JVM instance
-    JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
     // Retrieve the NativeActivity

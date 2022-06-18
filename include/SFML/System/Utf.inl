@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,11 +35,20 @@
 
 
 ////////////////////////////////////////////////////////////
+template <typename InputIt, typename OutputIt>
+OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
+{
+    while (first != last)
+        *d_first++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
+
+    return d_first;
+}
+
 template <typename In>
 In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {
     // Some useful precomputed data
-    static const int trailing[256] =
+    static constexpr int trailing[256] =
     {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -50,7 +59,7 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
     };
-    static const Uint32 offsets[6] =
+    static constexpr Uint32 offsets[6] =
     {
         0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080
     };
@@ -62,11 +71,11 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
         output = 0;
         switch (trailingBytes)
         {
-            case 5: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 4: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 3: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 2: output += static_cast<Uint8>(*begin++); output <<= 6;
-            case 1: output += static_cast<Uint8>(*begin++); output <<= 6;
+            case 5: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
+            case 4: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
+            case 3: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
+            case 2: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
+            case 1: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
             case 0: output += static_cast<Uint8>(*begin++);
         }
         output -= offsets[trailingBytes];
@@ -87,7 +96,7 @@ template <typename Out>
 Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
 {
     // Some useful precomputed data
-    static const Uint8 firstBytes[7] =
+    static constexpr Uint8 firstBytes[7] =
     {
         0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC
     };
@@ -97,7 +106,7 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
     {
         // Invalid character
         if (replacement)
-            *output++ = replacement;
+            *output++ = static_cast<typename Out::container_type::value_type>(replacement);
     }
     else
     {
@@ -114,14 +123,14 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         Uint8 bytes[4];
         switch (bytestoWrite)
         {
-            case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
-            case 3: bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
-            case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6;
+            case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 3: bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
             case 1: bytes[0] = static_cast<Uint8> (input | firstBytes[bytestoWrite]);
         }
 
         // Add them to the output
-        output = std::copy(bytes, bytes + bytestoWrite, output);
+        output = priv::copy(bytes, bytes + bytestoWrite, output);
     }
 
     return output;
@@ -244,7 +253,7 @@ Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 template <typename In, typename Out>
 Out Utf<8>::toUtf8(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -293,7 +302,7 @@ In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
             if ((second >= 0xDC00) && (second <= 0xDFFF))
             {
                 // The second element is valid: convert the two elements to a UTF-32 character
-                output = static_cast<Uint32>(((first - 0xD800) << 10) + (second - 0xDC00) + 0x0010000);
+                output = ((first - 0xD800u) << 10) + (second - 0xDC00) + 0x0010000;
             }
             else
             {
@@ -413,7 +422,7 @@ Out Utf<16>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -456,7 +465,7 @@ Out Utf<16>::toLatin1(In begin, In end, Out output, char replacement)
     while (begin < end)
     {
         *output++ = *begin < 256 ? static_cast<char>(*begin) : replacement;
-        begin++;
+        ++begin;
     }
 
     return output;
@@ -482,7 +491,7 @@ Out Utf<16>::toUtf8(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<16>::toUtf16(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -563,7 +572,7 @@ Out Utf<32>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
@@ -598,7 +607,7 @@ Out Utf<32>::toLatin1(In begin, In end, Out output, char replacement)
     while (begin < end)
     {
         *output++ = *begin < 256 ? static_cast<char>(*begin) : replacement;
-        begin++;
+        ++begin;
     }
 
     return output;
@@ -630,13 +639,13 @@ Out Utf<32>::toUtf16(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<32>::toUtf32(In begin, In end, Out output)
 {
-    return std::copy(begin, end, output);
+    return priv::copy(begin, end, output);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
+Uint32 Utf<32>::decodeAnsi(In input, [[maybe_unused]] const std::locale& locale)
 {
     // On Windows, GCC's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -647,8 +656,6 @@ Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
 
-        (void)locale; // to avoid warnings
-
         wchar_t character = 0;
         mbtowc(&character, &input, 1);
         return static_cast<Uint32>(character);
@@ -656,7 +663,7 @@ Uint32 Utf<32>::decodeAnsi(In input, const std::locale& locale)
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
+        const auto& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
         return static_cast<Uint32>(facet.widen(input));
@@ -675,13 +682,13 @@ Uint32 Utf<32>::decodeWide(In input)
     // In both cases, a simple copy is enough (UCS-2 is a subset of UCS-4,
     // and UCS-4 *is* UTF-32).
 
-    return input;
+    return static_cast<Uint32>(input);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const std::locale& locale)
+Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, [[maybe_unused]] const std::locale& locale)
 {
     // On Windows, gcc's standard library (glibc++) has almost
     // no support for Unicode stuff. As a consequence, in this
@@ -691,8 +698,6 @@ Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const st
     #if defined(SFML_SYSTEM_WINDOWS) &&                       /* if Windows ... */                          \
        (defined(__GLIBCPP__) || defined (__GLIBCXX__)) &&     /* ... and standard library is glibc++ ... */ \
       !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) /* ... and STLPort is not used on top of it */
-
-        (void)locale; // to avoid warnings
 
         char character = 0;
         if (wctomb(&character, static_cast<wchar_t>(codepoint)) >= 0)
@@ -705,7 +710,7 @@ Out Utf<32>::encodeAnsi(Uint32 codepoint, Out output, char replacement, const st
     #else
 
         // Get the facet of the locale which deals with character conversion
-        const std::ctype<wchar_t>& facet = std::use_facet< std::ctype<wchar_t> >(locale);
+        const auto& facet = std::use_facet< std::ctype<wchar_t> >(locale);
 
         // Use the facet to convert each character of the input string
         *output++ = facet.narrow(static_cast<wchar_t>(codepoint), replacement);

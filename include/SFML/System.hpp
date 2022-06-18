@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,19 +30,14 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Config.hpp>
+#include <SFML/System/Angle.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/String.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/ThreadLocal.hpp>
-#include <SFML/System/ThreadLocalPtr.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Utf.hpp>
 #include <SFML/System/Vector2.hpp>

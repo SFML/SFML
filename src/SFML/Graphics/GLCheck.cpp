@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,7 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <string>
+#include <ostream>
 
 
 namespace sf
@@ -35,14 +36,13 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void glCheckError(const char* file, unsigned int line, const char* expression)
+void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
 {
     // Get the last error
     GLenum errorCode = glGetError();
 
     if (errorCode != GL_NO_ERROR)
     {
-        std::string fileString = file;
         std::string error = "Unknown error";
         std::string description  = "No description";
 
@@ -101,9 +101,9 @@ void glCheckError(const char* file, unsigned int line, const char* expression)
 
         // Log the error
         err() << "An internal OpenGL call failed in "
-              << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line << ")."
+              << file.filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression
-              << "\nError description:\n   " << error << "\n   " << description << "\n"
+              << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
     }
 }

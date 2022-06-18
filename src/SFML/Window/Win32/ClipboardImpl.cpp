@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,9 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/ClipboardImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/String.hpp>
-#include <iostream>
-#include <windows.h>
+#include <SFML/System/Err.hpp>
+#include <ostream>
 
 
 namespace sf
@@ -42,13 +43,13 @@ String ClipboardImpl::getString()
 
     if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
     {
-        std::cerr << "Failed to get the clipboard data in Unicode format." << std::endl;
+        err() << "Failed to get the clipboard data in Unicode format." << std::endl;
         return text;
     }
 
-    if (!OpenClipboard(NULL))
+    if (!OpenClipboard(nullptr))
     {
-        std::cerr << "Failed to open the Win32 clipboard." << std::endl;
+        err() << "Failed to open the Win32 clipboard." << std::endl;
         return text;
     }
 
@@ -56,7 +57,7 @@ String ClipboardImpl::getString()
 
     if (!clipboard_handle)
     {
-        std::cerr << "Failed to get Win32 handle for clipboard content." << std::endl;
+        err() << "Failed to get Win32 handle for clipboard content." << std::endl;
         CloseClipboard();
         return text;
     }
@@ -72,15 +73,15 @@ String ClipboardImpl::getString()
 ////////////////////////////////////////////////////////////
 void ClipboardImpl::setString(const String& text)
 {
-    if (!OpenClipboard(NULL))
+    if (!OpenClipboard(nullptr))
     {
-        std::cerr << "Failed to open the Win32 clipboard." << std::endl;
+        err() << "Failed to open the Win32 clipboard." << std::endl;
         return;
     }
 
     if (!EmptyClipboard())
     {
-        std::cerr << "Failed to empty the Win32 clipboard." << std::endl;
+        err() << "Failed to empty the Win32 clipboard." << std::endl;
         return;
     }
 

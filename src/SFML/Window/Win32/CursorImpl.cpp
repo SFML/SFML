@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,8 +26,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/CursorImpl.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Err.hpp>
+#include <ostream>
 #include <cstring>
+
 
 namespace sf
 {
@@ -36,7 +39,8 @@ namespace priv
 
 ////////////////////////////////////////////////////////////
 CursorImpl::CursorImpl() :
-m_cursor(NULL)
+m_cursor(nullptr),
+m_systemCursor(false)
 {
     // That's it.
 }
@@ -59,8 +63,8 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     std::memset(&bitmapHeader, 0, sizeof(BITMAPV5HEADER));
 
     bitmapHeader.bV5Size        = sizeof(BITMAPV5HEADER);
-    bitmapHeader.bV5Width       = size.x;
-    bitmapHeader.bV5Height      = -static_cast<int>(size.y); // Negative indicates origin is in upper-left corner
+    bitmapHeader.bV5Width       = static_cast<LONG>(size.x);
+    bitmapHeader.bV5Height      = -static_cast<LONG>(size.y); // Negative indicates origin is in upper-left corner
     bitmapHeader.bV5Planes      = 1;
     bitmapHeader.bV5BitCount    = 32;
     bitmapHeader.bV5Compression = BI_BITFIELDS;
@@ -69,18 +73,18 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     bitmapHeader.bV5BlueMask    = 0x000000ff;
     bitmapHeader.bV5AlphaMask   = 0xff000000;
 
-    Uint32* bitmapData = NULL;
+    Uint32* bitmapData = nullptr;
 
-    HDC screenDC = GetDC(NULL);
+    HDC screenDC = GetDC(nullptr);
     HBITMAP color = CreateDIBSection(
         screenDC,
         reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
         DIB_RGB_COLORS,
         reinterpret_cast<void**>(&bitmapData),
-        NULL,
+        nullptr,
         0
     );
-    ReleaseDC(NULL, screenDC);
+    ReleaseDC(nullptr, screenDC);
 
     if (!color)
     {
@@ -93,11 +97,11 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     Uint32* bitmapOffset = bitmapData;
     for (std::size_t remaining = size.x * size.y; remaining > 0; --remaining, pixels += 4)
     {
-        *bitmapOffset++ = (pixels[3] << 24) | (pixels[0] << 16) | (pixels[1] << 8) | pixels[2];
+        *bitmapOffset++ = static_cast<Uint32>((pixels[3] << 24) | (pixels[0] << 16) | (pixels[1] << 8) | pixels[2]);
     }
 
     // Create a dummy mask bitmap (it won't be used)
-    HBITMAP mask = CreateBitmap(size.x, size.y, 1, 1, NULL);
+    HBITMAP mask = CreateBitmap(static_cast<int>(size.x), static_cast<int>(size.y), 1, 1, nullptr);
 
     if (!mask)
     {
@@ -118,6 +122,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 
     // Create the cursor
     m_cursor = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
+    m_systemCursor = false;
 
     // The data has been copied into the cursor, so get rid of these
     DeleteObject(color);
@@ -140,7 +145,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
     release();
 
-    LPCTSTR shape;
+    LPCTSTR shape = nullptr;
     switch (type)
     {
         case Cursor::Arrow:                  shape = IDC_ARROW;       break;
@@ -152,14 +157,23 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::SizeVertical:           shape = IDC_SIZENS;      break;
         case Cursor::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
         case Cursor::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
+        case Cursor::SizeLeft:               shape = IDC_SIZEWE;      break;
+        case Cursor::SizeRight:              shape = IDC_SIZEWE;      break;
+        case Cursor::SizeTop:                shape = IDC_SIZENS;      break;
+        case Cursor::SizeBottom:             shape = IDC_SIZENS;      break;
+        case Cursor::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
+        case Cursor::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
+        case Cursor::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
+        case Cursor::SizeTopRight:           shape = IDC_SIZENESW;    break;
         case Cursor::SizeAll:                shape = IDC_SIZEALL;     break;
         case Cursor::Cross:                  shape = IDC_CROSS;       break;
         case Cursor::Help:                   shape = IDC_HELP;        break;
         case Cursor::NotAllowed:             shape = IDC_NO;          break;
     }
 
-    // Create a copy of the shared system cursor that we can destroy later
-    m_cursor = CopyCursor(LoadCursor(NULL, shape));
+    // Get the shared system cursor and make sure not to destroy it
+    m_cursor = LoadCursor(nullptr, shape);
+    m_systemCursor = true;
 
     if (m_cursor)
     {
@@ -176,9 +190,9 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 ////////////////////////////////////////////////////////////
 void CursorImpl::release()
 {
-    if (m_cursor) {
-        DestroyCursor(m_cursor);
-        m_cursor = NULL;
+    if (m_cursor && !m_systemCursor) {
+        DestroyCursor(static_cast<HCURSOR>(m_cursor));
+        m_cursor = nullptr;
     }
 }
 

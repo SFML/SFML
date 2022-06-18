@@ -27,8 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/InputImpl.hpp>
 #include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <mutex>
+#include <ostream>
 #include <jni.h>
 
 
@@ -37,7 +38,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key /* key */)
 {
     // Not applicable
     return false;
@@ -48,28 +49,27 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 {
     // todo: Check if the window is active
 
-    ActivityStates* states = getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
     // Initializes JNI
-    jint lResult;
     jint lFlags = 0;
 
-    JavaVM* lJavaVM = states->activity->vm;
-    JNIEnv* lJNIEnv = states->activity->env;
+    JavaVM* lJavaVM = states.activity->vm;
+    JNIEnv* lJNIEnv = states.activity->env;
 
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
     lJavaVMAttachArgs.name = "NativeThread";
-    lJavaVMAttachArgs.group = NULL;
+    lJavaVMAttachArgs.group = nullptr;
 
-    lResult=lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
+    jint lResult = lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR)
         err() << "Failed to initialize JNI, couldn't switch the keyboard visibility" << std::endl;
 
     // Retrieves NativeActivity
-    jobject lNativeActivity = states->activity->clazz;
+    jobject lNativeActivity = states.activity->clazz;
     jclass ClassNativeActivity = lJNIEnv->GetObjectClass(lNativeActivity);
 
     // Retrieves Context.INPUT_METHOD_SERVICE
@@ -105,7 +105,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
         // Runs lInputMethodManager.showSoftInput(...)
         jmethodID MethodShowSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager,
             "showSoftInput", "(Landroid/view/View;I)Z");
-        jboolean lResult = lJNIEnv->CallBooleanMethod(lInputMethodManager,
+        lJNIEnv->CallBooleanMethod(lInputMethodManager,
             MethodShowSoftInput, lDecorView, lFlags);
     }
     else
@@ -121,7 +121,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
         // lInputMethodManager.hideSoftInput(...)
         jmethodID MethodHideSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager,
             "hideSoftInputFromWindow", "(Landroid/os/IBinder;I)Z");
-        jboolean lRes = lJNIEnv->CallBooleanMethod(lInputMethodManager,
+        lJNIEnv->CallBooleanMethod(lInputMethodManager,
             MethodHideSoftInput, lBinder, lFlags);
         lJNIEnv->DeleteLocalRef(lBinder);
     }
@@ -136,43 +136,43 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
-    return states->isButtonPressed[button];
+    return states.isButtonPressed[button];
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
-    return states->mousePosition;
+    return states.mousePosition;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
+Vector2i InputImpl::getMousePosition(const WindowBase& /* relativeTo */)
 {
     return getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& /* position */)
 {
     // Injecting events is impossible on Android
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& /* relativeTo */)
 {
     setMousePosition(position);
 }
@@ -181,29 +181,29 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
-    return states->touchEvents.find(finger) != states->touchEvents.end();
+    return states.touchEvents.find(static_cast<int>(finger)) != states.touchEvents.end();
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    priv::ActivityStates* states = priv::getActivity(NULL);
-    Lock lock(states->mutex);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
 
-    return states->touchEvents.find(finger)->second;
+    return states.touchEvents.find(static_cast<int>(finger))->second;
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& relativeTo)
+Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /* relativeTo */)
 {
     return getTouchPosition(finger);
 }

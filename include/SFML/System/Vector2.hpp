@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,11 +25,16 @@
 #ifndef SFML_VECTOR2_HPP
 #define SFML_VECTOR2_HPP
 
+#include <SFML/System/Angle.hpp>
+#include <cassert>
+#include <cmath>
+#include <type_traits>
+
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Utility template class for manipulating
+/// \brief Class template for manipulating
 ///        2-dimensional vectors
 ///
 ////////////////////////////////////////////////////////////
@@ -44,16 +49,16 @@ public:
     /// Creates a Vector2(0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    Vector2();
+    constexpr Vector2();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the vector from its coordinates
+    /// \brief Construct the vector from cartesian coordinates
     ///
     /// \param X X coordinate
     /// \param Y Y coordinate
     ///
     ////////////////////////////////////////////////////////////
-    Vector2(T X, T Y);
+    constexpr Vector2(T X, T Y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -67,14 +72,159 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Vector2(const Vector2<U>& vector);
+    constexpr explicit Vector2(const Vector2<U>& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the vector from polar coordinates
+    ///
+    /// \param r   Length of vector (can be negative)
+    /// \param phi Angle from X axis
+    ///
+    /// Note that this constructor is lossy: calling length() and angle()
+    /// may return values different to those provided in this constructor.
+    ///
+    /// In particular, these transforms can be applied:
+    /// * Vector2(r, phi) == Vector2(-r, phi + 180_deg)
+    /// * Vector2(r, phi) == Vector2(r, phi + n * 360_deg)
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2(T r, Angle phi);
+    
+    ////////////////////////////////////////////////////////////
+    /// \brief Length of the vector <i><b>(floating-point)</b></i>.
+    ///
+    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
+    ///
+    ////////////////////////////////////////////////////////////
+    T length() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Square of vector's length.
+    /// 
+    /// Suitable for comparisons, more efficient than length().
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T lengthSq() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
+    /// 
+    /// \pre \c *this is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Vector2 normalized() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Signed angle from \c *this to \c rhs <i><b>(floating-point)</b></i>.
+    /// 
+    /// \return The smallest angle which rotates \c *this in positive
+    /// or negative direction, until it has the same direction as \c rhs.
+    /// The result has a sign and lies in the range [-180, 180) degrees.
+    /// \pre Neither \c *this nor \c rhs is a zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Angle angleTo(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Signed angle from +X or (1,0) vector <i><b>(floating-point)</b></i>.
+    /// 
+    /// For example, the vector (1,0) corresponds to 0 degrees, (0,1) corresponds to 90 degrees.
+    /// 
+    /// \return Angle in the range [-180, 180) degrees.
+    /// \pre This vector is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    Angle angle() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Rotate by angle \c phi <i><b>(floating-point)</b></i>.
+    /// 
+    /// Returns a vector with same length but different direction.
+    ///
+    /// In SFML's default coordinate system with +X right and +Y down,
+    /// this amounts to a clockwise rotation by \c phi.
+    /// 
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Vector2 rotatedBy(Angle phi) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Projection of this vector onto \c axis <i><b>(floating-point)</b></i>.
+    /// 
+    /// \param axis Vector being projected onto. Need not be normalized.
+    /// \pre \c axis must not have length zero.
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] constexpr Vector2 projectedOnto(const Vector2& axis) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Returns a perpendicular vector.
+    /// 
+    /// Returns \c *this rotated by +90 degrees; (x,y) becomes (-y,x).
+    /// For example, the vector (1,0) is transformed to (0,1).
+    ///
+    /// In SFML's default coordinate system with +X right and +Y down,
+    /// this amounts to a clockwise rotation.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2 perpendicular() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Dot product of two 2D vectors.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T dot(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Z component of the cross product of two 2D vectors.
+    /// 
+    /// Treats the operands as 3D vectors, computes their cross product
+    /// and returns the result's Z component (X and Y components are always zero).
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T cross(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise multiplication of \c *this and \c rhs.
+    ///
+    /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y)</tt>.
+    /// 
+    /// Scaling is the most common use case for component-wise multiplication/division.
+    /// This operation is also known as the Hadamard or Schur product.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2 cwiseMul(const Vector2& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise division of \c *this and \c rhs.
+    /// 
+    /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y)</tt>.
+    /// 
+    /// Scaling is the most common use case for component-wise multiplication/division.
+    /// 
+    /// \pre Neither component of \c rhs is zero.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
+
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T x; ///< X coordinate of the vector
-    T y; ///< Y coordinate of the vector
+    T x; //!< X coordinate of the vector
+    T y; //!< Y coordinate of the vector
+
+
+    ////////////////////////////////////////////////////////////
+    // Static member data
+    ////////////////////////////////////////////////////////////
+    static const Vector2 UnitX; //!< The X unit vector (1, 0), usually facing right
+    static const Vector2 UnitY; //!< The Y unit vector (0, 1), usually facing down
 };
+
+// Define the most common types
+using Vector2i = Vector2<int>;
+using Vector2u = Vector2<unsigned int>;
+using Vector2f = Vector2<float>;
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -86,39 +236,39 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator +=
 ///
 /// This operator performs a memberwise addition of both vectors,
-/// and assigns the result to \a left.
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator +=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator -=
 ///
 /// This operator performs a memberwise subtraction of both vectors,
-/// and assigns the result to \a left.
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -131,7 +281,7 @@ Vector2<T>& operator -=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -144,7 +294,7 @@ Vector2<T> operator +(const Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -153,11 +303,11 @@ Vector2<T> operator -(const Vector2<T>& left, const Vector2<T>& right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise multiplication by \a right
+/// \return Memberwise multiplication by \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator *(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -166,27 +316,27 @@ Vector2<T> operator *(const Vector2<T>& left, T right);
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise multiplication by \a left
+/// \return Memberwise multiplication by \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator *(T left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator *(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator *=
 ///
-/// This operator performs a memberwise multiplication by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a memberwise multiplication by \c right,
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator *=(Vector2<T>& left, T right);
+constexpr Vector2<T>& operator *=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -195,27 +345,27 @@ Vector2<T>& operator *=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise division by \a right
+/// \return Memberwise division by \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> operator /(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator /(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator /=
 ///
-/// This operator performs a memberwise division by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a memberwise division by \c right,
+/// and assigns the result to \c left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to \c left
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T>& operator /=(Vector2<T>& left, T right);
+constexpr Vector2<T>& operator /=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -226,11 +376,11 @@ Vector2<T>& operator /=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is equal to \a right
+/// \return True if \c left is equal to \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -241,18 +391,13 @@ bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is not equal to \a right
+/// \return True if \c left is not equal to \c right
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator !=(const Vector2<T>& left, const Vector2<T>& right);
 
 #include <SFML/System/Vector2.inl>
-
-// Define the most common types
-typedef Vector2<int>          Vector2i;
-typedef Vector2<unsigned int> Vector2u;
-typedef Vector2<float>        Vector2f;
 
 } // namespace sf
 
@@ -267,33 +412,42 @@ typedef Vector2<float>        Vector2f;
 /// sf::Vector2 is a simple class that defines a mathematical
 /// vector with two coordinates (x and y). It can be used to
 /// represent anything that has two dimensions: a size, a point,
-/// a velocity, etc.
+/// a velocity, a scale, etc.
 ///
+/// The API provides basic arithmetic (addition, subtraction, scale), as
+/// well as more advanced geometric operations, such as dot/cross products,
+/// length and angle computations, projections, rotations, etc.
+/// 
 /// The template parameter T is the type of the coordinates. It
 /// can be any type that supports arithmetic operations (+, -, /, *)
 /// and comparisons (==, !=), for example int or float.
-///
+/// Note that some operations are only meaningful for vectors where T is
+/// a floating point type (e.g. float or double), often because
+/// results cannot be represented accurately with integers.
+/// The method documentation mentions "(floating-point)" in those cases.
+/// 
 /// You generally don't have to care about the templated form (sf::Vector2<T>),
-/// the most common specializations have special typedefs:
+/// the most common specializations have special type aliases:
 /// \li sf::Vector2<float> is sf::Vector2f
 /// \li sf::Vector2<int> is sf::Vector2i
 /// \li sf::Vector2<unsigned int> is sf::Vector2u
 ///
-/// The sf::Vector2 class has a small and simple interface, its x and y members
-/// can be accessed directly (there are no accessors like setX(), getX()) and it
-/// contains no mathematical function like dot product, cross product, length, etc.
+/// The sf::Vector2 class has a simple interface, its x and y members
+/// can be accessed directly (there are no accessors like setX(), getX()).
 ///
 /// Usage example:
 /// \code
-/// sf::Vector2f v1(16.5f, 24.f);
-/// v1.x = 18.2f;
-/// float y = v1.y;
+/// sf::Vector2f v(16.5f, 24.f);
+/// v.x = 18.2f;
+/// float y = v.y;
 ///
-/// sf::Vector2f v2 = v1 * 5.f;
-/// sf::Vector2f v3;
-/// v3 = v1 + v2;
+/// sf::Vector2f w = v * 5.f;
+/// sf::Vector2f u;
+/// u = v + w;
 ///
-/// bool different = (v2 != v3);
+/// float s = v.dot(w);
+///
+/// bool different = (v != u);
 /// \endcode
 ///
 /// Note: for 3-dimensional vectors, see sf::Vector3.

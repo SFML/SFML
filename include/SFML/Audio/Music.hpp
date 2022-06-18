@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,14 +31,14 @@
 #include <SFML/Audio/Export.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Time.hpp>
+#include <filesystem>
 #include <string>
 #include <vector>
 
 
 namespace sf
 {
+class Time;
 class InputStream;
 
 ////////////////////////////////////////////////////////////
@@ -79,12 +79,12 @@ public:
 
         }
 
-        T offset; ///< The beginning offset of the time range
-        T length; ///< The length of the time range
+        T offset; //!< The beginning offset of the time range
+        T length; //!< The length of the time range
     };
 
     // Define the relevant Span types
-    typedef Span<Time> TimeSpan;
+    using TimeSpan = Span<Time>;
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -96,7 +96,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~Music();
+    ~Music() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file
@@ -117,7 +117,7 @@ public:
     /// \see openFromMemory, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromFile(const std::string& filename);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in memory
@@ -140,7 +140,7 @@ public:
     /// \see openFromFile, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in a custom stream
@@ -161,7 +161,7 @@ public:
     /// \see openFromFile, openFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromStream(InputStream& stream);
+    [[nodiscard]] bool openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music
@@ -189,11 +189,11 @@ public:
     TimeSpan getLoopPoints() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the beginning and end of the sound's looping sequence using sf::Time
+    /// \brief Sets the beginning and duration of the sound's looping sequence using sf::Time
     ///
-    /// Loop points allow one to specify a pair of positions such that, when the music
+    /// setLoopPoints() allows for specifying the beginning offset and the duration of the loop such that, when the music
     /// is enabled for looping, it will seamlessly seek to the beginning whenever it
-    /// encounters the end. Valid ranges for timePoints.offset and timePoints.length are
+    /// encounters the end of the duration. Valid ranges for timePoints.offset and timePoints.length are
     /// [0, Dur) and (0, Dur-offset] respectively, where Dur is the value returned by getDuration().
     /// Note that the EOF "loop point" from the end to the beginning of the stream is still honored,
     /// in case the caller seeks to a point after the end of the loop range. This function can be
@@ -223,7 +223,7 @@ protected:
     /// \return True to continue playback, false to stop
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onGetData(Chunk& data);
+    [[nodiscard]] bool onGetData(Chunk& data) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source
@@ -231,7 +231,7 @@ protected:
     /// \param timeOffset New playing position, from the beginning of the music
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onSeek(Time timeOffset);
+    void onSeek(Time timeOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source to the loop offset
@@ -243,7 +243,7 @@ protected:
     /// \return The seek position after looping (or -1 if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 onLoop();
+    Int64 onLoop() override;
 
 private:
 
@@ -276,10 +276,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile     m_file;     ///< The streamed music file
-    std::vector<Int16> m_samples;  ///< Temporary buffer of samples
-    Mutex              m_mutex;    ///< Mutex protecting the data
-    Span<Uint64>       m_loopSpan; ///< Loop Range Specifier
+    InputSoundFile       m_file;     //!< The streamed music file
+    std::vector<Int16>   m_samples;  //!< Temporary buffer of samples
+    std::recursive_mutex m_mutex;    //!< Mutex protecting the data
+    Span<Uint64>         m_loopSpan; //!< Loop Range Specifier
 };
 
 } // namespace sf

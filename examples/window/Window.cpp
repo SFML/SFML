@@ -2,16 +2,18 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
-#include <SFML/OpenGL.hpp>
+#include <cstdlib>
+
+#define GLAD_GL_IMPLEMENTATION
+#include <gl.h>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
 #endif
 
-#ifdef SFML_OPENGL_ES
-#define glClearDepth glClearDepthf
-#define glFrustum glFrustumf
-#endif
+#include <array>
+#include <iostream>
+#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -26,13 +28,28 @@ int main()
     contextSettings.depthBits = 24;
 
     // Create the main window
-    sf::Window window(sf::VideoMode(640, 480), "SFML window with OpenGL", sf::Style::Default, contextSettings);
+    sf::Window window(sf::VideoMode({640, 480}), "SFML window with OpenGL", sf::Style::Default, contextSettings);
 
     // Make it the active window for OpenGL calls
-    window.setActive();
+    if (!window.setActive())
+    {
+        std::cerr << "Failed to set the window as active" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Load OpenGL or OpenGL ES entry points using glad
+#ifdef SFML_OPENGL_ES
+    gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#else
+    gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#endif
 
     // Set the color and depth clear values
+#ifdef SFML_OPENGL_ES
+    glClearDepthf(1.f);
+#else
     glClearDepth(1.f);
+#endif
     glClearColor(0.f, 0.f, 0.f, 1.f);
 
     // Enable Z-buffer read and write
@@ -44,16 +61,20 @@ int main()
     glDisable(GL_TEXTURE_2D);
 
     // Configure the viewport (the same size as the window)
-    glViewport(0, 0, window.getSize().x, window.getSize().y);
+    glViewport(0, 0, static_cast<GLsizei>(window.getSize().x), static_cast<GLsizei>(window.getSize().y));
 
     // Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    GLfloat ratio = static_cast<float>(window.getSize().x) / window.getSize().y;
+    GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
+#ifdef SFML_OPENGL_ES
+    glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#else
     glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+#endif
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-    GLfloat cube[] =
+    constexpr std::array<GLfloat, 252> cube =
     {
         // positions    // colors (r, g, b, a)
         -50, -50, -50,  0, 0, 1, 1,
@@ -102,8 +123,8 @@ int main()
     // Enable position and color vertex components
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), cube);
-    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), cube + 3);
+    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), cube.data());
+    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), cube.data() + 3);
 
     // Disable normal and texture coordinates vertex components
     glDisableClientState(GL_NORMAL_ARRAY);
@@ -116,8 +137,7 @@ int main()
     while (window.isOpen())
     {
         // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Close window: exit
             if (event.type == sf::Event::Closed)
@@ -130,11 +150,15 @@ int main()
             // Resize event: adjust the viewport
             if (event.type == sf::Event::Resized)
             {
-                glViewport(0, 0, event.size.width, event.size.height);
+                glViewport(0, 0, static_cast<GLsizei>(event.size.width), static_cast<GLsizei>(event.size.height));
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                GLfloat ratio = static_cast<float>(event.size.width) / event.size.height;
-                glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+                GLfloat newRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
+#ifdef SFML_OPENGL_ES
+                glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
+#else
+                glFrustum(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
+#endif
             }
         }
 

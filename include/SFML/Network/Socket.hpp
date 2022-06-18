@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/SocketHandle.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <vector>
 
 
@@ -42,7 +41,7 @@ class SocketSelector;
 /// \brief Base class for all the socket types
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API Socket : NonCopyable
+class SFML_NETWORK_API Socket
 {
 public:
 
@@ -52,11 +51,11 @@ public:
     ////////////////////////////////////////////////////////////
     enum Status
     {
-        Done,         ///< The socket has sent / received the data
-        NotReady,     ///< The socket is not ready to send / receive data yet
-        Partial,      ///< The socket sent a part of the data
-        Disconnected, ///< The TCP socket has been disconnected
-        Error         ///< An unexpected error happened
+        Done,         //!< The socket has sent / received the data
+        NotReady,     //!< The socket is not ready to send / receive data yet
+        Partial,      //!< The socket sent a part of the data
+        Disconnected, //!< The TCP socket has been disconnected
+        Error         //!< An unexpected error happened
     };
 
     ////////////////////////////////////////////////////////////
@@ -65,7 +64,7 @@ public:
     ////////////////////////////////////////////////////////////
     enum
     {
-        AnyPort = 0 ///< Special value that tells the system to pick any available port
+        AnyPort = 0 //!< Special value that tells the system to pick any available port
     };
 
 public:
@@ -75,6 +74,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~Socket();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Socket(const Socket&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Socket& operator=(const Socket&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the blocking state of the socket
@@ -113,8 +124,8 @@ protected:
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Tcp, ///< TCP protocol
-        Udp  ///< UDP protocol
+        Tcp, //!< TCP protocol
+        Udp  //!< UDP protocol
     };
 
     ////////////////////////////////////////////////////////////
@@ -173,9 +184,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Type         m_type;       ///< Type of the socket (TCP or UDP)
-    SocketHandle m_socket;     ///< Socket descriptor
-    bool         m_isBlocking; ///< Current blocking mode of the socket
+    Type         m_type;       //!< Type of the socket (TCP or UDP)
+    SocketHandle m_socket;     //!< Socket descriptor
+    bool         m_isBlocking; //!< Current blocking mode of the socket
 };
 
 } // namespace sf

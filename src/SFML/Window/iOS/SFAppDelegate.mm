@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,7 +33,7 @@
 namespace
 {
     // Save the global instance of the delegate
-    SFAppDelegate* delegateInstance = NULL;
+    SFAppDelegate* delegateInstance = nullptr;
 
     // Current touches positions
     std::vector<sf::Vector2i> touchPositions;
@@ -59,7 +59,7 @@ namespace
     NSAssert(delegateInstance,
              @"SFAppDelegate instance is nil, this means SFML was not properly initialized. "
              "Make sure that the file defining your main() function includes <SFML/Main.hpp>");
-    
+
     return delegateInstance;
 }
 
@@ -68,7 +68,7 @@ namespace
 - (void)runUserMain
 {
     // Arguments intentionally dropped, see comments in main in sfml-main
-    sfmlMain(0, NULL);
+    sfmlMain(0, nullptr);
 }
 
 
@@ -171,7 +171,26 @@ namespace
     if (!self.sfWindow)
         return false;
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wold-style-cast"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wold-style-cast"
+    #endif
+#endif
+
     UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic pop
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
+#endif
+
     if (!rootViewController || ![rootViewController shouldAutorotate])
         return false;
 
@@ -189,7 +208,7 @@ namespace
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
         appFlags += UIInterfaceOrientationMaskLandscapeRight;
 
-    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & appFlags;
+    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & static_cast<unsigned long>(appFlags);
 }
 
 - (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation
@@ -244,11 +263,11 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position
 {
-    position.x *= backingScaleFactor;
-    position.y *= backingScaleFactor;
-    
+    position.x *= static_cast<int>(backingScaleFactor);
+    position.y *= static_cast<int>(backingScaleFactor);
+
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -268,11 +287,11 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchMove:(unsigned int)index atPosition:(sf::Vector2i)position
 {
-    position.x *= backingScaleFactor;
-    position.y *= backingScaleFactor;
-    
+    position.x *= static_cast<int>(backingScaleFactor);
+    position.y *= static_cast<int>(backingScaleFactor);
+
     // save the touch position
     if (index >= touchPositions.size())
         touchPositions.resize(index + 1, sf::Vector2i(-1, -1));
@@ -292,7 +311,7 @@ namespace
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position;
+- (void)notifyTouchEnd:(unsigned int)index atPosition:(sf::Vector2i)position
 {
     // clear the touch position
     if (index < touchPositions.size())
@@ -304,8 +323,8 @@ namespace
         sf::Event event;
         event.type = sf::Event::TouchEnded;
         event.touch.finger = index;
-        event.touch.x = position.x * backingScaleFactor;
-        event.touch.y = position.y * backingScaleFactor;
+        event.touch.x = position.x * static_cast<int>(backingScaleFactor);
+        event.touch.y = position.y * static_cast<int>(backingScaleFactor);
         sfWindow->forwardEvent(event);
     }
 }

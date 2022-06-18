@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,6 +30,14 @@
 #include <SFML/System/Err.hpp>
 
 #import <SFML/Window/OSX/Scaling.h>
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
 
 namespace sf
 {
@@ -87,8 +95,8 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     //
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
-    VideoMode mode(CGDisplayModeGetWidth(cgmode), CGDisplayModeGetHeight(cgmode), modeBitsPerPixel(cgmode));
-    scaleOutWidthHeight(mode, nil);
+    VideoMode mode({static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)), static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode))}, static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
+    scaleOutWidthHeight(mode.size.x, mode.size.y, nil);
     return mode;
 }
 

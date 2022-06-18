@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,17 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef _WIN32_WINDOWS
-    #undef _WIN32_WINDOWS
-#endif
-#ifdef _WIN32_WINNT
-    #undef _WIN32_WINNT
-#endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
-#include <windows.h>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 
 namespace sf
@@ -157,7 +149,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool visible)
+void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
 }

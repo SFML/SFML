@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,10 +27,20 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/ALCheck.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Time.hpp>
 #include <fstream>
+#include <algorithm>
+#include <mutex>
+#include <ostream>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
 
 namespace sf
 {
@@ -52,7 +62,7 @@ Music::~Music()
 
 
 ////////////////////////////////////////////////////////////
-bool Music::openFromFile(const std::string& filename)
+bool Music::openFromFile(const std::filesystem::path& filename)
 {
     // First stop the music if it was already running
     stop();
@@ -178,7 +188,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
 ////////////////////////////////////////////////////////////
 bool Music::onGetData(SoundStream::Chunk& data)
 {
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     std::size_t toFill = m_samples.size();
     Uint64 currentOffset = m_file.getSampleOffset();
@@ -191,8 +201,8 @@ bool Music::onGetData(SoundStream::Chunk& data)
         toFill = static_cast<std::size_t>(loopEnd - currentOffset);
 
     // Fill the chunk parameters
-    data.samples = &m_samples[0];
-    data.sampleCount = static_cast<std::size_t>(m_file.read(&m_samples[0], toFill));
+    data.samples = m_samples.data();
+    data.sampleCount = static_cast<std::size_t>(m_file.read(m_samples.data(), toFill));
     currentOffset += data.sampleCount;
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point
@@ -203,7 +213,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
 ////////////////////////////////////////////////////////////
 void Music::onSeek(Time timeOffset)
 {
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     m_file.seek(timeOffset);
 }
 
@@ -212,14 +222,14 @@ void Music::onSeek(Time timeOffset)
 Int64 Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
-    Lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     Uint64 currentOffset = m_file.getSampleOffset();
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset == m_loopSpan.offset + m_loopSpan.length))
     {
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
         // when it's equivalent to the loop end (loop end takes priority). Send us to loop begin
         m_file.seek(m_loopSpan.offset);
-        return m_file.getSampleOffset();
+        return static_cast<Int64>(m_file.getSampleOffset());
     }
     else if (getLoop() && (currentOffset >= m_file.getSampleCount()))
     {
@@ -239,7 +249,7 @@ void Music::initialize()
     m_loopSpan.length = m_file.getSampleCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    m_samples.resize(m_file.getSampleRate() * m_file.getChannelCount());
+    m_samples.resize(static_cast<std::size_t>(m_file.getSampleRate()) * static_cast<std::size_t>(m_file.getChannelCount()));
 
     // Initialize the stream
     SoundStream::initialize(m_file.getChannelCount(), m_file.getSampleRate());
@@ -252,7 +262,7 @@ Uint64 Music::timeToSamples(Time position) const
     // This avoids most precision errors arising from "samples => Time => samples" conversions
     // Original rounding calculation is ((Micros * Freq * Channels) / 1000000) + 0.5
     // We refactor it to keep Int64 as the data type throughout the whole operation.
-    return ((position.asMicroseconds() * getSampleRate() * getChannelCount()) + 500000) / 1000000;
+    return ((static_cast<Uint64>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
 }
 
 
@@ -263,7 +273,7 @@ Time Music::samplesToTime(Uint64 samples) const
 
     // Make sure we don't divide by 0
     if (getSampleRate() != 0 && getChannelCount() != 0)
-        position = microseconds((samples * 1000000) / (getChannelCount() * getSampleRate()));
+        position = microseconds(static_cast<Int64>((samples * 1000000) / (getChannelCount() * getSampleRate())));
 
     return position;
 }

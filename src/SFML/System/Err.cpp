@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
+#include <iostream>
 #include <streambuf>
 #include <cstdio>
 
@@ -41,12 +42,12 @@ public:
     DefaultErrStreamBuf()
     {
         // Allocate the write buffer
-        static const int size = 64;
+        constexpr int size = 64;
         char* buffer = new char[size];
         setp(buffer, buffer + size);
     }
 
-    ~DefaultErrStreamBuf()
+    ~DefaultErrStreamBuf() override
     {
         // Synchronize
         sync();
@@ -57,7 +58,7 @@ public:
 
 private:
 
-    virtual int overflow(int character)
+    int overflow(int character) override
     {
         if ((character != EOF) && (pptr() != epptr()))
         {
@@ -77,13 +78,13 @@ private:
         }
     }
 
-    virtual int sync()
+    int sync() override
     {
         // Check if there is something into the write buffer
         if (pbase() != pptr())
         {
             // Print the contents of the write buffer into the standard error output
-            std::size_t size = static_cast<int>(pptr() - pbase());
+            auto size = static_cast<std::size_t>(pptr() - pbase());
             fwrite(pbase(), 1, size, stderr);
 
             // Reset the pointer position to the beginning of the write buffer

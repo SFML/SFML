@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //               2013-2013 David Demelier (demelier.david@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -27,13 +27,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/Err.hpp>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <utility>
 
@@ -50,8 +49,8 @@
 
 namespace
 {
-    std::map<unsigned int, std::string> plugged;
-    std::map<int, std::pair<int, int> > hatValueMap;
+    std::unordered_map<unsigned int, std::string> plugged;
+    std::unordered_map<int, std::pair<int, int> > hatValueMap;
 
     bool isJoystick(const char *name)
     {
@@ -124,7 +123,7 @@ namespace
                     name += directoryEntry->d_name;
 
                     if (isJoystick(name.c_str()))
-                        plugged[joystickCount++] = name;
+                        plugged[static_cast<unsigned int>(joystickCount++)] = name;
                 }
 
                 directoryEntry = readdir(directory);
@@ -150,8 +149,8 @@ namespace
 
     void hatValueToSfml(int value, sf::priv::JoystickState& state)
     {
-        state.axes[sf::Joystick::PovX] = hatValueMap[value].first;
-        state.axes[sf::Joystick::PovY] = hatValueMap[value].second;
+        state.axes[sf::Joystick::PovX] = static_cast<float>(hatValueMap[value].first);
+        state.axes[sf::Joystick::PovY] = static_cast<float>(hatValueMap[value].second);
     }
 }
 
@@ -163,7 +162,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    hid_init(NULL);
+    hid_init(nullptr);
 
     // Do an initial scan
     updatePluggedList();
@@ -221,7 +220,7 @@ bool JoystickImpl::open(unsigned int index)
 
             // Then allocate a buffer for data retrieval
             m_length = hid_report_size(m_desc, hid_input, m_id);
-            m_buffer.resize(m_length);
+            m_buffer.resize(static_cast<size_t>(m_length));
 
             m_state.connected = true;
 
@@ -257,7 +256,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
             if (usage == HUP_BUTTON)
             {
-                caps.buttonCount++;
+                ++caps.buttonCount;
                 break;
             }
             else if (usage == HUP_GENERIC_DESKTOP)
@@ -293,7 +292,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
-    while (read(m_file, &m_buffer[0], m_length) == m_length)
+    while (read(m_file, m_buffer.data(), static_cast<size_t>(m_length)) == m_length)
     {
         hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 
@@ -312,11 +311,11 @@ JoystickState JoystickImpl::JoystickImpl::update()
 
                 if (usage == HUP_BUTTON)
                 {
-                    m_state.buttons[buttonIndex++] = hid_get_data(&m_buffer[0], &item);
+                    m_state.buttons[buttonIndex++] = hid_get_data(m_buffer.data(), &item);
                 }
                 else if (usage == HUP_GENERIC_DESKTOP)
                 {
-                    int value = hid_get_data(&m_buffer[0], &item);
+                    int value = hid_get_data(m_buffer.data(), &item);
                     int axis = usageToAxis(usage);
 
                     if (usage == HUG_HAT_SWITCH)
@@ -329,7 +328,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
                         int maximum = item.logical_maximum;
 
                         value = (value - minimum) * 200 / (maximum - minimum) - 100;
-                        m_state.axes[axis] = value;
+                        m_state.axes[axis] = static_cast<float>(value);
                     }
                 }
             }

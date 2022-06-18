@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -130,7 +130,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the sprite
     ///
-    /// If the sprite has no source texture, a NULL pointer is returned.
+    /// If the sprite has no source texture, a null pointer is returned.
     /// The returned pointer is const, which means that you can't
     /// modify the texture when you retrieve it with this function.
     ///
@@ -198,7 +198,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void draw(RenderTarget& target, RenderStates states) const;
+    void draw(RenderTarget& target, const RenderStates& states) const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the vertices' positions
@@ -215,9 +215,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vertex         m_vertices[4]; ///< Vertices defining the sprite's geometry
-    const Texture* m_texture;     ///< Texture of the sprite
-    IntRect        m_textureRect; ///< Rectangle defining the area of the source texture to display
+    Vertex         m_vertices[4]; //!< Vertices defining the sprite's geometry
+    const Texture* m_texture;     //!< Texture of the sprite
+    IntRect        m_textureRect; //!< Rectangle defining the area of the source texture to display
 };
 
 } // namespace sf

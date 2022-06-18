@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,8 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterWav.hpp>
 #include <SFML/System/Err.hpp>
-#include <algorithm>
-#include <cctype>
+#include <SFML/System/Utils.hpp>
+#include <ostream>
 #include <cassert>
 
 
@@ -75,12 +75,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterWav::check(const std::string& filename)
+bool SoundFileWriterWav::check(const std::filesystem::path& filename)
 {
-    std::string extension = filename.substr(filename.find_last_of(".") + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-    return extension == "wav";
+    return toLower(filename.extension().string()) == ".wav";
 }
 
 
@@ -99,20 +96,20 @@ SoundFileWriterWav::~SoundFileWriterWav()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterWav::open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // Open the file
     m_file.open(filename.c_str(), std::ios::binary);
     if (!m_file)
     {
-        err() << "Failed to open WAV sound file \"" << filename << "\" for writing" << std::endl;
+        err() << "Failed to open WAV sound file for writing\n" << formatDebugPathInfo(filename) << std::endl;
         return false;
     }
 
     // Write the header
     if (!writeHeader(sampleRate, channelCount))
     {
-        err() << "Failed to write header of WAV sound file \"" << filename << "\"" << std::endl;
+        err() << "Failed to write header of WAV sound file\n" << formatDebugPathInfo(filename) << std::endl;
         return false;
     }
 
@@ -140,8 +137,7 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     m_file.write(mainChunkId, sizeof(mainChunkId));
 
     // Write the main chunk header
-    Uint32 mainChunkSize = 0; // placeholder, will be written later
-    encode(m_file, mainChunkSize);
+    encode(m_file, static_cast<Uint32>(0)); // 0 is a placeholder, will be written later
     char mainChunkFormat[4] = {'W', 'A', 'V', 'E'};
     m_file.write(mainChunkFormat, sizeof(mainChunkFormat));
 
@@ -157,10 +153,10 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
 
     // Write the sound attributes
     encode(m_file, static_cast<Uint16>(channelCount));
-    encode(m_file, static_cast<Uint32>(sampleRate));
+    encode(m_file, sampleRate);
     Uint32 byteRate = sampleRate * channelCount * 2;
     encode(m_file, byteRate);
-    Uint16 blockAlign = channelCount * 2;
+    auto blockAlign = static_cast<Uint16>(channelCount * 2);
     encode(m_file, blockAlign);
     Uint16 bitsPerSample = 16;
     encode(m_file, bitsPerSample);
@@ -185,12 +181,10 @@ void SoundFileWriterWav::close()
 
         // Update the main chunk size and data sub-chunk size
         Uint32 fileSize = static_cast<Uint32>(m_file.tellp());
-        Uint32 mainChunkSize = fileSize - 8;  // 8 bytes RIFF header
-        Uint32 dataChunkSize = fileSize - 44; // 44 bytes RIFF + WAVE headers
         m_file.seekp(4);
-        encode(m_file, mainChunkSize);
+        encode(m_file, fileSize - 8); // 8 bytes RIFF header
         m_file.seekp(40);
-        encode(m_file, dataChunkSize);
+        encode(m_file, fileSize - 44); // 44 bytes RIFF + WAVE headers
 
         m_file.close();
     }

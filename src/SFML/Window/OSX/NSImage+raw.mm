@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -35,8 +35,8 @@
     // Create an empty image representation.
     NSBitmapImageRep* bitmap =
     [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:0 // if 0: only allocate memory
-                                            pixelsWide:size.width
-                                            pixelsHigh:size.height
+                                            pixelsWide:(static_cast<NSInteger>(size.width))
+                                            pixelsHigh:(static_cast<NSInteger>(size.height))
                                          bitsPerSample:8 // The number of bits used to specify
                                                          // one pixel in a single component of the data.
                                        samplesPerPixel:4 // 3 if no alpha, 4 with it

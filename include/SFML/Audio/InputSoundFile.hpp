@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,14 +29,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Time.hpp>
+#include <filesystem>
+#include <memory>
 #include <string>
-#include <algorithm>
+#include <cstddef>
 
 
 namespace sf
 {
+class Time;
 class InputStream;
 class SoundFileReader;
 
@@ -44,7 +45,7 @@ class SoundFileReader;
 /// \brief Provide read access to sound files
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API InputSoundFile : NonCopyable
+class SFML_AUDIO_API InputSoundFile
 {
 public:
 
@@ -61,17 +62,34 @@ public:
     ~InputSoundFile();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile(const InputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile& operator=(const InputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading
     ///
-    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.
     /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// Because of minimp3_ex limitation, for MP3 files with big (>16kb) APEv2 tag,
+    /// it may not be properly removed, tag data will be treated as MP3 data
+    /// and there is a low chance of garbage decoded at the end of file.
+    /// See also: https://github.com/lieff/minimp3
     ///
     /// \param filename Path of the sound file to load
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromFile(const std::string& filename);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file in memory for reading
@@ -85,7 +103,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from a custom stream for reading
@@ -98,7 +116,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromStream(InputStream& stream);
+    [[nodiscard]] bool openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
@@ -193,7 +211,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -202,17 +220,32 @@ public:
     void close();
 
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleter for input streams that only conditionally deletes
+    ///
+    ////////////////////////////////////////////////////////////
+    struct StreamDeleter
+    {
+        StreamDeleter(bool theOwned);
+
+        // To accept ownership transfer from usual std::unique_ptr<T>
+        template <typename T>
+        StreamDeleter(const std::default_delete<T>&);
+
+        void operator()(InputStream* ptr) const;
+
+        bool owned;
+    };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileReader* m_reader;       ///< Reader that handles I/O on the file's format
-    InputStream*     m_stream;       ///< Input stream used to access the file's data
-    bool             m_streamOwned;  ///< Is the stream internal or external?
-    Uint64           m_sampleOffset; ///< Sample Read Position
-    Uint64           m_sampleCount;  ///< Total number of samples in the file
-    unsigned int     m_channelCount; ///< Number of channels of the sound
-    unsigned int     m_sampleRate;   ///< Number of samples per second
+    std::unique_ptr<SoundFileReader>            m_reader;       //!< Reader that handles I/O on the file's format
+    std::unique_ptr<InputStream, StreamDeleter> m_stream;       //!< Input stream used to access the file's data
+    Uint64                                      m_sampleOffset; //!< Sample Read Position
+    Uint64                                      m_sampleCount;  //!< Total number of samples in the file
+    unsigned int                                m_channelCount; //!< Number of channels of the sound
+    unsigned int                                m_sampleRate;   //!< Number of samples per second
 };
 
 } // namespace sf
@@ -240,10 +273,10 @@ private:
 ///     /* error */;
 ///
 /// // Print the sound attributes
-/// std::cout << "duration: " << file.getDuration().asSeconds() << std::endl;
-/// std::cout << "channels: " << file.getChannelCount() << std::endl;
-/// std::cout << "sample rate: " << file.getSampleRate() << std::endl;
-/// std::cout << "sample count: " << file.getSampleCount() << std::endl;
+/// std::cout << "duration: " << file.getDuration().asSeconds() << '\n'
+///           << "channels: " << file.getChannelCount() << '\n'
+///           << "sample rate: " << file.getSampleRate() << '\n'
+///           << "sample count: " << file.getSampleCount() << std::endl;
 ///
 /// // Read and process batches of samples until the end of file is reached
 /// sf::Int16 samples[1024];

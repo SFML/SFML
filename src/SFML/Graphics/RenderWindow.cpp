@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
@@ -60,10 +61,7 @@ m_defaultFrameBuffer(0)
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::~RenderWindow()
-{
-    // Nothing to do
-}
+RenderWindow::~RenderWindow() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -74,13 +72,20 @@ Vector2u RenderWindow::getSize() const
 
 
 ////////////////////////////////////////////////////////////
+bool RenderWindow::isSrgb() const
+{
+    return getSettings().sRgbCapable;
+}
+
+
+////////////////////////////////////////////////////////////
 bool RenderWindow::setActive(bool active)
 {
     bool result = Window::setActive(active);
 
     // Update RenderTarget tracking
     if (result)
-        RenderTarget::setActive(active);
+        result = RenderTarget::setActive(active);
 
     // If FBOs are available, make sure none are bound when we
     // try to draw to the default framebuffer of the RenderWindow
@@ -92,19 +97,6 @@ bool RenderWindow::setActive(bool active)
     }
 
     return result;
-}
-
-
-////////////////////////////////////////////////////////////
-Image RenderWindow::capture() const
-{
-    Vector2u windowSize = getSize();
-
-    Texture texture;
-    texture.create(windowSize.x, windowSize.y);
-    texture.update(*this);
-
-    return texture.copyToImage();
 }
 
 

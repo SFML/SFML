@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,11 +30,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/String.hpp>
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDKeys.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 namespace sf
@@ -79,7 +78,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool open(unsigned int index);
+    [[nodiscard]] bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the joystick
@@ -109,16 +108,16 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    JoystickState update();
+    [[nodiscard]] JoystickState update();
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    typedef long                                          Location;
-    typedef std::map<sf::Joystick::Axis, IOHIDElementRef> AxisMap;
-    typedef std::vector<IOHIDElementRef>                  ButtonsVector;
+    using Location = long;
+    using AxisMap = std::unordered_map<sf::Joystick::Axis, IOHIDElementRef>;
+    using ButtonsVector = std::vector<IOHIDElementRef>;
 
     AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
     IOHIDElementRef          m_hat;            ///< POV/Hat axis of the joystick

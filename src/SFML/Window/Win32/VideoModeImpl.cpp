@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
-#include <windows.h>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <algorithm>
 
 
@@ -43,10 +43,10 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     DEVMODE win32Mode;
     win32Mode.dmSize = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
-    for (int count = 0; EnumDisplaySettings(NULL, count, &win32Mode); ++count)
+    for (int count = 0; EnumDisplaySettings(nullptr, static_cast<DWORD>(count), &win32Mode); ++count)
     {
         // Convert to sf::VideoMode
-        VideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
+        VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())
@@ -63,9 +63,9 @@ VideoMode VideoModeImpl::getDesktopMode()
     DEVMODE win32Mode;
     win32Mode.dmSize = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
-    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &win32Mode);
+    EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoMode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
+    return VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 }
 
 } // namespace priv

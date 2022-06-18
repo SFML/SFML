@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,12 +40,15 @@
 
     // The Visual C++ version of gl.h uses WINGDIAPI and APIENTRY but doesn't define them
     #ifdef _MSC_VER
+        #ifndef WIN32_LEAN_AND_MEAN
+            #define WIN32_LEAN_AND_MEAN
+        #endif
         #include <windows.h>
     #endif
 
     #include <GL/gl.h>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
 
     #if defined(SFML_OPENGL_ES)
         #include <GLES/gl.h>
@@ -67,7 +70,7 @@
 
     #include <GLES/gl.h>
     #include <GLES/glext.h>
-    
+
     // We're not using OpenGL ES 2+ yet, but we can use the sRGB extension
     #include <GLES2/gl2platform.h>
     #include <GLES2/gl2ext.h>

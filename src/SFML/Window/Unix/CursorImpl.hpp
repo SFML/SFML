@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
 #include <X11/Xlib.h>
@@ -43,7 +42,7 @@ namespace priv
 /// \brief Unix implementation of Cursor
 ///
 ////////////////////////////////////////////////////////////
-class CursorImpl : NonCopyable
+class CursorImpl
 {
 public:
 
@@ -64,6 +63,18 @@ public:
     ~CursorImpl();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl(const CursorImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl& operator=(const CursorImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
     /// Refer to sf::Cursor::loadFromPixels().
@@ -82,6 +93,28 @@ public:
 private:
 
     friend class WindowImplX11;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Checks if colored cursors are supported for this display.
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isColorCursorSupported();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a cursor with the provided image (ARGB support)
+    ///
+    /// Refer to sf::Cursor::loadFromPixels().
+    ///
+    ////////////////////////////////////////////////////////////
+    bool loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a cursor with the provided image (monochrome)
+    ///
+    /// Refer to sf::Cursor::loadFromPixels().
+    ///
+    ////////////////////////////////////////////////////////////
+    bool loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release the cursor, if we have loaded one.

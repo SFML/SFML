@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -42,8 +42,8 @@
 
 +(id)stringWithstdwstring:(const std::wstring&)string
 {
-    char* data = (char*)string.data();
-    unsigned size = string.size() * sizeof(wchar_t);
+    const void* data = static_cast<const void*>(string.data());
+    unsigned size = static_cast<unsigned>(string.size() * sizeof(wchar_t));
 
     NSString* str = [[[NSString alloc] initWithBytes:data length:size
                                             encoding:NSUTF32LittleEndianStringEncoding] autorelease];
@@ -56,7 +56,7 @@
     // work for characters like é or à.
     const char *cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
 
-    if (cstr != NULL)
+    if (cstr != nullptr)
         return std::string(cstr);
     else
         return "";
@@ -67,7 +67,7 @@
     // According to Wikipedia, Mac OS X is Little Endian on x86 and x86-64
     // https://en.wikipedia.org/wiki/Endianness
     NSData* asData = [self dataUsingEncoding:NSUTF32LittleEndianStringEncoding];
-    return std::wstring((wchar_t*)[asData bytes], [asData length] / sizeof(wchar_t));
+    return std::wstring(static_cast<const wchar_t*>([asData bytes]), [asData length] / sizeof(wchar_t));
 }
 
 @end

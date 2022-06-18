@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,19 +28,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Export.hpp>
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <memory>
 
 
 namespace sf
 {
+class Cursor;
+class String;
+class VideoMode;
+
 namespace priv
 {
     class WindowImpl;
@@ -52,7 +53,7 @@ class Event;
 /// \brief Window that serves as a base for other windows
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API WindowBase : NonCopyable
+class SFML_WINDOW_API WindowBase
 {
 public:
 
@@ -96,6 +97,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual ~WindowBase();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(const WindowBase&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase& operator=(const WindowBase&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -152,8 +165,7 @@ public:
     /// thus you should always call this function in a loop
     /// to make sure that you process every pending event.
     /// \code
-    /// sf::Event event;
-    /// while (window.pollEvent(event))
+    /// for (sf::Event event; window.pollEvent(event);)
     /// {
     ///    // process event...
     /// }
@@ -166,7 +178,7 @@ public:
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    bool pollEvent(Event& event);
+    [[nodiscard]] bool pollEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -193,7 +205,7 @@ public:
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    bool waitEvent(Event& event);
+    [[nodiscard]] bool waitEvent(Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -260,8 +272,7 @@ public:
     ///
     /// The OS default icon is used by default.
     ///
-    /// \param width  Icon's width, in pixels
-    /// \param height Icon's height, in pixels
+    /// \param size   Icon's width and height, in pixels
     /// \param pixels Pointer to the array of pixels in memory. The
     ///               pixels are copied, so you need not keep the
     ///               source alive after calling this function.
@@ -269,7 +280,7 @@ public:
     /// \see setTitle
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    void setIcon(const Vector2u& size, const Uint8* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -383,7 +394,7 @@ public:
     /// \brief Get the OS-specific handle of the window
     ///
     /// The type of the returned handle is sf::WindowHandle,
-    /// which is a typedef to the handle type defined by the OS.
+    /// which is a type alias to the handle type defined by the OS.
     /// You shouldn't need to use this function, unless you have
     /// very specific stuff to implement that SFML doesn't support,
     /// or implement a temporary workaround until a bug is fixed.
@@ -392,6 +403,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     WindowHandle getSystemHandle() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a Vulkan rendering surface
+    ///
+    /// \param instance  Vulkan instance
+    /// \param surface   Created surface
+    /// \param allocator Allocator to use
+    ///
+    /// \return True if surface creation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator = nullptr);
 
 protected:
 
@@ -430,7 +453,7 @@ private:
     /// \param event Event to filter
     ///
     ////////////////////////////////////////////////////////////
-    bool filterEvent(const Event& event);
+    [[nodiscard]] bool filterEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform some common internal initializations
@@ -441,7 +464,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Get the fullscreen window
     ///
-    /// \return The fullscreen window or NULL if there is none
+    /// \return The fullscreen window or a null pointer if there is none
     ///
     ////////////////////////////////////////////////////////////
     const WindowBase* getFullscreenWindow();
@@ -457,8 +480,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::WindowImpl* m_impl;           ///< Platform-specific implementation of the window
-    Vector2u          m_size;           ///< Current size of the window
+    std::unique_ptr<priv::WindowImpl> m_impl; //!< Platform-specific implementation of the window
+    Vector2u                          m_size; //!< Current size of the window
 };
 
 } // namespace sf
@@ -490,8 +513,7 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    sf::Event event;
-///    while (window.pollEvent(event))
+///    for (sf::Event event; window.pollEvent(event);)
 ///    {
 ///        // Request for closing the window
 ///        if (event.type == sf::Event::Closed)

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,6 +25,9 @@
 #ifndef SFML_VECTOR3_HPP
 #define SFML_VECTOR3_HPP
 
+#include <cassert>
+#include <cmath>
+#include <type_traits>
 
 namespace sf
 {
@@ -44,7 +47,7 @@ public:
     /// Creates a Vector3(0, 0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    Vector3();
+    constexpr Vector3();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
@@ -54,7 +57,7 @@ public:
     /// \param Z Z coordinate
     ///
     ////////////////////////////////////////////////////////////
-    Vector3(T X, T Y, T Z);
+    constexpr Vector3(T X, T Y, T Z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -68,14 +71,73 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Vector3(const Vector3<U>& vector);
+    constexpr explicit Vector3(const Vector3<U>& vector);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Length of the vector <i><b>(floating-point)</b></i>.
+    ///
+    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
+    ///
+    ////////////////////////////////////////////////////////////
+    T length() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Square of vector's length.
+    /// 
+    /// Suitable for comparisons, more efficient than length().
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T lengthSq() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
+    /// 
+    /// \pre \c *this is no zero vector.
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Vector3 normalized() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Dot product of two 3D vectors.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T dot(const Vector3& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Cross product of two 3D vectors.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector3 cross(const Vector3& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise multiplication of \c *this and \c rhs.
+    ///
+    /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y, lhs.z*rhs.z)</tt>.
+    /// 
+    /// Scaling is the most common use case for component-wise multiplication/division.
+    /// This operation is also known as the Hadamard or Schur product.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector3 cwiseMul(const Vector3& rhs) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Component-wise division of \c *this and \c rhs.
+    /// 
+    /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y, lhs.z/rhs.z)</tt>.
+    /// 
+    /// Scaling is the most common use case for component-wise multiplication/division.
+    /// 
+    /// \pre Neither component of \c rhs is zero.
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T x; ///< X coordinate of the vector
-    T y; ///< Y coordinate of the vector
-    T z; ///< Z coordinate of the vector
+    T x; //!< X coordinate of the vector
+    T y; //!< Y coordinate of the vector
+    T z; //!< Z coordinate of the vector
 };
 
 ////////////////////////////////////////////////////////////
@@ -88,7 +150,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator -(const Vector3<T>& left);
+[[nodiscard]] constexpr Vector3<T> operator -(const Vector3<T>& left);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -104,7 +166,7 @@ Vector3<T> operator -(const Vector3<T>& left);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right);
+constexpr Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -120,7 +182,7 @@ Vector3<T>& operator +=(Vector3<T>& left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right);
+constexpr Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -133,7 +195,7 @@ Vector3<T>& operator -=(Vector3<T>& left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right);
+[[nodiscard]] constexpr Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -146,7 +208,7 @@ Vector3<T> operator +(const Vector3<T>& left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right);
+[[nodiscard]] constexpr Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -159,7 +221,7 @@ Vector3<T> operator -(const Vector3<T>& left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator *(const Vector3<T>& left, T right);
+[[nodiscard]] constexpr Vector3<T> operator *(const Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -172,7 +234,7 @@ Vector3<T> operator *(const Vector3<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator *(T left, const Vector3<T>& right);
+[[nodiscard]] constexpr Vector3<T> operator *(T left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -188,7 +250,7 @@ Vector3<T> operator *(T left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator *=(Vector3<T>& left, T right);
+constexpr Vector3<T>& operator *=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -201,7 +263,7 @@ Vector3<T>& operator *=(Vector3<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T> operator /(const Vector3<T>& left, T right);
+[[nodiscard]] constexpr Vector3<T> operator /(const Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -217,7 +279,7 @@ Vector3<T> operator /(const Vector3<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector3<T>& operator /=(Vector3<T>& left, T right);
+constexpr Vector3<T>& operator /=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -232,7 +294,7 @@ Vector3<T>& operator /=(Vector3<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Vector3<T>& left, const Vector3<T>& right);
+[[nodiscard]] constexpr bool operator ==(const Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
@@ -247,13 +309,13 @@ bool operator ==(const Vector3<T>& left, const Vector3<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Vector3<T>& left, const Vector3<T>& right);
+[[nodiscard]] constexpr bool operator !=(const Vector3<T>& left, const Vector3<T>& right);
 
 #include <SFML/System/Vector3.inl>
 
 // Define the most common types
-typedef Vector3<int>   Vector3i;
-typedef Vector3<float> Vector3f;
+using Vector3i = Vector3<int>;
+using Vector3f = Vector3<float>;
 
 } // namespace sf
 
@@ -273,28 +335,33 @@ typedef Vector3<float> Vector3f;
 /// The template parameter T is the type of the coordinates. It
 /// can be any type that supports arithmetic operations (+, -, /, *)
 /// and comparisons (==, !=), for example int or float.
+/// Note that some operations are only meaningful for vectors where T is
+/// a floating point type (e.g. float or double), often because
+/// results cannot be represented accurately with integers.
+/// The method documentation mentions "(floating-point)" in those cases.
 ///
 /// You generally don't have to care about the templated form (sf::Vector3<T>),
-/// the most common specializations have special typedefs:
+/// the most common specializations have special type aliases:
 /// \li sf::Vector3<float> is sf::Vector3f
 /// \li sf::Vector3<int> is sf::Vector3i
 ///
-/// The sf::Vector3 class has a small and simple interface, its x and y members
-/// can be accessed directly (there are no accessors like setX(), getX()) and it
-/// contains no mathematical function like dot product, cross product, length, etc.
+/// The sf::Vector3 class has a small and simple interface, its x, y and z members
+/// can be accessed directly (there are no accessors like setX(), getX()).
 ///
 /// Usage example:
 /// \code
-/// sf::Vector3f v1(16.5f, 24.f, -8.2f);
-/// v1.x = 18.2f;
-/// float y = v1.y;
-/// float z = v1.z;
+/// sf::Vector3f v(16.5f, 24.f, -3.2f);
+/// v.x = 18.2f;
+/// float y = v.y;
 ///
-/// sf::Vector3f v2 = v1 * 5.f;
-/// sf::Vector3f v3;
-/// v3 = v1 + v2;
+/// sf::Vector3f w = v * 5.f;
+/// sf::Vector3f u;
+/// u = v + w;
 ///
-/// bool different = (v2 != v3);
+/// float s = v.dot(w);
+/// sf::Vector3f t = v.cross(w);
+/// 
+/// bool different = (v != u);
 /// \endcode
 ///
 /// Note: for 2-dimensional vectors, see sf::Vector2.

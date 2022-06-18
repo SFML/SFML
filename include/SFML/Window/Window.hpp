@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,9 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
+#include <memory>
 
 
 namespace sf
@@ -102,7 +105,7 @@ public:
     /// Closes the window and frees all the resources attached to it.
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Window();
+    ~Window() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -116,7 +119,7 @@ public:
     /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, Uint32 style = Style::Default);
+    void create(VideoMode mode, const String& title, Uint32 style = Style::Default) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -147,7 +150,7 @@ public:
     /// \param handle   Platform-specific handle of the control
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(WindowHandle handle);
+    void create(WindowHandle handle) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -176,7 +179,7 @@ public:
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
-    virtual void close();
+    void close() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the settings of the OpenGL context of the window
@@ -239,7 +242,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setActive(bool active = true) const;
+    [[nodiscard]] bool setActive(bool active = true) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display on screen what has been rendered to the window so far
@@ -276,9 +279,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::GlContext*  m_context;        ///< Platform-specific implementation of the OpenGL context
-    Clock             m_clock;          ///< Clock for measuring the elapsed time between frames
-    Time              m_frameTimeLimit; ///< Current framerate limit
+    std::unique_ptr<priv::GlContext> m_context;        //!< Platform-specific implementation of the OpenGL context
+    Clock                            m_clock;          //!< Clock for measuring the elapsed time between frames
+    Time                             m_frameTimeLimit; //!< Current framerate limit
 };
 
 } // namespace sf
@@ -333,8 +336,7 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    sf::Event event;
-///    while (window.pollEvent(event))
+///    for (sf::Event event; window.pollEvent(event);)
 ///    {
 ///        // Request for closing the window
 ///        if (event.type == sf::Event::Closed)

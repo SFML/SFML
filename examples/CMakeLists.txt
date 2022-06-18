@@ -1,5 +1,3 @@
-
-
 # CLI based examples
 if (NOT SFML_OS_IOS)
     if(SFML_BUILD_NETWORK)
@@ -27,16 +25,19 @@ if(SFML_BUILD_GRAPHICS)
         add_subdirectory(joystick)
         add_subdirectory(shader)
         add_subdirectory(island)
+        add_subdirectory(vulkan)
     endif()
 
     if(SFML_OS_WINDOWS)
         add_subdirectory(win32)
     elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD)
-        add_subdirectory(X11)
-    elseif(SFML_OS_MACOSX)
+        if(NOT SFML_USE_DRM)
+            add_subdirectory(X11)
+        endif()
+    elseif(SFML_OS_MACOSX AND ${CMAKE_GENERATOR} MATCHES "Xcode")
         add_subdirectory(cocoa)
     endif()
 endif()
 if(SFML_BUILD_GRAPHICS AND SFML_BUILD_AUDIO)
-    add_subdirectory(pong)
+    add_subdirectory(tennis)
 endif()

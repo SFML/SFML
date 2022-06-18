@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <SFML/System/Time.hpp>
 
 
 namespace sf
@@ -49,14 +48,14 @@ public:
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Accelerometer,    ///< Measures the raw acceleration (m/s^2)
-        Gyroscope,        ///< Measures the raw rotation rates (degrees/s)
-        Magnetometer,     ///< Measures the ambient magnetic field (micro-teslas)
-        Gravity,          ///< Measures the direction and intensity of gravity, independent of device acceleration (m/s^2)
-        UserAcceleration, ///< Measures the direction and intensity of device acceleration, independent of the gravity (m/s^2)
-        Orientation,      ///< Measures the absolute 3D orientation (degrees)
+        Accelerometer,    //!< Measures the raw acceleration (m/s^2)
+        Gyroscope,        //!< Measures the raw rotation rates (degrees/s)
+        Magnetometer,     //!< Measures the ambient magnetic field (micro-teslas)
+        Gravity,          //!< Measures the direction and intensity of gravity, independent of device acceleration (m/s^2)
+        UserAcceleration, //!< Measures the direction and intensity of device acceleration, independent of the gravity (m/s^2)
+        Orientation,      //!< Measures the absolute 3D orientation (degrees)
 
-        Count             ///< Keep last -- the total number of sensor types
+        Count             //!< Keep last -- the total number of sensor types
     };
 
     ////////////////////////////////////////////////////////////

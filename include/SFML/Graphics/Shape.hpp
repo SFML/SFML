@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,6 +37,8 @@
 
 namespace sf
 {
+class Texture;
+
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline
 ///
@@ -49,7 +51,7 @@ public:
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Shape();
+    ~Shape() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
@@ -60,7 +62,7 @@ public:
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the shape tries to
     /// use it, the behavior is undefined.
-    /// \a texture can be NULL to disable texturing.
+    /// \a texture can be a null pointer to disable texturing.
     /// If \a resetRect is true, the TextureRect property of
     /// the shape is automatically adjusted to the size of the new
     /// texture. If it is false, the texture rect is left unchanged.
@@ -134,7 +136,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the shape
     ///
-    /// If the shape has no source texture, a NULL pointer is returned.
+    /// If the shape has no source texture, a null pointer is returned.
     /// The returned pointer is const, which means that you can't
     /// modify the texture when you retrieve it with this function.
     ///
@@ -274,7 +276,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    virtual void draw(RenderTarget& target, RenderStates states) const;
+    void draw(RenderTarget& target, const RenderStates& states) const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the fill vertices' color
@@ -305,15 +307,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Texture* m_texture;          ///< Texture of the shape
-    IntRect        m_textureRect;      ///< Rectangle defining the area of the source texture to display
-    Color          m_fillColor;        ///< Fill color
-    Color          m_outlineColor;     ///< Outline color
-    float          m_outlineThickness; ///< Thickness of the shape's outline
-    VertexArray    m_vertices;         ///< Vertex array containing the fill geometry
-    VertexArray    m_outlineVertices;  ///< Vertex array containing the outline geometry
-    FloatRect      m_insideBounds;     ///< Bounding rectangle of the inside (fill)
-    FloatRect      m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
+    const Texture* m_texture;          //!< Texture of the shape
+    IntRect        m_textureRect;      //!< Rectangle defining the area of the source texture to display
+    Color          m_fillColor;        //!< Fill color
+    Color          m_outlineColor;     //!< Outline color
+    float          m_outlineThickness; //!< Thickness of the shape's outline
+    VertexArray    m_vertices;         //!< Vertex array containing the fill geometry
+    VertexArray    m_outlineVertices;  //!< Vertex array containing the outline geometry
+    FloatRect      m_insideBounds;     //!< Bounding rectangle of the inside (fill)
+    FloatRect      m_bounds;           //!< Bounding rectangle of the whole shape (outline + fill)
 };
 
 } // namespace sf

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -49,9 +49,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum Status
     {
-        Stopped, ///< Sound is not playing
-        Paused,  ///< Sound is paused
-        Playing  ///< Sound is playing
+        Stopped, //!< Sound is not playing
+        Paused,  //!< Sound is paused
+        Playing  //!< Sound is playing
     };
 
     ////////////////////////////////////////////////////////////
@@ -96,22 +96,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setVolume(float volume);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the 3D position of the sound in the audio scene
-    ///
-    /// Only sounds with one channel (mono sounds) can be
-    /// spatialized.
-    /// The default position of a sound is (0, 0, 0).
-    ///
-    /// \param x X coordinate of the position of the sound in the scene
-    /// \param y Y coordinate of the position of the sound in the scene
-    /// \param z Z coordinate of the position of the sound in the scene
-    ///
-    /// \see getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    void setPosition(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the 3D position of the sound in the audio scene
@@ -306,7 +290,7 @@ protected:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_source; ///< OpenAL source identifier
+    unsigned int m_source; //!< OpenAL source identifier
 };
 
 } // namespace sf

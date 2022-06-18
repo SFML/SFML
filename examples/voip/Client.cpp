@@ -7,8 +7,8 @@
 #include <iostream>
 
 
-const sf::Uint8 audioData   = 1;
-const sf::Uint8 endOfStream = 2;
+const sf::Uint8 clientAudioData   = 1;
+const sf::Uint8 clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
     /// \see SoundRecorder::~SoundRecorder()
     ///
     ////////////////////////////////////////////////////////////
-    ~NetworkRecorder()
+    ~NetworkRecorder() override
     {
         // Make sure to stop the recording thread
         stop();
@@ -50,7 +50,7 @@ private:
     /// \see SoundRecorder::onStart
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onStart()
+    bool onStart() override
     {
         if (m_socket.connect(m_host, m_port) == sf::Socket::Done)
         {
@@ -67,11 +67,11 @@ private:
     /// \see SoundRecorder::onProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount)
+    bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount) override
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
-        packet << audioData;
+        packet << clientAudioData;
         packet.append(samples, sampleCount * sizeof(sf::Int16));
 
         // Send the audio packet to the server
@@ -82,12 +82,16 @@ private:
     /// \see SoundRecorder::onStop
     ///
     ////////////////////////////////////////////////////////////
-    virtual void onStop()
+    void onStop() override
     {
         // Send a "end-of-stream" packet
         sf::Packet packet;
-        packet << endOfStream;
-        m_socket.send(packet);
+        packet << clientEndOfStream;
+
+        if (m_socket.send(packet) != sf::Socket::Done)
+        {
+            std::cerr << "Failed to send end-of-stream packet" << std::endl;
+        }
 
         // Close the socket
         m_socket.disconnect();
@@ -134,7 +138,12 @@ void doClient(unsigned short port)
     std::cin.ignore(10000, '\n');
 
     // Start capturing audio data
-    recorder.start(44100);
+    if (!recorder.start(44100))
+    {
+        std::cerr << "Failed to start recorder" << std::endl;
+        return;
+    }
+
     std::cout << "Recording... press enter to stop";
     std::cin.ignore(10000, '\n');
     recorder.stop();

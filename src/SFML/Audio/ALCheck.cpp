@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,21 +28,40 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/System/Err.hpp>
 #include <string>
+#include <ostream>
+#include <utility>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
+namespace
+{
+    // A nested named namespace is used here to allow unity builds of SFML.
+    namespace AlCheckImpl
+    {
+        thread_local ALenum lastError(AL_NO_ERROR);
+    }
+}
 
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-void alCheckError(const char* file, unsigned int line, const char* expression)
+void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
 {
     // Get the last error
     ALenum errorCode = alGetError();
 
     if (errorCode != AL_NO_ERROR)
     {
-        std::string fileString = file;
+        AlCheckImpl::lastError = errorCode;
+
         std::string error = "Unknown error";
         std::string description = "No description";
 
@@ -87,11 +106,18 @@ void alCheckError(const char* file, unsigned int line, const char* expression)
 
         // Log the error
         err() << "An internal OpenAL call failed in "
-              << fileString.substr(fileString.find_last_of("\\/") + 1) << "(" << line << ")."
+              << file.filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression
-              << "\nError description:\n   " << error << "\n   " << description << "\n"
+              << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+ALenum alGetLastErrorImpl()
+{
+    return std::exchange(AlCheckImpl::lastError, AL_NO_ERROR);
 }
 
 } // namespace priv

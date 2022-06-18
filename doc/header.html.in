@@ -12,7 +12,7 @@
     <body>
         <div id="banner-container">
             <div id="banner">
-                <span id="sfml">SFML @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@</span>
+                <span id="sfml">SFML @PROJECT_VERSION@</span>
             </div>
         </div>
         <div id="content">

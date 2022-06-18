@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -50,13 +50,13 @@ public:
     ////////////////////////////////////////////////////////////
     enum Button
     {
-        Left,       ///< The left mouse button
-        Right,      ///< The right mouse button
-        Middle,     ///< The middle (wheel) mouse button
-        XButton1,   ///< The first extra mouse button
-        XButton2,   ///< The second extra mouse button
+        Left,       //!< The left mouse button
+        Right,      //!< The right mouse button
+        Middle,     //!< The middle (wheel) mouse button
+        XButton1,   //!< The first extra mouse button
+        XButton2,   //!< The second extra mouse button
 
-        ButtonCount ///< Keep last -- the total number of mouse buttons
+        ButtonCount //!< Keep last -- the total number of mouse buttons
     };
 
     ////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ public:
     ////////////////////////////////////////////////////////////
     enum Wheel
     {
-        VerticalWheel,  ///< The vertical mouse wheel
-        HorizontalWheel ///< The horizontal mouse wheel
+        VerticalWheel,  //!< The vertical mouse wheel
+        HorizontalWheel //!< The horizontal mouse wheel
     };
 
     ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,12 +33,20 @@
 #include <SFML/System/Err.hpp>
 #include <UIKit/UIKit.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
+WindowImplUIKit::WindowImplUIKit(WindowHandle /* handle */)
 {
     // Not implemented
 }
@@ -46,17 +54,17 @@ WindowImplUIKit::WindowImplUIKit(WindowHandle handle)
 
 ////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(VideoMode mode,
-                                 const String& title,
+                                 const String& /* title */,
                                  unsigned long style,
-                                 const ContextSettings& /*settings*/)
+                                 const ContextSettings& /* settings */)
 {
-    m_backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    m_backingScale = static_cast<float>([SFAppDelegate getInstance].backingScaleFactor);
 
     // Apply the fullscreen flag
     [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (style & Style::Fullscreen);
 
     // Set the orientation according to the requested size
-    if (mode.width > mode.height)
+    if (mode.size.x > mode.size.y)
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationLandscapeLeft];
     else
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
@@ -70,14 +78,9 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [SFAppDelegate getInstance].sfWindow = this;
 
     CGRect viewRect = frame;
-    // if UI-orientation doesn't match window-layout, swap the view size and notify the window about it
-    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
-    if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
-        if ((mode.width > mode.height) != (frame.size.width > frame.size.height))
-            std::swap(viewRect.size.width, viewRect.size.height);
 
     // Create the view
-    m_view = [[SFView alloc] initWithFrame:viewRect andContentScaleFactor:m_backingScale];
+    m_view = [[SFView alloc] initWithFrame:viewRect andContentScaleFactor:(static_cast<double>(m_backingScale))];
     [m_view resignFirstResponder];
 
     // Create the view controller
@@ -108,7 +111,25 @@ void WindowImplUIKit::processEvents()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplUIKit::getSystemHandle() const
 {
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wold-style-cast"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wold-style-cast"
+    #endif
+#endif
+
     return (__bridge WindowHandle)m_window;
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic pop
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
+#endif
 }
 
 
@@ -116,12 +137,12 @@ WindowHandle WindowImplUIKit::getSystemHandle() const
 Vector2i WindowImplUIKit::getPosition() const
 {
     CGPoint origin = m_window.frame.origin;
-    return Vector2i(origin.x * m_backingScale, origin.y * m_backingScale);
+    return Vector2i(static_cast<int>(origin.x * static_cast<double>(m_backingScale)), static_cast<int>(origin.y * static_cast<double>(m_backingScale)));
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setPosition(const Vector2i& position)
+void WindowImplUIKit::setPosition(const Vector2i& /* position */)
 {
 }
 
@@ -129,12 +150,8 @@ void WindowImplUIKit::setPosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplUIKit::getSize() const
 {
-    auto physicalFrame = m_window.frame;
-    // iOS 7 and 8 do different stuff here. In iOS 7 frame.x<frame.y always! In iOS 8 it correctly depends on orientation
-    if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1)
-        && UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
-        std::swap(physicalFrame.size.width, physicalFrame.size.height);
-    return Vector2u(physicalFrame.size.width * m_backingScale, physicalFrame.size.height * m_backingScale);
+    CGRect physicalFrame = m_window.frame;
+    return Vector2u(static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)), static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale)));
 }
 
 
@@ -156,49 +173,49 @@ void WindowImplUIKit::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setTitle(const String& title)
+void WindowImplUIKit::setTitle(const String& /* title */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setIcon(unsigned int width, unsigned int height, const Uint8* pixels)
+void WindowImplUIKit::setIcon(const Vector2u& /* size */, const Uint8* /* pixels */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setVisible(bool visible)
+void WindowImplUIKit::setVisible(bool /* visible */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setMouseCursorVisible(bool visible)
+void WindowImplUIKit::setMouseCursorVisible(bool /* visible */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setMouseCursorGrabbed(bool grabbed)
+void WindowImplUIKit::setMouseCursorGrabbed(bool /* grabbed */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setMouseCursor(const CursorImpl& cursor)
+void WindowImplUIKit::setMouseCursor(const CursorImpl& /* cursor */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplUIKit::setKeyRepeatEnabled(bool enabled)
+void WindowImplUIKit::setKeyRepeatEnabled(bool /* enabled */)
 {
     // Not applicable
 }

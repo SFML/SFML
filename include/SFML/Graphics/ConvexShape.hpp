@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -54,7 +54,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
     ///
-    /// \a count must be greater than 2 to define a valid shape.
+    /// For the shape to be rendered as expected, \a count must
+    /// be greater or equal to 3.
     ///
     /// \param count New number of points of the polygon
     ///
@@ -71,16 +72,19 @@ public:
     /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    virtual std::size_t getPointCount() const;
+    std::size_t getPointCount() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of a point
     ///
-    /// Don't forget that the polygon must remain convex, and
-    /// the points need to stay ordered!
-    /// setPointCount must be called first in order to set the total
-    /// number of points. The result is undefined if \a index is out
-    /// of the valid range.
+    /// Don't forget that the shape must be convex and the
+    /// order of points matters. Points should not overlap.
+    /// This applies to rendering; it is explicitly allowed
+    /// to temporarily have non-convex or degenerate shapes
+    /// when not drawn (e.g. during shape initialization).
+    ///
+    /// Point count must be specified beforehand. The behavior is
+    /// undefined if \a index is greater than or equal to getPointCount.
     ///
     /// \param index Index of the point to change, in range [0 .. getPointCount() - 1]
     /// \param point New position of the point
@@ -105,14 +109,14 @@ public:
     /// \see setPoint
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2f getPoint(std::size_t index) const;
+    Vector2f getPoint(std::size_t index) const override;
 
 private:
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<Vector2f> m_points; ///< Points composing the convex polygon
+    std::vector<Vector2f> m_points; //!< Points composing the convex polygon
 };
 
 } // namespace sf

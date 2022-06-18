@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -32,6 +32,14 @@
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
 #import <SFML/Window/OSX/SFSilentResponder.h>
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
 
 
 ////////////////////////////////////////////////////////////
@@ -86,11 +94,17 @@
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect
 {
-    return [self initWithFrame:frameRect fullscreen:NO];
+    return [self initWithFrame:frameRect fullscreen:NO highDpi:NO];
 }
 
 ////////////////////////////////////////////////////////
 -(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
+{
+    return [self initWithFrame:frameRect fullscreen:isFullscreen highDpi:NO];
+}
+
+////////////////////////////////////////////////////////
+-(id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi
 {
     if ((self = [super initWithFrame:frameRect]))
     {
@@ -118,8 +132,12 @@
         m_hiddenTextView = [[NSTextView alloc] initWithFrame:NSZeroRect];
         [m_hiddenTextView setNextResponder:m_silentResponder];
 
-        // Request high resolution on high DPI displays
-        [self setWantsBestResolutionOpenGLSurface:YES];
+        // If high DPI is requested, then use high resolution for the OpenGL view.
+        // Currently, isHighDpi is always expected to be NO, and so the OpenGL view will render scaled.
+        // Note: setWantsBestResolutionOpenGLSurface requires YES to work properly, rather than simply non-zero value.
+        // isHighDpi is an Objective-C BOOL, which can have non-zero values other than YES.
+        m_highDpi = isHighDpi ? YES : NO;
+        [self setWantsBestResolutionOpenGLSurface:m_highDpi];
 
         // At that point, the view isn't attached to a window. We defer the rest of
         // the initialization process to later.
@@ -204,7 +222,7 @@
     point = [self convertPointToScreen:point];
 
     // Flip screen coordinates to match CGDisplayMoveCursorToPoint referential.
-    const float screenHeight = [[[self window] screen] frame].size.height;
+    const double screenHeight = [[[self window] screen] frame].size.height;
     point.y = screenHeight - point.y;
 
     return point;
@@ -224,12 +242,12 @@
     NSWindow* window = [self window];
     NSScreen* screen = window ? [window screen] : [NSScreen mainScreen];
     CGFloat oldScaleFactor = m_scaleFactor;
-    m_scaleFactor = [screen backingScaleFactor];
+    m_scaleFactor = m_highDpi ? [screen backingScaleFactor] : 1.0;
 
     // Send a resize event if the scaling factor changed
     if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0)) {
         NSSize newSize = [self frame].size;
-        m_requester->windowResized(newSize.width, newSize.height);
+        m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
     }
 }
 
@@ -261,7 +279,7 @@
 
     // The new size
     NSSize newSize = [self frame].size;
-    m_requester->windowResized(newSize.width, newSize.height);
+    m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
 }
 
 ////////////////////////////////////////////////////////

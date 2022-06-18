@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 // Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -39,14 +39,18 @@
 
 #ifdef SFML_SYSTEM_WINDOWS
 
-#include <windows.h>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <cstdlib> // for `__argc` and `__argv`
 
 extern int main(int argc, char* argv[]);
 
 ////////////////////////////////////////////////////////////
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
     return main(__argc, __argv);
+    #pragma GCC diagnostic pop
 }
 
 #endif // SFML_SYSTEM_WINDOWS

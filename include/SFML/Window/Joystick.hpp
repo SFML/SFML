@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -48,9 +48,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum
     {
-        Count       = 8,  ///< Maximum number of supported joysticks
-        ButtonCount = 32, ///< Maximum number of supported buttons
-        AxisCount   = 8   ///< Maximum number of supported axes
+        Count       = 8,  //!< Maximum number of supported joysticks
+        ButtonCount = 32, //!< Maximum number of supported buttons
+        AxisCount   = 8   //!< Maximum number of supported axes
     };
 
     ////////////////////////////////////////////////////////////
@@ -59,14 +59,14 @@ public:
     ////////////////////////////////////////////////////////////
     enum Axis
     {
-        X,    ///< The X axis
-        Y,    ///< The Y axis
-        Z,    ///< The Z axis
-        R,    ///< The R axis
-        U,    ///< The U axis
-        V,    ///< The V axis
-        PovX, ///< The X axis of the point-of-view hat
-        PovY  ///< The Y axis of the point-of-view hat
+        X,    //!< The X axis
+        Y,    //!< The Y axis
+        Z,    //!< The Z axis
+        R,    //!< The R axis
+        U,    //!< The U axis
+        V,    //!< The V axis
+        PovX, //!< The X axis of the point-of-view hat
+        PovY  //!< The Y axis of the point-of-view hat
     };
 
     ////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ public:
     {
         Identification();
 
-        String       name;      ///< Name of the joystick
-        unsigned int vendorId;  ///< Manufacturer identifier
-        unsigned int productId; ///< Product identifier
+        String       name;      //!< Name of the joystick
+        unsigned int vendorId;  //!< Manufacturer identifier
+        unsigned int productId; //!< Product identifier
     };
 
     ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,23 +26,25 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <X11/keysym.h>
+#include <mutex>
+#include <unordered_map>
+#include <ostream>
 #include <cassert>
 #include <cstdlib>
-#include <map>
 
 
 namespace
 {
     // The shared display and its reference counter
-    Display* sharedDisplay = NULL;
+    Display* sharedDisplay = nullptr;
     unsigned int referenceCount = 0;
-    sf::Mutex mutex;
+    XIM sharedXIM = nullptr;
+    unsigned int referenceCountXIM = 0;
+    std::recursive_mutex mutex;
 
-    typedef std::map<std::string, Atom> AtomMap;
+    using AtomMap = std::unordered_map<std::string, Atom>;
     AtomMap atoms;
 }
 
@@ -53,11 +55,11 @@ namespace priv
 ////////////////////////////////////////////////////////////
 Display* OpenDisplay()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     if (referenceCount == 0)
     {
-        sharedDisplay = XOpenDisplay(NULL);
+        sharedDisplay = XOpenDisplay(nullptr);
 
         // Opening display failed: The best we can do at the moment is to output a meaningful error message
         // and cause an abnormal program termination
@@ -68,7 +70,7 @@ Display* OpenDisplay()
         }
     }
 
-    referenceCount++;
+    ++referenceCount;
     return sharedDisplay;
 }
 
@@ -76,23 +78,71 @@ Display* OpenDisplay()
 ////////////////////////////////////////////////////////////
 void CloseDisplay(Display* display)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(display == sharedDisplay);
 
-    referenceCount--;
+    --referenceCount;
     if (referenceCount == 0)
         XCloseDisplay(display);
 }
 
+////////////////////////////////////////////////////////////
+XIM OpenXIM()
+{
+    std::scoped_lock lock(mutex);
+
+    assert(sharedDisplay != nullptr);
+
+    if (referenceCountXIM == 0)
+    {
+        // Create a new XIM instance
+
+        // We need the default (environment) locale and X locale for opening
+        // the IM and properly receiving text
+        // First save the previous ones (this might be able to be written more elegantly?)
+        const char* p;
+        std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
+        std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
+
+        // Set the locales from environment
+        setlocale(LC_ALL, "");
+        XSetLocaleModifiers("");
+
+        // Create the input context
+        sharedXIM = XOpenIM(sharedDisplay, nullptr, nullptr, nullptr);
+
+        // Restore the previous locale
+        if (prevLoc.length() != 0)
+            setlocale(LC_ALL, prevLoc.c_str());
+
+        if (prevXLoc.length() != 0)
+            XSetLocaleModifiers(prevXLoc.c_str());
+    }
+
+    ++referenceCountXIM;
+
+    return sharedXIM;
+}
+
+////////////////////////////////////////////////////////////
+void CloseXIM(XIM xim)
+{
+    std::scoped_lock lock(mutex);
+
+    assert(xim == sharedXIM);
+
+    --referenceCountXIM;
+
+    if ((referenceCountXIM == 0) && (xim != nullptr))
+        XCloseIM(xim);
+}
 
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists)
 {
-    AtomMap::const_iterator iter = atoms.find(name);
-
-    if (iter != atoms.end())
-        return iter->second;
+    if (auto it = atoms.find(name); it != atoms.end())
+        return it->second;
 
     Display* display = OpenDisplay();
 

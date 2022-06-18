@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 // Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/Activity.hpp>
 #include <android/log.h>
+#include <cassert>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-error", __VA_ARGS__))
 
@@ -40,14 +41,14 @@ std::streambuf()
 
 std::streambuf::int_type LogcatStream::overflow (std::streambuf::int_type c)
 {
-    if (c == "\n"[0])
+    if (c == '\n')
     {
-        m_message.push_back(c);
+        m_message.push_back(static_cast<char>(c));
         LOGE("%s", m_message.c_str());
         m_message.clear();
     }
 
-    m_message.push_back(c);
+    m_message.push_back(static_cast<char>(c));
 
     return traits_type::not_eof(c);
 }
@@ -56,14 +57,24 @@ namespace sf
 {
 namespace priv
 {
-ActivityStates* getActivity(ActivityStates* initializedStates, bool reset)
+
+ActivityStates*& getActivityStatesPtr()
 {
-    static ActivityStates* states = NULL;
-
-    if (!states || reset)
-        states = initializedStates;
-
+    static ActivityStates* states = nullptr;
     return states;
 }
+
+void resetActivity(ActivityStates* initializedStates)
+{
+    getActivityStatesPtr() = initializedStates;
+}
+
+ActivityStates& getActivity()
+{
+    ActivityStates* const states = getActivityStatesPtr();
+    assert(states != nullptr);
+    return *states;
+}
+
 }
 }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,16 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
 
+// We check for this definition in order to avoid multiple definitions of GLAD
+// entities during unity builds of SFML.
+#ifndef SF_GLAD_GL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_GL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+#endif
+
+#include <ostream>
+
 #if !defined(GL_MAJOR_VERSION)
     #define GL_MAJOR_VERSION 0x821B
 #endif
@@ -45,13 +55,16 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
-#if !defined(SFML_OPENGL_ES)
     static bool initialized = false;
     if (!initialized)
     {
         initialized = true;
 
-        sfogl_LoadFunctions();
+#ifdef SFML_OPENGL_ES
+        gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#else
+        gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+#endif
 
         // Retrieve the context version number
         int majorVersion = 0;
@@ -81,11 +94,10 @@ void ensureExtensionsInit()
 
         if ((majorVersion < 1) || ((majorVersion == 1) && (minorVersion < 1)))
         {
-            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
     }
-#endif
 }
 
 } // namespace priv

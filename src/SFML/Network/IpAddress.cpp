@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,8 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Http.hpp>
 #include <SFML/Network/SocketImpl.hpp>
+#include <istream>
+#include <ostream>
 #include <cstring>
 #include <utility>
 
@@ -69,7 +71,7 @@ m_valid  (false)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)),
+m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))),
 m_valid  (true)
 {
 }
@@ -193,12 +195,14 @@ void IpAddress::resolve(const std::string& address)
             addrinfo hints;
             std::memset(&hints, 0, sizeof(hints));
             hints.ai_family = AF_INET;
-            addrinfo* result = NULL;
-            if (getaddrinfo(address.c_str(), NULL, &hints, &result) == 0)
+            addrinfo* result = nullptr;
+            if (getaddrinfo(address.c_str(), nullptr, &hints, &result) == 0)
             {
                 if (result)
                 {
-                    ip = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.s_addr;
+                    sockaddr_in sin;
+                    std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
+                    ip = sin.sin_addr.s_addr;
                     freeaddrinfo(result);
                     m_address = ip;
                     m_valid = true;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,11 +29,13 @@
 #include <SFML/System/Err.hpp>
 #include <linux/joystick.h>
 #include <libudev.h>
+#include <poll.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <vector>
 #include <string>
+#include <vector>
+#include <ostream>
+#include <cerrno>
 #include <cstring>
 
 namespace
@@ -48,7 +50,7 @@ namespace
         bool plugged;
     };
 
-    typedef std::vector<JoystickRecord> JoystickList;
+    using JoystickList = std::vector<JoystickRecord>;
     JoystickList joystickList;
 
     bool isJoystick(udev_device* udevDevice)
@@ -112,7 +114,7 @@ namespace
         return true;
     }
 
-    void updatePluggedList(udev_device* udevDevice = NULL)
+    void updatePluggedList(udev_device* udevDevice = nullptr)
     {
         if (udevDevice)
         {
@@ -125,42 +127,42 @@ namespace
                     // Since isJoystick returned true, this has to succeed
                     const char* devnode = udev_device_get_devnode(udevDevice);
 
-                    JoystickList::iterator record;
+                    JoystickList::iterator recordIt;
 
-                    for (record = joystickList.begin(); record != joystickList.end(); ++record)
+                    for (recordIt = joystickList.begin(); recordIt != joystickList.end(); ++recordIt)
                     {
-                        if (record->deviceNode == devnode)
+                        if (recordIt->deviceNode == devnode)
                         {
                             if (std::strstr(action, "add"))
                             {
                                 // The system path might have changed so update it
                                 const char* syspath = udev_device_get_syspath(udevDevice);
 
-                                record->plugged = true;
-                                record->systemPath = syspath ? syspath : "";
+                                recordIt->plugged = true;
+                                recordIt->systemPath = syspath ? syspath : "";
                                 break;
                             }
                             else if (std::strstr(action, "remove"))
                             {
-                                record->plugged = false;
+                                recordIt->plugged = false;
                                 break;
                             }
                         }
                     }
 
-                    if (record == joystickList.end())
+                    if (recordIt == joystickList.end())
                     {
                         if (std::strstr(action, "add"))
                         {
                             // If not mapped before and it got added, map it now
                             const char* syspath = udev_device_get_syspath(udevDevice);
 
-                            JoystickRecord record;
-                            record.deviceNode = devnode;
-                            record.systemPath = syspath ? syspath : "";
-                            record.plugged = true;
+                            JoystickRecord newRecord;
+                            newRecord.deviceNode = devnode;
+                            newRecord.systemPath = syspath ? syspath : "";
+                            newRecord.plugged    = true;
 
-                            joystickList.push_back(record);
+                            joystickList.push_back(newRecord);
                         }
                         else if (std::strstr(action, "remove"))
                         {
@@ -177,8 +179,8 @@ namespace
         }
 
         // Reset the plugged status of each mapping since we are doing a full rescan
-        for (JoystickList::iterator record = joystickList.begin(); record != joystickList.end(); ++record)
-            record->plugged = false;
+        for (JoystickRecord& record : joystickList)
+            record.plugged = false;
 
         udev_enumerate* udevEnumerator = udev_enumerate_new(udevContext);
 
@@ -211,38 +213,38 @@ namespace
 
         udev_list_entry_foreach(device, devices) {
             const char* syspath = udev_list_entry_get_name(device);
-            udev_device* udevDevice = udev_device_new_from_syspath(udevContext, syspath);
+            udev_device* newUdevDevice = udev_device_new_from_syspath(udevContext, syspath);
 
-            if (udevDevice && isJoystick(udevDevice))
+            if (newUdevDevice && isJoystick(newUdevDevice))
             {
                 // Since isJoystick returned true, this has to succeed
-                const char* devnode = udev_device_get_devnode(udevDevice);
+                const char* devnode = udev_device_get_devnode(newUdevDevice);
 
-                JoystickList::iterator record;
+                JoystickList::iterator recordIt;
 
                 // Check if the device node has been mapped before
-                for (record = joystickList.begin(); record != joystickList.end(); ++record)
+                for (recordIt = joystickList.begin(); recordIt != joystickList.end(); ++recordIt)
                 {
-                    if (record->deviceNode == devnode)
+                    if (recordIt->deviceNode == devnode)
                     {
-                        record->plugged = true;
+                        recordIt->plugged = true;
                         break;
                     }
                 }
 
                 // If not mapped before, map it now
-                if (record == joystickList.end())
+                if (recordIt == joystickList.end())
                 {
-                    JoystickRecord record;
-                    record.deviceNode = devnode;
-                    record.systemPath = syspath;
-                    record.plugged = true;
+                    JoystickRecord newRecord;
+                    newRecord.deviceNode = devnode;
+                    newRecord.systemPath = syspath;
+                    newRecord.plugged    = true;
 
-                    joystickList.push_back(record);
+                    joystickList.push_back(newRecord);
                 }
             }
 
-            udev_device_unref(udevDevice);
+            udev_device_unref(newUdevDevice);
         }
 
         udev_enumerate_unref(udevEnumerator);
@@ -253,13 +255,9 @@ namespace
         // This will not fail since we make sure udevMonitor is valid
         int monitorFd = udev_monitor_get_fd(udevMonitor);
 
-        fd_set descriptorSet;
-        FD_ZERO(&descriptorSet);
-        FD_SET(monitorFd, &descriptorSet);
-        timeval timeout = {0, 0};
+        pollfd fds{ monitorFd, POLLIN, 0 };
 
-        return (select(monitorFd + 1, &descriptorSet, NULL, NULL, &timeout) > 0) &&
-               FD_ISSET(monitorFd, &descriptorSet);
+        return (poll(&fds, 1, 0) > 0) && ((fds.revents & POLLIN) != 0);
     }
 
     // Get a property value from a udev device
@@ -274,7 +272,7 @@ namespace
         udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(udevDevice, "usb", "usb_device");
 
         if (!udevDeviceParent)
-            return NULL;
+            return nullptr;
 
         return udev_device_get_sysattr_value(udevDeviceParent, attributeName.c_str());
     }
@@ -289,7 +287,7 @@ namespace
         unsigned int value = 0;
 
         if (attribute)
-            value = static_cast<unsigned int>(std::strtoul(attribute, NULL, 16));
+            value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
         return value;
     }
@@ -304,7 +302,7 @@ namespace
         unsigned int value = 0;
 
         if (attribute)
-            value = static_cast<unsigned int>(std::strtoul(attribute, NULL, 16));
+            value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
         return value;
     }
@@ -466,7 +464,7 @@ void JoystickImpl::initialize()
     }
     else
     {
-        int error = udev_monitor_filter_add_match_subsystem_devtype(udevMonitor, "input", NULL);
+        int error = udev_monitor_filter_add_match_subsystem_devtype(udevMonitor, "input", nullptr);
 
         if (error < 0)
         {
@@ -528,7 +526,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         udev_device* udevDevice = udev_monitor_receive_device(udevMonitor);
 
         // If we can get the specific device, we check that,
-        // otherwise just do a full scan if udevDevice == NULL
+        // otherwise just do a full scan if udevDevice == nullptr
         updatePluggedList(udevDevice);
 
         if (udevDevice)
@@ -602,7 +600,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
     // Get the number of buttons
     char buttonCount;
     ioctl(m_file, JSIOCGBUTTONS, &buttonCount);
-    caps.buttonCount = buttonCount;
+    caps.buttonCount = static_cast<unsigned int>(buttonCount);
     if (caps.buttonCount > Joystick::ButtonCount)
         caps.buttonCount = Joystick::ButtonCount;
 
@@ -649,7 +647,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
 
     // pop events from the joystick file
     js_event joyState;
-    int result = read(m_file, &joyState, sizeof(joyState));
+    ssize_t result = read(m_file, &joyState, sizeof(joyState));
     while (result > 0)
     {
         switch (joyState.type & ~JS_EVENT_INIT)

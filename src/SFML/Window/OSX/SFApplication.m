@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -28,6 +28,14 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFApplication.h>
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 
 ////////////////////////////////////////////////////////////
 @implementation SFApplication
@@ -52,6 +60,8 @@
 ////////////////////////////////////////////////////////
 +(void)setUpMenuBar
 {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
     [SFApplication sharedApplication]; // Make sure NSApp exists
 
     // Set the main menu bar
@@ -76,6 +86,8 @@
     NSMenu* windowMenu = [[SFApplication newWindowMenu] autorelease];
     [windowItem setSubmenu:windowMenu];
     [NSApp setWindowsMenu:windowMenu];
+
+    [pool drain];
 }
 
 
@@ -97,6 +109,8 @@
     //    Show All
     //    --------------------
     //    Quit AppName      Command+Q
+
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     NSString* appName = [SFApplication applicationName];
 
@@ -153,6 +167,8 @@
     [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:appName]
                          action:@selector(terminate:)
                   keyEquivalent:@"q"];
+
+    [pool drain];
 
     return appleMenu;
 }

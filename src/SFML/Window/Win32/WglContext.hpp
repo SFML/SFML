@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/Window/Win32/WglExtensions.hpp>
+#include <glad/wgl.h>
 
 
 namespace sf
@@ -47,7 +47,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     WglContext(WglContext* shared);
@@ -61,24 +61,23 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    WglContext(WglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    WglContext(WglContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WglContext();
+    ~WglContext() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
@@ -98,13 +97,13 @@ public:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent(bool current);
+    bool makeCurrent(bool current) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void display();
+    void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -117,7 +116,7 @@ public:
     /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVerticalSyncEnabled(bool enabled);
+    void setVerticalSyncEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Select the best pixel format for a given set of settings
@@ -151,13 +150,12 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context's drawing surface
     ///
-    /// \param shared       Shared context (can be NULL)
-    /// \param width        Back buffer width, in pixels
-    /// \param height       Back buffer height, in pixels
+    /// \param shared       Shared context (can be a null pointer)
+    /// \param size         Back buffer width and height, in pixels
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(WglContext* shared, unsigned int width, unsigned int height, unsigned int bitsPerPixel);
+    void createSurface(WglContext* shared, const Vector2u& size, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context's drawing surface from an existing window
@@ -171,7 +169,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     void createContext(WglContext* shared);
@@ -179,11 +177,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    HWND        m_window;        ///< Window to which the context is attached
-    HPBUFFERARB m_pbuffer;       ///< Handle to a pbuffer if one was created
-    HDC         m_deviceContext; ///< Device context associated to the context
-    HGLRC       m_context;       ///< OpenGL context
-    bool        m_ownsWindow;    ///< Do we own the target window?
+    HWND        m_window;        //!< Window to which the context is attached
+    HPBUFFERARB m_pbuffer;       //!< Handle to a pbuffer if one was created
+    HDC         m_deviceContext; //!< Device context associated to the context
+    HGLRC       m_context;       //!< OpenGL context
+    bool        m_ownsWindow;    //!< Do we own the target window?
 };
 
 } // namespace priv

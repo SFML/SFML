@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,12 @@
 #include <SFML/System/Time.hpp>
 #include <android/looper.h>
 
+#if defined(__clang__)
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 // Define missing constants
 #define ASENSOR_TYPE_GRAVITY             0x00000009
 #define ASENSOR_TYPE_LINEAR_ACCELERATION 0x0000000a
@@ -54,11 +60,15 @@ void SensorImpl::initialize()
     looper = ALooper_forThread();
 
     // Get the unique sensor manager
-    sensorManager = ASensorManager_getInstance();
+    #if ANDROID_API >= 26 || __ANDROID_API__ >= 26
+        sensorManager = ASensorManager_getInstanceForPackage(nullptr);
+    #else
+        sensorManager = ASensorManager_getInstance();
+    #endif
 
     // Create the sensor events queue and attach it to the looper
     sensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper,
-        1, &processSensorEvents, NULL);
+        1, &processSensorEvents, nullptr);
 }
 
 
@@ -93,7 +103,7 @@ bool SensorImpl::open(Sensor::Type sensor)
     Time minimumDelay = microseconds(ASensor_getMinDelay(m_sensor));
 
     // Set the event rate (not to consume too much battery)
-    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, minimumDelay.asMicroseconds());
+    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<Int32>(minimumDelay.asMicroseconds()));
 
     // Save the index of the sensor
     m_index = static_cast<unsigned int>(sensor);
@@ -113,7 +123,7 @@ void SensorImpl::close()
 Vector3f SensorImpl::update()
 {
     // Update our sensor data list
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
     return sensorData[m_index];
 }
@@ -145,7 +155,7 @@ ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 
 
 ////////////////////////////////////////////////////////////
-int SensorImpl::processSensorEvents(int fd, int events, void* data)
+int SensorImpl::processSensorEvents(int /* fd */, int /* events */, void* /* sensorData */)
 {
     ASensorEvent event;
 

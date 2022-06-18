@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,7 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/ClipboardImpl.hpp>
+#include <SFML/System/String.hpp>
 
 #import <AppKit/AppKit.h>
 
@@ -37,6 +39,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 String ClipboardImpl::getString()
 {
+    AutoreleasePool pool;
     NSPasteboard* pboard = [NSPasteboard generalPasteboard];
     NSString* data = [pboard stringForType:NSPasteboardTypeString];
 
@@ -50,6 +53,7 @@ String ClipboardImpl::getString()
 ////////////////////////////////////////////////////////////
 void ClipboardImpl::setString(const String& text)
 {
+    AutoreleasePool pool;
     std::basic_string<Uint8> utf8 = text.toUtf8();
     NSString* data = [[NSString alloc] initWithBytes:utf8.data()
                                               length:utf8.length()

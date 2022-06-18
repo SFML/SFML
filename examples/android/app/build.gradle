@@ -11,7 +11,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             ndkBuild {
-                // cppFlags "-std=c++14 -frtti -fexceptions"
+                cppFlags "-std=c++17"
             }
 
         }

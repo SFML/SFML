@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -130,7 +130,7 @@ FloatRect VertexArray::getBounds() const
                 bottom = position.y;
         }
 
-        return FloatRect(left, top, right - left, bottom - top);
+        return FloatRect({left, top}, {right - left, bottom - top});
     }
     else
     {
@@ -141,10 +141,10 @@ FloatRect VertexArray::getBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::draw(RenderTarget& target, RenderStates states) const
+void VertexArray::draw(RenderTarget& target, const RenderStates& states) const
 {
     if (!m_vertices.empty())
-        target.draw(&m_vertices[0], m_vertices.size(), m_primitiveType, states);
+        target.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);
 }
 
 } // namespace sf

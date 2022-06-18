@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/CursorImpl.hpp>
+#include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 
-#import <SFML/Window/OSX/AutoreleasePoolWrapper.h>
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <AppKit/AppKit.h>
 
@@ -56,14 +56,14 @@ namespace priv
 CursorImpl::CursorImpl() :
 m_cursor(nil)
 {
-    // Just ask for a pool
-    ensureThreadHasPool();
+
 }
 
 
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
 {
+    AutoreleasePool pool;
     [m_cursor release];
 }
 
@@ -71,7 +71,12 @@ CursorImpl::~CursorImpl()
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
-    [m_cursor release];
+    AutoreleasePool pool;
+    if (m_cursor)
+    {
+        [m_cursor release];
+        m_cursor = nil;
+    }
 
     NSSize   nssize    = NSMakeSize(size.x, size.y);
     NSImage* image     = [NSImage imageWithRawData:pixels andSize:nssize];
@@ -85,41 +90,54 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
-    [m_cursor release];
+    AutoreleasePool pool;
+    NSCursor* newCursor = nil;
 
     switch (type)
     {
         default: return false;
 
-        case Cursor::Arrow:           m_cursor = [NSCursor arrowCursor];               break;
-        case Cursor::Text:            m_cursor = [NSCursor IBeamCursor];               break;
-        case Cursor::Hand:            m_cursor = [NSCursor pointingHandCursor];        break;
-        case Cursor::SizeHorizontal:  m_cursor = [NSCursor resizeLeftRightCursor];     break;
-        case Cursor::SizeVertical:    m_cursor = [NSCursor resizeUpDownCursor];        break;
-        case Cursor::Cross:           m_cursor = [NSCursor crosshairCursor];           break;
-        case Cursor::NotAllowed:      m_cursor = [NSCursor operationNotAllowedCursor]; break;
+        case Cursor::Arrow:           newCursor = [NSCursor arrowCursor];               break;
+        case Cursor::Text:            newCursor = [NSCursor IBeamCursor];               break;
+        case Cursor::Hand:            newCursor = [NSCursor pointingHandCursor];        break;
+        case Cursor::SizeHorizontal:  newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::SizeVertical:    newCursor = [NSCursor resizeUpDownCursor];        break;
+        case Cursor::Cross:           newCursor = [NSCursor crosshairCursor];           break;
+        case Cursor::NotAllowed:      newCursor = [NSCursor operationNotAllowedCursor]; break;
+        case Cursor::SizeLeft:        newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::SizeRight:       newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::SizeTop:         newCursor = [NSCursor resizeUpDownCursor];        break;
+        case Cursor::SizeBottom:      newCursor = [NSCursor resizeUpDownCursor];        break;
             
         // These cursor types are undocumented, may not be available on some platforms
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
+        case Cursor::SizeTopRight:
+        case Cursor::SizeBottomLeft:
         case Cursor::SizeBottomLeftTopRight:
-            m_cursor = loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor));
+            newCursor = loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor));
             break;
 
+        case Cursor::SizeTopLeft:
+        case Cursor::SizeBottomRight:
         case Cursor::SizeTopLeftBottomRight:
-            m_cursor = loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor));
+            newCursor = loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor));
             break;
 
         case Cursor::Help:
-            m_cursor = loadFromSelector(@selector(_helpCursor));
+            newCursor = loadFromSelector(@selector(_helpCursor));
             break;
 #pragma clang diagnostic pop
     }
 
-    if (m_cursor)
+    if (newCursor)
+    {
+        [m_cursor release];
+        m_cursor = newCursor;
         [m_cursor retain];
+    }
 
-    return m_cursor != nil;
+    return newCursor != nil;
 }
 
 

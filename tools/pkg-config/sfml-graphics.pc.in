@@ -1,12 +1,12 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib@LIB_SUFFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/include
 
 Name: SFML-graphics
 Description: The Simple and Fast Multimedia Library, graphics module.
 URL: http://www.sfml-dev.org
-Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+Version: @PROJECT_VERSION@
 Requires: sfml-window
 Requires.private: sfml-system, freetype2
 Libs: -L${libdir} -lsfml-graphics

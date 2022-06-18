@@ -1,12 +1,12 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib@LIB_SUFFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/include
 
 Name: SFML-audio
 Description: The Simple and Fast Multimedia Library, audio module.
 URL: http://www.sfml-dev.org
-Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+Version: @PROJECT_VERSION@
 Requires: sfml-system
 Requires.private: openal, vorbisenc, vorbisfile, vorbis, ogg, flac
 Libs: -L${libdir} -lsfml-audio

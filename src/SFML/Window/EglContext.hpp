@@ -32,8 +32,11 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/OpenGL.hpp>
-
+#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <glad/egl.h>
+#if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
+    #include <X11/Xlib.h>
+#endif
 
 namespace sf
 {
@@ -46,7 +49,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
     EglContext(EglContext* shared);
@@ -60,24 +63,34 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    EglContext(EglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
+    /// \warning This constructor is currently not implemented; use a different overload.
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EglContext(EglContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    EglContext(EglContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~EglContext();
+    ~EglContext() override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the address of an OpenGL function
+    ///
+    /// \param name Name of the function to get the address of
+    ///
+    /// \return Address of the OpenGL function, 0 on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -88,13 +101,13 @@ public:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent(bool current);
+    bool makeCurrent(bool current) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void display();
+    void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -107,12 +120,12 @@ public:
     /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVerticalSyncEnabled(bool enabled);
+    void setVerticalSyncEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param shared       Context to share the new one with (can be a null pointer)
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
@@ -151,7 +164,7 @@ public:
     ////////////////////////////////////////////////////////////
     static EGLConfig getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
-#ifdef SFML_SYSTEM_LINUX
+#if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
     ////////////////////////////////////////////////////////////
     /// \brief Select the best EGL visual for a given set of settings
     ///
@@ -168,17 +181,17 @@ public:
 private:
 
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to copy the picked EGL configuration 
+    /// \brief Helper to copy the picked EGL configuration
     ////////////////////////////////////////////////////////////
     void updateSettings();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EGLDisplay  m_display; ///< The internal EGL display
-    EGLContext  m_context; ///< The internal EGL context
-    EGLSurface  m_surface; ///< The internal EGL surface
-    EGLConfig   m_config;  ///< The internal EGL config
+    EGLDisplay  m_display; //!< The internal EGL display
+    EGLContext  m_context; //!< The internal EGL context
+    EGLSurface  m_surface; //!< The internal EGL surface
+    EGLConfig   m_config;  //!< The internal EGL config
 
 };
 

@@ -23,7 +23,7 @@ int vibrate(sf::Time duration)
 {
     // First we'll need the native activity handle
     ANativeActivity *activity = sf::getNativeActivity();
-    
+
     // Retrieve the JVM and JNI environment
     JavaVM* vm = activity->vm;
     JNIEnv* env = activity->env;
@@ -32,7 +32,7 @@ int vibrate(sf::Time duration)
     JavaVMAttachArgs attachargs;
     attachargs.version = JNI_VERSION_1_6;
     attachargs.name = "NativeThread";
-    attachargs.group = NULL;
+    attachargs.group = nullptr;
     jint res = vm->AttachCurrentThread(&env, &attachargs);
 
     if (res == JNI_ERR)
@@ -41,22 +41,22 @@ int vibrate(sf::Time duration)
     // Retrieve class information
     jclass natact = env->FindClass("android/app/NativeActivity");
     jclass context = env->FindClass("android/content/Context");
-    
+
     // Get the value of a constant
     jfieldID fid = env->GetStaticFieldID(context, "VIBRATOR_SERVICE", "Ljava/lang/String;");
     jobject svcstr = env->GetStaticObjectField(context, fid);
-    
+
     // Get the method 'getSystemService' and call it
     jmethodID getss = env->GetMethodID(natact, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
     jobject vib_obj = env->CallObjectMethod(activity->clazz, getss, svcstr);
-    
+
     // Get the object's class and retrieve the member name
     jclass vib_cls = env->GetObjectClass(vib_obj);
-    jmethodID vibrate = env->GetMethodID(vib_cls, "vibrate", "(J)V"); 
-    
+    jmethodID vibrate = env->GetMethodID(vib_cls, "vibrate", "(J)V");
+
     // Determine the timeframe
     jlong length = duration.asMilliseconds();
-    
+
     // Bzzz!
     env->CallVoidMethod(vib_obj, vibrate, length);
 
@@ -66,7 +66,7 @@ int vibrate(sf::Time duration)
     env->DeleteLocalRef(svcstr);
     env->DeleteLocalRef(context);
     env->DeleteLocalRef(natact);
-    
+
     // Detach thread again
     vm->DetachCurrentThread();
 }
@@ -87,24 +87,16 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
 
     sf::Sprite image(texture);
-    image.setPosition(screen.width / 2, screen.height / 2);
-    image.setOrigin(texture.getSize().x/2, texture.getSize().y/2);
+    image.setPosition(sf::Vector2f(screen.size) / 2.f);
+    image.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 
     sf::Font font;
-    if (!font.loadFromFile("sansation.ttf"))
+    if (!font.loadFromFile("tuffy.ttf"))
         return EXIT_FAILURE;
 
     sf::Text text("Tap anywhere to move the logo.", font, 64);
     text.setFillColor(sf::Color::Black);
-    text.setPosition(10, 10);
-
-    // Loading canary.wav fails for me for now; haven't had time to test why
-
-    /*sf::Music music;
-    if(!music.openFromFile("canary.wav"))
-        return EXIT_FAILURE;
-
-    music.play();*/
+    text.setPosition({10, 10});
 
     sf::View view = window.getDefaultView();
 
@@ -117,9 +109,7 @@ int main(int argc, char *argv[])
 
     while (window.isOpen())
     {
-        sf::Event event;
-
-        while (active ? window.pollEvent(event) : window.waitEvent(event))
+        for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
         {
             switch (event.type)
             {
@@ -131,8 +121,8 @@ int main(int argc, char *argv[])
                         window.close();
                     break;
                 case sf::Event::Resized:
-                    view.setSize(event.size.width, event.size.height);
-                    view.setCenter(event.size.width/2, event.size.height/2);
+                    view.setSize(sf::Vector2f(event.size.width, event.size.height));
+                    view.setCenter(sf::Vector2f(event.size.width, event.size.height) / 2.f);
                     window.setView(view);
                     break;
                 case sf::Event::LostFocus:
@@ -141,7 +131,7 @@ int main(int argc, char *argv[])
                 case sf::Event::GainedFocus:
                     background = sf::Color::White;
                     break;
-                
+
                 // On Android MouseLeft/MouseEntered are (for now) triggered,
                 // whenever the app loses or gains focus.
                 case sf::Event::MouseLeft:
@@ -153,7 +143,7 @@ int main(int argc, char *argv[])
                 case sf::Event::TouchBegan:
                     if (event.touch.finger == 0)
                     {
-                        image.setPosition(event.touch.x, event.touch.y);
+                        image.setPosition({static_cast<float>(event.touch.x), static_cast<float>(event.touch.y)});
 #if defined(USE_JNI)
                         vibrate(sf::milliseconds(10));
 #endif

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+#include <filesystem>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -86,8 +88,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right reader for the given file on disk
     ///
-    /// It's up to the caller to release the returned reader
-    ///
     /// \param filename Path of the sound file
     ///
     /// \return A new sound file reader that can read the given file, or null if no reader can handle it
@@ -95,12 +95,10 @@ public:
     /// \see createReaderFromMemory, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in memory
-    ///
-    /// It's up to the caller to release the returned reader
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Total size of the file data, in bytes
@@ -110,12 +108,10 @@ public:
     /// \see createReaderFromFilename, createReaderFromStream
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromMemory(const void* data, std::size_t sizeInBytes);
+    static std::unique_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right codec for the given file in stream
-    ///
-    /// It's up to the caller to release the returned reader
     ///
     /// \param stream Source stream to read from
     ///
@@ -124,19 +120,17 @@ public:
     /// \see createReaderFromFilename, createReaderFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileReader* createReaderFromStream(InputStream& stream);
+    static std::unique_ptr<SoundFileReader> createReaderFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Instantiate the right writer for the given file on disk
-    ///
-    /// It's up to the caller to release the returned writer
     ///
     /// \param filename Path of the sound file
     ///
     /// \return A new sound file writer that can write given file, or null if no writer can handle it
     ///
     ////////////////////////////////////////////////////////////
-    static SoundFileWriter* createWriterFromFilename(const std::string& filename);
+    static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::filesystem::path& filename);
 
 private:
 
@@ -146,22 +140,22 @@ private:
     struct ReaderFactory
     {
         bool (*check)(InputStream&);
-        SoundFileReader* (*create)();
+        std::unique_ptr<SoundFileReader> (*create)();
     };
-    typedef std::vector<ReaderFactory> ReaderFactoryArray;
+    using ReaderFactoryArray = std::vector<ReaderFactory>;
 
     struct WriterFactory
     {
-        bool (*check)(const std::string&);
-        SoundFileWriter* (*create)();
+        bool (*check)(const std::filesystem::path&);
+        std::unique_ptr<SoundFileWriter> (*create)();
     };
-    typedef std::vector<WriterFactory> WriterFactoryArray;
+    using WriterFactoryArray = std::vector<WriterFactory>;
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static ReaderFactoryArray s_readers; ///< List of all registered readers
-    static WriterFactoryArray s_writers; ///< List of all registered writers
+    static ReaderFactoryArray s_readers; //!< List of all registered readers
+    static WriterFactoryArray s_writers; //!< List of all registered writers
 };
 
 } // namespace sf

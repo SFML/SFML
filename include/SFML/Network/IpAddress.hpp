@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,8 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 #include <SFML/System/Time.hpp>
-#include <istream>
-#include <ostream>
+#include <iosfwd>
 #include <string>
 
 
@@ -181,10 +180,10 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const IpAddress None;      ///< Value representing an empty/invalid address
-    static const IpAddress Any;       ///< Value representing any address (0.0.0.0)
-    static const IpAddress LocalHost; ///< The "localhost" address (for connecting a computer to itself locally)
-    static const IpAddress Broadcast; ///< The "broadcast" address (for sending UDP messages to everyone on a local network)
+    static const IpAddress None;      //!< Value representing an empty/invalid address
+    static const IpAddress Any;       //!< Value representing any address (0.0.0.0)
+    static const IpAddress LocalHost; //!< The "localhost" address (for connecting a computer to itself locally)
+    static const IpAddress Broadcast; //!< The "broadcast" address (for sending UDP messages to everyone on a local network)
 
 private:
 
@@ -201,8 +200,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint32 m_address; ///< Address stored as an unsigned 32 bits integer
-    bool   m_valid;   ///< Is the address valid?
+    Uint32 m_address; //!< Address stored as an unsigned 32 bits integer
+    bool   m_valid;   //!< Is the address valid?
 };
 
 ////////////////////////////////////////////////////////////

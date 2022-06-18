@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,7 +33,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 MemoryInputStream::MemoryInputStream() :
-m_data  (NULL),
+m_data  (nullptr),
 m_size  (0),
 m_offset(0)
 {
@@ -44,7 +44,7 @@ m_offset(0)
 void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
 {
     m_data = static_cast<const char*>(data);
-    m_size = sizeInBytes;
+    m_size = static_cast<Int64>(sizeInBytes);
     m_offset = 0;
 }
 

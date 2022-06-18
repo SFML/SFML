@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <memory>
 
 
 namespace sf
@@ -64,29 +65,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderTexture();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the render-texture
-    ///
-    /// Before calling this function, the render-texture is in
-    /// an invalid state, thus it is mandatory to call it before
-    /// doing anything with the render-texture.
-    /// The last parameter, \a depthBuffer, is useful if you want
-    /// to use the render-texture for 3D OpenGL rendering that requires
-    /// a depth buffer. Otherwise it is unnecessary, and you should
-    /// leave this parameter to false (which is its default value).
-    ///
-    /// \param width       Width of the render-texture
-    /// \param height      Height of the render-texture
-    /// \param depthBuffer Do you want this render-texture to have a depth buffer?
-    ///
-    /// \return True if creation has been successful
-    ///
-    /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
-    ///
-    ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer);
+    ~RenderTexture() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the render-texture
@@ -99,14 +78,13 @@ public:
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
     /// you should leave this parameter at its default value.
     ///
-    /// \param width    Width of the render-texture
-    /// \param height   Height of the render-texture
+    /// \param size     Width and height of the render-texture
     /// \param settings Additional settings for the underlying OpenGL texture and context
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
+    [[nodiscard]] bool create(const Vector2u& size, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -176,7 +154,7 @@ public:
     /// \return True if mipmap generation was successful, false if unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    bool generateMipmap();
+    [[nodiscard]] bool generateMipmap();
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render-texture for rendering
@@ -193,7 +171,7 @@ public:
     /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setActive(bool active = true);
+    [[nodiscard]] bool setActive(bool active = true) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the contents of the target texture
@@ -215,7 +193,19 @@ public:
     /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const;
+    Vector2u getSize() const override;
+
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
+    ///
+    /// You can request sRGB encoding for a render-texture
+    /// by having the sRgbCapable flag set for the context parameter of create() method
+    ///
+    /// \return True if the render-texture use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only reference to the target texture
@@ -238,8 +228,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::RenderTextureImpl* m_impl;    ///< Platform/hardware specific implementation
-    Texture                  m_texture; ///< Target texture to draw on
+    std::unique_ptr<priv::RenderTextureImpl> m_impl;    //!< Platform/hardware specific implementation
+    Texture                                  m_texture; //!< Target texture to draw on
 };
 
 } // namespace sf

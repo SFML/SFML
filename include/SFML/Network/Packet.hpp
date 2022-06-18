@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <string>
 #include <vector>
+#include <cstddef>
 
 
 namespace sf
@@ -46,9 +47,6 @@ class UdpSocket;
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API Packet
 {
-    // A bool-like type that cannot be converted to integer or pointer types
-    typedef bool (Packet::*BoolType)(std::size_t);
-
 public:
 
     ////////////////////////////////////////////////////////////
@@ -66,15 +64,52 @@ public:
     virtual ~Packet();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Packet(const Packet&);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Packet& operator=(const Packet&);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Packet(Packet&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Packet& operator=(Packet&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Append data to the end of the packet
     ///
     /// \param data        Pointer to the sequence of bytes to append
     /// \param sizeInBytes Number of bytes to append
     ///
     /// \see clear
+    /// \see getReadPosition
     ///
     ////////////////////////////////////////////////////////////
     void append(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current reading position in the packet
+    ///
+    /// The next read operation will read data from this position
+    ///
+    /// \return The byte offset of the current read position
+    ///
+    /// \see append
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t getReadPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the packet
@@ -92,7 +127,7 @@ public:
     /// Warning: the returned pointer may become invalid after
     /// you append data to the packet, therefore it should never
     /// be stored.
-    /// The return pointer is NULL if the packet is empty.
+    /// The return pointer is a null pointer if the packet is empty.
     ///
     /// \return Pointer to the data
     ///
@@ -168,7 +203,7 @@ public:
     /// \see endOfPacket
     ///
     ////////////////////////////////////////////////////////////
-    operator BoolType() const;
+    explicit operator bool() const;
 
     ////////////////////////////////////////////////////////////
     /// Overload of operator >> to read data from the packet
@@ -400,10 +435,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_data;    ///< Data stored in the packet
-    std::size_t       m_readPos; ///< Current reading position in the packet
-    std::size_t       m_sendPos; ///< Current send position in the packet (for handling partial sends)
-    bool              m_isValid; ///< Reading state of the packet
+    std::vector<char> m_data;    //!< Data stored in the packet
+    std::size_t       m_readPos; //!< Current reading position in the packet
+    std::size_t       m_sendPos; //!< Current send position in the packet (for handling partial sends)
+    bool              m_isValid; //!< Reading state of the packet
 };
 
 } // namespace sf
@@ -504,7 +539,7 @@ private:
 /// \code
 /// class ZipPacket : public sf::Packet
 /// {
-///     virtual const void* onSend(std::size_t& size)
+///     const void* onSend(std::size_t& size) override
 ///     {
 ///         const void* srcData = getData();
 ///         std::size_t srcSize = getDataSize();
@@ -512,7 +547,7 @@ private:
 ///         return MySuperZipFunction(srcData, srcSize, &size);
 ///     }
 ///
-///     virtual void onReceive(const void* data, std::size_t size)
+///     void onReceive(const void* data, std::size_t size) override
 ///     {
 ///         std::size_t dstSize;
 ///         const void* dstData = MySuperUnzipFunction(data, size, &dstSize);

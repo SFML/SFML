@@ -3,14 +3,22 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+#include <stb_perlin.h>
+
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <deque>
-#include <sstream>
+
 #include <algorithm>
-#include <cstring>
+#include <array>
+#include <deque>
+#include <iostream>
+#include <mutex>
+#include <sstream>
+#include <thread>
+#include <vector>
+
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 
 
 namespace
@@ -34,11 +42,11 @@ namespace
     };
 
     std::deque<WorkItem> workQueue;
-    std::vector<sf::Thread*> threads;
+    std::vector<std::thread> threads;
     int pendingWorkCount = 0;
     bool workPending = true;
     bool bufferUploadPending = false;
-    sf::Mutex workQueueMutex;
+    std::recursive_mutex workQueueMutex;
 
     struct Setting
     {
@@ -80,12 +88,12 @@ void generateTerrain(sf::Vertex* vertexBuffer);
 int main()
 {
     // Create the window of the application
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "SFML Island",
+    sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island",
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     sf::Font font;
-    if (!font.loadFromFile("resources/sansation.ttf"))
+    if (!font.loadFromFile("resources/tuffy.ttf"))
         return EXIT_FAILURE;
 
     // Create all of our graphics resources
@@ -107,7 +115,7 @@ int main()
     hudText.setFillColor(sf::Color::White);
     hudText.setOutlineColor(sf::Color::Black);
     hudText.setOutlineThickness(2.0f);
-    hudText.setPosition(5.0f, 5.0f);
+    hudText.setPosition({5.0f, 5.0f});
 
     // Staging buffer for our terrain data that we will upload to our VertexBuffer
     std::vector<sf::Vertex> terrainStagingBuffer;
@@ -129,30 +137,33 @@ int main()
     else
     {
         // Start up our thread pool
-        for (unsigned int i = 0; i < threadCount; i++)
+        for (unsigned int i = 0; i < threadCount; ++i)
         {
-            threads.push_back(new sf::Thread(threadFunction));
-            threads.back()->launch();
+            threads.emplace_back(threadFunction);
         }
 
         // Create our VertexBuffer with enough space to hold all the terrain geometry
-        terrain.create(resolutionX * resolutionY * 6);
+        if (!terrain.create(resolutionX * resolutionY * 6))
+        {
+            std::cerr << "Failed to create vertex buffer" << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Resize the staging buffer to be able to hold all the terrain geometry
         terrainStagingBuffer.resize(resolutionX * resolutionY * 6);
 
         // Generate the initial terrain
-        generateTerrain(&terrainStagingBuffer[0]);
+        generateTerrain(terrainStagingBuffer.data());
 
         statusText.setString("Generating Terrain...");
     }
 
     // Center the status text
-    statusText.setPosition((windowWidth - statusText.getLocalBounds().width) / 2.f, (windowHeight - statusText.getLocalBounds().height) / 2.f);
+    statusText.setPosition({(windowWidth - statusText.getLocalBounds().width) / 2.f, (windowHeight - statusText.getLocalBounds().height) / 2.f});
 
     // Set up an array of pointers to our settings for arrow navigation
-    Setting settings[] =
-    {
+    constexpr std::array<Setting, 9> settings =
+    {{
         {"perlinFrequency",     &perlinFrequency},
         {"perlinFrequencyBase", &perlinFrequencyBase},
         {"heightBase",          &heightBase},
@@ -162,10 +173,9 @@ int main()
         {"heightFactor",        &heightFactor},
         {"heightFlatten",       &heightFlatten},
         {"lightFactor",         &lightFactor}
-    };
+    }};
 
-    const int settingCount = 9;
-    int currentSetting = 0;
+    std::size_t currentSetting = 0;
 
     std::ostringstream osstr;
     sf::Clock clock;
@@ -173,8 +183,7 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
+        for (sf::Event event; window.pollEvent(event);)
         {
             // Window closed or escape key pressed: exit
             if ((event.type == sf::Event::Closed) ||
@@ -189,11 +198,11 @@ int main()
             {
                 switch (event.key.code)
                 {
-                    case sf::Keyboard::Return: generateTerrain(&terrainStagingBuffer[0]); break;
-                    case sf::Keyboard::Down:   currentSetting = (currentSetting + 1) % settingCount; break;
-                    case sf::Keyboard::Up:     currentSetting = (currentSetting + settingCount - 1) % settingCount; break;
-                    case sf::Keyboard::Left:   *(settings[currentSetting].value) -= 0.1f; break;
-                    case sf::Keyboard::Right:  *(settings[currentSetting].value) += 0.1f; break;
+                    case sf::Keyboard::Enter: generateTerrain(terrainStagingBuffer.data()); break;
+                    case sf::Keyboard::Down:  currentSetting = (currentSetting + 1) % settings.size(); break;
+                    case sf::Keyboard::Up:    currentSetting = (currentSetting + settings.size() - 1) % settings.size(); break;
+                    case sf::Keyboard::Left:  *(settings[currentSetting].value) -= 0.1f; break;
+                    case sf::Keyboard::Right: *(settings[currentSetting].value) += 0.1f; break;
                     default: break;
                 }
             }
@@ -207,7 +216,7 @@ int main()
         if (prerequisitesSupported)
         {
             {
-                sf::Lock lock(workQueueMutex);
+                std::scoped_lock lock(workQueueMutex);
 
                 // Don't bother updating/drawing the VertexBuffer while terrain is being regenerated
                 if (!pendingWorkCount)
@@ -215,7 +224,12 @@ int main()
                     // If there is new data pending to be uploaded to the VertexBuffer, do it now
                     if (bufferUploadPending)
                     {
-                        terrain.update(&terrainStagingBuffer[0]);
+                        if (!terrain.update(terrainStagingBuffer.data()))
+                        {
+                            std::cerr << "Failed to update vertex buffer" << std::endl;
+                            return EXIT_FAILURE;
+                        }
+
                         bufferUploadPending = false;
                     }
 
@@ -230,8 +244,8 @@ int main()
                   << "perlinOctaves:  " << perlinOctaves << "\n\n"
                   << "Use the arrow keys to change the values.\nUse the return key to regenerate the terrain.\n\n";
 
-            for (int i = 0; i < settingCount; ++i)
-                osstr << ((i == currentSetting) ? ">>  " : "       ") << settings[i].name << ":  " << *(settings[i].value) << "\n";
+            for (std::size_t i = 0; i < settings.size(); ++i)
+                osstr << ((i == currentSetting) ? ">>  " : "       ") << settings[i].name << ":  " << *(settings[i].value) << '\n';
 
             hudText.setString(osstr.str());
 
@@ -244,14 +258,13 @@ int main()
 
     // Shut down our thread pool
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
         workPending = false;
     }
 
     while (!threads.empty())
     {
-        threads.back()->wait();
-        delete threads.back();
+        threads.back().join();
         threads.pop_back();
     }
 
@@ -270,13 +283,13 @@ float getElevation(float x, float y)
 
     float elevation = 0.0f;
 
-    for (int i = 0; i < perlinOctaves; i++)
+    for (int i = 0; i < perlinOctaves; ++i)
     {
         elevation += stb_perlin_noise3(
-            x * perlinFrequency * std::pow(perlinFrequencyBase, i),
-            y * perlinFrequency * std::pow(perlinFrequencyBase, i),
+            x * perlinFrequency * static_cast<float>(std::pow(perlinFrequencyBase, i)),
+            y * perlinFrequency * static_cast<float>(std::pow(perlinFrequencyBase, i)),
             0, 0, 0, 0
-        ) * std::pow(perlinFrequencyBase, -i);
+        ) * static_cast<float>(std::pow(perlinFrequencyBase, -i));
     }
 
     elevation = (elevation + 1.f) / 2.f;
@@ -286,6 +299,11 @@ float getElevation(float x, float y)
     elevation = std::min(std::max(elevation, 0.0f), 1.0f);
 
     return elevation;
+}
+
+float getElevation(unsigned int x, unsigned int y)
+{
+    return getElevation(static_cast<float>(x), static_cast<float>(y));
 }
 
 
@@ -307,21 +325,33 @@ float getMoisture(float x, float y)
     return (moisture + 1.f) / 2.f;
 }
 
+float getMoisture(unsigned int x, unsigned int y)
+{
+    return getMoisture(static_cast<float>(x), static_cast<float>(y));
+}
+
 
 ////////////////////////////////////////////////////////////
 /// Get the lowlands terrain color for the given moisture.
 ///
 ////////////////////////////////////////////////////////////
+sf::Color colorFromFloats(float r, float g, float b)
+{
+    return sf::Color(static_cast<sf::Uint8>(r),
+                     static_cast<sf::Uint8>(g),
+                     static_cast<sf::Uint8>(b));
+}
+
 sf::Color getLowlandsTerrainColor(float moisture)
 {
     sf::Color color =
-        moisture < 0.27f ? sf::Color(240, 240, 180) :
-        moisture < 0.3f ? sf::Color(240 - 240 * (moisture - 0.27f) / 0.03f, 240 - 40 * (moisture - 0.27f) / 0.03f, 180 - 180 * (moisture - 0.27f) / 0.03f) :
-        moisture < 0.4f ? sf::Color(0, 200, 0) :
-        moisture < 0.48f ? sf::Color(0, 200 - 40 * (moisture - 0.4f) / 0.08f, 0) :
-        moisture < 0.6f ? sf::Color(0, 160, 0) :
-        moisture < 0.7f ? sf::Color(34 * (moisture - 0.6f) / 0.1f, 160 - 60 * (moisture - 0.6f) / 0.1f, 34 * (moisture - 0.6f) / 0.1f) :
-        sf::Color(34, 100, 34);
+        moisture < 0.27f ? colorFromFloats(240, 240, 180) :
+        moisture < 0.3f ? colorFromFloats(240 - (240 * (moisture - 0.27f) / 0.03f), 240 - (40 * (moisture - 0.27f) / 0.03f), 180 - (180 * (moisture - 0.27f) / 0.03f)) :
+        moisture < 0.4f ? colorFromFloats(0, 200, 0) :
+        moisture < 0.48f ? colorFromFloats(0, 200 - (40 * (moisture - 0.4f) / 0.08f), 0) :
+        moisture < 0.6f ? colorFromFloats(0, 160, 0) :
+        moisture < 0.7f ? colorFromFloats((34 * (moisture - 0.6f) / 0.1f), 160 - (60 * (moisture - 0.6f) / 0.1f), (34 * (moisture - 0.6f) / 0.1f)) :
+        colorFromFloats(34, 100, 34);
 
     return color;
 }
@@ -338,13 +368,13 @@ sf::Color getHighlandsTerrainColor(float elevation, float moisture)
 
     sf::Color color =
         moisture < 0.6f ? sf::Color(112, 128, 144) :
-        sf::Color(112 + 110 * (moisture - 0.6f) / 0.4f, 128 + 56 * (moisture - 0.6f) / 0.4f, 144 - 9 * (moisture - 0.6f) / 0.4f);
+        colorFromFloats(112 + (110 * (moisture - 0.6f) / 0.4f), 128 + (56 * (moisture - 0.6f) / 0.4f), 144 - (9 * (moisture - 0.6f) / 0.4f));
 
     float factor = std::min((elevation - 0.4f) / 0.1f, 1.f);
 
-    color.r = lowlandsColor.r * (1.f - factor) + color.r * factor;
-    color.g = lowlandsColor.g * (1.f - factor) + color.g * factor;
-    color.b = lowlandsColor.b * (1.f - factor) + color.b * factor;
+    color.r = static_cast<sf::Uint8>(lowlandsColor.r * (1.f - factor) + color.r * factor);
+    color.g = static_cast<sf::Uint8>(lowlandsColor.g * (1.f - factor) + color.g * factor);
+    color.b = static_cast<sf::Uint8>(lowlandsColor.b * (1.f - factor) + color.b * factor);
 
     return color;
 }
@@ -363,9 +393,9 @@ sf::Color getSnowcapTerrainColor(float elevation, float moisture)
 
     float factor = std::min((elevation - snowcapHeight) / 0.05f, 1.f);
 
-    color.r = highlandsColor.r * (1.f - factor) + color.r * factor;
-    color.g = highlandsColor.g * (1.f - factor) + color.g * factor;
-    color.b = highlandsColor.b * (1.f - factor) + color.b * factor;
+    color.r = static_cast<sf::Uint8>(highlandsColor.r * (1.f - factor) + color.r * factor);
+    color.g = static_cast<sf::Uint8>(highlandsColor.g * (1.f - factor) + color.g * factor);
+    color.b = static_cast<sf::Uint8>(highlandsColor.b * (1.f - factor) + color.b * factor);
 
     return color;
 }
@@ -379,9 +409,9 @@ sf::Color getSnowcapTerrainColor(float elevation, float moisture)
 sf::Color getTerrainColor(float elevation, float moisture)
 {
     sf::Color color =
-        elevation < 0.11f ? sf::Color(0, 0, elevation / 0.11f * 74.f + 181.0f) :
-        elevation < 0.14f ? sf::Color(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f, std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f, 255) :
-        elevation < 0.16f ? sf::Color((elevation - 0.14f) * 128.f / 0.02f + 48.f, (elevation - 0.14f) * 128.f / 0.02f + 48.f, 127.0f + (0.16f - elevation) * 128.f / 0.02f) :
+        elevation < 0.11f ? sf::Color(0, 0, static_cast<sf::Uint8>(elevation / 0.11f * 74.f + 181.0f)) :
+        elevation < 0.14f ? sf::Color(static_cast<sf::Uint8>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f), static_cast<sf::Uint8>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f), 255) :
+        elevation < 0.16f ? sf::Color(static_cast<sf::Uint8>((elevation - 0.14f) * 128.f / 0.02f + 48.f), static_cast<sf::Uint8>((elevation - 0.14f) * 128.f / 0.02f + 48.f), static_cast<sf::Uint8>(127.0f + (0.16f - elevation) * 128.f / 0.02f)) :
         elevation < 0.17f ? sf::Color(240, 230, 140) :
         elevation < 0.4f ? getLowlandsTerrainColor(moisture) :
         elevation < snowcapHeight ? getHighlandsTerrainColor(elevation, moisture) :
@@ -397,7 +427,7 @@ sf::Color getTerrainColor(float elevation, float moisture)
 /// of the 4 adjacent neighbours.
 ///
 ////////////////////////////////////////////////////////////
-sf::Vector2f computeNormal(int x, int y, float left, float right, float bottom, float top)
+sf::Vector2f computeNormal(float left, float right, float bottom, float top)
 {
     sf::Vector3f deltaX(1, 0, (std::pow(right, heightFlatten) - std::pow(left, heightFlatten)) * heightFactor);
     sf::Vector3f deltaY(0, 1, (std::pow(top, heightFlatten) - std::pow(bottom, heightFlatten)) * heightFactor);
@@ -436,11 +466,11 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
     const float scalingFactorX = static_cast<float>(windowWidth) / static_cast<float>(resolutionX);
     const float scalingFactorY = static_cast<float>(windowHeight) / static_cast<float>(resolutionY);
 
-    for (unsigned int y = rowStart; y < rowEnd; y++)
+    for (unsigned int y = rowStart; y < rowEnd; ++y)
     {
-        for (int x = 0; x < resolutionX; x++)
+        for (unsigned int x = 0; x < resolutionX; ++x)
         {
-            int arrayIndexBase = ((y - rowStart) * resolutionX + x) * 6;
+            unsigned int arrayIndexBase = ((y - rowStart) * resolutionX + x) * 6;
 
             // Top left corner (first triangle)
             if (x > 0)
@@ -453,9 +483,9 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 0].position = sf::Vector2f(x * scalingFactorX, y * scalingFactorY);
+                vertices[arrayIndexBase + 0].position = sf::Vector2f(static_cast<float>(x) * scalingFactorX, static_cast<float>(y) * scalingFactorY);
                 vertices[arrayIndexBase + 0].color = getTerrainColor(getElevation(x, y), getMoisture(x, y));
-                vertices[arrayIndexBase + 0].texCoords = computeNormal(x, y, getElevation(x - 1, y), getElevation(x + 1, y), getElevation(x, y + 1), getElevation(x, y - 1));
+                vertices[arrayIndexBase + 0].texCoords = computeNormal(getElevation(x - 1, y), getElevation(x + 1, y), getElevation(x, y + 1), getElevation(x, y - 1));
             }
 
             // Bottom left corner (first triangle)
@@ -465,15 +495,15 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 1].position = sf::Vector2f(x * scalingFactorX, (y + 1) * scalingFactorY);
+                vertices[arrayIndexBase + 1].position = sf::Vector2f(static_cast<float>(x) * scalingFactorX, static_cast<float>(y + 1) * scalingFactorY);
                 vertices[arrayIndexBase + 1].color = getTerrainColor(getElevation(x, y + 1), getMoisture(x, y + 1));
-                vertices[arrayIndexBase + 1].texCoords = computeNormal(x, y + 1, getElevation(x - 1, y + 1), getElevation(x + 1, y + 1), getElevation(x, y + 2), getElevation(x, y));
+                vertices[arrayIndexBase + 1].texCoords = computeNormal(getElevation(x - 1, y + 1), getElevation(x + 1, y + 1), getElevation(x, y + 2), getElevation(x, y));
             }
 
             // Bottom right corner (first triangle)
-            vertices[arrayIndexBase + 2].position = sf::Vector2f((x + 1) * scalingFactorX, (y + 1) * scalingFactorY);
+            vertices[arrayIndexBase + 2].position = sf::Vector2f(static_cast<float>(x + 1) * scalingFactorX, static_cast<float>(y + 1) * scalingFactorY);
             vertices[arrayIndexBase + 2].color = getTerrainColor(getElevation(x + 1, y + 1), getMoisture(x + 1, y + 1));
-            vertices[arrayIndexBase + 2].texCoords = computeNormal(x + 1, y + 1, getElevation(x, y + 1), getElevation(x + 2, y + 1), getElevation(x + 1, y + 2), getElevation(x + 1, y));
+            vertices[arrayIndexBase + 2].texCoords = computeNormal(getElevation(x, y + 1), getElevation(x + 2, y + 1), getElevation(x + 1, y + 2), getElevation(x + 1, y));
 
             // Top left corner (second triangle)
             vertices[arrayIndexBase + 3] = vertices[arrayIndexBase + 0];
@@ -488,15 +518,15 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
             }
             else
             {
-                vertices[arrayIndexBase + 5].position = sf::Vector2f((x + 1) * scalingFactorX, y * scalingFactorY);
+                vertices[arrayIndexBase + 5].position = sf::Vector2f(static_cast<float>(x + 1) * scalingFactorX, static_cast<float>(y) * scalingFactorY);
                 vertices[arrayIndexBase + 5].color = getTerrainColor(getElevation(x + 1, y), getMoisture(x + 1, y));
-                vertices[arrayIndexBase + 5].texCoords = computeNormal(x + 1, y, getElevation(x, y), getElevation(x + 2, y), getElevation(x + 1, y + 1), getElevation(x + 1, y - 1));
+                vertices[arrayIndexBase + 5].texCoords = computeNormal(getElevation(x, y), getElevation(x + 2, y), getElevation(x + 1, y + 1), getElevation(x + 1, y - 1));
             }
         }
     }
 
     // Copy the resulting geometry from our thread-local buffer into the target buffer
-    std::memcpy(workItem.targetBuffer + (resolutionX * rowStart * 6), &vertices[0], sizeof(sf::Vertex) * resolutionX * rowCount * 6);
+    std::memcpy(workItem.targetBuffer + (resolutionX * rowStart * 6), vertices.data(), sizeof(sf::Vertex) * resolutionX * rowCount * 6);
 }
 
 
@@ -512,16 +542,16 @@ void threadFunction()
 
     std::vector<sf::Vertex> vertices(resolutionX * rowBlockSize * 6);
 
-    WorkItem workItem = {0, 0};
+    WorkItem workItem = {nullptr, 0};
 
     // Loop until the application exits
     for (;;)
     {
-        workItem.targetBuffer = 0;
+        workItem.targetBuffer = nullptr;
 
         // Check if there are new work items in the queue
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (!workPending)
                 return;
@@ -544,7 +574,7 @@ void threadFunction()
         processWorkItem(vertices, workItem);
 
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             --pendingWorkCount;
         }
@@ -566,7 +596,7 @@ void generateTerrain(sf::Vertex* buffer)
     for (;;)
     {
         {
-            sf::Lock lock(workQueueMutex);
+            std::scoped_lock lock(workQueueMutex);
 
             if (workQueue.empty())
                 break;
@@ -577,9 +607,9 @@ void generateTerrain(sf::Vertex* buffer)
 
     // Queue all the new work items
     {
-        sf::Lock lock(workQueueMutex);
+        std::scoped_lock lock(workQueueMutex);
 
-        for (unsigned int i = 0; i < blockCount; i++)
+        for (unsigned int i = 0; i < blockCount; ++i)
         {
             WorkItem workItem = {buffer, i};
             workQueue.push_back(workItem);

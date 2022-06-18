@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
 #include <algorithm>
+#include <ostream>
 #include <cctype>
 #include <cstdlib>
 #include <cassert>
@@ -38,12 +40,9 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterOgg::check(const std::string& filename)
+bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
 {
-    std::string extension = filename.substr(filename.find_last_of(".") + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-    return extension == "ogg";
+    return toLower(filename.extension().string()) == ".ogg";
 }
 
 
@@ -66,7 +65,7 @@ SoundFileWriterOgg::~SoundFileWriterOgg()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // Save the channel count
     m_channelCount = channelCount;
@@ -77,10 +76,10 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 
     // Setup the encoder: VBR, automatic bitrate management
     // Quality is in range [-1 .. 1], 0.4 gives ~128 kbps for a 44 KHz stereo sound
-    int status = vorbis_encode_init_vbr(&m_vorbis, channelCount, sampleRate, 0.4f);
+    int status = vorbis_encode_init_vbr(&m_vorbis, static_cast<long>(channelCount), static_cast<long>(sampleRate), 0.4f);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (unsupported bitrate)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (unsupported bitrate)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -90,7 +89,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
     m_file.open(filename.c_str(), std::ios::binary);
     if (!m_file)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (cannot open file)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot open file)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -105,7 +104,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
     vorbis_comment_clear(&comment);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (cannot generate the headers)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot generate the headers)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -131,7 +130,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
 {
     // Vorbis has issues with buffers that are too large, so we ask for 64K
-    static const int bufferSize = 65536;
+    constexpr int bufferSize = 65536;
 
     // A frame contains a sample from each channel
     int frameCount = static_cast<int>(count / m_channelCount);
@@ -149,7 +148,7 @@ void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
 
         // Tell the library how many samples we've written
         vorbis_analysis_wrote(&m_state, std::min(frameCount, bufferSize));
-        
+
         frameCount -= bufferSize;
 
         // Flush any produced block
@@ -167,7 +166,7 @@ void SoundFileWriterOgg::flushBlocks()
     while (vorbis_analysis_blockout(&m_state, &block) == 1)
     {
         // Let the automatic bitrate management do its job
-        vorbis_analysis(&block, NULL);
+        vorbis_analysis(&block, nullptr);
         vorbis_bitrate_addblock(&block);
 
         // Get new packets from the bitrate management engine

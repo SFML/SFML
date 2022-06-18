@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
-#include <ostream>
+#include <iosfwd>
 
 
 namespace sf
@@ -69,7 +69,7 @@ SFML_SYSTEM_API std::ostream& err();
 /// std::streambuf* previous = sf::err().rdbuf(file.rdbuf());
 ///
 /// // Redirect to nothing
-/// sf::err().rdbuf(NULL);
+/// sf::err().rdbuf(nullptr);
 ///
 /// // Restore the original output
 /// sf::err().rdbuf(previous);

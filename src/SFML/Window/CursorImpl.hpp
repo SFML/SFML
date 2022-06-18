@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,25 +31,19 @@
 #include <SFML/Config.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-
     #include <SFML/Window/Win32/CursorImpl.hpp>
-
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
-
-    #include <SFML/Window/Unix/CursorImpl.hpp>
-
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+    #if defined(SFML_USE_DRM)
+        #include <SFML/Window/DRM/CursorImpl.hpp>
+    #else
+        #include <SFML/Window/Unix/CursorImpl.hpp>
+    #endif
 #elif defined(SFML_SYSTEM_MACOS)
-
     #include <SFML/Window/OSX/CursorImpl.hpp>
-
 #elif defined(SFML_SYSTEM_IOS)
-
     #include <SFML/Window/iOS/CursorImpl.hpp>
-
 #elif defined(SFML_SYSTEM_ANDROID)
-
     #include <SFML/Window/Android/CursorImpl.hpp>
-
 #endif
 
 

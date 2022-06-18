@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -33,6 +33,7 @@
 #include <SFML/System/Err.hpp>
 #include <ApplicationServices/ApplicationServices.h>
 #include <algorithm>
+#include <ostream>
 
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <SFML/Window/OSX/Scaling.h>
@@ -41,6 +42,14 @@
 #import <SFML/Window/OSX/SFWindow.h>
 #import <SFML/Window/OSX/SFWindowController.h>
 #import <OpenGL/OpenGL.h>
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
 
 ////////////////////////////////////////////////////////////
 /// SFBlackView is a simple view filled with black, nothing more
@@ -99,6 +108,7 @@
         m_requester = 0;
         m_fullscreen = NO; // assuming this is the case... too hard to handle anyway.
         m_restoreResize = NO;
+        m_highDpi = NO;
 
         // Retain the window for our own use.
         m_window = [window retain];
@@ -111,7 +121,8 @@
 
         // Create the view.
         m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame]
-                                             fullscreen:NO];
+                                             fullscreen:NO
+                                                highDpi:NO];
 
         if (m_oglView == nil)
         {
@@ -123,6 +134,8 @@
 
         // Set the view to the window as its content view.
         [m_window setContentView:m_oglView];
+
+        [m_oglView finishInit];
     }
 
     return self;
@@ -149,8 +162,9 @@
         m_window = nil;
         m_oglView = nil;
         m_requester = 0;
-        m_fullscreen = (style & sf::Style::Fullscreen);
+        m_fullscreen = ((style & sf::Style::Fullscreen) != 0) ? YES : NO;
         m_restoreResize = NO;
+        m_highDpi = NO;
 
         if (m_fullscreen)
             [self setupFullscreenViewWithMode:mode];
@@ -169,7 +183,7 @@
     // Create a screen-sized window on the main display
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     sf::priv::scaleInWidthHeight(desktop, nil);
-    NSRect windowRect = NSMakeRect(0, 0, desktop.width, desktop.height);
+    NSRect windowRect = NSMakeRect(0, 0, desktop.size.x, desktop.size.y);
     m_window = [[SFWindow alloc] initWithContentRect:windowRect
                                            styleMask:NSBorderlessWindowMask
                                              backing:NSBackingStoreBuffered
@@ -209,14 +223,15 @@
     }
 
     // Create our OpenGL view size and the view
-    CGFloat width = std::min(mode.width, desktop.width);
-    CGFloat height = std::min(mode.height, desktop.height);
-    CGFloat x = (desktop.width - width) / 2.0;
-    CGFloat y = (desktop.height - height) / 2.0;
+    CGFloat width = std::min(mode.size.x, desktop.size.x);
+    CGFloat height = std::min(mode.size.y, desktop.size.y);
+    CGFloat x = (desktop.size.x - width) / 2.0;
+    CGFloat y = (desktop.size.y - height) / 2.0;
     NSRect oglRect = NSMakeRect(x, y, width, height);
 
     m_oglView = [[SFOpenGLView alloc] initWithFrame:oglRect
-                                         fullscreen:YES];
+                                         fullscreen:YES
+                                            highDpi:m_highDpi];
 
     if (m_oglView == nil)
     {
@@ -238,7 +253,7 @@
     // We know that style & sf::Style::Fullscreen is false.
 
     // Create our window size.
-    NSRect rect = NSMakeRect(0, 0, mode.width, mode.height);
+    NSRect rect = NSMakeRect(0, 0, mode.size.x, mode.size.y);
 
     // Convert the SFML window style to Cocoa window style.
     unsigned int nsStyle = NSBorderlessWindowMask;
@@ -275,7 +290,8 @@
 
     // Create the view.
     m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame]
-                                         fullscreen:NO];
+                                         fullscreen:NO
+                                            highDpi:m_highDpi];
 
     if (m_oglView == nil)
     {
@@ -352,7 +368,7 @@
 -(void)setCursorGrabbed:(BOOL)grabbed
 {
     // Remove or restore resizeable style if needed
-    BOOL resizeable = [m_window styleMask] & NSResizableWindowMask;
+    BOOL resizeable = (([m_window styleMask] & NSResizableWindowMask) != 0) ? YES : NO;
     if (grabbed && resizeable)
     {
         m_restoreResize = YES;
@@ -396,7 +412,7 @@
     CGFloat y = screen.origin.y + [m_oglView frame].size.height;
 
     // Flip y-axis (titlebar was already taken into account above)
-    y = [self screenHeight] - y;
+    y = static_cast<double>([self screenHeight]) - y;
 
     return NSMakePoint(x, y);
 }
@@ -408,7 +424,7 @@
     NSPoint point = NSMakePoint(x, y);
 
     // Flip for SFML window coordinate system and take titlebar into account
-    point.y = [self screenHeight] - point.y + [self titlebarHeight];
+    point.y = static_cast<double>([self screenHeight]) - point.y + static_cast<double>([self titlebarHeight]);
 
     // Place the window.
     [m_window setFrameTopLeftPoint:point];
@@ -435,11 +451,11 @@
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
         sf::priv::scaleInWidthHeight(desktop, nil);
 
-        width = std::min(width, desktop.width);
-        height = std::min(height, desktop.height);
+        width = std::min(width, desktop.size.x);
+        height = std::min(height, desktop.size.y);
 
-        CGFloat x = (desktop.width - width) / 2.0;
-        CGFloat y = (desktop.height - height) / 2.0;
+        CGFloat x = (desktop.size.x - width) / 2.0;
+        CGFloat y = (desktop.size.y - height) / 2.0;
         NSRect oglRect = NSMakeRect(x, y, width, height);
 
         [m_oglView setFrame:oglRect];
@@ -454,7 +470,7 @@
         [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
 
         // Add titlebar height.
-        height += [self titlebarHeight];
+        height += static_cast<unsigned int>([self titlebarHeight]);
 
         // Corner case: don't set the window height bigger than the screen height
         // or the view will be resized _later_ without generating a resize event.
@@ -462,11 +478,11 @@
         CGFloat maxVisibleHeight = screenFrame.size.height;
         if (height > maxVisibleHeight)
         {
-            height = maxVisibleHeight;
+            height = static_cast<unsigned int>(maxVisibleHeight);
 
             // The size is not the requested one, we fire an event
             if (m_requester != 0)
-                m_requester->windowResized(width, height - [self titlebarHeight]);
+                m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
         }
 
         NSRect frame = NSMakeRect([m_window frame].origin.x,
@@ -510,6 +526,7 @@
     [m_window close];
     [m_window setDelegate:nil];
     [self setRequesterTo:0];
+    [SFApplication processEvent];
 }
 
 
@@ -613,16 +630,15 @@
 {
     NSDictionary* deviceDescription = [[m_window screen] deviceDescription];
     NSNumber* screenNumber = [deviceDescription valueForKey:@"NSScreenNumber"];
-    CGDirectDisplayID screenID = (CGDirectDisplayID)[screenNumber intValue];
-    CGFloat height = CGDisplayPixelsHigh(screenID);
-    return height;
+    CGDirectDisplayID screenID = static_cast<CGDirectDisplayID>([screenNumber intValue]);
+    return static_cast<float>(CGDisplayPixelsHigh(screenID));
 }
 
 
 ////////////////////////////////////////////////////////
 -(float)titlebarHeight
 {
-    return NSHeight([m_window frame]) - NSHeight([[m_window contentView] frame]);
+    return static_cast<float>(NSHeight([m_window frame]) - NSHeight([[m_window contentView] frame]));
 }
 
 @end

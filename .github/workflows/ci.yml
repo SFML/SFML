@@ -1,0 +1,96 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2019, os: windows-2019 }
+        - { name: Windows VS2022, os: windows-2022 }
+        - { name: Linux GCC,      os: ubuntu-latest }
+        - { name: Linux Clang,    os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: MacOS XCode,    os: macos-latest }
+        config:
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
+        type:
+        - { name: Release }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+
+        include:
+        - platform: { name: Windows VS2022, os: windows-2022 }
+          config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
+          type: { name: Release }
+        - platform: { name: Windows VS2022, os: windows-2022 }
+          config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+        - platform: { name: MacOS XCode, os: macos-latest }
+          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=TRUE }
+        - platform: { name: MacOS XCode, os: macos-latest }
+          config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
+        - platform: { name: Android, os: ubuntu-latest }
+          config: { name: x86, flags: -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Android, os: ubuntu-latest }
+          config: { name: armeabi-v7a, flags: -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Linux GCC, os: ubuntu-latest  }
+          config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
+        - platform: { name: Linux GCC, os: ubuntu-latest  }
+          config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+
+    - name: Install Android Components
+      if: matrix.platform.name == 'Android'
+      run: |
+        echo "y" | /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "cmake;3.10.2.4988404" --sdk_root=ANDROID_SDK_ROOT
+        sudo ln -sf /usr/local/lib/android/sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
+        wget -nv https://dl.google.com/android/repository/android-ndk-r23b-linux.zip -P $GITHUB_WORKSPACE
+        unzip -qq -d $GITHUB_WORKSPACE android-ndk-r23b-linux.zip
+
+    - name: Install Linux Tools
+      if: matrix.type.name == 'Debug' && runner.os == 'Linux'
+      run: |
+        CLANG_VERSION=$(clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/\1/p')
+        echo "CLANG_VERSION=$CLANG_VERSION" >> $GITHUB_ENV
+        sudo apt-get install gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
+
+    - name: Install macOS Tools
+      if: matrix.type.name == 'Debug' && runner.os == 'macOS'
+      run: brew install gcovr
+
+    - name: Install OpenCppCoverage and add to PATH
+      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
+      run: |
+        choco install OpenCppCoverage -y
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+
+    - name: Build
+      shell: bash
+      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+
+    - name: Generate Coverage Report
+      if: matrix.type.name == 'Debug' && runner.os != 'Windows' # Coverage is already generated on Windows when running tests.
+      run: gcovr -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
+
+    - name: Upload Coverage Report to Codecov
+      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
+      uses: codecov/codecov-action@v2
+      with:
+        directory: ./build
+        files: ./build/coverage.out
+        fail_ci_if_error: true

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -68,7 +68,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of the connected peer
     ///
-    /// It the socket is not connected, this function returns
+    /// If the socket is not connected, this function returns
     /// sf::IpAddress::None.
     ///
     /// \return Address of the remote peer
@@ -109,7 +109,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
+    [[nodiscard]] Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disconnect the socket from its remote peer
@@ -138,7 +138,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const void* data, std::size_t size);
+    [[nodiscard]] Status send(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to the remote peer
@@ -154,7 +154,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(const void* data, std::size_t size, std::size_t& sent);
+    [[nodiscard]] Status send(const void* data, std::size_t size, std::size_t& sent);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from the remote peer
@@ -172,7 +172,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(void* data, std::size_t size, std::size_t& received);
+    [[nodiscard]] Status receive(void* data, std::size_t size, std::size_t& received);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
@@ -190,7 +190,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    Status send(Packet& packet);
+    [[nodiscard]] Status send(Packet& packet);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a formatted packet of data from the remote peer
@@ -206,7 +206,7 @@ public:
     /// \see send
     ///
     ////////////////////////////////////////////////////////////
-    Status receive(Packet& packet);
+    [[nodiscard]] Status receive(Packet& packet);
 
 private:
 
@@ -220,15 +220,15 @@ private:
     {
         PendingPacket();
 
-        Uint32            Size;         ///< Data of packet size
-        std::size_t       SizeReceived; ///< Number of size bytes received so far
-        std::vector<char> Data;         ///< Data of the packet
+        Uint32            Size;         //!< Data of packet size
+        std::size_t       SizeReceived; //!< Number of size bytes received so far
+        std::vector<char> Data;         //!< Data of the packet
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    PendingPacket m_pendingPacket; ///< Temporary data of the packet currently being received
+    PendingPacket m_pendingPacket; //!< Temporary data of the packet currently being received
 };
 
 } // namespace sf

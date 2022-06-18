@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/ResourceStream.hpp>
 #include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Lock.hpp>
+#include <mutex>
 
 
 namespace sf
@@ -37,12 +37,12 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-ResourceStream::ResourceStream(const std::string& filename) :
-m_file (NULL)
+ResourceStream::ResourceStream(const std::filesystem::path& filename) :
+m_file (nullptr)
 {
-    ActivityStates* states = getActivity(NULL);
-    Lock(states->mutex);
-    m_file = AAssetManager_open(states->activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+    ActivityStates& states = getActivity();
+    std::scoped_lock lock(states.mutex);
+    m_file = AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
 }
 
 
@@ -61,7 +61,7 @@ Int64 ResourceStream::read(void *data, Int64 size)
 {
     if (m_file)
     {
-        return AAsset_read(m_file, data, size);
+        return AAsset_read(m_file, data, static_cast<size_t>(size));
     }
     else
     {
@@ -75,7 +75,7 @@ Int64 ResourceStream::seek(Int64 position)
 {
     if (m_file)
     {
-        return AAsset_seek(m_file, position, SEEK_SET);
+        return AAsset_seek(m_file, static_cast<off_t>(position), SEEK_SET);
     }
     else
     {

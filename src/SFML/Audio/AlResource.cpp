@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,20 +27,20 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
+#include <memory>
+#include <mutex>
 
 
 namespace
 {
     // OpenAL resources counter and its mutex
     unsigned int count = 0;
-    sf::Mutex mutex;
+    std::recursive_mutex mutex;
 
     // The audio device is instantiated on demand rather than at global startup,
     // which solves a lot of weird crashes and errors.
     // It is destroyed when it is no longer needed.
-    sf::priv::AudioDevice* globalDevice;
+    std::unique_ptr<sf::priv::AudioDevice> globalDevice;
 }
 
 
@@ -50,14 +50,14 @@ namespace sf
 AlResource::AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // If this is the very first resource, trigger the global device initialization
     if (count == 0)
-        globalDevice = new priv::AudioDevice;
+        globalDevice = std::make_unique<priv::AudioDevice>();
 
     // Increment the resources counter
-    count++;
+    ++count;
 }
 
 
@@ -65,14 +65,14 @@ AlResource::AlResource()
 AlResource::~AlResource()
 {
     // Protect from concurrent access
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     // Decrement the resources counter
-    count--;
+    --count;
 
     // If there's no more resource alive, we can destroy the device
     if (count == 0)
-        delete globalDevice;
+        globalDevice.reset();
 }
 
 } // namespace sf

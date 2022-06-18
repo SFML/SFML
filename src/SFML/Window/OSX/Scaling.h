@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -54,14 +54,14 @@ inline CGFloat getDefaultScaleFactor()
 template <class T>
 void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+    in /= static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
 }
 
 template <class T>
 void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleIn(in.width, delegate);
-    scaleIn(in.height, delegate);
+    scaleIn(in.size.x, delegate);
+    scaleIn(in.size.y, delegate);
 }
 
 template <class T>
@@ -81,14 +81,14 @@ void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
 template <class T>
 void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+    out = out * static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
 }
 
 template <class T>
-void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
+void scaleOutWidthHeight(T& width, T& height, id<WindowImplDelegateProtocol> delegate)
 {
-    scaleOut(out.width, delegate);
-    scaleOut(out.height, delegate);
+    scaleOut(width, delegate);
+    scaleOut(height, delegate);
 }
 
 template <class T>

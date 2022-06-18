@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
+#include <filesystem>
+#include <memory>
 #include <string>
 
 
@@ -41,7 +42,7 @@ class SoundFileWriter;
 /// \brief Provide write access to sound files
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API OutputSoundFile : NonCopyable
+class SFML_AUDIO_API OutputSoundFile
 {
 public:
 
@@ -60,6 +61,18 @@ public:
     ~OutputSoundFile();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile(const OutputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile& operator=(const OutputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing
     ///
     /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
@@ -71,7 +84,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromFile(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
@@ -93,7 +106,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileWriter* m_writer; ///< Writer that handles I/O on the file's format
+    std::unique_ptr<SoundFileWriter> m_writer; //!< Writer that handles I/O on the file's format
 };
 
 } // namespace sf

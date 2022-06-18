@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -31,6 +31,14 @@
 #define GREEN   @"Green"
 #define RED     @"Red"
 
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
+
 // Our PIMPL
 struct SFMLmainWindow
 {
@@ -48,13 +56,13 @@ struct SFMLmainWindow
         sf::FloatRect rect = sprite.getLocalBounds();
         sf::Vector2f size(rect.width, rect.height);
         sprite.setOrigin(size / 2.f);
-        sprite.scale(0.3, 0.3);
+        sprite.scale({0.3f, 0.3f});
 
         unsigned int ww = renderWindow.getSize().x;
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/sansation.ttf"))
+        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
             NSLog(@"Couldn't load the font");
 
         text.setFillColor(sf::Color::White);
@@ -117,7 +125,7 @@ struct SFMLmainWindow
         self.visible = YES;
 
         // Launch the timer to periodically display our stuff into the Cocoa view.
-        self.renderTimer = [NSTimer timerWithTimeInterval:1.f/60.f
+        self.renderTimer = [NSTimer timerWithTimeInterval:1.0/60.0
                                                    target:self
                                                  selector:@selector(renderMainWindow:)
                                                  userInfo:nil
@@ -148,7 +156,7 @@ struct SFMLmainWindow
     self.sfmlView           = nil;
     self.textField          = nil;
 
-    delete (SFMLmainWindow*) self.mainWindow;
+    delete static_cast<SFMLmainWindow*>(self.mainWindow);
     self.mainWindow         = 0;
     self.renderTimer        = nil;
 
@@ -162,10 +170,10 @@ struct SFMLmainWindow
     // Scaling
     /* /!\ we do this at 60fps so choose low scaling factor! /!\ */
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        self.mainWindow->sprite.scale(1.01f, 1.01f);
+        self.mainWindow->sprite.scale({1.01f, 1.01f});
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        self.mainWindow->sprite.scale(0.99f, 0.99f);
+        self.mainWindow->sprite.scale({0.99f, 0.99f});
 
     // Clear the window, display some stuff and display it into our view.
 

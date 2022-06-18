@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -28,10 +28,19 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+#include <ostream>
 
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFViewController.h>
+
+#if defined(__APPLE__)
+    #if defined(__clang__)
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    #elif defined(__GNUC__)
+        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #endif
+#endif
 
 @implementation SFViewController
 
@@ -197,7 +206,7 @@
 ////////////////////////////////////////////////////////
 -(void)closeWindow
 {
-    sf::err() << "Cannot close SFML area when SFML is integrated in a NSView." << std::endl;
+    // If the "window" is really a view, this is a no-op.
 }
 
 

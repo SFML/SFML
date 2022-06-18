@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,11 +30,14 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <SFML/Window/Context.hpp>
+#include <memory>
 
 
 namespace sf
 {
+class Context;
+
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -56,7 +59,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~RenderTextureImplDefault();
+    ~RenderTextureImplDefault() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -71,15 +74,14 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create the render texture implementation
     ///
-    /// \param width      Width of the texture to render to
-    /// \param height     Height of the texture to render to
+    /// \param size       Width and height of the texture to render to
     /// \param textureId  OpenGL identifier of the target texture
     /// \param settings   Context settings to create render-texture with
     ///
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(unsigned int width, unsigned int height, unsigned int textureId, const ContextSettings& settings);
+    bool create(const Vector2u& size, unsigned int textureId, const ContextSettings& settings) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
@@ -89,7 +91,18 @@ private:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool activate(bool active);
+    bool activate(bool active) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
+    ///
+    /// You can request sRGB encoding for a render-texture
+    /// by having the sRgbCapable flag set for the context parameter of create() method
+    ///
+    /// \return True if the render-texture use sRGB encoding, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture
@@ -97,14 +110,13 @@ private:
     /// \param textureId OpenGL identifier of the target texture
     ///
     ////////////////////////////////////////////////////////////
-    virtual void updateTexture(unsigned textureId);
+    void updateTexture(unsigned textureId) override;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Context*     m_context; ///< P-Buffer based context
-    unsigned int m_width;   ///< Width of the P-Buffer
-    unsigned int m_height;  ///< Height of the P-Buffer
+    std::unique_ptr<Context> m_context; //!< P-Buffer based context
+    Vector2u m_size;                    //!< Width and height of the P-Buffer
 };
 
 } // namespace priv

@@ -30,21 +30,20 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/EglContext.hpp>
-#include <SFML/System/Mutex.hpp>
 #include <android/native_activity.h>
 #include <android/configuration.h>
-#include <EGL/egl.h>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <fstream>
+#include <mutex>
 
 class SFML_SYSTEM_API LogcatStream : public std::streambuf
 {
 public:
     LogcatStream();
 
-    std::streambuf::int_type overflow (std::streambuf::int_type c);
+    std::streambuf::int_type overflow(std::streambuf::int_type c) override;
 
 private:
     std::string m_message;
@@ -69,12 +68,12 @@ struct ActivityStates
     void* savedState;
     size_t savedStateSize;
 
-    Mutex mutex;
+    std::recursive_mutex mutex;
 
     void (*forwardEvent)(const Event& event);
     int (*processEvent)(int fd, int events, void* data);
 
-    std::map<int, Vector2i> touchEvents;
+    std::unordered_map<int, Vector2i> touchEvents;
     Vector2i mousePosition;
     bool isButtonPressed[Mouse::ButtonCount];
 
@@ -93,7 +92,9 @@ struct ActivityStates
     LogcatStream logcat;
 };
 
-SFML_SYSTEM_API ActivityStates* getActivity(ActivityStates* initializedStates=NULL, bool reset=false);
+SFML_SYSTEM_API ActivityStates*& getActivityStatesPtr();
+SFML_SYSTEM_API void resetActivity(ActivityStates* initializedStates);
+SFML_SYSTEM_API ActivityStates& getActivity();
 
 } // namespace priv
 } // namespace sf

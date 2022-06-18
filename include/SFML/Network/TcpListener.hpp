@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -74,6 +74,10 @@ public:
     /// function is called, it will stop listening on the old
     /// port before starting to listen on the new port.
     ///
+    /// When providing sf::Socket::AnyPort as port, the listener
+    /// will request an available port from the system.
+    /// The chosen port can be retrieved by calling getLocalPort().
+    ///
     /// \param port    Port to listen on for incoming connection attempts
     /// \param address Address of the interface to listen on
     ///
@@ -82,7 +86,7 @@ public:
     /// \see accept, close
     ///
     ////////////////////////////////////////////////////////////
-    Status listen(unsigned short port, const IpAddress& address = IpAddress::Any);
+    [[nodiscard]] Status listen(unsigned short port, const IpAddress& address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket
@@ -108,7 +112,7 @@ public:
     /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    Status accept(TcpSocket& socket);
+    [[nodiscard]] Status accept(TcpSocket& socket);
 };
 
 

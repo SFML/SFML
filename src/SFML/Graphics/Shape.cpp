@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,7 +28,6 @@
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Err.hpp>
 #include <cmath>
 
 
@@ -37,17 +36,11 @@ namespace
     // Compute the normal of a segment
     sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
     {
-        sf::Vector2f normal(p1.y - p2.y, p2.x - p1.x);
-        float length = std::sqrt(normal.x * normal.x + normal.y * normal.y);
+        sf::Vector2f normal = (p2 - p1).perpendicular();
+        float length = normal.length();
         if (length != 0.f)
             normal /= length;
         return normal;
-    }
-
-    // Compute the dot product of two vectors
-    float dotProduct(const sf::Vector2f& p1, const sf::Vector2f& p2)
-    {
-        return p1.x * p2.x + p1.y * p2.y;
     }
 }
 
@@ -55,9 +48,7 @@ namespace
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Shape::~Shape()
-{
-}
+Shape::~Shape() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -67,7 +58,7 @@ void Shape::setTexture(const Texture* texture, bool resetRect)
     {
         // Recompute the texture area if requested, or if there was no texture & rect before
         if (resetRect || (!m_texture && (m_textureRect == IntRect())))
-            setTextureRect(IntRect(0, 0, texture->getSize().x, texture->getSize().y));
+            setTextureRect(IntRect({0, 0}, Vector2i(texture->getSize())));
     }
 
     // Assign the new texture
@@ -158,7 +149,7 @@ FloatRect Shape::getGlobalBounds() const
 
 ////////////////////////////////////////////////////////////
 Shape::Shape() :
-m_texture         (NULL),
+m_texture         (nullptr),
 m_textureRect     (),
 m_fillColor       (255, 255, 255),
 m_outlineColor    (255, 255, 255),
@@ -210,19 +201,21 @@ void Shape::update()
 
 
 ////////////////////////////////////////////////////////////
-void Shape::draw(RenderTarget& target, RenderStates states) const
+void Shape::draw(RenderTarget& target, const RenderStates& states) const
 {
-    states.transform *= getTransform();
+    RenderStates statesCopy(states);
+
+    statesCopy.transform *= getTransform();
 
     // Render the inside
-    states.texture = m_texture;
-    target.draw(m_vertices, states);
+    statesCopy.texture = m_texture;
+    target.draw(m_vertices, statesCopy);
 
     // Render the outline
     if (m_outlineThickness != 0)
     {
-        states.texture = NULL;
-        target.draw(m_outlineVertices, states);
+        statesCopy.texture = nullptr;
+        target.draw(m_outlineVertices, statesCopy);
     }
 }
 
@@ -238,12 +231,14 @@ void Shape::updateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::updateTexCoords()
 {
+    FloatRect convertedTextureRect(m_textureRect);
+
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
         float xratio = m_insideBounds.width > 0 ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
         float yratio = m_insideBounds.height > 0 ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height : 0;
-        m_vertices[i].texCoords.x = m_textureRect.left + m_textureRect.width * xratio;
-        m_vertices[i].texCoords.y = m_textureRect.top + m_textureRect.height * yratio;
+        m_vertices[i].texCoords.x = convertedTextureRect.left + convertedTextureRect.width * xratio;
+        m_vertices[i].texCoords.y = convertedTextureRect.top + convertedTextureRect.height * yratio;
     }
 }
 
@@ -277,9 +272,9 @@ void Shape::updateOutline()
 
         // Make sure that the normals point towards the outside of the shape
         // (this depends on the order in which the points were defined)
-        if (dotProduct(n1, m_vertices[0].position - p1) > 0)
+        if (n1.dot(m_vertices[0].position - p1) > 0)
             n1 = -n1;
-        if (dotProduct(n2, m_vertices[0].position - p1) > 0)
+        if (n2.dot(m_vertices[0].position - p1) > 0)
             n2 = -n2;
 
         // Combine them to get the extrusion direction

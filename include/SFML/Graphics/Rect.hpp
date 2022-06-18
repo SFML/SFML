@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
-#include <algorithm>
+#include <optional>
 
 
 namespace sf
@@ -50,21 +50,7 @@ public:
     /// Rect(0, 0, 0, 0)).
     ///
     ////////////////////////////////////////////////////////////
-    Rect();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the rectangle from its coordinates
-    ///
-    /// Be careful, the last two parameters are the width
-    /// and height, not the right and bottom coordinates!
-    ///
-    /// \param rectLeft   Left coordinate of the rectangle
-    /// \param rectTop    Top coordinate of the rectangle
-    /// \param rectWidth  Width of the rectangle
-    /// \param rectHeight Height of the rectangle
-    ///
-    ////////////////////////////////////////////////////////////
-    Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight);
+    constexpr Rect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
@@ -76,7 +62,7 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    Rect(const Vector2<T>& position, const Vector2<T>& size);
+    constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
@@ -90,23 +76,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Rect(const Rect<U>& rectangle);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a point is inside the rectangle's area
-    ///
-    /// This check is non-inclusive. If the point lies on the
-    /// edge of the rectangle, this function will return false.
-    ///
-    /// \param x X coordinate of the point to test
-    /// \param y Y coordinate of the point to test
-    ///
-    /// \return True if the point is inside, false otherwise
-    ///
-    /// \see intersects
-    ///
-    ////////////////////////////////////////////////////////////
-    bool contains(T x, T y) const;
+    constexpr explicit Rect(const Rect<U>& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -118,46 +88,50 @@ public:
     ///
     /// \return True if the point is inside, false otherwise
     ///
-    /// \see intersects
+    /// \see findIntersection
     ///
     ////////////////////////////////////////////////////////////
-    bool contains(const Vector2<T>& point) const;
+    constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
     ///
     /// \param rectangle Rectangle to test
     ///
-    /// \return True if rectangles overlap, false otherwise
+    /// \return Intersection rectangle if intersecting, std::nullopt otherwise
     ///
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    bool intersects(const Rect<T>& rectangle) const;
+    constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the intersection between two rectangles
+    /// \brief Get the position of the rectangle's top-left corner
     ///
-    /// This overload returns the overlapped rectangle in the
-    /// \a intersection parameter.
+    /// \return Position of rectangle
     ///
-    /// \param rectangle    Rectangle to test
-    /// \param intersection Rectangle to be filled with the intersection
-    ///
-    /// \return True if rectangles overlap, false otherwise
-    ///
-    /// \see contains
+    /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
+    constexpr Vector2<T> getPosition() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the rectangle
+    ///
+    /// \return Size of rectangle
+    ///
+    /// \see getPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left;   ///< Left coordinate of the rectangle
-    T top;    ///< Top coordinate of the rectangle
-    T width;  ///< Width of the rectangle
-    T height; ///< Height of the rectangle
+    T left;   //!< Left coordinate of the rectangle
+    T top;    //!< Top coordinate of the rectangle
+    T width;  //!< Width of the rectangle
+    T height; //!< Height of the rectangle
 };
 
 ////////////////////////////////////////////////////////////
@@ -173,7 +147,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator ==(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator ==(const Rect<T>& left, const Rect<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
@@ -188,13 +162,13 @@ bool operator ==(const Rect<T>& left, const Rect<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-bool operator !=(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator !=(const Rect<T>& left, const Rect<T>& right);
 
 #include <SFML/Graphics/Rect.inl>
 
-// Create typedefs for the most common types
-typedef Rect<int>   IntRect;
-typedef Rect<float> FloatRect;
+// Create type aliases for the most common types
+using IntRect = Rect<int>;
+using FloatRect = Rect<float>;
 
 } // namespace sf
 
@@ -225,7 +199,7 @@ typedef Rect<float> FloatRect;
 /// don't intersect.
 ///
 /// sf::Rect is a template and may be used with any numeric type, but
-/// for simplicity the instantiations used by SFML are typedef'd:
+/// for simplicity type aliases for the instantiations used by SFML are given:
 /// \li sf::Rect<int> is sf::IntRect
 /// \li sf::Rect<float> is sf::FloatRect
 ///
@@ -246,9 +220,9 @@ typedef Rect<float> FloatRect;
 /// bool b2 = r2.contains(3, 1); // false
 ///
 /// // Test the intersection between r1 and r2
-/// sf::IntRect result;
-/// bool b3 = r1.intersects(r2, result); // true
-/// // result == (4, 2, 16, 3)
+/// std::optional<sf::IntRect> result = r1.findIntersection(r2);
+/// // result.has_value() == true
+/// // result.value() == (4, 2, 16, 3)
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

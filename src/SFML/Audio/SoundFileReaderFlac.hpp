@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
 #include <FLAC/stream_decoder.h>
-#include <string>
 #include <vector>
 
 
@@ -54,7 +53,7 @@ public:
     /// \return True if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
-    static bool check(InputStream& stream);
+    [[nodiscard]] static bool check(InputStream& stream);
 
 public:
 
@@ -68,7 +67,7 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SoundFileReaderFlac();
+    ~SoundFileReaderFlac() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
@@ -77,7 +76,7 @@ public:
     /// \param info   Structure to fill with the attributes of the loaded sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(sf::InputStream& stream, Info& info);
+    [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -92,7 +91,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset);
+    void seek(Uint64 sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -103,7 +102,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 public:
 
@@ -132,8 +131,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamDecoder* m_decoder;    ///< FLAC decoder
-    ClientData           m_clientData; ///< Structure passed to the decoder callbacks
+    FLAC__StreamDecoder* m_decoder;    //!< FLAC decoder
+    ClientData           m_clientData; //!< Structure passed to the decoder callbacks
 };
 
 } // namespace priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -30,7 +30,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
 
 ////////////////////////////////////////////////////////////
@@ -39,11 +38,11 @@
 #ifdef __OBJC__
 
 @class NSCursor;
-typedef NSCursor* NSCursorRef;
+using NSCursorRef = NSCursor*;
 
 #else // If C++
 
-typedef void* NSCursorRef;
+using NSCursorRef = void*;
 
 #endif
 
@@ -56,7 +55,7 @@ namespace priv
 /// \brief Mac OS X implementation of Cursor
 ///
 ////////////////////////////////////////////////////////////
-class CursorImpl : NonCopyable
+class CursorImpl
 {
 public:
 
@@ -75,6 +74,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     ~CursorImpl();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl(const CursorImpl&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    CursorImpl& operator=(const CursorImpl&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image

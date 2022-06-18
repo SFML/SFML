@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,7 +37,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key key)
+bool InputImpl::isKeyPressed(Keyboard::Key /* key */)
 {
     // Not applicable
     return false;
@@ -52,7 +52,7 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isMouseButtonPressed(Mouse::Button button)
+bool InputImpl::isMouseButtonPressed(Mouse::Button /* button */)
 {
     // Not applicable
     return false;
@@ -67,23 +67,21 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
+Vector2i InputImpl::getMousePosition(const WindowBase& /* relativeTo */)
 {
-    (void)relativeTo;
-
     return getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void InputImpl::setMousePosition(const Vector2i& /* position */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void InputImpl::setMousePosition(const Vector2i& /* position */, const WindowBase& /* relativeTo */)
 {
     // Not applicable
 }
@@ -104,10 +102,8 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& relativeTo)
+Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /* relativeTo */)
 {
-    (void)relativeTo;
-
     return getTouchPosition(finger);
 }
 

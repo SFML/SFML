@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
-#include <string>
 
 
 namespace sf
@@ -52,7 +51,7 @@ public:
     /// \return True if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
-    static bool check(InputStream& stream);
+    [[nodiscard]] static bool check(InputStream& stream);
 
 public:
 
@@ -69,7 +68,7 @@ public:
     /// \param info   Structure to fill with the attributes of the loaded sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(sf::InputStream& stream, Info& info);
+    [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -84,7 +83,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset);
+    void seek(Uint64 sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -95,7 +94,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 private:
 
@@ -112,10 +111,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputStream* m_stream;         ///< Source stream to read from
-    unsigned int m_bytesPerSample; ///< Size of a sample, in bytes
-    Uint64       m_dataStart;      ///< Starting position of the audio data in the open file
-    Uint64       m_dataEnd;        ///< Position one byte past the end of the audio data in the open file
+    InputStream* m_stream;         //!< Source stream to read from
+    unsigned int m_bytesPerSample; //!< Size of a sample, in bytes
+    Uint64       m_dataStart;      //!< Starting position of the audio data in the open file
+    Uint64       m_dataEnd;        //!< Position one byte past the end of the audio data in the open file
 };
 
 } // namespace priv

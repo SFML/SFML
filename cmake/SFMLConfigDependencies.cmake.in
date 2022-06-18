@@ -1,8 +1,3 @@
-
-if (CMAKE_VERSION VERSION_LESS 3.5.2)
-    include(CMakeParseArguments)
-endif()
-
 # in case of static linking, we must also define the list of all the dependencies of SFML libraries
 if(SFML_STATIC_LIBRARIES)
     # detect the OS
@@ -41,12 +36,13 @@ if(SFML_STATIC_LIBRARIES)
         endif()
     endfunction()
 
-    # sfml-window
-    list(FIND SFML_FIND_COMPONENTS "window" FIND_SFML_WINDOW_COMPONENT_INDEX)
+    # SFML::Window
+    list(FIND SFML_FIND_COMPONENTS "Window" FIND_SFML_WINDOW_COMPONENT_INDEX)
     if(FIND_SFML_WINDOW_COMPONENT_INDEX GREATER -1)
         if(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD)
             sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "X11" SEARCH_NAMES "X11")
             sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "Xrandr" SEARCH_NAMES "Xrandr")
+            sfml_bind_dependency(TARGET X11 FRIENDLY_NAME "Xcursor" SEARCH_NAMES "Xcursor")
         endif()
 
         if(FIND_SFML_OS_LINUX)
@@ -60,22 +56,22 @@ if(SFML_STATIC_LIBRARIES)
         endif()
     endif()
 
-    # sfml-graphics
-    list(FIND SFML_FIND_COMPONENTS "graphics" FIND_SFML_GRAPHICS_COMPONENT_INDEX)
+    # SFML::Graphics
+    list(FIND SFML_FIND_COMPONENTS "Graphics" FIND_SFML_GRAPHICS_COMPONENT_INDEX)
     if(FIND_SFML_GRAPHICS_COMPONENT_INDEX GREATER -1)
         sfml_bind_dependency(TARGET Freetype FRIENDLY_NAME "FreeType" SEARCH_NAMES "freetype")
     endif()
 
-    # sfml-audio
-    list(FIND SFML_FIND_COMPONENTS "audio" FIND_SFML_AUDIO_COMPONENT_INDEX)
+    # SFML::Audio
+    list(FIND SFML_FIND_COMPONENTS "Audio" FIND_SFML_AUDIO_COMPONENT_INDEX)
     if(FIND_SFML_AUDIO_COMPONENT_INDEX GREATER -1)
         sfml_bind_dependency(TARGET OpenAL FRIENDLY_NAME "OpenAL" SEARCH_NAMES "OpenAL" "openal" "openal32")
         if (NOT FIND_SFML_OS_IOS)
-            sfml_bind_dependency(TARGET Vorbis FRIENDLY_NAME "VorbisFile" SEARCH_NAMES "vorbisfile")
-            sfml_bind_dependency(TARGET Vorbis FRIENDLY_NAME "VorbisEnc" SEARCH_NAMES "vorbisenc")
+            sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "VorbisFile" SEARCH_NAMES "vorbisfile")
+            sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "VorbisEnc" SEARCH_NAMES "vorbisenc")
         endif()
-        sfml_bind_dependency(TARGET Vorbis FRIENDLY_NAME "Vorbis" SEARCH_NAMES "vorbis")
-        sfml_bind_dependency(TARGET Vorbis FRIENDLY_NAME "Ogg" SEARCH_NAMES "ogg")
+        sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Vorbis" SEARCH_NAMES "vorbis")
+        sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Ogg" SEARCH_NAMES "ogg")
         sfml_bind_dependency(TARGET FLAC FRIENDLY_NAME "FLAC" SEARCH_NAMES "FLAC")
     endif()
 

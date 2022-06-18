@@ -1,5 +1,8 @@
 include(CMakeParseArguments)
 
+# include the compiler warnings helpers
+include(${CMAKE_CURRENT_LIST_DIR}/CompilerWarnings.cmake)
+
 # This little macro lets you set any Xcode specific property
 macro (sfml_set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
@@ -8,8 +11,8 @@ endmacro ()
 # set the appropriate standard library on each platform for the given target
 # example: sfml_set_stdlib(sfml-system)
 function(sfml_set_stdlib target)
-    # for gcc >= 4.0 on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4")
+    # for gcc on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
         if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
             target_link_libraries(${target} PRIVATE "-static-libgcc" "-static-libstdc++")
         elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
@@ -20,9 +23,11 @@ function(sfml_set_stdlib target)
     if (SFML_OS_MACOSX)
         if (${CMAKE_GENERATOR} MATCHES "Xcode")
             sfml_set_xcode_property(${target} CLANG_CXX_LIBRARY "libc++")
-        else()
+        elseif(SFML_COMPILER_CLANG)
             target_compile_options(${target} PRIVATE "-stdlib=libc++")
             target_link_libraries(${target} PRIVATE "-stdlib=libc++")
+        else()
+            message(FATAL_ERROR "Clang is the only supported compiler on macOS")
         endif()
     endif()
 endfunction()
@@ -39,16 +44,16 @@ function(sfml_set_common_ios_properties target)
             MACOSX_BUNDLE TRUE # Bare executables are not usable on iOS, only bundle applications
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
             MACOSX_BUNDLE_BUNDLE_NAME "${target}"
-            MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+            MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}"
         )
     endif()
 endfunction()
 
 # add a new target which is a SFML library
-# example: sfml_add_library(sfml-graphics
+# example: sfml_add_library(Graphics
 #                           SOURCES sprite.cpp image.cpp ...
 #                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
-macro(sfml_add_library target)
+macro(sfml_add_library module)
 
     # parse the arguments
     cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
@@ -57,28 +62,69 @@ macro(sfml_add_library target)
     endif()
 
     # create the target
+    string(TOLOWER sfml-${module} target)
     if (THIS_STATIC)
         add_library(${target} STATIC ${THIS_SOURCES})
     else()
         add_library(${target} ${THIS_SOURCES})
     endif()
+    add_library(SFML::${module} ALIAS ${target})
+
+    # enable C++17 support
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
+    # Add required flags for GCC if coverage reporting is enabled
+    if (SFML_ENABLE_COVERAGE AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
+        target_compile_options(${target} PUBLIC $<$<CONFIG:DEBUG>:-O0> $<$<CONFIG:DEBUG>:-g> $<$<CONFIG:DEBUG>:-fprofile-arcs> $<$<CONFIG:DEBUG>:-ftest-coverage>)
+
+        if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+            target_link_options(${target} PUBLIC $<$<CONFIG:DEBUG>:--coverage>)
+        else()
+            target_link_libraries(${target} PUBLIC $<$<CONFIG:DEBUG>:--coverage>)
+        endif()
+    endif()
+
+    set_target_warnings(${target})
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
     string(TOUPPER "${NAME_UPPER}" NAME_UPPER)
     set_target_properties(${target} PROPERTIES DEFINE_SYMBOL ${NAME_UPPER}_EXPORTS)
 
+    # define the export name of the module
+    set_target_properties(${target} PROPERTIES EXPORT_NAME SFML::${module})
+
     # adjust the output file prefix/suffix to match our conventions
     if(BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_OS_WINDOWS)
             # include the major version number in Windows shared library names (but not import library names)
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
-            set_target_properties(${target} PROPERTIES SUFFIX "-${VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            set_target_properties(${target} PROPERTIES SUFFIX "-${PROJECT_VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+            # fill out all variables we use to generate the .rc file
+            string(TIMESTAMP RC_CURRENT_YEAR "%Y")
+            string(REGEX REPLACE "sfml-([a-z])([a-z]*)" "\\1" RC_MODULE_NAME_HEAD "${target}")
+            string(REGEX REPLACE "sfml-([a-z])([a-z]*)" "\\2" RC_MODULE_NAME_TAIL "${target}")
+            string(TOUPPER "${RC_MODULE_NAME_HEAD}" RC_MODULE_NAME_HEAD)
+            set(RC_MODULE_NAME "${RC_MODULE_NAME_HEAD}${RC_MODULE_NAME_TAIL}")
+            set(RC_VERSION_SUFFIX "") # Add something like the git revision short SHA-1 in the future
+            set(RC_PRERELEASE "0") # Set to 1 to mark the DLL as a pre-release DLL
+            set(RC_TARGET_NAME "${target}")
+            set(RC_TARGET_FILE_NAME_SUFFIX "-${PROJECT_VERSION_MAJOR}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+            # generate the .rc file
+            configure_file(
+                "${SFML_SOURCE_DIR}/tools/windows/resource.rc.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc"
+                @ONLY
+            )
+            target_sources(${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc")
+            source_group("" FILES "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc")
         else()
             set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
         endif()
-        if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
-            # on Windows/gcc get rid of "lib" prefix for shared libraries,
+        if (SFML_OS_WINDOWS AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
+            # on Windows + gcc/clang get rid of "lib" prefix for shared libraries,
             # and transform the ".dll.a" suffix into ".a" for import libraries
             set_target_properties(${target} PROPERTIES PREFIX "")
             set_target_properties(${target} PROPERTIES IMPORT_SUFFIX ".a")
@@ -93,8 +139,8 @@ macro(sfml_add_library target)
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
     # except for Android which strips soversion suffixes
     if(NOT SFML_OS_ANDROID)
-        set_target_properties(${target} PROPERTIES SOVERSION ${VERSION_MAJOR}.${VERSION_MINOR})
-        set_target_properties(${target} PROPERTIES VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+        set_target_properties(${target} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+        set_target_properties(${target} PROPERTIES VERSION ${PROJECT_VERSION})
     endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
@@ -125,11 +171,10 @@ macro(sfml_add_library target)
         endif()
     endif()
 
-    # if using gcc >= 4.0 or clang >= 3.0 on a non-Windows platform, we must hide public symbols by default
-    # (exported ones are explicitly marked)
-    if(NOT SFML_OS_WINDOWS AND ((SFML_COMPILER_GCC AND NOT SFML_GCC_VERSION VERSION_LESS "4") OR (SFML_COMPILER_CLANG AND NOT SFML_CLANG_VERSION VERSION_LESS "3")))
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
-    endif()
+    # ensure public symbols are hidden by default (exported ones are explicitly marked)
+    set_target_properties(${target} PROPERTIES
+                          CXX_VISIBILITY_PRESET hidden
+                          VISIBILITY_INLINES_HIDDEN YES)
 
     # build frameworks or dylibs
     if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
@@ -137,10 +182,10 @@ macro(sfml_add_library target)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
                                   FRAMEWORK TRUE
-                                  FRAMEWORK_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                  FRAMEWORK_VERSION ${PROJECT_VERSION}
                                   MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
-                                  MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
-                                  MACOSX_FRAMEWORK_BUNDLE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+                                  MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION}
+                                  MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION})
         endif()
 
         # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
@@ -175,9 +220,9 @@ macro(sfml_add_library target)
 
     # add the install rule
     install(TARGETS ${target} EXPORT SFMLConfigExport
-            RUNTIME DESTINATION bin COMPONENT bin
-            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT bin
-            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT devel
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
             FRAMEWORK DESTINATION "." COMPONENT bin)
 
     # add <project>/include as public include directory
@@ -202,7 +247,7 @@ endmacro()
 # example: sfml_add_example(ftp
 #                           SOURCES ftp.cpp ...
 #                           BUNDLE_RESOURCES MainMenu.nib ...    # Files to be added in target but not installed next to the executable
-#                           DEPENDS sfml-network
+#                           DEPENDS SFML::Network
 #                           RESOURCES_DIR resources)             # A directory to install next to the executable and sources
 macro(sfml_add_example target)
 
@@ -221,7 +266,7 @@ macro(sfml_add_example target)
     # create the target
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${target_input})
-        target_link_libraries(${target} PRIVATE sfml-main)
+        target_link_libraries(${target} PRIVATE SFML::Main)
     elseif(THIS_GUI_APP AND SFML_OS_IOS)
 
         # For iOS apps we need the launch screen storyboard,
@@ -235,10 +280,12 @@ macro(sfml_add_example target)
         set_target_properties(${target} PROPERTIES RESOURCE "${RESOURCES}"
                                                    MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
                                                    MACOSX_BUNDLE_ICON_FILE icon.icns)
-        target_link_libraries(${target} PRIVATE sfml-main)
+        target_link_libraries(${target} PRIVATE SFML::Main)
     else()
         add_executable(${target} ${target_input})
     endif()
+
+    set_target_warnings(${target})
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
@@ -257,46 +304,59 @@ macro(sfml_add_example target)
         target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
     endif()
 
-    set(target_install_dir ${SFML_MISC_INSTALL_PREFIX}/examples/${target})
-
-    if(BUILD_SHARED_LIBS AND (SFML_OS_LINUX OR SFML_OS_FREEBSD))
-        file(RELATIVE_PATH rel_lib_dir
-             ${CMAKE_INSTALL_PREFIX}/${target_install_dir}
-             ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
-
-        set_target_properties(${target} PROPERTIES
-                              INSTALL_RPATH "$ORIGIN/${rel_lib_dir}")
-    endif()
-
     if (SFML_OS_IOS)
         sfml_set_common_ios_properties(${target})
     endif()
 
-    # add the install rule
-    install(TARGETS ${target}
-            RUNTIME DESTINATION ${target_install_dir} COMPONENT examples
-            BUNDLE DESTINATION ${target_install_dir} COMPONENT examples
-			RESOURCE DESTINATION ${target_install_dir} COMPONENT examples)
-
-    # install the example's source code
-    install(FILES ${THIS_SOURCES}
-            DESTINATION ${target_install_dir}
-            COMPONENT examples)
-
-    if (THIS_RESOURCES_DIR)
-        # install the example's resources as well
-        get_filename_component(THIS_RESOURCES_DIR "${THIS_RESOURCES_DIR}" ABSOLUTE)
-
-        if(NOT EXISTS "${THIS_RESOURCES_DIR}")
-            message(FATAL_ERROR "Given resources directory to install does not exist: ${THIS_RESOURCES_DIR}")
-        endif()
-        install(DIRECTORY ${THIS_RESOURCES_DIR}
-                DESTINATION ${target_install_dir}
-                COMPONENT examples)
-    endif()
-
 endmacro()
 
+# add a new target which is a SFML test
+# example: sfml_add_test(sfml-test
+#                           ftp.cpp ...
+#                           SFML::Network)
+function(sfml_add_test target SOURCES DEPENDS)
+
+    # set a source group for the source files
+    source_group("" FILES ${SOURCES})
+
+    # create the target
+    add_executable(${target} ${SOURCES})
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Tests")
+
+    # link the target to its SFML dependencies
+    target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
+
+    set_target_warnings(${target})
+
+    # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
+    # to make sure the linker doesn't discard unused code sections before coverage can be measured
+    if (SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC AND NOT BUILD_SHARED_LIBS)
+        if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+            foreach (DEPENDENCY ${DEPENDS})
+                target_link_options(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:${DEPENDENCY}>>)
+            endforeach()
+        else()
+            foreach (DEPENDENCY ${DEPENDS})
+                target_link_libraries(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:${DEPENDENCY}>>)
+            endforeach()
+        endif()
+    endif()
+
+    # Add the test
+    add_test(${target} ${target})
+
+    # If building shared libs on windows we must copy the dependencies into the folder
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        foreach (DEPENDENCY ${DEPENDS})
+            add_custom_command(TARGET ${target} PRE_BUILD
+                                COMMAND ${CMAKE_COMMAND} -E copy
+                                $<TARGET_FILE:${DEPENDENCY}>
+                                $<TARGET_FILE_DIR:${target}>)
+        endforeach()
+    endif()
+endfunction()
 
 # Create an interface library for an external dependency. This virtual target can provide
 # link specifications and include directories to be used by dependees.
@@ -324,7 +384,7 @@ function(sfml_add_external)
             if (NOT include_dir)
                 message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
             endif()
-            target_include_directories(${target} INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
+            target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
         endforeach()
     endif()
 
@@ -392,7 +452,7 @@ function(sfml_export_targets)
 
     include(CMakePackageConfigHelpers)
     write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
-                                     VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                                     VERSION ${PROJECT_VERSION}
                                      COMPATIBILITY SameMajorVersion)
 
     if (BUILD_SHARED_LIBS)
@@ -408,7 +468,7 @@ function(sfml_export_targets)
     if (SFML_BUILD_FRAMEWORKS)
         set(config_package_location "SFML.framework/Resources/CMake")
     else()
-        set(config_package_location lib${LIB_SUFFIX}/cmake/SFML)
+        set(config_package_location ${CMAKE_INSTALL_LIBDIR}/cmake/SFML)
     endif()
     configure_package_config_file("${CURRENT_DIR}/SFMLConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
         INSTALL_DESTINATION "${config_package_location}")
@@ -426,4 +486,3 @@ function(sfml_export_targets)
             DESTINATION ${config_package_location}
             COMPONENT devel)
 endfunction()
-

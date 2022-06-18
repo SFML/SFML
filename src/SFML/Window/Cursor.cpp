@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,29 +27,28 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <memory>
 
 namespace sf
 {
 
 ////////////////////////////////////////////////////////////
 Cursor::Cursor() :
-m_impl(new priv::CursorImpl())
+m_impl(std::make_unique<priv::CursorImpl>())
 {
-    // That's it
+
 }
 
 
 ////////////////////////////////////////////////////////////
-Cursor::~Cursor()
-{
-    delete m_impl;
-}
+Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////
 bool Cursor::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
 {
-    if ((pixels == 0) || (size.x == 0) || (size.y == 0))
+    if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
         return false;
     else
         return m_impl->loadFromPixels(pixels, size, hotspot);

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,8 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <memory>
 
 namespace sf
 {
@@ -43,7 +43,7 @@ namespace priv
 /// \brief Cursor defines the appearance of a system cursor
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Cursor : NonCopyable
+class SFML_WINDOW_API Cursor
 {
 public:
 
@@ -64,6 +64,14 @@ public:
     ///  sf::Cursor::SizeVertical           |  yes  |    yes   |   yes    |
     ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    yes*  |   yes    |
     ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    yes*  |   yes    |
+    ///  sf::Cursor::SizeLeft               |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeRight              |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTop                |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottom             |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTopLeft            |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeTopRight           |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomLeft         |  yes  |    yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomRight        |  yes  |    yes** |   yes**  |
     ///  sf::Cursor::SizeAll                |  yes  |    no    |   yes    |
     ///  sf::Cursor::Cross                  |  yes  |    yes   |   yes    |
     ///  sf::Cursor::Help                   |  yes  |    yes*  |   yes    |
@@ -72,22 +80,32 @@ public:
     ///  * These cursor types are undocumented so may not
     ///    be available on all versions, but have been tested on 10.13
     ///
+    ///  ** On Windows and macOS, double-headed arrows are used
+    ///
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Arrow,                  ///< Arrow cursor (default)
-        ArrowWait,              ///< Busy arrow cursor
-        Wait,                   ///< Busy cursor
-        Text,                   ///< I-beam, cursor when hovering over a field allowing text entry
-        Hand,                   ///< Pointing hand cursor
-        SizeHorizontal,         ///< Horizontal double arrow cursor
-        SizeVertical,           ///< Vertical double arrow cursor
-        SizeTopLeftBottomRight, ///< Double arrow cursor going from top-left to bottom-right
-        SizeBottomLeftTopRight, ///< Double arrow cursor going from bottom-left to top-right
-        SizeAll,                ///< Combination of SizeHorizontal and SizeVertical
-        Cross,                  ///< Crosshair cursor
-        Help,                   ///< Help cursor
-        NotAllowed              ///< Action not allowed cursor
+        Arrow,                  //!< Arrow cursor (default)
+        ArrowWait,              //!< Busy arrow cursor
+        Wait,                   //!< Busy cursor
+        Text,                   //!< I-beam, cursor when hovering over a field allowing text entry
+        Hand,                   //!< Pointing hand cursor
+        SizeHorizontal,         //!< Horizontal double arrow cursor
+        SizeVertical,           //!< Vertical double arrow cursor
+        SizeTopLeftBottomRight, //!< Double arrow cursor going from top-left to bottom-right
+        SizeBottomLeftTopRight, //!< Double arrow cursor going from bottom-left to top-right
+        SizeLeft,               //!< Left arrow cursor on Linux, same as SizeHorizontal on other platforms
+        SizeRight,              //!< Right arrow cursor on Linux, same as SizeHorizontal on other platforms
+        SizeTop,                //!< Up arrow cursor on Linux, same as SizeVertical on other platforms
+        SizeBottom,             //!< Down arrow cursor on Linux, same as SizeVertical on other platforms
+        SizeTopLeft,            //!< Top-left arrow cursor on Linux, same as SizeTopLeftBottomRight on other platforms
+        SizeBottomRight,        //!< Bottom-right arrow cursor on Linux, same as SizeTopLeftBottomRight on other platforms
+        SizeBottomLeft,         //!< Bottom-left arrow cursor on Linux, same as SizeBottomLeftTopRight on other platforms
+        SizeTopRight,           //!< Top-right arrow cursor on Linux, same as SizeBottomLeftTopRight on other platforms
+        SizeAll,                //!< Combination of SizeHorizontal and SizeVertical
+        Cross,                  //!< Crosshair cursor
+        Help,                   //!< Help cursor
+        NotAllowed              //!< Action not allowed cursor
     };
 
 public:
@@ -113,6 +131,18 @@ public:
     ~Cursor();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor(const Cursor&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor& operator=(const Cursor&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
     /// \a pixels must be an array of \a width by \a height pixels
@@ -129,7 +159,8 @@ public:
     /// position is. Any mouse actions that are performed will
     /// return the window/screen location of the hotspot.
     ///
-    /// \warning On Unix, the pixels are mapped into a monochrome
+    /// \warning On Unix platforms which do not support colored
+    ///          cursors, the pixels are mapped into a monochrome
     ///          bitmap: pixels with an alpha channel to 0 are
     ///          transparent, black if the RGB channel are close
     ///          to zero, and white otherwise.
@@ -141,7 +172,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -157,7 +188,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSystem(Type type);
+    [[nodiscard]] bool loadFromSystem(Type type);
 
 private:
 
@@ -179,7 +210,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::CursorImpl* m_impl; ///< Platform-specific implementation of the cursor
+    std::unique_ptr<priv::CursorImpl> m_impl; //!< Platform-specific implementation of the cursor
 };
 
 } // namespace sf

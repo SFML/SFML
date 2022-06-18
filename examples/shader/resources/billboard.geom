@@ -25,7 +25,7 @@ void main()
     half_size /= resolution;
 
     // Iterate over all vertices
-    for (int i = 0; i < gl_in.length(); i++)
+    for (int i = 0; i < gl_in.length(); ++i)
     {
         // Retrieve the passed vertex position
         vec2 pos = gl_in[i].gl_Position.xy;
