@@ -191,14 +191,6 @@ private:
     friend SFML_NETWORK_API bool operator <(const IpAddress& left, const IpAddress& right);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Resolve the given address string
-    ///
-    /// \param address Address string
-    ///
-    ////////////////////////////////////////////////////////////
-    void resolve(const std::string& address);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     std::optional<Uint32> m_address; //!< Address stored as an unsigned 32 bits integer
