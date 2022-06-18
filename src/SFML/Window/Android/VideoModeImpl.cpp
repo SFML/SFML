@@ -44,7 +44,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     VideoMode desktop;
     {
         std::scoped_lock lock(states->mutex);
-        desktop = VideoMode(states->fullScreenSize.x, states->fullScreenSize.y);
+        desktop = VideoMode(Vector2u(states->fullScreenSize.x, states->fullScreenSize.y));
     }
 
     // Return both portrait and landscape resolutions
