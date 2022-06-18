@@ -43,7 +43,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     VideoMode desktop;
     {
-        Lock lock(states->mutex);
+        std::scoped_lock lock(states->mutex);
         desktop = VideoMode(states->fullScreenSize.x, states->fullScreenSize.y);
     }
 
