@@ -252,7 +252,6 @@ void getFullScreenSizeInPixels(ANativeActivity* activity, int* width, int* heigh
     // DisplayMetrics dm = new DisplayMetrics();
     // getWindowManager().getDefaultDisplay().getRealMetrics(dm);
 
-    JavaVM* lJavaVM = activity->vm;
     JNIEnv* lJNIEnv = activity->env;
 
     jobject objectActivity = activity->clazz;
