@@ -39,12 +39,12 @@ namespace priv
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     // Get the activity states
-    priv::ActivityStates* states = priv::getActivity();
+    priv::ActivityStates& states = priv::getActivity();
 
     VideoMode desktop;
     {
-        std::scoped_lock lock(states->mutex);
-        desktop = VideoMode(Vector2u(states->fullScreenSize.x, states->fullScreenSize.y));
+        std::scoped_lock lock(states.mutex);
+        desktop = VideoMode(Vector2u(states.fullScreenSize.x, states.fullScreenSize.y));
     }
 
     // Return both portrait and landscape resolutions
