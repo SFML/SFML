@@ -50,14 +50,49 @@ IpAddress::IpAddress() = default;
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(const std::string& address)
 {
-    resolve(address);
+    if (address == "255.255.255.255")
+    {
+        // The broadcast address needs to be handled explicitly,
+        // because it is also the value returned by inet_addr on error
+        m_address = INADDR_BROADCAST;
+        return;
+    }
+
+    if (address == "0.0.0.0")
+    {
+        m_address = INADDR_ANY;
+        return;
+    }
+
+    // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
+    sf::Uint32 ip = inet_addr(address.c_str());
+    if (ip != INADDR_NONE)
+    {
+        m_address = ip;
+        return;
+    }
+
+    // Not a valid address, try to convert it as a host name
+    addrinfo hints;
+    std::memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    addrinfo* result = nullptr;
+    if (getaddrinfo(address.c_str(), nullptr, &hints, &result) == 0 && result)
+    {
+        sockaddr_in sin;
+        std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
+        ip = sin.sin_addr.s_addr;
+        freeaddrinfo(result);
+        m_address = ip;
+        return;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const char* address)
+IpAddress::IpAddress(const char* address) :
+IpAddress(std::string(address))
 {
-    resolve(address);
 }
 
 
@@ -149,52 +184,6 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
 
     // Something failed: return an invalid address
     return IpAddress();
-}
-
-
-////////////////////////////////////////////////////////////
-void IpAddress::resolve(const std::string& address)
-{
-    m_address = std::nullopt;
-
-    if (address == "255.255.255.255")
-    {
-        // The broadcast address needs to be handled explicitly,
-        // because it is also the value returned by inet_addr on error
-        m_address = INADDR_BROADCAST;
-    }
-    else if (address == "0.0.0.0")
-    {
-        m_address = INADDR_ANY;
-    }
-    else
-    {
-        // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-        Uint32 ip = inet_addr(address.c_str());
-        if (ip != INADDR_NONE)
-        {
-            m_address = ip;
-        }
-        else
-        {
-            // Not a valid address, try to convert it as a host name
-            addrinfo hints;
-            std::memset(&hints, 0, sizeof(hints));
-            hints.ai_family = AF_INET;
-            addrinfo* result = nullptr;
-            if (getaddrinfo(address.c_str(), nullptr, &hints, &result) == 0)
-            {
-                if (result)
-                {
-                    sockaddr_in sin;
-                    std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
-                    ip = sin.sin_addr.s_addr;
-                    freeaddrinfo(result);
-                    m_address = ip;
-                }
-            }
-        }
-    }
 }
 
 
