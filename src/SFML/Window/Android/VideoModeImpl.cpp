@@ -39,7 +39,7 @@ namespace priv
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     // Get the activity states
-    priv::ActivityStates* states = priv::getActivity(NULL);
+    priv::ActivityStates* states = priv::getActivity();
 
     VideoMode desktop;
     {
