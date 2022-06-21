@@ -171,16 +171,16 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 
 
 ////////////////////////////////////////////////////////////
-void Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect, bool applyAlpha)
+[[nodiscard]] bool Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if ((source.m_size.x == 0) || (source.m_size.y == 0) || (m_size.x == 0) || (m_size.y == 0))
-        return;
+        return false;
 
     // Make sure the sourceRect left & top  and the {left, top} + {width, height} within bounds
     if (static_cast<unsigned int>(sourceRect.left) >= source.m_size.x || static_cast<unsigned int>(sourceRect.left + sourceRect.width) > source.m_size.x ||
         static_cast<unsigned int>(sourceRect.top) >= source.m_size.y || static_cast<unsigned int>(sourceRect.top + sourceRect.height) > source.m_size.y)
-        return;
+        return false;
 
     // Adjust the source rectangle
     IntRect srcRect = sourceRect;
@@ -207,7 +207,7 @@ void Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourc
 
     // Make sure the destination area is valid
     if ((width <= 0) || (height <= 0))
-        return;
+        return false;
 
     // Precompute as much as possible
     std::size_t  pitch     = static_cast<std::size_t>(width) * 4;
@@ -258,6 +258,8 @@ void Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourc
             dstPixels += dstStride;
         }
     }
+
+    return true;
 }
 
 

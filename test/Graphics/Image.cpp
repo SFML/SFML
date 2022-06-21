@@ -96,7 +96,7 @@ TEST_CASE("sf::Image - [graphics]")
 
             sf::Image image2;
             image2.create(sf::Vector2u(10, 10));
-            image2.copy(image1, sf::Vector2u(0, 0));
+            CHECK(image2.copy(image1, sf::Vector2u(0, 0)));
 
             for (sf::Uint32 i = 0; i < 10; ++i)
             {
@@ -114,7 +114,7 @@ TEST_CASE("sf::Image - [graphics]")
 
             sf::Image image2;
             image2.create(sf::Vector2u(10, 10));
-            image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(5, 5)));
+            CHECK(image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(5, 5))));
 
             for (sf::Uint32 i = 0; i < 10; ++i)
             {
@@ -145,7 +145,7 @@ TEST_CASE("sf::Image - [graphics]")
 
             sf::Image image2;
             image2.create(sf::Vector2u(10, 10), source);
-            image1.copy(image2, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(10, 10)), true);
+            CHECK(image1.copy(image2, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(10, 10)), true));
 
             for (sf::Uint32 i = 0; i < 10; ++i)
             {
@@ -162,7 +162,7 @@ TEST_CASE("sf::Image - [graphics]")
             sf::Image image2;
 
             image2.create(sf::Vector2u(10, 10), sf::Color::Red);
-            image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(9, 9)));
+            CHECK(!image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(9, 9))));
 
             for (sf::Uint32 i = 0; i < 10; ++i)
             {
@@ -181,7 +181,7 @@ TEST_CASE("sf::Image - [graphics]")
             sf::Image image2;
 
             image2.create(sf::Vector2u(10, 10), sf::Color::Red);
-            image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(5, 5), sf::Vector2i(9, 9)));
+            CHECK(!image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(5, 5), sf::Vector2i(9, 9))));
 
             for (sf::Uint32 i = 0; i < 10; ++i)
             {
