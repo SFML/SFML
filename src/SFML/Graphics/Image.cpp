@@ -174,56 +174,53 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 [[nodiscard]] bool Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
-    if ((source.m_size.x == 0) || (source.m_size.y == 0) || (m_size.x == 0) || (m_size.y == 0))
+    if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
         return false;
 
-    // Make sure the sourceRect left & top  and the {left, top} + {width, height} within bounds
-    if (static_cast<unsigned int>(sourceRect.left) >= source.m_size.x || static_cast<unsigned int>(sourceRect.left + sourceRect.width) > source.m_size.x ||
-        static_cast<unsigned int>(sourceRect.top) >= source.m_size.y || static_cast<unsigned int>(sourceRect.top + sourceRect.height) > source.m_size.y)
+    // Make sure the sourceRect components are non-negative before casting them to unsigned values
+    if (sourceRect.left < 0 || sourceRect.top < 0 || sourceRect.width < 0 || sourceRect.height < 0)
         return false;
 
-    // Adjust the source rectangle
-    IntRect srcRect = sourceRect;
-    if (srcRect.width == 0 || (srcRect.height == 0))
+    Rect<unsigned int> srcRect(sourceRect);
+
+    // Use the whole source image as srcRect if the provided source rectangle is empty
+    if (srcRect.width == 0 || srcRect.height == 0)
     {
-        srcRect.left   = 0;
-        srcRect.top    = 0;
-        srcRect.width  = static_cast<int>(source.m_size.x);
-        srcRect.height = static_cast<int>(source.m_size.y);
+        srcRect = Rect<unsigned int>({0, 0}, source.m_size);
     }
+    // Otherwise make sure the provided source rectangle fits into the source image
     else
     {
-        if (srcRect.left   < 0) srcRect.left = 0;
-        if (srcRect.top    < 0) srcRect.top  = 0;
-        if (srcRect.width  > static_cast<int>(source.m_size.x)) srcRect.width  = static_cast<int>(source.m_size.x);
-        if (srcRect.height > static_cast<int>(source.m_size.y)) srcRect.height = static_cast<int>(source.m_size.y);
+        // Checking the bottom right corner is enough because
+        // left and top are non-negative and width and height are positive.
+        if (source.m_size.x < srcRect.left + srcRect.width ||
+            source.m_size.y < srcRect.top + srcRect.height)
+            return false;
     }
 
-    // Then find the valid bounds of the destination rectangle
-    auto width  = static_cast<unsigned int>(srcRect.width);
-    auto height = static_cast<unsigned int>(srcRect.height);
-    if (dest.x + width  > m_size.x) width  = m_size.x - dest.x;
-    if (dest.y + height > m_size.y) height = m_size.y - dest.y;
-
-    // Make sure the destination area is valid
-    if ((width <= 0) || (height <= 0))
+    // Make sure the destination position is within this image bounds
+    if (m_size.x <= dest.x || m_size.y <= dest.y)
         return false;
 
+    // Then find the valid size of the destination rectangle
+    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width),
+                           std::min(m_size.y - dest.y, srcRect.height));
+
     // Precompute as much as possible
-    std::size_t  pitch     = static_cast<std::size_t>(width) * 4;
-    unsigned int rows      = height;
-    int          srcStride = static_cast<int>(source.m_size.x) * 4;
-    int          dstStride = static_cast<int>(m_size.x) * 4;
-    const Uint8* srcPixels = source.m_pixels.data() + (static_cast<unsigned int>(srcRect.left) + static_cast<unsigned int>(srcRect.top) * source.m_size.x) * 4;
+    const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
+    const unsigned int srcStride = source.m_size.x * 4;
+    const unsigned int dstStride = m_size.x * 4;
+
+    const Uint8* srcPixels = source.m_pixels.data() + (srcRect.left + srcRect.top * source.m_size.x) * 4;
     Uint8*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)
     {
         // Interpolation using alpha values, pixel by pixel (slower)
-        for (unsigned int i = 0; i < rows; ++i)
+        for (unsigned int i = 0; i < dstSize.y; ++i)
         {
-            for (unsigned int j = 0; j < width; ++j)
+            for (unsigned int j = 0; j < dstSize.x; ++j)
             {
                 // Get a direct pointer to the components of the current pixel
                 const Uint8* src = srcPixels + j * 4;
@@ -251,7 +248,7 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
     else
     {
         // Optimized copy ignoring alpha values, row by row (faster)
-        for (unsigned int i = 0; i < rows; ++i)
+        for (unsigned int i = 0; i < dstSize.y; ++i)
         {
             std::memcpy(dstPixels, srcPixels, pitch);
             srcPixels += srcStride;

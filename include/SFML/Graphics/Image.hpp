@@ -199,7 +199,7 @@ public:
     /// Note that this function can fail if either image is invalid
     /// (i.e. zero-sized width or height), or if \a sourceRect is
     /// not within the boundaries of the \a source parameter, or
-    /// if the destination area is invalid (i.e. negative coordinates).
+    /// if the destination area is out of the boundaries of this image.
     ///
     /// On failure, the destination image is left unchanged.
     ///
