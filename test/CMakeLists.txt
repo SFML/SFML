@@ -9,6 +9,7 @@ add_library(sfml-test-main STATIC
 )
 target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
+target_compile_definitions(sfml-test-main PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIFICATION_FOR_ALL_USED_TYPES)
 target_link_libraries(sfml-test-main PUBLIC SFML::System)
 set_target_warnings(sfml-test-main)
 

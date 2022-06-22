@@ -81,7 +81,6 @@ TEST_CASE("sf::Rect class template - [graphics]")
 
         const sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
         CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle).has_value());
-        CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle));
     }
 
     SUBCASE("Comparison operations")
