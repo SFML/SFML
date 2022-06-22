@@ -317,16 +317,16 @@ private:
 ///
 /// // Create a 20x20 image filled with black color
 /// sf::Image image;
-/// image.create(20, 20, sf::Color::Black);
+/// image.create({20, 20}, sf::Color::Black);
 ///
-/// // Copy image1 on image2 at position (10, 10)
-/// if (!image.copy(background, 10, 10))
+/// // Copy background on image at position (10, 10)
+/// if (!image.copy(background, {10, 10}))
 ///     return -1;
 ///
 /// // Make the top-left pixel transparent
-/// sf::Color color = image.getPixel(0, 0);
+/// sf::Color color = image.getPixel({0, 0});
 /// color.a = 0;
-/// image.setPixel(0, 0, color);
+/// image.setPixel({0, 0}, color);
 ///
 /// // Save the image to a file
 /// if (!image.saveToFile("result.png"))
