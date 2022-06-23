@@ -10,6 +10,7 @@
 #include <SFML/System/Vector3.hpp>
 
 #include <iomanip>
+#include <limits>
 #include <ostream>
 #include <sstream>
 #include <string>

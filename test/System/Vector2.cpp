@@ -1,6 +1,7 @@
 #include <SFML/System/Vector2.hpp>
 #include "SystemUtil.hpp"
 #include <type_traits>
+#include <cmath>
 
 #include <doctest.h>
 
@@ -248,7 +249,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(v.normalized() == Approx(sf::Vector2f(0.624695f, 0.780869f)));
 
         const sf::Vector2f w(-0.7f, -2.2f);
-        
+
         CHECK(w.length() == Approx(2.30868f));
         CHECK(w.lengthSq() == Approx(5.3300033f));
         CHECK(w.normalized() == Approx(sf::Vector2f(-0.303204f, -0.952926f)));
@@ -257,7 +258,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
     SUBCASE("Rotations and angles")
     {
         const sf::Vector2f v(2.4f, 3.0f);
-        
+
         CHECK(v.angle() == Approx(51.3402_deg));
         CHECK(sf::Vector2f::UnitX.angleTo(v) == Approx(51.3402_deg));
         CHECK(sf::Vector2f::UnitY.angleTo(v) == Approx(-38.6598_deg));
@@ -282,7 +283,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(v.rotatedBy(27.14_deg) == Approx(sf::Vector2f(0.767248f, 3.76448f)));
         CHECK(v.rotatedBy(-36.11_deg) == Approx(sf::Vector2f(3.70694f, 1.00925f)));
     }
-    
+
     SUBCASE("Products and quotients")
     {
         const sf::Vector2f v(2.4f, 3.0f);
@@ -293,18 +294,18 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
         CHECK(v.cross(w) == Approx(-3.18f));
         CHECK(w.cross(v) == Approx(+3.18f));
-        
+
         CHECK(v.cwiseMul(w) == Approx(sf::Vector2f(-1.68f, -6.6f)));
         CHECK(w.cwiseMul(v) == Approx(sf::Vector2f(-1.68f, -6.6f)));
         CHECK(v.cwiseDiv(w) == Approx(sf::Vector2f(-3.428571f, -1.363636f)));
         CHECK(w.cwiseDiv(v) == Approx(sf::Vector2f(-0.291666f, -0.733333f)));
     }
-    
+
     SUBCASE("Projection")
     {
         const sf::Vector2f v(2.4f, 3.0f);
         const sf::Vector2f w(-0.7f, -2.2f);
-        
+
         CHECK(v.projectedOnto(w) == Approx(sf::Vector2f(1.087430f, 3.417636f)));
         CHECK(v.projectedOnto(w) == Approx(sf::Vector2f(-1.55347f * w)));
 
