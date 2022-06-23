@@ -782,7 +782,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         case Keyboard::Scan::LaunchMail:         return "Launch Mail";
         case Keyboard::Scan::LaunchMediaSelect:  return "Launch Media Select";
 
-        default:                               return "Unknown Scancode";
+        default:                                 return "Unknown Scancode";
     }
 }
 
