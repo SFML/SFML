@@ -22,47 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/InputImpl.hpp>
+#include <SFML/System/Vector3.hpp>
+#include <type_traits>
+#include <cassert>
+#include <cmath>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool Mouse::isButtonPressed(Button button)
+template <typename T>
+Vector3<T> Vector3<T>::normalized() const
 {
-    return priv::InputImpl::isMouseButtonPressed(button);
+    static_assert(std::is_floating_point_v<T>, "Vector3::normalized() is only supported for floating point types");
+
+    assert(*this != Vector3<T>());
+    return (*this) / length();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::getPosition()
+template <typename T>
+T Vector3<T>::length() const
 {
-    return priv::InputImpl::getMousePosition();
+    static_assert(std::is_floating_point_v<T>, "Vector3::length() is only supported for floating point types");
+
+    return std::hypot(x, y, z);
+}
+
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::getPosition(const WindowBase& relativeTo)
-{
-    return priv::InputImpl::getMousePosition(relativeTo);
-}
-
-
+// Explicit template instantiations
 ////////////////////////////////////////////////////////////
-void Mouse::setPosition(const Vector2i& position)
-{
-    priv::InputImpl::setMousePosition(position);
-}
 
-
-////////////////////////////////////////////////////////////
-void Mouse::setPosition(const Vector2i& position, const WindowBase& relativeTo)
-{
-    priv::InputImpl::setMousePosition(position, relativeTo);
-}
-
-} // namespace sf
+template class sf::Vector3<float>;
+template class sf::Vector3<double>;
+template class sf::Vector3<long double>;
