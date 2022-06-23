@@ -75,6 +75,6 @@ TEST_CASE("sf::RenderStates class - [graphics]")
         CHECK(sf::RenderStates::Default.blendMode == sf::BlendMode());
         CHECK(sf::RenderStates::Default.transform == sf::Transform());
         CHECK(sf::RenderStates::Default.texture == nullptr);
-        CHECK(sf::RenderStates::Default.shader == nullptr); 
+        CHECK(sf::RenderStates::Default.shader == nullptr);
     }
 }

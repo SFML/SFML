@@ -282,7 +282,7 @@ int main()
             // Make the window the active window for OpenGL calls
             if (!window.setActive(true))
             {
-                // On failure, try re-creating the window, as it is intentionally 
+                // On failure, try re-creating the window, as it is intentionally
                 // closed when changing color space.
                 continue;
             }

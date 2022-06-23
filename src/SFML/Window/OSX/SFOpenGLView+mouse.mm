@@ -54,7 +54,7 @@
     m_cursor = cursor;
 
     // indirect call to resetCursorRects to set the cursor
-    [self.window invalidateCursorRectsForView:self]; 
+    [self.window invalidateCursorRectsForView:self];
 }
 
 

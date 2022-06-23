@@ -108,7 +108,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::SizeRight:       newCursor = [NSCursor resizeLeftRightCursor];     break;
         case Cursor::SizeTop:         newCursor = [NSCursor resizeUpDownCursor];        break;
         case Cursor::SizeBottom:      newCursor = [NSCursor resizeUpDownCursor];        break;
-            
+
         // These cursor types are undocumented, may not be available on some platforms
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
