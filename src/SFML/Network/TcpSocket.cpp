@@ -324,15 +324,15 @@ Socket::Status TcpSocket::send(Packet& packet)
     Uint32 packetSize = htonl(static_cast<Uint32>(size));
 
     // Allocate memory for the data block to send
-    std::vector<char> blockToSend(sizeof(packetSize) + size);
+    m_blockToSendBuffer.resize(sizeof(packetSize) + size);
 
     // Copy the packet size and data into the block to send
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wnull-dereference" // False positive.
-    std::memcpy(blockToSend.data(), &packetSize, sizeof(packetSize));
+    std::memcpy(m_blockToSendBuffer.data(), &packetSize, sizeof(packetSize));
     #pragma GCC diagnostic pop
     if (size > 0)
-        std::memcpy(blockToSend.data() + sizeof(packetSize), data, size);
+        std::memcpy(m_blockToSendBuffer.data() + sizeof(packetSize), data, size);
 
     // These warnings are ignored here for portability, as even on Windows the
     // signature of `send` might change depending on whether Win32 or MinGW is
@@ -343,7 +343,7 @@ Socket::Status TcpSocket::send(Packet& packet)
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
     std::size_t sent;
-    Status status = send(blockToSend.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(blockToSend.size() - packet.m_sendPos), sent);
+    Status status = send(m_blockToSendBuffer.data() + packet.m_sendPos, static_cast<priv::SocketImpl::Size>(m_blockToSendBuffer.size() - packet.m_sendPos), sent);
     #pragma GCC diagnostic pop
     #pragma GCC diagnostic pop
 
