@@ -228,7 +228,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    PendingPacket m_pendingPacket; //!< Temporary data of the packet currently being received
+    PendingPacket     m_pendingPacket;     //!< Temporary data of the packet currently being received
+    std::vector<char> m_blockToSendBuffer; //!< Buffer used to prepare data being sent from the socket
 };
 
 } // namespace sf
