@@ -558,7 +558,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             }
 
             // Reconstruct connection port and address
-            unsigned short port = static_cast<Uint8>(data[4] * 256) + data[5];
+            unsigned short port = static_cast<Uint16>(data[4] * 256 + data[5]);
             IpAddress address(data[0],
                               data[1],
                               data[2],
