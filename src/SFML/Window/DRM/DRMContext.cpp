@@ -168,7 +168,7 @@ namespace
 
         if (display == EGL_NO_DISPLAY)
         {
-            display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
+            eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
             EGLint major, minor;
             eglCheck(eglInitialize(display, &major, &minor));
@@ -295,7 +295,8 @@ m_scanOut    (false)
 DRMContext::~DRMContext()
 {
     // Deactivate the current context
-    EGLContext currentContext = eglCheck(eglGetCurrentContext());
+    EGLContext currentContext;
+    eglCheck(currentContext = eglGetCurrentContext());
 
     if (currentContext == m_context)
     {
@@ -427,7 +428,7 @@ void DRMContext::createContext(DRMContext* shared)
         eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
     // Create EGL context
-    m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
+    eglCheck(m_context = eglCreateContext(m_display, m_config, toShared, contextVersion));
     if (m_context == EGL_NO_CONTEXT)
         err() << "Failed to create EGL context" << std::endl;
 }
@@ -458,7 +459,7 @@ void DRMContext::createSurface(unsigned int width, unsigned int height, unsigned
     m_width = width;
     m_height = height;
 
-    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), NULL));
+    eglCheck(m_surface = eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), NULL));
 
     if (m_surface == EGL_NO_SURFACE)
     {
