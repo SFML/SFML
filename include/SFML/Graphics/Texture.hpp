@@ -32,7 +32,6 @@
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <filesystem>
-#include <string>
 
 
 namespace sf
