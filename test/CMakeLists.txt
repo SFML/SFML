@@ -18,6 +18,7 @@ SET(SYSTEM_SRC
     System/Clock.cpp
     System/Err.cpp
     System/FileInputStream.cpp
+    System/MemoryInputStream.cpp
     System/Time.cpp
     System/Vector2.cpp
     System/Vector3.cpp
