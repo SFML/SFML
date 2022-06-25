@@ -5,13 +5,6 @@
 #include <SFML/System/Time.hpp>
 
 #include <doctest.h> // for Approx
-#include <cassert>
-#include <filesystem>
-#include <fstream>
-#include <iomanip>
-#include <limits>
-#include <ostream>
-#include <sstream>
 
 namespace sf
 {
@@ -53,43 +46,4 @@ bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs)
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs)
 {
     return lhs.asDegrees() == Approx(rhs.value.asDegrees());
-}
-
-namespace sf::Testing
-{
-    static std::string getTemporaryFilePath()
-    {
-        static int counter = 0;
-
-        std::ostringstream oss;
-        oss << "sfmltemp" << counter << ".tmp";
-        ++counter;
-
-        std::filesystem::path result;
-        result /= std::filesystem::temp_directory_path();
-        result /= oss.str();
-
-        return result.string();
-    }
-
-    TemporaryFile::TemporaryFile(const std::string& contents)
-        : m_path(getTemporaryFilePath())
-    {
-        std::ofstream ofs(m_path);
-        assert(ofs);
-
-        ofs << contents;
-        assert(ofs);
-    }
-
-    TemporaryFile::~TemporaryFile()
-    {
-        [[maybe_unused]] const bool removed = std::filesystem::remove(m_path);
-        assert(removed);
-    }
-
-    const std::string& TemporaryFile::getPath() const
-    {
-        return m_path;
-    }
 }

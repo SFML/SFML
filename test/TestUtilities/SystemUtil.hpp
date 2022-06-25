@@ -12,8 +12,6 @@
 #include <iomanip>
 #include <limits>
 #include <ostream>
-#include <sstream>
-#include <string>
 
 // String conversions for doctest framework
 namespace sf
@@ -63,29 +61,6 @@ template <typename T>
 std::ostream& operator <<(std::ostream& os, const Approx<T>& approx)
 {
     return os << approx.value;
-}
-
-namespace sf::Testing
-{
-    class TemporaryFile
-    {
-    private:
-        std::string m_path;
-
-    public:
-        // Create a temporary file with a randomly generated path, containing 'contents'.
-        TemporaryFile(const std::string& contents);
-
-        // Close and delete the generated file.
-        ~TemporaryFile();
-
-        // Prevent copies.
-        TemporaryFile(const TemporaryFile&) = delete;
-        TemporaryFile& operator=(const TemporaryFile&) = delete;
-
-        // Return the randomly generated path.
-        const std::string& getPath() const;
-    };
 }
 
 #endif // SFML_TESTUTILITIES_SYSTEM_HPP
