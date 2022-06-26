@@ -6,7 +6,7 @@
 #ifndef SFML_TESTUTILITIES_WINDOW_HPP
 #define SFML_TESTUTILITIES_WINDOW_HPP
 
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 
 // String conversions for doctest framework
 namespace sf

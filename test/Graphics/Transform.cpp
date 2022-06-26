@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Angle.hpp>
-#include "GraphicsUtil.hpp"
+#include <GraphicsUtil.hpp>
 #include <vector>
 
 #include <doctest.h>

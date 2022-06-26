@@ -1,5 +1,5 @@
 #include <SFML/System/Angle.hpp>
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 
 #include <doctest.h>
 

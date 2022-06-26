@@ -1,5 +1,5 @@
 #include <SFML/Graphics/RectangleShape.hpp>
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 
 #include <doctest.h>
 

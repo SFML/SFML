@@ -1,4 +1,4 @@
-#include "GraphicsUtil.hpp"
+#include <GraphicsUtil.hpp>
 
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>

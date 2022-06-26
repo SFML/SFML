@@ -1,5 +1,5 @@
 #include <SFML/System/Time.hpp>
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 
 #include <doctest.h>
 
