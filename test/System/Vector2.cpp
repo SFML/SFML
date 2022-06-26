@@ -1,5 +1,5 @@
 #include <SFML/System/Vector2.hpp>
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 #include <type_traits>
 #include <cmath>
 

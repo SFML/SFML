@@ -1,5 +1,5 @@
 #include <SFML/Graphics/Glyph.hpp>
-#include "GraphicsUtil.hpp"
+#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
 

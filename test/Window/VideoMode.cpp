@@ -1,5 +1,5 @@
 #include <SFML/Window/VideoMode.hpp>
-#include "WindowUtil.hpp"
+#include <WindowUtil.hpp>
 
 #include <doctest.h>
 

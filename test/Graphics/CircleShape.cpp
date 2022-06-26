@@ -1,5 +1,5 @@
 #include <SFML/Graphics/CircleShape.hpp>
-#include "SystemUtil.hpp"
+#include <SystemUtil.hpp>
 
 #include <doctest.h>
 

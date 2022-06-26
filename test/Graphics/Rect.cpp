@@ -1,6 +1,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "GraphicsUtil.hpp"
+#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
 

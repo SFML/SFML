@@ -1,5 +1,5 @@
 #include <SFML/Graphics/Image.hpp>
-#include "GraphicsUtil.hpp"
+#include <GraphicsUtil.hpp>
 #include <array>
 
 #include <doctest.h>
