@@ -117,6 +117,12 @@ namespace
             FreeLibrary(user32Dll);
         }
     }
+
+    void registerRawInput()
+    {
+        RAWINPUTDEVICE rawKeyboard = { 0x01, 0x06, 0x0, 0x0 };
+        RegisterRawInputDevices(&rawKeyboard, 1, sizeof(RAWINPUTDEVICE));
+    }
 }
 
 namespace sf
@@ -145,7 +151,10 @@ m_cursorGrabbed   (false)
     {
         // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+            registerRawInput();
+        }
 
         ++handleCount;
 
@@ -219,7 +228,10 @@ m_cursorGrabbed   (m_fullscreen)
     if (m_handle)
     {
         if (handleCount == 0)
+        {
             JoystickImpl::setLazyUpdates(true);
+            registerRawInput();
+        }
 
         ++handleCount;
     }
@@ -715,36 +727,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Keydown event
-        case WM_KEYDOWN:
-        case WM_SYSKEYDOWN:
+        // Raw input event
+        case WM_INPUT:
         {
-            if (m_keyRepeatEnabled || ((HIWORD(lParam) & KF_REPEAT) == 0))
+            RAWINPUT input;
+            UINT size = sizeof(input);
+
+            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &input, &size, sizeof(RAWINPUTHEADER));
+
+            //Key event
+            if (input.header.dwType == RIM_TYPEKEYBOARD)
             {
+                //disregard escape sequence
+                if (input.data.keyboard.VKey == 255)
+                    break;
+
+                USHORT vKey = getDistinguishedVirtualKey(input.data.keyboard);
                 Event event;
-                event.type        = Event::KeyPressed;
+                event.type        = input.data.keyboard.Flags & RI_KEY_BREAK ? event.KeyReleased : event.KeyPressed;
                 event.key.alt     = HIWORD(GetKeyState(VK_MENU))    != 0;
                 event.key.control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
                 event.key.shift   = HIWORD(GetKeyState(VK_SHIFT))   != 0;
                 event.key.system  = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
-                event.key.code    = virtualKeyCodeToSF(wParam, lParam);
-                pushEvent(event);
-            }
-            break;
-        }
+                event.key.code    = virtualKeyCodeToSF(vKey);
 
-        // Keyup event
-        case WM_KEYUP:
-        case WM_SYSKEYUP:
-        {
-            Event event;
-            event.type        = Event::KeyReleased;
-            event.key.alt     = HIWORD(GetKeyState(VK_MENU))    != 0;
-            event.key.control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
-            event.key.shift   = HIWORD(GetKeyState(VK_SHIFT))   != 0;
-            event.key.system  = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
-            event.key.code    = virtualKeyCodeToSF(wParam, lParam);
-            pushEvent(event);
+                if ((event.type == event.KeyReleased) || (m_keyRepeatEnabled || HIWORD(GetKeyState(vKey)) == 0))
+                    pushEvent(event);
+            }
             break;
         }
 
@@ -990,25 +999,34 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
+USHORT WindowImplWin32::getDistinguishedVirtualKey(const RAWKEYBOARD & rawKeyboard)
 {
-    switch (key)
+    switch (rawKeyboard.VKey)
     {
-        // Check the scancode to distinguish between left and right shift
-        case VK_SHIFT:
-        {
-            static UINT lShift = MapVirtualKeyW(VK_LSHIFT, MAPVK_VK_TO_VSC);
-            UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
-            return scancode == lShift ? Keyboard::LShift : Keyboard::RShift;
-        }
+        // Check make code to distinguish left and right
+        case VK_SHIFT: return MapVirtualKeyW(rawKeyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
+       
+        // Check the RI_KEY_E0 flag to distinguish between left and right alt
+        case VK_MENU: return rawKeyboard.Flags & RI_KEY_E0 ? VK_RMENU : VK_LMENU;
 
-        // Check the "extended" flag to distinguish between left and right alt
-        case VK_MENU : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RAlt : Keyboard::LAlt;
+        // Check the RI_KEY_E0 flag to distinguish between left and right control
+        case VK_CONTROL: return rawKeyboard.Flags & RI_KEY_E0 ? VK_RCONTROL : VK_LCONTROL;
+    }
+    return rawKeyboard.VKey;
+}
 
-        // Check the "extended" flag to distinguish between left and right control
-        case VK_CONTROL : return (HIWORD(flags) & KF_EXTENDED) ? Keyboard::RControl : Keyboard::LControl;
 
-        // Other keys are reported properly
+////////////////////////////////////////////////////////////
+Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(USHORT vk)
+{
+    switch (vk)
+    {
+        case VK_LSHIFT:     return Keyboard::LShift;
+        case VK_RSHIFT:     return Keyboard::RShift;
+        case VK_LMENU:      return Keyboard::LAlt;
+        case VK_RMENU:      return Keyboard::RAlt;
+        case VK_LCONTROL:   return Keyboard::LControl;
+        case VK_RCONTROL:   return Keyboard::RControl;
         case VK_LWIN:       return Keyboard::LSystem;
         case VK_RWIN:       return Keyboard::RSystem;
         case VK_APPS:       return Keyboard::Menu;
