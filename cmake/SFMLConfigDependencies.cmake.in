@@ -73,6 +73,7 @@ if(SFML_STATIC_LIBRARIES)
         sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Vorbis" SEARCH_NAMES "vorbis")
         sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Ogg" SEARCH_NAMES "ogg")
         sfml_bind_dependency(TARGET FLAC FRIENDLY_NAME "FLAC" SEARCH_NAMES "FLAC")
+        sfml_bind_dependency(TARGET Opus FRIENDLY_NAME "Opus" SEARCH_NAMES "Opus")
     endif()
 
     if (FIND_SFML_DEPENDENCIES_NOTFOUND)
