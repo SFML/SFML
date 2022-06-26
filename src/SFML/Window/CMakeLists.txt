@@ -12,10 +12,6 @@ set(SRC
     ${SRCROOT}/Cursor.cpp
     ${INCROOT}/Cursor.hpp
     ${SRCROOT}/CursorImpl.hpp
-    ${SRCROOT}/EGLCheck.cpp
-    ${SRCROOT}/EGLCheck.hpp
-    ${SRCROOT}/EglContext.cpp
-    ${SRCROOT}/EglContext.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
@@ -63,8 +59,6 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/CursorImpl.cpp
         ${SRCROOT}/Win32/ClipboardImpl.hpp
         ${SRCROOT}/Win32/ClipboardImpl.cpp
-        ${SRCROOT}/Win32/WglContext.cpp
-        ${SRCROOT}/Win32/WglContext.hpp
         ${SRCROOT}/Win32/InputImpl.cpp
         ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
@@ -77,15 +71,40 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
+    if(SFML_OPENGL_ES)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/EGLCheck.cpp
+            ${SRCROOT}/EGLCheck.hpp
+            ${SRCROOT}/EglContext.cpp
+            ${SRCROOT}/EglContext.hpp
+        )
+    else()
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/Win32/WglContext.cpp
+            ${SRCROOT}/Win32/WglContext.hpp
+        )
+    endif()
     source_group("windows" FILES ${PLATFORM_SRC})
 
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    if(SFML_USE_DRM)
+    if(SFML_OPENGL_ES)
+        set(PLATFORM_SRC
+            ${PLATFORM_SRC}
+            ${SRCROOT}/EGLCheck.cpp
+            ${SRCROOT}/EGLCheck.hpp
+            ${SRCROOT}/EglContext.cpp
+            ${SRCROOT}/EglContext.hpp
+        )
+    elseif(SFML_USE_DRM)
         add_definitions(-DSFML_USE_DRM)
         set(PLATFORM_SRC
             ${PLATFORM_SRC}
+            ${SRCROOT}/EGLCheck.cpp
+            ${SRCROOT}/EGLCheck.hpp
             ${SRCROOT}/DRM/CursorImpl.hpp
             ${SRCROOT}/DRM/CursorImpl.cpp
             ${SRCROOT}/DRM/ClipboardImpl.hpp
@@ -146,7 +165,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/NetBSD/JoystickImpl.cpp
             ${SRCROOT}/NetBSD/JoystickImpl.hpp
         )
-
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_MACOSX)
@@ -232,6 +250,10 @@ elseif(SFML_OS_IOS)
     source_group("ios" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
+        ${SRCROOT}/EGLCheck.cpp
+        ${SRCROOT}/EGLCheck.hpp
+        ${SRCROOT}/EglContext.cpp
+        ${SRCROOT}/EglContext.hpp
         ${SRCROOT}/Android/CursorImpl.hpp
         ${SRCROOT}/Android/CursorImpl.cpp
         ${SRCROOT}/Android/ClipboardImpl.hpp
