@@ -35,9 +35,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/OpenGL.hpp>
 #include <drm-common.h>
-#define EGL_NO_X11
-#define MESA_EGL_NO_X11_HEADERS
-#include <EGL/egl.h>
+#include <glad/egl.h>
 #include <gbm.h>
 #include <xf86drmMode.h>
 

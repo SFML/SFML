@@ -37,6 +37,14 @@
 #include <poll.h>
 #include <unistd.h>
 
+// We check for this definition in order to avoid multiple definitions of GLAD
+// entities during unity builds of SFML.
+#ifndef SF_GLAD_EGL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_EGL_IMPLEMENTATION_INCLUDED
+#define SF_GLAD_EGL_IMPLEMENTATION
+#include <glad/egl.h>
+#endif
+
 namespace
 {
     bool initialized = false;
@@ -168,10 +176,14 @@ namespace
 
         if (display == EGL_NO_DISPLAY)
         {
+            gladLoaderLoadEGL(EGL_NO_DISPLAY);
+
             eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
             EGLint major, minor;
             eglCheck(eglInitialize(display, &major, &minor));
+
+            gladLoaderLoadEGL(display);
 
 #if defined(SFML_OPENGL_ES)
             if (!eglBindAPI(EGL_OPENGL_ES_API))
