@@ -134,9 +134,9 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T x; //!< X coordinate of the vector
-    T y; //!< Y coordinate of the vector
-    T z; //!< Z coordinate of the vector
+    T x{0}; //!< X coordinate of the vector
+    T y{0}; //!< Y coordinate of the vector
+    T z{0}; //!< Z coordinate of the vector
 };
 
 ////////////////////////////////////////////////////////////
