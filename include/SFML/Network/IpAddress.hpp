@@ -32,6 +32,7 @@
 #include <SFML/System/Time.hpp>
 #include <iosfwd>
 #include <optional>
+#include <string_view>
 #include <string>
 
 
@@ -44,17 +45,8 @@ namespace sf
 class SFML_NETWORK_API IpAddress
 {
 public:
-
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor creates an empty (invalid) address
-    ///
-    ////////////////////////////////////////////////////////////
-    IpAddress();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the address from a string
+    /// \brief Construct the address from a null-terminated string view
     ///
     /// Here \a address can be either a decimal address
     /// (ex: "192.168.1.56") or a network name (ex: "localhost").
@@ -62,28 +54,14 @@ public:
     /// \param address IP address or network name
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress(const std::string& address);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the address from a string
-    ///
-    /// Here \a address can be either a decimal address
-    /// (ex: "192.168.1.56") or a network name (ex: "localhost").
-    /// This is equivalent to the constructor taking a std::string
-    /// parameter, it is defined for convenience so that the
-    /// implicit conversions from literal strings to IpAddress work.
-    ///
-    /// \param address IP address or network name
-    ///
-    ////////////////////////////////////////////////////////////
-    IpAddress(const char* address);
+    static std::optional<IpAddress> resolve(std::string_view address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from 4 bytes
     ///
     /// Calling IpAddress(a, b, c, d) is equivalent to calling
-    /// IpAddress("a.b.c.d"), but safer as it doesn't have to
-    /// parse a string to get the address components.
+    /// IpAddress::resolve("a.b.c.d"), but safer as it doesn't
+    /// have to parse a string to get the address components.
     ///
     /// \param byte0 First byte of the address
     /// \param byte1 Second byte of the address
@@ -152,7 +130,7 @@ public:
     /// \see getPublicAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress getLocalAddress();
+    static std::optional<IpAddress> getLocalAddress();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's public address
@@ -176,12 +154,11 @@ public:
     /// \see getLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static IpAddress getPublicAddress(Time timeout = Time::Zero);
+    static std::optional<IpAddress> getPublicAddress(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const IpAddress None;      //!< Value representing an empty/invalid address
     static const IpAddress Any;       //!< Value representing any address (0.0.0.0)
     static const IpAddress LocalHost; //!< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; //!< The "broadcast" address (for sending UDP messages to everyone on a local network)
@@ -193,7 +170,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<Uint32> m_address; //!< Address stored as an unsigned 32 bits integer
+    Uint32 m_address; //!< Address stored as an unsigned 32 bits integer
 };
 
 ////////////////////////////////////////////////////////////
@@ -271,7 +248,7 @@ SFML_NETWORK_API bool operator >=(const IpAddress& left, const IpAddress& right)
 /// \return Reference to the input stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API std::istream& operator >>(std::istream& stream, IpAddress& address);
+SFML_NETWORK_API std::istream& operator >>(std::istream& stream, std::optional<IpAddress>& address);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of << operator to print an IP address to an output stream
@@ -301,16 +278,14 @@ SFML_NETWORK_API std::ostream& operator <<(std::ostream& stream, const IpAddress
 ///
 /// Usage example:
 /// \code
-/// sf::IpAddress a0;                                     // an invalid address
-/// sf::IpAddress a1 = sf::IpAddress::None;               // an invalid address (same as a0)
-/// sf::IpAddress a2("127.0.0.1");                        // the local host address
-/// sf::IpAddress a3 = sf::IpAddress::Broadcast;          // the broadcast address
-/// sf::IpAddress a4(192, 168, 1, 56);                    // a local address
-/// sf::IpAddress a5("my_computer");                      // a local address created from a network name
-/// sf::IpAddress a6("89.54.1.169");                      // a distant address
-/// sf::IpAddress a7("www.google.com");                   // a distant address created from a network name
-/// sf::IpAddress a8 = sf::IpAddress::getLocalAddress();  // my address on the local network
-/// sf::IpAddress a9 = sf::IpAddress::getPublicAddress(); // my address on the internet
+/// auto a2 = sf::IpAddress::resolve("127.0.0.1");      // the local host address
+/// auto a3 = sf::IpAddress::Broadcast;                 // the broadcast address
+/// sf::IpAddress a4(192, 168, 1, 56);                  // a local address
+/// auto a5 = sf::IpAddress::resolve("my_computer");    // a local address created from a network name
+/// auto a6 = sf::IpAddress::resolve("89.54.1.169");    // a distant address
+/// auto a7 = sf::IpAddress::resolve("www.google.com"); // a distant address created from a network name
+/// auto a8 = sf::IpAddress::getLocalAddress();         // my address on the local network
+/// auto a9 = sf::IpAddress::getPublicAddress();        // my address on the internet
 /// \endcode
 ///
 /// Note that sf::IpAddress currently doesn't support IPv6

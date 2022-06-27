@@ -37,68 +37,56 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-const IpAddress IpAddress::None;
 const IpAddress IpAddress::Any(0, 0, 0, 0);
 const IpAddress IpAddress::LocalHost(127, 0, 0, 1);
 const IpAddress IpAddress::Broadcast(255, 255, 255, 255);
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress() = default;
-
-
-////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const std::string& address)
+std::optional<IpAddress> IpAddress::resolve(std::string_view address)
 {
-    if (address == "255.255.255.255")
+    using namespace std::string_view_literals;
+
+    if (address.empty())
+        return std::nullopt;
+
+    if (address == "255.255.255.255"sv)
     {
         // The broadcast address needs to be handled explicitly,
         // because it is also the value returned by inet_addr on error
-        m_address = INADDR_BROADCAST;
-        return;
+        return Broadcast;
     }
 
-    if (address == "0.0.0.0")
-    {
-        m_address = INADDR_ANY;
-        return;
-    }
+    if (address == "0.0.0.0"sv)
+        return Any;
 
     // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-    sf::Uint32 ip = inet_addr(address.c_str());
-    if (ip != INADDR_NONE)
-    {
-        m_address = ip;
-        return;
-    }
+    if (const Uint32 ip = inet_addr(address.data()); ip != INADDR_NONE)
+        return IpAddress(ntohl(ip));
 
     // Not a valid address, try to convert it as a host name
-    addrinfo hints;
-    std::memset(&hints, 0, sizeof(hints));
+    addrinfo hints{}; // Zero-initialize
     hints.ai_family = AF_INET;
+
     addrinfo* result = nullptr;
-    if (getaddrinfo(address.c_str(), nullptr, &hints, &result) == 0 && result)
+    if (getaddrinfo(address.data(), nullptr, &hints, &result) == 0 && result != nullptr)
     {
         sockaddr_in sin;
         std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
-        ip = sin.sin_addr.s_addr;
+
+        const Uint32 ip = sin.sin_addr.s_addr;
         freeaddrinfo(result);
-        m_address = ip;
-        return;
+
+        return IpAddress(ntohl(ip));
     }
-}
 
-
-////////////////////////////////////////////////////////////
-IpAddress::IpAddress(const char* address) :
-IpAddress(std::string(address))
-{
+    return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
+m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
 {
 }
 
@@ -114,7 +102,7 @@ m_address(htonl(address))
 std::string IpAddress::toString() const
 {
     in_addr address;
-    address.s_addr = m_address.value_or(0);
+    address.s_addr = m_address;
 
     return inet_ntoa(address);
 }
@@ -123,30 +111,28 @@ std::string IpAddress::toString() const
 ////////////////////////////////////////////////////////////
 Uint32 IpAddress::toInteger() const
 {
-    return ntohl(m_address.value_or(0));
+    return ntohl(m_address);
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::getLocalAddress()
+std::optional<IpAddress> IpAddress::getLocalAddress()
 {
     // The method here is to connect a UDP socket to anyone (here to localhost),
     // and get the local socket address with the getsockname function.
     // UDP connection will not send anything to the network, so this function won't cause any overhead.
 
-    IpAddress localAddress;
-
     // Create the socket
     SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
     if (sock == priv::SocketImpl::invalidSocket())
-        return localAddress;
+        return std::nullopt;
 
     // Connect the socket to localhost on any port
     sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::close(sock);
-        return localAddress;
+        return std::nullopt;
     }
 
     // Get the local address of the socket connection
@@ -154,21 +140,19 @@ IpAddress IpAddress::getLocalAddress()
     if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
     {
         priv::SocketImpl::close(sock);
-        return localAddress;
+        return std::nullopt;
     }
 
     // Close the socket
     priv::SocketImpl::close(sock);
 
     // Finally build the IP address
-    localAddress = IpAddress(ntohl(address.sin_addr.s_addr));
-
-    return localAddress;
+    return IpAddress(ntohl(address.sin_addr.s_addr));
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress IpAddress::getPublicAddress(Time timeout)
+std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
 {
     // The trick here is more complicated, because the only way
     // to get our public IP address is to get it from a distant computer.
@@ -180,10 +164,10 @@ IpAddress IpAddress::getPublicAddress(Time timeout)
     Http::Request request("/ip-provider.php", Http::Request::Get);
     Http::Response page = server.sendRequest(request, timeout);
     if (page.getStatus() == Http::Response::Ok)
-        return IpAddress(page.getBody());
+        return IpAddress::resolve(page.getBody());
 
     // Something failed: return an invalid address
-    return IpAddress();
+    return std::nullopt;
 }
 
 
@@ -230,11 +214,11 @@ bool operator >=(const IpAddress& left, const IpAddress& right)
 
 
 ////////////////////////////////////////////////////////////
-std::istream& operator >>(std::istream& stream, IpAddress& address)
+std::istream& operator >>(std::istream& stream, std::optional<IpAddress>& address)
 {
     std::string str;
     stream >> str;
-    address = IpAddress(str);
+    address = IpAddress::resolve(str);
 
     return stream;
 }

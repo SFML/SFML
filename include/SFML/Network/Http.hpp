@@ -33,6 +33,7 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/Time.hpp>
 #include <map>
+#include <optional>
 #include <string>
 
 
@@ -420,10 +421,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket      m_connection; //!< Connection to the host
-    IpAddress      m_host;       //!< Web host address
-    std::string    m_hostName;   //!< Web host name
-    unsigned short m_port;       //!< Port used for connection with host
+    TcpSocket                m_connection; //!< Connection to the host
+    std::optional<IpAddress> m_host;       //!< Web host address
+    std::string              m_hostName;   //!< Web host name
+    unsigned short           m_port;       //!< Port used for connection with host
 };
 
 } // namespace sf

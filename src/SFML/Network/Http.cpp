@@ -329,7 +329,7 @@ void Http::setHost(const std::string& host, unsigned short port)
     if (!m_hostName.empty() && (*m_hostName.rbegin() == '/'))
         m_hostName.erase(m_hostName.size() - 1);
 
-    m_host = IpAddress(m_hostName);
+    m_host = IpAddress::resolve(m_hostName);
 }
 
 
@@ -369,7 +369,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     Response received;
 
     // Connect the socket to the host
-    if (m_connection.connect(m_host, m_port, timeout) == Socket::Done)
+    if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Done)
     {
         // Convert the request to string and send it through the connected socket
         std::string requestStr = toSend.prepare();

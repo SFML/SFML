@@ -71,7 +71,7 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
     create();
 
     // Check if the address is valid
-    if ((address == IpAddress::None) || (address == IpAddress::Broadcast))
+    if (address == IpAddress::Broadcast)
         return Error;
 
     // Bind the socket to the specified port

@@ -50,7 +50,7 @@ public:
             // Wait for a connection
             if (m_listener.accept(m_client) != sf::Socket::Done)
                 return;
-            std::cout << "Client connected: " << m_client.getRemoteAddress() << std::endl;
+            std::cout << "Client connected: " << m_client.getRemoteAddress().value() << std::endl;
 
             // Start playback
             play();

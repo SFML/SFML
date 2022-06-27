@@ -5,6 +5,7 @@
 #include <SFML/Network.hpp>
 #include <fstream>
 #include <iostream>
+#include <optional>
 
 
 ////////////////////////////////////////////////////////////
@@ -26,17 +27,17 @@ std::ostream& operator <<(std::ostream& stream, const sf::Ftp::Response& respons
 int main()
 {
     // Choose the server address
-    sf::IpAddress address;
+    std::optional<sf::IpAddress> address;
     do
     {
         std::cout << "Enter the FTP server address: ";
         std::cin  >> address;
     }
-    while (address == sf::IpAddress::None);
+    while (!address.has_value());
 
     // Connect to the server
     sf::Ftp server;
-    sf::Ftp::Response connectResponse = server.connect(address);
+    sf::Ftp::Response connectResponse = server.connect(address.value());
     std::cout << connectResponse << std::endl;
     if (!connectResponse.isOk())
         return EXIT_FAILURE;
