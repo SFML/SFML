@@ -31,6 +31,7 @@
 #include <SFML/Network/Export.hpp>
 #include <SFML/Network/Socket.hpp>
 #include <SFML/System/Time.hpp>
+#include <optional>
 
 
 namespace sf
@@ -69,14 +70,14 @@ public:
     /// \brief Get the address of the connected peer
     ///
     /// If the socket is not connected, this function returns
-    /// sf::IpAddress::None.
+    /// an unset optional.
     ///
     /// \return Address of the remote peer
     ///
     /// \see getRemotePort
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress getRemoteAddress() const;
+    std::optional<IpAddress> getRemoteAddress() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the port of the connected peer to which
@@ -299,7 +300,7 @@ private:
 /// // Wait for a connection
 /// sf::TcpSocket socket;
 /// listener.accept(socket);
-/// std::cout << "New client connected: " << socket.getRemoteAddress() << std::endl;
+/// std::cout << "New client connected: " << socket.getRemoteAddress().value() << std::endl;
 ///
 /// // Receive a message from the client
 /// char buffer[1024];

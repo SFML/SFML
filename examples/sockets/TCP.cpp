@@ -26,7 +26,7 @@ void runTcpServer(unsigned short port)
     sf::TcpSocket socket;
     if (listener.accept(socket) != sf::Socket::Done)
         return;
-    std::cout << "Client connected: " << socket.getRemoteAddress() << std::endl;
+    std::cout << "Client connected: " << socket.getRemoteAddress().value() << std::endl;
 
     // Send a message to the connected client
     const char out[] = "Hi, I'm the server";
@@ -51,21 +51,21 @@ void runTcpServer(unsigned short port)
 void runTcpClient(unsigned short port)
 {
     // Ask for the server address
-    sf::IpAddress server;
+    std::optional<sf::IpAddress> server;
     do
     {
         std::cout << "Type the address or name of the server to connect to: ";
         std::cin  >> server;
     }
-    while (server == sf::IpAddress::None);
+    while (!server.has_value());
 
     // Create a socket for communicating with the server
     sf::TcpSocket socket;
 
     // Connect to the server
-    if (socket.connect(server, port) != sf::Socket::Done)
+    if (socket.connect(server.value(), port) != sf::Socket::Done)
         return;
-    std::cout << "Connected to server " << server << std::endl;
+    std::cout << "Connected to server " << server.value() << std::endl;
 
     // Receive a message from the server
     char in[128];

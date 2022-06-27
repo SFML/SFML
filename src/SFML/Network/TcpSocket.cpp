@@ -79,7 +79,7 @@ unsigned short TcpSocket::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-IpAddress TcpSocket::getRemoteAddress() const
+std::optional<IpAddress> TcpSocket::getRemoteAddress() const
 {
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
@@ -93,7 +93,7 @@ IpAddress TcpSocket::getRemoteAddress() const
     }
 
     // We failed to retrieve the address
-    return IpAddress::None;
+    return std::nullopt;
 }
 
 
@@ -183,7 +183,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
-                if (getRemoteAddress() != IpAddress::None)
+                if (getRemoteAddress().has_value())
                 {
                     // Connection accepted
                     status = Done;

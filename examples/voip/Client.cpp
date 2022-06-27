@@ -121,16 +121,16 @@ void doClient(unsigned short port)
     }
 
     // Ask for server address
-    sf::IpAddress server;
+    std::optional<sf::IpAddress> server;
     do
     {
         std::cout << "Type address or name of the server to connect to: ";
         std::cin  >> server;
     }
-    while (server == sf::IpAddress::None);
+    while (!server.has_value());
 
     // Create an instance of our custom recorder
-    NetworkRecorder recorder(server, port);
+    NetworkRecorder recorder(server.value(), port);
 
     // Wait for user input...
     std::cin.ignore(10000, '\n');
