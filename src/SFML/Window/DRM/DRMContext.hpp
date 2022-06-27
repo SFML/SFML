@@ -33,7 +33,6 @@
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/OpenGL.hpp>
 #include <drm-common.h>
 #include <glad/egl.h>
 #include <gbm.h>

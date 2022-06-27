@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
-#include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <cerrno>

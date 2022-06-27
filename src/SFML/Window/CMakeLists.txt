@@ -91,18 +91,9 @@ if(SFML_OS_WINDOWS)
     # make sure that we use the Unicode version of the Win API functions
     add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    if(SFML_OPENGL_ES)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
-            ${SRCROOT}/EGLCheck.cpp
-            ${SRCROOT}/EGLCheck.hpp
-            ${SRCROOT}/EglContext.cpp
-            ${SRCROOT}/EglContext.hpp
-        )
-    elseif(SFML_USE_DRM)
+    if(SFML_USE_DRM)
         add_definitions(-DSFML_USE_DRM)
         set(PLATFORM_SRC
-            ${PLATFORM_SRC}
             ${SRCROOT}/EGLCheck.cpp
             ${SRCROOT}/EGLCheck.hpp
             ${SRCROOT}/DRM/CursorImpl.hpp
@@ -121,7 +112,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         )
     else()
         set(PLATFORM_SRC
-            ${PLATFORM_SRC}
             ${SRCROOT}/Unix/CursorImpl.hpp
             ${SRCROOT}/Unix/CursorImpl.cpp
             ${SRCROOT}/Unix/ClipboardImpl.hpp
@@ -132,14 +122,27 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp
             ${SRCROOT}/Unix/Display.hpp
-            ${SRCROOT}/Unix/GlxContext.cpp
-            ${SRCROOT}/Unix/GlxContext.hpp
             ${SRCROOT}/Unix/VideoModeImpl.cpp
             ${SRCROOT}/Unix/VulkanImplX11.cpp
             ${SRCROOT}/Unix/VulkanImplX11.hpp
             ${SRCROOT}/Unix/WindowImplX11.cpp
             ${SRCROOT}/Unix/WindowImplX11.hpp
         )
+        if(SFML_OPENGL_ES)
+            set(PLATFORM_SRC
+                ${PLATFORM_SRC}
+                ${SRCROOT}/EGLCheck.cpp
+                ${SRCROOT}/EGLCheck.hpp
+                ${SRCROOT}/EglContext.cpp
+                ${SRCROOT}/EglContext.hpp
+            )
+        else()
+             set(PLATFORM_SRC
+                ${PLATFORM_SRC}
+                ${SRCROOT}/Unix/GlxContext.cpp
+                ${SRCROOT}/Unix/GlxContext.hpp
+            )
+        endif()
     endif()
     if(SFML_OS_LINUX)
         set(PLATFORM_SRC
