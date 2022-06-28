@@ -4,19 +4,26 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <cassert>
 #include <vector>
 
-namespace std
+// Use StringMaker to avoid opening namespace std
+namespace doctest
 {
-std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector)
+template <>
+struct StringMaker<std::vector<float>>
 {
-    out << "{ ";
-    for (size_t i = 0; i + 1 < vector.size(); ++i)
-        out << vector[i] << ", ";
-    out << vector.back() << " }";
-    return out;
-}
-} // namespace std
+    static String convert(const std::vector<float>& vector)
+    {
+        assert(!vector.empty());
+        doctest::String out = "{ ";
+        for (size_t i = 0; i + 1 < vector.size(); ++i)
+            out += toString(vector[i]) + ", ";
+        out += toString(vector.back()) + " }";
+        return out;
+    }
+};
+} // namespace doctest
 
 TEST_CASE("sf::Transform class - [graphics]")
 {
