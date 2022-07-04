@@ -29,12 +29,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
 #include <SFML/System/Export.hpp>
+
 #include <SFML/System/InputStream.hpp>
-#include <memory>
-#include <string>
+
 #include <cstdio>
 #include <filesystem>
+#include <memory>
+#include <string>
 
 #ifdef SFML_SYSTEM_ANDROID
 namespace sf::priv
@@ -140,7 +143,6 @@ public:
     Int64 getSize() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

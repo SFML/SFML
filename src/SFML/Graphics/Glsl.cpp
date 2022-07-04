@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Glsl.hpp>
+
 #include <algorithm>
 
 
@@ -35,52 +36,58 @@ namespace sf
 namespace priv
 {
 
-    ////////////////////////////////////////////////////////////
-    void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
-    {
-        const float* from = source.getMatrix(); // 4x4
-        float* to = dest.array;                 // 3x3
+////////////////////////////////////////////////////////////
+void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
+{
+    const float* from = source.getMatrix(); // 4x4
+    float*       to   = dest.array;         // 3x3
 
-        // Use only left-upper 3x3 block (for a 2D transform)
-        to[0] = from[ 0]; to[1] = from[ 1]; to[2] = from[ 3];
-        to[3] = from[ 4]; to[4] = from[ 5]; to[5] = from[ 7];
-        to[6] = from[12]; to[7] = from[13]; to[8] = from[15];
-    }
-
-
-    ////////////////////////////////////////////////////////////
-    void copyMatrix(const Transform& source, Matrix<4, 4>& dest)
-    {
-        // Adopt 4x4 matrix as-is
-        copyMatrix(source.getMatrix(), 4 * 4, dest.array);
-    }
+    // Use only left-upper 3x3 block (for a 2D transform)
+    to[0] = from[0];
+    to[1] = from[1];
+    to[2] = from[3];
+    to[3] = from[4];
+    to[4] = from[5];
+    to[5] = from[7];
+    to[6] = from[12];
+    to[7] = from[13];
+    to[8] = from[15];
+}
 
 
-    ////////////////////////////////////////////////////////////
-    void copyMatrix(const float* source, std::size_t elements, float* dest)
-    {
-        std::copy(source, source + elements, dest);
-    }
+////////////////////////////////////////////////////////////
+void copyMatrix(const Transform& source, Matrix<4, 4>& dest)
+{
+    // Adopt 4x4 matrix as-is
+    copyMatrix(source.getMatrix(), 4 * 4, dest.array);
+}
 
 
-    ////////////////////////////////////////////////////////////
-    void copyVector(const Color& source, Vector4<float>& dest)
-    {
-        dest.x = source.r / 255.f;
-        dest.y = source.g / 255.f;
-        dest.z = source.b / 255.f;
-        dest.w = source.a / 255.f;
-    }
+////////////////////////////////////////////////////////////
+void copyMatrix(const float* source, std::size_t elements, float* dest)
+{
+    std::copy(source, source + elements, dest);
+}
 
 
-    ////////////////////////////////////////////////////////////
-    void copyVector(const Color& source, Vector4<int>& dest)
-    {
-        dest.x = static_cast<int>(source.r);
-        dest.y = static_cast<int>(source.g);
-        dest.z = static_cast<int>(source.b);
-        dest.w = static_cast<int>(source.a);
-    }
+////////////////////////////////////////////////////////////
+void copyVector(const Color& source, Vector4<float>& dest)
+{
+    dest.x = source.r / 255.f;
+    dest.y = source.g / 255.f;
+    dest.z = source.b / 255.f;
+    dest.w = source.a / 255.f;
+}
+
+
+////////////////////////////////////////////////////////////
+void copyVector(const Color& source, Vector4<int>& dest)
+{
+    dest.x = static_cast<int>(source.r);
+    dest.y = static_cast<int>(source.g);
+    dest.z = static_cast<int>(source.b);
+    dest.w = static_cast<int>(source.a);
+}
 
 } // namespace priv
 } // namespace sf

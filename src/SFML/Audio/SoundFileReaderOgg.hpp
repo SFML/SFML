@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
+
 #include <vorbis/vorbisfile.h>
 
 
@@ -43,7 +44,6 @@ namespace priv
 class SoundFileReaderOgg : public SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this reader can handle a file given by an input stream
     ///
@@ -55,7 +55,6 @@ public:
     [[nodiscard]] static bool check(InputStream& stream);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -106,7 +105,6 @@ public:
     [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Close the open Vorbis file
     ///

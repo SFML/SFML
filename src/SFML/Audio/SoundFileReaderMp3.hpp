@@ -29,9 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #ifndef NOMINMAX
-#define NOMINMAX               // To avoid windows.h and std::min issue
+#define NOMINMAX // To avoid windows.h and std::min issue
 #endif
-#define MINIMP3_NO_STDIO  // Minimp3 control define, eliminate file manipulation code which is useless here
+#define MINIMP3_NO_STDIO // Minimp3 control define, eliminate file manipulation code which is useless here
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -48,6 +48,7 @@
 #undef MINIMP3_NO_STDIO
 
 #include <SFML/Audio/SoundFileReader.hpp>
+
 #include <vector>
 
 
@@ -62,7 +63,6 @@ namespace priv
 class SoundFileReaderMp3 : public SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this reader can handle a file given by an input stream
     ///
@@ -74,7 +74,6 @@ public:
     [[nodiscard]] static bool check(InputStream& stream);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -125,14 +124,13 @@ public:
     [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mp3dec_io_t    m_io;
-    mp3dec_ex_t    m_decoder;
-    Uint64         m_numSamples;   // Decompressed audio storage size
-    Uint64         m_position;     // Position in decompressed audio buffer
+    mp3dec_io_t m_io;
+    mp3dec_ex_t m_decoder;
+    Uint64      m_numSamples; // Decompressed audio storage size
+    Uint64      m_position;   // Position in decompressed audio buffer
 };
 
 } // namespace priv

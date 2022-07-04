@@ -42,7 +42,6 @@ class String;
 class SFML_WINDOW_API Clipboard
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the content of the clipboard as string data
     ///

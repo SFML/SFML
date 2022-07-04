@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
+
 #include <SFML/Network/SocketHandle.hpp>
+
 #include <vector>
 
 
@@ -44,7 +46,6 @@ class SocketSelector;
 class SFML_NETWORK_API Socket
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Status codes that may be returned by socket functions
     ///
@@ -68,7 +69,6 @@ public:
     };
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -117,7 +117,6 @@ public:
     bool isBlocking() const;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Types of protocols that the socket can use
     ///
@@ -178,7 +177,6 @@ protected:
     void close();
 
 private:
-
     friend class SocketSelector;
 
     ////////////////////////////////////////////////////////////

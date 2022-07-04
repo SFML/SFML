@@ -30,10 +30,10 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Network/Win32/SocketImpl.hpp>
+#include <SFML/Network/Win32/SocketImpl.hpp>
 
 #else
 
-    #include <SFML/Network/Unix/SocketImpl.hpp>
+#include <SFML/Network/Unix/SocketImpl.hpp>
 
 #endif

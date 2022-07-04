@@ -25,25 +25,19 @@
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect() :
-left  (0),
-top   (0),
-width (0),
-height(0)
+constexpr Rect<T>::Rect() : left(0), top(0), width(0), height(0)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
-left  (position.x),
-top   (position.y),
-width (size.x),
+left(position.x),
+top(position.y),
+width(size.x),
 height(size.y)
 {
-
 }
 
 
@@ -51,9 +45,9 @@ height(size.y)
 template <typename T>
 template <typename U>
 constexpr Rect<T>::Rect(const Rect<U>& rectangle) :
-left  (static_cast<T>(rectangle.left)),
-top   (static_cast<T>(rectangle.top)),
-width (static_cast<T>(rectangle.width)),
+left(static_cast<T>(rectangle.left)),
+top(static_cast<T>(rectangle.top)),
+width(static_cast<T>(rectangle.width)),
 height(static_cast<T>(rectangle.height))
 {
 }
@@ -64,8 +58,8 @@ template <typename T>
 constexpr bool Rect<T>::contains(const Vector2<T>& point) const
 {
     // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
-    const auto min = [](T a, T b){ return (a < b) ? a : b; };
-    const auto max = [](T a, T b){ return (a < b) ? b : a; };
+    const auto min = [](T a, T b) { return (a < b) ? a : b; };
+    const auto max = [](T a, T b) { return (a < b) ? b : a; };
 
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
@@ -84,8 +78,8 @@ template <typename T>
 constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectangle) const
 {
     // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
-    const auto min = [](T a, T b){ return (a < b) ? a : b; };
-    const auto max = [](T a, T b){ return (a < b) ? b : a; };
+    const auto min = [](T a, T b) { return (a < b) ? a : b; };
+    const auto max = [](T a, T b) { return (a < b) ? b : a; };
 
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
@@ -137,16 +131,16 @@ constexpr Vector2<T> Rect<T>::getSize() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator ==(const Rect<T>& left, const Rect<T>& right)
+constexpr bool operator==(const Rect<T>& left, const Rect<T>& right)
 {
-    return (left.left == right.left) && (left.width == right.width) &&
-           (left.top == right.top) && (left.height == right.height);
+    return (left.left == right.left) && (left.width == right.width) && (left.top == right.top) &&
+           (left.height == right.height);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator !=(const Rect<T>& left, const Rect<T>& right)
+constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right)
 {
     return !(left == right);
 }

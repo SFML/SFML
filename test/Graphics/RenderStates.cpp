@@ -1,7 +1,8 @@
 #include <SFML/Graphics/RenderStates.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::RenderStates class - [graphics]")
 {
@@ -18,8 +19,12 @@ TEST_CASE("sf::RenderStates class - [graphics]")
 
         SUBCASE("BlendMode constructor")
         {
-            const sf::BlendMode blendMode(sf::BlendMode::Zero, sf::BlendMode::SrcColor, sf::BlendMode::ReverseSubtract,
-                                          sf::BlendMode::OneMinusDstAlpha, sf::BlendMode::DstAlpha, sf::BlendMode::Max);
+            const sf::BlendMode    blendMode(sf::BlendMode::Zero,
+                                          sf::BlendMode::SrcColor,
+                                          sf::BlendMode::ReverseSubtract,
+                                          sf::BlendMode::OneMinusDstAlpha,
+                                          sf::BlendMode::DstAlpha,
+                                          sf::BlendMode::Max);
             const sf::RenderStates renderStates(blendMode);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.transform == sf::Transform());
@@ -29,7 +34,7 @@ TEST_CASE("sf::RenderStates class - [graphics]")
 
         SUBCASE("Transform constructor")
         {
-            const sf::Transform transform(10, 9, 8, 7, 6, 5, 4, 3, 2);
+            const sf::Transform    transform(10, 9, 8, 7, 6, 5, 4, 3, 2);
             const sf::RenderStates renderStates(transform);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == transform);
@@ -39,7 +44,7 @@ TEST_CASE("sf::RenderStates class - [graphics]")
 
         SUBCASE("Texture constructor")
         {
-            const sf::Texture* texture = nullptr;
+            const sf::Texture*     texture = nullptr;
             const sf::RenderStates renderStates(texture);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == sf::Transform());
@@ -49,7 +54,7 @@ TEST_CASE("sf::RenderStates class - [graphics]")
 
         SUBCASE("Shader constructor")
         {
-            const sf::Shader* shader = nullptr;
+            const sf::Shader*      shader = nullptr;
             const sf::RenderStates renderStates(shader);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.transform == sf::Transform());
@@ -59,9 +64,13 @@ TEST_CASE("sf::RenderStates class - [graphics]")
 
         SUBCASE("Verbose constructor")
         {
-            const sf::BlendMode blendMode(sf::BlendMode::One, sf::BlendMode::SrcColor, sf::BlendMode::ReverseSubtract,
-                                          sf::BlendMode::OneMinusDstAlpha, sf::BlendMode::DstAlpha, sf::BlendMode::Max);
-            const sf::Transform transform(10, 2, 3, 4, 50, 40, 30, 20, 10);
+            const sf::BlendMode    blendMode(sf::BlendMode::One,
+                                          sf::BlendMode::SrcColor,
+                                          sf::BlendMode::ReverseSubtract,
+                                          sf::BlendMode::OneMinusDstAlpha,
+                                          sf::BlendMode::DstAlpha,
+                                          sf::BlendMode::Max);
+            const sf::Transform    transform(10, 2, 3, 4, 50, 40, 30, 20, 10);
             const sf::RenderStates renderStates(blendMode, transform, nullptr, nullptr);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.transform == transform);

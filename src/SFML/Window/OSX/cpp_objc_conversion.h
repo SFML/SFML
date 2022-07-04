@@ -27,9 +27,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/String.hpp>
-#include <string>
 
 #import <Foundation/Foundation.h>
+#include <string>
 
 ////////////////////////////////////////////////////////////
 /// \brief Returns a NSString construct with +stringWithCString:encoding:

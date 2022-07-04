@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+
 #include <cstring>
 #include <iostream>
 #include <iterator>
@@ -21,14 +22,11 @@ const sf::Uint8 serverEndOfStream = 2;
 class NetworkAudioStream : public sf::SoundStream
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    NetworkAudioStream() :
-    m_offset     (0),
-    m_hasFinished(false)
+    NetworkAudioStream() : m_offset(0), m_hasFinished(false)
     {
         // Set the sound parameters
         initialize(1, 44100);
@@ -66,7 +64,6 @@ public:
     }
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// /see SoundStream::OnGetData
     ///
@@ -85,7 +82,8 @@ private:
         // (don't forget that we run in two separate threads)
         {
             std::scoped_lock lock(m_mutex);
-            m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<sf::Int64>::difference_type>(m_offset), m_samples.end());
+            m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<sf::Int64>::difference_type>(m_offset),
+                                m_samples.end());
         }
 
         // Fill audio data to pass to the stream
@@ -133,9 +131,11 @@ private:
                 // (so we protect any operation on it with the mutex)
                 {
                     std::scoped_lock lock(m_mutex);
-                    std::size_t oldSize = m_samples.size();
+                    std::size_t      oldSize = m_samples.size();
                     m_samples.resize(oldSize + sampleCount);
-                    std::memcpy(&(m_samples[oldSize]), static_cast<const char*>(packet.getData()) + 1, sampleCount * sizeof(sf::Int16));
+                    std::memcpy(&(m_samples[oldSize]),
+                                static_cast<const char*>(packet.getData()) + 1,
+                                sampleCount * sizeof(sf::Int16));
                 }
             }
             else if (id == serverEndOfStream)

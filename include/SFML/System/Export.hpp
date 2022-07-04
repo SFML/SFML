@@ -36,11 +36,11 @@
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_EXPORTS)
 
-    #define SFML_SYSTEM_API SFML_API_EXPORT
+#define SFML_SYSTEM_API SFML_API_EXPORT
 
 #else
 
-    #define SFML_SYSTEM_API SFML_API_IMPORT
+#define SFML_SYSTEM_API SFML_API_IMPORT
 
 #endif
 

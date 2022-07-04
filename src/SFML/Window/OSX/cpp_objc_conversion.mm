@@ -27,14 +27,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Utf.hpp>
-
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+
 #import <Foundation/Foundation.h>
 
 ////////////////////////////////////////////////////////////
 NSString* stringToNSString(const std::string& string)
 {
-    std::string utf8; utf8.reserve(string.size() + 1);
+    std::string utf8;
+    utf8.reserve(string.size() + 1);
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
     NSString* str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
 
@@ -44,8 +45,8 @@ NSString* stringToNSString(const std::string& string)
 ////////////////////////////////////////////////////////////
 NSString* sfStringToNSString(const sf::String& string)
 {
-    sf::Uint32 length = static_cast<sf::Uint32>(string.getSize() * sizeof(sf::Uint32));
-    const void* data = reinterpret_cast<const void*>(string.getData());
+    sf::Uint32  length = static_cast<sf::Uint32>(string.getSize() * sizeof(sf::Uint32));
+    const void* data   = reinterpret_cast<const void*>(string.getData());
 
     NSStringEncoding encoding;
     if (NSHostByteOrder() == NS_LittleEndian)

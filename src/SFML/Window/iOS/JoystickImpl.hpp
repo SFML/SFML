@@ -42,7 +42,6 @@ namespace priv
 class JoystickImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the joystick module
     ///

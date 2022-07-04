@@ -23,9 +23,10 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/System/Vector2.hpp>
-#include <type_traits>
+
 #include <cassert>
 #include <cmath>
+#include <type_traits>
 
 
 namespace sf
@@ -75,9 +76,7 @@ Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
     T sin = std::sin(static_cast<T>(angle.asRadians()));
 
     // Don't manipulate x and y separately, otherwise they're overwritten too early
-    return Vector2<T>(
-        cos * x - sin * y,
-        sin * x + cos * y);
+    return Vector2<T>(cos * x - sin * y, sin * x + cos * y);
 }
 
 
@@ -111,7 +110,7 @@ T Vector2<T>::length() const
     return std::hypot(x, y);
 }
 
-}
+} // namespace sf
 
 
 ////////////////////////////////////////////////////////////

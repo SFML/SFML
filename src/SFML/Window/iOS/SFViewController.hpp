@@ -58,7 +58,7 @@
 ////////////////////////////////////////////////////////////
 // Member data
 ////////////////////////////////////////////////////////////
-@property (nonatomic) bool orientationCanChange; ///< Tells whether the controller's view can rotate or not
+@property(nonatomic) bool orientationCanChange; ///< Tells whether the controller's view can rotate or not
 
 @end
 

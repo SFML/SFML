@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -20,9 +21,9 @@ void playSound()
 
     // Display sound informations
     std::cout << "killdeer.wav:" << '\n'
-              << " " << buffer.getDuration().asSeconds() << " seconds"       << '\n'
-              << " " << buffer.getSampleRate()           << " samples / sec" << '\n'
-              << " " << buffer.getChannelCount()         << " channels"      << std::endl;
+              << " " << buffer.getDuration().asSeconds() << " seconds" << '\n'
+              << " " << buffer.getSampleRate() << " samples / sec" << '\n'
+              << " " << buffer.getChannelCount() << " channels" << std::endl;
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
@@ -55,9 +56,9 @@ void playMusic(const std::filesystem::path& filename)
 
     // Display music informations
     std::cout << filename << ":" << '\n'
-              << " " << music.getDuration().asSeconds() << " seconds"       << '\n'
-              << " " << music.getSampleRate()           << " samples / sec" << '\n'
-              << " " << music.getChannelCount()         << " channels"      << std::endl;
+              << " " << music.getDuration().asSeconds() << " seconds" << '\n'
+              << " " << music.getSampleRate() << " samples / sec" << '\n'
+              << " " << music.getChannelCount() << " channels" << std::endl;
 
     // Play it
     music.play();

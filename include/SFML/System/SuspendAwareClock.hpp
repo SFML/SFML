@@ -30,6 +30,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+
 #include <chrono>
 
 
@@ -64,9 +65,9 @@ public:
     /// https://en.cppreference.com/w/cpp/chrono/is_clock
     ///
     ////////////////////////////////////////////////////////////
-    using duration = std::chrono::nanoseconds;
-    using rep = duration::rep;
-    using period = duration::period;
+    using duration   = std::chrono::nanoseconds;
+    using rep        = duration::rep;
+    using period     = duration::period;
     using time_point = std::chrono::time_point<SuspendAwareClock, duration>;
 
     static constexpr bool is_steady = true;

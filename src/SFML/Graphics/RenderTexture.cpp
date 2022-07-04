@@ -26,9 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/RenderTextureImplDefault.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/System/Err.hpp>
+
 #include <memory>
 #include <ostream>
 

@@ -29,13 +29,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <vector>
+
 #include <cstdint>
+#include <vector>
 
 
 using VkInstance = struct VkInstance_T*;
 
-#if defined(__LP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__) ) || defined(_M_X64) || defined(__ia64) || defined (_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
+#if defined(__LP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__)) || defined(_M_X64) || \
+    defined(__ia64) || defined(_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
 
 using VkSurfaceKHR = struct VkSurfaceKHR_T*;
 
@@ -60,7 +62,6 @@ using VulkanFunctionPointer = void (*)();
 class SFML_WINDOW_API Vulkan
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports Vulkan
     ///

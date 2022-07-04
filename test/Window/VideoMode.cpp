@@ -1,7 +1,8 @@
 #include <SFML/Window/VideoMode.hpp>
-#include <WindowUtil.hpp>
 
 #include <doctest.h>
+
+#include <WindowUtil.hpp>
 
 TEST_CASE("sf::VideoMode class - [window]")
 {

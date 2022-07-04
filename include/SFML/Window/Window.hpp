@@ -28,11 +28,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/WindowBase.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Time.hpp>
+
 #include <memory>
 
 
@@ -40,7 +41,7 @@ namespace sf
 {
 namespace priv
 {
-    class GlContext;
+class GlContext;
 }
 
 class Event;
@@ -52,7 +53,6 @@ class Event;
 class SFML_WINDOW_API Window : public WindowBase, GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -81,7 +81,10 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    Window(VideoMode mode, const String& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
+    Window(VideoMode              mode,
+           const String&          title,
+           Uint32                 style    = Style::Default,
+           const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -255,7 +258,6 @@ public:
     void display();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Processes an event before it is sent to the user
     ///

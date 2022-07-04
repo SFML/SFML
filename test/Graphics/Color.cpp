@@ -1,7 +1,8 @@
 #include <SFML/Graphics/Color.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::Color class - [graphics]")
 {

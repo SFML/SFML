@@ -29,12 +29,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Time.hpp>
+
 #include <filesystem>
 #include <string>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 
 namespace sf
@@ -50,7 +52,6 @@ class InputStream;
 class SFML_AUDIO_API SoundBuffer : AlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -222,10 +223,9 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer& operator =(const SoundBuffer& right);
+    SoundBuffer& operator=(const SoundBuffer& right);
 
 private:
-
     friend class Sound;
 
     ////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using SoundList = std::unordered_set<Sound *>; //!< Set of unique sound instances
+    using SoundList = std::unordered_set<Sound*>; //!< Set of unique sound instances
 
     ////////////////////////////////////////////////////////////
     // Member data

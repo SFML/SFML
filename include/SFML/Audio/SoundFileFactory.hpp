@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -48,7 +49,6 @@ class SoundFileWriter;
 class SFML_AUDIO_API SoundFileFactory
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Register a new reader
     ///
@@ -133,7 +133,6 @@ public:
     static std::unique_ptr<SoundFileWriter> createWriterFromFilename(const std::filesystem::path& filename);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////

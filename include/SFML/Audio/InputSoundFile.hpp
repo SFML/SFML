@@ -29,10 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
+#include <cstddef>
 #include <filesystem>
 #include <memory>
 #include <string>
-#include <cstddef>
 
 
 namespace sf
@@ -48,7 +49,6 @@ class SoundFileReader;
 class SFML_AUDIO_API InputSoundFile
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

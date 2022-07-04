@@ -38,11 +38,11 @@
 ///
 ////////////////////////////////////////////////////////////
 
-@interface SFViewController : NSObject <WindowImplDelegateProtocol>
+@interface SFViewController : NSObject<WindowImplDelegateProtocol>
 {
-    NSView*                     m_view;         ///< Underlying Cocoa view
-    SFOpenGLView*               m_oglView;      ///< OpenGL view
-    sf::priv::WindowImplCocoa*  m_requester;    ///< View's requester
+    NSView*                    m_view;      ///< Underlying Cocoa view
+    SFOpenGLView*              m_oglView;   ///< OpenGL view
+    sf::priv::WindowImplCocoa* m_requester; ///< View's requester
 }
 
 ////////////////////////////////////////////////////////////
@@ -53,6 +53,6 @@
 /// \return an initialized view controller
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithView:(NSView*)view;
+- (id)initWithView:(NSView*)view;
 
 @end

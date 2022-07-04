@@ -26,17 +26,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
-
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#include <SFML/Window/VideoMode.hpp>
 
 ////////////////////////////////////////////////////////////
 /// Predefine some classes
 ////////////////////////////////////////////////////////////
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
+namespace sf
+{
+namespace priv
+{
+class WindowImplCocoa;
+}
 }
 
 @class SFOpenGLView;
@@ -55,14 +56,14 @@ namespace sf {
 /// style is restored.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
+@interface SFWindowController : NSResponder<WindowImplDelegateProtocol, NSWindowDelegate>
 {
-    NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
-    SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
-    sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
-    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
-    BOOL                        m_restoreResize;    ///< See note above
-    BOOL                        m_highDpi;          ///< Support high-DPI rendering or not
+    NSWindow*                  m_window;        ///< Underlying Cocoa window to be controlled
+    SFOpenGLView*              m_oglView;       ///< OpenGL view for rendering
+    sf::priv::WindowImplCocoa* m_requester;     ///< Requester
+    BOOL                       m_fullscreen;    ///< Indicate whether the window is fullscreen or not
+    BOOL                       m_restoreResize; ///< See note above
+    BOOL                       m_highDpi;       ///< Support high-DPI rendering or not
 }
 
 ////////////////////////////////////////////////////////////
@@ -73,7 +74,7 @@ namespace sf {
 /// \return an initialized controller
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow*)window;
+- (id)initWithWindow:(NSWindow*)window;
 
 ////////////////////////////////////////////////////////////
 /// \brief Create the SFML window "from scratch" (SFML handle everything)
@@ -84,6 +85,6 @@ namespace sf {
 /// \return an initialized controller
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
+- (id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
 
 @end

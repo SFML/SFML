@@ -29,8 +29,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -47,7 +49,6 @@ class InputStream;
 class SFML_GRAPHICS_API Image
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create the image and fill it with a unique color
     ///
@@ -211,7 +212,10 @@ public:
     /// \return True if the operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect = IntRect({0, 0}, {0, 0}), bool applyAlpha = false);
+    [[nodiscard]] bool copy(const Image&    source,
+                            const Vector2u& dest,
+                            const IntRect&  sourceRect = IntRect({0, 0}, {0, 0}),
+                            bool            applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel
@@ -272,7 +276,6 @@ public:
     void flipVertically();
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

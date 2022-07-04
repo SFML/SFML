@@ -25,24 +25,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray() :
-m_vertices     (),
-m_primitiveType(Points)
+VertexArray::VertexArray() : m_vertices(), m_primitiveType(Points)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) :
-m_vertices     (vertexCount),
-m_primitiveType(type)
+VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) : m_vertices(vertexCount), m_primitiveType(type)
 {
 }
 
@@ -55,14 +51,14 @@ std::size_t VertexArray::getVertexCount() const
 
 
 ////////////////////////////////////////////////////////////
-Vertex& VertexArray::operator [](std::size_t index)
+Vertex& VertexArray::operator[](std::size_t index)
 {
     return m_vertices[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vertex& VertexArray::operator [](std::size_t index) const
+const Vertex& VertexArray::operator[](std::size_t index) const
 {
     return m_vertices[index];
 }

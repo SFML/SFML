@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
+
 #include <SFML/System/Time.hpp>
+
 #include <memory>
 
 
@@ -44,7 +46,6 @@ class Socket;
 class SFML_NETWORK_API SocketSelector
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -150,10 +151,9 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    SocketSelector& operator =(const SocketSelector& right);
+    SocketSelector& operator=(const SocketSelector& right);
 
 private:
-
     struct SocketSelectorImpl;
 
     ////////////////////////////////////////////////////////////

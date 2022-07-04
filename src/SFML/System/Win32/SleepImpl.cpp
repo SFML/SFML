@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Time.hpp>
 #include <SFML/System/Win32/SleepImpl.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
-#include <SFML/System/Time.hpp>
+
 #include <mmsystem.h>
 
 namespace sf::priv

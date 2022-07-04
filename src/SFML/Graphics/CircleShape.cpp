@@ -26,15 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/CircleShape.hpp>
+
 #include <cmath>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-CircleShape::CircleShape(float radius, std::size_t pointCount) :
-m_radius    (radius),
-m_pointCount(pointCount)
+CircleShape::CircleShape(float radius, std::size_t pointCount) : m_radius(radius), m_pointCount(pointCount)
 {
     update();
 }

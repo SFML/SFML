@@ -40,7 +40,6 @@ namespace sf
 class SFML_AUDIO_API AlResource
 {
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

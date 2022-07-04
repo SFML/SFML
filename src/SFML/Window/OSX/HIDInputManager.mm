@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/OSX/HIDInputManager.hpp>
+
 #include <AppKit/AppKit.h>
 #include <ostream>
 
@@ -56,8 +57,7 @@ long HIDInputManager::getLocationID(IOHIDDeviceRef device)
     long loc = 0;
 
     // Get a unique ID: its USB location ID
-    CFTypeRef typeRef = IOHIDDeviceGetProperty(device,
-                                               CFSTR(kIOHIDLocationIDKey));
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(device, CFSTR(kIOHIDLocationIDKey));
     if (!typeRef || (CFGetTypeID(typeRef) != CFNumberGetTypeID()))
         return 0;
 
@@ -74,7 +74,8 @@ long HIDInputManager::getLocationID(IOHIDDeviceRef device)
 CFDictionaryRef HIDInputManager::copyDevicesMask(UInt32 page, UInt32 usage)
 {
     // Create the dictionary.
-    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 2,
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault,
+                                                            2,
                                                             &kCFTypeDictionaryKeyCallBacks,
                                                             &kCFTypeDictionaryValueCallBacks);
 
@@ -93,15 +94,11 @@ CFDictionaryRef HIDInputManager::copyDevicesMask(UInt32 page, UInt32 usage)
 
 
 ////////////////////////////////////////////////////////////
-HIDInputManager::HIDInputManager() :
-m_isValid(true),
-m_layoutData(0),
-m_layout(0),
-m_manager(0)
+HIDInputManager::HIDInputManager() : m_isValid(true), m_layoutData(0), m_layout(0), m_manager(0)
 {
     // Get the current keyboard layout
     TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource();
-    m_layoutData = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
+    m_layoutData          = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
 
     if (m_layoutData == 0)
     {
@@ -180,9 +177,7 @@ void HIDInputManager::initializeKeyboard()
 ////////////////////////////////////////////////////////////
 void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 {
-    CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard,
-                                                      nullptr,
-                                                      kIOHIDOptionsTypeNone);
+    CFArrayRef keys = IOHIDDeviceCopyMatchingElements(keyboard, nullptr, kIOHIDOptionsTypeNone);
     if (keys == nullptr)
     {
         sf::err() << "We got a keyboard without any keys (1)" << std::endl;
@@ -229,24 +224,24 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     // Now translate the virtual code to Unicode according to
     // the current keyboard layout
 
-    UInt32       deadKeyState = 0;
+    UInt32 deadKeyState = 0;
     // Unicode string length is usually less or equal to 4
-    UniCharCount maxStringLength = 4;
-    UniCharCount actualStringLength = 0;
+    UniCharCount         maxStringLength    = 4;
+    UniCharCount         actualStringLength = 0;
     std::vector<UniChar> unicodeString(maxStringLength);
 
-    OSStatus     error;
+    OSStatus error;
 
-    error = UCKeyTranslate(m_layout,                    // current layout
-                           virtualCode,                 // our key
-                           kUCKeyActionDown,            // or kUCKeyActionUp ?
-                           0x100,                       // no modifiers
-                           LMGetKbdType(),              // keyboard's type
-                           kUCKeyTranslateNoDeadKeysBit,// some sort of option
-                           &deadKeyState,               // unused stuff
-                           maxStringLength,             // our memory limit
-                           &actualStringLength,         // length of what we get
-                           unicodeString.data());       // what we get
+    error = UCKeyTranslate(m_layout,                     // current layout
+                           virtualCode,                  // our key
+                           kUCKeyActionDown,             // or kUCKeyActionUp ?
+                           0x100,                        // no modifiers
+                           LMGetKbdType(),               // keyboard's type
+                           kUCKeyTranslateNoDeadKeysBit, // some sort of option
+                           &deadKeyState,                // unused stuff
+                           maxStringLength,              // our memory limit
+                           &actualStringLength,          // length of what we get
+                           unicodeString.data());        // what we get
 
     if (error == noErr)
     {
@@ -300,9 +295,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     } /* if (error == noErr) */
     else
     {
-        sf::err() << "Cannot translate the virtual key code, error: "
-                  << error
-                  << std::endl;
+        sf::err() << "Cannot translate the virtual key code, error: " << error << std::endl;
     }
 }
 
@@ -876,4 +869,3 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 } // namespace priv
 
 } // namespace sf
-

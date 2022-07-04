@@ -1,13 +1,13 @@
 #include <SFML/Graphics/Shape.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 class TriangleShape : public sf::Shape
 {
 public:
-    explicit TriangleShape(const sf::Vector2f& size)
-        : m_size(size)
+    explicit TriangleShape(const sf::Vector2f& size) : m_size(size)
     {
         update();
     }
@@ -22,9 +22,12 @@ public:
         switch (index)
         {
             default:
-            case 0: return sf::Vector2f(m_size.x / 2, 0);
-            case 1: return sf::Vector2f(0, m_size.y);
-            case 2: return sf::Vector2f(m_size.x, m_size.y);
+            case 0:
+                return sf::Vector2f(m_size.x / 2, 0);
+            case 1:
+                return sf::Vector2f(0, m_size.y);
+            case 2:
+                return sf::Vector2f(m_size.x, m_size.y);
         }
     }
 

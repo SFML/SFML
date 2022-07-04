@@ -25,21 +25,21 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
-#include <tchar.h>
-#include <regstr.h>
-#include <iomanip>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <vector>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <SFML/Window/JoystickImpl.hpp>
+
 #include <cmath>
 #include <cstring>
-
+#include <iomanip>
+#include <ostream>
+#include <regstr.h>
+#include <sstream>
+#include <string>
+#include <tchar.h>
+#include <vector>
 
 
 ////////////////////////////////////////////////////////////
@@ -54,46 +54,46 @@
 
 namespace
 {
-    namespace guids
-    {
-        const GUID IID_IDirectInput8W = {0xbf798031, 0x483a, 0x4da2, {0xaa, 0x99, 0x5d, 0x64, 0xed, 0x36, 0x97, 0x00}};
+namespace guids
+{
+const GUID IID_IDirectInput8W = {0xbf798031, 0x483a, 0x4da2, {0xaa, 0x99, 0x5d, 0x64, 0xed, 0x36, 0x97, 0x00}};
 
-        const GUID GUID_XAxis         = {0xa36d02e0, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-        const GUID GUID_YAxis         = {0xa36d02e1, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-        const GUID GUID_ZAxis         = {0xa36d02e2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-        const GUID GUID_RzAxis        = {0xa36d02e3, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-        const GUID GUID_Slider        = {0xa36d02e4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_XAxis  = {0xa36d02e0, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_YAxis  = {0xa36d02e1, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_ZAxis  = {0xa36d02e2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_RzAxis = {0xa36d02e3, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_Slider = {0xa36d02e4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
 
-        const GUID GUID_POV           = {0xa36d02f2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_POV = {0xa36d02f2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
 
-        const GUID GUID_RxAxis        = {0xa36d02f4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-        const GUID GUID_RyAxis        = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-    }
+const GUID GUID_RxAxis = {0xa36d02f4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+const GUID GUID_RyAxis = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+} // namespace guids
 
-    HMODULE dinput8dll = nullptr;
-    IDirectInput8W* directInput = nullptr;
+HMODULE         dinput8dll  = nullptr;
+IDirectInput8W* directInput = nullptr;
 
-    struct JoystickRecord
-    {
-        GUID guid;
-        unsigned int index;
-        bool plugged;
-    };
+struct JoystickRecord
+{
+    GUID         guid;
+    unsigned int index;
+    bool         plugged;
+};
 
-    using JoystickList = std::vector<JoystickRecord>;
-    JoystickList joystickList;
+using JoystickList = std::vector<JoystickRecord>;
+JoystickList joystickList;
 
-    struct JoystickBlacklistEntry
-    {
-        unsigned int vendorId;
-        unsigned int productId;
-    };
+struct JoystickBlacklistEntry
+{
+    unsigned int vendorId;
+    unsigned int productId;
+};
 
-    using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
-    JoystickBlacklist joystickBlacklist;
+using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
+JoystickBlacklist joystickBlacklist;
 
-    const DWORD directInputEventBufferSize = 32;
-}
+const DWORD directInputEventBufferSize = 32;
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -101,112 +101,124 @@ namespace
 ////////////////////////////////////////////////////////////
 namespace
 {
-    struct ConnectionCache
+struct ConnectionCache
+{
+    ConnectionCache() : connected(false)
     {
-        ConnectionCache() : connected(false) {}
-        bool connected;
-        sf::Clock timer;
-    };
-    const sf::Time connectionRefreshDelay = sf::milliseconds(500);
-
-    ConnectionCache connectionCache[sf::Joystick::Count];
-
-    // If true, will only update when WM_DEVICECHANGE message is received
-    bool lazyUpdates = false;
-
-    // Get a system error string from an error code
-    std::string getErrorString(DWORD error)
-    {
-        PTCHAR buffer;
-
-        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error, 0, reinterpret_cast<PTCHAR>(&buffer), 0, nullptr) == 0)
-            return "Unknown error.";
-
-        sf::String message = buffer;
-        LocalFree(buffer);
-        return message.toAnsiString();
     }
+    bool      connected;
+    sf::Clock timer;
+};
+const sf::Time connectionRefreshDelay = sf::milliseconds(500);
 
-    // Get the joystick's name
-    sf::String getDeviceName(unsigned int index, JOYCAPS caps)
+ConnectionCache connectionCache[sf::Joystick::Count];
+
+// If true, will only update when WM_DEVICECHANGE message is received
+bool lazyUpdates = false;
+
+// Get a system error string from an error code
+std::string getErrorString(DWORD error)
+{
+    PTCHAR buffer;
+
+    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+                      nullptr,
+                      error,
+                      0,
+                      reinterpret_cast<PTCHAR>(&buffer),
+                      0,
+                      nullptr) == 0)
+        return "Unknown error.";
+
+    sf::String message = buffer;
+    LocalFree(buffer);
+    return message.toAnsiString();
+}
+
+// Get the joystick's name
+sf::String getDeviceName(unsigned int index, JOYCAPS caps)
+{
+    // Give the joystick a default name
+    sf::String joystickDescription = "Unknown Joystick";
+
+    LONG                     result;
+    HKEY                     rootKey;
+    HKEY                     currentKey;
+    std::basic_string<TCHAR> subkey;
+
+    subkey = REGSTR_PATH_JOYCONFIG;
+    subkey += TEXT('\\');
+    subkey += caps.szRegKey;
+    subkey += TEXT('\\');
+    subkey += REGSTR_KEY_JOYCURR;
+
+    rootKey = HKEY_CURRENT_USER;
+    result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+
+    if (result != ERROR_SUCCESS)
     {
-        // Give the joystick a default name
-        sf::String joystickDescription = "Unknown Joystick";
-
-        LONG result;
-        HKEY rootKey;
-        HKEY currentKey;
-        std::basic_string<TCHAR> subkey;
-
-        subkey  = REGSTR_PATH_JOYCONFIG;
-        subkey += TEXT('\\');
-        subkey += caps.szRegKey;
-        subkey += TEXT('\\');
-        subkey += REGSTR_KEY_JOYCURR;
-
-        rootKey = HKEY_CURRENT_USER;
+        rootKey = HKEY_LOCAL_MACHINE;
         result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
         if (result != ERROR_SUCCESS)
         {
-            rootKey = HKEY_LOCAL_MACHINE;
-            result  = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
-
-            if (result != ERROR_SUCCESS)
-            {
-                sf::err() << "Unable to open registry for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
-                return joystickDescription;
-            }
-        }
-
-        std::basic_ostringstream<TCHAR> indexString;
-        indexString << index + 1;
-
-        subkey  = TEXT("Joystick");
-        subkey += indexString.str();
-        subkey += REGSTR_VAL_JOYOEMNAME;
-
-        TCHAR keyData[256];
-        DWORD keyDataSize = sizeof(keyData);
-
-        result = RegQueryValueEx(currentKey, subkey.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
-        RegCloseKey(currentKey);
-
-        if (result != ERROR_SUCCESS)
-        {
-            sf::err() << "Unable to query registry key for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
+            sf::err() << "Unable to open registry for joystick at index " << index << ": "
+                      << getErrorString(static_cast<DWORD>(result)) << std::endl;
             return joystickDescription;
         }
+    }
 
-        subkey  = REGSTR_PATH_JOYOEM;
-        subkey += TEXT('\\');
-        subkey.append(keyData, keyDataSize / sizeof(TCHAR));
+    std::basic_ostringstream<TCHAR> indexString;
+    indexString << index + 1;
 
-        result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+    subkey = TEXT("Joystick");
+    subkey += indexString.str();
+    subkey += REGSTR_VAL_JOYOEMNAME;
 
-        if (result != ERROR_SUCCESS)
-        {
-            sf::err() << "Unable to open registry key for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
-            return joystickDescription;
-        }
+    TCHAR keyData[256];
+    DWORD keyDataSize = sizeof(keyData);
 
-        keyDataSize = sizeof(keyData);
+    result = RegQueryValueEx(currentKey, subkey.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+    RegCloseKey(currentKey);
 
-        result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
-        RegCloseKey(currentKey);
-
-        if (result != ERROR_SUCCESS)
-        {
-            sf::err() << "Unable to query name for joystick at index " << index << ": " << getErrorString(static_cast<DWORD>(result)) << std::endl;
-            return joystickDescription;
-        }
-
-        keyData[255] = TEXT('\0'); // Ensure null terminator in case the data is too long.
-        joystickDescription = keyData;
-
+    if (result != ERROR_SUCCESS)
+    {
+        sf::err() << "Unable to query registry key for joystick at index " << index << ": "
+                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
         return joystickDescription;
     }
+
+    subkey = REGSTR_PATH_JOYOEM;
+    subkey += TEXT('\\');
+    subkey.append(keyData, keyDataSize / sizeof(TCHAR));
+
+    result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
+
+    if (result != ERROR_SUCCESS)
+    {
+        sf::err() << "Unable to open registry key for joystick at index " << index << ": "
+                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
+        return joystickDescription;
+    }
+
+    keyDataSize = sizeof(keyData);
+
+    result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+    RegCloseKey(currentKey);
+
+    if (result != ERROR_SUCCESS)
+    {
+        sf::err() << "Unable to query name for joystick at index " << index << ": "
+                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
+        return joystickDescription;
+    }
+
+    keyData[255]        = TEXT('\0'); // Ensure null terminator in case the data is too long.
+    joystickDescription = keyData;
+
+    return joystickDescription;
 }
+} // namespace
 
 namespace sf
 {
@@ -244,7 +256,7 @@ bool JoystickImpl::isConnected(unsigned int index)
     if (!lazyUpdates && cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
         JOYINFOEX joyInfo;
-        joyInfo.dwSize = sizeof(joyInfo);
+        joyInfo.dwSize  = sizeof(joyInfo);
         joyInfo.dwFlags = 0;
         cache.connected = joyGetPosEx(JOYSTICKID1 + index, &joyInfo) == JOYERR_NOERROR;
 
@@ -268,10 +280,10 @@ void JoystickImpl::updateConnections()
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         JOYINFOEX joyInfo;
-        joyInfo.dwSize = sizeof(joyInfo);
-        joyInfo.dwFlags = 0;
+        joyInfo.dwSize         = sizeof(joyInfo);
+        joyInfo.dwFlags        = 0;
         ConnectionCache& cache = connectionCache[i];
-        cache.connected = joyGetPosEx(JOYSTICKID1 + i, &joyInfo) == JOYERR_NOERROR;
+        cache.connected        = joyGetPosEx(JOYSTICKID1 + i, &joyInfo) == JOYERR_NOERROR;
 
         cache.timer.restart();
     }
@@ -358,26 +370,32 @@ JoystickState JoystickImpl::update()
 
     // Get the current joystick state
     JOYINFOEX pos;
-    pos.dwFlags  = JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNU | JOY_RETURNV | JOY_RETURNBUTTONS;
+    pos.dwFlags = JOY_RETURNX | JOY_RETURNY | JOY_RETURNZ | JOY_RETURNR | JOY_RETURNU | JOY_RETURNV | JOY_RETURNBUTTONS;
     pos.dwFlags |= (m_caps.wCaps & JOYCAPS_POVCTS) ? JOY_RETURNPOVCTS : JOY_RETURNPOV;
-    pos.dwSize   = sizeof(JOYINFOEX);
+    pos.dwSize = sizeof(JOYINFOEX);
     if (joyGetPosEx(m_index, &pos) == JOYERR_NOERROR)
     {
         // The joystick is connected
         state.connected = true;
 
         // Axes
-        state.axes[Joystick::X] = (static_cast<float>(pos.dwXpos) - static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) * 200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
-        state.axes[Joystick::Y] = (static_cast<float>(pos.dwYpos) - static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) * 200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
-        state.axes[Joystick::Z] = (static_cast<float>(pos.dwZpos) - static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) * 200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
-        state.axes[Joystick::R] = (static_cast<float>(pos.dwRpos) - static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) * 200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
-        state.axes[Joystick::U] = (static_cast<float>(pos.dwUpos) - static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) * 200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
-        state.axes[Joystick::V] = (static_cast<float>(pos.dwVpos) - static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) * 200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
+        state.axes[Joystick::X] = (static_cast<float>(pos.dwXpos) - static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
+        state.axes[Joystick::Y] = (static_cast<float>(pos.dwYpos) - static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
+        state.axes[Joystick::Z] = (static_cast<float>(pos.dwZpos) - static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
+        state.axes[Joystick::R] = (static_cast<float>(pos.dwRpos) - static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
+        state.axes[Joystick::U] = (static_cast<float>(pos.dwUpos) - static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
+        state.axes[Joystick::V] = (static_cast<float>(pos.dwVpos) - static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) *
+                                  200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            float angle = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
+            float angle                = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
             state.axes[Joystick::PovX] = std::sin(angle) * 100;
             state.axes[Joystick::PovY] = std::cos(angle) * 100;
         }
@@ -405,13 +423,18 @@ void JoystickImpl::initializeDInput()
     if (dinput8dll)
     {
         // Try to get the address of the DirectInput8Create entry point
-        using DirectInput8CreateFunc = HRESULT (WINAPI *)(HINSTANCE, DWORD, const IID &, LPVOID *, LPUNKNOWN);
-        auto directInput8Create = reinterpret_cast<DirectInput8CreateFunc>(reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
+        using DirectInput8CreateFunc = HRESULT(WINAPI*)(HINSTANCE, DWORD, const IID&, LPVOID*, LPUNKNOWN);
+        auto directInput8Create      = reinterpret_cast<DirectInput8CreateFunc>(
+            reinterpret_cast<void*>(GetProcAddress(dinput8dll, "DirectInput8Create")));
 
         if (directInput8Create)
         {
             // Try to acquire a DirectInput 8.x interface
-            HRESULT result = directInput8Create(GetModuleHandleW(nullptr), 0x0800, guids::IID_IDirectInput8W, reinterpret_cast<void**>(&directInput), nullptr);
+            HRESULT result = directInput8Create(GetModuleHandleW(nullptr),
+                                                0x0800,
+                                                guids::IID_IDirectInput8W,
+                                                reinterpret_cast<void**>(&directInput),
+                                                nullptr);
 
             if (FAILED(result))
             {
@@ -471,7 +494,10 @@ void JoystickImpl::updateConnectionsDInput()
         record.plugged = false;
 
     // Enumerate devices
-    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, &JoystickImpl::deviceEnumerationCallback, nullptr, DIEDFL_ATTACHEDONLY);
+    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL,
+                                              &JoystickImpl::deviceEnumerationCallback,
+                                              nullptr,
+                                              DIEDFL_ATTACHEDONLY);
 
     // Remove devices that were not connected during the enumeration
     for (auto i = joystickList.begin(); i != joystickList.end();)
@@ -521,8 +547,8 @@ bool JoystickImpl::openDInput(unsigned int index)
 
     std::memset(&m_deviceCaps, 0, sizeof(DIDEVCAPS));
     m_deviceCaps.dwSize = sizeof(DIDEVCAPS);
-    m_state = JoystickState();
-    m_buffered = false;
+    m_state             = JoystickState();
+    m_buffered          = false;
 
     // Search for a joystick with the given index in the connected list
     for (const JoystickRecord& record : joystickList)
@@ -542,14 +568,14 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Get vendor and product id of the device
             DIPROPDWORD property;
             std::memset(&property, 0, sizeof(property));
-            property.diph.dwSize = sizeof(property);
+            property.diph.dwSize       = sizeof(property);
             property.diph.dwHeaderSize = sizeof(property.diph);
-            property.diph.dwHow = DIPH_DEVICE;
+            property.diph.dwHow        = DIPH_DEVICE;
 
             if (SUCCEEDED(m_device->GetProperty(DIPROP_VIDPID, &property.diph)))
             {
                 m_identification.productId = HIWORD(property.dwData);
-                m_identification.vendorId = LOWORD(property.dwData);
+                m_identification.vendorId  = LOWORD(property.dwData);
 
                 // Check if device is already blacklisted
                 if (m_identification.productId && m_identification.vendorId)
@@ -557,7 +583,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     for (const JoystickBlacklistEntry& blacklistEntry : joystickBlacklist)
                     {
                         if ((m_identification.productId == blacklistEntry.productId) &&
-                            (m_identification.vendorId  == blacklistEntry.vendorId))
+                            (m_identification.vendorId == blacklistEntry.vendorId))
                         {
                             // Device is blacklisted
                             m_device->Release();
@@ -572,21 +598,21 @@ bool JoystickImpl::openDInput(unsigned int index)
             // Get friendly product name of the device
             DIPROPSTRING stringProperty;
             std::memset(&stringProperty, 0, sizeof(stringProperty));
-            stringProperty.diph.dwSize = sizeof(stringProperty);
+            stringProperty.diph.dwSize       = sizeof(stringProperty);
             stringProperty.diph.dwHeaderSize = sizeof(stringProperty.diph);
-            stringProperty.diph.dwHow = DIPH_DEVICE;
-            stringProperty.diph.dwObj = 0;
+            stringProperty.diph.dwHow        = DIPH_DEVICE;
+            stringProperty.diph.dwObj        = 0;
 
             if (SUCCEEDED(m_device->GetProperty(DIPROP_PRODUCTNAME, &stringProperty.diph)))
                 m_identification.name = stringProperty.wsz;
 
-            static bool formatInitialized = false;
+            static bool         formatInitialized = false;
             static DIDATAFORMAT format;
 
             if (!formatInitialized)
             {
-                const DWORD axisType   = DIDFT_AXIS   | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
-                const DWORD povType    = DIDFT_POV    | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
+                const DWORD axisType   = DIDFT_AXIS | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
+                const DWORD povType    = DIDFT_POV | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
                 const DWORD buttonType = DIDFT_BUTTON | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
 
                 static DIOBJECTDATAFORMAT data[8 * 4 + 4 + sf::Joystick::ButtonCount];
@@ -603,16 +629,16 @@ bool JoystickImpl::openDInput(unsigned int index)
                     data[8 * i + 7].pguid = &guids::GUID_Slider;
                 }
 
-                data[ 0].dwOfs = DIJOFS_X;
-                data[ 1].dwOfs = DIJOFS_Y;
-                data[ 2].dwOfs = DIJOFS_Z;
-                data[ 3].dwOfs = DIJOFS_RX;
-                data[ 4].dwOfs = DIJOFS_RY;
-                data[ 5].dwOfs = DIJOFS_RZ;
-                data[ 6].dwOfs = DIJOFS_SLIDER(0);
-                data[ 7].dwOfs = DIJOFS_SLIDER(1);
-                data[ 8].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVX);
-                data[ 9].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVY);
+                data[0].dwOfs  = DIJOFS_X;
+                data[1].dwOfs  = DIJOFS_Y;
+                data[2].dwOfs  = DIJOFS_Z;
+                data[3].dwOfs  = DIJOFS_RX;
+                data[4].dwOfs  = DIJOFS_RY;
+                data[5].dwOfs  = DIJOFS_RZ;
+                data[6].dwOfs  = DIJOFS_SLIDER(0);
+                data[7].dwOfs  = DIJOFS_SLIDER(1);
+                data[8].dwOfs  = FIELD_OFFSET(DIJOYSTATE2, lVX);
+                data[9].dwOfs  = FIELD_OFFSET(DIJOYSTATE2, lVY);
                 data[10].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVZ);
                 data[11].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVRx);
                 data[12].dwOfs = FIELD_OFFSET(DIJOYSTATE2, lVRy);
@@ -638,32 +664,32 @@ bool JoystickImpl::openDInput(unsigned int index)
 
                 for (int i = 0; i < 8 * 4; ++i)
                 {
-                    data[i].dwType = axisType;
+                    data[i].dwType  = axisType;
                     data[i].dwFlags = 0;
                 }
 
                 for (int i = 0; i < 4; ++i)
                 {
-                    data[8 * 4 + i].pguid = &guids::GUID_POV;
-                    data[8 * 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_POV(static_cast<unsigned int>(i)));
-                    data[8 * 4 + i].dwType = povType;
+                    data[8 * 4 + i].pguid   = &guids::GUID_POV;
+                    data[8 * 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_POV(static_cast<unsigned int>(i)));
+                    data[8 * 4 + i].dwType  = povType;
                     data[8 * 4 + i].dwFlags = 0;
                 }
 
                 for (int i = 0; i < sf::Joystick::ButtonCount; ++i)
                 {
-                    data[8 * 4 + 4 + i].pguid = nullptr;
-                    data[8 * 4 + 4 + i].dwOfs = static_cast<DWORD>(DIJOFS_BUTTON(i));
-                    data[8 * 4 + 4 + i].dwType = buttonType;
+                    data[8 * 4 + 4 + i].pguid   = nullptr;
+                    data[8 * 4 + 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_BUTTON(i));
+                    data[8 * 4 + 4 + i].dwType  = buttonType;
                     data[8 * 4 + 4 + i].dwFlags = 0;
                 }
 
-                format.dwSize = sizeof(DIDATAFORMAT);
-                format.dwObjSize = sizeof(DIOBJECTDATAFORMAT);
-                format.dwFlags = DIDFT_ABSAXIS;
+                format.dwSize     = sizeof(DIDATAFORMAT);
+                format.dwObjSize  = sizeof(DIOBJECTDATAFORMAT);
+                format.dwFlags    = DIDFT_ABSAXIS;
                 format.dwDataSize = sizeof(DIJOYSTATE2);
-                format.dwNumObjs = 8 * 4 + 4 + sf::Joystick::ButtonCount;
-                format.rgodf = data;
+                format.dwNumObjs  = 8 * 4 + 4 + sf::Joystick::ButtonCount;
+                format.rgodf      = data;
 
                 formatInitialized = true;
             }
@@ -695,7 +721,9 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Enumerate device objects (axes/povs/buttons)
-            result = m_device->EnumObjects(&JoystickImpl::deviceObjectEnumerationCallback, this, DIDFT_AXIS | DIDFT_BUTTON | DIDFT_POV);
+            result = m_device->EnumObjects(&JoystickImpl::deviceObjectEnumerationCallback,
+                                           this,
+                                           DIDFT_AXIS | DIDFT_BUTTON | DIDFT_POV);
 
             if (FAILED(result))
             {
@@ -713,10 +741,10 @@ bool JoystickImpl::openDInput(unsigned int index)
                 if (axis != -1)
                 {
                     std::memset(&property, 0, sizeof(property));
-                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
-                    property.diph.dwHow = DIPH_DEVICE;
-                    property.diph.dwObj = 0;
+                    property.diph.dwHow        = DIPH_DEVICE;
+                    property.diph.dwObj        = 0;
 
                     result = m_device->GetProperty(DIPROP_AXISMODE, &property.diph);
 
@@ -736,19 +764,19 @@ bool JoystickImpl::openDInput(unsigned int index)
                         break;
 
                     std::memset(&property, 0, sizeof(property));
-                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
-                    property.diph.dwHow = DIPH_DEVICE;
-                    property.dwData = DIPROPAXISMODE_ABS;
+                    property.diph.dwHow        = DIPH_DEVICE;
+                    property.dwData            = DIPROPAXISMODE_ABS;
 
                     m_device->SetProperty(DIPROP_AXISMODE, &property.diph);
 
                     // Check if the axis mode has been set to absolute
                     std::memset(&property, 0, sizeof(property));
-                    property.diph.dwSize = sizeof(property);
+                    property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
-                    property.diph.dwHow = DIPH_DEVICE;
-                    property.diph.dwObj = 0;
+                    property.diph.dwHow        = DIPH_DEVICE;
+                    property.diph.dwObj        = 0;
 
                     result = m_device->GetProperty(DIPROP_AXISMODE, &property.diph);
 
@@ -770,7 +798,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                         {
                             JoystickBlacklistEntry entry;
 
-                            entry.vendorId = m_identification.vendorId;
+                            entry.vendorId  = m_identification.vendorId;
                             entry.productId = m_identification.productId;
 
                             joystickBlacklist.push_back(entry);
@@ -789,10 +817,10 @@ bool JoystickImpl::openDInput(unsigned int index)
 
             // Try to enable buffering by setting the buffer size
             std::memset(&property, 0, sizeof(property));
-            property.diph.dwSize = sizeof(property);
+            property.diph.dwSize       = sizeof(property);
             property.diph.dwHeaderSize = sizeof(property.diph);
-            property.diph.dwHow = DIPH_DEVICE;
-            property.dwData = directInputEventBufferSize;
+            property.diph.dwHow        = DIPH_DEVICE;
+            property.dwData            = directInputEventBufferSize;
 
             result = m_device->SetProperty(DIPROP_BUFFERSIZE, &property.diph);
 
@@ -869,7 +897,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
         return m_state;
 
     DIDEVICEOBJECTDATA events[directInputEventBufferSize];
-    DWORD eventCount = directInputEventBufferSize;
+    DWORD              eventCount = directInputEventBufferSize;
 
     // Try to get the device data
     HRESULT result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events, &eventCount, 0);
@@ -998,7 +1026,8 @@ JoystickState JoystickImpl::updateDInputPolled()
             {
                 if ((i == Joystick::PovX) || (i == Joystick::PovY))
                 {
-                    unsigned short value = LOWORD(*reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[i]));
+                    unsigned short value = LOWORD(
+                        *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[i]));
 
                     if (value != 0xFFFF)
                     {
@@ -1015,7 +1044,10 @@ JoystickState JoystickImpl::updateDInputPolled()
                 }
                 else
                 {
-                    state.axes[i] = (static_cast<float>(*reinterpret_cast<const LONG*>(reinterpret_cast<const char*>(&joystate) + m_axes[i])) + 0.5f) * 100.f / 32767.5f;
+                    state.axes[i] = (static_cast<float>(*reinterpret_cast<const LONG*>(
+                                         reinterpret_cast<const char*>(&joystate) + m_axes[i])) +
+                                     0.5f) *
+                                    100.f / 32767.5f;
                 }
             }
             else
@@ -1059,7 +1091,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
         }
     }
 
-    JoystickRecord record = { deviceInstance->guidInstance, sf::Joystick::Count, true };
+    JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
@@ -1088,7 +1120,7 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
             joystick.m_axes[Joystick::V] = DIJOFS_RY;
         else if (deviceObjectInstance->guidType == guids::GUID_Slider)
         {
-            if(joystick.m_axes[Joystick::U] == -1)
+            if (joystick.m_axes[Joystick::U] == -1)
                 joystick.m_axes[Joystick::U] = DIJOFS_SLIDER(0);
             else
                 joystick.m_axes[Joystick::V] = DIJOFS_SLIDER(1);
@@ -1100,12 +1132,12 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
         DIPROPRANGE propertyRange;
 
         std::memset(&propertyRange, 0, sizeof(propertyRange));
-        propertyRange.diph.dwSize = sizeof(propertyRange);
+        propertyRange.diph.dwSize       = sizeof(propertyRange);
         propertyRange.diph.dwHeaderSize = sizeof(propertyRange.diph);
-        propertyRange.diph.dwObj = deviceObjectInstance->dwType;
-        propertyRange.diph.dwHow = DIPH_BYID;
-        propertyRange.lMin = -32768;
-        propertyRange.lMax =  32767;
+        propertyRange.diph.dwObj        = deviceObjectInstance->dwType;
+        propertyRange.diph.dwHow        = DIPH_BYID;
+        propertyRange.lMin              = -32768;
+        propertyRange.lMax              = 32767;
 
         HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
 

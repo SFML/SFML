@@ -24,27 +24,26 @@
 ////////////////////////////////////////////////////////////
 
 #import "CocoaAppDelegate.h"
+
 #import "NSString+stdstring.h"
 
 // These define are used for converting the color of the NSPopUpButton
-#define BLUE    @"Blue"
-#define GREEN   @"Green"
-#define RED     @"Red"
+#define BLUE  @"Blue"
+#define GREEN @"Green"
+#define RED   @"Red"
 
 #if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #endif
 
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win) :
-    renderWindow(win),
-    background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), background(sf::Color::Blue)
     {
         std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath + "/logo.png"))
@@ -54,7 +53,7 @@ struct SFMLmainWindow
 
         sprite.setTexture(logo, true);
         sf::FloatRect rect = sprite.getLocalBounds();
-        sf::Vector2f size(rect.width, rect.height);
+        sf::Vector2f  size(rect.width, rect.height);
         sprite.setOrigin(size / 2.f);
         sprite.scale({0.3f, 0.3f});
 
@@ -69,24 +68,24 @@ struct SFMLmainWindow
         text.setFont(font);
     }
 
-    sf::RenderWindow    renderWindow;
-    sf::Font            font;
-    sf::Text            text;
-    sf::Texture         logo;
-    sf::Sprite          sprite;
-    sf::Color           background;
+    sf::RenderWindow renderWindow;
+    sf::Font         font;
+    sf::Text         text;
+    sf::Texture      logo;
+    sf::Sprite       sprite;
+    sf::Color        background;
 };
 
 // Private stuff
 @interface CocoaAppDelegate ()
 
-@property (assign) SFMLmainWindow*  mainWindow;
-@property (retain) NSTimer*         renderTimer;
-@property (assign) BOOL             visible;
+@property (assign) SFMLmainWindow* mainWindow;
+@property (retain) NSTimer*        renderTimer;
+@property (assign) BOOL            visible;
 
-@property (assign) BOOL             initialized;
+@property (assign) BOOL initialized;
 
--(void)renderMainWindow:(NSTimer*)aTimer;
+- (void)renderMainWindow:(NSTimer*)aTimer;
 
 @end
 
@@ -94,15 +93,15 @@ struct SFMLmainWindow
 // Finally, the implementation
 @implementation CocoaAppDelegate
 
-@synthesize window          = m_window;
-@synthesize sfmlView        = m_sfmlView;
-@synthesize textField       = m_textField;
+@synthesize window    = m_window;
+@synthesize sfmlView  = m_sfmlView;
+@synthesize textField = m_textField;
 
-@synthesize mainWindow      = m_mainWindow;
-@synthesize renderTimer     = m_renderTimer;
-@synthesize visible         = m_visible;
+@synthesize mainWindow  = m_mainWindow;
+@synthesize renderTimer = m_renderTimer;
+@synthesize visible     = m_visible;
 
-@synthesize initialized     = m_initialized;
+@synthesize initialized = m_initialized;
 
 - (id)init
 {
@@ -113,7 +112,7 @@ struct SFMLmainWindow
     return self;
 }
 
--(void)applicationDidFinishLaunching:(NSNotification*)aNotification
+- (void)applicationDidFinishLaunching:(NSNotification*)aNotification
 {
     (void)aNotification;
 
@@ -125,15 +124,14 @@ struct SFMLmainWindow
         self.visible = YES;
 
         // Launch the timer to periodically display our stuff into the Cocoa view.
-        self.renderTimer = [NSTimer timerWithTimeInterval:1.0/60.0
-                                                   target:self
-                                                 selector:@selector(renderMainWindow:)
-                                                 userInfo:nil
-                                                  repeats:YES];
-        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer
-                                  forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer
-                                  forMode:NSEventTrackingRunLoopMode];
+        self.renderTimer = [NSTimer
+            timerWithTimeInterval:1.0 / 60.0
+                           target:self
+                         selector:@selector(renderMainWindow:)
+                         userInfo:nil
+                          repeats:YES];
+        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop mainRunLoop] addTimer:self.renderTimer forMode:NSEventTrackingRunLoopMode];
         /*
          * This is really some ugly code but in order to have the timer fired
          * periodically we need to add it to the two above runloop mode.
@@ -147,23 +145,23 @@ struct SFMLmainWindow
     }
 }
 
--(void)dealloc
+- (void)dealloc
 {
     [self.renderTimer invalidate];
     self.mainWindow->renderWindow.close();
 
-    self.window             = nil;
-    self.sfmlView           = nil;
-    self.textField          = nil;
+    self.window    = nil;
+    self.sfmlView  = nil;
+    self.textField = nil;
 
     delete static_cast<SFMLmainWindow*>(self.mainWindow);
-    self.mainWindow         = 0;
-    self.renderTimer        = nil;
+    self.mainWindow  = 0;
+    self.renderTimer = nil;
 
     [super dealloc];
 }
 
--(void)renderMainWindow:(NSTimer*)aTimer
+- (void)renderMainWindow:(NSTimer*)aTimer
 {
     (void)aTimer;
 
@@ -187,7 +185,7 @@ struct SFMLmainWindow
     self.mainWindow->renderWindow.display();
 }
 
--(IBAction)colorChanged:(NSPopUpButton*)sender
+- (IBAction)colorChanged:(NSPopUpButton*)sender
 {
     if (self.initialized)
     {
@@ -202,7 +200,7 @@ struct SFMLmainWindow
     }
 }
 
--(IBAction)rotationChanged:(NSSlider*)sender
+- (IBAction)rotationChanged:(NSSlider*)sender
 {
     if (self.initialized)
     {
@@ -211,13 +209,13 @@ struct SFMLmainWindow
     }
 }
 
--(IBAction)visibleChanged:(NSButton*)sender
+- (IBAction)visibleChanged:(NSButton*)sender
 {
     if (self.initialized)
         self.visible = [sender state] == NSOnState;
 }
 
--(IBAction)textChanged:(NSTextField*)sender
+- (IBAction)textChanged:(NSTextField*)sender
 {
     if (self.initialized)
         self.mainWindow->text.setString([[sender stringValue] tostdwstring]);
@@ -235,7 +233,7 @@ struct SFMLmainWindow
 
 @implementation SilentWindow
 
--(void)keyDown:(NSEvent*)theEvent
+- (void)keyDown:(NSEvent*)theEvent
 {
     (void)theEvent;
     // Do nothing except preventing this alert.

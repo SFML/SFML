@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+
 #include <SFML/System/Utf.hpp>
+
 #include <iterator>
 #include <locale>
 #include <string>
@@ -45,11 +47,10 @@ namespace sf
 class SFML_SYSTEM_API String
 {
 public:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using Iterator = std::basic_string<Uint32>::iterator;      //!< Iterator type
+    using Iterator      = std::basic_string<Uint32>::iterator;       //!< Iterator type
     using ConstIterator = std::basic_string<Uint32>::const_iterator; //!< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
@@ -318,7 +319,7 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    String& operator =(const String& right);
+    String& operator=(const String& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of += operator to append an UTF-32 string
@@ -328,7 +329,7 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    String& operator +=(const String& right);
+    String& operator+=(const String& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of [] operator to access a character by its position
@@ -341,7 +342,7 @@ public:
     /// \return Character at position \a index
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 operator [](std::size_t index) const;
+    Uint32 operator[](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of [] operator to access a character by its position
@@ -354,7 +355,7 @@ public:
     /// \return Reference to the character at position \a index
     ///
     ////////////////////////////////////////////////////////////
-    Uint32& operator [](std::size_t index);
+    Uint32& operator[](std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the string
@@ -529,9 +530,8 @@ public:
     ConstIterator end() const;
 
 private:
-
-    friend SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
-    friend SFML_SYSTEM_API bool operator <(const String& left, const String& right);
+    friend SFML_SYSTEM_API bool operator==(const String& left, const String& right);
+    friend SFML_SYSTEM_API bool operator<(const String& left, const String& right);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -549,7 +549,7 @@ private:
 /// \return True if both strings are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
+SFML_SYSTEM_API bool operator==(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -561,7 +561,7 @@ SFML_SYSTEM_API bool operator ==(const String& left, const String& right);
 /// \return True if both strings are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator !=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator!=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -573,7 +573,7 @@ SFML_SYSTEM_API bool operator !=(const String& left, const String& right);
 /// \return True if \a left is lexicographically before \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator <(const String& left, const String& right);
+SFML_SYSTEM_API bool operator<(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -585,7 +585,7 @@ SFML_SYSTEM_API bool operator <(const String& left, const String& right);
 /// \return True if \a left is lexicographically after \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator >(const String& left, const String& right);
+SFML_SYSTEM_API bool operator>(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -597,7 +597,7 @@ SFML_SYSTEM_API bool operator >(const String& left, const String& right);
 /// \return True if \a left is lexicographically before or equivalent to \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator<=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -609,7 +609,7 @@ SFML_SYSTEM_API bool operator <=(const String& left, const String& right);
 /// \return True if \a left is lexicographically after or equivalent to \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
+SFML_SYSTEM_API bool operator>=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
@@ -621,7 +621,7 @@ SFML_SYSTEM_API bool operator >=(const String& left, const String& right);
 /// \return Concatenated string
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API String operator +(const String& left, const String& right);
+SFML_SYSTEM_API String operator+(const String& left, const String& right);
 
 #include <SFML/System/String.inl>
 

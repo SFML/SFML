@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Shape.hpp>
+
 #include <vector>
 
 
@@ -42,7 +44,6 @@ namespace sf
 class SFML_GRAPHICS_API ConvexShape : public Shape
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -112,7 +113,6 @@ public:
     Vector2f getPoint(std::size_t index) const override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

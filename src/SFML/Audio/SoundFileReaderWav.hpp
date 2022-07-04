@@ -42,7 +42,6 @@ namespace priv
 class SoundFileReaderWav : public SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this reader can handle a file given by an input stream
     ///
@@ -54,7 +53,6 @@ public:
     [[nodiscard]] static bool check(InputStream& stream);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -97,7 +95,6 @@ public:
     [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Read the header of the open file
     ///

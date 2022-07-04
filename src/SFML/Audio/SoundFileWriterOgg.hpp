@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
+
 #include <vorbis/vorbisenc.h>
+
 #include <filesystem>
 #include <fstream>
 
@@ -45,7 +47,6 @@ namespace priv
 class SoundFileWriterOgg : public SoundFileWriter
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this writer can handle a file on disk
     ///
@@ -57,7 +58,6 @@ public:
     [[nodiscard]] static bool check(const std::filesystem::path& filename);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -92,7 +92,6 @@ public:
     void write(const Int16* samples, Uint64 count) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Flush blocks produced by the ogg stream, if any
     ///

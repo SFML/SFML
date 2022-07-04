@@ -1,8 +1,9 @@
 #include <SFML/System/Vector3.hpp>
-#include <SystemUtil.hpp>
-#include <type_traits>
 
 #include <doctest.h>
+
+#include <SystemUtil.hpp>
+#include <type_traits>
 
 // Use sf::Vector3i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
@@ -96,7 +97,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
     SUBCASE("Arithmetic operations between vector and scalar value")
     {
         sf::Vector3i vector(26, 12, 6);
-        int scalar = 2;
+        int          scalar = 2;
 
         SUBCASE("vector * scalar")
         {

@@ -32,12 +32,12 @@
 
 namespace
 {
-    unsigned int deviceMotionEnabledCount = 0;
+unsigned int deviceMotionEnabledCount = 0;
 
-    float toDegrees(float radians)
-    {
-        return sf::radians(radians).asDegrees();
-    }
+float toDegrees(float radians)
+{
+    return sf::radians(radians).asDegrees();
+}
 }
 
 
@@ -133,7 +133,7 @@ void SensorImpl::close()
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    Vector3f value;
+    Vector3f         value;
     CMMotionManager* manager = [SFAppDelegate getInstance].motionManager;
 
     switch (m_sensor)

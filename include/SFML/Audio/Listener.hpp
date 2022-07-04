@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/System/Vector3.hpp>
 
 
@@ -42,7 +43,6 @@ namespace sf
 class SFML_AUDIO_API Listener
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Change the global volume of all the sounds and musics
     ///

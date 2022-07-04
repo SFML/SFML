@@ -4,14 +4,14 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 
+#include <X11/Xlib.h>
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>
 
-#include <X11/Xlib.h>
 #include <array>
-#include <iostream>
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Initialize OpenGL states into the specified view
@@ -171,31 +171,49 @@ int main()
     XSetWindowAttributes attributes;
     attributes.background_pixel = BlackPixel(display, screen);
     attributes.event_mask       = KeyPressMask;
-    Window window = XCreateWindow(display, RootWindow(display, screen),
-                                  0, 0, 650, 330, 0,
+    Window window               = XCreateWindow(display,
+                                  RootWindow(display, screen),
+                                  0,
+                                  0,
+                                  650,
+                                  330,
+                                  0,
                                   DefaultDepth(display, screen),
                                   InputOutput,
                                   DefaultVisual(display, screen),
-                                  CWBackPixel | CWEventMask, &attributes);
+                                  CWBackPixel | CWEventMask,
+                                  &attributes);
     if (!window)
         return EXIT_FAILURE;
 
     // Set the window's name
-    XStoreName(display, window , "SFML Window");
+    XStoreName(display, window, "SFML Window");
 
     // Let's create the windows which will serve as containers for our SFML views
-    Window view1 = XCreateWindow(display, window,
-                                 10, 10, 310, 310, 0,
+    Window view1 = XCreateWindow(display,
+                                 window,
+                                 10,
+                                 10,
+                                 310,
+                                 310,
+                                 0,
                                  DefaultDepth(display, screen),
                                  InputOutput,
                                  DefaultVisual(display, screen),
-                                 0, nullptr);
-    Window view2 = XCreateWindow(display, window,
-                                 330, 10, 310, 310, 0,
+                                 0,
+                                 nullptr);
+    Window view2 = XCreateWindow(display,
+                                 window,
+                                 330,
+                                 10,
+                                 310,
+                                 310,
+                                 0,
                                  DefaultDepth(display, screen),
                                  InputOutput,
                                  DefaultVisual(display, screen),
-                                 0, nullptr);
+                                 0,
+                                 nullptr);
 
     // Show our windows
     XMapWindow(display, window);

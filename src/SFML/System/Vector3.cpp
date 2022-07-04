@@ -23,9 +23,10 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/System/Vector3.hpp>
-#include <type_traits>
+
 #include <cassert>
 #include <cmath>
+#include <type_traits>
 
 
 namespace sf
@@ -50,7 +51,7 @@ T Vector3<T>::length() const
     return std::hypot(x, y, z);
 }
 
-}
+} // namespace sf
 
 
 ////////////////////////////////////////////////////////////

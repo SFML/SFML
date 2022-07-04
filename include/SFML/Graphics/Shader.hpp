@@ -29,10 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Glsl.hpp>
-#include <SFML/Window/GlResource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/Window/GlResource.hpp>
+
 #include <filesystem>
 #include <string>
 #include <unordered_map>
@@ -52,7 +54,6 @@ class Transform;
 class SFML_GRAPHICS_API Shader : GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Types of shaders
     ///
@@ -71,7 +72,9 @@ public:
     /// \see setUniform(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
-    struct CurrentTextureType {};
+    struct CurrentTextureType
+    {
+    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Represents the texture of the object being drawn
@@ -82,7 +85,6 @@ public:
     static CurrentTextureType CurrentTexture;
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -149,7 +151,8 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename, const std::filesystem::path& fragmentShaderFilename);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from files
@@ -171,7 +174,9 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename, const std::filesystem::path& geometryShaderFilename, const std::filesystem::path& fragmentShaderFilename);
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& geometryShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a source code in memory
@@ -234,7 +239,9 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader, const std::string& geometryShader, const std::string& fragmentShader);
+    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader,
+                                      const std::string& geometryShader,
+                                      const std::string& fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
@@ -297,7 +304,9 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream);
+    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream,
+                                      InputStream& geometryShaderStream,
+                                      InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p float uniform
@@ -624,7 +633,6 @@ public:
     static bool isGeometryAvailable();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
@@ -671,7 +679,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using TextureTable = std::unordered_map<int, const Texture *>;
+    using TextureTable = std::unordered_map<int, const Texture*>;
     using UniformTable = std::unordered_map<std::string, int>;
 
     ////////////////////////////////////////////////////////////

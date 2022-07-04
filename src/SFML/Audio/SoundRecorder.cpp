@@ -25,44 +25,44 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundRecorder.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/ALCheck.hpp>
-#include <SFML/System/Sleep.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/SoundRecorder.hpp>
 #include <SFML/System/Err.hpp>
-#include <ostream>
-#include <cstring>
+#include <SFML/System/Sleep.hpp>
+
 #include <cassert>
+#include <cstring>
+#include <ostream>
 
 #ifdef _MSC_VER
-    #pragma warning(disable: 4355) // 'this' used in base member initializer list
+#pragma warning(disable : 4355) // 'this' used in base member initializer list
 #endif
 
 #if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #endif
 
 namespace
 {
-    ALCdevice* captureDevice = nullptr;
+ALCdevice* captureDevice = nullptr;
 }
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 SoundRecorder::SoundRecorder() :
-m_thread            (),
-m_sampleRate        (0),
+m_thread(),
+m_sampleRate(0),
 m_processingInterval(milliseconds(100)),
-m_isCapturing       (false),
-m_deviceName        (getDefaultDevice()),
-m_channelCount      (1)
+m_isCapturing(false),
+m_deviceName(getDefaultDevice()),
+m_channelCount(1)
 {
-
 }
 
 
@@ -74,7 +74,9 @@ SoundRecorder::~SoundRecorder()
     // destructor of the derived class, which makes sure that the recording
     // thread finishes before the derived object is destroyed. Otherwise a
     // "pure virtual method called" exception is triggered.
-    assert(!m_isCapturing && "You must call stop() in the destructor of your derived class, so that the recording thread finishes before your object is destroyed.");
+    assert(!m_isCapturing &&
+           "You must call stop() in the destructor of your derived class, so that the recording thread finishes before "
+           "your object is destroyed.");
 }
 
 
@@ -84,7 +86,9 @@ bool SoundRecorder::start(unsigned int sampleRate)
     // Check if the device can do audio capture
     if (!isAvailable())
     {
-        err() << "Failed to start capture: your system cannot capture audio data (call SoundRecorder::isAvailable to check it)" << std::endl;
+        err() << "Failed to start capture: your system cannot capture audio data (call SoundRecorder::isAvailable to "
+                 "check it)"
+              << std::endl;
         return false;
     }
 
@@ -232,7 +236,8 @@ void SoundRecorder::setChannelCount(unsigned int channelCount)
 
     if (channelCount < 1 || channelCount > 2)
     {
-        err() << "Unsupported channel count: " << channelCount << " Currently only mono (1) and stereo (2) recording is supported." << std::endl;
+        err() << "Unsupported channel count: " << channelCount
+              << " Currently only mono (1) and stereo (2) recording is supported." << std::endl;
         return;
     }
 

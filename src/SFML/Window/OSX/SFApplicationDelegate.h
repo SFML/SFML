@@ -34,7 +34,7 @@
 /// \brief Process some application specific events
 ///
 ////////////////////////////////////////////////////////////
-@interface SFApplicationDelegate : NSObject <NSApplicationDelegate>
+@interface SFApplicationDelegate : NSObject<NSApplicationDelegate>
 
 ////////////////////////////////////////////////////////////
 /// \brief React to a termination notification
@@ -42,12 +42,12 @@
 /// Send a close message to all windows and cancel the termination.
 ///
 ////////////////////////////////////////////////////////////
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 
 ////////////////////////////////////////////////////////////
 /// \brief Exit the app when all windows are closed
 ///
 ////////////////////////////////////////////////////////////
--(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication;
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication;
 
 @end

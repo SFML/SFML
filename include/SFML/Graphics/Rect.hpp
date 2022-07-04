@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector2.hpp>
+
 #include <optional>
 
 
@@ -42,7 +43,6 @@ template <typename T>
 class Rect
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -147,7 +147,7 @@ public:
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator ==(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator==(const Rect<T>& left, const Rect<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
@@ -162,12 +162,12 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator !=(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right);
 
 #include <SFML/Graphics/Rect.inl>
 
 // Create type aliases for the most common types
-using IntRect = Rect<int>;
+using IntRect   = Rect<int>;
 using FloatRect = Rect<float>;
 
 } // namespace sf

@@ -57,7 +57,9 @@ public:
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundFileReader() {}
+    virtual ~SoundFileReader()
+    {
+    }
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading

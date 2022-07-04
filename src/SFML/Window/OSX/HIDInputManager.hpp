@@ -31,6 +31,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
+
 #include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDManager.h>
@@ -53,7 +54,6 @@ using IOHIDElements = std::vector<IOHIDElementRef>;
 class HIDInputManager
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class
     ///
@@ -75,7 +75,6 @@ public:
     bool isKeyPressed(Keyboard::Key key);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the usb location ID of a given device
     ///
@@ -119,7 +118,6 @@ public:
     static Keyboard::Key nonLocalizedKeys(UniChar virtualKeycode);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -219,16 +217,15 @@ private:
     static UInt8 usageToVirtualCode(UInt32 usage);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool              m_isValid;                    ///< If any error occurs this variable is false
-    CFDataRef         m_layoutData;                 ///< CFData containing the layout
-    UCKeyboardLayout* m_layout;                     ///< Current Keyboard Layout
-    IOHIDManagerRef   m_manager;                    ///< HID Manager
+    bool              m_isValid;    ///< If any error occurs this variable is false
+    CFDataRef         m_layoutData; ///< CFData containing the layout
+    UCKeyboardLayout* m_layout;     ///< Current Keyboard Layout
+    IOHIDManagerRef   m_manager;    ///< HID Manager
 
-    IOHIDElements     m_keys[Keyboard::KeyCount];   ///< All the keys on any connected keyboard
+    IOHIDElements m_keys[Keyboard::KeyCount]; ///< All the keys on any connected keyboard
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Key enum.

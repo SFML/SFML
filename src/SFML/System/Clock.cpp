@@ -32,8 +32,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Clock::Clock() :
-m_startTime(ClockImpl::now())
+Clock::Clock() : m_startTime(ClockImpl::now())
 {
 }
 
@@ -48,9 +47,9 @@ Time Clock::getElapsedTime() const
 ////////////////////////////////////////////////////////////
 Time Clock::restart()
 {
-    const ClockImpl::time_point now = ClockImpl::now();
-    Time elapsed = durationToTime(now - m_startTime);
-    m_startTime = now;
+    const ClockImpl::time_point now     = ClockImpl::now();
+    Time                        elapsed = durationToTime(now - m_startTime);
+    m_startTime                         = now;
 
     return elapsed;
 }

@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <SFML/Window/Event.hpp>
 
 
 namespace sf
@@ -44,7 +44,6 @@ namespace priv
 class InputImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if a key is pressed
     ///
@@ -161,7 +160,6 @@ public:
     static Vector2i getTouchPosition(unsigned int finger, const WindowBase& relativeTo);
 
 private:
-
     friend class WindowImplDRM;
 
     ////////////////////////////////////////////////////////////

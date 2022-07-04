@@ -2,16 +2,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "Effect.hpp"
 #include <array>
 #include <random>
+
+#include "Effect.hpp"
 
 
 namespace
 {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-}
+std::random_device rd;
+std::mt19937       rng(rd());
+} // namespace
 
 const sf::Font* Effect::s_font = nullptr;
 
@@ -21,9 +22,7 @@ const sf::Font* Effect::s_font = nullptr;
 class Pixelate : public Effect
 {
 public:
-
-    Pixelate() :
-    Effect("Pixelate")
+    Pixelate() : Effect("Pixelate")
     {
     }
 
@@ -55,10 +54,9 @@ public:
     }
 
 private:
-
     sf::Texture m_texture;
-    sf::Sprite m_sprite;
-    sf::Shader m_shader;
+    sf::Sprite  m_sprite;
+    sf::Shader  m_shader;
 };
 
 
@@ -68,33 +66,32 @@ private:
 class WaveBlur : public Effect
 {
 public:
-
-    WaveBlur() :
-    Effect("Wave + Blur")
+    WaveBlur() : Effect("Wave + Blur")
     {
     }
 
     bool onLoad() override
     {
         // Create the text
-        m_text.setString("Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
-                         "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
-                         "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
-                         "Donec fringilla scelerisque mauris et viverra.\n"
-                         "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
-                         "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
-                         "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
-                         "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
-                         "Fusce vel libero sed neque scelerisque venenatis.\n"
-                         "Integer mattis tincidunt quam vitae iaculis.\n"
-                         "Vivamus fringilla sem non velit venenatis fermentum.\n"
-                         "Vivamus varius tincidunt nisi id vehicula.\n"
-                         "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
-                         "vestibulum sodales sem ante in massa.\n"
-                         "Vestibulum in augue non felis convallis viverra.\n"
-                         "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
-                         "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
-                         "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
+        m_text.setString(
+            "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+            "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
+            "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
+            "Donec fringilla scelerisque mauris et viverra.\n"
+            "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
+            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
+            "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
+            "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
+            "Fusce vel libero sed neque scelerisque venenatis.\n"
+            "Integer mattis tincidunt quam vitae iaculis.\n"
+            "Vivamus fringilla sem non velit venenatis fermentum.\n"
+            "Vivamus varius tincidunt nisi id vehicula.\n"
+            "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
+            "vestibulum sodales sem ante in massa.\n"
+            "Vestibulum in augue non felis convallis viverra.\n"
+            "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
+            "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
+            "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
         m_text.setFont(getFont());
         m_text.setCharacterSize(22);
         m_text.setPosition({30.f, 20.f});
@@ -121,8 +118,7 @@ public:
     }
 
 private:
-
-    sf::Text m_text;
+    sf::Text   m_text;
     sf::Shader m_shader;
 };
 
@@ -133,16 +129,14 @@ private:
 class StormBlink : public Effect
 {
 public:
-
-    StormBlink() :
-    Effect("Storm + Blink")
+    StormBlink() : Effect("Storm + Blink")
     {
     }
 
     bool onLoad() override
     {
-        std::uniform_real_distribution<float> x_distribution(0, 800);
-        std::uniform_real_distribution<float> y_distribution(0, 600);
+        std::uniform_real_distribution<float>     x_distribution(0, 800);
+        std::uniform_real_distribution<float>     y_distribution(0, 600);
         std::uniform_int_distribution<sf::Uint16> color_distribution(0, 255);
 
         // Create the points
@@ -181,9 +175,8 @@ public:
     }
 
 private:
-
     sf::VertexArray m_points;
-    sf::Shader m_shader;
+    sf::Shader      m_shader;
 };
 
 
@@ -193,9 +186,7 @@ private:
 class Edge : public Effect
 {
 public:
-
-    Edge() :
-    Effect("Edge Post-effect")
+    Edge() : Effect("Edge Post-effect")
     {
     }
 
@@ -241,8 +232,10 @@ public:
         for (std::size_t i = 0; i < m_entities.size(); ++i)
         {
             sf::Vector2f position;
-            position.x = std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(m_entities.size() - i))) * 300 + 350;
-            position.y = std::sin(0.25f * (time * static_cast<float>(m_entities.size() - i) + static_cast<float>(i))) * 200 + 250;
+            position.x = std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(m_entities.size() - i))) * 300 +
+                         350;
+            position.y = std::sin(0.25f * (time * static_cast<float>(m_entities.size() - i) + static_cast<float>(i))) * 200 +
+                         250;
             m_entities[i].setPosition(position);
         }
 
@@ -262,13 +255,12 @@ public:
     }
 
 private:
-
-    sf::RenderTexture m_surface;
-    sf::Texture m_backgroundTexture;
-    sf::Texture m_entityTexture;
-    sf::Sprite m_backgroundSprite;
+    sf::RenderTexture       m_surface;
+    sf::Texture             m_backgroundTexture;
+    sf::Texture             m_entityTexture;
+    sf::Sprite              m_backgroundSprite;
     std::vector<sf::Sprite> m_entities;
-    sf::Shader m_shader;
+    sf::Shader              m_shader;
 };
 
 
@@ -278,10 +270,7 @@ private:
 class Geometry : public Effect
 {
 public:
-
-    Geometry() :
-        Effect("Geometry Shader Billboards"),
-        m_pointCloud(sf::Points, 10000)
+    Geometry() : Effect("Geometry Shader Billboards"), m_pointCloud(sf::Points, 10000)
     {
     }
 
@@ -336,8 +325,8 @@ public:
         sf::RenderStates statesCopy(states);
 
         // Prepare the render state
-        statesCopy.shader = &m_shader;
-        statesCopy.texture = &m_logoTexture;
+        statesCopy.shader    = &m_shader;
+        statesCopy.texture   = &m_logoTexture;
         statesCopy.transform = m_transform;
 
         // Draw the point cloud
@@ -345,10 +334,9 @@ public:
     }
 
 private:
-
-    sf::Texture m_logoTexture;
-    sf::Transform m_transform;
-    sf::Shader m_shader;
+    sf::Texture     m_logoTexture;
+    sf::Transform   m_transform;
+    sf::Shader      m_shader;
     sf::VertexArray m_pointCloud;
 };
 
@@ -362,8 +350,7 @@ private:
 int main()
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Shader",
-                            sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Shader", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     // Load the application font and pass it to the Effect class
@@ -373,19 +360,13 @@ int main()
     Effect::setFont(font);
 
     // Create the effects
-    Pixelate pixelateEffect;
-    WaveBlur waveBlurEffect;
+    Pixelate   pixelateEffect;
+    WaveBlur   waveBlurEffect;
     StormBlink stormBlinkEffect;
-    Edge edgeEffect;
-    Geometry geometryEffect;
+    Edge       edgeEffect;
+    Geometry   geometryEffect;
 
-    const std::array<Effect*, 5> effects{
-        &pixelateEffect,
-        &waveBlurEffect,
-        &stormBlinkEffect,
-        &edgeEffect,
-        &geometryEffect
-    };
+    const std::array<Effect*, 5> effects{&pixelateEffect, &waveBlurEffect, &stormBlinkEffect, &edgeEffect, &geometryEffect};
 
     std::size_t current = 0;
 
@@ -461,9 +442,12 @@ int main()
         effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
 
         // Clear the window
-        if(effects[current]->getName() == "Edge Post-effect"){
+        if (effects[current]->getName() == "Edge Post-effect")
+        {
             window.clear(sf::Color::White);
-        } else {
+        }
+        else
+        {
             window.clear(sf::Color(50, 50, 50));
         }
 

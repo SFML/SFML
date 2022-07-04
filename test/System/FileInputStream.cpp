@@ -1,12 +1,13 @@
 #include <SFML/System/FileInputStream.hpp>
+
+#include <doctest.h>
+
 #include <cassert>
 #include <fstream>
 #include <sstream>
 #include <string_view>
 #include <utility>
 
-#include <doctest.h>
-    
 static std::string getTemporaryFilePath()
 {
     static int counter = 0;
@@ -29,8 +30,7 @@ private:
 
 public:
     // Create a temporary file with a randomly generated path, containing 'contents'.
-    TemporaryFile(const std::string& contents)
-        : m_path(getTemporaryFilePath())
+    TemporaryFile(const std::string& contents) : m_path(getTemporaryFilePath())
     {
         std::ofstream ofs(m_path);
         assert(ofs);
@@ -73,7 +73,7 @@ TEST_CASE("sf::FileInputStream class - [system]")
     {
         const std::string fileContents = "hello world";
 
-        TemporaryFile tmpFile(fileContents);
+        TemporaryFile       tmpFile(fileContents);
         sf::FileInputStream fis;
 
         REQUIRE(fis.open(tmpFile.getPath()));

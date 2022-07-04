@@ -49,7 +49,6 @@ namespace priv
 class WindowImplUIKit : public WindowImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation from an existing control
     ///
@@ -188,7 +187,6 @@ public:
     bool hasFocus() const override;
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Notify an event
     ///
@@ -214,7 +212,6 @@ public:
     void setVirtualKeyboardVisible(bool visible);
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
@@ -222,7 +219,6 @@ protected:
     void processEvents() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

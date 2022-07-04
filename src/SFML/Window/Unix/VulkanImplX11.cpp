@@ -25,87 +25,88 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/VulkanImplX11.hpp>
+
+#include <cstring>
 #include <dlfcn.h>
+#include <map>
+#include <string>
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
-#include <string>
-#include <map>
-#include <cstring>
 
 
 namespace
 {
-    struct VulkanLibraryWrapper
+struct VulkanLibraryWrapper
+{
+    VulkanLibraryWrapper() :
+    library(nullptr),
+    vkGetInstanceProcAddr(nullptr),
+    vkEnumerateInstanceLayerProperties(nullptr),
+    vkEnumerateInstanceExtensionProperties(nullptr)
     {
-        VulkanLibraryWrapper() :
-        library(nullptr),
-        vkGetInstanceProcAddr(nullptr),
-        vkEnumerateInstanceLayerProperties(nullptr),
-        vkEnumerateInstanceExtensionProperties(nullptr)
-        {
-        }
+    }
 
-        ~VulkanLibraryWrapper()
-        {
-            if (library)
-                dlclose(library);
-        }
+    ~VulkanLibraryWrapper()
+    {
+        if (library)
+            dlclose(library);
+    }
 
-        // Try to load the library and all the required entry points
-        bool loadLibrary()
-        {
-            if (library)
-                return true;
-
-            library = dlopen("libvulkan.so.1", RTLD_LAZY);
-
-            if (!library)
-                return false;
-
-            if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
-            {
-                dlclose(library);
-                library = nullptr;
-                return false;
-            }
-
-            if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
-            {
-                dlclose(library);
-                library = nullptr;
-                return false;
-            }
-
-            if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
-            {
-                dlclose(library);
-                library = nullptr;
-                return false;
-            }
-
+    // Try to load the library and all the required entry points
+    bool loadLibrary()
+    {
+        if (library)
             return true;
-        }
 
-        template<typename T>
-        bool loadEntryPoint(T& entryPoint, const char* name)
+        library = dlopen("libvulkan.so.1", RTLD_LAZY);
+
+        if (!library)
+            return false;
+
+        if (!loadEntryPoint(vkGetInstanceProcAddr, "vkGetInstanceProcAddr"))
         {
-            entryPoint = reinterpret_cast<T>(dlsym(library, name));
-
-            return (entryPoint != nullptr);
+            dlclose(library);
+            library = nullptr;
+            return false;
         }
 
-        void* library;
+        if (!loadEntryPoint(vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties"))
+        {
+            dlclose(library);
+            library = nullptr;
+            return false;
+        }
 
-        PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
-        PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
-        PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
-    };
+        if (!loadEntryPoint(vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties"))
+        {
+            dlclose(library);
+            library = nullptr;
+            return false;
+        }
 
-    VulkanLibraryWrapper wrapper;
-}
+        return true;
+    }
+
+    template <typename T>
+    bool loadEntryPoint(T& entryPoint, const char* name)
+    {
+        entryPoint = reinterpret_cast<T>(dlsym(library, name));
+
+        return (entryPoint != nullptr);
+    }
+
+    void* library;
+
+    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr;
+    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties;
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+};
+
+VulkanLibraryWrapper wrapper;
+} // namespace
 
 
 namespace sf
@@ -115,8 +116,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool VulkanImplX11::isAvailable(bool requireGraphics)
 {
-    static bool checked = false;
-    static bool computeAvailable = false;
+    static bool checked           = false;
+    static bool computeAvailable  = false;
     static bool graphicsAvailable = false;
 
     if (!checked)
@@ -143,7 +144,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
             wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
-            bool has_VK_KHR_surface = false;
+            bool has_VK_KHR_surface          = false;
             bool has_VK_KHR_platform_surface = false;
 
             for (const VkExtensionProperties& properties : extensionProperties)
@@ -196,7 +197,10 @@ const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtens
 
 
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle windowHandle, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator)
+bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
+                                        WindowHandle                 windowHandle,
+                                        VkSurfaceKHR&                surface,
+                                        const VkAllocationCallbacks* allocator)
 {
     if (!isAvailable())
         return false;
@@ -204,7 +208,8 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle
     // Make a copy of the instance handle since we get it passed as a reference
     VkInstance inst = instance;
 
-    auto vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(wrapper.vkGetInstanceProcAddr(inst, "vkCreateXlibSurfaceKHR"));
+    auto vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(
+        wrapper.vkGetInstanceProcAddr(inst, "vkCreateXlibSurfaceKHR"));
 
     if (!vkCreateXlibSurfaceKHR)
         return false;
@@ -212,9 +217,9 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance& instance, WindowHandle
     // Since the surface is basically attached to the window, the connection
     // to the X display will stay open even after we open and close it here
     VkXlibSurfaceCreateInfoKHR surfaceCreateInfo = VkXlibSurfaceCreateInfoKHR();
-    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.dpy = OpenDisplay();
-    surfaceCreateInfo.window = windowHandle;
+    surfaceCreateInfo.sType                      = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    surfaceCreateInfo.dpy                        = OpenDisplay();
+    surfaceCreateInfo.window                     = windowHandle;
 
     bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
 

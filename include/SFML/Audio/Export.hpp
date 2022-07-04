@@ -36,11 +36,11 @@
 ////////////////////////////////////////////////////////////
 #if defined(SFML_AUDIO_EXPORTS)
 
-    #define SFML_AUDIO_API SFML_API_EXPORT
+#define SFML_AUDIO_API SFML_API_EXPORT
 
 #else
 
-    #define SFML_AUDIO_API SFML_API_IMPORT
+#define SFML_AUDIO_API SFML_API_IMPORT
 
 #endif
 

@@ -30,8 +30,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
-#include <glad/glx.h>
+
 #include <X11/Xlib.h>
+#include <glad/glx.h>
 
 
 namespace sf
@@ -45,7 +46,6 @@ namespace priv
 class GlxContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
     ///
@@ -133,7 +133,6 @@ public:
     static XVisualInfo selectBestVisual(::Display* display, unsigned int bitsPerPixel, const ContextSettings& settings);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Update the context visual settings from XVisualInfo
     ///
@@ -177,11 +176,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display*        m_display;    ///< Connection to the X server
-    ::Window          m_window;     ///< Window to which the context is attached
-    GLXContext        m_context;    ///< OpenGL context
-    GLXPbuffer        m_pbuffer;    ///< GLX pbuffer ID if one was created
-    bool              m_ownsWindow; ///< Do we own the window associated to the context?
+    ::Display* m_display;    ///< Connection to the X server
+    ::Window   m_window;     ///< Window to which the context is attached
+    GLXContext m_context;    ///< OpenGL context
+    GLXPbuffer m_pbuffer;    ///< GLX pbuffer ID if one was created
+    bool       m_ownsWindow; ///< Do we own the window associated to the context?
 };
 
 } // namespace priv

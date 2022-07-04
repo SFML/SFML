@@ -29,10 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/System/Vector2.hpp>
+
 #include <memory>
 
 
@@ -44,7 +46,7 @@ class VideoMode;
 
 namespace priv
 {
-    class WindowImpl;
+class WindowImpl;
 }
 
 class Event;
@@ -56,7 +58,6 @@ class Event;
 class SFML_WINDOW_API WindowBase
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -414,10 +415,11 @@ public:
     /// \return True if surface creation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator = nullptr);
+    [[nodiscard]] bool createVulkanSurface(const VkInstance&            instance,
+                                           VkSurfaceKHR&                surface,
+                                           const VkAllocationCallbacks* allocator = nullptr);
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Function called after the window has been created
     ///
@@ -438,7 +440,6 @@ protected:
     virtual void onResize();
 
 private:
-
     friend class Window;
 
     ////////////////////////////////////////////////////////////

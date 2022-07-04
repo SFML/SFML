@@ -26,16 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/MemoryInputStream.hpp>
+
 #include <cstring>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-MemoryInputStream::MemoryInputStream() :
-m_data  (nullptr),
-m_size  (0),
-m_offset(0)
+MemoryInputStream::MemoryInputStream() : m_data(nullptr), m_size(0), m_offset(0)
 {
 }
 
@@ -43,8 +41,8 @@ m_offset(0)
 ////////////////////////////////////////////////////////////
 void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
 {
-    m_data = static_cast<const char*>(data);
-    m_size = static_cast<Int64>(sizeInBytes);
+    m_data   = static_cast<const char*>(data);
+    m_size   = static_cast<Int64>(sizeInBytes);
     m_offset = 0;
 }
 
@@ -56,7 +54,7 @@ Int64 MemoryInputStream::read(void* data, Int64 size)
         return -1;
 
     Int64 endPosition = m_offset + size;
-    Int64 count = endPosition <= m_size ? size : m_size - m_offset;
+    Int64 count       = endPosition <= m_size ? size : m_size - m_offset;
 
     if (count > 0)
     {

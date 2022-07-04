@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 #define MINIMP3_IMPLEMENTATION // Minimp3 control define, places implementation in this file.
 #ifndef NOMINMAX
-#define NOMINMAX               // To avoid windows.h and std::min issue
+#define NOMINMAX // To avoid windows.h and std::min issue
 #endif
-#define MINIMP3_NO_STDIO       // Minimp3 control define, eliminate file manipulation code which is useless here
+#define MINIMP3_NO_STDIO // Minimp3 control define, eliminate file manipulation code which is useless here
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -47,6 +47,7 @@
 
 #include <SFML/Audio/SoundFileReaderMp3.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
+
 #include <algorithm>
 #include <cstring>
 
@@ -61,16 +62,17 @@ std::size_t readCallback(void* ptr, std::size_t size, void* data)
 
 int seekCallback(std::uint64_t offset, void* data)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(data);
-    sf::Int64 position = stream->seek(static_cast<sf::Int64>(offset));
+    sf::InputStream* stream   = static_cast<sf::InputStream*>(data);
+    sf::Int64        position = stream->seek(static_cast<sf::Int64>(offset));
     return position < 0 ? -1 : 0;
 }
 
 bool hasValidId3Tag(const sf::Uint8* header)
 {
-    return std::memcmp(header, "ID3", 3) == 0 && !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
+    return std::memcmp(header, "ID3", 3) == 0 &&
+           !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
 }
-}
+} // namespace
 
 namespace sf
 {
@@ -95,9 +97,7 @@ bool SoundFileReaderMp3::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderMp3::SoundFileReaderMp3() :
-m_numSamples(0),
-m_position(0)
+SoundFileReaderMp3::SoundFileReaderMp3() : m_numSamples(0), m_position(0)
 {
     std::memset(&m_io, 0, sizeof(m_io));
     std::memset(&m_decoder, 0, sizeof(m_decoder));
@@ -130,7 +130,7 @@ bool SoundFileReaderMp3::open(InputStream& stream, Info& info)
     info.sampleRate   = static_cast<unsigned int>(m_decoder.info.hz);
     info.sampleCount  = m_decoder.samples;
 
-    m_numSamples      = info.sampleCount;
+    m_numSamples = info.sampleCount;
     return true;
 }
 
@@ -147,7 +147,7 @@ void SoundFileReaderMp3::seek(Uint64 sampleOffset)
 Uint64 SoundFileReaderMp3::read(Int16* samples, Uint64 maxCount)
 {
     Uint64 toRead = std::min(maxCount, m_numSamples - m_position);
-    toRead = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
+    toRead        = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
     m_position += toRead;
     return toRead;
 }

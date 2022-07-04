@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/OSX/CursorImpl.hpp>
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
-
+#include <SFML/Window/OSX/CursorImpl.hpp>
 #import <SFML/Window/OSX/NSImage+raw.h>
+
 #import <AppKit/AppKit.h>
 
 namespace
@@ -53,10 +53,8 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() :
-m_cursor(nil)
+CursorImpl::CursorImpl() : m_cursor(nil)
 {
-
 }
 
 
@@ -91,7 +89,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
     AutoreleasePool pool;
-    NSCursor* newCursor = nil;
+    NSCursor*       newCursor = nil;
 
     // clang-format off
     switch (type)
@@ -146,4 +144,3 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 } // namespace priv
 
 } // namespace sf
-

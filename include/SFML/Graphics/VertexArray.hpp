@@ -29,10 +29,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/Vertex.hpp>
+
+#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+
 #include <vector>
 
 
@@ -45,7 +47,6 @@ namespace sf
 class SFML_GRAPHICS_API VertexArray : public Drawable
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -85,7 +86,7 @@ public:
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    Vertex& operator [](std::size_t index);
+    Vertex& operator[](std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only access to a vertex by its index
@@ -101,7 +102,7 @@ public:
     /// \see getVertexCount
     ///
     ////////////////////////////////////////////////////////////
-    const Vertex& operator [](std::size_t index) const;
+    const Vertex& operator[](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the vertex array
@@ -171,7 +172,6 @@ public:
     FloatRect getBounds() const;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Draw the vertex array to a render target
     ///
@@ -182,7 +182,6 @@ private:
     void draw(RenderTarget& target, const RenderStates& states) const override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

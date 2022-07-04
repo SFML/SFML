@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/Audio/AlResource.hpp>
 #include <SFML/System/Vector3.hpp>
 
@@ -42,7 +43,6 @@ namespace sf
 class SFML_AUDIO_API SoundSource : AlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the sound source states
     ///
@@ -232,7 +232,7 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    SoundSource& operator =(const SoundSource& right);
+    SoundSource& operator=(const SoundSource& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Start or resume playing the sound source
@@ -278,7 +278,6 @@ public:
     virtual Status getStatus() const;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

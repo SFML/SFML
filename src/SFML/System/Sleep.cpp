@@ -29,9 +29,9 @@
 #include <SFML/System/Time.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
-    #include <SFML/System/Win32/SleepImpl.hpp>
+#include <SFML/System/Win32/SleepImpl.hpp>
 #else
-    #include <SFML/System/Unix/SleepImpl.hpp>
+#include <SFML/System/Unix/SleepImpl.hpp>
 #endif
 
 

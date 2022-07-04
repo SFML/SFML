@@ -81,12 +81,8 @@ void Joystick::update()
 
 
 ////////////////////////////////////////////////////////////
-Joystick::Identification::Identification() :
-name     ("No Joystick"),
-vendorId (0),
-productId(0)
+Joystick::Identification::Identification() : name("No Joystick"), vendorId(0), productId(0)
 {
-
 }
 
 } // namespace sf

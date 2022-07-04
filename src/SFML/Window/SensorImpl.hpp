@@ -29,27 +29,29 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
 #include <SFML/Window/Sensor.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Window/Win32/SensorImpl.hpp>
+#include <SFML/Window/Win32/SensorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
 
-    #include <SFML/Window/Unix/SensorImpl.hpp>
+#include <SFML/Window/Unix/SensorImpl.hpp>
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-    #include <SFML/Window/OSX/SensorImpl.hpp>
+#include <SFML/Window/OSX/SensorImpl.hpp>
 
 #elif defined(SFML_SYSTEM_IOS)
 
-    #include <SFML/Window/iOS/SensorImpl.hpp>
+#include <SFML/Window/iOS/SensorImpl.hpp>
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-    #include <SFML/Window/Android/SensorImpl.hpp>
+#include <SFML/Window/Android/SensorImpl.hpp>
 
 #endif
 

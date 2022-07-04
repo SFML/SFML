@@ -26,45 +26,46 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Err.hpp>
-#include <cctype>
+#include <SFML/System/MemoryInputStream.hpp>
+
 #include <cassert>
+#include <cctype>
 #include <ostream>
 
 
 namespace
 {
-    size_t read(void* ptr, size_t size, size_t nmemb, void* data)
-    {
-        auto* stream = static_cast<sf::InputStream*>(data);
-        return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
-    }
-
-    int seek(void* data, ogg_int64_t offset, int whence)
-    {
-        auto* stream = static_cast<sf::InputStream*>(data);
-        switch (whence)
-        {
-            case SEEK_SET:
-                break;
-            case SEEK_CUR:
-                offset += stream->tell();
-                break;
-            case SEEK_END:
-                offset = stream->getSize() - offset;
-        }
-        return static_cast<int>(stream->seek(offset));
-    }
-
-    long tell(void* data)
-    {
-        auto* stream = static_cast<sf::InputStream*>(data);
-        return static_cast<long>(stream->tell());
-    }
-
-    static ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+size_t read(void* ptr, size_t size, size_t nmemb, void* data)
+{
+    auto* stream = static_cast<sf::InputStream*>(data);
+    return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
 }
+
+int seek(void* data, ogg_int64_t offset, int whence)
+{
+    auto* stream = static_cast<sf::InputStream*>(data);
+    switch (whence)
+    {
+        case SEEK_SET:
+            break;
+        case SEEK_CUR:
+            offset += stream->tell();
+            break;
+        case SEEK_END:
+            offset = stream->getSize() - offset;
+    }
+    return static_cast<int>(stream->seek(offset));
+}
+
+long tell(void* data)
+{
+    auto* stream = static_cast<sf::InputStream*>(data);
+    return static_cast<long>(stream->tell());
+}
+
+static ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+} // namespace
 
 namespace sf
 {
@@ -87,9 +88,7 @@ bool SoundFileReaderOgg::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderOgg::SoundFileReaderOgg() :
-m_vorbis      (),
-m_channelCount(0)
+SoundFileReaderOgg::SoundFileReaderOgg() : m_vorbis(), m_channelCount(0)
 {
     m_vorbis.datasource = nullptr;
 }
@@ -115,9 +114,9 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
 
     // Retrieve the music attributes
     vorbis_info* vorbisInfo = ov_info(&m_vorbis, -1);
-    info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
-    info.sampleRate = static_cast<unsigned int>(vorbisInfo->rate);
-    info.sampleCount = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
+    info.channelCount       = static_cast<unsigned int>(vorbisInfo->channels);
+    info.sampleRate         = static_cast<unsigned int>(vorbisInfo->rate);
+    info.sampleCount        = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
 
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
@@ -144,8 +143,8 @@ Uint64 SoundFileReaderOgg::read(Int16* samples, Uint64 maxCount)
     Uint64 count = 0;
     while (count < maxCount)
     {
-        int bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(Int16));
-        long bytesRead = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
+        int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(Int16));
+        long bytesRead   = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
         if (bytesRead > 0)
         {
             long samplesRead = bytesRead / static_cast<long>(sizeof(Int16));
@@ -170,7 +169,7 @@ void SoundFileReaderOgg::close()
     {
         ov_clear(&m_vorbis);
         m_vorbis.datasource = nullptr;
-        m_channelCount = 0;
+        m_channelCount      = 0;
     }
 }
 

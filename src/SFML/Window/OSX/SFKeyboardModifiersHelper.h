@@ -28,10 +28,12 @@
 ////////////////////////////////////////////////////////////
 #import <AppKit/AppKit.h>
 
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
+namespace sf
+{
+namespace priv
+{
+class WindowImplCocoa;
+}
 }
 
 ////////////////////////////////////////////////////////////
@@ -66,5 +68,3 @@ sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Ke
 ///
 ////////////////////////////////////////////////////////////
 void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& requester);
-
-

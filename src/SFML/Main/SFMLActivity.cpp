@@ -23,22 +23,25 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Config.hpp>
-#include <android/native_activity.h>
+
 #include <android/log.h>
+#include <android/native_activity.h>
+#include <jni.h>
+
 #include <dlfcn.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <jni.h>
 #include <string>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 
-namespace {
-    using activityOnCreatePointer = void (*)(ANativeActivity*, void*, size_t);
+namespace
+{
+using activityOnCreatePointer = void (*)(ANativeActivity*, void*, size_t);
 }
 
-const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
+const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 {
     // This function reads the value of meta-data "sfml.app.lib_name"
     // found in the Android Manifest file and returns it. It performs the
@@ -48,17 +51,17 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     static char name[256];
 
     // Get metaData instance from the ActivityInfo object
-    jclass classActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
-    jfieldID fieldMetaData = lJNIEnv->GetFieldID(classActivityInfo, "metaData", "Landroid/os/Bundle;");
-    jobject objectMetaData = lJNIEnv->GetObjectField(objectActivityInfo, fieldMetaData);
+    jclass   classActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
+    jfieldID fieldMetaData     = lJNIEnv->GetFieldID(classActivityInfo, "metaData", "Landroid/os/Bundle;");
+    jobject  objectMetaData    = lJNIEnv->GetObjectField(objectActivityInfo, fieldMetaData);
 
     // Create a java string object containing "sfml.app.lib_name"
     jobject objectName = lJNIEnv->NewStringUTF("sfml.app.lib_name");
 
     // Get the value of meta-data named "sfml.app.lib_name"
-    jclass classBundle = lJNIEnv->FindClass("android/os/Bundle");
+    jclass    classBundle     = lJNIEnv->FindClass("android/os/Bundle");
     jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring valueString = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
+    jstring   valueString     = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
 
     // No meta-data "sfml.app.lib_name" was found so we abort and inform the user
     if (valueString == nullptr)
@@ -69,7 +72,7 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 
     // Convert the application name to a C++ string and return it
     const size_t applicationNameLength = static_cast<size_t>(lJNIEnv->GetStringUTFLength(valueString));
-    const char* applicationName = lJNIEnv->GetStringUTFChars(valueString, nullptr);
+    const char*  applicationName       = lJNIEnv->GetStringUTFChars(valueString, nullptr);
 
     if (applicationNameLength >= 256)
     {
@@ -87,32 +90,36 @@ const char *getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
 void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActivityInfo)
 {
     // Find out the absolute path of the library
-    jclass ClassActivityInfo = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
-    jfieldID FieldApplicationInfo = lJNIEnv->GetFieldID(ClassActivityInfo, "applicationInfo", "Landroid/content/pm/ApplicationInfo;");
-    jobject ObjectApplicationInfo = lJNIEnv->GetObjectField(ObjectActivityInfo, FieldApplicationInfo);
+    jclass   ClassActivityInfo     = lJNIEnv->FindClass("android/content/pm/ActivityInfo");
+    jfieldID FieldApplicationInfo  = lJNIEnv->GetFieldID(ClassActivityInfo,
+                                                        "applicationInfo",
+                                                        "Landroid/content/pm/ApplicationInfo;");
+    jobject  ObjectApplicationInfo = lJNIEnv->GetObjectField(ObjectActivityInfo, FieldApplicationInfo);
 
-    jclass ClassApplicationInfo = lJNIEnv->FindClass("android/content/pm/ApplicationInfo");
+    jclass   ClassApplicationInfo  = lJNIEnv->FindClass("android/content/pm/ApplicationInfo");
     jfieldID FieldNativeLibraryDir = lJNIEnv->GetFieldID(ClassApplicationInfo, "nativeLibraryDir", "Ljava/lang/String;");
 
     jobject ObjectDirPath = lJNIEnv->GetObjectField(ObjectApplicationInfo, FieldNativeLibraryDir);
 
-    jclass ClassSystem = lJNIEnv->FindClass("java/lang/System");
-    jmethodID StaticMethodMapLibraryName = lJNIEnv->GetStaticMethodID(ClassSystem, "mapLibraryName", "(Ljava/lang/String;)Ljava/lang/String;");
+    jclass    ClassSystem                = lJNIEnv->FindClass("java/lang/System");
+    jmethodID StaticMethodMapLibraryName = lJNIEnv->GetStaticMethodID(ClassSystem,
+                                                                      "mapLibraryName",
+                                                                      "(Ljava/lang/String;)Ljava/lang/String;");
 
     jstring LibNameObject = lJNIEnv->NewStringUTF(libraryName);
-    jobject ObjectName = lJNIEnv->CallStaticObjectMethod(ClassSystem, StaticMethodMapLibraryName, LibNameObject);
+    jobject ObjectName    = lJNIEnv->CallStaticObjectMethod(ClassSystem, StaticMethodMapLibraryName, LibNameObject);
 
-    jclass ClassFile = lJNIEnv->FindClass("java/io/File");
+    jclass    ClassFile       = lJNIEnv->FindClass("java/io/File");
     jmethodID FileConstructor = lJNIEnv->GetMethodID(ClassFile, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
-    jobject ObjectFile = lJNIEnv->NewObject(ClassFile, FileConstructor, ObjectDirPath, ObjectName);
+    jobject   ObjectFile      = lJNIEnv->NewObject(ClassFile, FileConstructor, ObjectDirPath, ObjectName);
 
     // Get the library absolute path and convert it
-    jmethodID MethodGetPath = lJNIEnv->GetMethodID(ClassFile, "getPath", "()Ljava/lang/String;");
-    jstring javaLibraryPath = static_cast<jstring>(lJNIEnv->CallObjectMethod(ObjectFile, MethodGetPath));
-    const char* libraryPath = lJNIEnv->GetStringUTFChars(javaLibraryPath, nullptr);
+    jmethodID   MethodGetPath   = lJNIEnv->GetMethodID(ClassFile, "getPath", "()Ljava/lang/String;");
+    jstring     javaLibraryPath = static_cast<jstring>(lJNIEnv->CallObjectMethod(ObjectFile, MethodGetPath));
+    const char* libraryPath     = lJNIEnv->GetStringUTFChars(javaLibraryPath, nullptr);
 
     // Manually load the library
-    void * handle = dlopen(libraryPath, RTLD_NOW | RTLD_GLOBAL);
+    void* handle = dlopen(libraryPath, RTLD_NOW | RTLD_GLOBAL);
     if (!handle)
     {
         LOGE("dlopen(\"%s\"): %s", libraryPath, dlerror());
@@ -145,32 +152,42 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
     // Retrieve the NativeActivity
     jobject ObjectNativeActivity = activity->clazz;
-    jclass ClassNativeActivity = lJNIEnv->GetObjectClass(ObjectNativeActivity);
+    jclass  ClassNativeActivity  = lJNIEnv->GetObjectClass(ObjectNativeActivity);
 
     // Retrieve the ActivityInfo
-    jmethodID MethodGetPackageManager = lJNIEnv->GetMethodID(ClassNativeActivity, "getPackageManager", "()Landroid/content/pm/PackageManager;");
-    jobject ObjectPackageManager = lJNIEnv->CallObjectMethod(ObjectNativeActivity, MethodGetPackageManager);
+    jmethodID MethodGetPackageManager = lJNIEnv->GetMethodID(ClassNativeActivity,
+                                                             "getPackageManager",
+                                                             "()Landroid/content/pm/PackageManager;");
+    jobject   ObjectPackageManager    = lJNIEnv->CallObjectMethod(ObjectNativeActivity, MethodGetPackageManager);
 
     jmethodID MethodGetIndent = lJNIEnv->GetMethodID(ClassNativeActivity, "getIntent", "()Landroid/content/Intent;");
-    jobject ObjectIntent = lJNIEnv->CallObjectMethod(ObjectNativeActivity, MethodGetIndent);
+    jobject   ObjectIntent    = lJNIEnv->CallObjectMethod(ObjectNativeActivity, MethodGetIndent);
 
-    jclass ClassIntent = lJNIEnv->FindClass("android/content/Intent");
-    jmethodID MethodGetComponent = lJNIEnv->GetMethodID(ClassIntent, "getComponent", "()Landroid/content/ComponentName;");
+    jclass    ClassIntent        = lJNIEnv->FindClass("android/content/Intent");
+    jmethodID MethodGetComponent = lJNIEnv->GetMethodID(ClassIntent,
+                                                        "getComponent",
+                                                        "()Landroid/content/ComponentName;");
 
     jobject ObjectComponentName = lJNIEnv->CallObjectMethod(ObjectIntent, MethodGetComponent);
 
     jclass ClassPackageManager = lJNIEnv->FindClass("android/content/pm/PackageManager");
 
     jfieldID FieldGET_META_DATA = lJNIEnv->GetStaticFieldID(ClassPackageManager, "GET_META_DATA", "I");
-    jint GET_META_DATA = lJNIEnv->GetStaticIntField(ClassPackageManager, FieldGET_META_DATA);
+    jint     GET_META_DATA      = lJNIEnv->GetStaticIntField(ClassPackageManager, FieldGET_META_DATA);
 
-    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager, "getActivityInfo", "(Landroid/content/ComponentName;I)Landroid/content/pm/ActivityInfo;");
-    jobject ObjectActivityInfo = lJNIEnv->CallObjectMethod(ObjectPackageManager, MethodGetActivityInfo, ObjectComponentName, GET_META_DATA);
+    jmethodID MethodGetActivityInfo = lJNIEnv->GetMethodID(ClassPackageManager,
+                                                           "getActivityInfo",
+                                                           "(Landroid/content/ComponentName;I)Landroid/content/pm/"
+                                                           "ActivityInfo;");
+    jobject   ObjectActivityInfo    = lJNIEnv->CallObjectMethod(ObjectPackageManager,
+                                                           MethodGetActivityInfo,
+                                                           ObjectComponentName,
+                                                           GET_META_DATA);
 
     // Load our libraries in reverse order
 #if defined(STL_LIBRARY)
 #define _SFML_QS(s) _SFML_S(s)
-#define _SFML_S(s) #s
+#define _SFML_S(s)  #s
     loadLibrary(_SFML_QS(STL_LIBRARY), lJNIEnv, ObjectActivityInfo);
 #undef _SFML_S
 #undef _SFML_QS
@@ -194,7 +211,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     void* handle = loadLibrary(getLibraryName(lJNIEnv, ObjectActivityInfo), lJNIEnv, ObjectActivityInfo);
 
     // Call the original ANativeActivity_onCreate function
-    activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle, "ANativeActivity_onCreate");
+    activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle,
+                                                                                      "ANativeActivity_onCreate");
 
     if (!ANativeActivity_onCreate)
     {

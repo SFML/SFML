@@ -29,8 +29,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/Audio/SoundStream.hpp>
+
 #include <SFML/Audio/InputSoundFile.hpp>
+#include <SFML/Audio/SoundStream.hpp>
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -48,7 +50,6 @@ class InputStream;
 class SFML_AUDIO_API Music : public SoundStream
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a time range using the template type
     ///
@@ -62,7 +63,6 @@ public:
         ////////////////////////////////////////////////////////////
         Span()
         {
-
         }
 
         ////////////////////////////////////////////////////////////
@@ -72,11 +72,8 @@ public:
         /// \param len Initial Length
         ///
         ////////////////////////////////////////////////////////////
-        Span(T off, T len):
-        offset(off),
-        length(len)
+        Span(T off, T len) : offset(off), length(len)
         {
-
         }
 
         T offset; //!< The beginning offset of the time range
@@ -211,7 +208,6 @@ public:
     void setLoopPoints(TimeSpan timePoints);
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
     ///
@@ -246,7 +242,6 @@ protected:
     Int64 onLoop() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music
     ///

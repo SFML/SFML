@@ -1,7 +1,8 @@
 #include <SFML/Graphics/Glyph.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::Glyph class - [graphics]")
 {

@@ -1,32 +1,32 @@
-#include <SystemUtil.hpp>
-
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <doctest.h> // for Approx
 
+#include <SystemUtil.hpp>
+
 namespace sf
 {
-    std::ostream& operator <<(std::ostream& os, const sf::Angle& angle)
-    {
-        os << std::fixed << std::setprecision(std::numeric_limits<float>::max_digits10);
-        os << angle.asDegrees() << " deg";
-        return os;
-    }
-
-    std::ostream& operator <<(std::ostream& os, const sf::String& string)
-    {
-        os << string.toAnsiString();
-        return os;
-    }
-
-    std::ostream& operator <<(std::ostream& os, sf::Time time)
-    {
-        os << time.asMicroseconds() << "us";
-        return os;
-    }
+std::ostream& operator<<(std::ostream& os, const sf::Angle& angle)
+{
+    os << std::fixed << std::setprecision(std::numeric_limits<float>::max_digits10);
+    os << angle.asDegrees() << " deg";
+    return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const sf::String& string)
+{
+    os << string.toAnsiString();
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, sf::Time time)
+{
+    os << time.asMicroseconds() << "us";
+    return os;
+}
+} // namespace sf
 
 bool operator==(const float& lhs, const Approx<float>& rhs)
 {

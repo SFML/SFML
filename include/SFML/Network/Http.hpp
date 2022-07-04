@@ -29,9 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
+
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/System/Time.hpp>
+
 #include <map>
 #include <optional>
 #include <string>
@@ -46,7 +48,6 @@ namespace sf
 class SFML_NETWORK_API Http
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Define a HTTP request
     ///
@@ -54,7 +55,6 @@ public:
     class SFML_NETWORK_API Request
     {
     public:
-
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate the available HTTP methods for a request
         ///
@@ -144,7 +144,6 @@ public:
         void setBody(const std::string& body);
 
     private:
-
         friend class Http;
 
         ////////////////////////////////////////////////////////////
@@ -193,7 +192,6 @@ public:
     class SFML_NETWORK_API Response
     {
     public:
-
         ////////////////////////////////////////////////////////////
         /// \brief Enumerate all the valid status codes for a response
         ///
@@ -201,18 +199,18 @@ public:
         enum Status
         {
             // 2xx: success
-            Ok             = 200, //!< Most common code returned when operation was successful
-            Created        = 201, //!< The resource has successfully been created
-            Accepted       = 202, //!< The request has been accepted, but will be processed later by the server
-            NoContent      = 204, //!< The server didn't send any data in return
-            ResetContent   = 205, //!< The server informs the client that it should clear the view (form) that caused the request to be sent
+            Ok        = 200, //!< Most common code returned when operation was successful
+            Created   = 201, //!< The resource has successfully been created
+            Accepted  = 202, //!< The request has been accepted, but will be processed later by the server
+            NoContent = 204, //!< The server didn't send any data in return
+            ResetContent = 205, //!< The server informs the client that it should clear the view (form) that caused the request to be sent
             PartialContent = 206, //!< The server has sent a part of the resource, as a response to a partial GET request
 
             // 3xx: redirection
             MultipleChoices  = 300, //!< The requested page can be accessed from several locations
             MovedPermanently = 301, //!< The requested page has permanently moved to a new location
             MovedTemporarily = 302, //!< The requested page has temporarily moved to a new location
-            NotModified      = 304, //!< For conditional requests, means the requested page hasn't changed and doesn't need to be refreshed
+            NotModified = 304, //!< For conditional requests, means the requested page hasn't changed and doesn't need to be refreshed
 
             // 4xx: client error
             BadRequest          = 400, //!< The server couldn't understand the request (syntax error)
@@ -304,7 +302,6 @@ public:
         const std::string& getBody() const;
 
     private:
-
         friend class Http;
 
         ////////////////////////////////////////////////////////////
@@ -328,7 +325,7 @@ public:
         /// \param in String stream containing the header values
         ///
         ////////////////////////////////////////////////////////////
-        void parseFields(std::istream &in);
+        void parseFields(std::istream& in);
 
         ////////////////////////////////////////////////////////////
         // Types
@@ -417,7 +414,6 @@ public:
     [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

@@ -25,47 +25,41 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowBase.hpp>
-#include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/WindowImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/WindowBase.hpp>
+#include <SFML/Window/WindowImpl.hpp>
+
 #include <ostream>
 
 
 namespace
 {
-    // A nested named namespace is used here to allow unity builds of SFML.
-    namespace WindowsBaseImpl
-    {
-        const sf::WindowBase* fullscreenWindow = nullptr;
-    }
+// A nested named namespace is used here to allow unity builds of SFML.
+namespace WindowsBaseImpl
+{
+const sf::WindowBase* fullscreenWindow = nullptr;
 }
+} // namespace
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase() :
-m_impl(),
-m_size(0, 0)
+WindowBase::WindowBase() : m_impl(), m_size(0, 0)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(VideoMode mode, const String& title, Uint32 style) :
-m_impl(),
-m_size(0, 0)
+WindowBase::WindowBase(VideoMode mode, const String& title, Uint32 style) : m_impl(), m_size(0, 0)
 {
     WindowBase::create(mode, title, style);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(WindowHandle handle) :
-m_impl(),
-m_size(0, 0)
+WindowBase::WindowBase(WindowHandle handle) : m_impl(), m_size(0, 0)
 {
     WindowBase::create(handle);
 }
@@ -107,16 +101,16 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
         }
     }
 
-    // Check validity of style according to the underlying platform
-    #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
-        if (style & Style::Fullscreen)
-            style &= ~static_cast<Uint32>(Style::Titlebar);
-        else
-            style |= Style::Titlebar;
-    #else
-        if ((style & Style::Close) || (style & Style::Resize))
-            style |= Style::Titlebar;
-    #endif
+// Check validity of style according to the underlying platform
+#if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
+    if (style & Style::Fullscreen)
+        style &= ~static_cast<Uint32>(Style::Titlebar);
+    else
+        style |= Style::Titlebar;
+#else
+    if ((style & Style::Close) || (style & Style::Resize))
+        style |= Style::Titlebar;
+#endif
 
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode, title, style, ContextSettings(0, 0, 0, 0, 0, 0xFFFFFFFF, false));

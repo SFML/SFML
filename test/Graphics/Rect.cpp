@@ -1,8 +1,9 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::Rect class template - [graphics]")
 {
@@ -30,7 +31,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
         {
             sf::Vector2i position(1, 2);
             sf::Vector2i dimension(3, 4);
-            sf::IntRect rectangle(position, dimension);
+            sf::IntRect  rectangle(position, dimension);
 
             CHECK(rectangle.left == 1);
             CHECK(rectangle.top == 2);
@@ -41,7 +42,7 @@ TEST_CASE("sf::Rect class template - [graphics]")
         SUBCASE("Conversion constructor")
         {
             sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
-            sf::IntRect rectangle(sourceRectangle);
+            sf::IntRect   rectangle(sourceRectangle);
 
             CHECK(rectangle.left == static_cast<int>(sourceRectangle.left));
             CHECK(rectangle.top == static_cast<int>(sourceRectangle.top));

@@ -32,18 +32,19 @@
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
 using VulkanImplType = sf::priv::VulkanImplWin32;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
 
-    #if defined(SFML_USE_DRM)
+#if defined(SFML_USE_DRM)
 
-        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
-    #else
+#else
 
-		#include <SFML/Window/Unix/VulkanImplX11.hpp>
-		using VulkanImplType = sf::priv::VulkanImplX11;
+#include <SFML/Window/Unix/VulkanImplX11.hpp>
+using VulkanImplType = sf::priv::VulkanImplX11;
 
-    #endif
+#endif
 
 #else
 

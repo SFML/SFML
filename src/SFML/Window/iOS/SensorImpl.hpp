@@ -42,7 +42,6 @@ namespace priv
 class SensorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the sensor module
     ///
@@ -98,12 +97,11 @@ public:
     void setEnabled(bool enabled);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Sensor::Type m_sensor; ///< Type of the sensor
-    bool m_enabled;        ///< Enable state of the sensor
+    Sensor::Type m_sensor;  ///< Type of the sensor
+    bool         m_enabled; ///< Enable state of the sensor
 };
 
 } // namespace priv

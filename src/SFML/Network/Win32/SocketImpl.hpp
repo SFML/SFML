@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Socket.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
@@ -46,12 +47,11 @@ namespace priv
 class SocketImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
     using AddrLength = int;
-    using Size = int;
+    using Size       = int;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address

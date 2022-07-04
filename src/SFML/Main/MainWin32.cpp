@@ -40,6 +40,7 @@
 #ifdef SFML_SYSTEM_WINDOWS
 
 #include <SFML/System/Win32/WindowsHeader.hpp>
+
 #include <cstdlib> // for `__argc` and `__argv`
 
 extern int main(int argc, char* argv[]);
@@ -47,11 +48,10 @@ extern int main(int argc, char* argv[]);
 ////////////////////////////////////////////////////////////
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
     return main(__argc, __argv);
-    #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 }
 
 #endif // SFML_SYSTEM_WINDOWS
-

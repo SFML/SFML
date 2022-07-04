@@ -25,20 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/SocketImpl.hpp>
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/TcpSocket.hpp>
-#include <SFML/Network/SocketImpl.hpp>
 #include <SFML/System/Err.hpp>
+
 #include <ostream>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-TcpListener::TcpListener() :
-Socket(Tcp)
+TcpListener::TcpListener() : Socket(Tcp)
 {
-
 }
 
 
@@ -48,7 +47,7 @@ unsigned short TcpListener::getLocalPort() const
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve informations about the local end of the socket
-        sockaddr_in address;
+        sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
@@ -114,9 +113,9 @@ Socket::Status TcpListener::accept(TcpSocket& socket)
     }
 
     // Accept a new connection
-    sockaddr_in address;
+    sockaddr_in                  address;
     priv::SocketImpl::AddrLength length = sizeof(address);
-    SocketHandle remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
+    SocketHandle                 remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
 
     // Check for errors
     if (remote == priv::SocketImpl::invalidSocket())
