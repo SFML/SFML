@@ -29,9 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Glyph.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -56,7 +58,6 @@ class InputStream;
 class SFML_GRAPHICS_API Font
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Holds various information about a font
     ///
@@ -67,7 +68,6 @@ public:
     };
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -327,17 +327,18 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    Font& operator =(const Font& right);
+    Font& operator=(const Font& right);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
     ///
     ////////////////////////////////////////////////////////////
     struct Row
     {
-        Row(unsigned int rowTop, unsigned int rowHeight) : width(0), top(rowTop), height(rowHeight) {}
+        Row(unsigned int rowTop, unsigned int rowHeight) : width(0), top(rowTop), height(rowHeight)
+        {
+        }
 
         unsigned int width;  //!< Current width of the row
         unsigned int top;    //!< Y position of the row into the texture
@@ -422,14 +423,14 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<FontHandles>          m_fontHandles; //!< Shared information about the internal font instance
-    bool                                  m_isSmooth;    //!< Status of the smooth filter
-    Info                                  m_info;        //!< Information about the font
-    mutable PageTable                     m_pages;       //!< Table containing the glyphs pages by character size
-    mutable std::vector<Uint8>            m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
-    #ifdef SFML_SYSTEM_ANDROID
-    std::unique_ptr<priv::ResourceStream> m_stream;      //!< Asset file streamer (if loaded from file)
-    #endif
+    std::shared_ptr<FontHandles> m_fontHandles; //!< Shared information about the internal font instance
+    bool                         m_isSmooth;    //!< Status of the smooth filter
+    Info                         m_info;        //!< Information about the font
+    mutable PageTable            m_pages;       //!< Table containing the glyphs pages by character size
+    mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
+#ifdef SFML_SYSTEM_ANDROID
+    std::unique_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)
+#endif
 };
 
 } // namespace sf

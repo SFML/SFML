@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/DRM/WindowImplDRM.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
+#include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <drm-common.h>
 
 
@@ -39,8 +40,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/) :
-m_size(0, 0)
+WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/) : m_size(0, 0)
 {
     sf::priv::InputImpl::setTerminalConfig();
 }

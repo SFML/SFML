@@ -26,11 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/DRM/DRMContext.hpp>
-#include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/Window/DRM/DRMContext.hpp>
+#include <SFML/Window/DRM/WindowImplDRM.hpp>
+
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -39,153 +40,152 @@
 
 namespace
 {
-    bool initialized = false;
-    drm drmNode;
-    drmEventContext drmEventCtx;
-    pollfd pollFD;
-    gbm_device* gbmDevice = nullptr;
-    int contextCount = 0;
-    EGLDisplay display = EGL_NO_DISPLAY;
-    int waitingForFlip = 0;
+bool            initialized = false;
+drm             drmNode;
+drmEventContext drmEventCtx;
+pollfd          pollFD;
+gbm_device*     gbmDevice      = nullptr;
+int             contextCount   = 0;
+EGLDisplay      display        = EGL_NO_DISPLAY;
+int             waitingForFlip = 0;
 
-    static void pageFlipHandler(int /* fd */, unsigned int /* frame */,
-        unsigned int /* sec */, unsigned int /* usec */, void* data)
-    {
-        int* temp = static_cast<int*>(data);
-        *temp = 0;
-    }
+static void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
+{
+    int* temp = static_cast<int*>(data);
+    *temp     = 0;
+}
 
-    static bool waitForFlip(int timeout)
+static bool waitForFlip(int timeout)
+{
+    while (waitingForFlip)
     {
-        while (waitingForFlip)
+        pollFD.revents = 0;
+
+        if (poll(&pollFD, 1, timeout) < 0)
+            return false;
+
+        if (pollFD.revents & (POLLHUP | POLLERR))
+            return false;
+
+        if (pollFD.revents & POLLIN)
         {
-            pollFD.revents = 0;
-
-            if (poll(&pollFD, 1, timeout) < 0)
-                return false;
-
-            if (pollFD.revents & (POLLHUP | POLLERR))
-                return false;
-
-            if (pollFD.revents & POLLIN)
-            {
-                drmHandleEvent(drmNode.fd, &drmEventCtx);
-            }
-            else
-            {
-                return false;
-            }
+            drmHandleEvent(drmNode.fd, &drmEventCtx);
         }
-        return true;
-    }
-
-    void cleanup()
-    {
-        if (!initialized)
-            return;
-
-        drmModeSetCrtc(drmNode.fd,
-                       drmNode.original_crtc->crtc_id,
-                       drmNode.original_crtc->buffer_id,
-                       drmNode.original_crtc->x,
-                       drmNode.original_crtc->y,
-                       &drmNode.connector_id,
-                       1,
-                       &drmNode.original_crtc->mode);
-
-        drmModeFreeConnector(drmNode.saved_connector);
-        drmModeFreeEncoder(drmNode.saved_encoder);
-        drmModeFreeCrtc(drmNode.original_crtc);
-
-        eglTerminate(display);
-        display = EGL_NO_DISPLAY;
-
-        gbm_device_destroy(gbmDevice);
-        gbmDevice = nullptr;
-
-        close(drmNode.fd);
-
-        drmNode.fd = -1;
-        drmNode.mode = 0;
-
-        std::memset(&pollFD, 0, sizeof(pollfd));
-        std::memset(&drmEventCtx, 0, sizeof(drmEventContext));
-
-        waitingForFlip = 0;
-
-        initialized = false;
-    }
-
-    void checkInit()
-    {
-        if (initialized)
-            return;
-
-        // Use environment variable "SFML_DRM_DEVICE" (or nullptr if not set)
-        char* deviceString = std::getenv("SFML_DRM_DEVICE");
-        if (deviceString && !*deviceString)
-            deviceString = nullptr;
-
-        // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
-        char* modeString = std::getenv("SFML_DRM_MODE");
-
-        // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
-        // Use in combination with mode to request specific refresh rate for the mode
-        // if multiple refresh rates for same mode might be supported
-        unsigned int refreshRate = 0;
-        char* refreshString = std::getenv("SFML_DRM_REFRESH");
-
-        if (refreshString)
-            refreshRate = static_cast<unsigned int>(atoi(refreshString));
-
-        if (init_drm(&drmNode,
-                     deviceString,     // device
-                     modeString,       // requested mode
-                     refreshRate) < 0) // screen refresh rate
+        else
         {
-            sf::err() << "Error initializing DRM" << std::endl;
-            return;
+            return false;
         }
+    }
+    return true;
+}
 
-        gbmDevice = gbm_create_device(drmNode.fd);
+void cleanup()
+{
+    if (!initialized)
+        return;
 
-        std::atexit(cleanup);
-        initialized = true;
+    drmModeSetCrtc(drmNode.fd,
+                   drmNode.original_crtc->crtc_id,
+                   drmNode.original_crtc->buffer_id,
+                   drmNode.original_crtc->x,
+                   drmNode.original_crtc->y,
+                   &drmNode.connector_id,
+                   1,
+                   &drmNode.original_crtc->mode);
 
-        pollFD.fd = drmNode.fd;
-        pollFD.events = POLLIN;
-        drmEventCtx.version = 2;
-        drmEventCtx.page_flip_handler = pageFlipHandler;
+    drmModeFreeConnector(drmNode.saved_connector);
+    drmModeFreeEncoder(drmNode.saved_encoder);
+    drmModeFreeCrtc(drmNode.original_crtc);
+
+    eglTerminate(display);
+    display = EGL_NO_DISPLAY;
+
+    gbm_device_destroy(gbmDevice);
+    gbmDevice = nullptr;
+
+    close(drmNode.fd);
+
+    drmNode.fd   = -1;
+    drmNode.mode = 0;
+
+    std::memset(&pollFD, 0, sizeof(pollfd));
+    std::memset(&drmEventCtx, 0, sizeof(drmEventContext));
+
+    waitingForFlip = 0;
+
+    initialized = false;
+}
+
+void checkInit()
+{
+    if (initialized)
+        return;
+
+    // Use environment variable "SFML_DRM_DEVICE" (or nullptr if not set)
+    char* deviceString = std::getenv("SFML_DRM_DEVICE");
+    if (deviceString && !*deviceString)
+        deviceString = nullptr;
+
+    // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
+    char* modeString = std::getenv("SFML_DRM_MODE");
+
+    // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
+    // Use in combination with mode to request specific refresh rate for the mode
+    // if multiple refresh rates for same mode might be supported
+    unsigned int refreshRate   = 0;
+    char*        refreshString = std::getenv("SFML_DRM_REFRESH");
+
+    if (refreshString)
+        refreshRate = static_cast<unsigned int>(atoi(refreshString));
+
+    if (init_drm(&drmNode,
+                 deviceString,     // device
+                 modeString,       // requested mode
+                 refreshRate) < 0) // screen refresh rate
+    {
+        sf::err() << "Error initializing DRM" << std::endl;
+        return;
     }
 
+    gbmDevice = gbm_create_device(drmNode.fd);
 
-    EGLDisplay getInitializedDisplay()
+    std::atexit(cleanup);
+    initialized = true;
+
+    pollFD.fd                     = drmNode.fd;
+    pollFD.events                 = POLLIN;
+    drmEventCtx.version           = 2;
+    drmEventCtx.page_flip_handler = pageFlipHandler;
+}
+
+
+EGLDisplay getInitializedDisplay()
+{
+    checkInit();
+
+    if (display == EGL_NO_DISPLAY)
     {
-        checkInit();
+        display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
-        if (display == EGL_NO_DISPLAY)
-        {
-            display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
-
-            EGLint major, minor;
-            eglCheck(eglInitialize(display, &major, &minor));
+        EGLint major, minor;
+        eglCheck(eglInitialize(display, &major, &minor));
 
 #if defined(SFML_OPENGL_ES)
-            if (!eglBindAPI(EGL_OPENGL_ES_API))
-            {
-                sf::err() << "failed to bind api EGL_OPENGL_ES_API" << std::endl;
-            }
-#else
-            if (!eglBindAPI(EGL_OPENGL_API))
-            {
-                sf::err() << "failed to bind api EGL_OPENGL_API" << std::endl;
-            }
-#endif
+        if (!eglBindAPI(EGL_OPENGL_ES_API))
+        {
+            sf::err() << "failed to bind api EGL_OPENGL_ES_API" << std::endl;
         }
-
-        return display;
+#else
+        if (!eglBindAPI(EGL_OPENGL_API))
+        {
+            sf::err() << "failed to bind api EGL_OPENGL_API" << std::endl;
+        }
+#endif
     }
+
+    return display;
 }
+} // namespace
 
 
 namespace sf
@@ -194,16 +194,16 @@ namespace priv
 {
 ////////////////////////////////////////////////////////////
 DRMContext::DRMContext(DRMContext* shared) :
-m_display    (EGL_NO_DISPLAY),
-m_context    (EGL_NO_CONTEXT),
-m_surface    (EGL_NO_SURFACE),
-m_config     (nullptr),
-m_currentBO  (nullptr),
-m_nextBO     (nullptr),
-m_gbmSurface (nullptr),
-m_size       (0, 0),
-m_shown      (false),
-m_scanOut    (false)
+m_display(EGL_NO_DISPLAY),
+m_context(EGL_NO_CONTEXT),
+m_surface(EGL_NO_SURFACE),
+m_config(nullptr),
+m_currentBO(nullptr),
+m_nextBO(nullptr),
+m_gbmSurface(nullptr),
+m_size(0, 0),
+m_shown(false),
+m_scanOut(false)
 {
     contextCount++;
 
@@ -226,16 +226,16 @@ m_scanOut    (false)
 
 ////////////////////////////////////////////////////////////
 DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_display    (EGL_NO_DISPLAY),
-m_context    (EGL_NO_CONTEXT),
-m_surface    (EGL_NO_SURFACE),
-m_config     (nullptr),
-m_currentBO  (nullptr),
-m_nextBO     (nullptr),
-m_gbmSurface (nullptr),
-m_size       (0, 0),
-m_shown      (false),
-m_scanOut    (false)
+m_display(EGL_NO_DISPLAY),
+m_context(EGL_NO_CONTEXT),
+m_surface(EGL_NO_SURFACE),
+m_config(nullptr),
+m_currentBO(nullptr),
+m_nextBO(nullptr),
+m_gbmSurface(nullptr),
+m_size(0, 0),
+m_shown(false),
+m_scanOut(false)
 {
     contextCount++;
 
@@ -256,16 +256,16 @@ m_scanOut    (false)
 
 ////////////////////////////////////////////////////////////
 DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size) :
-m_display    (EGL_NO_DISPLAY),
-m_context    (EGL_NO_CONTEXT),
-m_surface    (EGL_NO_SURFACE),
-m_config     (nullptr),
-m_currentBO  (nullptr),
-m_nextBO     (nullptr),
-m_gbmSurface (nullptr),
-m_size       (0, 0),
-m_shown      (false),
-m_scanOut    (false)
+m_display(EGL_NO_DISPLAY),
+m_context(EGL_NO_CONTEXT),
+m_surface(EGL_NO_SURFACE),
+m_config(nullptr),
+m_currentBO(nullptr),
+m_nextBO(nullptr),
+m_gbmSurface(nullptr),
+m_size(0, 0),
+m_shown(false),
+m_scanOut(false)
 {
     contextCount++;
 
@@ -375,8 +375,7 @@ void DRMContext::display()
     // If first time, need to first call drmModeSetCrtc()
     if (!m_shown)
     {
-        if (drmModeSetCrtc(drmNode.fd, drmNode.crtc_id, fb->fb_id, 0, 0,
-            &drmNode.connector_id, 1, drmNode.mode))
+        if (drmModeSetCrtc(drmNode.fd, drmNode.crtc_id, fb->fb_id, 0, 0, &drmNode.connector_id, 1, drmNode.mode))
         {
             err() << "Failed to set mode: " << std::strerror(errno) << std::endl;
             std::abort();
@@ -385,8 +384,7 @@ void DRMContext::display()
     }
 
     // Do page flip
-    if (!drmModePageFlip(drmNode.fd, drmNode.crtc_id, fb->fb_id,
-            DRM_MODE_PAGE_FLIP_EVENT, &waitingForFlip))
+    if (!drmModePageFlip(drmNode.fd, drmNode.crtc_id, fb->fb_id, DRM_MODE_PAGE_FLIP_EVENT, &waitingForFlip))
         waitingForFlip = 1;
 }
 
@@ -401,11 +399,7 @@ void DRMContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void DRMContext::createContext(DRMContext* shared)
 {
-    const EGLint contextVersion[] =
-    {
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-        EGL_NONE
-    };
+    const EGLint contextVersion[] = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE};
 
     EGLContext toShared;
 
@@ -433,12 +427,7 @@ void DRMContext::createSurface(const Vector2u& size, unsigned int /*bpp*/, bool 
     if (m_scanOut)
         flags |= GBM_BO_USE_SCANOUT;
 
-    m_gbmSurface = gbm_surface_create(
-        gbmDevice,
-        size.x,
-        size.y,
-        GBM_FORMAT_ARGB8888,
-        flags);
+    m_gbmSurface = gbm_surface_create(gbmDevice, size.x, size.y, GBM_FORMAT_ARGB8888, flags);
 
     if (!m_gbmSurface)
     {
@@ -448,7 +437,8 @@ void DRMContext::createSurface(const Vector2u& size, unsigned int /*bpp*/, bool 
 
     m_size = size;
 
-    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), nullptr));
+    m_surface = eglCheck(
+        eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), nullptr));
 
     if (m_surface == EGL_NO_SURFACE)
     {
@@ -476,26 +466,35 @@ EGLConfig DRMContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 {
     // Set our video settings constraint
     const EGLint attributes[] =
-    {
-        EGL_BUFFER_SIZE, static_cast<EGLint>(bitsPerPixel),
-        EGL_DEPTH_SIZE, static_cast<EGLint>(settings.depthBits),
-        EGL_STENCIL_SIZE, static_cast<EGLint>(settings.stencilBits),
-        EGL_SAMPLE_BUFFERS, static_cast<EGLint>(settings.antialiasingLevel),
-        EGL_BLUE_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_RED_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
+    { EGL_BUFFER_SIZE,
+      static_cast<EGLint>(bitsPerPixel),
+      EGL_DEPTH_SIZE,
+      static_cast<EGLint>(settings.depthBits),
+      EGL_STENCIL_SIZE,
+      static_cast<EGLint>(settings.stencilBits),
+      EGL_SAMPLE_BUFFERS,
+      static_cast<EGLint>(settings.antialiasingLevel),
+      EGL_BLUE_SIZE,
+      8,
+      EGL_GREEN_SIZE,
+      8,
+      EGL_RED_SIZE,
+      8,
+      EGL_ALPHA_SIZE,
+      8,
 
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+      EGL_SURFACE_TYPE,
+      EGL_WINDOW_BIT,
 #if defined(SFML_OPENGL_ES)
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+      EGL_RENDERABLE_TYPE,
+      EGL_OPENGL_ES_BIT,
 #else
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+      EGL_RENDERABLE_TYPE,
+      EGL_OPENGL_BIT,
 #endif
-        EGL_NONE
-    };
+      EGL_NONE };
 
-    EGLint configCount;
+    EGLint    configCount;
     EGLConfig configs[1];
 
     // Ask EGL for the best config matching our video settings
@@ -520,8 +519,8 @@ void DRMContext::updateSettings()
     eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
     m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
 
-    m_settings.majorVersion = 1;
-    m_settings.minorVersion = 1;
+    m_settings.majorVersion   = 1;
+    m_settings.minorVersion   = 1;
     m_settings.attributeFlags = ContextSettings::Default;
 }
 

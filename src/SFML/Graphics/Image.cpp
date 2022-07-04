@@ -29,11 +29,11 @@
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/Err.hpp>
 #ifdef SFML_SYSTEM_ANDROID
-    #include <SFML/System/Android/ResourceStream.hpp>
+#include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
-#include <ostream>
 #include <cstring>
+#include <ostream>
 
 
 namespace sf
@@ -104,16 +104,16 @@ void Image::create(const Vector2u& size, const Uint8* pixels)
 ////////////////////////////////////////////////////////////
 bool Image::loadFromFile(const std::filesystem::path& filename)
 {
-    #ifndef SFML_SYSTEM_ANDROID
+#ifndef SFML_SYSTEM_ANDROID
 
-        return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
+    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
 
-    #else
+#else
 
-        priv::ResourceStream stream(filename);
-        return loadFromStream(stream);
+    priv::ResourceStream stream(filename);
+    return loadFromStream(stream);
 
-    #endif
+#endif
 }
 
 
@@ -193,8 +193,7 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
     {
         // Checking the bottom right corner is enough because
         // left and top are non-negative and width and height are positive.
-        if (source.m_size.x < srcRect.left + srcRect.width ||
-            source.m_size.y < srcRect.top + srcRect.height)
+        if (source.m_size.x < srcRect.left + srcRect.width || source.m_size.y < srcRect.top + srcRect.height)
             return false;
     }
 
@@ -203,8 +202,7 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
         return false;
 
     // Then find the valid size of the destination rectangle
-    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width),
-                           std::min(m_size.y - dest.y, srcRect.height));
+    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width), std::min(m_size.y - dest.y, srcRect.height));
 
     // Precompute as much as possible
     const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
@@ -264,10 +262,10 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 void Image::setPixel(const Vector2u& coords, const Color& color)
 {
     Uint8* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
-    *pixel++ = color.r;
-    *pixel++ = color.g;
-    *pixel++ = color.b;
-    *pixel++ = color.a;
+    *pixel++     = color.r;
+    *pixel++     = color.g;
+    *pixel++     = color.b;
+    *pixel++     = color.a;
 }
 
 
@@ -303,8 +301,9 @@ void Image::flipHorizontally()
 
         for (std::size_t y = 0; y < m_size.y; ++y)
         {
-            auto left = m_pixels.begin() + static_cast<std::vector<Uint8>::iterator::difference_type>(y * rowSize);
-            auto right = m_pixels.begin() + static_cast<std::vector<Uint8>::iterator::difference_type>((y + 1) * rowSize - 4);
+            auto left  = m_pixels.begin() + static_cast<std::vector<Uint8>::iterator::difference_type>(y * rowSize);
+            auto right = m_pixels.begin() +
+                         static_cast<std::vector<Uint8>::iterator::difference_type>((y + 1) * rowSize - 4);
 
             for (std::size_t x = 0; x < m_size.x / 2; ++x)
             {
@@ -325,7 +324,7 @@ void Image::flipVertically()
     {
         auto rowSize = static_cast<std::vector<Uint8>::iterator::difference_type>(m_size.x * 4);
 
-        auto top = m_pixels.begin();
+        auto top    = m_pixels.begin();
         auto bottom = m_pixels.end() - rowSize;
 
         for (std::size_t y = 0; y < m_size.y / 2; ++y)

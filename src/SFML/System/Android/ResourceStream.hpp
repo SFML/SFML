@@ -29,8 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+
 #include <SFML/System/InputStream.hpp>
+
 #include <android/asset_manager.h>
+
 #include <filesystem>
 #include <string>
 
@@ -46,7 +49,6 @@ namespace priv
 class SFML_SYSTEM_API ResourceStream : public InputStream
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -70,7 +72,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 read(void *data, Int64 size) override;
+    Int64 read(void* data, Int64 size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position in the asset file
@@ -99,7 +101,6 @@ public:
     Int64 getSize() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

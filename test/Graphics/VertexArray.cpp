@@ -1,7 +1,8 @@
 #include <SFML/Graphics/VertexArray.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::VertexArray class - [graphics]")
 {
@@ -61,7 +62,7 @@ TEST_CASE("sf::VertexArray class - [graphics]")
 
     SUBCASE("Append to array")
     {
-        sf::VertexArray vertexArray;
+        sf::VertexArray  vertexArray;
         const sf::Vertex vertex({1, 2}, {3, 4, 5, 6}, {7, 8});
         vertexArray.append(vertex);
         CHECK(vertexArray.getVertexCount() == 1);

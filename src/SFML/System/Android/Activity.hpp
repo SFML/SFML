@@ -28,15 +28,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Event.hpp>
 #include <SFML/Window/EglContext.hpp>
-#include <android/native_activity.h>
+#include <SFML/Window/Event.hpp>
+
 #include <android/configuration.h>
-#include <vector>
-#include <unordered_map>
-#include <string>
+#include <android/native_activity.h>
+
 #include <fstream>
 #include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 class SFML_SYSTEM_API LogcatStream : public std::streambuf
 {
@@ -56,16 +58,16 @@ namespace priv
 struct ActivityStates
 {
     ANativeActivity* activity;
-    ANativeWindow* window;
+    ANativeWindow*   window;
 
     ALooper*        looper;
     AInputQueue*    inputQueue;
     AConfiguration* config;
 
-    EGLDisplay display;
+    EGLDisplay  display;
     EglContext* context;
 
-    void* savedState;
+    void*  savedState;
     size_t savedStateSize;
 
     std::recursive_mutex mutex;
@@ -74,8 +76,8 @@ struct ActivityStates
     int (*processEvent)(int fd, int events, void* data);
 
     std::unordered_map<int, Vector2i> touchEvents;
-    Vector2i mousePosition;
-    bool isButtonPressed[Mouse::ButtonCount];
+    Vector2i                          mousePosition;
+    bool                              isButtonPressed[Mouse::ButtonCount];
 
     bool mainOver;
 

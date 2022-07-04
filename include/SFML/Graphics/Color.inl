@@ -24,24 +24,14 @@
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color::Color() :
-r(0),
-g(0),
-b(0),
-a(255)
+constexpr Color::Color() : r(0), g(0), b(0), a(255)
 {
-
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) :
-r(red),
-g(green),
-b(blue),
-a(alpha)
+constexpr Color::Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha) : r(red), g(green), b(blue), a(alpha)
 {
-
 }
 
 
@@ -52,7 +42,6 @@ g(static_cast<Uint8>((color & 0x00ff0000) >> 16)),
 b(static_cast<Uint8>((color & 0x0000ff00) >> 8)),
 a(static_cast<Uint8>(color & 0x000000ff))
 {
-
 }
 
 
@@ -64,24 +53,21 @@ constexpr Uint32 Color::toInteger() const
 
 
 ////////////////////////////////////////////////////////////
-constexpr bool operator ==(const Color& left, const Color& right)
+constexpr bool operator==(const Color& left, const Color& right)
 {
-    return (left.r == right.r) &&
-           (left.g == right.g) &&
-           (left.b == right.b) &&
-           (left.a == right.a);
+    return (left.r == right.r) && (left.g == right.g) && (left.b == right.b) && (left.a == right.a);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr bool operator !=(const Color& left, const Color& right)
+constexpr bool operator!=(const Color& left, const Color& right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color operator +(const Color& left, const Color& right)
+constexpr Color operator+(const Color& left, const Color& right)
 {
     const auto clampedAdd = [](Uint8 lhs, Uint8 rhs) -> Uint8
     {
@@ -97,7 +83,7 @@ constexpr Color operator +(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color operator -(const Color& left, const Color& right)
+constexpr Color operator-(const Color& left, const Color& right)
 {
     const auto clampedSub = [](Uint8 lhs, Uint8 rhs) -> Uint8
     {
@@ -113,7 +99,7 @@ constexpr Color operator -(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color operator *(const Color& left, const Color& right)
+constexpr Color operator*(const Color& left, const Color& right)
 {
     const auto scaledMul = [](Uint8 lhs, Uint8 rhs) -> Uint8
     {
@@ -129,21 +115,21 @@ constexpr Color operator *(const Color& left, const Color& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color& operator +=(Color& left, const Color& right)
+constexpr Color& operator+=(Color& left, const Color& right)
 {
     return left = left + right;
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color& operator -=(Color& left, const Color& right)
+constexpr Color& operator-=(Color& left, const Color& right)
 {
     return left = left - right;
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color& operator *=(Color& left, const Color& right)
+constexpr Color& operator*=(Color& left, const Color& right)
 {
     return left = left * right;
 }

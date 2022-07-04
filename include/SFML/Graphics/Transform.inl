@@ -102,18 +102,15 @@ constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
 constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 {
     // Transform the 4 corners of the rectangle
-    const Vector2f points[] =
-    {
-        transformPoint({rectangle.left, rectangle.top}),
-        transformPoint({rectangle.left, rectangle.top + rectangle.height}),
-        transformPoint({rectangle.left + rectangle.width, rectangle.top}),
-        transformPoint({rectangle.left + rectangle.width, rectangle.top + rectangle.height})
-    };
+    const Vector2f points[] = {transformPoint({rectangle.left, rectangle.top}),
+                               transformPoint({rectangle.left, rectangle.top + rectangle.height}),
+                               transformPoint({rectangle.left + rectangle.width, rectangle.top}),
+                               transformPoint({rectangle.left + rectangle.width, rectangle.top + rectangle.height})};
 
     // Compute the bounding rectangle of the transformed points
-    float left = points[0].x;
-    float top = points[0].y;
-    float right = points[0].x;
+    float left   = points[0].x;
+    float top    = points[0].y;
+    float right  = points[0].x;
     float bottom = points[0].y;
 
     for (int i = 1; i < 4; ++i)
@@ -193,28 +190,28 @@ constexpr Transform& Transform::scale(const Vector2f& factors, const Vector2f& c
 
 
 ////////////////////////////////////////////////////////////
-constexpr Transform operator *(const Transform& left, const Transform& right)
+constexpr Transform operator*(const Transform& left, const Transform& right)
 {
     return Transform(left).combine(right);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Transform& operator *=(Transform& left, const Transform& right)
+constexpr Transform& operator*=(Transform& left, const Transform& right)
 {
     return left.combine(right);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Vector2f operator *(const Transform& left, const Vector2f& right)
+constexpr Vector2f operator*(const Transform& left, const Vector2f& right)
 {
     return left.transformPoint(right);
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr bool operator ==(const Transform& left, const Transform& right)
+constexpr bool operator==(const Transform& left, const Transform& right)
 {
     const float* a = left.getMatrix();
     const float* b = right.getMatrix();
@@ -228,7 +225,7 @@ constexpr bool operator ==(const Transform& left, const Transform& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr bool operator !=(const Transform& left, const Transform& right)
+constexpr bool operator!=(const Transform& left, const Transform& right)
 {
     return !(left == right);
 }

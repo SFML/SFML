@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
+
 #include <cassert>
 
 
@@ -41,7 +42,6 @@ namespace sf
 class Angle
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -142,7 +142,6 @@ public:
     static const Angle Zero; //!< Predefined 0 degree angle value
 
 private:
-
     friend constexpr Angle degrees(float angle);
     friend constexpr Angle radians(float angle);
 
@@ -158,7 +157,6 @@ private:
     constexpr explicit Angle(float degrees);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -199,7 +197,7 @@ private:
 /// \return True if both angle values are equal
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator ==(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator==(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -211,7 +209,7 @@ private:
 /// \return True if both angle values are different
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator !=(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator!=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -223,7 +221,7 @@ private:
 /// \return True if \a left is less than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator <(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator<(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -235,7 +233,7 @@ private:
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator >(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator>(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -247,7 +245,7 @@ private:
 /// \return True if \a left is less than or equal to \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator <=(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator<=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -259,7 +257,7 @@ private:
 /// \return True if \a left is greater than or equal to \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator >=(Angle left, Angle right);
+[[nodiscard]] constexpr bool operator>=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -272,7 +270,7 @@ private:
 /// \return Negative of the angle value
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator -(Angle right);
+[[nodiscard]] constexpr Angle operator-(Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -284,7 +282,7 @@ private:
 /// \return Sum of the two angle values
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator +(Angle left, Angle right);
+[[nodiscard]] constexpr Angle operator+(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -296,7 +294,7 @@ private:
 /// \return Sum of the two angle values
 ///
 ////////////////////////////////////////////////////////////
-constexpr Angle& operator +=(Angle& left, Angle right);
+constexpr Angle& operator+=(Angle& left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -308,7 +306,7 @@ constexpr Angle& operator +=(Angle& left, Angle right);
 /// \return Difference of the two angle values
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator -(Angle left, Angle right);
+[[nodiscard]] constexpr Angle operator-(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -320,7 +318,7 @@ constexpr Angle& operator +=(Angle& left, Angle right);
 /// \return Difference of the two angle values
 ///
 ////////////////////////////////////////////////////////////
-constexpr Angle& operator -=(Angle& left, Angle right);
+constexpr Angle& operator-=(Angle& left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -332,7 +330,7 @@ constexpr Angle& operator -=(Angle& left, Angle right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator *(Angle left, float right);
+[[nodiscard]] constexpr Angle operator*(Angle left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -344,7 +342,7 @@ constexpr Angle& operator -=(Angle& left, Angle right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator *(float left, Angle right);
+[[nodiscard]] constexpr Angle operator*(float left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -356,7 +354,7 @@ constexpr Angle& operator -=(Angle& left, Angle right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Angle& operator *=(Angle& left, float right);
+constexpr Angle& operator*=(Angle& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -368,7 +366,7 @@ constexpr Angle& operator *=(Angle& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator /(Angle left, float right);
+[[nodiscard]] constexpr Angle operator/(Angle left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -380,7 +378,7 @@ constexpr Angle& operator *=(Angle& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Angle& operator /=(Angle& left, float right);
+constexpr Angle& operator/=(Angle& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -392,7 +390,7 @@ constexpr Angle& operator /=(Angle& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr float operator /(Angle left, Angle right);
+[[nodiscard]] constexpr float operator/(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -412,7 +410,7 @@ constexpr Angle& operator /=(Angle& left, float right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator %(Angle left, Angle right);
+[[nodiscard]] constexpr Angle operator%(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
@@ -424,7 +422,7 @@ constexpr Angle& operator /=(Angle& left, float right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Angle& operator %=(Angle& left, Angle right);
+constexpr Angle& operator%=(Angle& left, Angle right);
 
 namespace Literals
 {
@@ -438,7 +436,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator "" _deg(long double angle);
+[[nodiscard]] constexpr Angle operator"" _deg(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -449,7 +447,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator "" _deg(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator"" _deg(unsigned long long int angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -460,7 +458,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator "" _rad(long double angle);
+[[nodiscard]] constexpr Angle operator"" _rad(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -471,7 +469,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator "" _rad(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator"" _rad(unsigned long long int angle);
 
 } // namespace Literals
 

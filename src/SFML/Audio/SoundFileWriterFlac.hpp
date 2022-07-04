@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
+
 #include <FLAC/stream_encoder.h>
 #include <filesystem>
 #include <vector>
@@ -45,7 +46,6 @@ namespace priv
 class SoundFileWriterFlac : public SoundFileWriter
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this writer can handle a file on disk
     ///
@@ -57,7 +57,6 @@ public:
     [[nodiscard]] static bool check(const std::filesystem::path& filename);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -92,7 +91,6 @@ public:
     void write(const Int16* samples, Uint64 count) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Close the file
     ///

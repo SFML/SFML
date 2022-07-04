@@ -26,17 +26,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
-
 #import <SFML/Window/OSX/Scaling.h>
+#include <SFML/Window/OSX/cg_sf_conversion.hpp>
 
 #if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #endif
 
 namespace sf
@@ -51,11 +50,11 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode)
 
     // Compare encoding.
     CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
-    if(CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if (CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 32;
-    else if(CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    else if (CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 16;
-    else if(CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    else if (CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         bpp = 8;
 
     // Clean up memory.
@@ -95,11 +94,12 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     //
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
-    VideoMode mode({static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)), static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode))}, static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
+    VideoMode mode({static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)),
+                    static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode))},
+                   static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
     scaleOutWidthHeight(mode.size.x, mode.size.y, nil);
     return mode;
 }
 
 } // namespace priv
 } // namespace sf
-

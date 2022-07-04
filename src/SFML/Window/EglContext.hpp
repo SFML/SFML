@@ -28,14 +28,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+
 #include <glad/egl.h>
 #if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
-    #include <X11/Xlib.h>
+#include <X11/Xlib.h>
 #endif
 
 namespace sf
@@ -45,7 +46,6 @@ namespace priv
 class EglContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
@@ -179,7 +179,6 @@ public:
 #endif
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Helper to copy the picked EGL configuration
     ////////////////////////////////////////////////////////////
@@ -188,11 +187,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EGLDisplay  m_display; //!< The internal EGL display
-    EGLContext  m_context; //!< The internal EGL context
-    EGLSurface  m_surface; //!< The internal EGL surface
-    EGLConfig   m_config;  //!< The internal EGL config
-
+    EGLDisplay m_display; //!< The internal EGL display
+    EGLContext m_context; //!< The internal EGL context
+    EGLSurface m_surface; //!< The internal EGL surface
+    EGLConfig  m_config;  //!< The internal EGL config
 };
 
 } // namespace priv

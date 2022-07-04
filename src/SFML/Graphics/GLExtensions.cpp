@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLExtensions.hpp>
-#include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/Context.hpp>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -40,11 +40,11 @@
 #include <ostream>
 
 #if !defined(GL_MAJOR_VERSION)
-    #define GL_MAJOR_VERSION 0x821B
+#define GL_MAJOR_VERSION 0x821B
 #endif
 
 #if !defined(GL_MINOR_VERSION)
-    #define GL_MINOR_VERSION 0x821C
+#define GL_MINOR_VERSION 0x821C
 #endif
 
 

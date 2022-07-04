@@ -29,8 +29,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/SoundRecorder.hpp>
+
 #include <vector>
 
 
@@ -44,7 +46,6 @@ namespace sf
 class SFML_AUDIO_API SoundBufferRecorder : public SoundRecorder
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief destructor
     ///
@@ -65,7 +66,6 @@ public:
     const SoundBuffer& getBuffer() const;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
     ///
@@ -92,7 +92,6 @@ protected:
     void onStop() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

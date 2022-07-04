@@ -36,7 +36,7 @@ namespace sf
 
 class Context;
 
-using ContextDestroyCallback = void (*)(void *);
+using ContextDestroyCallback = void (*)(void*);
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for classes that require an OpenGL context
@@ -45,7 +45,6 @@ using ContextDestroyCallback = void (*)(void *);
 class SFML_WINDOW_API GlResource
 {
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

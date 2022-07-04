@@ -1,7 +1,8 @@
 #include <SFML/Graphics/Transformable.hpp>
-#include <GraphicsUtil.hpp>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
 
 TEST_CASE("sf::Transformable class - [graphics]")
 {

@@ -25,8 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <algorithm>
 
 
@@ -41,7 +42,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     // Enumerate all available video modes for the primary display adapter
     DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
+    win32Mode.dmSize        = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
     for (int count = 0; EnumDisplaySettings(nullptr, static_cast<DWORD>(count), &win32Mode); ++count)
     {
@@ -61,7 +62,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 VideoMode VideoModeImpl::getDesktopMode()
 {
     DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
+    win32Mode.dmSize        = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
     EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &win32Mode);
 

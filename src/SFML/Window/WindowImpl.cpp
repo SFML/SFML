@@ -25,64 +25,66 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowImpl.hpp>
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/JoystickManager.hpp>
 #include <SFML/Window/SensorManager.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Time.hpp>
+#include <SFML/Window/WindowImpl.hpp>
+
 #include <algorithm>
-#include <memory>
 #include <cmath>
+#include <memory>
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Window/Win32/WindowImplWin32.hpp>
-    using WindowImplType = sf::priv::WindowImplWin32;
+#include <SFML/Window/Win32/WindowImplWin32.hpp>
+using WindowImplType = sf::priv::WindowImplWin32;
 
-    #include <SFML/Window/Win32/VulkanImplWin32.hpp>
-    using VulkanImplType = sf::priv::VulkanImplWin32;
+#include <SFML/Window/Win32/VulkanImplWin32.hpp>
+using VulkanImplType = sf::priv::VulkanImplWin32;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
 
-    #if defined(SFML_USE_DRM)
+#if defined(SFML_USE_DRM)
 
-        #include <SFML/Window/DRM/WindowImplDRM.hpp>
-        using WindowImplType = sf::priv::WindowImplDRM;
+#include <SFML/Window/DRM/WindowImplDRM.hpp>
+using WindowImplType = sf::priv::WindowImplDRM;
 
-        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
-    #else
+#else
 
-        #include <SFML/Window/Unix/WindowImplX11.hpp>
-		using WindowImplType = sf::priv::WindowImplX11;
+#include <SFML/Window/Unix/WindowImplX11.hpp>
+using WindowImplType = sf::priv::WindowImplX11;
 
-        #include <SFML/Window/Unix/VulkanImplX11.hpp>
-        using VulkanImplType = sf::priv::VulkanImplX11;
+#include <SFML/Window/Unix/VulkanImplX11.hpp>
+using VulkanImplType = sf::priv::VulkanImplX11;
 
-    #endif
+#endif
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-    #include <SFML/Window/OSX/WindowImplCocoa.hpp>
-    using WindowImplType = sf::priv::WindowImplCocoa;
+#include <SFML/Window/OSX/WindowImplCocoa.hpp>
+using WindowImplType = sf::priv::WindowImplCocoa;
 
-    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #elif defined(SFML_SYSTEM_IOS)
 
-    #include <SFML/Window/iOS/WindowImplUIKit.hpp>
-    using WindowImplType = sf::priv::WindowImplUIKit;
+#include <SFML/Window/iOS/WindowImplUIKit.hpp>
+using WindowImplType = sf::priv::WindowImplUIKit;
 
-    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-    #include <SFML/Window/Android/WindowImplAndroid.hpp>
-    using WindowImplType = sf::priv::WindowImplAndroid;
+#include <SFML/Window/Android/WindowImplAndroid.hpp>
+using WindowImplType = sf::priv::WindowImplAndroid;
 
-    #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
 #endif
 
@@ -113,9 +115,7 @@ std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl::WindowImpl() :
-m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>()),
-m_joystickThreshold(0.1f)
+WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>()), m_joystickThreshold(0.1f)
 {
     // Get the initial joystick states
     JoystickManager::getInstance().update();
@@ -198,7 +198,7 @@ void WindowImpl::processJoystickEvents()
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
-        JoystickState previousState = m_joystickStatesImpl->m_states[i];
+        JoystickState previousState       = m_joystickStatesImpl->m_states[i];
         m_joystickStatesImpl->m_states[i] = JoystickManager::getInstance().getState(i);
 
         // Connection state
@@ -206,7 +206,7 @@ void WindowImpl::processJoystickEvents()
         if (previousState.connected ^ connected)
         {
             Event event;
-            event.type = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
+            event.type                      = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
             event.joystickButton.joystickId = i;
             pushEvent(event);
 
@@ -224,16 +224,16 @@ void WindowImpl::processJoystickEvents()
             {
                 if (caps.axes[j])
                 {
-                    auto axis = static_cast<Joystick::Axis>(j);
+                    auto  axis    = static_cast<Joystick::Axis>(j);
                     float prevPos = m_previousAxes[i][axis];
                     float currPos = m_joystickStatesImpl->m_states[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
-                        event.type = Event::JoystickMoved;
+                        event.type                    = Event::JoystickMoved;
                         event.joystickMove.joystickId = i;
-                        event.joystickMove.axis = axis;
-                        event.joystickMove.position = currPos;
+                        event.joystickMove.axis       = axis;
+                        event.joystickMove.position   = currPos;
                         pushEvent(event);
 
                         m_previousAxes[i][axis] = currPos;
@@ -252,7 +252,7 @@ void WindowImpl::processJoystickEvents()
                     Event event;
                     event.type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
                     event.joystickButton.joystickId = i;
-                    event.joystickButton.button = j;
+                    event.joystickButton.button     = j;
                     pushEvent(event);
                 }
             }
@@ -276,17 +276,17 @@ void WindowImpl::processSensorEvents()
         {
             // Copy the previous value of the sensor and get the new one
             Vector3f previousValue = m_sensorValue[i];
-            m_sensorValue[i] = SensorManager::getInstance().getValue(sensor);
+            m_sensorValue[i]       = SensorManager::getInstance().getValue(sensor);
 
             // If the value has changed, trigger an event
             if (m_sensorValue[i] != previousValue) // @todo use a threshold?
             {
                 Event event;
-                event.type = Event::SensorChanged;
+                event.type        = Event::SensorChanged;
                 event.sensor.type = sensor;
-                event.sensor.x = m_sensorValue[i].x;
-                event.sensor.y = m_sensorValue[i].y;
-                event.sensor.z = m_sensorValue[i].z;
+                event.sensor.x    = m_sensorValue[i].x;
+                event.sensor.y    = m_sensorValue[i].y;
+                event.sensor.z    = m_sensorValue[i].z;
                 pushEvent(event);
             }
         }
@@ -295,7 +295,9 @@ void WindowImpl::processSensorEvents()
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance& instance, [[maybe_unused]] VkSurfaceKHR& surface, [[maybe_unused]] const VkAllocationCallbacks* allocator)
+bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&            instance,
+                                     [[maybe_unused]] VkSurfaceKHR&                surface,
+                                     [[maybe_unused]] const VkAllocationCallbacks* allocator)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 

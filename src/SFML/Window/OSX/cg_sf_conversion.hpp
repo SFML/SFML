@@ -30,6 +30,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
+
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace sf

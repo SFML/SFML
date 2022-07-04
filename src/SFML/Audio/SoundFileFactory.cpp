@@ -27,38 +27,39 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileReaderFlac.hpp>
-#include <SFML/Audio/SoundFileWriterFlac.hpp>
 #include <SFML/Audio/SoundFileReaderMp3.hpp>
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
-#include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileReaderWav.hpp>
+#include <SFML/Audio/SoundFileWriterFlac.hpp>
+#include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileWriterWav.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
+
 #include <ostream>
 
 
 namespace
 {
-    // Register all the built-in readers and writers if not already done
-    void ensureDefaultReadersWritersRegistered()
+// Register all the built-in readers and writers if not already done
+void ensureDefaultReadersWritersRegistered()
+{
+    static bool registered = false;
+    if (!registered)
     {
-        static bool registered = false;
-        if (!registered)
-        {
-            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
-            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
-            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderMp3>();
-            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
-            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
-            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
-            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterWav>();
-            registered = true;
-        }
+        sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
+        sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
+        sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderMp3>();
+        sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
+        sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
+        sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
+        sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterWav>();
+        registered = true;
     }
 }
+} // namespace
 
 namespace sf
 {
@@ -74,7 +75,8 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
 
     // Wrap the input file into a file stream
     FileInputStream stream;
-    if (!stream.open(filename)) {
+    if (!stream.open(filename))
+    {
         err() << "Failed to open sound file (couldn't open stream)\n" << formatDebugPathInfo(filename) << std::endl;
         return nullptr;
     }

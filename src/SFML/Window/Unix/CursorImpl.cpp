@@ -27,9 +27,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/CursorImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <X11/cursorfont.h>
-#include <X11/Xutil.h>
+
 #include <X11/Xcursor/Xcursor.h>
+#include <X11/Xutil.h>
+#include <X11/cursorfont.h>
+
 #include <cassert>
 #include <cstdlib>
 #include <vector>
@@ -40,9 +42,7 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() :
-m_display(OpenDisplay()),
-m_cursor(None)
+CursorImpl::CursorImpl() : m_display(OpenDisplay()), m_cursor(None)
 {
     // That's it.
 }
@@ -74,16 +74,15 @@ bool CursorImpl::loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u
 {
     // Create cursor image, convert from RGBA to ARGB.
     XcursorImage* cursorImage = XcursorImageCreate(static_cast<int>(size.x), static_cast<int>(size.y));
-    cursorImage->xhot = hotspot.x;
-    cursorImage->yhot = hotspot.y;
+    cursorImage->xhot         = hotspot.x;
+    cursorImage->yhot         = hotspot.y;
 
     const std::size_t numPixels = static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y);
     for (std::size_t pixelIndex = 0; pixelIndex < numPixels; ++pixelIndex)
     {
-        cursorImage->pixels[pixelIndex] = static_cast<Uint32>(pixels[pixelIndex * 4 + 2] +
-                                                              (pixels[pixelIndex * 4 + 1] << 8) +
-                                                              (pixels[pixelIndex * 4 + 0] << 16) +
-                                                              (pixels[pixelIndex * 4 + 3] << 24));
+        cursorImage->pixels[pixelIndex] = static_cast<Uint32>(
+            pixels[pixelIndex * 4 + 2] + (pixels[pixelIndex * 4 + 1] << 8) + (pixels[pixelIndex * 4 + 0] << 16) +
+            (pixels[pixelIndex * 4 + 3] << 24));
     }
 
     // Create the cursor.
@@ -104,8 +103,8 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
     // The bit data is stored packed into bytes. If the number of pixels on each row of the image
     // does not fit exactly into (width/8) bytes, one extra byte is allocated at the end of each
     // row to store the extra pixels.
-    std::size_t packedWidth = (size.x + 7) / 8;
-    std::size_t bytes = packedWidth * size.y;
+    std::size_t        packedWidth = (size.x + 7) / 8;
+    std::size_t        bytes       = packedWidth * size.y;
     std::vector<Uint8> mask(bytes, 0); // Defines which pixel is opaque (1) or transparent (0).
     std::vector<Uint8> data(bytes, 0); // Defines which pixel is white (1) or black (0).
 
@@ -125,15 +124,21 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
             // based on the pixel color intensity: on average, if a channel is "active"
             // at 50%, the bit is white.
             int intensity = (pixels[pixelIndex * 4 + 0] + pixels[pixelIndex * 4 + 1] + pixels[pixelIndex * 4 + 2]) / 3;
-            Uint8 bit = intensity > 128 ? 1 : 0;
+            Uint8 bit     = intensity > 128 ? 1 : 0;
             data[byteIndex] |= static_cast<Uint8>(bit << bitIndex);
         }
     }
 
-    Pixmap maskPixmap = XCreateBitmapFromData(m_display, XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(mask.data()), size.x, size.y);
-    Pixmap dataPixmap = XCreateBitmapFromData(m_display, XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(data.data()), size.x, size.y);
+    Pixmap maskPixmap = XCreateBitmapFromData(m_display,
+                                              XDefaultRootWindow(m_display),
+                                              reinterpret_cast<char*>(mask.data()),
+                                              size.x,
+                                              size.y);
+    Pixmap dataPixmap = XCreateBitmapFromData(m_display,
+                                              XDefaultRootWindow(m_display),
+                                              reinterpret_cast<char*>(data.data()),
+                                              size.x,
+                                              size.y);
 
     // Define the foreground color as white and the background as black.
     XColor fg, bg;
@@ -145,10 +150,7 @@ bool CursorImpl::loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Ve
     bg.green = 0x0000;
 
     // Create the monochrome cursor.
-    m_cursor = XCreatePixmapCursor(m_display,
-                                   dataPixmap, maskPixmap,
-                                   &fg, &bg,
-                                   hotspot.x, hotspot.y);
+    m_cursor = XCreatePixmapCursor(m_display, dataPixmap, maskPixmap, &fg, &bg, hotspot.x, hotspot.y);
 
     // Free the resources
     XFreePixmap(m_display, dataPixmap);
@@ -218,4 +220,3 @@ void CursorImpl::release()
 } // namespace priv
 
 } // namespace sf
-

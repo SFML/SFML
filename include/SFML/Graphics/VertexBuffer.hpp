@@ -29,9 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Window/GlResource.hpp>
+
 #include <cstddef>
 
 
@@ -47,7 +49,6 @@ class Vertex;
 class SFML_GRAPHICS_API VertexBuffer : public Drawable, private GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Usage specifiers
     ///
@@ -216,7 +217,7 @@ public:
     /// \return Reference to self
     ///
     ////////////////////////////////////////////////////////////
-    VertexBuffer& operator =(const VertexBuffer& right);
+    VertexBuffer& operator=(const VertexBuffer& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Swap the contents of this vertex buffer with those of another
@@ -320,7 +321,6 @@ public:
     static bool isAvailable();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Draw the vertex buffer to a render target
     ///
@@ -331,7 +331,6 @@ private:
     void draw(RenderTarget& target, const RenderStates& states) const override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

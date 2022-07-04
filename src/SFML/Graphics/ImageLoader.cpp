@@ -26,13 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ImageLoader.hpp>
-#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+
 #include <filesystem>
 #include <iomanip>
 #include <iterator>
@@ -41,33 +42,33 @@
 
 namespace
 {
-    // stb_image callbacks that operate on a sf::InputStream
-    int read(void* user, char* data, int size)
-    {
-        auto* stream = static_cast<sf::InputStream*>(user);
-        return static_cast<int>(stream->read(data, size));
-    }
-    void skip(void* user, int size)
-    {
-        auto* stream = static_cast<sf::InputStream*>(user);
-
-        if (stream->seek(stream->tell() + size) == -1)
-            sf::err() << "Failed to seek image loader input stream" << std::endl;
-    }
-    int eof(void* user)
-    {
-        auto* stream = static_cast<sf::InputStream*>(user);
-        return stream->tell() >= stream->getSize();
-    }
-
-    // stb_image callback for constructing a buffer
-    void bufferFromCallback(void* context, void* data, int size)
-    {
-        auto* source = static_cast<sf::Uint8*>(data);
-        auto* dest = static_cast<std::vector<sf::Uint8>*>(context);
-        std::copy(source, source + size, std::back_inserter(*dest));
-    }
+// stb_image callbacks that operate on a sf::InputStream
+int read(void* user, char* data, int size)
+{
+    auto* stream = static_cast<sf::InputStream*>(user);
+    return static_cast<int>(stream->read(data, size));
 }
+void skip(void* user, int size)
+{
+    auto* stream = static_cast<sf::InputStream*>(user);
+
+    if (stream->seek(stream->tell() + size) == -1)
+        sf::err() << "Failed to seek image loader input stream" << std::endl;
+}
+int eof(void* user)
+{
+    auto* stream = static_cast<sf::InputStream*>(user);
+    return stream->tell() >= stream->getSize();
+}
+
+// stb_image callback for constructing a buffer
+void bufferFromCallback(void* context, void* data, int size)
+{
+    auto* source = static_cast<sf::Uint8*>(data);
+    auto* dest   = static_cast<std::vector<sf::Uint8>*>(context);
+    std::copy(source, source + size, std::back_inserter(*dest));
+}
+} // namespace
 
 
 namespace sf
@@ -97,10 +98,10 @@ bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::
     pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-    unsigned char* ptr = stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+    int            width    = 0;
+    int            height   = 0;
+    int            channels = 0;
+    unsigned char* ptr      = stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
     if (ptr)
     {
@@ -123,7 +124,8 @@ bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::
     else
     {
         // Error, failed to load the image
-        err() << "Failed to load image\n" << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
+        err() << "Failed to load image\n"
+              << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
 
         return false;
     }
@@ -140,10 +142,10 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
         pixels.clear();
 
         // Load the image and get a pointer to the pixels in memory
-        int width = 0;
-        int height = 0;
-        int channels = 0;
-        const auto* buffer = static_cast<const unsigned char*>(data);
+        int         width    = 0;
+        int         height   = 0;
+        int         channels = 0;
+        const auto* buffer   = static_cast<const unsigned char*>(data);
         unsigned char* ptr = stbi_load_from_memory(buffer, static_cast<int>(dataSize), &width, &height, &channels, STBI_rgb_alpha);
 
         if (ptr)
@@ -200,10 +202,10 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
     callbacks.eof  = &eof;
 
     // Load the image and get a pointer to the pixels in memory
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-    unsigned char* ptr = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
+    int            width    = 0;
+    int            height   = 0;
+    int            channels = 0;
+    unsigned char* ptr      = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
 
     if (ptr)
     {
@@ -242,8 +244,8 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const s
         // Deduce the image type from its extension
 
         // Extract the extension
-        const std::filesystem::path extension = filename.extension();
-        const Vector2i convertedSize = Vector2i(size);
+        const std::filesystem::path extension     = filename.extension();
+        const Vector2i              convertedSize = Vector2i(size);
 
         if (extension == ".bmp")
         {
@@ -276,14 +278,17 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const s
 }
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size)
+bool ImageLoader::saveImageToMemory(const std::string&        format,
+                                    std::vector<sf::Uint8>&   output,
+                                    const std::vector<Uint8>& pixels,
+                                    const Vector2u&           size)
 {
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
         // Choose function based on format
 
-        std::string specified = toLower(format);
+        std::string    specified     = toLower(format);
         const Vector2i convertedSize = Vector2i(size);
 
         if (specified == "bmp")

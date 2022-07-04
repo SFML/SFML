@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
@@ -45,7 +46,6 @@ class Texture;
 class SFML_GRAPHICS_API RenderStates
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -101,8 +101,7 @@ public:
     /// \param theShader    Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform,
-                 const Texture* theTexture, const Shader* theShader);
+    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform, const Texture* theTexture, const Shader* theShader);
 
     ////////////////////////////////////////////////////////////
     // Static member data

@@ -43,7 +43,6 @@ namespace priv
 class JoystickManager
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the global unique instance of the manager
     ///
@@ -89,7 +88,6 @@ public:
     void update();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

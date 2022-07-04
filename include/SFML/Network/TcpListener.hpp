@@ -29,8 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
-#include <SFML/Network/Socket.hpp>
+
 #include <SFML/Network/IpAddress.hpp>
+#include <SFML/Network/Socket.hpp>
 
 
 namespace sf
@@ -44,7 +45,6 @@ class TcpSocket;
 class SFML_NETWORK_API TcpListener : public Socket
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

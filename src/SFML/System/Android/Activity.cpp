@@ -28,18 +28,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Android/Activity.hpp>
+
 #include <android/log.h>
+
 #include <cassert>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-error", __VA_ARGS__))
 
-LogcatStream::LogcatStream() :
-std::streambuf()
+LogcatStream::LogcatStream() : std::streambuf()
 {
     // Nothing to do
 }
 
-std::streambuf::int_type LogcatStream::overflow (std::streambuf::int_type c)
+std::streambuf::int_type LogcatStream::overflow(std::streambuf::int_type c)
 {
     if (c == '\n')
     {
@@ -76,5 +77,5 @@ ActivityStates& getActivity()
     return *states;
 }
 
-}
-}
+} // namespace priv
+} // namespace sf

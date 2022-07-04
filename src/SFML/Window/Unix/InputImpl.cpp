@@ -30,8 +30,9 @@
 #include <SFML/Window/Window.hpp> // important to be included first (conflict with None)
 // clang-format on
 
-#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/InputImpl.hpp>
+
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
@@ -200,8 +201,8 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 
     // we don't care about these but they are required
     ::Window root, child;
-    int wx, wy;
-    int gx, gy;
+    int      wx, wy;
+    int      gx, gy;
 
     unsigned int buttons = 0;
     XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &wx, &wy, &buttons);
@@ -232,8 +233,8 @@ Vector2i InputImpl::getMousePosition()
     Display* display = OpenDisplay();
 
     // we don't care about these but they are required
-    ::Window root, child;
-    int x, y;
+    ::Window     root, child;
+    int          x, y;
     unsigned int buttons;
 
     int gx = 0;
@@ -257,8 +258,8 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
         Display* display = OpenDisplay();
 
         // we don't care about these but they are required
-        ::Window root, child;
-        int gx, gy;
+        ::Window     root, child;
+        int          gx, gy;
         unsigned int buttons;
 
         int x = 0;

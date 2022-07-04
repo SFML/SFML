@@ -29,11 +29,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/OpenGL.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <SFML/OpenGL.hpp>
+
 #include <drm-common.h>
 #define EGL_NO_X11
 #define MESA_EGL_NO_X11_HEADERS
@@ -51,7 +52,6 @@ class WindowImplDRM;
 class DRMContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
@@ -169,7 +169,6 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
 protected:
-
     friend class VideoModeImpl;
     friend class WindowImplDRM;
 
@@ -180,7 +179,6 @@ protected:
     static drm* getDRM();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Helper to copy the picked EGL configuration
     ///
@@ -190,17 +188,17 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EGLDisplay  m_display; ///< The internal EGL display
-    EGLContext  m_context; ///< The internal EGL context
-    EGLSurface  m_surface; ///< The internal EGL surface
-    EGLConfig   m_config;  ///< The internal EGL config
+    EGLDisplay m_display; ///< The internal EGL display
+    EGLContext m_context; ///< The internal EGL context
+    EGLSurface m_surface; ///< The internal EGL surface
+    EGLConfig  m_config;  ///< The internal EGL config
 
-    gbm_bo* m_currentBO;
-    gbm_bo* m_nextBO;
+    gbm_bo*      m_currentBO;
+    gbm_bo*      m_nextBO;
     gbm_surface* m_gbmSurface;
-    Vector2u m_size;
-    bool m_shown;
-    bool m_scanOut;
+    Vector2u     m_size;
+    bool         m_shown;
+    bool         m_scanOut;
 };
 
 } // namespace priv

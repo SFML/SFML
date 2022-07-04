@@ -50,7 +50,7 @@
 /// \return sf::Keyboard::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
-+(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
++ (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if the event represent some Unicode text
@@ -63,6 +63,6 @@
 /// \return true if event represents a Unicode character, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-+(BOOL)isValidTextUnicode:(NSEvent*)event;
++ (BOOL)isValidTextUnicode:(NSEvent*)event;
 
 @end

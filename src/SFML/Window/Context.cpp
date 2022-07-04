@@ -25,27 +25,27 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Err.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlContext.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <ostream>
 
 
 namespace
 {
-    // A nested named namespace is used here to allow unity builds of SFML.
-    namespace ContextImpl
-    {
-        // This per-thread variable holds the current context for each thread
-        thread_local sf::Context* currentContext(nullptr);
-    }
-}
+// A nested named namespace is used here to allow unity builds of SFML.
+namespace ContextImpl
+{
+// This per-thread variable holds the current context for each thread
+thread_local sf::Context* currentContext(nullptr);
+} // namespace ContextImpl
+} // namespace
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Context::Context()
-: m_context(priv::GlContext::create())
+Context::Context() : m_context(priv::GlContext::create())
 {
     if (!setActive(true))
     {
@@ -118,8 +118,8 @@ GlFunctionPointer Context::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-Context::Context(const ContextSettings& settings, const Vector2u& size)
-: m_context(priv::GlContext::create(settings, size))
+Context::Context(const ContextSettings& settings, const Vector2u& size) :
+m_context(priv::GlContext::create(settings, size))
 {
     if (!setActive(true))
     {

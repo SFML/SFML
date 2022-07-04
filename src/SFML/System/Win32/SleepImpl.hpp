@@ -30,7 +30,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-namespace sf { class Time; }
+namespace sf
+{
+class Time;
+}
 
 namespace sf::priv
 {

@@ -1,9 +1,10 @@
 #include <SFML/System/Vector2.hpp>
-#include <SystemUtil.hpp>
-#include <type_traits>
-#include <cmath>
 
 #include <doctest.h>
+
+#include <SystemUtil.hpp>
+#include <cmath>
+#include <type_traits>
 
 using namespace sf::Literals;
 
@@ -77,9 +78,11 @@ TEST_CASE("sf::Vector2 class template - [system]")
             CHECK(sf::Vector2f(-1, -360_deg) == Approx(sf::Vector2f(-1, 0)));
 
             CHECK(sf::Vector2f(4.2f, 0_deg) == sf::Vector2f(4.2f, 0));
-            CHECK(sf::Vector2f(4.2f, 45_deg) == Approx(sf::Vector2f(4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(4.2f, 45_deg) ==
+                  Approx(sf::Vector2f(4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
             CHECK(sf::Vector2f(4.2f, 90_deg) == Approx(sf::Vector2f(0, 4.2f)));
-            CHECK(sf::Vector2f(4.2f, 135_deg) == Approx(sf::Vector2f(-4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
+            CHECK(sf::Vector2f(4.2f, 135_deg) ==
+                  Approx(sf::Vector2f(-4.2f * std::sqrt(2.f) / 2.f, 4.2f * std::sqrt(2.f) / 2.f)));
             CHECK(sf::Vector2f(4.2f, 180_deg) == Approx(sf::Vector2f(-4.2f, 0)));
             CHECK(sf::Vector2f(4.2f, 270_deg) == Approx(sf::Vector2f(0, -4.2f)));
             CHECK(sf::Vector2f(4.2f, 360_deg) == Approx(sf::Vector2f(4.2f, 0)));
@@ -104,7 +107,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
 
     SUBCASE("Arithmetic operations between two vectors")
     {
-        sf::Vector2i firstVector(2, 5);
+        sf::Vector2i       firstVector(2, 5);
         const sf::Vector2i secondVector(8, 3);
 
         SUBCASE("vector += vector")
@@ -143,7 +146,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
     SUBCASE("Arithmetic operations between vector and scalar value")
     {
         sf::Vector2i vector(26, 12);
-        int scalar = 2;
+        int          scalar = 2;
 
         SUBCASE("vector * scalar")
         {
@@ -273,7 +276,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
         CHECK(w.angleTo(v) == Approx(158.9902_deg));
 
         const float ratio = w.length() / v.length();
-        CHECK(v.rotatedBy(-158.9902_deg) * ratio  == Approx(w));
+        CHECK(v.rotatedBy(-158.9902_deg) * ratio == Approx(w));
         CHECK(w.rotatedBy(158.9902_deg) / ratio == Approx(v));
 
         CHECK(v.perpendicular() == sf::Vector2f(-3.0f, 2.4f));

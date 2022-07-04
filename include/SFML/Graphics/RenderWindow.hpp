@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Window.hpp>
 
@@ -42,7 +43,6 @@ namespace sf
 class SFML_GRAPHICS_API RenderWindow : public Window, public RenderTarget
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -71,7 +71,10 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow(VideoMode mode, const String& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
+    RenderWindow(VideoMode              mode,
+                 const String&          title,
+                 Uint32                 style    = Style::Default,
+                 const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -140,7 +143,6 @@ public:
     [[nodiscard]] bool setActive(bool active = true) override;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Function called after the window has been created
     ///
@@ -161,7 +163,6 @@ protected:
     void onResize() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

@@ -3,9 +3,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+
 #include <array>
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>
@@ -42,7 +43,7 @@ int main()
     {
         // Request a 24-bits depth buffer when creating the window
         sf::ContextSettings contextSettings;
-        contextSettings.depthBits = 24;
+        contextSettings.depthBits   = 24;
         contextSettings.sRgbCapable = sRgb;
 
         // Create the main window
@@ -79,7 +80,7 @@ int main()
         // Attempt to generate a mipmap for our cube texture
         // We don't check the return value here since
         // mipmapping is purely optional in this example
-        (void) texture.generateMipmap();
+        (void)texture.generateMipmap();
 
         // Make the window the active window for OpenGL calls
         if (!window.setActive(true))
@@ -295,11 +296,11 @@ int main()
             // We get the position of the mouse cursor (or touch), so that we can move the box accordingly
             sf::Vector2i pos;
 
-            #ifdef SFML_SYSTEM_IOS
+#ifdef SFML_SYSTEM_IOS
             pos = sf::Touch::getPosition(0);
-            #else
+#else
             pos = sf::Mouse::getPosition(window);
-            #endif
+#endif
 
             float x = static_cast<float>(pos.x) * 200.f / static_cast<float>(window.getSize().x) - 100.f;
             float y = -static_cast<float>(pos.y) * 200.f / static_cast<float>(window.getSize().y) + 100.f;

@@ -40,7 +40,6 @@ namespace sf
 class Time
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -85,7 +84,6 @@ public:
     static const Time Zero; //!< Predefined "zero" time value
 
 private:
-
     friend constexpr Time seconds(float);
     friend constexpr Time milliseconds(Int32);
     friend constexpr Time microseconds(Int64);
@@ -102,7 +100,6 @@ private:
     constexpr explicit Time(Int64 microseconds);
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -158,7 +155,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if both time values are equal
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator ==(Time left, Time right);
+[[nodiscard]] constexpr bool operator==(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -170,7 +167,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if both time values are different
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator !=(Time left, Time right);
+[[nodiscard]] constexpr bool operator!=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -182,7 +179,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if \a left is lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator <(Time left, Time right);
+[[nodiscard]] constexpr bool operator<(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -194,7 +191,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator >(Time left, Time right);
+[[nodiscard]] constexpr bool operator>(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -206,7 +203,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if \a left is lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator <=(Time left, Time right);
+[[nodiscard]] constexpr bool operator<=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -218,7 +215,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return True if \a left is greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator >=(Time left, Time right);
+[[nodiscard]] constexpr bool operator>=(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -229,7 +226,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return Opposite of the time value
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator -(Time right);
+[[nodiscard]] constexpr Time operator-(Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -241,7 +238,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator +(Time left, Time right);
+[[nodiscard]] constexpr Time operator+(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -253,7 +250,7 @@ constexpr Time microseconds(Int64 amount);
 /// \return Sum of the two times values
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator +=(Time& left, Time right);
+constexpr Time& operator+=(Time& left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -265,7 +262,7 @@ constexpr Time& operator +=(Time& left, Time right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator -(Time left, Time right);
+[[nodiscard]] constexpr Time operator-(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -277,7 +274,7 @@ constexpr Time& operator +=(Time& left, Time right);
 /// \return Difference of the two times values
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator -=(Time& left, Time right);
+constexpr Time& operator-=(Time& left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -289,7 +286,7 @@ constexpr Time& operator -=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator *(Time left, float right);
+[[nodiscard]] constexpr Time operator*(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -301,19 +298,7 @@ constexpr Time& operator -=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator *(Time left, Int64 right);
-
-////////////////////////////////////////////////////////////
-/// \relates Time
-/// \brief Overload of binary * operator to scale a time value
-///
-/// \param left  Left operand (a number)
-/// \param right Right operand (a time)
-///
-/// \return \a left multiplied by \a right
-///
-////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator *(float left, Time right);
+[[nodiscard]] constexpr Time operator*(Time left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -325,7 +310,19 @@ constexpr Time& operator -=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator *(Int64 left, Time right);
+[[nodiscard]] constexpr Time operator*(float left, Time right);
+
+////////////////////////////////////////////////////////////
+/// \relates Time
+/// \brief Overload of binary * operator to scale a time value
+///
+/// \param left  Left operand (a number)
+/// \param right Right operand (a time)
+///
+/// \return \a left multiplied by \a right
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] constexpr Time operator*(Int64 left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -337,7 +334,7 @@ constexpr Time& operator -=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator *=(Time& left, float right);
+constexpr Time& operator*=(Time& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -349,7 +346,7 @@ constexpr Time& operator *=(Time& left, float right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator *=(Time& left, Int64 right);
+constexpr Time& operator*=(Time& left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -361,7 +358,7 @@ constexpr Time& operator *=(Time& left, Int64 right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator /(Time left, float right);
+[[nodiscard]] constexpr Time operator/(Time left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -373,7 +370,7 @@ constexpr Time& operator *=(Time& left, Int64 right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator /(Time left, Int64 right);
+[[nodiscard]] constexpr Time operator/(Time left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -385,7 +382,7 @@ constexpr Time& operator *=(Time& left, Int64 right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator /=(Time& left, float right);
+constexpr Time& operator/=(Time& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -397,7 +394,7 @@ constexpr Time& operator /=(Time& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator /=(Time& left, Int64 right);
+constexpr Time& operator/=(Time& left, Int64 right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -409,7 +406,7 @@ constexpr Time& operator /=(Time& left, Int64 right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr float operator /(Time left, Time right);
+[[nodiscard]] constexpr float operator/(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -421,7 +418,7 @@ constexpr Time& operator /=(Time& left, Int64 right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator %(Time left, Time right);
+[[nodiscard]] constexpr Time operator%(Time left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -433,7 +430,7 @@ constexpr Time& operator /=(Time& left, Int64 right);
 /// \return \a left modulo \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator %=(Time& left, Time right);
+constexpr Time& operator%=(Time& left, Time right);
 
 #include <SFML/System/Time.inl>
 

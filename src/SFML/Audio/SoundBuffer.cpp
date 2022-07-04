@@ -25,31 +25,30 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/ALCheck.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
+
 #include <memory>
 #include <ostream>
 
 #if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #endif
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer() :
-m_buffer  (0),
-m_duration()
+SoundBuffer::SoundBuffer() : m_buffer(0), m_duration()
 {
     // Create the buffer
     alCheck(alGenBuffers(1, &m_buffer));
@@ -58,10 +57,10 @@ m_duration()
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-m_buffer  (0),
-m_samples (copy.m_samples),
+m_buffer(0),
+m_samples(copy.m_samples),
 m_duration(copy.m_duration),
-m_sounds  () // don't copy the attached sounds
+m_sounds() // don't copy the attached sounds
 {
     // Create the buffer
     alCheck(alGenBuffers(1, &m_buffer));
@@ -139,11 +138,10 @@ bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsi
     {
         // Error...
         err() << "Failed to load sound buffer from samples ("
-              << "array: "      << samples      << ", "
-              << "count: "      << sampleCount  << ", "
-              << "channels: "   << channelCount << ", "
-              << "samplerate: " << sampleRate   << ")"
-              << std::endl;
+              << "array: " << samples << ", "
+              << "count: " << sampleCount << ", "
+              << "channels: " << channelCount << ", "
+              << "samplerate: " << sampleRate << ")" << std::endl;
 
         return false;
     }
@@ -211,14 +209,14 @@ Time SoundBuffer::getDuration() const
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer& SoundBuffer::operator =(const SoundBuffer& right)
+SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 {
     SoundBuffer temp(right);
 
-    std::swap(m_samples,  temp.m_samples);
-    std::swap(m_buffer,   temp.m_buffer);
+    std::swap(m_samples, temp.m_samples);
+    std::swap(m_buffer, temp.m_buffer);
     std::swap(m_duration, temp.m_duration);
-    std::swap(m_sounds,   temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
+    std::swap(m_sounds, temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
 
     return *this;
 }
@@ -275,7 +273,8 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration
-    m_duration = seconds(static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
+    m_duration = seconds(
+        static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
 
     // Now reattach the buffer to the sounds that use it
     for (Sound* soundPtr : sounds)

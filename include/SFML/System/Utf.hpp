@@ -29,18 +29,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
+#include <cstdlib>
 #include <iterator>
 #include <locale>
 #include <string>
-#include <cstdlib>
 
 
 namespace sf
 {
 namespace priv
 {
-    template<class InputIt, class OutputIt>
-    OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+template <class InputIt, class OutputIt>
+OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
 }
 
 template <unsigned int N>
@@ -54,7 +55,6 @@ template <>
 class Utf<8>
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-8 character
     ///
@@ -261,7 +261,6 @@ template <>
 class Utf<16>
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-16 character
     ///
@@ -468,7 +467,6 @@ template <>
 class Utf<32>
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single UTF-32 character
     ///
@@ -737,7 +735,7 @@ public:
 #include <SFML/System/Utf.inl>
 
 // Make type aliases to get rid of the template syntax
-using Utf8 = Utf<8>;
+using Utf8  = Utf<8>;
 using Utf16 = Utf<16>;
 using Utf32 = Utf<32>;
 

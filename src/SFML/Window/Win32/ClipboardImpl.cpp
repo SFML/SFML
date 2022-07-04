@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Win32/ClipboardImpl.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
-#include <SFML/System/String.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <SFML/Window/Win32/ClipboardImpl.hpp>
+
 #include <ostream>
 
 
@@ -86,7 +87,7 @@ void ClipboardImpl::setString(const String& text)
     }
 
     // Create a Win32-compatible string
-    size_t string_size = (text.getSize() + 1) * sizeof(WCHAR);
+    size_t string_size   = (text.getSize() + 1) * sizeof(WCHAR);
     HANDLE string_handle = GlobalAlloc(GMEM_MOVEABLE, string_size);
 
     if (string_handle)

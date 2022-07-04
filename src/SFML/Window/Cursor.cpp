@@ -25,19 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
-#include <SFML/System/Vector2.hpp>
+
 #include <memory>
 
 namespace sf
 {
 
 ////////////////////////////////////////////////////////////
-Cursor::Cursor() :
-m_impl(std::make_unique<priv::CursorImpl>())
+Cursor::Cursor() : m_impl(std::make_unique<priv::CursorImpl>())
 {
-
 }
 
 
@@ -69,4 +68,3 @@ const priv::CursorImpl& Cursor::getImpl() const
 }
 
 } // namespace sf
-

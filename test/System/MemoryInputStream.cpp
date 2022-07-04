@@ -1,8 +1,9 @@
 #include <SFML/System/MemoryInputStream.hpp>
-#include <string_view>
-#include <ostream>
 
 #include <doctest.h>
+
+#include <ostream>
+#include <string_view>
 
 TEST_CASE("sf::MemoryInputStream class - [system]")
 {
@@ -19,7 +20,7 @@ TEST_CASE("sf::MemoryInputStream class - [system]")
     SUBCASE("Open memory stream")
     {
         using namespace std::literals::string_view_literals;
-        constexpr auto memoryContents = "hello world"sv;
+        constexpr auto        memoryContents = "hello world"sv;
         sf::MemoryInputStream mis;
         mis.open(memoryContents.data(), sizeof(char) * memoryContents.size());
 

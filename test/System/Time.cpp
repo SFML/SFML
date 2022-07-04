@@ -1,7 +1,8 @@
 #include <SFML/System/Time.hpp>
-#include <SystemUtil.hpp>
 
 #include <doctest.h>
+
+#include <SystemUtil.hpp>
 
 TEST_CASE("sf::Time class - [system]")
 {

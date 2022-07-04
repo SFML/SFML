@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
+
 #include <fstream>
 #include <string>
 
@@ -44,7 +45,6 @@ namespace priv
 class SoundFileWriterWav : public SoundFileWriter
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this writer can handle a file on disk
     ///
@@ -56,7 +56,6 @@ public:
     [[nodiscard]] static bool check(const std::filesystem::path& filename);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -91,7 +90,6 @@ public:
     void write(const Int16* samples, Uint64 count) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Write the header of the open file
     ///
@@ -112,7 +110,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::ofstream m_file;         //!< File stream to write to
+    std::ofstream m_file; //!< File stream to write to
 };
 
 } // namespace priv

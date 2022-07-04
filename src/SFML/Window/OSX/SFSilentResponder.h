@@ -36,7 +36,6 @@
 ////////////////////////////////////////////////////////////
 @interface SFSilentResponder : NSResponder
 
--(void)doCommandBySelector:(SEL)sel;
+- (void)doCommandBySelector:(SEL)sel;
 
 @end
-

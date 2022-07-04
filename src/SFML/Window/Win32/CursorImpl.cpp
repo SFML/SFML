@@ -25,11 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Win32/CursorImpl.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/System/Err.hpp>
-#include <ostream>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+#include <SFML/Window/Win32/CursorImpl.hpp>
+
 #include <cstring>
+#include <ostream>
 
 
 namespace sf
@@ -38,9 +39,7 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() :
-m_cursor(nullptr),
-m_systemCursor(false)
+CursorImpl::CursorImpl() : m_cursor(nullptr), m_systemCursor(false)
 {
     // That's it.
 }
@@ -75,15 +74,13 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
 
     Uint32* bitmapData = nullptr;
 
-    HDC screenDC = GetDC(nullptr);
-    HBITMAP color = CreateDIBSection(
-        screenDC,
-        reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
-        DIB_RGB_COLORS,
-        reinterpret_cast<void**>(&bitmapData),
-        nullptr,
-        0
-    );
+    HDC     screenDC = GetDC(nullptr);
+    HBITMAP color    = CreateDIBSection(screenDC,
+                                     reinterpret_cast<const BITMAPINFO*>(&bitmapHeader),
+                                     DIB_RGB_COLORS,
+                                     reinterpret_cast<void**>(&bitmapData),
+                                     nullptr,
+                                     0);
     ReleaseDC(nullptr, screenDC);
 
     if (!color)
@@ -121,7 +118,7 @@ bool CursorImpl::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hot
     cursorInfo.hbmMask  = mask;
 
     // Create the cursor
-    m_cursor = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
+    m_cursor       = reinterpret_cast<HCURSOR>(CreateIconIndirect(&cursorInfo));
     m_systemCursor = false;
 
     // The data has been copied into the cursor, so get rid of these
@@ -175,7 +172,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     // clang-format on
 
     // Get the shared system cursor and make sure not to destroy it
-    m_cursor = LoadCursor(nullptr, shape);
+    m_cursor       = LoadCursor(nullptr, shape);
     m_systemCursor = true;
 
     if (m_cursor)
@@ -193,7 +190,8 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 ////////////////////////////////////////////////////////////
 void CursorImpl::release()
 {
-    if (m_cursor && !m_systemCursor) {
+    if (m_cursor && !m_systemCursor)
+    {
         DestroyCursor(static_cast<HCURSOR>(m_cursor));
         m_cursor = nullptr;
     }
@@ -202,4 +200,3 @@ void CursorImpl::release()
 } // namespace priv
 
 } // namespace sf
-

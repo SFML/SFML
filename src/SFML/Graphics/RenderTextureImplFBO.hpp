@@ -30,8 +30,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/GlResource.hpp>
-#include <unordered_map>
+
 #include <memory>
+#include <unordered_map>
 
 
 namespace sf
@@ -49,7 +50,6 @@ namespace priv
 class RenderTextureImplFBO : public RenderTextureImpl, GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -85,7 +85,6 @@ public:
     static void unbind();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create the render texture implementation
     ///
@@ -138,16 +137,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::unordered_map<Uint64, unsigned int> m_frameBuffers;            //!< OpenGL frame buffer objects per context
+    std::unordered_map<Uint64, unsigned int> m_frameBuffers; //!< OpenGL frame buffer objects per context
     std::unordered_map<Uint64, unsigned int> m_multisampleFrameBuffers; //!< Optional per-context OpenGL frame buffer objects with multisample attachments
-    unsigned int                             m_depthStencilBuffer;      //!< Optional depth/stencil buffer attached to the frame buffer
-    unsigned int                             m_colorBuffer;             //!< Optional multisample color buffer attached to the frame buffer
-    Vector2u                                 m_size;                    //!< Width and height of the attachments
-    std::unique_ptr<Context>                 m_context;                 //!< Backup OpenGL context, used when none already exist
-    unsigned int                             m_textureId;               //!< The ID of the texture to attach to the FBO
-    bool                                     m_multisample;             //!< Whether we have to create a multisample frame buffer as well
-    bool                                     m_stencil;                 //!< Whether we have stencil attachment
-    bool                                     m_sRgb;                    //!< Whether we need to encode drawn pixels into sRGB color space
+    unsigned int             m_depthStencilBuffer; //!< Optional depth/stencil buffer attached to the frame buffer
+    unsigned int             m_colorBuffer;        //!< Optional multisample color buffer attached to the frame buffer
+    Vector2u                 m_size;               //!< Width and height of the attachments
+    std::unique_ptr<Context> m_context;            //!< Backup OpenGL context, used when none already exist
+    unsigned int             m_textureId;          //!< The ID of the texture to attach to the FBO
+    bool                     m_multisample;        //!< Whether we have to create a multisample frame buffer as well
+    bool                     m_stencil;            //!< Whether we have stencil attachment
+    bool                     m_sRgb;               //!< Whether we need to encode drawn pixels into sRGB color space
 };
 
 } // namespace priv

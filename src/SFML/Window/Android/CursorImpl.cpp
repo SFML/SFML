@@ -58,4 +58,3 @@ bool CursorImpl::loadFromSystem(Cursor::Type /* type */)
 } // namespace priv
 
 } // namespace sf
-

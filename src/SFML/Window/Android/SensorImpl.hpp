@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector3.hpp>
+
 #include <android/sensor.h>
 
 
@@ -43,7 +44,6 @@ namespace priv
 class SensorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the sensor module
     ///
@@ -99,7 +99,6 @@ public:
     void setEnabled(bool enabled);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the default Android sensor matching the sensor type
     ///

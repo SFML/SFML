@@ -5,6 +5,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
+
 #include <cassert>
 #include <string>
 
@@ -15,7 +16,6 @@
 class Effect : public sf::Drawable
 {
 public:
-
     ~Effect() override
     {
     }
@@ -57,10 +57,7 @@ public:
     }
 
 protected:
-
-    Effect(const std::string& name) :
-    m_name(name),
-    m_isLoaded(false)
+    Effect(const std::string& name) : m_name(name), m_isLoaded(false)
     {
     }
 
@@ -71,16 +68,14 @@ protected:
     }
 
 private:
-
     // Virtual functions to be implemented in derived effects
-    virtual bool onLoad() = 0;
-    virtual void onUpdate(float time, float x, float y) = 0;
+    virtual bool onLoad()                                                               = 0;
+    virtual void onUpdate(float time, float x, float y)                                 = 0;
     virtual void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const = 0;
 
 private:
-
     std::string m_name;
-    bool m_isLoaded;
+    bool        m_isLoaded;
 
     static const sf::Font* s_font;
 };

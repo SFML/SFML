@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
+
 #include <FLAC/stream_decoder.h>
 #include <vector>
 
@@ -44,7 +45,6 @@ namespace priv
 class SoundFileReaderFlac : public SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this reader can handle a file given by an input stream
     ///
@@ -56,7 +56,6 @@ public:
     [[nodiscard]] static bool check(InputStream& stream);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -105,7 +104,6 @@ public:
     [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Hold the state that is passed to the decoder callbacks
     ///
@@ -121,7 +119,6 @@ public:
     };
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Close the open FLAC file
     ///

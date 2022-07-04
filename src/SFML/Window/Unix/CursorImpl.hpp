@@ -28,9 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Cursor.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+
 #include <X11/Xlib.h>
 
 namespace sf
@@ -45,7 +46,6 @@ namespace priv
 class CursorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -91,7 +91,6 @@ public:
     bool loadFromSystem(Cursor::Type type);
 
 private:
-
     friend class WindowImplX11;
 
     ////////////////////////////////////////////////////////////

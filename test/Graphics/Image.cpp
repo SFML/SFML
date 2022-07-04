@@ -1,8 +1,9 @@
 #include <SFML/Graphics/Image.hpp>
-#include <GraphicsUtil.hpp>
-#include <array>
 
 #include <doctest.h>
+
+#include <GraphicsUtil.hpp>
+#include <array>
 
 TEST_CASE("sf::Image - [graphics]")
 {
@@ -54,7 +55,7 @@ TEST_CASE("sf::Image - [graphics]")
             std::array<sf::Uint8, 400> pixels;
             for (std::size_t i = 0; i < pixels.size(); i += 4)
             {
-                pixels[i] = 255;     // r
+                pixels[i]     = 255; // r
                 pixels[i + 1] = 0;   // g
                 pixels[i + 2] = 0;   // b
                 pixels[i + 3] = 255; // a
@@ -135,9 +136,12 @@ TEST_CASE("sf::Image - [graphics]")
 
             // Create the composited colour for via the alpha composite over operation
             const auto a = static_cast<sf::Uint8>(source.a + (dest.a * (255 - source.a)) / 255);
-            const auto r = static_cast<sf::Uint8>(((source.r * source.a) + (((dest.r * dest.a) * (255 - source.a))) / 255) / a);
-            const auto g = static_cast<sf::Uint8>(((source.g * source.a) + (((dest.g * dest.a) * (255 - source.a))) / 255) / a);
-            const auto b = static_cast<sf::Uint8>(((source.b * source.a) + (((dest.b * dest.a) * (255 - source.a))) / 255) / a);
+            const auto r = static_cast<sf::Uint8>(
+                ((source.r * source.a) + (((dest.r * dest.a) * (255 - source.a))) / 255) / a);
+            const auto g = static_cast<sf::Uint8>(
+                ((source.g * source.a) + (((dest.g * dest.a) * (255 - source.a))) / 255) / a);
+            const auto b = static_cast<sf::Uint8>(
+                ((source.b * source.a) + (((dest.b * dest.a) * (255 - source.a))) / 255) / a);
             const sf::Color composite(r, g, b, a);
 
             sf::Image image1;

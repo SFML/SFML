@@ -25,9 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/String.hpp>
 #include <SFML/Window/Clipboard.hpp>
 #include <SFML/Window/ClipboardImpl.hpp>
-#include <SFML/System/String.hpp>
 
 
 namespace sf

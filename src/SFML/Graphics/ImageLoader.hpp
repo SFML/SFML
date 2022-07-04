@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
 #include <SFML/System/Vector2.hpp>
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -48,7 +50,6 @@ namespace priv
 class ImageLoader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the unique instance of the class
     ///
@@ -117,10 +118,12 @@ public:
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToMemory(const std::string& format, std::vector<sf::Uint8>& output, const std::vector<Uint8>& pixels, const Vector2u& size);
+    bool saveImageToMemory(const std::string&        format,
+                           std::vector<sf::Uint8>&   output,
+                           const std::vector<Uint8>& pixels,
+                           const Vector2u&           size);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

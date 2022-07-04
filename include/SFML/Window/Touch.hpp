@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 
@@ -43,7 +44,6 @@ class WindowBase;
 class SFML_WINDOW_API Touch
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if a touch event is currently down
     ///

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/GlContext.hpp>
+
 #include <glad/wgl.h>
 
 
@@ -43,7 +44,6 @@ namespace priv
 class WglContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new default context
     ///
@@ -129,10 +129,12 @@ public:
     /// \return The best pixel format
     ///
     ////////////////////////////////////////////////////////////
-    static int selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings, bool pbuffer = false);
+    static int selectBestPixelFormat(HDC                    deviceContext,
+                                     unsigned int           bitsPerPixel,
+                                     const ContextSettings& settings,
+                                     bool                   pbuffer = false);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Set the pixel format of the device context
     ///

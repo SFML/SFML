@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Cursor.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Cursor.hpp>
 
 namespace sf
 {
@@ -43,7 +43,6 @@ namespace priv
 class CursorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -89,7 +88,6 @@ public:
     bool loadFromSystem(Cursor::Type type);
 
 private:
-
     friend class WindowImplWin32;
 
     ////////////////////////////////////////////////////////////
@@ -110,4 +108,3 @@ private:
 } // namespace sf
 
 #endif // SFML_CUSROSIMPLWIN32_HPP
-

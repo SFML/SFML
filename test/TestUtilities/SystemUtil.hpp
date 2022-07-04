@@ -16,29 +16,29 @@
 // String conversions for doctest framework
 namespace sf
 {
-    class Angle;
-    class String;
-    class Time;
+class Angle;
+class String;
+class Time;
 
-    std::ostream& operator <<(std::ostream& os, const sf::Angle& angle);
-    std::ostream& operator <<(std::ostream& os, const sf::String& string);
-    std::ostream& operator <<(std::ostream& os, sf::Time time);
+std::ostream& operator<<(std::ostream& os, const sf::Angle& angle);
+std::ostream& operator<<(std::ostream& os, const sf::String& string);
+std::ostream& operator<<(std::ostream& os, sf::Time time);
 
-    template <typename T>
-    std::ostream& operator <<(std::ostream& os, const sf::Vector2<T>& vector)
-    {
-        os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
-        os << "(" << vector.x << ", " << vector.y << ")";
-        return os;
-    }
-
-    template <typename T>
-    std::ostream& operator <<(std::ostream& os, const sf::Vector3<T>& vector)
-    {
-        os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
-        return os;
-    }
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& vector)
+{
+    os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
+    os << "(" << vector.x << ", " << vector.y << ")";
+    return os;
 }
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const sf::Vector3<T>& vector)
+{
+    os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
+    return os;
+}
+} // namespace sf
 
 ////////////////////////////////////////////////////////////
 /// Class template for creating custom approximate comparisons.
@@ -48,7 +48,9 @@ namespace sf
 template <typename T>
 struct Approx
 {
-    explicit Approx(const T& t) : value(t) {}
+    explicit Approx(const T& t) : value(t)
+    {
+    }
     const T& value;
 };
 
@@ -58,7 +60,7 @@ bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs);
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs);
 
 template <typename T>
-std::ostream& operator <<(std::ostream& os, const Approx<T>& approx)
+std::ostream& operator<<(std::ostream& os, const Approx<T>& approx)
 {
     return os << approx.value;
 }

@@ -23,17 +23,17 @@
 //
 ////////////////////////////////////////////////////////////
 
-#import <string>
 #import <Foundation/Foundation.h>
+#import <string>
 
 @interface NSString (NSString_stdstring)
 
-+(id)stringWithstdstring:(const std::string&)string;
++ (id)stringWithstdstring:(const std::string&)string;
 
-+(id)stringWithstdwstring:(const std::wstring&)string;
++ (id)stringWithstdwstring:(const std::wstring&)string;
 
--(std::string)tostdstring;
+- (std::string)tostdstring;
 
--(std::wstring)tostdwstring;
+- (std::wstring)tostdwstring;
 
 @end

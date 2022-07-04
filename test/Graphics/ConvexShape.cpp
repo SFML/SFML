@@ -1,7 +1,8 @@
 #include <SFML/Graphics/ConvexShape.hpp>
-#include <SystemUtil.hpp>
 
 #include <doctest.h>
+
+#include <SystemUtil.hpp>
 
 TEST_CASE("sf::ConvexShape class - [graphics]")
 {

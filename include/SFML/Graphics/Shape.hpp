@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -46,7 +47,6 @@ class Texture;
 class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
@@ -250,7 +250,6 @@ public:
     FloatRect getGlobalBounds() const;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -268,7 +267,6 @@ protected:
     void update();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Draw the shape to a render target
     ///
@@ -303,7 +301,6 @@ private:
     void updateOutlineColors();
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

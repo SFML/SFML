@@ -95,11 +95,7 @@ struct Vector4
     /// \brief Default constructor, creates a zero vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4() :
-    x(0),
-    y(0),
-    z(0),
-    w(0)
+    Vector4() : x(0), y(0), z(0), w(0)
     {
     }
 
@@ -112,11 +108,7 @@ struct Vector4
     /// \param W Component of the 4D vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4(T X, T Y, T Z, T W) :
-    x(X),
-    y(Y),
-    z(Z),
-    w(W)
+    Vector4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W)
     {
     }
 

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/iOS/EaglContext.hpp>
+
 #include <UIKit/UIKit.h>
 
 
@@ -37,7 +38,7 @@
 ///        (supports OpenGL and reports events)
 ///
 ////////////////////////////////////////////////////////////
-@interface SFView : UIView<UIKeyInput>
+@interface SFView : UIView <UIKeyInput>
 
 ////////////////////////////////////////////////////////////
 /// \brief Construct the view with its initial size
@@ -52,7 +53,7 @@
 ////////////////////////////////////////////////////////////
 // Member data
 ////////////////////////////////////////////////////////////
-@property (nonatomic) sf::priv::EaglContext* context; ///< The attached EAGL context
+@property(nonatomic) sf::priv::EaglContext* context; ///< The attached EAGL context
 
 @end
 

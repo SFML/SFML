@@ -29,12 +29,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Socket.hpp>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
+
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 
@@ -50,12 +51,11 @@ namespace priv
 class SocketImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
     using AddrLength = socklen_t;
-    using Size = size_t;
+    using Size       = size_t;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address

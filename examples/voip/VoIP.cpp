@@ -2,8 +2,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
 
 ////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ int main()
     // Client or server ?
     char who;
     std::cout << "Do you want to be a server ('s') or a client ('c')? ";
-    std::cin  >> who;
+    std::cin >> who;
 
     if (who == 's')
     {

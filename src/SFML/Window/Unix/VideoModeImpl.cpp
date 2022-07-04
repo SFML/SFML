@@ -25,11 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+
 #include <algorithm>
 #include <ostream>
 
@@ -59,13 +61,13 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             if (config)
             {
                 // Get the available screen sizes
-                int nbSizes;
+                int            nbSizes;
                 XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     // Get the list of supported depths
-                    int nbDepths = 0;
-                    int* depths = XListDepths(display, screen, &nbDepths);
+                    int  nbDepths = 0;
+                    int* depths   = XListDepths(display, screen, &nbDepths);
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
@@ -101,7 +103,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             else
             {
                 // Failed to get the screen configuration
-                err() << "Failed to retrieve the screen configuration while trying to get the supported video modes" << std::endl;
+                err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
+                      << std::endl;
             }
         }
         else
@@ -145,10 +148,10 @@ VideoMode VideoModeImpl::getDesktopMode()
             {
                 // Get the current video mode
                 Rotation currentRotation;
-                int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+                int      currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
                 // Get the available screen sizes
-                int nbSizes;
+                int            nbSizes;
                 XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
@@ -169,7 +172,8 @@ VideoMode VideoModeImpl::getDesktopMode()
             else
             {
                 // Failed to get the screen configuration
-                err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes" << std::endl;
+                err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes"
+                      << std::endl;
             }
         }
         else

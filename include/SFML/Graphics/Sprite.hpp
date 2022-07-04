@@ -29,10 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/Rect.hpp>
 
 
 namespace sf
@@ -47,7 +48,6 @@ class Texture;
 class SFML_GRAPHICS_API Sprite : public Drawable, public Transformable
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -190,7 +190,6 @@ public:
     FloatRect getGlobalBounds() const;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Draw the sprite to a render target
     ///

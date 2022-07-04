@@ -29,11 +29,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/String.hpp>
+
 #include <string>
 #include <vector>
 
@@ -49,7 +51,6 @@ class Font;
 class SFML_GRAPHICS_API Text : public Drawable, public Transformable
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the string drawing styles
     ///
@@ -406,7 +407,6 @@ public:
     FloatRect getGlobalBounds() const;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Draw the text to a render target
     ///

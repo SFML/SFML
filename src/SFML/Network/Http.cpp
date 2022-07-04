@@ -28,10 +28,11 @@
 #include <SFML/Network/Http.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
+
 #include <iterator>
-#include <sstream>
 #include <limits>
 #include <ostream>
+#include <sstream>
 
 
 namespace sf
@@ -95,11 +96,21 @@ std::string Http::Request::prepare() const
     std::string method;
     switch (m_method)
     {
-        case Get:    method = "GET";    break;
-        case Post:   method = "POST";   break;
-        case Head:   method = "HEAD";   break;
-        case Put:    method = "PUT";    break;
-        case Delete: method = "DELETE"; break;
+        case Get:
+            method = "GET";
+            break;
+        case Post:
+            method = "POST";
+            break;
+        case Head:
+            method = "HEAD";
+            break;
+        case Put:
+            method = "PUT";
+            break;
+        case Delete:
+            method = "DELETE";
+            break;
     }
 
     // Write the first line containing the request type
@@ -130,12 +141,8 @@ bool Http::Request::hasField(const std::string& field) const
 
 
 ////////////////////////////////////////////////////////////
-Http::Response::Response() :
-m_status      (ConnectionFailed),
-m_majorVersion(0),
-m_minorVersion(0)
+Http::Response::Response() : m_status(ConnectionFailed), m_majorVersion(0), m_minorVersion(0)
 {
-
 }
 
 
@@ -189,9 +196,8 @@ void Http::Response::parse(const std::string& data)
     std::string version;
     if (in >> version)
     {
-        if ((version.size() >= 8) && (version[6] == '.') &&
-            (toLower(version.substr(0, 5)) == "http/")   &&
-             std::isdigit(version[5]) && std::isdigit(version[7]))
+        if ((version.size() >= 8) && (version[6] == '.') && (toLower(version.substr(0, 5)) == "http/") &&
+            std::isdigit(version[5]) && std::isdigit(version[7]))
         {
             m_majorVersion = static_cast<unsigned int>(version[5] - '0');
             m_minorVersion = static_cast<unsigned int>(version[7] - '0');
@@ -262,7 +268,7 @@ void Http::Response::parse(const std::string& data)
 
 
 ////////////////////////////////////////////////////////////
-void Http::Response::parseFields(std::istream &in)
+void Http::Response::parseFields(std::istream& in)
 {
     std::string line;
     while (std::getline(in, line) && (line.size() > 2))
@@ -286,11 +292,8 @@ void Http::Response::parseFields(std::istream &in)
 
 
 ////////////////////////////////////////////////////////////
-Http::Http() :
-m_host(),
-m_port(0)
+Http::Http() : m_host(), m_port(0)
 {
-
 }
 
 
@@ -316,7 +319,7 @@ void Http::setHost(const std::string& host, unsigned short port)
         // HTTPS protocol -- unsupported (requires encryption and certificates and stuff...)
         err() << "HTTPS protocol is not supported by sf::Http" << std::endl;
         m_hostName.clear();
-        m_port     = 0;
+        m_port = 0;
     }
     else
     {
@@ -382,7 +385,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
                 // Wait for the server's response
                 std::string receivedStr;
                 std::size_t size = 0;
-                char buffer[1024];
+                char        buffer[1024];
                 while (m_connection.receive(buffer, sizeof(buffer), size) == Socket::Done)
                 {
                     receivedStr.append(buffer, buffer + size);

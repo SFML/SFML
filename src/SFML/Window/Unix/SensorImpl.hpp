@@ -37,7 +37,6 @@ namespace priv
 class SensorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the sensor module
     ///

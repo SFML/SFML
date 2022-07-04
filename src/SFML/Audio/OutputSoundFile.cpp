@@ -26,15 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/OutputSoundFile.hpp>
-#include <SFML/Audio/SoundFileWriter.hpp>
 #include <SFML/Audio/SoundFileFactory.hpp>
+#include <SFML/Audio/SoundFileWriter.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile() :
-m_writer(nullptr)
+OutputSoundFile::OutputSoundFile() : m_writer(nullptr)
 {
 }
 

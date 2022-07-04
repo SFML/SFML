@@ -1,7 +1,8 @@
 #include <SFML/System/Err.hpp>
-#include <sstream>
 
 #include <doctest.h>
+
+#include <sstream>
 
 TEST_CASE("sf::err - [system]")
 {
@@ -10,8 +11,8 @@ TEST_CASE("sf::err - [system]")
         // No assertion macros in this subcase since nothing about this can be directly observed.
         // Intention is to ensure DefaultErrStreamBuf::overflow gets called.
         sf::err() << "SFML is a simple, fast, cross-platform and object-oriented multimedia API."
-            "It provides access to windowing, graphics, audio and network."
-            "It is written in C++, and has bindings for various languages such as C, .Net, Ruby, Python.";
+                     "It provides access to windowing, graphics, audio and network."
+                     "It is written in C++, and has bindings for various languages such as C, .Net, Ruby, Python.";
     }
 
     SUBCASE("Redirect buffer to observe contents")

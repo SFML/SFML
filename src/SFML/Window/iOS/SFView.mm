@@ -25,21 +25,22 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/iOS/SFView.hpp>
-#include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/System/Utf.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
+#include <SFML/Window/iOS/SFView.hpp>
+
 #include <QuartzCore/CAEAGLLayer.h>
 #include <cstring>
 
 #if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #endif
 
-@interface SFView()
+@interface SFView ()
 
 @property (nonatomic) NSMutableArray* touches;
 
@@ -52,7 +53,7 @@
 
 
 ////////////////////////////////////////////////////////////
--(BOOL)canBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
     return true;
 }
@@ -107,7 +108,7 @@
         }
 
         // get the touch position
-        CGPoint point = [touch locationInView:self];
+        CGPoint      point = [touch locationInView:self];
         sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
         // notify the application delegate
@@ -126,7 +127,7 @@
         if (index != NSNotFound)
         {
             // get the touch position
-            CGPoint point = [touch locationInView:self];
+            CGPoint      point = [touch locationInView:self];
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
@@ -146,7 +147,7 @@
         if (index != NSNotFound)
         {
             // get the touch position
-            CGPoint point = [touch locationInView:self];
+            CGPoint      point = [touch locationInView:self];
             sf::Vector2i position(static_cast<int>(point.x), static_cast<int>(point.y));
 
             // notify the application delegate
@@ -195,23 +196,25 @@
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
-        CAEAGLLayer* eaglLayer = static_cast<CAEAGLLayer*>(self.layer);
-        eaglLayer.opaque = YES;
-        eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
-                                        kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
-                                        nil];
+        CAEAGLLayer* eaglLayer       = static_cast<CAEAGLLayer*>(self.layer);
+        eaglLayer.opaque             = YES;
+        eaglLayer.drawableProperties = [NSDictionary
+            dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:FALSE],
+                                         kEAGLDrawablePropertyRetainedBacking,
+                                         kEAGLColorFormatRGBA8,
+                                         kEAGLDrawablePropertyColorFormat,
+                                         nil];
 
         // Enable user interactions on the view (multi-touch events)
         self.userInteractionEnabled = true;
-        self.multipleTouchEnabled = true;
+        self.multipleTouchEnabled   = true;
     }
 
     return self;
 }
 
 ////////////////////////////////////////////////////////////
-- (UITextAutocorrectionType) autocorrectionType
+- (UITextAutocorrectionType)autocorrectionType
 {
     return UITextAutocorrectionTypeNo;
 }

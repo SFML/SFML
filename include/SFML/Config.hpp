@@ -35,9 +35,9 @@
 ////////////////////////////////////////////////////////////
 // Define the SFML version
 ////////////////////////////////////////////////////////////
-#define SFML_VERSION_MAJOR 3
-#define SFML_VERSION_MINOR 0
-#define SFML_VERSION_PATCH 0
+#define SFML_VERSION_MAJOR      3
+#define SFML_VERSION_MINOR      0
+#define SFML_VERSION_PATCH      0
 #define SFML_VERSION_IS_RELEASE false
 
 
@@ -47,73 +47,73 @@
 ////////////////////////////////////////////////////////////
 #if defined(_WIN32)
 
-    // Windows
-    #define SFML_SYSTEM_WINDOWS
-    #ifndef NOMINMAX
-        #define NOMINMAX
-    #endif
+// Windows
+#define SFML_SYSTEM_WINDOWS
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
 #elif defined(__APPLE__) && defined(__MACH__)
 
-    // Apple platform, see which one it is
-    #include "TargetConditionals.h"
+// Apple platform, see which one it is
+#include "TargetConditionals.h"
 
-    #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 
-        // iOS
-        #define SFML_SYSTEM_IOS
+// iOS
+#define SFML_SYSTEM_IOS
 
-    #elif TARGET_OS_MAC
+#elif TARGET_OS_MAC
 
-        // MacOS
-        #define SFML_SYSTEM_MACOS
-
-    #else
-
-        // Unsupported Apple system
-        #error This Apple operating system is not supported by SFML library
-
-    #endif
-
-#elif defined(__unix__)
-
-    // UNIX system, see which one it is
-    #if defined(__ANDROID__)
-
-        // Android
-        #define SFML_SYSTEM_ANDROID
-
-    #elif defined(__linux__)
-
-         // Linux
-        #define SFML_SYSTEM_LINUX
-
-    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-
-        // FreeBSD
-        #define SFML_SYSTEM_FREEBSD
-
-    #elif defined(__OpenBSD__)
-
-        // OpenBSD
-        #define SFML_SYSTEM_OPENBSD
-
-    #elif defined(__NetBSD__)
-
-        // NetBSD
-        #define SFML_SYSTEM_NETBSD
-
-    #else
-
-        // Unsupported UNIX system
-        #error This UNIX operating system is not supported by SFML library
-
-    #endif
+// MacOS
+#define SFML_SYSTEM_MACOS
 
 #else
 
-    // Unsupported system
-    #error This operating system is not supported by SFML library
+// Unsupported Apple system
+#error This Apple operating system is not supported by SFML library
+
+#endif
+
+#elif defined(__unix__)
+
+// UNIX system, see which one it is
+#if defined(__ANDROID__)
+
+// Android
+#define SFML_SYSTEM_ANDROID
+
+#elif defined(__linux__)
+
+// Linux
+#define SFML_SYSTEM_LINUX
+
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+
+// FreeBSD
+#define SFML_SYSTEM_FREEBSD
+
+#elif defined(__OpenBSD__)
+
+// OpenBSD
+#define SFML_SYSTEM_OPENBSD
+
+#elif defined(__NetBSD__)
+
+// NetBSD
+#define SFML_SYSTEM_NETBSD
+
+#else
+
+// Unsupported UNIX system
+#error This UNIX operating system is not supported by SFML library
+
+#endif
+
+#else
+
+// Unsupported system
+#error This operating system is not supported by SFML library
 
 #endif
 
@@ -123,7 +123,7 @@
 ////////////////////////////////////////////////////////////
 #if !defined(NDEBUG)
 
-    #define SFML_DEBUG
+#define SFML_DEBUG
 
 #endif
 
@@ -133,31 +133,31 @@
 ////////////////////////////////////////////////////////////
 #if !defined(SFML_STATIC)
 
-    #if defined(SFML_SYSTEM_WINDOWS)
+#if defined(SFML_SYSTEM_WINDOWS)
 
-        // Windows compilers need specific (and different) keywords for export and import
-        #define SFML_API_EXPORT __declspec(dllexport)
-        #define SFML_API_IMPORT __declspec(dllimport)
+// Windows compilers need specific (and different) keywords for export and import
+#define SFML_API_EXPORT __declspec(dllexport)
+#define SFML_API_IMPORT __declspec(dllimport)
 
-        // For Visual C++ compilers, we also need to turn off this annoying C4251 warning
-        #ifdef _MSC_VER
+// For Visual C++ compilers, we also need to turn off this annoying C4251 warning
+#ifdef _MSC_VER
 
-            #pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
 
-        #endif
+#endif
 
-    #else // Linux, FreeBSD, Mac OS X
+#else // Linux, FreeBSD, Mac OS X
 
-        #define SFML_API_EXPORT __attribute__ ((__visibility__ ("default")))
-        #define SFML_API_IMPORT __attribute__ ((__visibility__ ("default")))
+#define SFML_API_EXPORT __attribute__((__visibility__("default")))
+#define SFML_API_IMPORT __attribute__((__visibility__("default")))
 
-    #endif
+#endif
 
 #else
 
-    // Static build doesn't need import/export macros
-    #define SFML_API_EXPORT
-    #define SFML_API_IMPORT
+// Static build doesn't need import/export macros
+#define SFML_API_EXPORT
+#define SFML_API_IMPORT
 
 #endif
 
@@ -167,21 +167,21 @@
 ////////////////////////////////////////////////////////////
 namespace sf
 {
-    // 8 bits integer types
-    using Int8 = std::int8_t;
-    using Uint8 = std::uint8_t;
+// 8 bits integer types
+using Int8  = std::int8_t;
+using Uint8 = std::uint8_t;
 
-    // 16 bits integer types
-    using Int16 = std::int16_t;
-    using Uint16 = std::uint16_t;
+// 16 bits integer types
+using Int16  = std::int16_t;
+using Uint16 = std::uint16_t;
 
-    // 32 bits integer types
-    using Int32 = std::int32_t;
-    using Uint32 = std::uint32_t;
+// 32 bits integer types
+using Int32  = std::int32_t;
+using Uint32 = std::uint32_t;
 
-    // 64 bits integer types
-    using Int64 = std::int64_t;
-    using Uint64 = std::uint64_t;
+// 64 bits integer types
+using Int64  = std::int64_t;
+using Uint64 = std::uint64_t;
 
 } // namespace sf
 

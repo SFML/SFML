@@ -11,9 +11,9 @@
 // String conversions for doctest framework
 namespace sf
 {
-    class VideoMode;
+class VideoMode;
 
-    std::ostream& operator <<(std::ostream& os, const sf::VideoMode& videoMode);
-}
+std::ostream& operator<<(std::ostream& os, const sf::VideoMode& videoMode);
+} // namespace sf
 
 #endif // SFML_TESTUTILITIES_WINDOW_HPP

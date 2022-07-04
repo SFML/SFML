@@ -42,7 +42,6 @@ namespace priv
 class WindowImplDRM : public WindowImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation from an existing control
     ///
@@ -181,7 +180,6 @@ public:
     virtual bool hasFocus() const override;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
@@ -189,7 +187,6 @@ protected:
     virtual void processEvents() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -44,7 +45,6 @@ class Angle;
 class Transform
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -67,9 +67,7 @@ public:
     /// \param a22 Element (2, 2) of the matrix
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform(float a00, float a01, float a02,
-                        float a10, float a11, float a12,
-                        float a20, float a21, float a22);
+    constexpr Transform(float a00, float a01, float a02, float a10, float a11, float a12, float a20, float a21, float a22);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the transform as a 4x4 matrix
@@ -264,7 +262,6 @@ public:
     static const Transform Identity; //!< The identity transform (does nothing)
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -283,7 +280,7 @@ private:
 /// \return New combined transform
 ///
 ////////////////////////////////////////////////////////////
-constexpr Transform operator *(const Transform& left, const Transform& right);
+constexpr Transform operator*(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -297,7 +294,7 @@ constexpr Transform operator *(const Transform& left, const Transform& right);
 /// \return The combined transform
 ///
 ////////////////////////////////////////////////////////////
-constexpr Transform& operator *=(Transform& left, const Transform& right);
+constexpr Transform& operator*=(Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -311,7 +308,7 @@ constexpr Transform& operator *=(Transform& left, const Transform& right);
 /// \return New transformed point
 ///
 ////////////////////////////////////////////////////////////
-constexpr Vector2f operator *(const Transform& left, const Vector2f& right);
+constexpr Vector2f operator*(const Transform& left, const Vector2f& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -326,7 +323,7 @@ constexpr Vector2f operator *(const Transform& left, const Vector2f& right);
 /// \return true if the transforms are equal, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator ==(const Transform& left, const Transform& right);
+[[nodiscard]] constexpr bool operator==(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform
@@ -340,7 +337,7 @@ constexpr Vector2f operator *(const Transform& left, const Vector2f& right);
 /// \return true if the transforms are not equal, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator !=(const Transform& left, const Transform& right);
+[[nodiscard]] constexpr bool operator!=(const Transform& left, const Transform& right);
 
 #include <SFML/Graphics/Transform.inl>
 

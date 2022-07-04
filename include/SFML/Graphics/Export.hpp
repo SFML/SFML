@@ -36,11 +36,11 @@
 ////////////////////////////////////////////////////////////
 #if defined(SFML_GRAPHICS_EXPORTS)
 
-    #define SFML_GRAPHICS_API SFML_API_EXPORT
+#define SFML_GRAPHICS_API SFML_API_EXPORT
 
 #else
 
-    #define SFML_GRAPHICS_API SFML_API_IMPORT
+#define SFML_GRAPHICS_API SFML_API_IMPORT
 
 #endif
 

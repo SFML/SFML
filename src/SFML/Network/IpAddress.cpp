@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Http.hpp>
+#include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/SocketImpl.hpp>
+
+#include <cstring>
 #include <istream>
 #include <ostream>
-#include <cstring>
 #include <utility>
 
 
@@ -92,8 +93,7 @@ m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint32 address) :
-m_address(htonl(address))
+IpAddress::IpAddress(Uint32 address) : m_address(htonl(address))
 {
 }
 
@@ -160,8 +160,8 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     // and parse the result to extract our IP address
     // (not very hard: the web page contains only our IP address).
 
-    Http server("www.sfml-dev.org");
-    Http::Request request("/ip-provider.php", Http::Request::Get);
+    Http           server("www.sfml-dev.org");
+    Http::Request  request("/ip-provider.php", Http::Request::Get);
     Http::Response page = server.sendRequest(request, timeout);
     if (page.getStatus() == Http::Response::Ok)
         return IpAddress::resolve(page.getBody());
@@ -172,49 +172,49 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-bool operator ==(const IpAddress& left, const IpAddress& right)
+bool operator==(const IpAddress& left, const IpAddress& right)
 {
     return !(left < right) && !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator !=(const IpAddress& left, const IpAddress& right)
+bool operator!=(const IpAddress& left, const IpAddress& right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <(const IpAddress& left, const IpAddress& right)
+bool operator<(const IpAddress& left, const IpAddress& right)
 {
     return left.m_address < right.m_address;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >(const IpAddress& left, const IpAddress& right)
+bool operator>(const IpAddress& left, const IpAddress& right)
 {
     return right < left;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator <=(const IpAddress& left, const IpAddress& right)
+bool operator<=(const IpAddress& left, const IpAddress& right)
 {
     return !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator >=(const IpAddress& left, const IpAddress& right)
+bool operator>=(const IpAddress& left, const IpAddress& right)
 {
     return !(left < right);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::istream& operator >>(std::istream& stream, std::optional<IpAddress>& address)
+std::istream& operator>>(std::istream& stream, std::optional<IpAddress>& address)
 {
     std::string str;
     stream >> str;
@@ -225,7 +225,7 @@ std::istream& operator >>(std::istream& stream, std::optional<IpAddress>& addres
 
 
 ////////////////////////////////////////////////////////////
-std::ostream& operator <<(std::ostream& stream, const IpAddress& address)
+std::ostream& operator<<(std::ostream& stream, const IpAddress& address)
 {
     return stream << address.toString();
 }

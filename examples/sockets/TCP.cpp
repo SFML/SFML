@@ -3,6 +3,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network.hpp>
+
 #include <iomanip>
 #include <iostream>
 
@@ -35,7 +36,7 @@ void runTcpServer(unsigned short port)
     std::cout << "Message sent to the client: " << std::quoted(out) << std::endl;
 
     // Receive a message back from the client
-    char in[128];
+    char        in[128];
     std::size_t received;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
         return;
@@ -55,9 +56,8 @@ void runTcpClient(unsigned short port)
     do
     {
         std::cout << "Type the address or name of the server to connect to: ";
-        std::cin  >> server;
-    }
-    while (!server.has_value());
+        std::cin >> server;
+    } while (!server.has_value());
 
     // Create a socket for communicating with the server
     sf::TcpSocket socket;
@@ -68,7 +68,7 @@ void runTcpClient(unsigned short port)
     std::cout << "Connected to server " << server.value() << std::endl;
 
     // Receive a message from the server
-    char in[128];
+    char        in[128];
     std::size_t received;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
         return;

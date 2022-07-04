@@ -100,4 +100,3 @@ void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
 
 } // namespace priv
 } // namespace sf
-

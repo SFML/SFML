@@ -40,7 +40,6 @@ namespace priv
 class ClipboardImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the content of the clipboard as string data
     ///
@@ -72,4 +71,3 @@ public:
 
 
 #endif // SFML_CLIPBOARDIMPLCOCOA_HPP
-

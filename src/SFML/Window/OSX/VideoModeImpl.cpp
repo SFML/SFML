@@ -26,9 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/OSX/cg_sf_conversion.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <algorithm>
 #include <ostream>
 
@@ -86,7 +87,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     // instead of display id and CGDisplayPixelsHigh/Wide.
 
     CGDirectDisplayID display = CGMainDisplayID();
-    CGDisplayModeRef cgmode = CGDisplayCopyDisplayMode(display);
+    CGDisplayModeRef  cgmode  = CGDisplayCopyDisplayMode(display);
 
     mode = convertCGModeToSFMode(cgmode);
 
@@ -97,4 +98,3 @@ VideoMode VideoModeImpl::getDesktopMode()
 
 } // namespace priv
 } // namespace sf
-

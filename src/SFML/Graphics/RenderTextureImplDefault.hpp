@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImpl.hpp>
 #include <SFML/Window/GlResource.hpp>
+
 #include <memory>
 
 
@@ -48,7 +49,6 @@ namespace priv
 class RenderTextureImplDefault : public RenderTextureImpl, GlResource
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -70,7 +70,6 @@ public:
     static unsigned int getMaximumAntialiasingLevel();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create the render texture implementation
     ///
@@ -116,7 +115,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     std::unique_ptr<Context> m_context; //!< P-Buffer based context
-    Vector2u m_size;                    //!< Width and height of the P-Buffer
+    Vector2u                 m_size;    //!< Width and height of the P-Buffer
 };
 
 } // namespace priv

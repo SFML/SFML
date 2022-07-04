@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Rect.hpp>
 
 
@@ -41,12 +42,13 @@ namespace sf
 class SFML_GRAPHICS_API Glyph
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    Glyph() : advance(0), lsbDelta(0), rsbDelta(0) {}
+    Glyph() : advance(0), lsbDelta(0), rsbDelta(0)
+    {
+    }
 
     ////////////////////////////////////////////////////////////
     // Member data

@@ -28,10 +28,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/iOS/ObjCType.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Clock.hpp>
+
 #include <glad/gl.h>
 
 
@@ -51,7 +52,6 @@ class WindowImplUIKit;
 class EaglContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
@@ -69,8 +69,7 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    EaglContext(EaglContext* shared, const ContextSettings& settings,
-                const WindowImpl& owner, unsigned int bitsPerPixel);
+    EaglContext(EaglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
@@ -80,8 +79,7 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EaglContext(EaglContext* shared, const ContextSettings& settings,
-                const Vector2u& size);
+    EaglContext(EaglContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -130,7 +128,6 @@ public:
     void setVerticalSyncEnabled(bool enabled) override;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
     ///        for rendering
@@ -143,7 +140,6 @@ protected:
     bool makeCurrent(bool current) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create the context
     ///
@@ -153,20 +149,20 @@ private:
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(EaglContext* shared,
+    void createContext(EaglContext*           shared,
                        const WindowImplUIKit& window,
-                       unsigned int bitsPerPixel,
+                       unsigned int           bitsPerPixel,
                        const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EAGLContext* m_context; ///< The internal context
-    GLuint m_framebuffer;   ///< Frame buffer associated to the context
-    GLuint m_colorbuffer;   ///< Color render buffer
-    GLuint m_depthbuffer;   ///< Depth render buffer
-    bool m_vsyncEnabled;    ///< Vertical sync activation flag
-    Clock m_clock;          ///< Measures the elapsed time for the fake v-sync implementation
+    EAGLContext* m_context;      ///< The internal context
+    GLuint       m_framebuffer;  ///< Frame buffer associated to the context
+    GLuint       m_colorbuffer;  ///< Color render buffer
+    GLuint       m_depthbuffer;  ///< Depth render buffer
+    bool         m_vsyncEnabled; ///< Vertical sync activation flag
+    Clock        m_clock;        ///< Measures the elapsed time for the fake v-sync implementation
 };
 
 } // namespace priv
