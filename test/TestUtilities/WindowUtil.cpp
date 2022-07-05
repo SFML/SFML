@@ -7,7 +7,6 @@ namespace sf
 {
 std::ostream& operator<<(std::ostream& os, const VideoMode& videoMode)
 {
-    os << videoMode.size.x << "x" << videoMode.size.y << "x" << videoMode.bitsPerPixel;
-    return os;
+    return os << videoMode.size.x << "x" << videoMode.size.y << "x" << videoMode.bitsPerPixel;
 }
 } // namespace sf
