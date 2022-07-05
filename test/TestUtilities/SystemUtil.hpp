@@ -20,12 +20,12 @@ class Angle;
 class String;
 class Time;
 
-std::ostream& operator<<(std::ostream& os, const sf::Angle& angle);
-std::ostream& operator<<(std::ostream& os, const sf::String& string);
-std::ostream& operator<<(std::ostream& os, sf::Time time);
+std::ostream& operator<<(std::ostream& os, const Angle& angle);
+std::ostream& operator<<(std::ostream& os, const String& string);
+std::ostream& operator<<(std::ostream& os, Time time);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& vector)
+std::ostream& operator<<(std::ostream& os, const Vector2<T>& vector)
 {
     os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
     os << "(" << vector.x << ", " << vector.y << ")";
@@ -33,7 +33,7 @@ std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& vector)
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const sf::Vector3<T>& vector)
+std::ostream& operator<<(std::ostream& os, const Vector3<T>& vector)
 {
     os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
     return os;

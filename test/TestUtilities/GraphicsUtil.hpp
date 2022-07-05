@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& os, const Color& color);
 std::ostream& operator<<(std::ostream& os, const Transform& transform);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const sf::Rect<T>& rect)
+std::ostream& operator<<(std::ostream& os, const Rect<T>& rect)
 {
     const auto flags = os.flags();
     os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
