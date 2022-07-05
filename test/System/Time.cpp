@@ -19,7 +19,7 @@ struct StringMaker<std::chrono::duration<Rep, Period>>
 };
 } // namespace doctest
 
-TEST_CASE("sf::Time class - [system]")
+TEST_CASE("[System] sf::Time")
 {
     SUBCASE("Construction")
     {

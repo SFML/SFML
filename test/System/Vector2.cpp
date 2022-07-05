@@ -12,7 +12,7 @@ using namespace sf::Literals;
 // Test coverage is given, as there are no template specializations.
 
 
-TEST_CASE("sf::Vector2 class template - [system]")
+TEST_CASE("[System] sf::Vector2")
 {
     SUBCASE("Construction")
     {

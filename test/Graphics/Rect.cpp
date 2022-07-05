@@ -5,7 +5,7 @@
 
 #include <GraphicsUtil.hpp>
 
-TEST_CASE("sf::Rect class template - [graphics]")
+TEST_CASE("[Graphics] sf::Rect")
 {
     SUBCASE("Construction")
     {

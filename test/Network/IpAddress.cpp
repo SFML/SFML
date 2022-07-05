@@ -8,7 +8,7 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-TEST_CASE("sf::IpAddress class - [network]")
+TEST_CASE("[Network] sf::IpAddress")
 {
     SUBCASE("Construction")
     {

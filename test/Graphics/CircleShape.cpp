@@ -4,7 +4,7 @@
 
 #include <SystemUtil.hpp>
 
-TEST_CASE("sf::CircleShape class - [graphics]")
+TEST_CASE("[Graphics] sf::CircleShape")
 {
     SUBCASE("Default constructor")
     {

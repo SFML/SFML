@@ -35,7 +35,7 @@ private:
     sf::Vector2f m_size;
 };
 
-TEST_CASE("sf::Shape class - [graphics]")
+TEST_CASE("[Graphics] sf::Shape")
 {
     SUBCASE("Default constructor")
     {
