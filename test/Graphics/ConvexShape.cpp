@@ -4,7 +4,7 @@
 
 #include <SystemUtil.hpp>
 
-TEST_CASE("sf::ConvexShape class - [graphics]")
+TEST_CASE("[Graphics] sf::ConvexShape")
 {
     SUBCASE("Default constructor")
     {

@@ -4,7 +4,7 @@
 
 #include <SystemUtil.hpp>
 
-TEST_CASE("sf::RectangleShape class - [graphics]")
+TEST_CASE("[Graphics] sf::RectangleShape")
 {
     SUBCASE("Default constructor")
     {

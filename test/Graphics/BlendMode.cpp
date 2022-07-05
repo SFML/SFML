@@ -4,7 +4,7 @@
 
 #include <GraphicsUtil.hpp>
 
-TEST_CASE("sf::BlendMode class - [graphics]")
+TEST_CASE("[Graphics] sf::BlendMode")
 {
     SUBCASE("Construction")
     {

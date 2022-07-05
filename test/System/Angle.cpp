@@ -4,7 +4,7 @@
 
 #include <SystemUtil.hpp>
 
-TEST_CASE("sf::Angle class - [system]")
+TEST_CASE("[System] sf::Angle")
 {
     SUBCASE("Construction")
     {

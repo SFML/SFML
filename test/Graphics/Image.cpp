@@ -5,7 +5,7 @@
 #include <GraphicsUtil.hpp>
 #include <array>
 
-TEST_CASE("sf::Image - [graphics]")
+TEST_CASE("[Graphics] sf::Image")
 {
     SUBCASE("Default constructor")
     {

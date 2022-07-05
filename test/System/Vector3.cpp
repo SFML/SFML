@@ -8,7 +8,7 @@
 // Use sf::Vector3i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
 
-TEST_CASE("sf::Vector3 class template - [system]")
+TEST_CASE("[System] sf::Vector3")
 {
     SUBCASE("Construction")
     {

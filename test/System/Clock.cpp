@@ -6,7 +6,7 @@
 #include <SystemUtil.hpp>
 #include <thread>
 
-TEST_CASE("sf::Clock class - [system]")
+TEST_CASE("[System] sf::Clock")
 {
     SUBCASE("getElapsedTime()")
     {

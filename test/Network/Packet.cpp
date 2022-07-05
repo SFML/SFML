@@ -26,7 +26,7 @@
         CHECK(expected == received);                         \
     } while (false)
 
-TEST_CASE("sf::Packet class - [network]")
+TEST_CASE("[Network] sf::Packet")
 {
     SUBCASE("Default constructor")
     {

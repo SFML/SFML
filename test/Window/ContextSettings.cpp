@@ -2,7 +2,7 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("sf::ContextSettings class - [window]")
+TEST_CASE("[Window] sf::ContextSettings")
 {
     SUBCASE("Construction")
     {

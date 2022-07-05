@@ -58,7 +58,7 @@ public:
     }
 };
 
-TEST_CASE("sf::FileInputStream class - [system]")
+TEST_CASE("[System] sf::FileInputStream")
 {
     SUBCASE("Empty stream")
     {

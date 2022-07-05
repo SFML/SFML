@@ -4,7 +4,7 @@
 
 #include <GraphicsUtil.hpp>
 
-TEST_CASE("sf::RenderStates class - [graphics]")
+TEST_CASE("[Graphics] sf::RenderStates")
 {
     SUBCASE("Construction")
     {

@@ -2,7 +2,7 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("SFML/Config.hpp")
+TEST_CASE("[System] SFML/Config.hpp")
 {
     SUBCASE("Version macros")
     {

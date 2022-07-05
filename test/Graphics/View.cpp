@@ -4,7 +4,7 @@
 
 #include <GraphicsUtil.hpp>
 
-TEST_CASE("sf::View class - [graphics]")
+TEST_CASE("[Graphics] sf::View")
 {
     SUBCASE("Construction")
     {

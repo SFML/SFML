@@ -4,7 +4,7 @@
 
 #include <WindowUtil.hpp>
 
-TEST_CASE("sf::VideoMode class - [window]")
+TEST_CASE("[Window] sf::VideoMode")
 {
     SUBCASE("Construction")
     {

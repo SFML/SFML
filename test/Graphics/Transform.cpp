@@ -25,7 +25,7 @@ struct StringMaker<std::vector<float>>
 };
 } // namespace doctest
 
-TEST_CASE("sf::Transform class - [graphics]")
+TEST_CASE("[Graphics] sf::Transform")
 {
     SUBCASE("Construction")
     {
