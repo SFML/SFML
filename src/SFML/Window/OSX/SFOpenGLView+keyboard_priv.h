@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Mouse.hpp>
+#import <SFML/Window/OSX/SFOpenGLView.h>
 
 #import <AppKit/AppKit.h>
 
