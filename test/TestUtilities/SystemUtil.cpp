@@ -11,20 +11,17 @@ namespace sf
 std::ostream& operator<<(std::ostream& os, const Angle& angle)
 {
     os << std::fixed << std::setprecision(std::numeric_limits<float>::max_digits10);
-    os << angle.asDegrees() << " deg";
-    return os;
+    return os << angle.asDegrees() << " deg";
 }
 
 std::ostream& operator<<(std::ostream& os, const String& string)
 {
-    os << string.toAnsiString();
-    return os;
+    return os << string.toAnsiString();
 }
 
 std::ostream& operator<<(std::ostream& os, Time time)
 {
-    os << time.asMicroseconds() << "us";
-    return os;
+    return os << time.asMicroseconds() << "us";
 }
 } // namespace sf
 

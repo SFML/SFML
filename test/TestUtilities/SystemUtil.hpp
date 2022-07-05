@@ -28,15 +28,13 @@ template <typename T>
 std::ostream& operator<<(std::ostream& os, const Vector2<T>& vector)
 {
     os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
-    os << "(" << vector.x << ", " << vector.y << ")";
-    return os;
+    return os << "(" << vector.x << ", " << vector.y << ")";
 }
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Vector3<T>& vector)
 {
-    os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
-    return os;
+    return os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
 }
 } // namespace sf
 
