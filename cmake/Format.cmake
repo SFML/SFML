@@ -22,7 +22,7 @@ endif()
 # Run
 set(SOURCES "")
 foreach(FOLDER IN ITEMS examples include src test tools)
-    file(GLOB_RECURSE folder_files "${FOLDER}/*.h" "${FOLDER}/*.hpp" "${FOLDER}/*.inl" "${FOLDER}/*.cpp" "${FOLDER}/*.mm")
+    file(GLOB_RECURSE folder_files "${FOLDER}/*.h" "${FOLDER}/*.hpp" "${FOLDER}/*.inl" "${FOLDER}/*.cpp" "${FOLDER}/*.mm" "${FOLDER}/*.m")
     list(FILTER folder_files EXCLUDE REGEX "gl.h|vulkan.h|stb_perlin.h") # 3rd party code to exclude from formatting
     list(APPEND SOURCES ${folder_files})
 endforeach()

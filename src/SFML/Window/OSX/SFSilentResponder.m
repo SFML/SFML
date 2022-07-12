@@ -30,11 +30,10 @@
 
 @implementation SFSilentResponder
 
--(void)doCommandBySelector:(SEL)sel
+- (void)doCommandBySelector:(SEL)sel
 {
     // Just do nothing, to prevent sound alerts
     (void)sel;
 }
 
 @end
-
