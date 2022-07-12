@@ -34,13 +34,7 @@
 
 #include <UIKit/UIKit.h>
 
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#elif defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-#endif
 
 namespace sf
 {
@@ -109,25 +103,12 @@ void WindowImplUIKit::processEvents()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplUIKit::getSystemHandle() const
 {
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#elif defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
-#endif
 
     return (__bridge WindowHandle)m_window;
 
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#elif defined(__GNUC__)
 #pragma GCC diagnostic pop
-#endif
-#endif
 }
 
 

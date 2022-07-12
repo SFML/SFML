@@ -30,13 +30,7 @@
 #import <SFML/Window/OSX/Scaling.h>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#elif defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-#endif
 
 namespace sf
 {

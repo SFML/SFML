@@ -35,15 +35,8 @@
 
 #include <glad/gl.h>
 
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#elif defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-#endif
 
 SFML_DECLARE_OBJC_CLASS(EAGLContext);
 SFML_DECLARE_OBJC_CLASS(SFView);
@@ -178,12 +171,6 @@ private:
 
 } // namespace sf
 
-#if defined(__APPLE__)
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#elif defined(__GNUC__)
 #pragma GCC diagnostic pop
-#endif
-#endif
 
 #endif // SFML_EAGLCONTEXT_HPP
