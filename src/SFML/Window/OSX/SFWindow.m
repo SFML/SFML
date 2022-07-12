@@ -32,28 +32,28 @@
 @implementation SFWindow
 
 ////////////////////////////////////////////////////////
--(BOOL)acceptsFirstResponder
+- (BOOL)acceptsFirstResponder
 {
     return YES;
 }
 
 
 ////////////////////////////////////////////////////////
--(BOOL)canBecomeKeyWindow
+- (BOOL)canBecomeKeyWindow
 {
     return YES;
 }
 
 
 ////////////////////////////////////////////////////////
--(BOOL)canBecomeMainWindow
+- (BOOL)canBecomeMainWindow
 {
     return YES;
 }
 
 
 ////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent*)theEvent
+- (void)keyDown:(NSEvent*)theEvent
 {
     // Do nothing except preventing a system alert each time a key is pressed
     //
@@ -67,7 +67,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)performClose:(id)sender
+- (void)performClose:(id)sender
 {
     // From Apple documentation:
     //
@@ -98,7 +98,7 @@
 
 
 ////////////////////////////////////////////////////////
--(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
     return [menuItem action] == @selector(performClose:) || [super validateMenuItem:menuItem];
 }
@@ -110,7 +110,7 @@
 @implementation NSWindow (SFML)
 
 ////////////////////////////////////////////////////////////
--(id)sfClose
+- (id)sfClose
 {
     [self performClose:nil];
     return nil;
