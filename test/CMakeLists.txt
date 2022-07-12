@@ -24,6 +24,7 @@ set_target_warnings(sfml-test-main)
 SET(SYSTEM_SRC
     System/Angle.cpp
     System/Clock.cpp
+    System/Config.cpp
     System/Err.cpp
     System/FileInputStream.cpp
     System/MemoryInputStream.cpp
@@ -32,6 +33,12 @@ SET(SYSTEM_SRC
     System/Vector3.cpp
 )
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
+target_compile_definitions(test-sfml-system PRIVATE
+    EXPECTED_SFML_VERSION_MAJOR=${SFML_VERSION_MAJOR}
+    EXPECTED_SFML_VERSION_MINOR=${SFML_VERSION_MINOR}
+    EXPECTED_SFML_VERSION_PATCH=${SFML_VERSION_PATCH}
+    EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
+)
 
 SET(WINDOW_SRC
     Window/ContextSettings.cpp
