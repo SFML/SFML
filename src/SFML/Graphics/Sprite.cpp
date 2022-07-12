@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/SpriteBatch.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 #include <cstdlib>
@@ -127,6 +128,14 @@ FloatRect Sprite::getLocalBounds() const
 FloatRect Sprite::getGlobalBounds() const
 {
     return getTransform().transformRect(getLocalBounds());
+}
+
+
+////////////////////////////////////////////////////////////
+void Sprite::batch(SpriteBatch& spriteBatch, float depth) const
+{
+    if (m_texture)
+        spriteBatch.batch(m_vertices, 4, PrimitiveType::TriangleStrip, m_texture, getTransform(), depth);
 }
 
 

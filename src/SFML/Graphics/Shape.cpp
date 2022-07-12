@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <SFML/Graphics/SpriteBatch.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 #include <cmath>
@@ -145,6 +146,28 @@ FloatRect Shape::getLocalBounds() const
 FloatRect Shape::getGlobalBounds() const
 {
     return getTransform().transformRect(getLocalBounds());
+}
+
+
+////////////////////////////////////////////////////////////
+void Shape::batch(SpriteBatch& spriteBatch, float depth) const
+{
+    // Draw the shape itself
+    {
+        const std::size_t shapeCount = m_vertices.getVertexCount();
+        const Vertex*     shapePtr   = shapeCount > 0 ? &m_vertices[0] : nullptr;
+
+        spriteBatch.batch(shapePtr, shapeCount, m_vertices.getPrimitiveType(), m_texture, getTransform(), depth);
+    }
+
+    // Draw outline
+    if (m_outlineThickness != 0)
+    {
+        const std::size_t outlineCount = m_outlineVertices.getVertexCount();
+        const Vertex*     outlinePtr   = outlineCount > 0 ? &m_outlineVertices[0] : nullptr;
+
+        spriteBatch.batch(outlinePtr, outlineCount, m_outlineVertices.getPrimitiveType(), nullptr, getTransform(), depth);
+    }
 }
 
 

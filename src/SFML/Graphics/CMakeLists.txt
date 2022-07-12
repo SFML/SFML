@@ -4,6 +4,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Graphics)
 
 # all source files
 set(SRC
+    ${INCROOT}/Batchable.hpp
     ${SRCROOT}/BlendMode.cpp
     ${INCROOT}/BlendMode.hpp
     ${INCROOT}/Color.hpp
@@ -36,6 +37,8 @@ set(SRC
     ${INCROOT}/RenderWindow.hpp
     ${SRCROOT}/Shader.cpp
     ${INCROOT}/Shader.hpp
+    ${SRCROOT}/SpriteBatch.cpp
+    ${INCROOT}/SpriteBatch.hpp
     ${SRCROOT}/Texture.cpp
     ${INCROOT}/Texture.hpp
     ${SRCROOT}/TextureSaver.cpp

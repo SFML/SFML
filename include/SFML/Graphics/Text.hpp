@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Batchable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -47,7 +48,7 @@ class Font;
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Text : public Drawable, public Transformable
+class SFML_GRAPHICS_API Text : public Drawable, public Transformable, public Batchable
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -416,6 +417,15 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Batch the Text using the given SpriteBatch
+    ///
+    /// \param spriteBatch The SpriteBatch to use
+    /// \param depth       The depth at which to render the text
+    ///
+    ////////////////////////////////////////////////////////////
+    void batch(SpriteBatch& spriteBatch, float depth = 0.f) const override;
 
 private:
     ////////////////////////////////////////////////////////////
