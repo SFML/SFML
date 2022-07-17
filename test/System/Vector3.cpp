@@ -1,6 +1,6 @@
 #include <SFML/System/Vector3.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
 #include <type_traits>

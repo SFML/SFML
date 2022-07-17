@@ -1,6 +1,6 @@
 #include <SFML/System/Vector2.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
 #include <cmath>

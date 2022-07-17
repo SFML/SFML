@@ -1,6 +1,6 @@
 #include <SFML/System/MemoryInputStream.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <ostream>
 #include <string_view>

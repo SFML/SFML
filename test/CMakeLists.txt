@@ -1,3 +1,12 @@
+include(FetchContent)
+
+set(DOCTEST_NO_INSTALL ON)
+FetchContent_Declare(doctest
+    GIT_REPOSITORY "https://github.com/doctest/doctest.git"
+    GIT_TAG v2.4.9
+)
+FetchContent_MakeAvailable(doctest)
+
 add_library(sfml-test-main STATIC
     DoctestMain.cpp
     TestUtilities/SystemUtil.hpp
@@ -7,10 +16,9 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
 )
-target_include_directories(sfml-test-main SYSTEM PUBLIC "${PROJECT_SOURCE_DIR}/extlibs/headers")
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_compile_definitions(sfml-test-main PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIFICATION_FOR_ALL_USED_TYPES)
-target_link_libraries(sfml-test-main PUBLIC SFML::System)
+target_link_libraries(sfml-test-main PUBLIC SFML::System doctest::doctest)
 set_target_warnings(sfml-test-main)
 
 SET(SYSTEM_SRC

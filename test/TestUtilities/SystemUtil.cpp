@@ -2,7 +2,7 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <doctest.h> // for Approx
+#include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
 

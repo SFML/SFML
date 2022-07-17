@@ -1,6 +1,6 @@
 #include <SFML/System/Err.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <sstream>
 

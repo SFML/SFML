@@ -1,6 +1,6 @@
 #include <SFML/Window/ContextSettings.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 TEST_CASE("sf::ContextSettings class - [window]")
 {

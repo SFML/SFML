@@ -1,6 +1,6 @@
 #include <SFML/System/FileInputStream.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <cassert>
 #include <fstream>

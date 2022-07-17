@@ -1,6 +1,6 @@
 #include <SFML/Window/VideoMode.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <WindowUtil.hpp>
 
