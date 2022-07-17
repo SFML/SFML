@@ -330,17 +330,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     # Add the test
-    add_test(${target} ${target})
-
-    # If building shared libs on windows we must copy the dependencies into the folder
-    if (WIN32 AND BUILD_SHARED_LIBS)
-        foreach (DEPENDENCY ${DEPENDS})
-            add_custom_command(TARGET ${target} PRE_BUILD
-                                COMMAND ${CMAKE_COMMAND} -E copy
-                                $<TARGET_FILE:${DEPENDENCY}>
-                                $<TARGET_FILE_DIR:${target}>)
-        endforeach()
-    endif()
+    doctest_discover_tests(${target})
 endfunction()
 
 # Create an interface library for an external dependency. This virtual target can provide

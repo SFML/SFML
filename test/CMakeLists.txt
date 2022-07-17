@@ -6,6 +6,8 @@ FetchContent_Declare(doctest
     GIT_TAG v2.4.9
 )
 FetchContent_MakeAvailable(doctest)
+list(APPEND CMAKE_MODULE_PATH ${doctest_SOURCE_DIR}/scripts/cmake)
+include(doctest)
 
 add_library(sfml-test-main STATIC
     DoctestMain.cpp
@@ -76,30 +78,18 @@ set(AUDIO_SRC
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 
+if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
+    add_custom_command(
+        TARGET test-sfml-audio
+        COMMENT "Copy OpenAL DLL"
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:test-sfml-audio>
+    )
+endif()
+
 # Automatically run the tests at the end of the build
 add_custom_target(runtests ALL
                   DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio
 )
-
-if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
-    # Copy the binaries of SFML dependencies
-    list(APPEND BINARIES
-        "openal32.dll"
-    )
-
-    foreach (BINARY ${BINARIES})
-        if(ARCH_32BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x86/${BINARY}")
-        elseif(ARCH_64BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x64/${BINARY}")
-        endif()
-    endforeach()
-
-    add_custom_command(TARGET runtests
-                       COMMENT "Copy binaries"
-                       POST_BUILD COMMAND "${CMAKE_COMMAND}" -E copy ${BINARY_PATHS} "$<TARGET_FILE_DIR:test-sfml-system>"
-    )
-endif()
 
 if(SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
