@@ -251,6 +251,9 @@ if(SFML_OS_MACOSX)
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
 
+# set the output directory for SFML DLLs and executables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 # enable project folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
