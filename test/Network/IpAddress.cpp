@@ -1,6 +1,6 @@
 #include <SFML/Network/IpAddress.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <sstream>
 #include <string_view>

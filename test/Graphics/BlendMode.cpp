@@ -1,6 +1,6 @@
 #include <SFML/Graphics/BlendMode.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
 

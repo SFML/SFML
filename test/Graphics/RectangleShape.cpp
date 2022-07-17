@@ -1,6 +1,6 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
 

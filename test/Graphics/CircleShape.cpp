@@ -1,6 +1,6 @@
 #include <SFML/Graphics/CircleShape.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
 
@@ -9,7 +9,7 @@ TEST_CASE("sf::CircleShape class - [graphics]")
     SUBCASE("Default constructor")
     {
         const sf::CircleShape circle;
-        CHECK(circle.getRadius() == 0);
+        CHECK(circle.getRadius() == 0.f);
         CHECK(circle.getPointCount() == 30);
         for (std::size_t i = 0; i < circle.getPointCount(); ++i)
             CHECK(circle.getPoint(i) == sf::Vector2f(0, 0));

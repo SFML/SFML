@@ -1,7 +1,7 @@
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Angle.hpp>
 
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
 #include <vector>
