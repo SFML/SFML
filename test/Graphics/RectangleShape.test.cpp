@@ -1,7 +1,10 @@
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <GraphicsUtil.hpp>
 #include <SystemUtil.hpp>
 #include <type_traits>
 
@@ -45,5 +48,26 @@ TEST_CASE("[Graphics] sf::RectangleShape")
         rectangle.setSize({5, 4});
         CHECK(rectangle.getSize() == sf::Vector2f(5, 4));
         CHECK(rectangle.getGeometricCenter() == sf::Vector2f(5.f, 4.f) / 2.f);
+    }
+
+    SUBCASE("Render rectangle shape")
+    {
+        sf::RectangleShape rectangle({50.f, 20.f});
+        rectangle.setFillColor(sf::Color::Red);
+        rectangle.setOutlineColor(sf::Color::Green);
+        rectangle.setOutlineThickness(2.f);
+        rectangle.setPosition({10.f, 10.f});
+
+        sf::RenderTexture renderTexture;
+        REQUIRE(renderTexture.create({100, 100}));
+
+        renderTexture.clear();
+        renderTexture.draw(rectangle);
+        renderTexture.display();
+
+        auto image = renderTexture.getTexture().copyToImage();
+        REQUIRE(image.saveToFile("testOutput.png"));
+
+        REQUIRE(compareImages("expected/rectangleShape.png", "testOutput.png"));
     }
 }

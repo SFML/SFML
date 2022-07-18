@@ -1,5 +1,6 @@
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/StencilMode.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -112,4 +113,41 @@ bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
            lhs.getMatrix()[3] == Approx(rhs.value.getMatrix()[3]) &&
            lhs.getMatrix()[7] == Approx(rhs.value.getMatrix()[7]) &&
            lhs.getMatrix()[15] == Approx(rhs.value.getMatrix()[15]);
+}
+
+bool compareImages(const std::string& expected, const std::string& actual)
+{
+    sf::Image image1;
+    if (!image1.loadFromFile(expected))
+    {
+        return false;
+    }
+
+    sf::Image image2;
+    if (!image2.loadFromFile(actual))
+    {
+        return false;
+    }
+
+    if (image1.getSize() != image2.getSize())
+    {
+        return false;
+    }
+
+    auto size = image1.getSize();
+
+    double totalDiff = 0;
+    for (unsigned int y = 0; y < size.y; ++y)
+    {
+        for (unsigned int x = 0; x < size.x; ++x)
+        {
+            unsigned int index = ((y * x) + x) * 4;
+            totalDiff += std::abs(int(image1.getPixelsPtr()[index + 0]) - int(image2.getPixelsPtr()[index + 0])) / 255.0;
+            totalDiff += std::abs(int(image1.getPixelsPtr()[index + 1]) - int(image2.getPixelsPtr()[index + 1])) / 255.0;
+            totalDiff += std::abs(int(image1.getPixelsPtr()[index + 2]) - int(image2.getPixelsPtr()[index + 2])) / 255.0;
+        }
+    }
+
+    const double diffPercentage = (totalDiff * 100) / (size.x * size.y * 3);
+    return diffPercentage <= 1.;
 }

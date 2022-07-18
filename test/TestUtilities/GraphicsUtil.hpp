@@ -29,6 +29,8 @@ std::ostream& operator<<(std::ostream& os, const Rect<T>& rect);
 
 bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs);
 
+bool compareImages(const std::string& expected, const std::string& actual);
+
 template <typename T>
 bool operator==(const sf::Rect<T>& lhs, const Approx<sf::Rect<T>>& rhs)
 {
