@@ -395,11 +395,7 @@ else()
     # NOTE: it's not required to link against SFML.framework
     set_target_properties(SFML PROPERTIES INSTALL_NAME_DIR "@rpath")
     if(NOT CMAKE_SKIP_BUILD_RPATH)
-        if (CMAKE_VERSION VERSION_LESS 3.9)
-            set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-        else()
-            set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
-        endif()
+        set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
     endif()
 
     # install rule
