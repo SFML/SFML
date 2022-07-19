@@ -500,19 +500,8 @@ void Text::ensureGeometryUpdate() const
         {
             const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold, m_outlineThickness);
 
-            float left   = glyph.bounds.left;
-            float top    = glyph.bounds.top;
-            float right  = glyph.bounds.left + glyph.bounds.width;
-            float bottom = glyph.bounds.top  + glyph.bounds.height;
-
             // Add the outline glyph to the vertices
             addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear);
-
-            // Update the current bounds with the outlined glyph bounds
-            minX = std::min(minX, x + left   - italicShear * bottom);
-            maxX = std::max(maxX, x + right  - italicShear * top);
-            minY = std::min(minY, y + top);
-            maxY = std::max(maxY, y + bottom);
         }
 
         // Extract the current glyph's description
@@ -521,22 +510,29 @@ void Text::ensureGeometryUpdate() const
         // Add the glyph to the vertices
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
 
-        // Update the current bounds with the non outlined glyph bounds
-        if (m_outlineThickness == 0)
-        {
-            float left   = glyph.bounds.left;
-            float top    = glyph.bounds.top;
-            float right  = glyph.bounds.left + glyph.bounds.width;
-            float bottom = glyph.bounds.top  + glyph.bounds.height;
+        // Update the current bounds
+        float left   = glyph.bounds.left;
+        float top    = glyph.bounds.top;
+        float right  = glyph.bounds.left + glyph.bounds.width;
+        float bottom = glyph.bounds.top + glyph.bounds.height;
 
-            minX = std::min(minX, x + left  - italicShear * bottom);
-            maxX = std::max(maxX, x + right - italicShear * top);
-            minY = std::min(minY, y + top);
-            maxY = std::max(maxY, y + bottom);
-        }
+        minX = std::min(minX, x + left - italicShear * bottom);
+        maxX = std::max(maxX, x + right - italicShear * top);
+        minY = std::min(minY, y + top);
+        maxY = std::max(maxY, y + bottom);
 
         // Advance to the next character
         x += glyph.advance + letterSpacing;
+    }
+
+    // If we're using outline, update the current bounds
+    if (m_outlineThickness != 0)
+    {
+        float outline = std::abs(std::ceil(m_outlineThickness));
+        minX -= outline;
+        maxX += outline;
+        minY -= outline;
+        maxY += outline;
     }
 
     // If we're using the underlined style, add the last line
