@@ -104,21 +104,61 @@ public:
     Time getElapsedTime() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check whether the clock is running
+    ///
+    /// \return True if the clock is running, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isRunning() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Start the clock
+    ///
+    /// \see stop
+    ///
+    ////////////////////////////////////////////////////////////
+    void start();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop the clock
+    ///
+    /// \see start
+    ///
+    ////////////////////////////////////////////////////////////
+    void stop();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Restart the clock
     ///
-    /// This function puts the time counter back to zero.
-    /// It also returns the time elapsed since the clock was started.
+    /// This function puts the time counter back to zero, returns
+    /// the elapsed time, and leaves the clock in a running state.
     ///
     /// \return Time elapsed
     ///
+    /// \see reset
+    ///
     ////////////////////////////////////////////////////////////
     Time restart();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reset the clock
+    ///
+    /// This function puts the time counter back to zero, returns
+    /// the elapsed time, and leaves the clock in a paused state.
+    ///
+    /// \return Time elapsed
+    ///
+    /// \see restart
+    ///
+    ////////////////////////////////////////////////////////////
+    Time reset();
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    priv::ClockImpl::time_point m_startTime{priv::ClockImpl::now()}; //!< Time of last reset
+    priv::ClockImpl::time_point m_refPoint{priv::ClockImpl::now()}; //!< Time of last reset
+    priv::ClockImpl::time_point m_stopPoint;                        //!< Time of last stop
 };
 
 } // namespace sf
@@ -130,7 +170,7 @@ private:
 ///
 /// sf::Clock is a lightweight class for measuring time.
 ///
-/// Its provides the most precise time that the underlying
+/// It provides the most precise time that the underlying
 /// OS can achieve (generally microseconds or nanoseconds).
 /// It also ensures monotonicity, which means that the returned
 /// time can never go backward, even if the system time is
@@ -143,6 +183,8 @@ private:
 /// Time time1 = clock.getElapsedTime();
 /// ...
 /// Time time2 = clock.restart();
+/// ...
+/// Time time3 = clock.reset();
 /// \endcode
 ///
 /// The sf::Time value returned by the clock can then be

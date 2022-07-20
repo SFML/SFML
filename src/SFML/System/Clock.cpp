@@ -34,17 +34,54 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Time Clock::getElapsedTime() const
 {
-    return std::chrono::duration_cast<std::chrono::microseconds>(priv::ClockImpl::now() - m_startTime);
+    if (isRunning())
+        return std::chrono::duration_cast<std::chrono::microseconds>(priv::ClockImpl::now() - m_refPoint);
+    return std::chrono::duration_cast<std::chrono::microseconds>(m_stopPoint - m_refPoint);
+}
+
+
+////////////////////////////////////////////////////////////
+bool Clock::isRunning() const
+{
+    return m_stopPoint == priv::ClockImpl::time_point();
+}
+
+
+////////////////////////////////////////////////////////////
+void Clock::start()
+{
+    if (!isRunning())
+    {
+        m_refPoint += priv::ClockImpl::now() - m_stopPoint;
+        m_stopPoint = {};
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Clock::stop()
+{
+    if (isRunning())
+        m_stopPoint = priv::ClockImpl::now();
 }
 
 
 ////////////////////////////////////////////////////////////
 Time Clock::restart()
 {
-    const auto now     = priv::ClockImpl::now();
-    const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - m_startTime);
-    m_startTime        = now;
+    const Time elapsed = getElapsedTime();
+    m_refPoint         = priv::ClockImpl::now();
+    m_stopPoint        = {};
+    return elapsed;
+}
 
+
+////////////////////////////////////////////////////////////
+Time Clock::reset()
+{
+    const Time elapsed = getElapsedTime();
+    m_refPoint         = priv::ClockImpl::now();
+    m_stopPoint        = m_refPoint;
     return elapsed;
 }
 
