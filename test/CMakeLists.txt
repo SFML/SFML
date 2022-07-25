@@ -30,6 +30,7 @@ set(SYSTEM_SRC
     System/Err.cpp
     System/FileInputStream.cpp
     System/MemoryInputStream.cpp
+    System/String.cpp
     System/Time.cpp
     System/Vector2.cpp
     System/Vector3.cpp
@@ -43,8 +44,13 @@ target_compile_definitions(test-sfml-system PRIVATE
 )
 
 set(WINDOW_SRC
+    Window/Context.cpp
     Window/ContextSettings.cpp
+    Window/Cursor.cpp
+    Window/GlResource.cpp
     Window/VideoMode.cpp
+    Window/Window.cpp
+    Window/WindowBase.cpp
 )
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
@@ -53,28 +59,54 @@ set(GRAPHICS_SRC
     Graphics/CircleShape.cpp
     Graphics/Color.cpp
     Graphics/ConvexShape.cpp
+    Graphics/Drawable.cpp
+    Graphics/Font.cpp
     Graphics/Glyph.cpp
     Graphics/Image.cpp
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
-    Graphics/Shape.cpp
     Graphics/RenderStates.cpp
+    Graphics/RenderTarget.cpp
+    Graphics/RenderTexture.cpp
+    Graphics/RenderWindow.cpp
+    Graphics/Shader.cpp
+    Graphics/Shape.cpp
+    Graphics/Sprite.cpp
+    Graphics/Text.cpp
+    Graphics/Texture.cpp
     Graphics/Transform.cpp
     Graphics/Transformable.cpp
     Graphics/Vertex.cpp
     Graphics/VertexArray.cpp
+    Graphics/VertexBuffer.cpp
     Graphics/View.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
 set(NETWORK_SRC
+    Network/Ftp.cpp
+    Network/Http.cpp
     Network/IpAddress.cpp
     Network/Packet.cpp
+    Network/Socket.cpp
+    Network/SocketSelector.cpp
+    Network/TcpListener.cpp
+    Network/TcpSocket.cpp
+    Network/UdpSocket.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
 set(AUDIO_SRC
-    Audio/Dummy.cpp # TODO: Remove when there are real tests
+    Audio/AlResource.cpp
+    Audio/InputSoundFile.cpp
+    Audio/Music.cpp
+    Audio/OutputSoundFile.cpp
+    Audio/Sound.cpp
+    Audio/SoundBuffer.cpp
+    Audio/SoundBufferRecorder.cpp
+    Audio/SoundRecorder.cpp
+    Audio/SoundSource.cpp
+    Audio/SoundStream.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 

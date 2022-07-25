@@ -3,6 +3,12 @@
 #include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
+#include <type_traits>
+
+static_assert(std::is_copy_constructible_v<sf::Angle>);
+static_assert(std::is_copy_assignable_v<sf::Angle>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Angle>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Angle>);
 
 TEST_CASE("[System] sf::Angle")
 {

@@ -8,6 +8,11 @@
 // Use sf::Vector3i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
 
+static_assert(std::is_copy_constructible_v<sf::Vector3i>);
+static_assert(std::is_copy_assignable_v<sf::Vector3i>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Vector3i>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Vector3i>);
+
 TEST_CASE("[System] sf::Vector3")
 {
     SUBCASE("Construction")

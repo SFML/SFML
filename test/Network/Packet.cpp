@@ -4,6 +4,12 @@
 
 #include <array>
 #include <limits>
+#include <type_traits>
+
+static_assert(std::is_copy_constructible_v<sf::Packet>);
+static_assert(std::is_copy_assignable_v<sf::Packet>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Packet>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Packet>);
 
 #define CHECK_PACKET_STREAM_OPERATORS(expected)              \
     do                                                       \
