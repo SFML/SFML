@@ -3,7 +3,13 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <type_traits>
 #include <vector>
+
+static_assert(std::is_copy_constructible_v<sf::Color>);
+static_assert(std::is_copy_assignable_v<sf::Color>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Color>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Color>);
 
 TEST_CASE("[Graphics] sf::Color")
 {

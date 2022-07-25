@@ -4,9 +4,15 @@
 
 #include <sstream>
 #include <string_view>
+#include <type_traits>
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
+
+static_assert(std::is_copy_constructible_v<sf::IpAddress>);
+static_assert(std::is_copy_assignable_v<sf::IpAddress>);
+static_assert(std::is_nothrow_move_constructible_v<sf::IpAddress>);
+static_assert(std::is_nothrow_move_assignable_v<sf::IpAddress>);
 
 TEST_CASE("[Network] sf::IpAddress")
 {

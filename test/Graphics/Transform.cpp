@@ -5,7 +5,13 @@
 
 #include <GraphicsUtil.hpp>
 #include <cassert>
+#include <type_traits>
 #include <vector>
+
+static_assert(std::is_copy_constructible_v<sf::Transform>);
+static_assert(std::is_copy_assignable_v<sf::Transform>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Transform>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Transform>);
 
 // Use StringMaker to avoid opening namespace std
 namespace doctest

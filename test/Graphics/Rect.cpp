@@ -4,6 +4,12 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <type_traits>
+
+static_assert(std::is_copy_constructible_v<sf::IntRect>);
+static_assert(std::is_copy_assignable_v<sf::IntRect>);
+static_assert(std::is_nothrow_move_constructible_v<sf::IntRect>);
+static_assert(std::is_nothrow_move_assignable_v<sf::IntRect>);
 
 TEST_CASE("[Graphics] sf::Rect")
 {
