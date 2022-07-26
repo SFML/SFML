@@ -30,6 +30,7 @@
 #include <SFML/Config.hpp>
 
 #include <filesystem>
+#include <string_view>
 
 #if defined(__APPLE__)
 #pragma GCC diagnostic push
@@ -73,7 +74,7 @@ namespace sf::priv
 /// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
+void alCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
 
 ////////////////////////////////////////////////////////////

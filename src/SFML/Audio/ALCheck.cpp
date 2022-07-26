@@ -48,7 +48,7 @@ thread_local ALenum lastError(AL_NO_ERROR);
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
+void alCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
 {
     // Get the last error
     ALenum errorCode = alGetError();
