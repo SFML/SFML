@@ -29,6 +29,17 @@
 #include <SFML/System/Time.hpp>
 
 
+namespace
+{
+[[nodiscard]] sf::Time durationToTime(const std::chrono::nanoseconds& duration)
+{
+    using std::chrono::duration_cast;
+    using std::chrono::microseconds;
+    return sf::microseconds(duration_cast<microseconds>(duration).count());
+}
+} // namespace
+
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -50,15 +61,6 @@ Time Clock::restart()
     m_startTime                         = now;
 
     return elapsed;
-}
-
-
-////////////////////////////////////////////////////////////
-Time Clock::durationToTime(Clock::ClockImpl::duration duration)
-{
-    using std::chrono::duration_cast;
-    using std::chrono::microseconds;
-    return duration_cast<microseconds>(duration);
 }
 
 } // namespace sf

@@ -126,17 +126,6 @@ private:
                   "Clock resolution is too low. Expecting at least a microsecond precision");
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert clock duration to Time
-    ///
-    /// This function acts as a utility for converting clock
-    /// duration type instance into sf::Time
-    ///
-    /// \return Time instance
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static Time durationToTime(ClockImpl::duration duration);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     ClockImpl::time_point m_startTime{ClockImpl::now()}; //!< Time of last reset
