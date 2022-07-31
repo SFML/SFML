@@ -1254,7 +1254,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2folderopen.png');
+    background-image:url('folderopen.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1265,7 +1265,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2folderclosed.png');
+    background-image:url('folderclosed.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1276,7 +1276,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2doc.png');
+    background-image:url('doc.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
