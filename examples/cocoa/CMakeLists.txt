@@ -1,3 +1,5 @@
+enable_language(OBJC OBJCXX)
+
 # Usage: compile_xib(INPUT path/to/file.xib OUTPUT path/to/file.nib)
 function(compile_xib)
     cmake_parse_arguments(THIS "" "INPUT;OUTPUT" "" ${ARGN})
