@@ -136,6 +136,15 @@ void SoundStream::play()
         // If the sound is playing, stop it and continue as if it was stopped
         stop();
     }
+    else if (!isStreaming)
+    {
+        // Either the streaming thread has never been launched or it has been launched and has reached its end.
+        // - If it has reached its end, we have to restart the sound from the beginning.
+        // - If it has never been launched, it is not necessary to move to the beginning, but it is not harmful.
+        // To check if the sound has never been launched would require additional complexity
+        // which we can avoid by moving to the beginning in both cases.
+        onSeek(Time::Zero);
+    }
 
     // Start updating the stream in a separate thread to avoid blocking the application
     m_isStreaming = true;
