@@ -359,7 +359,7 @@ function(sfml_add_external)
 
     cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
     if (THIS_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "Unknown arguments when calling sfml_import_library: ${THIS_UNPARSED_ARGUMENTS}")
+        message(FATAL_ERROR "Unknown arguments when calling sfml_add_external: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
     add_library(${target} INTERFACE)
@@ -400,7 +400,7 @@ function(sfml_find_package)
 
     cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
     if (THIS_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "Unknown arguments when calling sfml_import_library: ${THIS_UNPARSED_ARGUMENTS}")
+        message(FATAL_ERROR "Unknown arguments when calling sfml_find_package: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
     set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
