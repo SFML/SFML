@@ -27,6 +27,12 @@ project(SFML VERSION 3.0.0)
 
 set(VERSION_IS_RELEASE OFF)
 
+# Convert the variable to a C++ boolean value
+set(VERSION_IS_RELEASE_bool false)
+if(VERSION_IS_RELEASE)
+    set(VERSION_IS_RELEASE_bool true)
+endif()
+
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -135,6 +141,10 @@ if(SFML_OS_ANDROID)
     set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
     set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 endif()
+
+# Output variables to the config header
+configure_file(include/SFML/Config.hpp.in configured/include/SFML/Config.hpp @ONLY)
+include_directories("${PROJECT_BINARY_DIR}/configured/include")
 
 # Install directories
 # For miscellaneous files
@@ -301,7 +311,7 @@ endif()
 
 # setup the install rules
 if(NOT SFML_BUILD_FRAMEWORKS)
-    install(DIRECTORY include
+    install(DIRECTORY include "${PROJECT_BINARY_DIR}/configured/"
             DESTINATION .
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
@@ -314,7 +324,8 @@ if(NOT SFML_BUILD_FRAMEWORKS)
     endif()
 else()
     # find only "root" headers
-    file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
+    file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*.hpp")
+    list(APPEND SFML_HEADERS "${PROJECT_BINARY_DIR}/configured/include/SFML/Config.hpp")
 
     # in fact we have to fool cmake to copy all the headers in subdirectories
     # to do that we have to add the "root" headers to the PUBLIC_HEADER
@@ -347,7 +358,7 @@ else()
 
     # add the non-optional SFML headers
     add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
-                       ${PROJECT_SOURCE_DIR}/include/SFML/Config.hpp
+                       ${PROJECT_BINARY_DIR}/configured/include/SFML/Config.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/OpenGL.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/GpuPreference.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/System.hpp

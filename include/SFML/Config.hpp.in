@@ -29,10 +29,12 @@
 ////////////////////////////////////////////////////////////
 // Define the SFML version
 ////////////////////////////////////////////////////////////
-#define SFML_VERSION_MAJOR      3
-#define SFML_VERSION_MINOR      0
-#define SFML_VERSION_PATCH      0
-#define SFML_VERSION_IS_RELEASE false
+// clang-format off
+#define SFML_VERSION_MAJOR @SFML_VERSION_MAJOR@
+#define SFML_VERSION_MINOR @SFML_VERSION_MINOR@
+#define SFML_VERSION_PATCH @SFML_VERSION_PATCH@
+#define SFML_VERSION_IS_RELEASE @VERSION_IS_RELEASE_bool@
+// clang-format on
 
 
 ////////////////////////////////////////////////////////////
