@@ -35,7 +35,7 @@ if(CCACHE_PROGRAM)
 endif()
 
 # include the configuration file
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
+include(cmake/Config.cmake)
 
 # we use the paths from the cmake GNUInstallDirs module as defaults
 # you can override these if you like
