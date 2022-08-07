@@ -50,14 +50,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 
         # don't use the OpenGL ES implementation on Mac OS X
         set(OPENGL_ES 0)
-
-        # detect OS X version. (use '/usr/bin/sw_vers -productVersion' to extract V from '10.V.x'.)
-        exec_program(/usr/bin/sw_vers ARGS -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
-        string(REGEX REPLACE "10\\.([0-9]+).*" "\\1" MACOSX_VERSION "${MACOSX_VERSION_RAW}")
-        if(${MACOSX_VERSION} LESS 7)
-            message(FATAL_ERROR "Unsupported version of OS X: ${MACOSX_VERSION_RAW}")
-            return()
-        endif()
     endif()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
     set(SFML_OS_ANDROID 1)
