@@ -2,8 +2,8 @@
 set(SRC Tennis.cpp)
 if (SFML_OS_IOS)
     set(RESOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/ball.wav
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/tuffy.ttf)
+        resources/ball.wav
+        resources/tuffy.ttf)
     set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 endif()
 
