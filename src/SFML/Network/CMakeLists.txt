@@ -29,14 +29,12 @@ set(SRC
 
 # add platform specific sources
 if(SFML_OS_WINDOWS)
-    set(SRC
-        ${SRC}
+    list(APPEND SRC
         ${SRCROOT}/Win32/SocketImpl.cpp
         ${SRCROOT}/Win32/SocketImpl.hpp
     )
 else()
-    set(SRC
-        ${SRC}
+    list(APPEND SRC
         ${SRCROOT}/Unix/SocketImpl.cpp
         ${SRCROOT}/Unix/SocketImpl.hpp
     )
