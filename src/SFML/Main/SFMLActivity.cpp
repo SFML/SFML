@@ -61,7 +61,7 @@ const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     // Get the value of meta-data named "sfml.app.lib_name"
     jclass    classBundle     = lJNIEnv->FindClass("android/os/Bundle");
     jmethodID methodGetString = lJNIEnv->GetMethodID(classBundle, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring   valueString     = (jstring)lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName);
+    jstring valueString = static_cast<jstring>(lJNIEnv->CallObjectMethod(objectMetaData, methodGetString, objectName));
 
     // No meta-data "sfml.app.lib_name" was found so we abort and inform the user
     if (valueString == nullptr)
@@ -211,8 +211,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     void* handle = loadLibrary(getLibraryName(lJNIEnv, ObjectActivityInfo), lJNIEnv, ObjectActivityInfo);
 
     // Call the original ANativeActivity_onCreate function
-    activityOnCreatePointer ANativeActivity_onCreate = (activityOnCreatePointer)dlsym(handle,
-                                                                                      "ANativeActivity_onCreate");
+    activityOnCreatePointer ANativeActivity_onCreate = reinterpret_cast<activityOnCreatePointer>(
+        dlsym(handle, "ANativeActivity_onCreate"));
 
     if (!ANativeActivity_onCreate)
     {

@@ -36,23 +36,6 @@ function(set_target_warnings target)
         /wd4800 # disable warnings regarding implicit conversions to bool
     )
 
-    # some warnings are not supported on older NDK versions used for CI
-    if (ANDROID)
-        set(NON_ANDROID_CLANG_AND_GCC_WARNINGS "")
-        set(NON_ANDROID_GCC_WARNINGS "")
-    else()
-        set(NON_ANDROID_CLANG_AND_GCC_WARNINGS
-            -Wnull-dereference # warn if a null dereference is detected
-            -Wold-style-cast # warn for c-style casts
-            -Wpedantic # warn if non-standard C++ is used
-        )
-
-        set(NON_ANDROID_GCC_WARNINGS
-            -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
-            -Wduplicated-cond # warn if if / else chain has duplicated conditions
-        )
-    endif()
-
     set(CLANG_AND_GCC_WARNINGS
         -Wall
         -Wextra # reasonable and standard
@@ -67,8 +50,14 @@ function(set_target_warnings target)
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
         -Wimplicit-fallthrough # warn when a missing break causes control flow to continue at the next case in a switch statement
         -Wsuggest-override # warn when 'override' could be used on a member function overriding a virtual function
-        ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
+        -Wnull-dereference # warn if a null dereference is detected
+        -Wold-style-cast # warn for c-style casts
+        -Wpedantic # warn if non-standard C++ is used
     )
+
+    if(ANDROID)
+        set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Wno-main) # allow main() to be called
+    endif()
 
     if(WARNINGS_AS_ERRORS)
         set(CLANG_AND_GCC_WARNINGS ${CLANG_AND_GCC_WARNINGS} -Werror)
@@ -82,7 +71,8 @@ function(set_target_warnings target)
 
     set(GCC_WARNINGS
         ${CLANG_AND_GCC_WARNINGS}
-        ${NON_ANDROID_GCC_WARNINGS}
+        -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
+        -Wduplicated-cond # warn if if / else chain has duplicated conditions
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
         # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some type aliases might vary between platforms)
     )
