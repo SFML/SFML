@@ -50,7 +50,7 @@ else()
     )
 
     if(SFML_OS_ANDROID)
-        set(PLATFORM_SRC ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/Android/Activity.hpp
             ${SRCROOT}/Android/Activity.cpp
             ${SRCROOT}/Android/NativeActivity.cpp
