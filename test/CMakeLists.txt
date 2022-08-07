@@ -21,7 +21,7 @@ target_compile_definitions(sfml-test-main PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIF
 target_link_libraries(sfml-test-main PUBLIC SFML::System doctest::doctest)
 set_target_warnings(sfml-test-main)
 
-SET(SYSTEM_SRC
+set(SYSTEM_SRC
     System/Angle.cpp
     System/Clock.cpp
     System/Config.cpp
@@ -40,13 +40,13 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
-SET(WINDOW_SRC
+set(WINDOW_SRC
     Window/ContextSettings.cpp
     Window/VideoMode.cpp
 )
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
-SET(GRAPHICS_SRC
+set(GRAPHICS_SRC
     Graphics/BlendMode.cpp
     Graphics/CircleShape.cpp
     Graphics/Color.cpp
@@ -65,13 +65,13 @@ SET(GRAPHICS_SRC
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
-SET(NETWORK_SRC
+set(NETWORK_SRC
     Network/IpAddress.cpp
     Network/Packet.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
-SET(AUDIO_SRC
+set(AUDIO_SRC
     Audio/Dummy.cpp # TODO: Remove when there are real tests
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
