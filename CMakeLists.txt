@@ -229,13 +229,6 @@ if(SFML_OS_MACOSX)
         endif()
     endif()
 
-    # only the default x86_64 or arm64 are supported
-    foreach(arch IN LISTS CMAKE_OSX_ARCHITECTURES)
-        if(NOT (arch STREQUAL "x86_64" OR arch STREQUAL "arm64"))
-            message(FATAL_ERROR "Invalid arch ${arch}")
-        endif()
-    endforeach()
-
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
