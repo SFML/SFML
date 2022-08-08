@@ -403,7 +403,6 @@ function(sfml_find_package)
         message(FATAL_ERROR "Unknown arguments when calling sfml_find_package: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
-    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
     if (SFML_OS_IOS)
         find_host_package(${target} REQUIRED)
     else()
