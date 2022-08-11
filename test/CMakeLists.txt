@@ -2,12 +2,16 @@ include(FetchContent)
 
 set(DOCTEST_NO_INSTALL ON)
 FetchContent_Declare(doctest
-    GIT_REPOSITORY "https://github.com/doctest/doctest.git"
+    GIT_REPOSITORY https://github.com/doctest/doctest.git
     GIT_TAG v2.4.9
 )
 FetchContent_MakeAvailable(doctest)
-list(APPEND CMAKE_MODULE_PATH ${doctest_SOURCE_DIR}/scripts/cmake)
-include(doctest)
+include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
+
+# Ensure that doctest sources and headers are not analyzed by any tools
+set_target_properties(doctest_with_main PROPERTIES COMPILE_OPTIONS "" EXPORT_COMPILE_COMMANDS OFF)
+get_target_property(DOCTEST_INCLUDE_DIRS doctest INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(doctest SYSTEM INTERFACE ${DOCTEST_INCLUDE_DIRS})
 
 add_subdirectory(install)
 
