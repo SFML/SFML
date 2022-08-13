@@ -334,10 +334,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_buffer;        //!< Internal buffer identifier
-    std::size_t   m_size;          //!< Size in Vertexes of the currently allocated buffer
-    PrimitiveType m_primitiveType; //!< Type of primitives to draw
-    Usage         m_usage;         //!< How this vertex buffer is to be used
+    unsigned int  m_buffer{0};                            //!< Internal buffer identifier
+    std::size_t   m_size{0};                              //!< Size in Vertexes of the currently allocated buffer
+    PrimitiveType m_primitiveType{PrimitiveType::Points}; //!< Type of primitives to draw
+    Usage         m_usage{Stream};                        //!< How this vertex buffer is to be used
 };
 
 } // namespace sf

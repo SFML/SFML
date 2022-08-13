@@ -230,14 +230,14 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f          m_origin;                     //!< Origin of translation/rotation/scaling of the object
-    Vector2f          m_position;                   //!< Position of the object in the 2D world
-    Angle             m_rotation;                   //!< Orientation of the object
-    Vector2f          m_scale;                      //!< Scale of the object
-    mutable Transform m_transform;                  //!< Combined transformation of the object
-    mutable Transform m_inverseTransform;           //!< Combined transformation of the object
-    mutable bool      m_transformNeedUpdate;        //!< Does the transform need to be recomputed?
-    mutable bool      m_inverseTransformNeedUpdate; //!< Does the transform need to be recomputed?
+    Vector2f          m_origin;                           //!< Origin of translation/rotation/scaling of the object
+    Vector2f          m_position;                         //!< Position of the object in the 2D world
+    Angle             m_rotation;                         //!< Orientation of the object
+    Vector2f          m_scale{1, 1};                      //!< Scale of the object
+    mutable Transform m_transform;                        //!< Combined transformation of the object
+    mutable Transform m_inverseTransform;                 //!< Combined transformation of the object
+    mutable bool      m_transformNeedUpdate{true};        //!< Does the transform need to be recomputed?
+    mutable bool      m_inverseTransformNeedUpdate{true}; //!< Does the transform need to be recomputed?
 };
 
 } // namespace sf

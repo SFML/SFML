@@ -187,10 +187,7 @@ struct Shader::UniformBinder
     /// \brief Constructor: set up state before uniform is set
     ///
     ////////////////////////////////////////////////////////////
-    UniformBinder(Shader& shader, const std::string& name) :
-    savedProgram(0),
-    currentProgram(castToGlHandle(shader.m_shaderProgram)),
-    location(-1)
+    UniformBinder(Shader& shader, const std::string& name) : currentProgram(castToGlHandle(shader.m_shaderProgram))
     {
         if (currentProgram)
         {
@@ -227,17 +224,15 @@ struct Shader::UniformBinder
     ////////////////////////////////////////////////////////////
     UniformBinder& operator=(const UniformBinder&) = delete;
 
-    TransientContextLock lock;           //!< Lock to keep context active while uniform is bound
-    GLEXT_GLhandle       savedProgram;   //!< Handle to the previously active program object
-    GLEXT_GLhandle       currentProgram; //!< Handle to the program object of the modified sf::Shader instance
-    GLint                location;       //!< Uniform location, used by the surrounding sf::Shader code
+    TransientContextLock lock;            //!< Lock to keep context active while uniform is bound
+    GLEXT_GLhandle       savedProgram{0}; //!< Handle to the previously active program object
+    GLEXT_GLhandle       currentProgram;  //!< Handle to the program object of the modified sf::Shader instance
+    GLint                location{-1};    //!< Uniform location, used by the surrounding sf::Shader code
 };
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader() : m_shaderProgram(0), m_currentTexture(-1), m_textures(), m_uniforms()
-{
-}
+Shader::Shader() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -991,9 +986,7 @@ Shader::CurrentTextureType Shader::CurrentTexture;
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader() : m_shaderProgram(0), m_currentTexture(-1)
-{
-}
+Shader::Shader() = default;
 
 
 ////////////////////////////////////////////////////////////

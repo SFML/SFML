@@ -428,20 +428,20 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String                m_string;              //!< String to display
-    const Font*           m_font;                //!< Font used to display the string
-    unsigned int          m_characterSize;       //!< Base size of characters, in pixels
-    float                 m_letterSpacingFactor; //!< Spacing factor between letters
-    float                 m_lineSpacingFactor;   //!< Spacing factor between lines
-    std::uint32_t         m_style;               //!< Text style (see Style enum)
-    Color                 m_fillColor;           //!< Text fill color
-    Color                 m_outlineColor;        //!< Text outline color
-    float                 m_outlineThickness;    //!< Thickness of the text's outline
-    mutable VertexArray   m_vertices;            //!< Vertex array containing the fill geometry
-    mutable VertexArray   m_outlineVertices;     //!< Vertex array containing the outline geometry
-    mutable FloatRect     m_bounds;              //!< Bounding rectangle of the text (in local coordinates)
-    mutable bool          m_geometryNeedUpdate;  //!< Does the geometry need to be recomputed?
-    mutable std::uint64_t m_fontTextureId;       //!< The font texture id
+    String                m_string;                                    //!< String to display
+    const Font*           m_font{nullptr};                             //!< Font used to display the string
+    unsigned int          m_characterSize{30};                         //!< Base size of characters, in pixels
+    float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
+    float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
+    std::uint32_t         m_style{Regular};                            //!< Text style (see Style enum)
+    Color                 m_fillColor{Color::White};                   //!< Text fill color
+    Color                 m_outlineColor{Color::Black};                //!< Text outline color
+    float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
+    mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
+    mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
+    mutable FloatRect     m_bounds;                    //!< Bounding rectangle of the text (in local coordinates)
+    mutable bool          m_geometryNeedUpdate{false}; //!< Does the geometry need to be recomputed?
+    mutable std::uint64_t m_fontTextureId{0};          //!< The font texture id
 };
 
 } // namespace sf

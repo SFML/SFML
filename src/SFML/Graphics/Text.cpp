@@ -94,41 +94,14 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Text::Text() :
-m_string(),
-m_font(nullptr),
-m_characterSize(30),
-m_letterSpacingFactor(1.f),
-m_lineSpacingFactor(1.f),
-m_style(Regular),
-m_fillColor(255, 255, 255),
-m_outlineColor(0, 0, 0),
-m_outlineThickness(0),
-m_vertices(PrimitiveType::Triangles),
-m_outlineVertices(PrimitiveType::Triangles),
-m_bounds(),
-m_geometryNeedUpdate(false),
-m_fontTextureId(0)
-{
-}
+Text::Text() = default;
 
 
 ////////////////////////////////////////////////////////////
 Text::Text(const String& string, const Font& font, unsigned int characterSize) :
 m_string(string),
 m_font(&font),
-m_characterSize(characterSize),
-m_letterSpacingFactor(1.f),
-m_lineSpacingFactor(1.f),
-m_style(Regular),
-m_fillColor(255, 255, 255),
-m_outlineColor(0, 0, 0),
-m_outlineThickness(0),
-m_vertices(PrimitiveType::Triangles),
-m_outlineVertices(PrimitiveType::Triangles),
-m_bounds(),
-m_geometryNeedUpdate(true),
-m_fontTextureId(0)
+m_characterSize(characterSize)
 {
 }
 

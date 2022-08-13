@@ -39,9 +39,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() : m_context(), m_size(0, 0)
-{
-}
+RenderTextureImplDefault::RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////

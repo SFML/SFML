@@ -63,43 +63,29 @@ GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer() : m_buffer(0), m_size(0), m_primitiveType(PrimitiveType::Points), m_usage(Stream)
+VertexBuffer::VertexBuffer() = default;
+
+
+////////////////////////////////////////////////////////////
+VertexBuffer::VertexBuffer(PrimitiveType type) : m_primitiveType(type)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(PrimitiveType type) : m_buffer(0), m_size(0), m_primitiveType(type), m_usage(Stream)
+VertexBuffer::VertexBuffer(VertexBuffer::Usage usage) : m_usage(usage)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(VertexBuffer::Usage usage) :
-m_buffer(0),
-m_size(0),
-m_primitiveType(PrimitiveType::Points),
-m_usage(usage)
+VertexBuffer::VertexBuffer(PrimitiveType type, VertexBuffer::Usage usage) : m_primitiveType(type), m_usage(usage)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(PrimitiveType type, VertexBuffer::Usage usage) :
-m_buffer(0),
-m_size(0),
-m_primitiveType(type),
-m_usage(usage)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(const VertexBuffer& copy) :
-m_buffer(0),
-m_size(0),
-m_primitiveType(copy.m_primitiveType),
-m_usage(copy.m_usage)
+VertexBuffer::VertexBuffer(const VertexBuffer& copy) : m_primitiveType(copy.m_primitiveType), m_usage(copy.m_usage)
 {
     if (copy.m_buffer && copy.m_size)
     {

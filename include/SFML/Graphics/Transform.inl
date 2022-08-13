@@ -24,16 +24,7 @@
 
 
 ////////////////////////////////////////////////////////////
-// clang-format off
-constexpr Transform::Transform()
-    // Identity matrix
-    : m_matrix{1.f, 0.f, 0.f, 0.f,
-               0.f, 1.f, 0.f, 0.f,
-               0.f, 0.f, 1.f, 0.f,
-               0.f, 0.f, 0.f, 1.f}
-{
-}
-// clang-format on
+constexpr Transform::Transform() = default;
 
 
 ////////////////////////////////////////////////////////////

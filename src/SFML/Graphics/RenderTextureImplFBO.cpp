@@ -117,15 +117,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-RenderTextureImplFBO::RenderTextureImplFBO() :
-m_depthStencilBuffer(0),
-m_colorBuffer(0),
-m_size(0, 0),
-m_context(),
-m_textureId(0),
-m_multisample(false),
-m_stencil(false),
-m_sRgb(false)
+RenderTextureImplFBO::RenderTextureImplFBO()
 {
     std::scoped_lock lock(mutex);
 
