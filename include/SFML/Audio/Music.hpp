@@ -56,37 +56,12 @@ public:
     template <typename T>
     struct Span
     {
-        ////////////////////////////////////////////////////////////
-        /// \brief Default constructor
-        ///
-        ////////////////////////////////////////////////////////////
-        Span()
-        {
-        }
-
-        ////////////////////////////////////////////////////////////
-        /// \brief Initialization constructor
-        ///
-        /// \param off Initial Offset
-        /// \param len Initial Length
-        ///
-        ////////////////////////////////////////////////////////////
-        Span(T off, T len) : offset(off), length(len)
-        {
-        }
-
-        T offset; //!< The beginning offset of the time range
-        T length; //!< The length of the time range
+        T offset{}; //!< The beginning offset of the time range
+        T length{}; //!< The length of the time range
     };
 
     // Define the relevant Span types
     using TimeSpan = Span<Time>;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Music();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

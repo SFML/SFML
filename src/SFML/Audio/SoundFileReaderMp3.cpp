@@ -97,7 +97,7 @@ bool SoundFileReaderMp3::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderMp3::SoundFileReaderMp3() : m_io(), m_decoder(), m_numSamples(0), m_position(0)
+SoundFileReaderMp3::SoundFileReaderMp3()
 {
     m_io.read = readCallback;
     m_io.seek = seekCallback;

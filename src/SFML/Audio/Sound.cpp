@@ -36,20 +36,18 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sound::Sound() : m_buffer(nullptr)
-{
-}
+Sound::Sound() = default;
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const SoundBuffer& buffer) : m_buffer(nullptr)
+Sound::Sound(const SoundBuffer& buffer)
 {
     setBuffer(buffer);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const Sound& copy) : SoundSource(copy), m_buffer(nullptr)
+Sound::Sound(const Sound& copy) : SoundSource(copy)
 {
     if (copy.m_buffer)
         setBuffer(*copy.m_buffer);

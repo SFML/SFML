@@ -46,21 +46,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundStream::SoundStream() :
-m_thread(),
-m_threadMutex(),
-m_threadStartState(Stopped),
-m_isStreaming(false),
-m_buffers(),
-m_channelCount(0),
-m_sampleRate(0),
-m_format(0),
-m_loop(false),
-m_samplesProcessed(0),
-m_bufferSeeks(),
-m_processingInterval(milliseconds(10))
-{
-}
+SoundStream::SoundStream() = default;
 
 
 ////////////////////////////////////////////////////////////

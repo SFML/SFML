@@ -219,9 +219,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderFlac::SoundFileReaderFlac() : m_decoder(nullptr), m_clientData()
-{
-}
+SoundFileReaderFlac::SoundFileReaderFlac() = default;
 
 
 ////////////////////////////////////////////////////////////

@@ -109,12 +109,12 @@ public:
     ////////////////////////////////////////////////////////////
     struct ClientData
     {
-        InputStream*              stream;
+        InputStream*              stream{};
         SoundFileReader::Info     info;
-        std::int16_t*             buffer;
-        std::uint64_t             remaining;
+        std::int16_t*             buffer{};
+        std::uint64_t             remaining{};
         std::vector<std::int16_t> leftovers;
-        bool                      error;
+        bool                      error{};
     };
 
 private:
@@ -127,7 +127,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamDecoder* m_decoder;    //!< FLAC decoder
+    FLAC__StreamDecoder* m_decoder{};  //!< FLAC decoder
     ClientData           m_clientData; //!< Structure passed to the decoder callbacks
 };
 

@@ -106,11 +106,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount; // channel count of the sound being written
-    std::ofstream    m_file;         // output file
-    ogg_stream_state m_ogg;          // ogg stream
-    vorbis_info      m_vorbis;       // vorbis handle
-    vorbis_dsp_state m_state;        // current encoding state
+    unsigned int     m_channelCount{}; // channel count of the sound being written
+    std::ofstream    m_file;           // output file
+    ogg_stream_state m_ogg{};          // ogg stream
+    vorbis_info      m_vorbis{};       // vorbis handle
+    vorbis_dsp_state m_state{};        // current encoding state
 };
 
 } // namespace priv

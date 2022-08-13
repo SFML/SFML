@@ -44,7 +44,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer() : m_buffer(0), m_duration()
+SoundBuffer::SoundBuffer()
 {
     // Create the buffer
     alCheck(alGenBuffers(1, &m_buffer));
@@ -53,7 +53,6 @@ SoundBuffer::SoundBuffer() : m_buffer(0), m_duration()
 
 ////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-m_buffer(0),
 m_samples(copy.m_samples),
 m_duration(copy.m_duration),
 m_sounds() // don't copy the attached sounds

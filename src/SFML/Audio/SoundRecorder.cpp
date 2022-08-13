@@ -51,15 +51,7 @@ ALCdevice* captureDevice = nullptr;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundRecorder::SoundRecorder() :
-m_thread(),
-m_sampleRate(0),
-m_processingInterval(milliseconds(100)),
-m_isCapturing(false),
-m_deviceName(getDefaultDevice()),
-m_channelCount(1)
-{
-}
+SoundRecorder::SoundRecorder() = default;
 
 
 ////////////////////////////////////////////////////////////

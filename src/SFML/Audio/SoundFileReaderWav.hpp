@@ -107,10 +107,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputStream*  m_stream;         //!< Source stream to read from
-    unsigned int  m_bytesPerSample; //!< Size of a sample, in bytes
-    std::uint64_t m_dataStart;      //!< Starting position of the audio data in the open file
-    std::uint64_t m_dataEnd;        //!< Position one byte past the end of the audio data in the open file
+    InputStream*  m_stream{};         //!< Source stream to read from
+    unsigned int  m_bytesPerSample{}; //!< Size of a sample, in bytes
+    std::uint64_t m_dataStart{};      //!< Starting position of the audio data in the open file
+    std::uint64_t m_dataEnd{};        //!< Position one byte past the end of the audio data in the open file
 };
 
 } // namespace priv

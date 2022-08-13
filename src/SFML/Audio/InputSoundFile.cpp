@@ -41,14 +41,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-InputSoundFile::StreamDeleter::StreamDeleter(bool theOwned) : owned{theOwned}
+InputSoundFile::StreamDeleter::StreamDeleter(bool theOwned) : owned(theOwned)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-InputSoundFile::StreamDeleter::StreamDeleter(const std::default_delete<T>&) : owned{true}
+InputSoundFile::StreamDeleter::StreamDeleter(const std::default_delete<T>&)
 {
 }
 
@@ -62,15 +62,7 @@ void InputSoundFile::StreamDeleter::operator()(InputStream* ptr) const
 
 
 ////////////////////////////////////////////////////////////
-InputSoundFile::InputSoundFile() :
-m_reader(),
-m_stream(nullptr, false),
-m_sampleOffset(0),
-m_sampleCount(0),
-m_channelCount(0),
-m_sampleRate(0)
-{
-}
+InputSoundFile::InputSoundFile() = default;
 
 
 ////////////////////////////////////////////////////////////

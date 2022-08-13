@@ -48,9 +48,7 @@ bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterOgg::SoundFileWriterOgg() : m_channelCount(0), m_file(), m_ogg(), m_vorbis(), m_state()
-{
-}
+SoundFileWriterOgg::SoundFileWriterOgg() = default;
 
 
 ////////////////////////////////////////////////////////////

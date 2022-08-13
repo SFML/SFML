@@ -49,9 +49,9 @@ public:
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        std::uint64_t sampleCount;  //!< Total number of samples in the file
-        unsigned int  channelCount; //!< Number of channels of the sound
-        unsigned int  sampleRate;   //!< Samples rate of the sound, in samples per second
+        std::uint64_t sampleCount{};  //!< Total number of samples in the file
+        unsigned int  channelCount{}; //!< Number of channels of the sound
+        unsigned int  sampleRate{};   //!< Samples rate of the sound, in samples per second
     };
 
     ////////////////////////////////////////////////////////////

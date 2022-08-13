@@ -126,10 +126,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mp3dec_io_t   m_io;
-    mp3dec_ex_t   m_decoder;
-    std::uint64_t m_numSamples; // Decompressed audio storage size
-    std::uint64_t m_position;   // Position in decompressed audio buffer
+    mp3dec_io_t   m_io{};
+    mp3dec_ex_t   m_decoder{};
+    std::uint64_t m_numSamples{}; // Decompressed audio storage size
+    std::uint64_t m_position{};   // Position in decompressed audio buffer
 };
 
 } // namespace priv
