@@ -35,7 +35,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Socket::Socket(Type type) : m_type(type), m_socket(priv::SocketImpl::invalidSocket()), m_isBlocking(true)
+Socket::Socket(Type type) : m_type(type), m_socket(priv::SocketImpl::invalidSocket())
 {
 }
 
