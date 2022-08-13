@@ -43,19 +43,11 @@ class SFML_GRAPHICS_API Glyph
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Glyph() : advance(0), lsbDelta(0), rsbDelta(0)
-    {
-    }
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float     advance;     //!< Offset to move horizontally to the next character
-    int       lsbDelta;    //!< Left offset after forced autohint. Internally used by getKerning()
-    int       rsbDelta;    //!< Right offset after forced autohint. Internally used by getKerning()
+    float     advance{0};  //!< Offset to move horizontally to the next character
+    int       lsbDelta{0}; //!< Left offset after forced autohint. Internally used by getKerning()
+    int       rsbDelta{0}; //!< Right offset after forced autohint. Internally used by getKerning()
     FloatRect bounds;      //!< Bounding rectangle of the glyph, in coordinates relative to the baseline
     IntRect   textureRect; //!< Texture coordinates of the glyph inside the font's texture
 };

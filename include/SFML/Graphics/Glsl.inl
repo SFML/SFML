@@ -95,9 +95,7 @@ struct Vector4
     /// \brief Default constructor, creates a zero vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4() : x(0), y(0), z(0), w(0)
-    {
-    }
+    Vector4() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from 4 vector components
@@ -142,13 +140,12 @@ struct Vector4
     ///
     ////////////////////////////////////////////////////////////
     Vector4(const Color& color)
-    // uninitialized
     {
         copyVector(color, *this);
     }
 
-    T x; //!< 1st component (X) of the 4D vector
-    T y; //!< 2nd component (Y) of the 4D vector
-    T z; //!< 3rd component (Z) of the 4D vector
-    T w; //!< 4th component (W) of the 4D vector
+    T x{0}; //!< 1st component (X) of the 4D vector
+    T y{0}; //!< 2nd component (Y) of the 4D vector
+    T z{0}; //!< 3rd component (Z) of the 4D vector
+    T w{0}; //!< 4th component (W) of the 4D vector
 };

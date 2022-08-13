@@ -336,13 +336,13 @@ private:
     ////////////////////////////////////////////////////////////
     struct Row
     {
-        Row(unsigned int rowTop, unsigned int rowHeight) : width(0), top(rowTop), height(rowHeight)
+        Row(unsigned int rowTop, unsigned int rowHeight) : top(rowTop), height(rowHeight)
         {
         }
 
-        unsigned int width;  //!< Current width of the row
-        unsigned int top;    //!< Y position of the row into the texture
-        unsigned int height; //!< Height of the row
+        unsigned int width{0}; //!< Current width of the row
+        unsigned int top;      //!< Y position of the row into the texture
+        unsigned int height;   //!< Height of the row
     };
 
     ////////////////////////////////////////////////////////////
@@ -423,10 +423,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::shared_ptr<FontHandles> m_fontHandles; //!< Shared information about the internal font instance
-    bool                         m_isSmooth;    //!< Status of the smooth filter
-    Info                         m_info;        //!< Information about the font
-    mutable PageTable            m_pages;       //!< Table containing the glyphs pages by character size
+    std::shared_ptr<FontHandles> m_fontHandles;    //!< Shared information about the internal font instance
+    bool                         m_isSmooth{true}; //!< Status of the smooth filter
+    Info                         m_info;           //!< Information about the font
+    mutable PageTable            m_pages;          //!< Table containing the glyphs pages by character size
     mutable std::vector<std::uint8_t> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
 #ifdef SFML_SYSTEM_ANDROID
     std::unique_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)

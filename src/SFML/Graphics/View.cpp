@@ -33,39 +33,21 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-View::View() :
-m_center(),
-m_size(),
-m_rotation(),
-m_viewport({0, 0}, {1, 1}),
-m_transformUpdated(false),
-m_invTransformUpdated(false)
+View::View()
 {
     reset(FloatRect({0, 0}, {1000, 1000}));
 }
 
 
 ////////////////////////////////////////////////////////////
-View::View(const FloatRect& rectangle) :
-m_center(),
-m_size(),
-m_rotation(),
-m_viewport({0, 0}, {1, 1}),
-m_transformUpdated(false),
-m_invTransformUpdated(false)
+View::View(const FloatRect& rectangle)
 {
     reset(rectangle);
 }
 
 
 ////////////////////////////////////////////////////////////
-View::View(const Vector2f& center, const Vector2f& size) :
-m_center(center),
-m_size(size),
-m_rotation(),
-m_viewport({0, 0}, {1, 1}),
-m_transformUpdated(false),
-m_invTransformUpdated(false)
+View::View(const Vector2f& center, const Vector2f& size) : m_center(center), m_size(size)
 {
 }
 

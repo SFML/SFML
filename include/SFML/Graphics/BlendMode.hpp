@@ -117,12 +117,12 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////////
     // Member Data
     ////////////////////////////////////////////////////////////
-    Factor   colorSrcFactor; //!< Source blending factor for the color channels
-    Factor   colorDstFactor; //!< Destination blending factor for the color channels
-    Equation colorEquation;  //!< Blending equation for the color channels
-    Factor   alphaSrcFactor; //!< Source blending factor for the alpha channel
-    Factor   alphaDstFactor; //!< Destination blending factor for the alpha channel
-    Equation alphaEquation;  //!< Blending equation for the alpha channel
+    Factor   colorSrcFactor{BlendMode::SrcAlpha};         //!< Source blending factor for the color channels
+    Factor   colorDstFactor{BlendMode::OneMinusSrcAlpha}; //!< Destination blending factor for the color channels
+    Equation colorEquation{BlendMode::Add};               //!< Blending equation for the color channels
+    Factor   alphaSrcFactor{BlendMode::One};              //!< Source blending factor for the alpha channel
+    Factor   alphaDstFactor{BlendMode::OneMinusSrcAlpha}; //!< Destination blending factor for the alpha channel
+    Equation alphaEquation{BlendMode::Add};               //!< Blending equation for the alpha channel
 };
 
 ////////////////////////////////////////////////////////////

@@ -149,18 +149,7 @@ FloatRect Shape::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-Shape::Shape() :
-m_texture(nullptr),
-m_textureRect(),
-m_fillColor(255, 255, 255),
-m_outlineColor(255, 255, 255),
-m_outlineThickness(0),
-m_vertices(PrimitiveType::TriangleFan),
-m_outlineVertices(PrimitiveType::TriangleStrip),
-m_insideBounds(),
-m_bounds()
-{
-}
+Shape::Shape() = default;
 
 
 ////////////////////////////////////////////////////////////

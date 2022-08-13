@@ -33,17 +33,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Transformable::Transformable() :
-m_origin(0, 0),
-m_position(0, 0),
-m_rotation(),
-m_scale(1, 1),
-m_transform(),
-m_inverseTransform(),
-m_transformNeedUpdate(true),
-m_inverseTransformNeedUpdate(true)
-{
-}
+Transformable::Transformable() = default;
 
 
 ////////////////////////////////////////////////////////////

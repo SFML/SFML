@@ -266,7 +266,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float m_matrix[16]; //!< 4x4 matrix defining the transformation
+    // clang-format off
+    float m_matrix[16]{1.f, 0.f, 0.f, 0.f,
+                       0.f, 1.f, 0.f, 0.f,
+                       0.f, 0.f, 1.f, 0.f,
+                       0.f, 0.f, 0.f, 1.f}; //!< 4x4 matrix defining the transformation
+    // clang-format off
 };
 
 ////////////////////////////////////////////////////////////

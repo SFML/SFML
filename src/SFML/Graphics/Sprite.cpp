@@ -35,20 +35,18 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite() : m_texture(nullptr), m_textureRect()
-{
-}
+Sprite::Sprite() = default;
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture) : m_texture(nullptr), m_textureRect()
+Sprite::Sprite(const Texture& texture)
 {
     setTexture(texture, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(nullptr), m_textureRect()
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
 {
     // Compute the texture area
     setTextureRect(rectangle);

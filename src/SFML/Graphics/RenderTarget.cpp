@@ -147,10 +147,7 @@ std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderTarget::RenderTarget() : m_defaultView(), m_view(), m_cache(), m_id(0)
-{
-    m_cache.glStatesSet = false;
-}
+RenderTarget::RenderTarget() = default;
 
 
 ////////////////////////////////////////////////////////////

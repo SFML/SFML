@@ -65,32 +65,16 @@ std::uint64_t getUniqueId()
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Texture::Texture() :
-m_size(0, 0),
-m_actualSize(0, 0),
-m_texture(0),
-m_isSmooth(false),
-m_sRgb(false),
-m_isRepeated(false),
-m_pixelsFlipped(false),
-m_fboAttachment(false),
-m_hasMipmap(false),
-m_cacheId(TextureImpl::getUniqueId())
+Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
-m_size(0, 0),
-m_actualSize(0, 0),
-m_texture(0),
 m_isSmooth(copy.m_isSmooth),
 m_sRgb(copy.m_sRgb),
 m_isRepeated(copy.m_isRepeated),
-m_pixelsFlipped(false),
-m_fboAttachment(false),
-m_hasMipmap(false),
 m_cacheId(TextureImpl::getUniqueId())
 {
     if (copy.m_texture)
