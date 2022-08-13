@@ -233,18 +233,18 @@ private:
 
         void operator()(InputStream* ptr) const;
 
-        bool owned;
+        bool owned{true};
     };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::unique_ptr<SoundFileReader>            m_reader;       //!< Reader that handles I/O on the file's format
-    std::unique_ptr<InputStream, StreamDeleter> m_stream;       //!< Input stream used to access the file's data
-    std::uint64_t                               m_sampleOffset; //!< Sample Read Position
-    std::uint64_t                               m_sampleCount;  //!< Total number of samples in the file
-    unsigned int                                m_channelCount; //!< Number of channels of the sound
-    unsigned int                                m_sampleRate;   //!< Number of samples per second
+    std::unique_ptr<SoundFileReader>            m_reader; //!< Reader that handles I/O on the file's format
+    std::unique_ptr<InputStream, StreamDeleter> m_stream{nullptr, false}; //!< Input stream used to access the file's data
+    std::uint64_t                               m_sampleOffset{};         //!< Sample Read Position
+    std::uint64_t                               m_sampleCount{};          //!< Total number of samples in the file
+    unsigned int                                m_channelCount{};         //!< Number of channels of the sound
+    unsigned int                                m_sampleRate{};           //!< Number of samples per second
 };
 
 } // namespace sf

@@ -336,18 +336,18 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::thread                  m_thread;               //!< Thread running the background tasks
-    mutable std::recursive_mutex m_threadMutex;          //!< Thread mutex
-    Status                       m_threadStartState;     //!< State the thread starts in (Playing, Paused, Stopped)
-    bool                         m_isStreaming;          //!< Streaming state (true = playing, false = stopped)
-    unsigned int                 m_buffers[BufferCount]; //!< Sound buffers used to store temporary audio data
-    unsigned int                 m_channelCount;         //!< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int                 m_sampleRate;           //!< Frequency (samples / second)
-    std::int32_t                 m_format;               //!< Format of the internal sound buffers
-    bool                         m_loop;                 //!< Loop flag (true to loop, false to play once)
-    std::uint64_t                m_samplesProcessed;     //!< Number of samples processed since beginning of the stream
-    std::int64_t                 m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
-    Time m_processingInterval; //!< Interval for checking and filling the internal sound buffers.
+    std::thread                  m_thread;                    //!< Thread running the background tasks
+    mutable std::recursive_mutex m_threadMutex;               //!< Thread mutex
+    Status                       m_threadStartState{Stopped}; //!< State the thread starts in (Playing, Paused, Stopped)
+    bool                         m_isStreaming{};             //!< Streaming state (true = playing, false = stopped)
+    unsigned int                 m_buffers[BufferCount]{};    //!< Sound buffers used to store temporary audio data
+    unsigned int                 m_channelCount{};            //!< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int                 m_sampleRate{};              //!< Frequency (samples / second)
+    std::int32_t                 m_format{};                  //!< Format of the internal sound buffers
+    bool                         m_loop{};                    //!< Loop flag (true to loop, false to play once)
+    std::uint64_t                m_samplesProcessed{}; //!< Number of samples processed since beginning of the stream
+    std::int64_t                 m_bufferSeeks[BufferCount]{}; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    Time m_processingInterval{milliseconds(10)}; //!< Interval for checking and filling the internal sound buffers.
 };
 
 } // namespace sf

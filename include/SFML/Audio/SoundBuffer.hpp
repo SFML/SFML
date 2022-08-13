@@ -274,7 +274,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int              m_buffer;   //!< OpenAL buffer identifier
+    unsigned int              m_buffer{}; //!< OpenAL buffer identifier
     std::vector<std::int16_t> m_samples;  //!< Samples buffer
     Time                      m_duration; //!< Sound duration
     mutable SoundList         m_sounds;   //!< List of sounds that are using this buffer

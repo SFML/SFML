@@ -42,12 +42,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Music::Music() : m_file(), m_loopSpan(0, 0)
-{
-}
-
-
-////////////////////////////////////////////////////////////
 Music::~Music()
 {
     // We must stop before destroying the file
@@ -116,14 +110,14 @@ Time Music::getDuration() const
 ////////////////////////////////////////////////////////////
 Music::TimeSpan Music::getLoopPoints() const
 {
-    return TimeSpan(samplesToTime(m_loopSpan.offset), samplesToTime(m_loopSpan.length));
+    return TimeSpan{samplesToTime(m_loopSpan.offset), samplesToTime(m_loopSpan.length)};
 }
 
 
 ////////////////////////////////////////////////////////////
 void Music::setLoopPoints(TimeSpan timePoints)
 {
-    Span<std::uint64_t> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
+    Span<std::uint64_t> samplePoints{timeToSamples(timePoints.offset), timeToSamples(timePoints.length)};
 
     // Check our state. This averts a divide-by-zero. GetChannelCount() is cheap enough to use often
     if (getChannelCount() == 0 || m_file.getSampleCount() == 0)

@@ -74,9 +74,7 @@ bool SoundFileWriterWav::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterWav::SoundFileWriterWav() : m_file()
-{
-}
+SoundFileWriterWav::SoundFileWriterWav() = default;
 
 
 ////////////////////////////////////////////////////////////

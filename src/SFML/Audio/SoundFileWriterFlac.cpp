@@ -47,9 +47,7 @@ bool SoundFileWriterFlac::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterFlac::SoundFileWriterFlac() : m_encoder(nullptr), m_channelCount(0), m_samples32()
-{
-}
+SoundFileWriterFlac::SoundFileWriterFlac() = default;
 
 
 ////////////////////////////////////////////////////////////

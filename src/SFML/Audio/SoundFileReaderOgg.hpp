@@ -113,8 +113,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    OggVorbis_File m_vorbis;       // ogg/vorbis file handle
-    unsigned int   m_channelCount; // number of channels of the open sound file
+    OggVorbis_File m_vorbis{};       // ogg/vorbis file handle
+    unsigned int   m_channelCount{}; // number of channels of the open sound file
 };
 
 } // namespace priv
