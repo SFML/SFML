@@ -38,7 +38,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-UdpSocket::UdpSocket() : Socket(Type::Udp), m_buffer(MaxDatagramSize)
+UdpSocket::UdpSocket() : Socket(Type::Udp)
 {
 }
 

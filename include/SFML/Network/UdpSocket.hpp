@@ -199,7 +199,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::vector<char> m_buffer; //!< Temporary buffer holding the received data in Receive(Packet)
+    std::vector<char> m_buffer{std::vector<char>(MaxDatagramSize)}; //!< Temporary buffer holding the received data in Receive(Packet)
 };
 
 } // namespace sf

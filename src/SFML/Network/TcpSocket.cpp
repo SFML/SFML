@@ -425,10 +425,4 @@ Socket::Status TcpSocket::receive(Packet& packet)
     return Status::Done;
 }
 
-
-////////////////////////////////////////////////////////////
-TcpSocket::PendingPacket::PendingPacket() : Size(0), SizeReceived(0), Data()
-{
-}
-
 } // namespace sf

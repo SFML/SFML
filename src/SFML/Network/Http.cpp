@@ -141,12 +141,6 @@ bool Http::Request::hasField(const std::string& field) const
 
 
 ////////////////////////////////////////////////////////////
-Http::Response::Response() : m_status(Status::ConnectionFailed), m_majorVersion(0), m_minorVersion(0)
-{
-}
-
-
-////////////////////////////////////////////////////////////
 const std::string& Http::Response::getField(const std::string& field) const
 {
     if (auto it = m_fields.find(toLower(field)); it != m_fields.end())
@@ -292,9 +286,7 @@ void Http::Response::parseFields(std::istream& in)
 
 
 ////////////////////////////////////////////////////////////
-Http::Http() : m_host(), m_port(0)
-{
-}
+Http::Http() = default;
 
 
 ////////////////////////////////////////////////////////////
