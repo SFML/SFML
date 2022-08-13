@@ -94,7 +94,7 @@ CFDictionaryRef HIDInputManager::copyDevicesMask(UInt32 page, UInt32 usage)
 
 
 ////////////////////////////////////////////////////////////
-HIDInputManager::HIDInputManager() : m_isValid(true), m_layoutData(0), m_layout(0), m_manager(0)
+HIDInputManager::HIDInputManager()
 {
     // Get the current keyboard layout
     TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource();

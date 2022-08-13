@@ -41,14 +41,6 @@ namespace
 {
 struct VulkanLibraryWrapper
 {
-    VulkanLibraryWrapper() :
-    library(nullptr),
-    vkGetInstanceProcAddr(nullptr),
-    vkEnumerateInstanceLayerProperties(nullptr),
-    vkEnumerateInstanceExtensionProperties(nullptr)
-    {
-    }
-
     ~VulkanLibraryWrapper()
     {
         if (library)
@@ -98,11 +90,11 @@ struct VulkanLibraryWrapper
         return (entryPoint != nullptr);
     }
 
-    void* library;
+    void* library{nullptr};
 
-    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr;
-    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties;
-    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr{nullptr};
+    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties{nullptr};
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties{nullptr};
 };
 
 VulkanLibraryWrapper wrapper;

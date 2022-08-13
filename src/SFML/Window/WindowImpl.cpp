@@ -115,7 +115,7 @@ std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>()), m_joystickThreshold(0.1f)
+WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>())
 {
     // Get the initial joystick states
     JoystickManager::getInstance().update();

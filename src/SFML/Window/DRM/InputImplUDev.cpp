@@ -47,13 +47,9 @@ namespace
 {
 struct TouchSlot
 {
-    int          oldId;
-    int          id;
+    int          oldId{-1};
+    int          id{-1};
     sf::Vector2i pos;
-
-    TouchSlot() : oldId(-1), id(-1), pos(0, 0)
-    {
-    }
 };
 
 std::recursive_mutex inputMutex; // threadsafe? maybe...

@@ -38,7 +38,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/) : m_size(0, 0)
+WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
 {
     sf::priv::InputImpl::setTerminalConfig();
 }

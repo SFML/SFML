@@ -35,12 +35,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl()
-{
-}
-
-
-////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
     return false;

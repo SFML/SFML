@@ -75,11 +75,9 @@ public:
     ////////////////////////////////////////////////////////////
     struct SFML_WINDOW_API Identification
     {
-        Identification();
-
-        String       name;      //!< Name of the joystick
-        unsigned int vendorId;  //!< Manufacturer identifier
-        unsigned int productId; //!< Product identifier
+        String       name{"No Joystick"}; //!< Name of the joystick
+        unsigned int vendorId{0};         //!< Manufacturer identifier
+        unsigned int productId{0};        //!< Product identifier
     };
 
     ////////////////////////////////////////////////////////////

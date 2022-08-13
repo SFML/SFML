@@ -435,7 +435,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-JoystickImpl::JoystickImpl() : m_file(-1)
+JoystickImpl::JoystickImpl()
 {
     std::fill(m_mapping, m_mapping + ABS_MAX + 1, 0);
 }

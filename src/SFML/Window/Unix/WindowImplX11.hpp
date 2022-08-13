@@ -297,25 +297,25 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window   m_window;       ///< X identifier defining our window
-    ::Display* m_display;      ///< Pointer to the display
-    int        m_screen;       ///< Screen identifier
-    XIM        m_inputMethod;  ///< Input method linked to the X display
-    XIC        m_inputContext; ///< Input context used to get unicode input in our window
-    bool       m_isExternal;   ///< Tell whether the window has been created externally or by SFML
-    RRMode     m_oldVideoMode; ///< Video mode in use before we switch to fullscreen
-    RRCrtc     m_oldRRCrtc;    ///< RRCrtc in use before we switch to fullscreen
-    ::Cursor   m_hiddenCursor; ///< As X11 doesn't provide cursor hiding, we must create a transparent one
-    ::Cursor m_lastCursor; ///< Last cursor used -- this data is not owned by the window and is required to be always valid
-    bool     m_keyRepeat; ///< Is the KeyRepeat feature enabled?
-    Vector2i m_previousSize; ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
-    bool     m_useSizeHints;   ///< Is the size of the window fixed with size hints?
-    bool     m_fullscreen;     ///< Is the window in fullscreen?
-    bool     m_cursorGrabbed;  ///< Is the mouse cursor trapped?
-    bool     m_windowMapped;   ///< Has the window been mapped by the window manager?
-    Pixmap   m_iconPixmap;     ///< The current icon pixmap if in use
-    Pixmap   m_iconMaskPixmap; ///< The current icon mask pixmap if in use
-    ::Time   m_lastInputTime;  ///< Last time we received user input
+    ::Window   m_window{0};             ///< X identifier defining our window
+    ::Display* m_display;               ///< Pointer to the display
+    int        m_screen;                ///< Screen identifier
+    XIM        m_inputMethod{nullptr};  ///< Input method linked to the X display
+    XIC        m_inputContext{nullptr}; ///< Input context used to get unicode input in our window
+    bool       m_isExternal;            ///< Tell whether the window has been created externally or by SFML
+    RRMode     m_oldVideoMode{0};       ///< Video mode in use before we switch to fullscreen
+    RRCrtc     m_oldRRCrtc{0};          ///< RRCrtc in use before we switch to fullscreen
+    ::Cursor   m_hiddenCursor{0};       ///< As X11 doesn't provide cursor hiding, we must create a transparent one
+    ::Cursor m_lastCursor{None}; ///< Last cursor used -- this data is not owned by the window and is required to be always valid
+    bool     m_keyRepeat{true}; ///< Is the KeyRepeat feature enabled?
+    Vector2i m_previousSize{-1, -1}; ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    bool     m_useSizeHints{false};  ///< Is the size of the window fixed with size hints?
+    bool     m_fullscreen{false};    ///< Is the window in fullscreen?
+    bool     m_cursorGrabbed{false}; ///< Is the mouse cursor trapped?
+    bool     m_windowMapped{false};  ///< Has the window been mapped by the window manager?
+    Pixmap   m_iconPixmap{0};        ///< The current icon pixmap if in use
+    Pixmap   m_iconMaskPixmap{0};    ///< The current icon mask pixmap if in use
+    ::Time   m_lastInputTime{0};     ///< Last time we received user input
 };
 
 } // namespace priv

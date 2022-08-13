@@ -42,9 +42,8 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() : m_display(openDisplay()), m_cursor(None)
+CursorImpl::CursorImpl() : m_display(openDisplay())
 {
-    // That's it.
 }
 
 

@@ -116,12 +116,7 @@ WglContext::WglContext(WglContext* shared) : WglContext(shared, ContextSettings(
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_window(nullptr),
-m_pbuffer(nullptr),
-m_deviceContext(nullptr),
-m_context(nullptr),
-m_ownsWindow(false)
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
     WglContextImpl::ensureInit();
 
@@ -137,12 +132,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const Vector2u& size) :
-m_window(nullptr),
-m_pbuffer(nullptr),
-m_deviceContext(nullptr),
-m_context(nullptr),
-m_ownsWindow(false)
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const Vector2u& size)
 {
     WglContextImpl::ensureInit();
 

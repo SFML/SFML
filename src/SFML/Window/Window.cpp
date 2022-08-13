@@ -37,22 +37,18 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Window::Window() : m_context(), m_frameTimeLimit(Time::Zero)
-{
-}
+Window::Window() = default;
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings) :
-m_context(),
-m_frameTimeLimit(Time::Zero)
+Window::Window(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
 {
     Window::create(mode, title, style, settings);
 }
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(WindowHandle handle, const ContextSettings& settings) : m_context(), m_frameTimeLimit(Time::Zero)
+Window::Window(WindowHandle handle, const ContextSettings& settings)
 {
     Window::create(handle, settings);
 }

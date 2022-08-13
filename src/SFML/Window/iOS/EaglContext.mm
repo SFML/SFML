@@ -93,13 +93,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* shared) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
 {
     ensureInit();
 
@@ -114,12 +108,7 @@ m_clock()
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+m_context(nil)
 {
     ensureInit();
 
@@ -131,12 +120,7 @@ m_clock()
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, const Vector2u& /* size */) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+m_context(nil)
 {
     ensureInit();
 

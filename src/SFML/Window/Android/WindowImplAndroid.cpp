@@ -52,11 +52,7 @@ namespace priv
 WindowImplAndroid* WindowImplAndroid::singleInstance = nullptr;
 
 ////////////////////////////////////////////////////////////
-WindowImplAndroid::WindowImplAndroid(WindowHandle /* handle */) :
-m_size(0, 0),
-m_windowBeingCreated(false),
-m_windowBeingDestroyed(false),
-m_hasFocus(false)
+WindowImplAndroid::WindowImplAndroid(WindowHandle /* handle */)
 {
 }
 
@@ -66,10 +62,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const String& /* title */,
                                      unsigned long style,
                                      const ContextSettings& /* settings */) :
-m_size(mode.size),
-m_windowBeingCreated(false),
-m_windowBeingDestroyed(false),
-m_hasFocus(false)
+m_size(mode.size)
 {
     ActivityStates&  states = getActivity();
     std::scoped_lock lock(states.mutex);

@@ -125,7 +125,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     ::Display* m_display;
-    ::Cursor   m_cursor;
+    ::Cursor   m_cursor{None};
 };
 
 } // namespace priv
