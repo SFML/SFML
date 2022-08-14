@@ -7,32 +7,107 @@ FetchContent_Declare(doctest
 )
 FetchContent_MakeAvailable(doctest)
 
-add_library(sfml-test-main STATIC
-    DoctestMain.cpp
-    TestUtilities/SystemUtil.hpp
-    TestUtilities/SystemUtil.cpp
-    TestUtilities/WindowUtil.hpp
-    TestUtilities/WindowUtil.cpp
-    TestUtilities/GraphicsUtil.hpp
-    TestUtilities/GraphicsUtil.cpp
-)
-target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_compile_definitions(sfml-test-main PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIFICATION_FOR_ALL_USED_TYPES)
-target_link_libraries(sfml-test-main PUBLIC SFML::System doctest::doctest)
-set_target_warnings(sfml-test-main)
+# add a new static library which provides a main function and testing utilities for SFML types
+# example: sfml_add_test_utils(sfml-window-test-utils
+#                              SOURCES TestUtilities/WindowUtil.hpp TestUtilities/WindowUtil.cpp
+#                              DEPENDS SFML::Window sfml-system-test-utils)
+function(sfml_add_test_utils target)
 
-SET(SYSTEM_SRC
-    System/Angle.cpp
-    System/Clock.cpp
-    System/Config.cpp
-    System/Err.cpp
-    System/FileInputStream.cpp
-    System/MemoryInputStream.cpp
-    System/Time.cpp
-    System/Vector2.cpp
-    System/Vector3.cpp
+    # parse the arguments
+    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS" ${ARGN})
+    if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_test_utils: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
+
+    # set a source group for the source files
+    source_group("" FILES ${THIS_SOURCES})
+
+    # create the target
+    add_library(${target} STATIC ${THIS_SOURCES})
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Tests/Utilities")
+
+    # link the target to its dependencies
+    target_link_libraries(${target} PUBLIC ${THIS_DEPENDS})
+
+    set_target_warnings(${target})
+endfunction()
+
+# add a new target which is a test executable for an SFML module
+# example: sfml_add_test(Network
+#                        SOURCES ftp.cpp ...
+#                        DEPENDS SFML::Network sfml-system-test-utils)
+function(sfml_add_test module)
+
+    # parse the arguments
+    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS" ${ARGN})
+    if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_test: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
+
+    # set a source group for the source files
+    source_group("" FILES ${THIS_SOURCES})
+
+    # create the target
+    string(TOLOWER test-sfml-${module} target)
+    add_executable(${target} ${THIS_SOURCES})
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Tests")
+
+    # link the target to its dependencies
+    target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
+
+    set_target_warnings(${target})
+
+    # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
+    # to make sure the linker doesn't discard unused code sections in the module under test
+    # before coverage can be measured
+    if (SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC AND NOT BUILD_SHARED_LIBS)
+        target_link_options(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:SFML::${module}>>)
+    endif()
+
+    # Add the test
+    add_test(${target} ${target})
+
+    # Require this test to be built before automatically running tests
+    add_dependencies(runtests ${target})
+
+    # If building shared libs on windows we must copy the library under test into the folder
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        add_custom_command(TARGET ${target} PRE_BUILD
+                           COMMAND ${CMAKE_COMMAND} -E copy
+                           $<TARGET_FILE:SFML::${module}>
+                           $<TARGET_FILE_DIR:${target}>)
+    endif()
+endfunction()
+
+# Target to automatically run the tests at the end of the build
+# Its dependencies are added by sfml_add_test for enabled modules
+add_custom_target(runtests ALL)
+
+# System module is always built
+sfml_add_test_utils(sfml-system-test-utils
+    SOURCES DoctestMain.cpp
+            TestUtilities/SystemUtil.hpp
+            TestUtilities/SystemUtil.cpp
+    DEPENDS SFML::System doctest::doctest
 )
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
+target_include_directories(sfml-system-test-utils PUBLIC TestUtilities)
+target_compile_definitions(sfml-system-test-utils PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIFICATION_FOR_ALL_USED_TYPES)
+
+sfml_add_test(System
+    SOURCES System/Angle.cpp
+            System/Clock.cpp
+            System/Err.cpp
+            System/FileInputStream.cpp
+            System/MemoryInputStream.cpp
+            System/Time.cpp
+            System/Vector2.cpp
+            System/Vector3.cpp
+    DEPENDS sfml-system-test-utils
+)
 target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_MAJOR=${SFML_VERSION_MAJOR}
     EXPECTED_SFML_VERSION_MINOR=${SFML_VERSION_MINOR}
@@ -40,46 +115,61 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
-SET(WINDOW_SRC
-    Window/ContextSettings.cpp
-    Window/VideoMode.cpp
-)
-sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
+if(SFML_BUILD_WINDOW)
+    sfml_add_test_utils(sfml-window-test-utils
+        SOURCES TestUtilities/WindowUtil.hpp
+                TestUtilities/WindowUtil.cpp
+        DEPENDS SFML::Window sfml-system-test-utils
+    )
 
-SET(GRAPHICS_SRC
-    Graphics/BlendMode.cpp
-    Graphics/CircleShape.cpp
-    Graphics/Color.cpp
-    Graphics/ConvexShape.cpp
-    Graphics/Glyph.cpp
-    Graphics/Image.cpp
-    Graphics/Rect.cpp
-    Graphics/RectangleShape.cpp
-    Graphics/Shape.cpp
-    Graphics/RenderStates.cpp
-    Graphics/Transform.cpp
-    Graphics/Transformable.cpp
-    Graphics/Vertex.cpp
-    Graphics/VertexArray.cpp
-    Graphics/View.cpp
-)
-sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
+    sfml_add_test(Window
+        SOURCES Window/ContextSettings.cpp
+                Window/VideoMode.cpp
+        DEPENDS sfml-window-test-utils
+    )
+endif()
 
-SET(NETWORK_SRC
-    Network/IpAddress.cpp
-    Network/Packet.cpp
-)
-sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
+if(SFML_BUILD_GRAPHICS)
+    sfml_add_test_utils(sfml-graphics-test-utils
+        SOURCES TestUtilities/GraphicsUtil.hpp
+                TestUtilities/GraphicsUtil.cpp
+        DEPENDS SFML::Graphics sfml-window-test-utils
+    )
 
-SET(AUDIO_SRC
-    Audio/Dummy.cpp # TODO: Remove when there are real tests
-)
-sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+    sfml_add_test(Graphics
+        SOURCES Graphics/BlendMode.cpp
+                Graphics/CircleShape.cpp
+                Graphics/Color.cpp
+                Graphics/ConvexShape.cpp
+                Graphics/Glyph.cpp
+                Graphics/Image.cpp
+                Graphics/Rect.cpp
+                Graphics/RectangleShape.cpp
+                Graphics/Shape.cpp
+                Graphics/RenderStates.cpp
+                Graphics/Transform.cpp
+                Graphics/Transformable.cpp
+                Graphics/Vertex.cpp
+                Graphics/VertexArray.cpp
+                Graphics/View.cpp
+        DEPENDS sfml-graphics-test-utils
+    )
+endif()
 
-# Automatically run the tests at the end of the build
-add_custom_target(runtests ALL
-                  DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio
-)
+if(SFML_BUILD_NETWORK)
+    sfml_add_test(Network
+        SOURCES Network/IpAddress.cpp
+                Network/Packet.cpp
+        DEPENDS SFML::Network sfml-system-test-utils
+    )
+endif()
+
+if(SFML_BUILD_AUDIO)
+    sfml_add_test(Audio
+        SOURCES Audio/Dummy.cpp # TODO: Remove when there are real tests
+        DEPENDS SFML::Audio sfml-system-test-utils
+    )
+endif()
 
 if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
     # Copy the binaries of SFML dependencies
