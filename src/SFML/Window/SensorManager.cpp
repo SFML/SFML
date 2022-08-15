@@ -35,7 +35,7 @@ namespace sf
 {
 namespace priv
 {
-SensorManager* SensorManager::singleInstance = NULL;
+SensorManager* SensorManager::singleInstance = nullptr;
 
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
