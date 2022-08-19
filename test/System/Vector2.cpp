@@ -18,14 +18,14 @@ TEST_CASE("[System] sf::Vector2")
     {
         SUBCASE("Default constructor")
         {
-            sf::Vector2i vector;
+            const sf::Vector2i vector;
             CHECK(vector.x == 0);
             CHECK(vector.y == 0);
         }
 
         SUBCASE("(x, y) coordinate constructor")
         {
-            sf::Vector2i vector(1, 2);
+            const sf::Vector2i vector(1, 2);
             CHECK(vector.x == 1);
             CHECK(vector.y == 2);
         }
@@ -146,7 +146,7 @@ TEST_CASE("[System] sf::Vector2")
     SUBCASE("Arithmetic operations between vector and scalar value")
     {
         sf::Vector2i vector(26, 12);
-        int          scalar = 2;
+        const int    scalar = 2;
 
         SUBCASE("vector * scalar")
         {
