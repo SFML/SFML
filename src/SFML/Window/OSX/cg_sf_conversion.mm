@@ -38,9 +38,9 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-size_t modeBitsPerPixel(CGDisplayModeRef mode)
+std::size_t modeBitsPerPixel(CGDisplayModeRef mode)
 {
-    size_t bpp = 0; // no match
+    std::size_t bpp = 0; // no match
 
     // Compare encoding.
     CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
@@ -59,13 +59,13 @@ size_t modeBitsPerPixel(CGDisplayModeRef mode)
 
 
 ////////////////////////////////////////////////////////////
-size_t displayBitsPerPixel(CGDirectDisplayID displayId)
+std::size_t displayBitsPerPixel(CGDirectDisplayID displayId)
 {
     // Get the display mode.
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
 
     // Get bpp for the mode.
-    const size_t bpp = modeBitsPerPixel(mode);
+    const std::size_t bpp = modeBitsPerPixel(mode);
 
     // Clean up Memory.
     CGDisplayModeRelease(mode);

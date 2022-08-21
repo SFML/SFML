@@ -1611,7 +1611,7 @@ public:
     void setupUniformBuffers()
     {
         // Create a uniform buffer for every frame that might be in flight to prevent clobbering
-        for (size_t i = 0; i < swapchainImages.size(); ++i)
+        for (std::size_t i = 0; i < swapchainImages.size(); ++i)
         {
             uniformBuffers.push_back(0);
             uniformBuffersMemory.push_back(0);

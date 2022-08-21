@@ -476,9 +476,9 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& s
     else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         event.type = Event::TouchMoved;
 
-    size_t pointerCount = AMotionEvent_getPointerCount(_event);
+    std::size_t pointerCount = AMotionEvent_getPointerCount(_event);
 
-    for (size_t p = 0; p < pointerCount; ++p)
+    for (std::size_t p = 0; p < pointerCount; ++p)
     {
         int32_t id = AMotionEvent_getPointerId(_event, p);
 
@@ -516,8 +516,8 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
     int32_t device = AInputEvent_getSource(_event);
     int32_t action = AMotionEvent_getAction(_event);
 
-    size_t  index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-    int32_t id    = AMotionEvent_getPointerId(_event, index);
+    std::size_t index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+    int32_t     id    = AMotionEvent_getPointerId(_event, index);
 
     int x = static_cast<int>(AMotionEvent_getX(_event, index));
     int y = static_cast<int>(AMotionEvent_getY(_event, index));

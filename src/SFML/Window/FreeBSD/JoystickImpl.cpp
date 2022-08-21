@@ -228,7 +228,7 @@ bool JoystickImpl::open(unsigned int index)
 
             // Then allocate a buffer for data retrieval
             m_length = hid_report_size(m_desc, hid_input, m_id);
-            m_buffer.resize(static_cast<size_t>(m_length));
+            m_buffer.resize(static_cast<std::size_t>(m_length));
 
             m_state.connected = true;
 
@@ -300,7 +300,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
-    while (read(m_file, m_buffer.data(), static_cast<size_t>(m_length)) == m_length)
+    while (read(m_file, m_buffer.data(), static_cast<std::size_t>(m_length)) == m_length)
     {
         hid_data_t data = hid_start_parse(m_desc, 1 << hid_input, m_id);
 

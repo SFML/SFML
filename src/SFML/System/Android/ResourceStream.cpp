@@ -61,7 +61,7 @@ Int64 ResourceStream::read(void* data, Int64 size)
 {
     if (m_file)
     {
-        return AAsset_read(m_file, data, static_cast<size_t>(size));
+        return AAsset_read(m_file, data, static_cast<std::size_t>(size));
     }
     else
     {
