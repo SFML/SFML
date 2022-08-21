@@ -55,7 +55,7 @@ public:
     // Types
     ////////////////////////////////////////////////////////////
     using AddrLength = socklen_t;
-    using Size       = size_t;
+    using Size       = std::size_t;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address

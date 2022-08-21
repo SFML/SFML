@@ -36,7 +36,7 @@
 
 namespace
 {
-size_t read(void* ptr, size_t size, size_t nmemb, void* data)
+std::size_t read(void* ptr, std::size_t size, std::size_t nmemb, void* data)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
     return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));

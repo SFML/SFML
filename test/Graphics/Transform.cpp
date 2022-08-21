@@ -17,7 +17,7 @@ struct StringMaker<std::vector<float>>
     {
         assert(!vector.empty());
         doctest::String out = "{ ";
-        for (size_t i = 0; i + 1 < vector.size(); ++i)
+        for (std::size_t i = 0; i + 1 < vector.size(); ++i)
             out += toString(vector[i]) + ", ";
         out += toString(vector.back()) + " }";
         return out;

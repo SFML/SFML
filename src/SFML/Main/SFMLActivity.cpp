@@ -38,7 +38,7 @@
 
 namespace
 {
-using activityOnCreatePointer = void (*)(ANativeActivity*, void*, size_t);
+using activityOnCreatePointer = void (*)(ANativeActivity*, void*, std::size_t);
 }
 
 const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
@@ -71,8 +71,8 @@ const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     }
 
     // Convert the application name to a C++ string and return it
-    const size_t applicationNameLength = static_cast<size_t>(lJNIEnv->GetStringUTFLength(valueString));
-    const char*  applicationName       = lJNIEnv->GetStringUTFChars(valueString, nullptr);
+    const std::size_t applicationNameLength = static_cast<std::size_t>(lJNIEnv->GetStringUTFLength(valueString));
+    const char*       applicationName       = lJNIEnv->GetStringUTFChars(valueString, nullptr);
 
     if (applicationNameLength >= 256)
     {
@@ -80,7 +80,7 @@ const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
         exit(1);
     }
 
-    strncpy(name, applicationName, static_cast<size_t>(applicationNameLength));
+    strncpy(name, applicationName, static_cast<std::size_t>(applicationNameLength));
     name[applicationNameLength] = '\0';
     lJNIEnv->ReleaseStringUTFChars(valueString, applicationName);
 
@@ -132,7 +132,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     return handle;
 }
 
-void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
+void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
 {
     // Before we can load a library, we need to find out its location. As
     // we're powerless here in C/C++, we need the JNI interface to communicate

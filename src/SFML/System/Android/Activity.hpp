@@ -67,8 +67,8 @@ struct ActivityStates
     EGLDisplay  display;
     EglContext* context;
 
-    void*  savedState;
-    size_t savedStateSize;
+    void*       savedState;
+    std::size_t savedStateSize;
 
     std::recursive_mutex mutex;
 

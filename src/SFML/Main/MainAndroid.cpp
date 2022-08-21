@@ -474,7 +474,7 @@ static void onConfigurationChanged(ANativeActivity* /* activity */)
 
 
 ////////////////////////////////////////////////////////////
-static void* onSaveInstanceState(ANativeActivity* /* activity */, size_t* outLen)
+static void* onSaveInstanceState(ANativeActivity* /* activity */, std::size_t* outLen)
 {
     *outLen = 0;
 
@@ -489,7 +489,7 @@ static void onLowMemory(ANativeActivity* /* activity */)
 
 
 ////////////////////////////////////////////////////////////
-JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
+JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
     auto* states = new sf::priv::ActivityStates;
