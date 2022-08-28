@@ -294,14 +294,14 @@ endif()
 
 # setup the install rules
 if(NOT SFML_BUILD_FRAMEWORKS)
-    install(DIRECTORY include
-            DESTINATION .
+    install(DIRECTORY include/
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 
     if(SFML_GENERATE_PDB)
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
-                DESTINATION .
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT devel
                 FILES_MATCHING PATTERN "*.pdb")
     endif()
