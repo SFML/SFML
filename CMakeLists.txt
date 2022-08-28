@@ -163,9 +163,9 @@ if(SFML_USE_SYSTEM_DEPS)
         message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
     endif()
 
-    file(GLOB_RECURSE DEP_LIBS    "${CMAKE_SOURCE_DIR}/extlibs/libs*/*")
-    file(GLOB_RECURSE DEP_BINS    "${CMAKE_SOURCE_DIR}/extlibs/bin*/*")
-    file(GLOB_RECURSE DEP_HEADERS "${CMAKE_SOURCE_DIR}/extlibs/headers/*")
+    file(GLOB_RECURSE DEP_LIBS    "${PROJECT_SOURCE_DIR}/extlibs/libs*/*")
+    file(GLOB_RECURSE DEP_BINS    "${PROJECT_SOURCE_DIR}/extlibs/bin*/*")
+    file(GLOB_RECURSE DEP_HEADERS "${PROJECT_SOURCE_DIR}/extlibs/headers/*")
 
     foreach(DEP_FILE ${DEP_LIBS} ${DEP_BINS} ${DEP_HEADERS})
         get_filename_component(DEP_DIR ${DEP_FILE} PATH)
@@ -175,7 +175,7 @@ if(SFML_USE_SYSTEM_DEPS)
         endif()
 
         get_filename_component(DEP_PARENT_DIR ${DEP_DIR} PATH)
-        while(NOT DEP_PARENT_DIR STREQUAL "${CMAKE_SOURCE_DIR}/extlibs")
+        while(NOT DEP_PARENT_DIR STREQUAL "${PROJECT_SOURCE_DIR}/extlibs")
             if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
                 list(APPEND CMAKE_IGNORE_PATH "${DEP_PARENT_DIR}")
             endif()
@@ -470,7 +470,7 @@ elseif(SFML_OS_MACOSX)
 elseif(SFML_OS_IOS)
 
     # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
     if(NOT SFML_USE_SYSTEM_DEPS)
         # since the iOS libraries are built as static, we must install the SFML dependencies
@@ -529,4 +529,4 @@ endif()
 sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires minimum version 12")
 add_custom_target(format
     COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" VERBATIM)
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)
