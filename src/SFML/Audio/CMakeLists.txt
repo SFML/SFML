@@ -93,3 +93,11 @@ endif()
 target_link_libraries(sfml-audio
                       PUBLIC sfml-system
                       PRIVATE VORBIS FLAC)
+
+if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
+    add_custom_command(
+        TARGET sfml-audio
+        COMMENT "Copy OpenAL DLL"
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>/openal32.dll
+    )
+endif()
