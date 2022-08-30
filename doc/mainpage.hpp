@@ -9,29 +9,8 @@
 ///
 /// \section example Short example
 /// Here is a short example, to show you how simple it is to use SFML:
-///
-/// \code
-///
-/// #include <SFML/Audio.hpp>
-/// #include <SFML/Graphics.hpp>
-///
-/// int main()
-/// {
-///     // Create the main window
-///     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
-///
-///     // Load a sprite to display
-///     sf::Texture texture;
-///     if (!texture.loadFromFile("cute_image.jpg"))
-///         return EXIT_FAILURE;
-///     sf::Sprite sprite(texture);
-///
-///     // Create a graphical text to display
-///     sf::Font font;
-///     if (!font.loadFromFile("arial.ttf"))
-///         return EXIT_FAILURE;
-///     sf::Text text("Hello SFML", font, 50);
-///
+//
+///     sf::Sprite sprite
 ///     // Load a music to play
 ///     sf::Music music;
 ///     if (!music.openFromFile("nice_music.ogg"))
