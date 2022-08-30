@@ -121,7 +121,7 @@ macro(sfml_add_library module)
 
             # generate the .rc file
             configure_file(
-                "${SFML_SOURCE_DIR}/tools/windows/resource.rc.in"
+                "${PROJECT_SOURCE_DIR}/tools/windows/resource.rc.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/${target}.rc"
                 @ONLY
             )
