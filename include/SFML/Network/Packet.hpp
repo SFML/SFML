@@ -213,7 +213,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int8& data);
+    Packet& operator>>(std::int8_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -294,7 +294,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int8 data);
+    Packet& operator<<(std::int8_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -498,7 +498,7 @@ private:
 /// Packets have built-in operator >> and << overloads for
 /// standard types:
 /// \li bool
-/// \li fixed-size integer types (sf::Int8/16/32, sf::Uint8/16/32)
+/// \li fixed-size integer types (int[8|16|32]_t, uint[8|16|32]_t)
 /// \li floating point numbers (float, double)
 /// \li string types (char*, wchar_t*, std::string, std::wstring, sf::String)
 ///
@@ -510,7 +510,7 @@ private:
 /// struct MyStruct
 /// {
 ///     float       number;
-///     sf::Int8    integer;
+///     std::int8_t integer;
 ///     std::string str;
 /// };
 ///
