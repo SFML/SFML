@@ -172,7 +172,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor

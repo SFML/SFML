@@ -8,8 +8,8 @@
 #include <iostream>
 
 
-const sf::Uint8 clientAudioData   = 1;
-const sf::Uint8 clientEndOfStream = 2;
+const std::uint8_t clientAudioData   = 1;
+const std::uint8_t clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////

@@ -80,7 +80,7 @@ public:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -105,7 +105,7 @@ private:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixelsARGB(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    bool loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image (monochrome)
@@ -113,7 +113,7 @@ private:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixelsMonochrome(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    bool loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release the cursor, if we have loaded one.

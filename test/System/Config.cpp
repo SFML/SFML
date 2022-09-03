@@ -14,8 +14,6 @@ TEST_CASE("SFML/Config.hpp")
 
     SUBCASE("Fixed width types")
     {
-        CHECK(sizeof(sf::Uint8) == 1);
-
         CHECK(sizeof(sf::Int16) == 2);
         CHECK(sizeof(sf::Uint16) == 2);
 

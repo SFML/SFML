@@ -68,7 +68,7 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
     // clang-format on
 
     // decode the character
-    int trailingBytes = trailing[static_cast<Uint8>(*begin)];
+    int trailingBytes = trailing[static_cast<std::uint8_t>(*begin)];
     if (begin + trailingBytes < end)
     {
         output = 0;
@@ -76,12 +76,12 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
         // clang-format off
         switch (trailingBytes)
         {
-            case 5: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
-            case 4: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
-            case 3: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
-            case 2: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
-            case 1: output += static_cast<Uint8>(*begin++); output <<= 6; [[fallthrough]];
-            case 0: output += static_cast<Uint8>(*begin++);
+            case 5: output += static_cast<std::uint8_t>(*begin++); output <<= 6; [[fallthrough]];
+            case 4: output += static_cast<std::uint8_t>(*begin++); output <<= 6; [[fallthrough]];
+            case 3: output += static_cast<std::uint8_t>(*begin++); output <<= 6; [[fallthrough]];
+            case 2: output += static_cast<std::uint8_t>(*begin++); output <<= 6; [[fallthrough]];
+            case 1: output += static_cast<std::uint8_t>(*begin++); output <<= 6; [[fallthrough]];
+            case 0: output += static_cast<std::uint8_t>(*begin++);
         }
         // clang-format on
 
@@ -100,10 +100,10 @@ In Utf<8>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
+Out Utf<8>::encode(Uint32 input, Out output, std::uint8_t replacement)
 {
     // Some useful precomputed data
-    static constexpr Uint8 firstBytes[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
+    static constexpr std::uint8_t firstBytes[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
 
     // encode the character
     if ((input > 0x0010FFFF) || ((input >= 0xD800) && (input <= 0xDBFF)))
@@ -127,15 +127,15 @@ Out Utf<8>::encode(Uint32 input, Out output, Uint8 replacement)
         // clang-format on
 
         // Extract the bytes to write
-        Uint8 bytes[4];
+        std::uint8_t bytes[4];
 
         // clang-format off
         switch (bytestoWrite)
         {
-            case 4: bytes[3] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 3: bytes[2] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 2: bytes[1] = static_cast<Uint8>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 1: bytes[0] = static_cast<Uint8> (input | firstBytes[bytestoWrite]);
+            case 4: bytes[3] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 3: bytes[2] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 2: bytes[1] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 1: bytes[0] = static_cast<std::uint8_t> (input | firstBytes[bytestoWrite]);
         }
         // clang-format on
 

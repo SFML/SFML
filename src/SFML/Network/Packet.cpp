@@ -120,7 +120,7 @@ Packet::operator bool() const
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator>>(bool& data)
 {
-    Uint8 value;
+    std::uint8_t value;
     if (*this >> value)
         data = (value != 0);
 
@@ -142,7 +142,7 @@ Packet& Packet::operator>>(std::int8_t& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator>>(Uint8& data)
+Packet& Packet::operator>>(std::uint8_t& data)
 {
     if (checkSize(sizeof(data)))
     {
@@ -217,7 +217,7 @@ Packet& Packet::operator>>(Int64& data)
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        Uint8 bytes[sizeof(data)];
+        std::uint8_t bytes[sizeof(data)];
         std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
 
         data = (static_cast<Int64>(bytes[0]) << 56) | (static_cast<Int64>(bytes[1]) << 48) |
@@ -239,7 +239,7 @@ Packet& Packet::operator>>(Uint64& data)
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        Uint8 bytes[sizeof(data)];
+        std::uint8_t bytes[sizeof(data)];
         std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
 
         data = (static_cast<Uint64>(bytes[0]) << 56) | (static_cast<Uint64>(bytes[1]) << 48) |
@@ -394,7 +394,7 @@ Packet& Packet::operator>>(String& data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(bool data)
 {
-    *this << static_cast<Uint8>(data);
+    *this << static_cast<std::uint8_t>(data);
     return *this;
 }
 
@@ -408,7 +408,7 @@ Packet& Packet::operator<<(std::int8_t data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator<<(Uint8 data)
+Packet& Packet::operator<<(std::uint8_t data)
 {
     append(&data, sizeof(data));
     return *this;
@@ -457,14 +457,14 @@ Packet& Packet::operator<<(Int64 data)
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
 
-    Uint8 toWrite[] = {static_cast<Uint8>((data >> 56) & 0xFF),
-                       static_cast<Uint8>((data >> 48) & 0xFF),
-                       static_cast<Uint8>((data >> 40) & 0xFF),
-                       static_cast<Uint8>((data >> 32) & 0xFF),
-                       static_cast<Uint8>((data >> 24) & 0xFF),
-                       static_cast<Uint8>((data >> 16) & 0xFF),
-                       static_cast<Uint8>((data >> 8) & 0xFF),
-                       static_cast<Uint8>((data)&0xFF)};
+    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                              static_cast<std::uint8_t>((data)&0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;
@@ -477,14 +477,14 @@ Packet& Packet::operator<<(Uint64 data)
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
 
-    Uint8 toWrite[] = {static_cast<Uint8>((data >> 56) & 0xFF),
-                       static_cast<Uint8>((data >> 48) & 0xFF),
-                       static_cast<Uint8>((data >> 40) & 0xFF),
-                       static_cast<Uint8>((data >> 32) & 0xFF),
-                       static_cast<Uint8>((data >> 24) & 0xFF),
-                       static_cast<Uint8>((data >> 16) & 0xFF),
-                       static_cast<Uint8>((data >> 8) & 0xFF),
-                       static_cast<Uint8>((data)&0xFF)};
+    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                              static_cast<std::uint8_t>((data)&0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;

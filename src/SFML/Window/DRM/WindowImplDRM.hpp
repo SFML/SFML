@@ -122,7 +122,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setIcon(const Vector2u& size, const Uint8* pixels) override;
+    virtual void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

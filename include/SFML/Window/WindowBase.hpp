@@ -281,7 +281,7 @@ public:
     /// \see setTitle
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const Uint8* pixels);
+    void setIcon(const Vector2u& size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

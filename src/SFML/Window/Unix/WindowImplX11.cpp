@@ -956,7 +956,7 @@ void WindowImplX11::setTitle(const String& title)
     // There is however an option to tell the window manager your Unicode title via hints.
 
     // Convert to UTF-8 encoding.
-    std::basic_string<Uint8> utf8Title;
+    std::basic_string<std::uint8_t> utf8Title;
     Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
 
     Atom useUtf8 = getAtom("UTF8_STRING", false);
@@ -1001,11 +1001,11 @@ void WindowImplX11::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setIcon(const Vector2u& size, const Uint8* pixels)
+void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by XDestroyImage
-    auto* iconPixels = static_cast<Uint8*>(
+    auto* iconPixels = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4));
     for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
     {
@@ -1048,8 +1048,8 @@ void WindowImplX11::setIcon(const Vector2u& size, const Uint8* pixels)
     XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
-    std::size_t        pitch = (size.x + 7) / 8;
-    std::vector<Uint8> maskPixels(pitch * size.y, 0);
+    std::size_t               pitch = (size.x + 7) / 8;
+    std::vector<std::uint8_t> maskPixels(pitch * size.y, 0);
     for (std::size_t j = 0; j < size.y; ++j)
     {
         for (std::size_t i = 0; i < pitch; ++i)
@@ -1058,8 +1058,8 @@ void WindowImplX11::setIcon(const Vector2u& size, const Uint8* pixels)
             {
                 if (i * 8 + k < size.x)
                 {
-                    Uint8 opacity = (pixels[(i * 8 + k + j * size.x) * 4 + 3] > 0) ? 1 : 0;
-                    maskPixels[i + j * pitch] |= static_cast<Uint8>(opacity << k);
+                    std::uint8_t opacity = (pixels[(i * 8 + k + j * size.x) * 4 + 3] > 0) ? 1 : 0;
+                    maskPixels[i + j * pitch] |= static_cast<std::uint8_t>(opacity << k);
                 }
             }
         }
@@ -1921,8 +1921,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
-                    Status status;
-                    Uint8  keyBuffer[64];
+                    Status       status;
+                    std::uint8_t keyBuffer[64];
 
                     int length = Xutf8LookupString(m_inputContext,
                                                    &windowEvent.xkey,
@@ -1940,8 +1940,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     {
                         // There might be more than 1 characters in this event,
                         // so we must iterate it
-                        Uint32 unicode = 0;
-                        Uint8* iter    = keyBuffer;
+                        Uint32        unicode = 0;
+                        std::uint8_t* iter    = keyBuffer;
                         while (iter < keyBuffer + length)
                         {
                             iter = Utf8::decode(iter, keyBuffer + length, unicode, 0);

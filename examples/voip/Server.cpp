@@ -11,8 +11,8 @@
 #include <mutex>
 
 
-const sf::Uint8 serverAudioData   = 1;
-const sf::Uint8 serverEndOfStream = 2;
+const std::uint8_t serverAudioData   = 1;
+const std::uint8_t serverEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ private:
                 break;
 
             // Extract the message ID
-            sf::Uint8 id;
+            std::uint8_t id;
             packet >> id;
 
             if (id == serverAudioData)

@@ -254,7 +254,7 @@ public:
     /// \param pixels Array of pixels to copy to the texture
     ///
     ////////////////////////////////////////////////////////////
-    void update(const Uint8* pixels);
+    void update(const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an array of pixels
@@ -274,7 +274,7 @@ public:
     /// \param dest   Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
-    void update(const Uint8* pixels, const Vector2u& size, const Vector2u& dest);
+    void update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of this texture from another texture
@@ -703,7 +703,7 @@ private:
 ///     ...
 ///
 ///     // update the texture
-///     sf::Uint8* pixels = ...; // get a fresh chunk of pixels (the next frame of a movie, for example)
+///     std::uint8_t* pixels = ...; // get a fresh chunk of pixels (the next frame of a movie, for example)
 ///     texture.update(pixels);
 ///
 ///     // draw it

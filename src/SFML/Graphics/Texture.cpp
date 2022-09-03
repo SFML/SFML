@@ -302,7 +302,7 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
             priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
-            const Uint8* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
+            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
             for (int i = 0; i < rectangle.height; ++i)
             {
@@ -347,7 +347,7 @@ Image Texture::copyToImage() const
     priv::TextureSaver save;
 
     // Create an array of pixels
-    std::vector<Uint8> pixels(static_cast<std::size_t>(m_size.x) * static_cast<std::size_t>(m_size.y) * 4);
+    std::vector<std::uint8_t> pixels(static_cast<std::size_t>(m_size.x) * static_cast<std::size_t>(m_size.y) * 4);
 
 #ifdef SFML_OPENGL_ES
 
@@ -381,14 +381,14 @@ Image Texture::copyToImage() const
         // Texture is either padded or flipped, we have to use a slower algorithm
 
         // All the pixels will first be copied to a temporary array
-        std::vector<Uint8> allPixels(
+        std::vector<std::uint8_t> allPixels(
             static_cast<std::size_t>(m_actualSize.x) * static_cast<std::size_t>(m_actualSize.y) * 4);
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
         // Then we copy the useful pixels from the temporary array to the final one
-        const Uint8* src = allPixels.data();
-        Uint8* dst = pixels.data();
+        const std::uint8_t* src = allPixels.data();
+        std::uint8_t* dst = pixels.data();
         int srcPitch = static_cast<int>(m_actualSize.x * 4);
         unsigned int dstPitch = m_size.x * 4;
 
@@ -418,7 +418,7 @@ Image Texture::copyToImage() const
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels)
+void Texture::update(const std::uint8_t* pixels)
 {
     // Update the whole texture
     update(pixels, m_size, {0, 0});
@@ -426,7 +426,7 @@ void Texture::update(const Uint8* pixels)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels, const Vector2u& size, const Vector2u& dest)
+void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest)
 {
     assert(dest.x + size.x <= m_size.x);
     assert(dest.y + size.y <= m_size.y);

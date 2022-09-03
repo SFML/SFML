@@ -45,7 +45,7 @@ Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Cursor::loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot)
+bool Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
         return false;
