@@ -18,12 +18,12 @@ TEST_CASE("sf::Packet class - [network]")
 {
     SUBCASE("Stream operators")
     {
-        SUBCASE("Int8")
+        SUBCASE("std::int8_t")
         {
-            testPacketStreamOperators(sf::Int8(0));
-            testPacketStreamOperators(sf::Int8(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int8>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int8>::max());
+            testPacketStreamOperators(std::int8_t(0));
+            testPacketStreamOperators(std::int8_t(1));
+            testPacketStreamOperators(std::numeric_limits<std::int8_t>::min());
+            testPacketStreamOperators(std::numeric_limits<std::int8_t>::max());
         }
 
         SUBCASE("Int16")

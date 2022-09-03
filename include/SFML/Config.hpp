@@ -168,7 +168,6 @@
 namespace sf
 {
 // 8 bits integer types
-using Int8  = std::int8_t;
 using Uint8 = std::uint8_t;
 
 // 16 bits integer types

@@ -129,7 +129,7 @@ Packet& Packet::operator>>(bool& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator>>(Int8& data)
+Packet& Packet::operator>>(std::int8_t& data)
 {
     if (checkSize(sizeof(data)))
     {
@@ -400,7 +400,7 @@ Packet& Packet::operator<<(bool data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator<<(Int8 data)
+Packet& Packet::operator<<(std::int8_t data)
 {
     append(&data, sizeof(data));
     return *this;
