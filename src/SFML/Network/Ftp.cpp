@@ -537,15 +537,16 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
         std::string::size_type begin = response.getMessage().find_first_of("0123456789");
         if (begin != std::string::npos)
         {
-            Uint8       data[6] = {0, 0, 0, 0, 0, 0};
-            std::string str     = response.getMessage().substr(begin);
-            std::size_t index   = 0;
+            std::uint8_t data[6] = {0, 0, 0, 0, 0, 0};
+            std::string  str     = response.getMessage().substr(begin);
+            std::size_t  index   = 0;
             for (unsigned char& datum : data)
             {
                 // Extract the current number
                 while (isdigit(str[index]))
                 {
-                    datum = static_cast<Uint8>(static_cast<Uint8>(datum * 10) + static_cast<Uint8>(str[index] - '0'));
+                    datum = static_cast<std::uint8_t>(
+                        static_cast<std::uint8_t>(datum * 10) + static_cast<std::uint8_t>(str[index] - '0'));
                     ++index;
                 }
 
@@ -554,7 +555,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             }
 
             // Reconstruct connection port and address
-            unsigned short port = static_cast<Uint8>(data[4] * 256) + data[5];
+            unsigned short port = static_cast<std::uint8_t>(data[4] * 256) + data[5];
             IpAddress      address(data[0], data[1], data[2], data[3]);
 
             // Connect the data channel to the server

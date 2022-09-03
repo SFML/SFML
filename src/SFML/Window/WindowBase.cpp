@@ -229,7 +229,7 @@ void WindowBase::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setIcon(const Vector2u& size, const Uint8* pixels)
+void WindowBase::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     if (m_impl)
         m_impl->setIcon(size, pixels);

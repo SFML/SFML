@@ -58,7 +58,7 @@ public:
     /// \param alpha Alpha (opacity) component (in the range [0, 255])
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Color(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha = 255);
+    constexpr Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = 255);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the color from 32-bit unsigned integer
@@ -92,10 +92,10 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint8 r; //!< Red component
-    Uint8 g; //!< Green component
-    Uint8 b; //!< Blue component
-    Uint8 a; //!< Alpha (opacity) component
+    std::uint8_t r; //!< Red component
+    std::uint8_t g; //!< Green component
+    std::uint8_t b; //!< Blue component
+    std::uint8_t a; //!< Alpha (opacity) component
 };
 
 ////////////////////////////////////////////////////////////

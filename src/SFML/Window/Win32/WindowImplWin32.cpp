@@ -367,14 +367,14 @@ void WindowImplWin32::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setIcon(const Vector2u& size, const Uint8* pixels)
+void WindowImplWin32::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     // First destroy the previous one
     if (m_icon)
         DestroyIcon(m_icon);
 
     // Windows wants BGRA pixels: swap red and blue channels
-    std::vector<Uint8> iconPixels(size.x * size.y * 4);
+    std::vector<std::uint8_t> iconPixels(size.x * size.y * 4);
     for (std::size_t i = 0; i < iconPixels.size() / 4; ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];

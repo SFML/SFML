@@ -68,7 +68,7 @@ public:
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromFile(const std::filesystem::path& filename, std::vector<Uint8>& pixels, Vector2u& size);
+    bool loadImageFromFile(const std::filesystem::path& filename, std::vector<std::uint8_t>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a file in memory
@@ -81,7 +81,7 @@ public:
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<Uint8>& pixels, Vector2u& size);
+    bool loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<std::uint8_t>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load an image from a custom stream
@@ -93,7 +93,7 @@ public:
     /// \return True if loading was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size);
+    bool loadImageFromStream(InputStream& stream, std::vector<std::uint8_t>& pixels, Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save an array of pixels as an image file
@@ -105,7 +105,7 @@ public:
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToFile(const std::filesystem::path& filename, const std::vector<Uint8>& pixels, const Vector2u& size);
+    bool saveImageToFile(const std::filesystem::path& filename, const std::vector<std::uint8_t>& pixels, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save an array of pixels as an encoded image buffer
@@ -118,10 +118,10 @@ public:
     /// \return True if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToMemory(const std::string&        format,
-                           std::vector<sf::Uint8>&   output,
-                           const std::vector<Uint8>& pixels,
-                           const Vector2u&           size);
+    bool saveImageToMemory(const std::string&               format,
+                           std::vector<std::uint8_t>&       output,
+                           const std::vector<std::uint8_t>& pixels,
+                           const Vector2u&                  size);
 
 private:
     ////////////////////////////////////////////////////////////

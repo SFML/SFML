@@ -47,6 +47,6 @@
 /// \return an instance of NSImage that needs to be released by the caller
 ///
 ////////////////////////////////////////////////////////////
-+ (NSImage*)imageWithRawData:(const sf::Uint8*)pixels andSize:(NSSize)size;
++ (NSImage*)imageWithRawData:(const std::uint8_t*)pixels andSize:(NSSize)size;
 
 @end

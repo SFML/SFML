@@ -448,7 +448,7 @@ void WindowImplCocoa::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setIcon(const Vector2u& size, const Uint8* pixels)
+void WindowImplCocoa::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     AutoreleasePool pool;
     [m_delegate setIconTo:size.x by:size.y with:pixels];

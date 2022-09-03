@@ -165,7 +165,7 @@ void WindowImplAndroid::setTitle(const String& /* title */)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::setIcon(const Vector2u& /* size */, const Uint8* /* pixels */)
+void WindowImplAndroid::setIcon(const Vector2u& /* size */, const std::uint8_t* /* pixels */)
 {
     // Not applicable
 }

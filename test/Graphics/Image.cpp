@@ -49,10 +49,10 @@ TEST_CASE("sf::Image - [graphics]")
             }
         }
 
-        SUBCASE("create(Vector2, Uint8*)")
+        SUBCASE("create(Vector2, std::uint8_t*)")
         {
             // 10 x 10, with 4 colour channels array
-            std::array<sf::Uint8, 400> pixels;
+            std::array<std::uint8_t, 400> pixels;
             for (std::size_t i = 0; i < pixels.size(); i += 4)
             {
                 pixels[i]     = 255; // r
@@ -135,12 +135,12 @@ TEST_CASE("sf::Image - [graphics]")
             const sf::Color source(5, 255, 78, 232);
 
             // Create the composited colour for via the alpha composite over operation
-            const auto a = static_cast<sf::Uint8>(source.a + (dest.a * (255 - source.a)) / 255);
-            const auto r = static_cast<sf::Uint8>(
+            const auto a = static_cast<std::uint8_t>(source.a + (dest.a * (255 - source.a)) / 255);
+            const auto r = static_cast<std::uint8_t>(
                 ((source.r * source.a) + (((dest.r * dest.a) * (255 - source.a))) / 255) / a);
-            const auto g = static_cast<sf::Uint8>(
+            const auto g = static_cast<std::uint8_t>(
                 ((source.g * source.a) + (((dest.g * dest.a) * (255 - source.a))) / 255) / a);
-            const auto b = static_cast<sf::Uint8>(
+            const auto b = static_cast<std::uint8_t>(
                 ((source.b * source.a) + (((dest.b * dest.a) * (255 - source.a))) / 255) / a);
             const sf::Color composite(r, g, b, a);
 
@@ -214,7 +214,7 @@ TEST_CASE("sf::Image - [graphics]")
             }
         }
 
-        SUBCASE("createMaskFromColor(Color, Uint8)")
+        SUBCASE("createMaskFromColor(Color, std::uint8_t)")
         {
             sf::Image image;
             image.create(sf::Vector2u(10, 10), sf::Color::Blue);

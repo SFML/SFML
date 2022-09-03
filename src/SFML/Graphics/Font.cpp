@@ -536,7 +536,7 @@ void Font::cleanup()
 
     // Reset members
     m_pages.clear();
-    std::vector<Uint8>().swap(m_pixelBuffer);
+    std::vector<std::uint8_t>().swap(m_pixelBuffer);
 }
 
 
@@ -661,8 +661,8 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
 
-        Uint8* current = m_pixelBuffer.data();
-        Uint8* end     = current + width * height * 4;
+        std::uint8_t* current = m_pixelBuffer.data();
+        std::uint8_t* end     = current + width * height * 4;
 
         while (current != end)
         {
@@ -673,7 +673,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         }
 
         // Extract the glyph's pixels from the bitmap
-        const Uint8* pixels = bitmap.buffer;
+        const std::uint8_t* pixels = bitmap.buffer;
         if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
             // Pixels are 1 bit monochrome values

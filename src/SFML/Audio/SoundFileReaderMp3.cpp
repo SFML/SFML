@@ -67,7 +67,7 @@ int seekCallback(std::uint64_t offset, void* data)
     return position < 0 ? -1 : 0;
 }
 
-bool hasValidId3Tag(const sf::Uint8* header)
+bool hasValidId3Tag(const std::uint8_t* header)
 {
     return std::memcmp(header, "ID3", 3) == 0 &&
            !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
@@ -81,7 +81,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderMp3::check(InputStream& stream)
 {
-    Uint8 header[10];
+    std::uint8_t header[10];
 
     if (static_cast<std::size_t>(stream.read(header, static_cast<Int64>(sizeof(header)))) < sizeof(header))
         return false;

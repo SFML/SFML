@@ -427,7 +427,7 @@ private:
     bool                         m_isSmooth;    //!< Status of the smooth filter
     Info                         m_info;        //!< Information about the font
     mutable PageTable            m_pages;       //!< Table containing the glyphs pages by character size
-    mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
+    mutable std::vector<std::uint8_t> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
 #ifdef SFML_SYSTEM_ANDROID
     std::unique_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)
 #endif

@@ -145,9 +145,9 @@ public:
         {
             auto x = x_distribution(rng);
             auto y = y_distribution(rng);
-            auto r = static_cast<sf::Uint8>(color_distribution(rng));
-            auto g = static_cast<sf::Uint8>(color_distribution(rng));
-            auto b = static_cast<sf::Uint8>(color_distribution(rng));
+            auto r = static_cast<std::uint8_t>(color_distribution(rng));
+            auto g = static_cast<std::uint8_t>(color_distribution(rng));
+            auto b = static_cast<std::uint8_t>(color_distribution(rng));
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 

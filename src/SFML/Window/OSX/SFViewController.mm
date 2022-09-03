@@ -236,7 +236,7 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const sf::Uint8*)pixels
+- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels
 {
     (void)width;
     (void)height;

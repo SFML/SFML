@@ -41,7 +41,7 @@ namespace
 // The following functions read integers as little endian and
 // return them in the host byte order
 
-bool decode(sf::InputStream& stream, sf::Uint8& value)
+bool decode(sf::InputStream& stream, std::uint8_t& value)
 {
     return static_cast<std::size_t>(stream.read(&value, sizeof(value))) == sizeof(value);
 }
@@ -164,7 +164,7 @@ Uint64 SoundFileReaderWav::read(Int16* samples, Uint64 maxCount)
         {
             case 1:
             {
-                Uint8 sample = 0;
+                std::uint8_t sample = 0;
                 if (decode(*m_stream, sample))
                     *samples++ = static_cast<Int16>((static_cast<Int16>(sample) - 128) << 8);
                 else

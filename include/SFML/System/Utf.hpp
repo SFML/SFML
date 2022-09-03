@@ -86,7 +86,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encode(Uint32 input, Out output, Uint8 replacement = 0);
+    static Out encode(Uint32 input, Out output, std::uint8_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Advance to the next UTF-8 character
