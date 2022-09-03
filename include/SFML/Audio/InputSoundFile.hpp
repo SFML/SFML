@@ -211,7 +211,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] Uint64 read(std::int16_t* samples, Uint64 maxCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -279,7 +279,7 @@ private:
 ///           << "sample count: " << file.getSampleCount() << std::endl;
 ///
 /// // Read and process batches of samples until the end of file is reached
-/// sf::Int16 samples[1024];
+/// std::int16_t samples[1024];
 /// sf::Uint64 count;
 /// do
 /// {

@@ -120,7 +120,7 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate)
+bool SoundBuffer::loadFromSamples(const std::int16_t* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate)
 {
     if (samples && sampleCount && channelCount && sampleRate)
     {
@@ -164,7 +164,7 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 
 
 ////////////////////////////////////////////////////////////
-const Int16* SoundBuffer::getSamples() const
+const std::int16_t* SoundBuffer::getSamples() const
 {
     return m_samples.empty() ? nullptr : m_samples.data();
 }
@@ -265,7 +265,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         soundPtr->resetBuffer();
 
     // Fill the buffer
-    auto size = static_cast<ALsizei>(m_samples.size() * sizeof(Int16));
+    auto size = static_cast<ALsizei>(m_samples.size() * sizeof(std::int16_t));
     alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration

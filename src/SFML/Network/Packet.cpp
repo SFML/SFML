@@ -155,12 +155,12 @@ Packet& Packet::operator>>(std::uint8_t& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator>>(Int16& data)
+Packet& Packet::operator>>(std::int16_t& data)
 {
     if (checkSize(sizeof(data)))
     {
         std::memcpy(&data, &m_data[m_readPos], sizeof(data));
-        data = static_cast<Int16>(ntohs(static_cast<uint16_t>(data)));
+        data = static_cast<std::int16_t>(ntohs(static_cast<uint16_t>(data)));
         m_readPos += sizeof(data);
     }
 
@@ -416,9 +416,9 @@ Packet& Packet::operator<<(std::uint8_t data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator<<(Int16 data)
+Packet& Packet::operator<<(std::int16_t data)
 {
-    auto toWrite = static_cast<Int16>(htons(static_cast<uint16_t>(data)));
+    auto toWrite = static_cast<std::int16_t>(htons(static_cast<uint16_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }

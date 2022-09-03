@@ -135,7 +135,7 @@ void SoundFileReaderOgg::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderOgg::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderOgg::read(std::int16_t* samples, Uint64 maxCount)
 {
     assert(m_vorbis.datasource);
 
@@ -143,11 +143,11 @@ Uint64 SoundFileReaderOgg::read(Int16* samples, Uint64 maxCount)
     Uint64 count = 0;
     while (count < maxCount)
     {
-        int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(Int16));
+        int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
         long bytesRead   = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
         if (bytesRead > 0)
         {
-            long samplesRead = bytesRead / static_cast<long>(sizeof(Int16));
+            long samplesRead = bytesRead / static_cast<long>(sizeof(std::int16_t));
             count += static_cast<Uint64>(samplesRead);
             samples += samplesRead;
         }

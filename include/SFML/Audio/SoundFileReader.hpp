@@ -100,7 +100,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual Uint64 read(Int16* samples, Uint64 maxCount) = 0;
+    [[nodiscard]] virtual Uint64 read(std::int16_t* samples, Uint64 maxCount) = 0;
 };
 
 } // namespace sf
@@ -149,7 +149,7 @@ public:
 ///         sound
 ///     }
 ///
-///     sf::Uint64 read(sf::Int16* samples, sf::Uint64 maxCount) override
+///     sf::Uint64 read(std::int16_t* samples, sf::Uint64 maxCount) override
 ///     {
 ///         // read up to 'maxCount' samples into the 'samples' array,
 ///         // convert them (for example from normalized float) if they are not stored

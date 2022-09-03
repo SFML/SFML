@@ -93,7 +93,7 @@ public:
     /// \param count       Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count);
+    void write(const std::int16_t* samples, Uint64 count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -133,7 +133,7 @@ private:
 /// while (...)
 /// {
 ///     // Read or generate audio samples from your custom source
-///     std::vector<sf::Int16> samples = ...;
+///     std::vector<std::int16_t> samples = ...;
 ///
 ///     // Write them to the file
 ///     file.write(samples.data(), samples.size());
