@@ -38,7 +38,7 @@ namespace
 // The following functions takes integers in host byte order
 // and writes them to a stream as little endian
 
-void encode(std::ostream& stream, sf::Int16 value)
+void encode(std::ostream& stream, std::int16_t value)
 {
     unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
@@ -109,7 +109,7 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterWav::write(const Int16* samples, Uint64 count)
+void SoundFileWriterWav::write(const std::int16_t* samples, Uint64 count)
 {
     assert(m_file.good());
 

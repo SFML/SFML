@@ -88,7 +88,7 @@ public:
     /// \param count   Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count) override;
+    void write(const std::int16_t* samples, Uint64 count) override;
 
 private:
     ////////////////////////////////////////////////////////////

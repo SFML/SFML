@@ -101,7 +101,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
+    [[nodiscard]] Uint64 read(std::int16_t* samples, Uint64 maxCount) override;
 
 public:
     ////////////////////////////////////////////////////////////
@@ -110,12 +110,12 @@ public:
     ////////////////////////////////////////////////////////////
     struct ClientData
     {
-        InputStream*          stream;
-        SoundFileReader::Info info;
-        Int16*                buffer;
-        Uint64                remaining;
-        std::vector<Int16>    leftovers;
-        bool                  error;
+        InputStream*              stream;
+        SoundFileReader::Info     info;
+        std::int16_t*             buffer;
+        Uint64                    remaining;
+        std::vector<std::int16_t> leftovers;
+        bool                      error;
     };
 
 private:

@@ -125,7 +125,7 @@ private:
             if (id == serverAudioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(sf::Int16);
+                std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(std::int16_t);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
@@ -135,7 +135,7 @@ private:
                     m_samples.resize(oldSize + sampleCount);
                     std::memcpy(&(m_samples[oldSize]),
                                 static_cast<const char*>(packet.getData()) + 1,
-                                sampleCount * sizeof(sf::Int16));
+                                sampleCount * sizeof(std::int16_t));
                 }
             }
             else if (id == serverEndOfStream)
@@ -156,13 +156,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::TcpListener        m_listener;
-    sf::TcpSocket          m_client;
-    std::recursive_mutex   m_mutex;
-    std::vector<sf::Int16> m_samples;
-    std::vector<sf::Int16> m_tempBuffer;
-    std::size_t            m_offset;
-    bool                   m_hasFinished;
+    sf::TcpListener           m_listener;
+    sf::TcpSocket             m_client;
+    std::recursive_mutex      m_mutex;
+    std::vector<std::int16_t> m_samples;
+    std::vector<std::int16_t> m_tempBuffer;
+    std::size_t               m_offset;
+    bool                      m_hasFinished;
 };
 
 

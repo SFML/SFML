@@ -26,12 +26,12 @@ TEST_CASE("sf::Packet class - [network]")
             testPacketStreamOperators(std::numeric_limits<std::int8_t>::max());
         }
 
-        SUBCASE("Int16")
+        SUBCASE("std::int16_t")
         {
-            testPacketStreamOperators(sf::Int16(0));
-            testPacketStreamOperators(sf::Int16(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int16>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int16>::max());
+            testPacketStreamOperators(std::int16_t(0));
+            testPacketStreamOperators(std::int16_t(1));
+            testPacketStreamOperators(std::numeric_limits<std::int16_t>::min());
+            testPacketStreamOperators(std::numeric_limits<std::int16_t>::max());
         }
 
         SUBCASE("Int32")

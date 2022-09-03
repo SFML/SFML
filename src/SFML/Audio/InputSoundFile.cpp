@@ -261,7 +261,7 @@ void InputSoundFile::seek(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 InputSoundFile::read(Int16* samples, Uint64 maxCount)
+Uint64 InputSoundFile::read(std::int16_t* samples, Uint64 maxCount)
 {
     Uint64 readSamples = 0;
     if (m_reader && samples && maxCount)

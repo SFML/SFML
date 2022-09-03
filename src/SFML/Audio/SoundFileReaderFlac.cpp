@@ -123,20 +123,20 @@ FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*,
         for (unsigned int j = 0; j < frame->header.channels; ++j)
         {
             // Decode the current sample
-            sf::Int16 sample = 0;
+            std::int16_t sample = 0;
             switch (frame->header.bits_per_sample)
             {
                 case 8:
-                    sample = static_cast<sf::Int16>(buffer[j][i] << 8);
+                    sample = static_cast<std::int16_t>(buffer[j][i] << 8);
                     break;
                 case 16:
-                    sample = static_cast<sf::Int16>(buffer[j][i]);
+                    sample = static_cast<std::int16_t>(buffer[j][i]);
                     break;
                 case 24:
-                    sample = static_cast<sf::Int16>(buffer[j][i] >> 8);
+                    sample = static_cast<std::int16_t>(buffer[j][i] >> 8);
                     break;
                 case 32:
-                    sample = static_cast<sf::Int16>(buffer[j][i] >> 16);
+                    sample = static_cast<std::int16_t>(buffer[j][i] >> 16);
                     break;
                 default:
                     assert(false);
@@ -300,7 +300,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
+Uint64 SoundFileReaderFlac::read(std::int16_t* samples, Uint64 maxCount)
 {
     assert(m_decoder);
 
@@ -312,11 +312,11 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
         {
             // There are more leftovers than needed
             std::copy(m_clientData.leftovers.begin(),
-                      m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(maxCount),
+                      m_clientData.leftovers.begin() + static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
                       samples);
-            std::vector<Int16> leftovers(m_clientData.leftovers.begin() +
-                                             static_cast<std::vector<Int16>::difference_type>(maxCount),
-                                         m_clientData.leftovers.end());
+            std::vector<std::int16_t> leftovers(m_clientData.leftovers.begin() +
+                                                    static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
+                                                m_clientData.leftovers.end());
             m_clientData.leftovers.swap(leftovers);
             return maxCount;
         }

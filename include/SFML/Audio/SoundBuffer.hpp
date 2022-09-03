@@ -121,8 +121,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
     ///
-    /// The assumed format of the audio samples is 16 bits signed integer
-    /// (sf::Int16).
+    /// The assumed format of the audio samples is 16 bits signed integer.
     ///
     /// \param samples      Pointer to the array of samples in memory
     /// \param sampleCount  Number of samples in the array
@@ -134,7 +133,10 @@ public:
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSamples(const Int16* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate);
+    [[nodiscard]] bool loadFromSamples(const std::int16_t* samples,
+                                       Uint64              sampleCount,
+                                       unsigned int        channelCount,
+                                       unsigned int        sampleRate);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -154,16 +156,16 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
     ///
-    /// The format of the returned samples is 16 bits signed integer
-    /// (sf::Int16). The total number of samples in this array
-    /// is given by the getSampleCount() function.
+    /// The format of the returned samples is 16 bits signed integer.
+    /// The total number of samples in this array is given by the
+    /// getSampleCount() function.
     ///
     /// \return Read-only pointer to the array of sound samples
     ///
     /// \see getSampleCount
     ///
     ////////////////////////////////////////////////////////////
-    const Int16* getSamples() const;
+    const std::int16_t* getSamples() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of samples stored in the buffer
@@ -273,10 +275,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int       m_buffer;   //!< OpenAL buffer identifier
-    std::vector<Int16> m_samples;  //!< Samples buffer
-    Time               m_duration; //!< Sound duration
-    mutable SoundList  m_sounds;   //!< List of sounds that are using this buffer
+    unsigned int              m_buffer;   //!< OpenAL buffer identifier
+    std::vector<std::int16_t> m_samples;  //!< Samples buffer
+    Time                      m_duration; //!< Sound duration
+    mutable SoundList         m_sounds;   //!< List of sounds that are using this buffer
 };
 
 } // namespace sf
