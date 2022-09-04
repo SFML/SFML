@@ -135,9 +135,9 @@ public:
 
     bool onLoad() override
     {
-        std::uniform_real_distribution<float>     x_distribution(0, 800);
-        std::uniform_real_distribution<float>     y_distribution(0, 600);
-        std::uniform_int_distribution<sf::Uint16> color_distribution(0, 255);
+        std::uniform_real_distribution<float>        x_distribution(0, 800);
+        std::uniform_real_distribution<float>        y_distribution(0, 600);
+        std::uniform_int_distribution<std::uint16_t> color_distribution(0, 255);
 
         // Create the points
         m_points.setPrimitiveType(sf::Points);
