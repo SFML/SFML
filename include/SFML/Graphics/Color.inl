@@ -107,7 +107,8 @@ constexpr Color operator*(const Color& left, const Color& right)
 {
     const auto scaledMul = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
     {
-        const auto uint16Result = static_cast<Uint16>(static_cast<Uint16>(lhs) * static_cast<Uint16>(rhs));
+        const auto uint16Result = static_cast<std::uint16_t>(
+            static_cast<std::uint16_t>(lhs) * static_cast<std::uint16_t>(rhs));
         return static_cast<std::uint8_t>(uint16Result / 255u);
     };
 

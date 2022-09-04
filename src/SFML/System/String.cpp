@@ -196,10 +196,10 @@ std::basic_string<std::uint8_t> String::toUtf8() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<Uint16> String::toUtf16() const
+std::basic_string<std::uint16_t> String::toUtf16() const
 {
     // Prepare the output string
-    std::basic_string<Uint16> output;
+    std::basic_string<std::uint16_t> output;
     output.reserve(m_string.length());
 
     // Convert

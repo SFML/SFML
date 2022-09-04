@@ -57,13 +57,13 @@ bool decode(sf::InputStream& stream, std::int16_t& value)
     return true;
 }
 
-bool decode(sf::InputStream& stream, sf::Uint16& value)
+bool decode(sf::InputStream& stream, std::uint16_t& value)
 {
     unsigned char bytes[sizeof(value)];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<sf::Uint16>(bytes[0] | (bytes[1] << 8));
+    value = static_cast<std::uint16_t>(bytes[0] | (bytes[1] << 8));
 
     return true;
 }
@@ -92,9 +92,9 @@ bool decode(sf::InputStream& stream, sf::Uint32& value)
 
 const sf::Uint64 mainChunkSize = 12;
 
-const sf::Uint16 waveFormatPcm = 1;
+const std::uint16_t waveFormatPcm = 1;
 
-const sf::Uint16 waveFormatExtensible = 65534;
+const std::uint16_t waveFormatExtensible = 65534;
 
 const char* waveSubformatPcm =
     "\x01\x00\x00\x00\x00\x00\x10\x00"
@@ -249,14 +249,14 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             // "fmt" chunk
 
             // Audio format
-            Uint16 format = 0;
+            std::uint16_t format = 0;
             if (!decode(*m_stream, format))
                 return false;
             if ((format != waveFormatPcm) && (format != waveFormatExtensible))
                 return false;
 
             // Channel count
-            Uint16 channelCount = 0;
+            std::uint16_t channelCount = 0;
             if (!decode(*m_stream, channelCount))
                 return false;
             info.channelCount = channelCount;
@@ -273,12 +273,12 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                 return false;
 
             // Block align
-            Uint16 blockAlign = 0;
+            std::uint16_t blockAlign = 0;
             if (!decode(*m_stream, blockAlign))
                 return false;
 
             // Bits per sample
-            Uint16 bitsPerSample = 0;
+            std::uint16_t bitsPerSample = 0;
             if (!decode(*m_stream, bitsPerSample))
                 return false;
             if (bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32)
@@ -292,12 +292,12 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             if (format == waveFormatExtensible)
             {
                 // Extension size
-                Uint16 extensionSize = 0;
+                std::uint16_t extensionSize = 0;
                 if (!decode(*m_stream, extensionSize))
                     return false;
 
                 // Valid bits per sample
-                Uint16 validBitsPerSample = 0;
+                std::uint16_t validBitsPerSample = 0;
                 if (!decode(*m_stream, validBitsPerSample))
                     return false;
 

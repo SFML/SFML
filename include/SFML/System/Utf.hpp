@@ -292,7 +292,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encode(Uint32 input, Out output, Uint16 replacement = 0);
+    static Out encode(Uint32 input, Out output, std::uint16_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Advance to the next UTF-16 character

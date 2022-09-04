@@ -301,7 +301,7 @@ Out Utf<8>::toUtf32(In begin, In end, Out output)
 template <typename In>
 In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 {
-    Uint16 first = *begin++;
+    std::uint16_t first = *begin++;
 
     // If it's a surrogate pair, first convert to a single UTF-32 character
     if ((first >= 0xD800) && (first <= 0xDBFF))
@@ -339,7 +339,7 @@ In Utf<16>::decode(In begin, In end, Uint32& output, Uint32 replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
+Out Utf<16>::encode(Uint32 input, Out output, std::uint16_t replacement)
 {
     if (input <= 0xFFFF)
     {
@@ -353,7 +353,7 @@ Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
         else
         {
             // Valid character directly convertible to a single UTF-16 character
-            *output++ = static_cast<Uint16>(input);
+            *output++ = static_cast<std::uint16_t>(input);
         }
     }
     else if (input > 0x0010FFFF)
@@ -366,8 +366,8 @@ Out Utf<16>::encode(Uint32 input, Out output, Uint16 replacement)
     {
         // The input character will be converted to two UTF-16 elements
         input -= 0x0010000;
-        *output++ = static_cast<Uint16>((input >> 10) + 0xD800);
-        *output++ = static_cast<Uint16>((input & 0x3FFUL) + 0xDC00);
+        *output++ = static_cast<std::uint16_t>((input >> 10) + 0xD800);
+        *output++ = static_cast<std::uint16_t>((input & 0x3FFUL) + 0xDC00);
     }
 
     return output;

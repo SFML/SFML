@@ -44,7 +44,7 @@ void encode(std::ostream& stream, std::int16_t value)
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
 
-void encode(std::ostream& stream, sf::Uint16 value)
+void encode(std::ostream& stream, std::uint16_t value)
 {
     unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
@@ -139,17 +139,17 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     encode(m_file, fmtChunkSize);
 
     // Write the format (PCM)
-    Uint16 format = 1;
+    std::uint16_t format = 1;
     encode(m_file, format);
 
     // Write the sound attributes
-    encode(m_file, static_cast<Uint16>(channelCount));
+    encode(m_file, static_cast<std::uint16_t>(channelCount));
     encode(m_file, sampleRate);
     Uint32 byteRate = sampleRate * channelCount * 2;
     encode(m_file, byteRate);
-    auto blockAlign = static_cast<Uint16>(channelCount * 2);
+    auto blockAlign = static_cast<std::uint16_t>(channelCount * 2);
     encode(m_file, blockAlign);
-    Uint16 bitsPerSample = 16;
+    std::uint16_t bitsPerSample = 16;
     encode(m_file, bitsPerSample);
 
     // Write the sub-chunk 2 ("data") id and size
