@@ -41,8 +41,9 @@ void updateIdentification(unsigned int index)
 {
     sstr.str("");
     sstr << "Joystick " << index << ":";
-    texts.at("ID").label.setString(sstr.str());
-    texts.at("ID").value.setString(sf::Joystick::getIdentification(index).name);
+    auto& [label, value] = texts.at("ID");
+    label.setString(sstr.str());
+    value.setString(sf::Joystick::getIdentification(index).name);
 }
 
 // Update joystick axes
@@ -103,37 +104,40 @@ int main()
     sstr.setf(std::ios::fixed | std::ios::boolalpha);
 
     // Set up our joystick identification sf::Text objects
-    texts.emplace("ID", JoystickObject{{"<Not Connected>", font}, {"", font}});
-    texts.at("ID").label.setPosition({5.f, 5.f});
-    texts.at("ID").value.setPosition({80.f, 5.f});
+    {
+        auto [it, success]   = texts.emplace("ID", JoystickObject{{font, "<Not Connected>"}, {font}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f});
+        value.setPosition({80.f, 5.f});
+    }
 
     // Set up our threshold sf::Text objects
     sstr.str("");
     sstr << threshold << "  (Change with up/down arrow keys)";
-
-    texts.emplace("Threshold", JoystickObject{{"Threshold:", font}, {sstr.str(), font}});
-    texts.at("Threshold").label.setPosition({5.f, 5.f + 2 * font.getLineSpacing(14)});
-    texts.at("Threshold").value.setPosition({80.f, 5.f + 2 * font.getLineSpacing(14)});
+    {
+        auto [it, success]   = texts.emplace("Threshold", JoystickObject{{font, "Threshold:"}, {font, sstr.str()}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + 2 * font.getLineSpacing(14)});
+        value.setPosition({80.f, 5.f + 2 * font.getLineSpacing(14)});
+    }
 
     // Set up our label-value sf::Text objects
     for (unsigned int i = 0; i < sf::Joystick::AxisCount; ++i)
     {
-        auto& object = texts.insert({axislabels[i], {{axislabels[i] + ":", font}, {"N/A", font}}}).first->second;
-
-        object.label.setPosition({5.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
-        object.value.setPosition({80.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
+        auto [it, success]   = texts.emplace(axislabels[i], JoystickObject{{font, axislabels[i] + ":"}, {font, "N/A"}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
+        value.setPosition({80.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
     }
 
     for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
     {
         sstr.str("");
         sstr << "Button " << i;
-        auto& object = texts.insert({sstr.str(), {{sstr.str() + ":", font}, {"N/A", font}}}).first->second;
-
-        object.label.setPosition(
-            {5.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
-        object.value.setPosition(
-            {80.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
+        auto [it, success]   = texts.emplace(sstr.str(), JoystickObject{{font, sstr.str() + ":"}, {font, "N/A"}});
+        auto& [label, value] = it->second;
+        label.setPosition({5.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
+        value.setPosition({80.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
     }
 
     for (auto& [label, joystickObject] : texts)
@@ -176,8 +180,9 @@ int main()
                 for (auto& [label, joystickObject] : texts)
                     joystickObject.value.setString("N/A");
 
-                texts.at("ID").label.setString("<Not Connected>");
-                texts.at("ID").value.setString("");
+                auto& [label, value] = texts.at("ID");
+                label.setString("<Not Connected>");
+                value.setString("");
 
                 sstr.str("");
                 sstr << threshold << "  (Change with up/down arrow keys)";

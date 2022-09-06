@@ -66,7 +66,7 @@ private:
 class WaveBlur : public Effect
 {
 public:
-    WaveBlur() : Effect("Wave + Blur")
+    WaveBlur() : Effect("Wave + Blur"), m_text(getFont())
     {
     }
 
@@ -92,7 +92,6 @@ public:
             "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
             "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
             "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
-        m_text.setFont(getFont());
         m_text.setCharacterSize(22);
         m_text.setPosition({30.f, 20.f});
 
@@ -378,12 +377,12 @@ int main()
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
-    sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
+    sf::Text description(font, "Current effect: " + effects[current]->getName(), 20);
     description.setPosition({10.f, 530.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
-    sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
+    sf::Text instructions(font, "Press left and right arrows to change the current shader", 20);
     instructions.setPosition({280.f, 555.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
 

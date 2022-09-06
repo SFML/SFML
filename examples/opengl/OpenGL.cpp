@@ -62,9 +62,9 @@ int main()
         if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
             return EXIT_FAILURE;
 
-        sf::Text text("SFML / OpenGL demo", font);
-        sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
-        sf::Text mipmapInstructions("Press return to toggle mipmapping", font);
+        sf::Text text(font, "SFML / OpenGL demo");
+        sf::Text sRgbInstructions(font, "Press space to toggle sRGB conversion");
+        sf::Text mipmapInstructions(font, "Press return to toggle mipmapping");
         text.setFillColor(sf::Color(255, 255, 255, 170));
         sRgbInstructions.setFillColor(sf::Color(255, 255, 255, 170));
         mipmapInstructions.setFillColor(sf::Color(255, 255, 255, 170));
