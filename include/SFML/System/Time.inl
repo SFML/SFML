@@ -30,50 +30,66 @@ constexpr Time::Time() : m_microseconds(0)
 
 
 ////////////////////////////////////////////////////////////
+template <typename Rep, typename Period>
+constexpr Time::Time(const std::chrono::duration<Rep, Period>& duration) : m_microseconds(duration)
+{
+}
+
+
+////////////////////////////////////////////////////////////
 constexpr float Time::asSeconds() const
 {
-    return static_cast<float>(static_cast<double>(m_microseconds) / 1000000.0);
+    return std::chrono::duration<float>(m_microseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Int32 Time::asMilliseconds() const
 {
-    return static_cast<Int32>(m_microseconds / 1000);
+    return std::chrono::duration_cast<std::chrono::duration<Int32, std::milli>>(m_microseconds).count();
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Int64 Time::asMicroseconds() const
 {
+    return m_microseconds.count();
+}
+
+
+////////////////////////////////////////////////////////////
+constexpr std::chrono::microseconds Time::toDuration() const
+{
     return m_microseconds;
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time::Time(Int64 microseconds) : m_microseconds(microseconds)
+template <typename Rep, typename Period>
+constexpr Time::operator std::chrono::duration<Rep, Period>() const
 {
+    return m_microseconds;
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time seconds(float amount)
 {
-    return Time(static_cast<Int64>(amount * 1000000));
+    return Time(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount)));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time milliseconds(Int32 amount)
 {
-    return Time(static_cast<Int64>(amount) * 1000);
+    return Time(std::chrono::milliseconds(amount));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time microseconds(Int64 amount)
 {
-    return Time(amount);
+    return Time(std::chrono::microseconds(amount));
 }
 
 
