@@ -48,7 +48,7 @@ T Vector3<T>::length() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector3::length() is only supported for floating point types");
 
-    return std::hypot(x, y, z);
+    return std::sqrt(x*x + y*y + z*z);
 }
 
 } // namespace sf
