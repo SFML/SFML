@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     if (!font.loadFromFile("tuffy.ttf"))
         return EXIT_FAILURE;
 
-    sf::Text text("Tap anywhere to move the logo.", font, 64);
+    sf::Text text(font, "Tap anywhere to move the logo.", 64);
     text.setFillColor(sf::Color::Black);
     text.setPosition({10, 10});
 

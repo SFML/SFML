@@ -37,7 +37,7 @@
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), text(font), background(sf::Color::Blue)
     {
         std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath + "/logo.png"))
@@ -59,7 +59,6 @@ struct SFMLmainWindow
             NSLog(@"Couldn't load the font");
 
         text.setFillColor(sf::Color::White);
-        text.setFont(font);
     }
 
     sf::RenderWindow renderWindow;
