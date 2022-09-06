@@ -106,8 +106,9 @@ template <typename T>
 T Vector2<T>::length() const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");
-    
-    return std::sqrt(x*x + y*y);
+
+    // don't use std::hypot because of slow performance
+    return std::sqrt(x * x + y * y);
 }
 
 } // namespace sf
