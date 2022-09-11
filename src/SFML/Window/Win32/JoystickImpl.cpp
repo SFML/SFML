@@ -68,6 +68,7 @@ const GUID GUID_POV = {0xa36d02f2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53
 
 const GUID GUID_RxAxis = {0xa36d02f4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
 const GUID GUID_RyAxis = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+
 } // namespace guids
 
 HMODULE         dinput8dll  = nullptr;
@@ -93,6 +94,7 @@ using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
 JoystickBlacklist joystickBlacklist;
 
 const DWORD directInputEventBufferSize = 32;
+
 } // namespace
 
 
@@ -218,11 +220,10 @@ sf::String getDeviceName(unsigned int index, JOYCAPS caps)
 
     return joystickDescription;
 }
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
@@ -265,11 +266,13 @@ bool JoystickImpl::isConnected(unsigned int index)
     return cache.connected;
 }
 
+
 ////////////////////////////////////////////////////////////
 void JoystickImpl::setLazyUpdates(bool status)
 {
     lazyUpdates = status;
 }
+
 
 ////////////////////////////////////////////////////////////
 void JoystickImpl::updateConnections()
@@ -288,6 +291,7 @@ void JoystickImpl::updateConnections()
         cache.timer.restart();
     }
 }
+
 
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
@@ -318,6 +322,7 @@ void JoystickImpl::close()
     if (directInput)
         closeDInput();
 }
+
 
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
@@ -1178,6 +1183,4 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
     return DIENUM_CONTINUE;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -39,11 +39,8 @@
 #endif
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 ////////////////////////////////////////////////////////////
 /// \brief Chooses a monotonic clock of highest resolution
 ///
@@ -77,8 +74,10 @@ using MostSuitableClock = std::conditional_t<std::chrono::high_resolution_clock:
                                              std::chrono::steady_clock>;
 #endif
 
-} // namespace priv
+} // namespace sf::priv
 
+namespace sf
+{
 class Time;
 
 ////////////////////////////////////////////////////////////

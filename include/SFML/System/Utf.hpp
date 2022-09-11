@@ -36,14 +36,15 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 template <class InputIt, class OutputIt>
 OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
-}
 
+} // namespace sf::priv
+
+namespace sf
+{
 template <unsigned int N>
 class Utf;
 
@@ -732,14 +733,14 @@ public:
     static Out encodeWide(Uint32 codepoint, Out output, wchar_t replacement = 0);
 };
 
-#include <SFML/System/Utf.inl>
-
 // Make type aliases to get rid of the template syntax
 using Utf8  = Utf<8>;
 using Utf16 = Utf<16>;
 using Utf32 = Utf<32>;
 
 } // namespace sf
+
+#include <SFML/System/Utf.inl>
 
 
 #endif // SFML_UTF_HPP

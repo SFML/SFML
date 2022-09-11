@@ -52,7 +52,6 @@ struct VkAllocationCallbacks;
 
 namespace sf
 {
-
 using VulkanFunctionPointer = void (*)();
 
 ////////////////////////////////////////////////////////////

@@ -42,8 +42,8 @@ std::recursive_mutex mutex;
 // which solves a lot of weird crashes and errors.
 // It is destroyed when it is no longer needed.
 std::unique_ptr<sf::priv::AudioDevice> globalDevice;
-} // namespace
 
+} // namespace
 
 namespace sf
 {

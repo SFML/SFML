@@ -424,9 +424,10 @@ constexpr Angle& operator/=(Angle& left, float right);
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator%=(Angle& left, Angle right);
 
-namespace Literals
-{
+} // namespace sf
 
+namespace sf::Literals
+{
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
 /// \brief User defined literal for angles in degrees, e.g. 10.5_deg
@@ -471,11 +472,9 @@ namespace Literals
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator"" _rad(unsigned long long int angle);
 
-} // namespace Literals
+} // namespace sf::Literals
 
 #include <SFML/System/Angle.inl>
-
-} // namespace sf
 
 
 #endif // SFML_ANGLE_HPP

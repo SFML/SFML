@@ -84,6 +84,7 @@ sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 index)
     return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) |
            (static_cast<sf::Uint64>(bold) << 31) | index;
 }
+
 } // namespace
 
 

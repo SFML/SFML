@@ -34,13 +34,15 @@
 
 #include <memory>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 class CursorImpl;
-}
 
+} // namespace sf::priv
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 /// \brief Cursor defines the appearance of a system cursor
 ///

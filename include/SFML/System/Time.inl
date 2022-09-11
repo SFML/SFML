@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 constexpr Time::Time() : m_microseconds(0)
 {
@@ -268,3 +269,5 @@ constexpr Time& operator%=(Time& left, Time right)
 // Note: the 'inline' keyword here is technically not required, but VS2019 fails
 // to compile with a bogus "multiple definition" error if not explicitly used.
 inline constexpr Time Time::Zero;
+
+} // namespace sf

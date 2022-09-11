@@ -43,6 +43,7 @@
 namespace sf::priv
 {
 class SFML_SYSTEM_API ResourceStream;
+
 }
 #endif
 

@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Rect<T>::Rect() : left(0), top(0), width(0), height(0)
@@ -144,3 +145,5 @@ constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right)
 {
     return !(left == right);
 }
+
+} // namespace sf

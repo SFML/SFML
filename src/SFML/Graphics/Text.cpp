@@ -88,8 +88,8 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
                                color,
                                sf::Vector2f(u2, v2)));
 }
-} // namespace
 
+} // namespace
 
 namespace sf
 {

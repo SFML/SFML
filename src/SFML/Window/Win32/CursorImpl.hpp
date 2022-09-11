@@ -31,10 +31,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 
-namespace sf
-{
 
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Win32 implementation of Cursor
@@ -103,8 +101,7 @@ private:
     bool  m_systemCursor;
 };
 
-} // namespace priv
+} // namespace sf::priv
 
-} // namespace sf
 
 #endif // SFML_CUSROSIMPLWIN32_HPP

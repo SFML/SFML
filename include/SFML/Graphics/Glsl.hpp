@@ -36,9 +36,7 @@
 #include <cstddef>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 // Forward declarations
 template <std::size_t Columns, std::size_t Rows>
@@ -47,18 +45,10 @@ struct Matrix;
 template <typename T>
 struct Vector4;
 
-#include <SFML/Graphics/Glsl.inl>
+} // namespace sf::priv
 
-} // namespace priv
-
-
-////////////////////////////////////////////////////////////
-/// \brief Namespace with GLSL types
-///
-////////////////////////////////////////////////////////////
-namespace Glsl
+namespace sf::Glsl
 {
-
 ////////////////////////////////////////////////////////////
 /// \brief 2D float vector (\p vec2 in GLSL)
 ///
@@ -192,8 +182,10 @@ using Mat4  = priv::Matrix<4, 4>;
 
 #endif // SFML_DOXYGEN
 
-} // namespace Glsl
-} // namespace sf
+} // namespace sf::Glsl
+
+#include <SFML/Graphics/Glsl.inl>
+
 
 #endif // SFML_GLSL_HPP
 

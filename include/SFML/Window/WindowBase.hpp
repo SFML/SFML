@@ -38,17 +38,17 @@
 #include <memory>
 
 
+namespace sf::priv
+{
+class WindowImpl;
+
+} // namespace sf::priv
+
 namespace sf
 {
 class Cursor;
 class String;
 class VideoMode;
-
-namespace priv
-{
-class WindowImpl;
-}
-
 class Event;
 
 ////////////////////////////////////////////////////////////

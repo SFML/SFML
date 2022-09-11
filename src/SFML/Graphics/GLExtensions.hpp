@@ -335,20 +335,16 @@
 #define GLEXT_GL_VERSION_4_5 SF_GLAD_GL_VERSION_4_5
 #define GLEXT_GL_VERSION_4_6 SF_GLAD_GL_VERSION_4_6
 
-namespace sf
-{
-namespace priv
-{
 
+namespace sf::priv
+{
 ////////////////////////////////////////////////////////////
 /// \brief Make sure that extensions are initialized
 ///
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit();
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_GLEXTENSIONS_HPP

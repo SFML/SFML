@@ -44,12 +44,15 @@
 #include <queue>
 #include <set>
 
+
 namespace sf
 {
 class String;
 class WindowListener;
 
-namespace priv
+} // namespace sf
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for OS-specific window implementation
@@ -299,9 +302,7 @@ private:
     float m_previousAxes[Joystick::Count][Joystick::AxisCount]; //!< Position of each axis last time a move event triggered, in range [-100, 100]
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_WINDOWIMPL_HPP

@@ -93,6 +93,7 @@ private:
         return 0;
     }
 };
+
 } // namespace
 
 namespace sf
@@ -105,6 +106,5 @@ std::ostream& err()
 
     return stream;
 }
-
 
 } // namespace sf

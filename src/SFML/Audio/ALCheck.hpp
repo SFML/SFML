@@ -40,9 +40,8 @@
 #include <al.h>
 #include <alc.h>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// Let's define a macro to quickly check every OpenAL API call
@@ -87,9 +86,7 @@ void alCheckError(const std::filesystem::path& file, unsigned int line, const ch
 ////////////////////////////////////////////////////////////
 ALenum alGetLastErrorImpl();
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_ALCHECK_HPP

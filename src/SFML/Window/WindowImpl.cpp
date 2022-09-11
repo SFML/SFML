@@ -89,11 +89,8 @@ using WindowImplType = sf::priv::WindowImplAndroid;
 #endif
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
@@ -310,6 +307,4 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
 #endif
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

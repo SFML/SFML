@@ -68,12 +68,10 @@ void bufferFromCallback(void* context, void* data, int size)
     auto* dest   = static_cast<std::vector<std::uint8_t>*>(context);
     std::copy(source, source + size, std::back_inserter(*dest));
 }
+
 } // namespace
 
-
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 ImageLoader& ImageLoader::getInstance()
@@ -323,6 +321,4 @@ bool ImageLoader::saveImageToMemory(const std::string&               format,
     return false;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

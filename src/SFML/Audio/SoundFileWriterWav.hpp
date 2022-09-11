@@ -34,9 +34,7 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file writer that handles wav files
@@ -113,9 +111,7 @@ private:
     std::ofstream m_file; //!< File stream to write to
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_SOUNDFILEWRITERWAV_HPP

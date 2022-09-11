@@ -33,10 +33,11 @@
 
 namespace sf
 {
-
 struct ContextSettings;
 
-namespace priv
+} // namespace sf
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for render-texture implementations
@@ -111,9 +112,7 @@ public:
     virtual void updateTexture(unsigned int textureId) = 0;
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_RENDERTEXTUREIMPL_HPP

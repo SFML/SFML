@@ -35,9 +35,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterFlac::check(const std::filesystem::path& filename)
@@ -127,6 +125,4 @@ void SoundFileWriterFlac::close()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

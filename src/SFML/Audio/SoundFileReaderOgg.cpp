@@ -65,11 +65,10 @@ long tell(void* data)
 }
 
 static ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderOgg::check(InputStream& stream)
@@ -173,6 +172,4 @@ void SoundFileReaderOgg::close()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

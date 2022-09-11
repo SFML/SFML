@@ -31,9 +31,9 @@
 
 #include <memory>
 
+
 namespace sf
 {
-
 ////////////////////////////////////////////////////////////
 Cursor::Cursor() : m_impl(std::make_unique<priv::CursorImpl>())
 {

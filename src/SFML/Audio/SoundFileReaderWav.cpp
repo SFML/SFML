@@ -99,11 +99,10 @@ const sf::Uint16 waveFormatExtensible = 65534;
 const char* waveSubformatPcm =
     "\x01\x00\x00\x00\x00\x00\x10\x00"
     "\x80\x00\x00\xAA\x00\x38\x9B\x71";
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderWav::check(InputStream& stream)
@@ -356,6 +355,4 @@ bool SoundFileReaderWav::parseHeader(Info& info)
     return true;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

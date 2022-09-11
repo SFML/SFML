@@ -22,7 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-namespace priv
+namespace sf::priv
 {
 constexpr float pi = 3.141592654f;
 
@@ -35,9 +35,12 @@ constexpr float positiveRemainder(float a, float b)
     else
         return val + b;
 }
-} // namespace priv
+
+} // namespace sf::priv
 
 
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 constexpr Angle::Angle() : m_degrees(0.0f)
 {
@@ -224,7 +227,9 @@ constexpr Angle& operator%=(Angle& left, Angle right)
     return left = left % right;
 }
 
-namespace Literals
+} // namespace sf
+
+namespace sf::Literals
 {
 
 ////////////////////////////////////////////////////////////
@@ -254,13 +259,17 @@ constexpr Angle operator"" _rad(unsigned long long angle)
     return radians(static_cast<float>(angle));
 }
 
-} // namespace Literals
+} // namespace sf::Literals
 
 
 ////////////////////////////////////////////////////////////
 // Static member data
 ////////////////////////////////////////////////////////////
 
+namespace sf
+{
 // Note: the 'inline' keyword here is technically not required, but VS2019 fails
 // to compile with a bogus "multiple definition" error if not explicitly used.
 inline constexpr Angle Angle::Zero;
+
+} // namespace sf

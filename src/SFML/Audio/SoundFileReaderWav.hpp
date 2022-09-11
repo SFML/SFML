@@ -31,9 +31,7 @@
 #include <SFML/Audio/SoundFileReader.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles wav files
@@ -114,9 +112,7 @@ private:
     Uint64       m_dataEnd;        //!< Position one byte past the end of the audio data in the open file
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_SOUNDFILEREADERWAV_HPP

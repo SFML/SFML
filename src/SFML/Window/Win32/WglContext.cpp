@@ -42,6 +42,7 @@
 #include <glad/wgl.h>
 #endif
 
+
 namespace
 {
 namespace WglContextImpl
@@ -77,13 +78,12 @@ void ensureExtensionsInit(HDC deviceContext)
         gladLoadWGL(deviceContext, sf::priv::WglContext::getFunction);
     }
 }
+
 } // namespace WglContextImpl
+
 } // namespace
 
-
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 String getErrorString(DWORD errorCode)
@@ -789,6 +789,4 @@ void WglContext::createContext(WglContext* shared)
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

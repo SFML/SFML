@@ -58,9 +58,10 @@ sf::Uint64 getUniqueId()
 
     return id++;
 }
-} // namespace TextureImpl
-} // namespace
 
+} // namespace TextureImpl
+
+} // namespace
 
 namespace sf
 {

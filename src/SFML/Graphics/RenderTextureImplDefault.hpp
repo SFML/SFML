@@ -38,8 +38,9 @@ namespace sf
 {
 class Context;
 
+} // namespace sf
 
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Default specialization of RenderTextureImpl,
@@ -118,9 +119,7 @@ private:
     Vector2u                 m_size;    //!< Width and height of the P-Buffer
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_RENDERTEXTUREIMPLDEFAULT_HPP

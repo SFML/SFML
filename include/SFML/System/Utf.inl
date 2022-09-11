@@ -33,7 +33,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename InputIt, typename OutputIt>
 OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
@@ -765,3 +766,5 @@ Out Utf<32>::encodeWide(Uint32 codepoint, Out output, wchar_t replacement)
 
     return output;
 }
+
+} // namespace sf

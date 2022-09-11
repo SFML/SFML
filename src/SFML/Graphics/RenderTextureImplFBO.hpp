@@ -39,8 +39,9 @@ namespace sf
 {
 class Context;
 
+} // namespace sf
 
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Specialization of RenderTextureImpl using the
@@ -149,9 +150,7 @@ private:
     bool                     m_sRgb;               //!< Whether we need to encode drawn pixels into sRGB color space
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_RENDERTEXTUREIMPLFBO_HPP

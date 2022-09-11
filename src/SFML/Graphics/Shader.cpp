@@ -42,7 +42,6 @@
 #include <ostream>
 #include <vector>
 
-
 #ifndef SFML_OPENGL_ES
 
 #if defined(SFML_SYSTEM_MACOS) || defined(SFML_SYSTEM_IOS)
@@ -56,6 +55,7 @@
 #define castFromGlHandle(x) (x)
 
 #endif
+
 
 namespace
 {
@@ -171,8 +171,8 @@ std::vector<T> flatten(const sf::priv::Vector4<T>* vectorArray, std::size_t leng
 
     return contiguous;
 }
-} // namespace
 
+} // namespace
 
 namespace sf
 {
@@ -1212,5 +1212,6 @@ void Shader::bindTextures() const
 }
 
 } // namespace sf
+
 
 #endif // SFML_OPENGL_ES

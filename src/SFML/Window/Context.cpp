@@ -39,7 +39,9 @@ namespace ContextImpl
 {
 // This per-thread variable holds the current context for each thread
 thread_local sf::Context* currentContext(nullptr);
+
 } // namespace ContextImpl
+
 } // namespace
 
 namespace sf

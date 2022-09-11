@@ -41,6 +41,7 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////

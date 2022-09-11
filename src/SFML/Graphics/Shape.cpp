@@ -43,6 +43,7 @@ sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
         normal /= length;
     return normal;
 }
+
 } // namespace
 
 

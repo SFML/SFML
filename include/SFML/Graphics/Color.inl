@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 constexpr Color::Color() : r(0), g(0), b(0), a(255)
 {
@@ -154,3 +155,5 @@ inline constexpr Color Color::Yellow(255, 255, 0);
 inline constexpr Color Color::Magenta(255, 0, 255);
 inline constexpr Color Color::Cyan(0, 255, 255);
 inline constexpr Color Color::Transparent(0, 0, 0, 0);
+
+} // namespace sf

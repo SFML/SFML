@@ -34,9 +34,7 @@
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplDefault::RenderTextureImplDefault() : m_context(), m_size(0, 0)
@@ -97,6 +95,4 @@ void RenderTextureImplDefault::updateTexture(unsigned int textureId)
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, static_cast<GLsizei>(m_size.x), static_cast<GLsizei>(m_size.y)));
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

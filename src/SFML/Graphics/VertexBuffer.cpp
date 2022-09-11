@@ -37,6 +37,7 @@
 #include <ostream>
 #include <utility>
 
+
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
@@ -56,9 +57,10 @@ GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
             return GLEXT_GL_STREAM_DRAW;
     }
 }
-} // namespace VertexBufferImpl
-} // namespace
 
+} // namespace VertexBufferImpl
+
+} // namespace
 
 namespace sf
 {

@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Vector3<T>::Vector3() : x(0), y(0), z(0)
@@ -201,3 +202,5 @@ constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y) || (left.z != right.z);
 }
+
+} // namespace sf

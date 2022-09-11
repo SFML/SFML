@@ -161,6 +161,7 @@ private:
 
 #include <SFML/Audio/SoundFileFactory.inl>
 
+
 #endif // SFML_SOUNDFILEFACTORY_HPP
 
 

@@ -37,6 +37,7 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+
 namespace
 {
 ALCdevice*  audioDevice  = nullptr;
@@ -46,11 +47,10 @@ float        listenerVolume = 100.f;
 sf::Vector3f listenerPosition(0.f, 0.f, 0.f);
 sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
 sf::Vector3f listenerUpVector(0.f, 1.f, 0.f);
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 AudioDevice::AudioDevice()
@@ -233,6 +233,4 @@ Vector3f AudioDevice::getUpVector()
     return listenerUpVector;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

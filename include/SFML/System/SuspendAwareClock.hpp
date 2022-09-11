@@ -77,4 +77,5 @@ public:
 
 } // namespace sf
 
+
 #endif // SFML_SUSPENDAWARECLOCK_HPP

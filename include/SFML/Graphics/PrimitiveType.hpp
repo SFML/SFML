@@ -25,6 +25,7 @@
 #ifndef SFML_PRIMITIVETYPE_HPP
 #define SFML_PRIMITIVETYPE_HPP
 
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////

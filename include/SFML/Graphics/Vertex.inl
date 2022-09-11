@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 constexpr Vertex::Vertex() : position(0, 0), color(255, 255, 255), texCoords(0, 0)
 {
@@ -60,3 +61,5 @@ color(theColor),
 texCoords(theTexCoords)
 {
 }
+
+} // namespace sf

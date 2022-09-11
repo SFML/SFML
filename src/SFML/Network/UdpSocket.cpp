@@ -217,5 +217,4 @@ Socket::Status UdpSocket::receive(Packet& packet, std::optional<IpAddress>& remo
     return status;
 }
 
-
 } // namespace sf

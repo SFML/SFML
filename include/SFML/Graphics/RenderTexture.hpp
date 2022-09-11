@@ -37,13 +37,14 @@
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class RenderTextureImpl;
-}
 
+} // namespace sf::priv
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 /// \brief Target for off-screen 2D rendering into a texture
 ///

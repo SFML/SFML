@@ -60,11 +60,10 @@ void encode(std::ostream& stream, sf::Uint32 value)
     };
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterWav::check(const std::filesystem::path& filename)
@@ -181,6 +180,4 @@ void SoundFileWriterWav::close()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

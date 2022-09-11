@@ -30,9 +30,7 @@
 #include <cstring>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 sockaddr_in SocketImpl::createAddress(Uint32 address, unsigned short port)
@@ -110,6 +108,4 @@ struct SocketInitializer
 
 SocketInitializer globalInitializer;
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

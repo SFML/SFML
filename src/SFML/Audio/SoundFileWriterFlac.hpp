@@ -35,9 +35,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file writer that handles FLAC files
@@ -105,9 +103,7 @@ private:
     std::vector<Int32>   m_samples32;    //!< Conversion buffer
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_SOUNDFILEWRITERFLAC_HPP

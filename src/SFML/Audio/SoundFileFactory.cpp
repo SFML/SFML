@@ -59,6 +59,7 @@ void ensureDefaultReadersWritersRegistered()
         registered = true;
     }
 }
+
 } // namespace
 
 namespace sf

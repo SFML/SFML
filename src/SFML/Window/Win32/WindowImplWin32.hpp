@@ -37,7 +37,9 @@ namespace sf
 {
 class String;
 
-namespace priv
+}
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of WindowImpl
@@ -283,8 +285,7 @@ private:
     bool   m_cursorGrabbed; //!< Is the mouse cursor trapped?
 };
 
-} // namespace priv
+} // namespace sf::priv
 
-} // namespace sf
 
 #endif // SFML_WINDOWIMPLWIN32_HPP

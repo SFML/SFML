@@ -39,9 +39,10 @@ namespace
 namespace WindowsBaseImpl
 {
 const sf::WindowBase* fullscreenWindow = nullptr;
-}
-} // namespace
 
+}
+
+} // namespace
 
 namespace sf
 {

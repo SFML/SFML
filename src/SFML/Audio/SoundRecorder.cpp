@@ -43,10 +43,12 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+
 namespace
 {
 ALCdevice* captureDevice = nullptr;
-}
+
+} // namespace
 
 namespace sf
 {

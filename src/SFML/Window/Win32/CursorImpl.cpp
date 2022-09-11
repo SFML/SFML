@@ -33,11 +33,8 @@
 #include <ostream>
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 ////////////////////////////////////////////////////////////
 CursorImpl::CursorImpl() : m_cursor(nullptr), m_systemCursor(false)
 {
@@ -197,6 +194,4 @@ void CursorImpl::release()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

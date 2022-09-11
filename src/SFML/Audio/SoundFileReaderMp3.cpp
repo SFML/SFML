@@ -72,11 +72,10 @@ bool hasValidId3Tag(const std::uint8_t* header)
     return std::memcmp(header, "ID3", 3) == 0 &&
            !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
 }
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderMp3::check(InputStream& stream)
@@ -152,6 +151,4 @@ Uint64 SoundFileReaderMp3::read(Int16* samples, Uint64 maxCount)
     return toRead;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

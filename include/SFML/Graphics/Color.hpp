@@ -223,9 +223,9 @@ constexpr Color& operator-=(Color& left, const Color& right);
 ////////////////////////////////////////////////////////////
 constexpr Color& operator*=(Color& left, const Color& right);
 
-#include <SFML/Graphics/Color.inl>
-
 } // namespace sf
+
+#include <SFML/Graphics/Color.inl>
 
 
 #endif // SFML_COLOR_HPP

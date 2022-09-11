@@ -447,9 +447,9 @@ constexpr Time& operator/=(Time& left, Int64 right);
 ////////////////////////////////////////////////////////////
 constexpr Time& operator%=(Time& left, Time right);
 
-#include <SFML/System/Time.inl>
-
 } // namespace sf
+
+#include <SFML/System/Time.inl>
 
 
 #endif // SFML_TIME_HPP

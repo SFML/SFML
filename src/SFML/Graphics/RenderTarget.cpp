@@ -140,9 +140,10 @@ sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
 
     return GLEXT_GL_FUNC_ADD;
 }
-} // namespace RenderTargetImpl
-} // namespace
 
+} // namespace RenderTargetImpl
+
+} // namespace
 
 namespace sf
 {

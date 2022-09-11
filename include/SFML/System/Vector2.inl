@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Vector2<T>::Vector2() : x(0), y(0)
@@ -212,3 +213,5 @@ const Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
 
 template <typename T>
 const Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
+
+} // namespace sf

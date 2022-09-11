@@ -339,9 +339,9 @@ constexpr Vector2f operator*(const Transform& left, const Vector2f& right);
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator!=(const Transform& left, const Transform& right);
 
-#include <SFML/Graphics/Transform.inl>
-
 } // namespace sf
+
+#include <SFML/Graphics/Transform.inl>
 
 
 #endif // SFML_TRANSFORM_HPP

@@ -23,6 +23,8 @@
 ////////////////////////////////////////////////////////////
 
 
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 String String::fromUtf8(T begin, T end)
@@ -51,3 +53,5 @@ String String::fromUtf32(T begin, T end)
     string.m_string.assign(begin, end);
     return string;
 }
+
+} // namespace sf

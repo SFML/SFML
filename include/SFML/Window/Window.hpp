@@ -37,13 +37,14 @@
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class GlContext;
-}
 
+} // namespace sf::priv
+
+namespace sf
+{
 class Event;
 
 ////////////////////////////////////////////////////////////

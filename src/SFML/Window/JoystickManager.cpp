@@ -28,9 +28,7 @@
 #include <SFML/Window/JoystickManager.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 JoystickManager& JoystickManager::getInstance()
@@ -118,6 +116,4 @@ JoystickManager::~JoystickManager()
     JoystickImpl::cleanup();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

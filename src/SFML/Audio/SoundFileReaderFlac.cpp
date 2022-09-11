@@ -178,11 +178,10 @@ void streamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, voi
     auto* data  = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
     data->error = true;
 }
+
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderFlac::check(InputStream& stream)
@@ -360,6 +359,4 @@ void SoundFileReaderFlac::close()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

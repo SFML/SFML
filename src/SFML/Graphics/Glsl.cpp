@@ -31,11 +31,8 @@
 #include <algorithm>
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 ////////////////////////////////////////////////////////////
 void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
 {
@@ -89,5 +86,4 @@ void copyVector(const Color& source, Vector4<int>& dest)
     dest.w = static_cast<int>(source.a);
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

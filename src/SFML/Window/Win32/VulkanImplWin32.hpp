@@ -34,9 +34,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of Vulkan
@@ -98,9 +96,7 @@ public:
                                     const VkAllocationCallbacks* allocator);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_VULKANIMPLWIN32_HPP

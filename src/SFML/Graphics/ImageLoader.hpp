@@ -41,7 +41,9 @@ namespace sf
 {
 class InputStream;
 
-namespace priv
+} // namespace sf
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Load/save image files
@@ -143,9 +145,7 @@ private:
     ImageLoader& operator=(const ImageLoader&) = delete;
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_IMAGELOADER_HPP

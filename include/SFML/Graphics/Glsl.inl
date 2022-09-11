@@ -22,7 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-
+namespace sf::priv
+{
 ////////////////////////////////////////////////////////////
 /// \brief Helper functions to copy sf::Transform to sf::Glsl::Mat3/4
 ///
@@ -145,3 +146,5 @@ struct Vector4
     T z; //!< 3rd component (Z) of the 4D vector
     T w; //!< 4th component (W) of the 4D vector
 };
+
+} // namespace sf::priv

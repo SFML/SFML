@@ -48,6 +48,7 @@ const int flags = MSG_NOSIGNAL;
 #else
 const int flags = 0;
 #endif
+
 } // namespace
 
 namespace sf

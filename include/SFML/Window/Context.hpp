@@ -35,14 +35,14 @@
 
 #include <memory>
 
+namespace sf::priv
+{
+class GlContext;
+
+} // namespace sf::priv
 
 namespace sf
 {
-namespace priv
-{
-class GlContext;
-}
-
 struct ContextSettings;
 
 using GlFunctionPointer = void (*)();

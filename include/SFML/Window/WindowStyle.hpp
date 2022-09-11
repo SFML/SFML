@@ -26,9 +26,7 @@
 #define SFML_WINDOWSTYLE_HPP
 
 
-namespace sf
-{
-namespace Style
+namespace sf::Style
 {
 ////////////////////////////////////////////////////////////
 /// \ingroup window
@@ -45,9 +43,8 @@ enum
 
     Default = Titlebar | Resize | Close //!< Default window style
 };
-} // namespace Style
 
-} // namespace sf
+} // namespace sf::Style
 
 
 #endif // SFML_WINDOWSTYLE_HPP

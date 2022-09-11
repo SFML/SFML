@@ -31,9 +31,7 @@
 #include <SFML/Graphics/GLCheck.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Automatic wrapper for saving and restoring the current texture binding
@@ -65,9 +63,7 @@ private:
     GLint m_textureBinding; //!< Texture binding to restore
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_TEXTURESAVER_HPP

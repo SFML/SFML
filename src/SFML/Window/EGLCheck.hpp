@@ -33,9 +33,7 @@
 #include <filesystem>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// Let's define a macro to quickly check every EGL API call
@@ -68,8 +66,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void eglCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_EGLCHECK_HPP
