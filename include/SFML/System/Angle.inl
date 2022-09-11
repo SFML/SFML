@@ -231,7 +231,6 @@ constexpr Angle& operator%=(Angle& left, Angle right)
 
 namespace sf::Literals
 {
-
 ////////////////////////////////////////////////////////////
 constexpr Angle operator"" _deg(long double angle)
 {
