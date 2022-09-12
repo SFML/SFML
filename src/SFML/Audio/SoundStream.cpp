@@ -218,7 +218,8 @@ void SoundStream::setPlayingOffset(Time timeOffset)
     onSeek(timeOffset);
 
     // Restart streaming
-    m_samplesProcessed = static_cast<Uint64>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount;
+    m_samplesProcessed = static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) *
+                         m_channelCount;
 
     if (oldStatus == Stopped)
         return;
@@ -354,7 +355,7 @@ void SoundStream::streamData()
             if (m_bufferSeeks[bufferNum] != NoLoop)
             {
                 // This was the last buffer before EOF or Loop End: reset the sample count
-                m_samplesProcessed       = static_cast<Uint64>(m_bufferSeeks[bufferNum]);
+                m_samplesProcessed       = static_cast<std::uint64_t>(m_bufferSeeks[bufferNum]);
                 m_bufferSeeks[bufferNum] = NoLoop;
             }
             else
@@ -377,7 +378,7 @@ void SoundStream::streamData()
                 }
                 else
                 {
-                    m_samplesProcessed += static_cast<Uint64>(size / (bits / 8));
+                    m_samplesProcessed += static_cast<std::uint64_t>(size / (bits / 8));
                 }
             }
 
@@ -449,7 +450,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
         if (immediateLoop && (m_bufferSeeks[bufferNum] != NoLoop))
         {
             // We just tried to begin preloading at EOF or Loop End: reset the sample count
-            m_samplesProcessed       = static_cast<Uint64>(m_bufferSeeks[bufferNum]);
+            m_samplesProcessed       = static_cast<std::uint64_t>(m_bufferSeeks[bufferNum]);
             m_bufferSeeks[bufferNum] = NoLoop;
         }
 

@@ -123,7 +123,7 @@ Music::TimeSpan Music::getLoopPoints() const
 ////////////////////////////////////////////////////////////
 void Music::setLoopPoints(TimeSpan timePoints)
 {
-    Span<Uint64> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
+    Span<std::uint64_t> samplePoints(timeToSamples(timePoints.offset), timeToSamples(timePoints.length));
 
     // Check our state. This averts a divide-by-zero. GetChannelCount() is cheap enough to use often
     if (getChannelCount() == 0 || m_file.getSampleCount() == 0)
@@ -184,9 +184,9 @@ bool Music::onGetData(SoundStream::Chunk& data)
 {
     std::scoped_lock lock(m_mutex);
 
-    std::size_t toFill        = m_samples.size();
-    Uint64      currentOffset = m_file.getSampleOffset();
-    Uint64      loopEnd       = m_loopSpan.offset + m_loopSpan.length;
+    std::size_t   toFill        = m_samples.size();
+    std::uint64_t currentOffset = m_file.getSampleOffset();
+    std::uint64_t loopEnd       = m_loopSpan.offset + m_loopSpan.length;
 
     // If the loop end is enabled and imminent, request less data.
     // This will trip an "onLoop()" call from the underlying SoundStream,
@@ -218,7 +218,7 @@ std::int64_t Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
     std::scoped_lock lock(m_mutex);
-    Uint64           currentOffset = m_file.getSampleOffset();
+    std::uint64_t    currentOffset = m_file.getSampleOffset();
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset == m_loopSpan.offset + m_loopSpan.length))
     {
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
@@ -251,18 +251,18 @@ void Music::initialize()
 }
 
 ////////////////////////////////////////////////////////////
-Uint64 Music::timeToSamples(Time position) const
+std::uint64_t Music::timeToSamples(Time position) const
 {
     // Always ROUND, no unchecked truncation, hence the addition in the numerator.
     // This avoids most precision errors arising from "samples => Time => samples" conversions
     // Original rounding calculation is ((Micros * Freq * Channels) / 1000000) + 0.5
     // We refactor it to keep std::int64_t as the data type throughout the whole operation.
-    return ((static_cast<Uint64>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
+    return ((static_cast<std::uint64_t>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
 }
 
 
 ////////////////////////////////////////////////////////////
-Time Music::samplesToTime(Uint64 samples) const
+Time Music::samplesToTime(std::uint64_t samples) const
 {
     Time position = Time::Zero;
 

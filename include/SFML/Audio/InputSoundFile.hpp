@@ -124,7 +124,7 @@ public:
     /// \return Number of samples
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 getSampleCount() const;
+    std::uint64_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
@@ -167,7 +167,7 @@ public:
     /// \return Sample position
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 getSampleOffset() const;
+    std::uint64_t getSampleOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -186,7 +186,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    void seek(Uint64 sampleOffset);
+    void seek(std::uint64_t sampleOffset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given time offset
@@ -211,7 +211,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(std::int16_t* samples, Uint64 maxCount);
+    [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -242,8 +242,8 @@ private:
     ////////////////////////////////////////////////////////////
     std::unique_ptr<SoundFileReader>            m_reader;       //!< Reader that handles I/O on the file's format
     std::unique_ptr<InputStream, StreamDeleter> m_stream;       //!< Input stream used to access the file's data
-    Uint64                                      m_sampleOffset; //!< Sample Read Position
-    Uint64                                      m_sampleCount;  //!< Total number of samples in the file
+    std::uint64_t                               m_sampleOffset; //!< Sample Read Position
+    std::uint64_t                               m_sampleCount;  //!< Total number of samples in the file
     unsigned int                                m_channelCount; //!< Number of channels of the sound
     unsigned int                                m_sampleRate;   //!< Number of samples per second
 };
@@ -280,7 +280,7 @@ private:
 ///
 /// // Read and process batches of samples until the end of file is reached
 /// std::int16_t samples[1024];
-/// sf::Uint64 count;
+/// std::uint64_t count;
 /// do
 /// {
 ///     count = file.read(samples, 1024);

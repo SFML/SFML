@@ -109,7 +109,7 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterWav::write(const std::int16_t* samples, Uint64 count)
+void SoundFileWriterWav::write(const std::int16_t* samples, std::uint64_t count)
 {
     assert(m_file.good());
 

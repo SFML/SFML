@@ -233,7 +233,7 @@ Packet& Packet::operator>>(std::int64_t& data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator>>(Uint64& data)
+Packet& Packet::operator>>(std::uint64_t& data)
 {
     if (checkSize(sizeof(data)))
     {
@@ -242,10 +242,10 @@ Packet& Packet::operator>>(Uint64& data)
         std::uint8_t bytes[sizeof(data)];
         std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
 
-        data = (static_cast<Uint64>(bytes[0]) << 56) | (static_cast<Uint64>(bytes[1]) << 48) |
-               (static_cast<Uint64>(bytes[2]) << 40) | (static_cast<Uint64>(bytes[3]) << 32) |
-               (static_cast<Uint64>(bytes[4]) << 24) | (static_cast<Uint64>(bytes[5]) << 16) |
-               (static_cast<Uint64>(bytes[6]) << 8) | (static_cast<Uint64>(bytes[7]));
+        data = (static_cast<std::uint64_t>(bytes[0]) << 56) | (static_cast<std::uint64_t>(bytes[1]) << 48) |
+               (static_cast<std::uint64_t>(bytes[2]) << 40) | (static_cast<std::uint64_t>(bytes[3]) << 32) |
+               (static_cast<std::uint64_t>(bytes[4]) << 24) | (static_cast<std::uint64_t>(bytes[5]) << 16) |
+               (static_cast<std::uint64_t>(bytes[6]) << 8) | (static_cast<std::uint64_t>(bytes[7]));
 
         m_readPos += sizeof(data);
     }
@@ -472,7 +472,7 @@ Packet& Packet::operator<<(std::int64_t data)
 
 
 ////////////////////////////////////////////////////////////
-Packet& Packet::operator<<(Uint64 data)
+Packet& Packet::operator<<(std::uint64_t data)
 {
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually

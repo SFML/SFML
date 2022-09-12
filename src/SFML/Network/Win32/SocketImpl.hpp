@@ -31,6 +31,7 @@
 #include <SFML/Network/Socket.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <cstdint>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 

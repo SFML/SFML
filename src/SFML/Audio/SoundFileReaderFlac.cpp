@@ -271,7 +271,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderFlac::seek(Uint64 sampleOffset)
+void SoundFileReaderFlac::seek(std::uint64_t sampleOffset)
 {
     assert(m_decoder);
 
@@ -300,7 +300,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderFlac::read(std::int16_t* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t maxCount)
 {
     assert(m_decoder);
 

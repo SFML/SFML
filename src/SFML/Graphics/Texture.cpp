@@ -50,11 +50,11 @@ std::recursive_mutex maximumSizeMutex;
 
 // Thread-safe unique identifier generator,
 // is used for states cache (see RenderTarget)
-sf::Uint64 getUniqueId()
+std::uint64_t getUniqueId()
 {
     std::scoped_lock lock(idMutex);
 
-    static sf::Uint64 id = 1; // start at 1, zero is "no texture"
+    static std::uint64_t id = 1; // start at 1, zero is "no texture"
 
     return id++;
 }

@@ -91,7 +91,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    void seek(Uint64 sampleOffset) override;
+    void seek(std::uint64_t sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -102,7 +102,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(std::int16_t* samples, Uint64 maxCount) override;
+    [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override;
 
 private:
     ////////////////////////////////////////////////////////////

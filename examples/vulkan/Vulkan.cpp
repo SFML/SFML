@@ -188,7 +188,7 @@ GLADapiproc getVulkanFunction(const char* name)
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugReportFlagsEXT,
     VkDebugReportObjectTypeEXT,
-    uint64_t,
+    std::uint64_t,
     std::size_t,
     std::int32_t,
     const char*,
@@ -393,7 +393,7 @@ public:
     {
         // Swapchain teardown procedure
         for (VkFence fence : fences)
-            vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
+            vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
         if (commandBuffers.size())
             vkFreeCommandBuffers(device, commandPool, static_cast<std::uint32_t>(commandBuffers.size()), commandBuffers.data());
@@ -2483,13 +2483,13 @@ public:
         std::uint32_t imageIndex = 0;
 
         // If the objects we need to submit this frame are still pending, wait here
-        vkWaitForFences(device, 1, &fences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+        vkWaitForFences(device, 1, &fences[currentFrame], VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
         {
             // Get the next image in the swapchain
             VkResult result = vkAcquireNextImageKHR(device,
                                                     swapchain,
-                                                    std::numeric_limits<uint64_t>::max(),
+                                                    std::numeric_limits<std::uint64_t>::max(),
                                                     imageAvailableSemaphores[currentFrame],
                                                     VK_NULL_HANDLE,
                                                     &imageIndex);

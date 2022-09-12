@@ -134,7 +134,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromSamples(const std::int16_t* samples,
-                                       Uint64              sampleCount,
+                                       std::uint64_t       sampleCount,
                                        unsigned int        channelCount,
                                        unsigned int        sampleRate);
 
@@ -178,7 +178,7 @@ public:
     /// \see getSamples
     ///
     ////////////////////////////////////////////////////////////
-    Uint64 getSampleCount() const;
+    std::uint64_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound

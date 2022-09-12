@@ -120,7 +120,10 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const std::int16_t* samples, Uint64 sampleCount, unsigned int channelCount, unsigned int sampleRate)
+bool SoundBuffer::loadFromSamples(const std::int16_t* samples,
+                                  std::uint64_t       sampleCount,
+                                  unsigned int        channelCount,
+                                  unsigned int        sampleRate)
 {
     if (samples && sampleCount && channelCount && sampleRate)
     {
@@ -171,7 +174,7 @@ const std::int16_t* SoundBuffer::getSamples() const
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundBuffer::getSampleCount() const
+std::uint64_t SoundBuffer::getSampleCount() const
 {
     return m_samples.size();
 }
@@ -222,9 +225,9 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 bool SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
-    Uint64       sampleCount  = file.getSampleCount();
-    unsigned int channelCount = file.getChannelCount();
-    unsigned int sampleRate   = file.getSampleRate();
+    std::uint64_t sampleCount  = file.getSampleCount();
+    unsigned int  channelCount = file.getChannelCount();
+    unsigned int  sampleRate   = file.getSampleRate();
 
     // Read the samples from the provided file
     m_samples.resize(static_cast<std::size_t>(sampleCount));

@@ -136,7 +136,7 @@ bool SoundFileReaderMp3::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderMp3::seek(Uint64 sampleOffset)
+void SoundFileReaderMp3::seek(std::uint64_t sampleOffset)
 {
     m_position = std::min(sampleOffset, m_numSamples);
     mp3dec_ex_seek(&m_decoder, m_position);
@@ -144,10 +144,10 @@ void SoundFileReaderMp3::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderMp3::read(std::int16_t* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderMp3::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    Uint64 toRead = std::min(maxCount, m_numSamples - m_position);
-    toRead        = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
+    std::uint64_t toRead = std::min(maxCount, m_numSamples - m_position);
+    toRead = static_cast<std::uint64_t>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
     m_position += toRead;
     return toRead;
 }

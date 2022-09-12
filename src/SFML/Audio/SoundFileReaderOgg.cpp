@@ -126,7 +126,7 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderOgg::seek(Uint64 sampleOffset)
+void SoundFileReaderOgg::seek(std::uint64_t sampleOffset)
 {
     assert(m_vorbis.datasource);
 
@@ -135,12 +135,12 @@ void SoundFileReaderOgg::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderOgg::read(std::int16_t* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderOgg::read(std::int16_t* samples, std::uint64_t maxCount)
 {
     assert(m_vorbis.datasource);
 
     // Try to read the requested number of samples, stop only on error or end of file
-    Uint64 count = 0;
+    std::uint64_t count = 0;
     while (count < maxCount)
     {
         int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
@@ -148,7 +148,7 @@ Uint64 SoundFileReaderOgg::read(std::int16_t* samples, Uint64 maxCount)
         if (bytesRead > 0)
         {
             long samplesRead = bytesRead / static_cast<long>(sizeof(std::int16_t));
-            count += static_cast<Uint64>(samplesRead);
+            count += static_cast<std::uint64_t>(samplesRead);
             samples += samplesRead;
         }
         else

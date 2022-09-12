@@ -32,6 +32,8 @@
 
 #include <SFML/System/Export.hpp>
 
+#include <cstdint>
+
 
 namespace sf
 {

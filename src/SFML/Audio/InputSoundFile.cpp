@@ -189,7 +189,7 @@ bool InputSoundFile::openFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 InputSoundFile::getSampleCount() const
+std::uint64_t InputSoundFile::getSampleCount() const
 {
     return m_sampleCount;
 }
@@ -234,14 +234,14 @@ Time InputSoundFile::getTimeOffset() const
 
 
 ////////////////////////////////////////////////////////////
-Uint64 InputSoundFile::getSampleOffset() const
+std::uint64_t InputSoundFile::getSampleOffset() const
 {
     return m_sampleOffset;
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputSoundFile::seek(Uint64 sampleOffset)
+void InputSoundFile::seek(std::uint64_t sampleOffset)
 {
     if (m_reader && m_channelCount != 0)
     {
@@ -256,14 +256,14 @@ void InputSoundFile::seek(Uint64 sampleOffset)
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Time timeOffset)
 {
-    seek(static_cast<Uint64>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount);
+    seek(static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount);
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint64 InputSoundFile::read(std::int16_t* samples, Uint64 maxCount)
+std::uint64_t InputSoundFile::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    Uint64 readSamples = 0;
+    std::uint64_t readSamples = 0;
     if (m_reader && samples && maxCount)
         readSamples = m_reader->read(samples, maxCount);
     m_sampleOffset += readSamples;
