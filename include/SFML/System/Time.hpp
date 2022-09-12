@@ -85,7 +85,7 @@ public:
     /// \see asSeconds, asMilliseconds
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Int64 asMicroseconds() const;
+    constexpr std::int64_t asMicroseconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a std::chorono::duration
@@ -112,7 +112,7 @@ public:
 private:
     friend constexpr Time seconds(float);
     friend constexpr Time milliseconds(std::int32_t);
-    friend constexpr Time microseconds(Int64);
+    friend constexpr Time microseconds(std::int64_t);
 
 private:
     ////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ constexpr Time milliseconds(std::int32_t amount);
 /// \see seconds, milliseconds
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time microseconds(Int64 amount);
+constexpr Time microseconds(std::int64_t amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -313,7 +313,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator*(Time left, Int64 right);
+[[nodiscard]] constexpr Time operator*(Time left, std::int64_t right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -337,7 +337,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator*(Int64 left, Time right);
+[[nodiscard]] constexpr Time operator*(std::int64_t left, Time right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -361,7 +361,7 @@ constexpr Time& operator*=(Time& left, float right);
 /// \return \a left multiplied by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator*=(Time& left, Int64 right);
+constexpr Time& operator*=(Time& left, std::int64_t right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -385,7 +385,7 @@ constexpr Time& operator*=(Time& left, Int64 right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Time operator/(Time left, Int64 right);
+[[nodiscard]] constexpr Time operator/(Time left, std::int64_t right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -409,7 +409,7 @@ constexpr Time& operator/=(Time& left, float right);
 /// \return \a left divided by \a right
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time& operator/=(Time& left, Int64 right);
+constexpr Time& operator/=(Time& left, std::int64_t right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -485,7 +485,7 @@ constexpr Time& operator%=(Time& left, Time right);
 /// std::int32_t milli = t1.asMilliseconds(); // 100
 ///
 /// sf::Time t2 = sf::milliseconds(30);
-/// Int64 micro = t2.asMicroseconds(); // 30000
+/// std::int64_t micro = t2.asMicroseconds(); // 30000
 ///
 /// sf::Time t3 = sf::microseconds(-800000);
 /// float sec = t3.asSeconds(); // -0.8

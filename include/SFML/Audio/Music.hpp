@@ -239,7 +239,7 @@ protected:
     /// \return The seek position after looping (or -1 if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    Int64 onLoop() override;
+    std::int64_t onLoop() override;
 
 private:
     ////////////////////////////////////////////////////////////

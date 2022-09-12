@@ -341,8 +341,8 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
     }
 
     // Retrieve everything we need to create this MotionEvent in Java
-    Int64        downTime   = AMotionEvent_getDownTime(_event);
-    Int64        eventTime  = AMotionEvent_getEventTime(_event);
+    std::int64_t downTime   = AMotionEvent_getDownTime(_event);
+    std::int64_t eventTime  = AMotionEvent_getEventTime(_event);
     std::int32_t action     = AMotionEvent_getAction(_event);
     float        x          = AMotionEvent_getX(_event, 0);
     float        y          = AMotionEvent_getY(_event, 0);

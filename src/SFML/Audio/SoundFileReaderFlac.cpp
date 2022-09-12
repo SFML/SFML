@@ -39,7 +39,7 @@ FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte 
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 count = data->stream->read(buffer, static_cast<sf::Int64>(*bytes));
+    std::int64_t count = data->stream->read(buffer, static_cast<std::int64_t>(*bytes));
     if (count > 0)
     {
         *bytes = static_cast<std::size_t>(count);
@@ -59,7 +59,7 @@ FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 position = data->stream->seek(static_cast<sf::Int64>(absoluteByteOffset));
+    std::int64_t position = data->stream->seek(static_cast<std::int64_t>(absoluteByteOffset));
     if (position >= 0)
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
     else
@@ -70,7 +70,7 @@ FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 position = data->stream->tell();
+    std::int64_t position = data->stream->tell();
     if (position >= 0)
     {
         *absoluteByteOffset = static_cast<FLAC__uint64>(position);
@@ -86,7 +86,7 @@ FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__u
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 count = data->stream->getSize();
+    std::int64_t count = data->stream->getSize();
     if (count >= 0)
     {
         *streamLength = static_cast<FLAC__uint64>(count);

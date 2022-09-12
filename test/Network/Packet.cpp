@@ -42,12 +42,12 @@ TEST_CASE("sf::Packet class - [network]")
             testPacketStreamOperators(std::numeric_limits<std::int32_t>::max());
         }
 
-        SUBCASE("Int64")
+        SUBCASE("std::int64_t")
         {
-            testPacketStreamOperators(sf::Int64(0));
-            testPacketStreamOperators(sf::Int64(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int64>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int64>::max());
+            testPacketStreamOperators(std::int64_t(0));
+            testPacketStreamOperators(std::int64_t(1));
+            testPacketStreamOperators(std::numeric_limits<std::int64_t>::min());
+            testPacketStreamOperators(std::numeric_limits<std::int64_t>::max());
         }
     }
 }

@@ -102,8 +102,8 @@ bool getFileContents(const std::filesystem::path& filename, std::vector<char>& b
 // Read the contents of a stream into an array of char
 bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
 {
-    bool      success = true;
-    sf::Int64 size    = stream.getSize();
+    bool         success = true;
+    std::int64_t size    = stream.getSize();
     if (size > 0)
     {
         buffer.resize(static_cast<std::size_t>(size));
@@ -114,8 +114,8 @@ bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
             return false;
         }
 
-        sf::Int64 read = stream.read(buffer.data(), size);
-        success        = (read == size);
+        std::int64_t read = stream.read(buffer.data(), size);
+        success           = (read == size);
     }
     buffer.push_back('\0');
     return success;

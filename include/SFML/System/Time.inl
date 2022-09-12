@@ -51,7 +51,7 @@ constexpr std::int32_t Time::asMilliseconds() const
 
 
 ////////////////////////////////////////////////////////////
-constexpr Int64 Time::asMicroseconds() const
+constexpr std::int64_t Time::asMicroseconds() const
 {
     return m_microseconds.count();
 }
@@ -87,7 +87,7 @@ constexpr Time milliseconds(std::int32_t amount)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time microseconds(Int64 amount)
+constexpr Time microseconds(std::int64_t amount)
 {
     return Time(std::chrono::microseconds(amount));
 }
@@ -178,7 +178,7 @@ constexpr Time operator*(Time left, float right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time operator*(Time left, Int64 right)
+constexpr Time operator*(Time left, std::int64_t right)
 {
     return microseconds(left.asMicroseconds() * right);
 }
@@ -192,7 +192,7 @@ constexpr Time operator*(float left, Time right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time operator*(Int64 left, Time right)
+constexpr Time operator*(std::int64_t left, Time right)
 {
     return right * left;
 }
@@ -206,7 +206,7 @@ constexpr Time& operator*=(Time& left, float right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time& operator*=(Time& left, Int64 right)
+constexpr Time& operator*=(Time& left, std::int64_t right)
 {
     return left = left * right;
 }
@@ -220,7 +220,7 @@ constexpr Time operator/(Time left, float right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time operator/(Time left, Int64 right)
+constexpr Time operator/(Time left, std::int64_t right)
 {
     return microseconds(left.asMicroseconds() / right);
 }
@@ -234,7 +234,7 @@ constexpr Time& operator/=(Time& left, float right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Time& operator/=(Time& left, Int64 right)
+constexpr Time& operator/=(Time& left, std::int64_t right)
 {
     return left = left / right;
 }

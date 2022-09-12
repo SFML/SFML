@@ -214,7 +214,7 @@ void Music::onSeek(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-Int64 Music::onLoop()
+std::int64_t Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
     std::scoped_lock lock(m_mutex);
@@ -224,7 +224,7 @@ Int64 Music::onLoop()
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
         // when it's equivalent to the loop end (loop end takes priority). Send us to loop begin
         m_file.seek(m_loopSpan.offset);
-        return static_cast<Int64>(m_file.getSampleOffset());
+        return static_cast<std::int64_t>(m_file.getSampleOffset());
     }
     else if (getLoop() && (currentOffset >= m_file.getSampleCount()))
     {
@@ -256,7 +256,7 @@ Uint64 Music::timeToSamples(Time position) const
     // Always ROUND, no unchecked truncation, hence the addition in the numerator.
     // This avoids most precision errors arising from "samples => Time => samples" conversions
     // Original rounding calculation is ((Micros * Freq * Channels) / 1000000) + 0.5
-    // We refactor it to keep Int64 as the data type throughout the whole operation.
+    // We refactor it to keep std::int64_t as the data type throughout the whole operation.
     return ((static_cast<Uint64>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
 }
 
@@ -268,7 +268,7 @@ Time Music::samplesToTime(Uint64 samples) const
 
     // Make sure we don't divide by 0
     if (getSampleRate() != 0 && getChannelCount() != 0)
-        position = microseconds(static_cast<Int64>((samples * 1000000) / (getChannelCount() * getSampleRate())));
+        position = microseconds(static_cast<std::int64_t>((samples * 1000000) / (getChannelCount() * getSampleRate())));
 
     return position;
 }
