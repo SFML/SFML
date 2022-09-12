@@ -185,8 +185,15 @@ GLADapiproc getVulkanFunction(const char* name)
 }
 
 // Debug we pass to Vulkan to call when it detects warnings or errors
-VKAPI_ATTR VkBool32 VKAPI_CALL
-    debugCallback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* pMessage, void*)
+VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugReportFlagsEXT,
+    VkDebugReportObjectTypeEXT,
+    uint64_t,
+    std::size_t,
+    std::int32_t,
+    const char*,
+    const char* pMessage,
+    void*)
 {
     std::cerr << pMessage << std::endl;
 
