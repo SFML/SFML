@@ -35,7 +35,7 @@ TEST_CASE("sf::Color class - [graphics]")
             CHECK(color.a == 4);
         }
 
-        SUBCASE("Int32 constructor")
+        SUBCASE("std::int32_t constructor")
         {
             CHECK(sf::Color(0x00000000) == sf::Color(0, 0, 0, 0));
             CHECK(sf::Color(0x01020304) == sf::Color(1, 2, 3, 4));

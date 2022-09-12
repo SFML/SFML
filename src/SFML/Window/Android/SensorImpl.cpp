@@ -101,7 +101,7 @@ bool SensorImpl::open(Sensor::Type sensor)
     Time minimumDelay = microseconds(ASensor_getMinDelay(m_sensor));
 
     // Set the event rate (not to consume too much battery)
-    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<Int32>(minimumDelay.asMicroseconds()));
+    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<std::int32_t>(minimumDelay.asMicroseconds()));
 
     // Save the index of the sensor
     m_index = static_cast<unsigned int>(sensor);

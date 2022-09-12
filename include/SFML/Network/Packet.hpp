@@ -233,7 +233,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int32& data);
+    Packet& operator>>(std::int32_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -314,7 +314,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int32 data);
+    Packet& operator<<(std::int32_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -461,7 +461,7 @@ private:
 /// It is designed to follow the behavior of standard C++ streams,
 /// using operators >> and << to extract and insert data.
 ///
-/// It is recommended to use only fixed-size types (like sf::Int32, etc.),
+/// It is recommended to use only fixed-size types (like std::int32_t, etc.),
 /// to avoid possible differences between the sender and the receiver.
 /// Indeed, the native C++ types may have different sizes on two platforms
 /// and your data may be corrupted if that happens.

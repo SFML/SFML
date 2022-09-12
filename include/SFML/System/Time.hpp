@@ -75,7 +75,7 @@ public:
     /// \see asSeconds, asMicroseconds
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Int32 asMilliseconds() const;
+    constexpr std::int32_t asMilliseconds() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the time value as a number of microseconds
@@ -111,7 +111,7 @@ public:
 
 private:
     friend constexpr Time seconds(float);
-    friend constexpr Time milliseconds(Int32);
+    friend constexpr Time milliseconds(std::int32_t);
     friend constexpr Time microseconds(Int64);
 
 private:
@@ -145,7 +145,7 @@ constexpr Time seconds(float amount);
 /// \see seconds, microseconds
 ///
 ////////////////////////////////////////////////////////////
-constexpr Time milliseconds(Int32 amount);
+constexpr Time milliseconds(std::int32_t amount);
 
 ////////////////////////////////////////////////////////////
 /// \relates Time
@@ -482,7 +482,7 @@ constexpr Time& operator%=(Time& left, Time right);
 /// Usage example:
 /// \code
 /// sf::Time t1 = sf::seconds(0.1f);
-/// Int32 milli = t1.asMilliseconds(); // 100
+/// std::int32_t milli = t1.asMilliseconds(); // 100
 ///
 /// sf::Time t2 = sf::milliseconds(30);
 /// Int64 micro = t2.asMicroseconds(); // 30000
