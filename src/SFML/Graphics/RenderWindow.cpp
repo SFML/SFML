@@ -42,7 +42,7 @@ RenderWindow::RenderWindow() : m_defaultFrameBuffer(0)
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::RenderWindow(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
+RenderWindow::RenderWindow(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings) :
 m_defaultFrameBuffer(0)
 {
     // Don't call the base class constructor because it contains virtual function calls

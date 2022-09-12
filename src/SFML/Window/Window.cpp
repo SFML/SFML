@@ -43,7 +43,7 @@ Window::Window() : m_context(), m_frameTimeLimit(Time::Zero)
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
+Window::Window(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings) :
 m_context(),
 m_frameTimeLimit(Time::Zero)
 {
@@ -66,14 +66,14 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const String& title, Uint32 style)
+void Window::create(VideoMode mode, const String& title, std::uint32_t style)
 {
     Window::create(mode, title, style, ContextSettings());
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+void Window::create(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
 {
     // Destroy the previous window implementation
     close();
@@ -85,7 +85,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
         if (getFullscreenWindow())
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            style &= ~static_cast<Uint32>(Style::Fullscreen);
+            style &= ~static_cast<std::uint32_t>(Style::Fullscreen);
         }
         else
         {
@@ -104,7 +104,7 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
 // Check validity of style according to the underlying platform
 #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
     if (style & Style::Fullscreen)
-        style &= ~static_cast<Uint32>(Style::Titlebar);
+        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
     else
         style |= Style::Titlebar;
 #else

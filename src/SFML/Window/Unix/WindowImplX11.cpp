@@ -1940,7 +1940,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     {
                         // There might be more than 1 characters in this event,
                         // so we must iterate it
-                        Uint32        unicode = 0;
+                        std::uint32_t unicode = 0;
                         std::uint8_t* iter    = keyBuffer;
                         while (iter < keyBuffer + length)
                         {
@@ -1964,7 +1964,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     {
                         Event textEvent;
                         textEvent.type         = Event::TextEntered;
-                        textEvent.text.unicode = static_cast<Uint32>(keyBuffer[0]);
+                        textEvent.text.unicode = static_cast<std::uint32_t>(keyBuffer[0]);
                         pushEvent(textEvent);
                     }
                 }

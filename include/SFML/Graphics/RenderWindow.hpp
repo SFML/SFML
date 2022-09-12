@@ -73,7 +73,7 @@ public:
     ////////////////////////////////////////////////////////////
     RenderWindow(VideoMode              mode,
                  const String&          title,
-                 Uint32                 style    = Style::Default,
+                 std::uint32_t          style    = Style::Default,
                  const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////

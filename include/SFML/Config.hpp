@@ -167,9 +167,6 @@
 ////////////////////////////////////////////////////////////
 namespace sf
 {
-// 32 bits integer types
-using Uint32 = std::uint32_t;
-
 // 64 bits integer types
 using Int64  = std::int64_t;
 using Uint64 = std::uint64_t;

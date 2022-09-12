@@ -69,7 +69,10 @@ public:
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<WindowImpl> create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
+    static std::unique_ptr<WindowImpl> create(VideoMode              mode,
+                                              const String&          title,
+                                              std::uint32_t          style,
+                                              const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS

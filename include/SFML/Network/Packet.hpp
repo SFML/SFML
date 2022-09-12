@@ -238,7 +238,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Uint32& data);
+    Packet& operator>>(std::uint32_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -319,7 +319,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Uint32 data);
+    Packet& operator<<(std::uint32_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -468,7 +468,7 @@ private:
 ///
 /// Usage example:
 /// \code
-/// sf::Uint32 x = 24;
+/// std::uint32_t x = 24;
 /// std::string s = "hello";
 /// double d = 5.89;
 ///
@@ -486,7 +486,7 @@ private:
 /// socket.receive(packet);
 ///
 /// // Extract the variables contained in the packet
-/// sf::Uint32 x;
+/// std::uint32_t x;
 /// std::string s;
 /// double d;
 /// if (packet >> x >> s >> d)

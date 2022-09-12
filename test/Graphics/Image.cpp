@@ -23,9 +23,9 @@ TEST_CASE("sf::Image - [graphics]")
             CHECK(image.getSize() == sf::Vector2u(10, 10));
             CHECK(image.getPixelsPtr() != nullptr);
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color(0, 0, 0));
                 }
@@ -40,9 +40,9 @@ TEST_CASE("sf::Image - [graphics]")
             CHECK(image.getSize() == sf::Vector2u(10, 10));
             CHECK(image.getPixelsPtr() != nullptr);
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color::Red);
                 }
@@ -67,9 +67,9 @@ TEST_CASE("sf::Image - [graphics]")
             CHECK(image.getSize() == sf::Vector2u(10, 10));
             CHECK(image.getPixelsPtr() != nullptr);
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color::Red);
                 }
@@ -99,9 +99,9 @@ TEST_CASE("sf::Image - [graphics]")
             image2.create(sf::Vector2u(10, 10));
             CHECK(image2.copy(image1, sf::Vector2u(0, 0)));
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image1.getPixel(sf::Vector2u(i, j)) == image2.getPixel(sf::Vector2u(i, j)));
                 }
@@ -117,9 +117,9 @@ TEST_CASE("sf::Image - [graphics]")
             image2.create(sf::Vector2u(10, 10));
             CHECK(image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(5, 5))));
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     if (i <= 4 && j <= 4)
                         CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color::Blue);
@@ -151,9 +151,9 @@ TEST_CASE("sf::Image - [graphics]")
             image2.create(sf::Vector2u(10, 10), source);
             CHECK(image1.copy(image2, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(10, 10)), true));
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image1.getPixel(sf::Vector2u(i, j)) == composite);
                 }
@@ -168,9 +168,9 @@ TEST_CASE("sf::Image - [graphics]")
             image2.create(sf::Vector2u(10, 10), sf::Color::Red);
             CHECK(!image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(9, 9))));
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color::Red);
                 }
@@ -187,9 +187,9 @@ TEST_CASE("sf::Image - [graphics]")
             image2.create(sf::Vector2u(10, 10), sf::Color::Red);
             CHECK(!image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(5, 5), sf::Vector2i(9, 9))));
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color::Red);
                 }
@@ -205,9 +205,9 @@ TEST_CASE("sf::Image - [graphics]")
             image.create(sf::Vector2u(10, 10), sf::Color::Blue);
             image.createMaskFromColor(sf::Color::Blue);
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color(0, 0, 255, 0));
                 }
@@ -220,9 +220,9 @@ TEST_CASE("sf::Image - [graphics]")
             image.create(sf::Vector2u(10, 10), sf::Color::Blue);
             image.createMaskFromColor(sf::Color::Blue, 100);
 
-            for (sf::Uint32 i = 0; i < 10; ++i)
+            for (std::uint32_t i = 0; i < 10; ++i)
             {
-                for (sf::Uint32 j = 0; j < 10; ++j)
+                for (std::uint32_t j = 0; j < 10; ++j)
                 {
                     CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color(0, 0, 255, 100));
                 }

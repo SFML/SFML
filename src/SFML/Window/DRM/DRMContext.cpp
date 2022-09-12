@@ -421,7 +421,7 @@ void DRMContext::createContext(DRMContext* shared)
 ////////////////////////////////////////////////////////////
 void DRMContext::createSurface(const Vector2u& size, unsigned int /*bpp*/, bool scanout)
 {
-    sf::Uint32 flags = GBM_BO_USE_RENDERING;
+    std::uint32_t flags = GBM_BO_USE_RENDERING;
 
     m_scanOut = scanout;
     if (m_scanOut)

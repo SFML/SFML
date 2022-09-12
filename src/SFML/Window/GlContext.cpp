@@ -866,7 +866,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 
                     if (std::strstr(extensionString, "GL_ARB_compatibility"))
                     {
-                        m_settings.attributeFlags &= ~static_cast<Uint32>(ContextSettings::Core);
+                        m_settings.attributeFlags &= ~static_cast<std::uint32_t>(ContextSettings::Core);
                         break;
                     }
                 }

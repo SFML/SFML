@@ -80,13 +80,13 @@ struct ContextSettings
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int depthBits;         //!< Bits of the depth buffer
-    unsigned int stencilBits;       //!< Bits of the stencil buffer
-    unsigned int antialiasingLevel; //!< Level of antialiasing
-    unsigned int majorVersion;      //!< Major number of the context version to create
-    unsigned int minorVersion;      //!< Minor number of the context version to create
-    Uint32       attributeFlags;    //!< The attribute flags to create the context with
-    bool         sRgbCapable;       //!< Whether the context framebuffer is sRGB capable
+    unsigned int  depthBits;         //!< Bits of the depth buffer
+    unsigned int  stencilBits;       //!< Bits of the stencil buffer
+    unsigned int  antialiasingLevel; //!< Level of antialiasing
+    unsigned int  majorVersion;      //!< Major number of the context version to create
+    unsigned int  minorVersion;      //!< Minor number of the context version to create
+    std::uint32_t attributeFlags;    //!< The attribute flags to create the context with
+    bool          sRgbCapable;       //!< Whether the context framebuffer is sRGB capable
 };
 
 } // namespace sf

@@ -425,10 +425,10 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* s
             event.type = Event::KeyReleased;
             forwardEvent(event);
 
-            if (Uint32 unicode = static_cast<Uint32>(getUnicode(_event)))
+            if (std::uint32_t unicode = static_cast<std::uint32_t>(getUnicode(_event)))
             {
                 event.type         = Event::TextEntered;
-                event.text.unicode = static_cast<Uint32>(unicode);
+                event.text.unicode = static_cast<std::uint32_t>(unicode);
                 forwardEvent(event);
             }
             return 1;
@@ -448,10 +448,10 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* _event, ActivityStates& /* s
                 // https://code.google.com/p/android/issues/detail?id=33998
                 return 0;
             }
-            else if (Uint32 unicode = static_cast<Uint32>(getUnicode(_event))) // This is a repeated sequence
+            else if (std::uint32_t unicode = static_cast<std::uint32_t>(getUnicode(_event))) // This is a repeated sequence
             {
                 event.type         = Event::TextEntered;
-                event.text.unicode = static_cast<Uint32>(unicode);
+                event.text.unicode = static_cast<std::uint32_t>(unicode);
 
                 std::int32_t repeats = AKeyEvent_getRepeatCount(_event);
                 for (std::int32_t i = 0; i < repeats; ++i)
@@ -473,7 +473,7 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& s
 
     if (device == AINPUT_SOURCE_MOUSE)
         event.type = Event::MouseMoved;
-    else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+    else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         event.type = Event::TouchMoved;
 
     std::size_t pointerCount = AMotionEvent_getPointerCount(_event);
@@ -492,7 +492,7 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* _event, ActivityStates& s
 
             states.mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
         }
-        else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+        else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             if (states.touchEvents[id].x == x && states.touchEvents[id].y == y)
                 continue;
@@ -558,7 +558,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* _event, Act
             if (id >= 0 && id < Mouse::ButtonCount)
                 states.isButtonPressed[id] = false;
         }
-        else if (static_cast<Uint32>(device) & AINPUT_SOURCE_TOUCHSCREEN)
+        else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             event.type         = Event::TouchEnded;
             event.touch.finger = static_cast<unsigned int>(id);

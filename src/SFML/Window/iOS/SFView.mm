@@ -77,7 +77,7 @@
     const char* end = utf8 + std::strlen(utf8);
     while (utf8 < end)
     {
-        sf::Uint32 character;
+        std::uint32_t character;
         utf8 = sf::Utf8::decode(utf8, end, character);
         [[SFAppDelegate getInstance] notifyCharacter:character];
     }

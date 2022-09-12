@@ -52,7 +52,7 @@ WindowBase::WindowBase() : m_impl(), m_size(0, 0)
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(VideoMode mode, const String& title, Uint32 style) : m_impl(), m_size(0, 0)
+WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style) : m_impl(), m_size(0, 0)
 {
     WindowBase::create(mode, title, style);
 }
@@ -73,7 +73,7 @@ WindowBase::~WindowBase()
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
+void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style)
 {
     // Destroy the previous window implementation
     close();
@@ -85,7 +85,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
         if (getFullscreenWindow())
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            style &= ~static_cast<Uint32>(Style::Fullscreen);
+            style &= ~static_cast<std::uint32_t>(Style::Fullscreen);
         }
         else
         {
@@ -104,7 +104,7 @@ void WindowBase::create(VideoMode mode, const String& title, Uint32 style)
 // Check validity of style according to the underlying platform
 #if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
     if (style & Style::Fullscreen)
-        style &= ~static_cast<Uint32>(Style::Titlebar);
+        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
     else
         style |= Style::Titlebar;
 #else

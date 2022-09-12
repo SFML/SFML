@@ -135,7 +135,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
             // Retrieve the available instance extensions
             std::vector<VkExtensionProperties> extensionProperties;
 
-            uint32_t extensionCount = 0;
+            std::uint32_t extensionCount = 0;
 
             wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
 
