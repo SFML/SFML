@@ -77,13 +77,13 @@ bool FileInputStream::open(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-Int64 FileInputStream::read(void* data, Int64 size)
+std::int64_t FileInputStream::read(void* data, std::int64_t size)
 {
 #ifdef SFML_SYSTEM_ANDROID
     return m_file->read(data, size);
 #else
     if (m_file)
-        return static_cast<Int64>(std::fread(data, 1, static_cast<std::size_t>(size), m_file.get()));
+        return static_cast<std::int64_t>(std::fread(data, 1, static_cast<std::size_t>(size), m_file.get()));
     else
         return -1;
 #endif
@@ -91,7 +91,7 @@ Int64 FileInputStream::read(void* data, Int64 size)
 
 
 ////////////////////////////////////////////////////////////
-Int64 FileInputStream::seek(Int64 position)
+std::int64_t FileInputStream::seek(std::int64_t position)
 {
 #ifdef SFML_SYSTEM_ANDROID
     return m_file->seek(position);
@@ -112,7 +112,7 @@ Int64 FileInputStream::seek(Int64 position)
 
 
 ////////////////////////////////////////////////////////////
-Int64 FileInputStream::tell()
+std::int64_t FileInputStream::tell()
 {
 #ifdef SFML_SYSTEM_ANDROID
     return m_file->tell();
@@ -126,16 +126,16 @@ Int64 FileInputStream::tell()
 
 
 ////////////////////////////////////////////////////////////
-Int64 FileInputStream::getSize()
+std::int64_t FileInputStream::getSize()
 {
 #ifdef SFML_SYSTEM_ANDROID
     return m_file->getSize();
 #else
     if (m_file)
     {
-        Int64 position = tell();
+        std::int64_t position = tell();
         std::fseek(m_file.get(), 0, SEEK_END);
-        Int64 size = tell();
+        std::int64_t size = tell();
 
         if (seek(position) == -1)
             return -1;

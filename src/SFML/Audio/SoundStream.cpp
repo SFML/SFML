@@ -260,7 +260,7 @@ bool SoundStream::getLoop() const
 
 
 ////////////////////////////////////////////////////////////
-Int64 SoundStream::onLoop()
+std::int64_t SoundStream::onLoop()
 {
     onSeek(Time::Zero);
     return 0;
@@ -290,7 +290,7 @@ void SoundStream::streamData()
 
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));
-    for (Int64& bufferSeek : m_bufferSeeks)
+    for (std::int64_t& bufferSeek : m_bufferSeeks)
         bufferSeek = NoLoop;
 
     // Fill the queue

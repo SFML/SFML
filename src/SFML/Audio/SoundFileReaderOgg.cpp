@@ -39,7 +39,7 @@ namespace
 std::size_t read(void* ptr, std::size_t size, std::size_t nmemb, void* data)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size * nmemb)));
+    return static_cast<std::size_t>(stream->read(ptr, static_cast<std::int64_t>(size * nmemb)));
 }
 
 int seek(void* data, ogg_int64_t offset, int whence)

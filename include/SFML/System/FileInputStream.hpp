@@ -114,7 +114,7 @@ public:
     /// \return The number of bytes actually read, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Int64 read(void* data, Int64 size) override;
+    [[nodiscard]] std::int64_t read(void* data, std::int64_t size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
@@ -124,7 +124,7 @@ public:
     /// \return The position actually sought to, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Int64 seek(Int64 position) override;
+    [[nodiscard]] std::int64_t seek(std::int64_t position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
@@ -132,7 +132,7 @@ public:
     /// \return The current position, or -1 on error.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Int64 tell() override;
+    [[nodiscard]] std::int64_t tell() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
@@ -140,7 +140,7 @@ public:
     /// \return The total number of bytes available in the stream, or -1 on error
     ///
     ////////////////////////////////////////////////////////////
-    Int64 getSize() override;
+    std::int64_t getSize() override;
 
 private:
     ////////////////////////////////////////////////////////////

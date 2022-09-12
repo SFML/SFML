@@ -82,7 +82,7 @@ private:
         // (don't forget that we run in two separate threads)
         {
             std::scoped_lock lock(m_mutex);
-            m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<sf::Int64>::difference_type>(m_offset),
+            m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<std::int64_t>::difference_type>(m_offset),
                                 m_samples.end());
         }
 

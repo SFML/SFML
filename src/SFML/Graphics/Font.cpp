@@ -53,12 +53,13 @@ namespace
 // FreeType callbacks that operate on a sf::InputStream
 unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
 {
-    auto  convertedOffset = static_cast<sf::Int64>(offset);
+    auto  convertedOffset = static_cast<std::int64_t>(offset);
     auto* stream          = static_cast<sf::InputStream*>(rec->descriptor.pointer);
     if (stream->seek(convertedOffset) == convertedOffset)
     {
         if (count > 0)
-            return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), static_cast<sf::Int64>(count)));
+            return static_cast<unsigned long>(
+                stream->read(reinterpret_cast<char*>(buffer), static_cast<std::int64_t>(count)));
         else
             return 0;
     }
