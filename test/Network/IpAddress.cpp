@@ -72,9 +72,11 @@ TEST_CASE("sf::IpAddress class - [network]")
         SUBCASE("getPublicAddress")
         {
             const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress(sf::seconds(1));
-            REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() != "0.0.0.0");
-            CHECK(ipAddress->toInteger() != 0);
+            if (ipAddress.has_value())
+            {
+                CHECK(ipAddress->toString() != "0.0.0.0");
+                CHECK(ipAddress->toInteger() != 0);
+            }
         }
     }
 
