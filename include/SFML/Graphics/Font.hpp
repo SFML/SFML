@@ -199,7 +199,7 @@ public:
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
+    const Glyph& getGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Determine if this font has a glyph representing the requested code point
@@ -217,7 +217,7 @@ public:
     /// \return True if the codepoint has a glyph representation, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool hasGlyph(Uint32 codePoint) const;
+    bool hasGlyph(std::uint32_t codePoint) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -235,7 +235,7 @@ public:
     /// \return Kerning value for \a first and \a second, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    float getKerning(Uint32 first, Uint32 second, unsigned int characterSize, bool bold = false) const;
+    float getKerning(std::uint32_t first, std::uint32_t second, unsigned int characterSize, bool bold = false) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
@@ -391,7 +391,7 @@ private:
     /// \return The glyph corresponding to \a codePoint and \a characterSize
     ///
     ////////////////////////////////////////////////////////////
-    Glyph loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+    Glyph loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph

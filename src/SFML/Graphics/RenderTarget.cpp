@@ -79,7 +79,7 @@ bool isActive(sf::Uint64 id)
 }
 
 // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
-sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
+std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
 {
     // clang-format off
     switch (blendFactor)
@@ -104,7 +104,7 @@ sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
 
 
 // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
+std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
 {
     switch (blendEquation)
     {

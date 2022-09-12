@@ -215,7 +215,7 @@ public:
     /// \see getStyle
     ///
     ////////////////////////////////////////////////////////////
-    void setStyle(Uint32 style);
+    void setStyle(std::uint32_t style);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the fill color of the text
@@ -329,7 +329,7 @@ public:
     /// \see setStyle
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 getStyle() const;
+    std::uint32_t getStyle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the fill color of the text
@@ -433,7 +433,7 @@ private:
     unsigned int        m_characterSize;       //!< Base size of characters, in pixels
     float               m_letterSpacingFactor; //!< Spacing factor between letters
     float               m_lineSpacingFactor;   //!< Spacing factor between lines
-    Uint32              m_style;               //!< Text style (see Style enum)
+    std::uint32_t       m_style;               //!< Text style (see Style enum)
     Color               m_fillColor;           //!< Text fill color
     Color               m_outlineColor;        //!< Text outline color
     float               m_outlineThickness;    //!< Thickness of the text's outline

@@ -324,7 +324,7 @@ std::vector<sf::Vector2i> touchPositions;
 
 
 ////////////////////////////////////////////////////////////
-- (void)notifyCharacter:(sf::Uint32)character
+- (void)notifyCharacter:(std::uint32_t)character
 {
     if (self.sfWindow)
     {

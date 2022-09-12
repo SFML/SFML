@@ -99,7 +99,7 @@
 /// \param character The typed character
 ///
 ////////////////////////////////////////////////////////////
-- (void)notifyCharacter:(sf::Uint32)character;
+- (void)notifyCharacter:(std::uint32_t)character;
 
 ////////////////////////////////////////////////////////////
 /// \brief Tells if the dimensions of the current window must be flipped when switching to a given orientation

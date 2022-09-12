@@ -40,7 +40,7 @@ a(alpha)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Color::Color(Uint32 color) :
+constexpr Color::Color(std::uint32_t color) :
 r(static_cast<std::uint8_t>((color & 0xff000000) >> 24)),
 g(static_cast<std::uint8_t>((color & 0x00ff0000) >> 16)),
 b(static_cast<std::uint8_t>((color & 0x0000ff00) >> 8)),
@@ -50,9 +50,9 @@ a(static_cast<std::uint8_t>(color & 0x000000ff))
 
 
 ////////////////////////////////////////////////////////////
-constexpr Uint32 Color::toInteger() const
+constexpr std::uint32_t Color::toInteger() const
 {
-    return static_cast<Uint32>((r << 24) | (g << 16) | (b << 8) | a);
+    return static_cast<std::uint32_t>((r << 24) | (g << 16) | (b << 8) | a);
 }
 
 

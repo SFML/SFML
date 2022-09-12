@@ -62,7 +62,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         return Any;
 
     // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-    if (const Uint32 ip = inet_addr(address.data()); ip != INADDR_NONE)
+    if (const std::uint32_t ip = inet_addr(address.data()); ip != INADDR_NONE)
         return IpAddress(ntohl(ip));
 
     // Not a valid address, try to convert it as a host name
@@ -75,7 +75,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         sockaddr_in sin;
         std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
 
-        const Uint32 ip = sin.sin_addr.s_addr;
+        const std::uint32_t ip = sin.sin_addr.s_addr;
         freeaddrinfo(result);
 
         return IpAddress(ntohl(ip));
@@ -93,7 +93,7 @@ m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint32 address) : m_address(htonl(address))
+IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
 {
 }
 
@@ -109,7 +109,7 @@ std::string IpAddress::toString() const
 
 
 ////////////////////////////////////////////////////////////
-Uint32 IpAddress::toInteger() const
+std::uint32_t IpAddress::toInteger() const
 {
     return ntohl(m_address);
 }

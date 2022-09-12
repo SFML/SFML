@@ -159,7 +159,7 @@ m_cursorGrabbed(false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& /*settings*/) :
 m_handle(nullptr),
 m_callback(0),
 m_cursorVisible(true), // might need to call GetCursorInfo
@@ -712,7 +712,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (m_keyRepeatEnabled || ((lParam & (1 << 30)) == 0))
             {
                 // Get the code of the typed character
-                auto character = static_cast<Uint32>(wParam);
+                auto character = static_cast<std::uint32_t>(wParam);
 
                 // Check if it is the first part of a surrogate pair, or a regular character
                 if ((character >= 0xD800) && (character <= 0xDBFF))

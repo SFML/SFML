@@ -221,7 +221,7 @@ private:
     {
         PendingPacket();
 
-        Uint32            Size;         //!< Data of packet size
+        std::uint32_t     Size;         //!< Data of packet size
         std::size_t       SizeReceived; //!< Number of size bytes received so far
         std::vector<char> Data;         //!< Data of the packet
     };

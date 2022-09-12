@@ -101,7 +101,7 @@ struct WindowImpl::JoystickStatesImpl
 };
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<WindowImpl> WindowImpl::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+std::unique_ptr<WindowImpl> WindowImpl::create(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
 {
     return std::make_unique<WindowImplType>(mode, title, style, settings);
 }

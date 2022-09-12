@@ -79,9 +79,9 @@ inline T reinterpret(const U& input)
 }
 
 // Combine outline thickness, boldness and font glyph index into a single 64-bit key
-sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 index)
+sf::Uint64 combine(float outlineThickness, bool bold, std::uint32_t index)
 {
-    return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) |
+    return (static_cast<sf::Uint64>(reinterpret<std::uint32_t>(outlineThickness)) << 32) |
            (static_cast<sf::Uint64>(bold) << 31) | index;
 }
 } // namespace
@@ -350,7 +350,7 @@ const Font::Info& Font::getInfo() const
 
 
 ////////////////////////////////////////////////////////////
-const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // Get the page corresponding to the character size
     GlyphTable& glyphs = loadPage(characterSize).glyphs;
@@ -376,14 +376,14 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 
 
 ////////////////////////////////////////////////////////////
-bool Font::hasGlyph(Uint32 codePoint) const
+bool Font::hasGlyph(std::uint32_t codePoint) const
 {
     return FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint) != 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize, bool bold) const
+float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int characterSize, bool bold) const
 {
     // Special case where first or second is 0 (null character)
     if (first == 0 || second == 0)
@@ -548,7 +548,7 @@ Font::Page& Font::loadPage(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // The glyph to return
     Glyph glyph;

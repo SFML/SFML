@@ -68,24 +68,24 @@ bool decode(sf::InputStream& stream, std::uint16_t& value)
     return true;
 }
 
-bool decode24bit(sf::InputStream& stream, sf::Uint32& value)
+bool decode24bit(sf::InputStream& stream, std::uint32_t& value)
 {
     unsigned char bytes[3];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
+    value = static_cast<std::uint32_t>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
 
     return true;
 }
 
-bool decode(sf::InputStream& stream, sf::Uint32& value)
+bool decode(sf::InputStream& stream, std::uint32_t& value)
 {
     unsigned char bytes[sizeof(value)];
     if (static_cast<std::size_t>(stream.read(bytes, static_cast<sf::Int64>(sizeof(bytes)))) != sizeof(bytes))
         return false;
 
-    value = static_cast<sf::Uint32>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
+    value = static_cast<std::uint32_t>(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
 
     return true;
 }
@@ -184,7 +184,7 @@ Uint64 SoundFileReaderWav::read(std::int16_t* samples, Uint64 maxCount)
 
             case 3:
             {
-                Uint32 sample = 0;
+                std::uint32_t sample = 0;
                 if (decode24bit(*m_stream, sample))
                     *samples++ = static_cast<std::int16_t>(sample >> 8);
                 else
@@ -194,7 +194,7 @@ Uint64 SoundFileReaderWav::read(std::int16_t* samples, Uint64 maxCount)
 
             case 4:
             {
-                Uint32 sample = 0;
+                std::uint32_t sample = 0;
                 if (decode(*m_stream, sample))
                     *samples++ = static_cast<std::int16_t>(sample >> 16);
                 else
@@ -236,7 +236,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
         if (static_cast<std::size_t>(m_stream->read(subChunkId, static_cast<Int64>(sizeof(subChunkId)))) !=
             sizeof(subChunkId))
             return false;
-        Uint32 subChunkSize = 0;
+        std::uint32_t subChunkSize = 0;
         if (!decode(*m_stream, subChunkSize))
             return false;
         Int64 subChunkStart = m_stream->tell();
@@ -262,13 +262,13 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             info.channelCount = channelCount;
 
             // Sample rate
-            Uint32 sampleRate = 0;
+            std::uint32_t sampleRate = 0;
             if (!decode(*m_stream, sampleRate))
                 return false;
             info.sampleRate = sampleRate;
 
             // Byte rate
-            Uint32 byteRate = 0;
+            std::uint32_t byteRate = 0;
             if (!decode(*m_stream, byteRate))
                 return false;
 
@@ -302,7 +302,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                     return false;
 
                 // Channel mask
-                Uint32 channelMask = 0;
+                std::uint32_t channelMask = 0;
                 if (!decode(*m_stream, channelMask))
                     return false;
 

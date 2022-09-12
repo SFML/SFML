@@ -35,7 +35,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-const std::size_t String::InvalidPos = std::basic_string<Uint32>::npos;
+const std::size_t String::InvalidPos = std::basic_string<std::uint32_t>::npos;
 
 
 ////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ String::String(wchar_t wideChar)
 
 
 ////////////////////////////////////////////////////////////
-String::String(Uint32 utf32Char)
+String::String(std::uint32_t utf32Char)
 {
     m_string += utf32Char;
 }
@@ -112,7 +112,7 @@ String::String(const std::wstring& wideString)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const Uint32* utf32String)
+String::String(const std::uint32_t* utf32String)
 {
     if (utf32String)
         m_string = utf32String;
@@ -120,7 +120,7 @@ String::String(const Uint32* utf32String)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::basic_string<Uint32>& utf32String) : m_string(utf32String)
+String::String(const std::basic_string<std::uint32_t>& utf32String) : m_string(utf32String)
 {
 }
 
@@ -210,7 +210,7 @@ std::basic_string<std::uint16_t> String::toUtf16() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<Uint32> String::toUtf32() const
+std::basic_string<std::uint32_t> String::toUtf32() const
 {
     return m_string;
 }
@@ -233,14 +233,14 @@ String& String::operator+=(const String& right)
 
 
 ////////////////////////////////////////////////////////////
-Uint32 String::operator[](std::size_t index) const
+std::uint32_t String::operator[](std::size_t index) const
 {
     return m_string[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-Uint32& String::operator[](std::size_t index)
+std::uint32_t& String::operator[](std::size_t index)
 {
     return m_string[index];
 }
@@ -319,7 +319,7 @@ String String::substring(std::size_t position, std::size_t length) const
 
 
 ////////////////////////////////////////////////////////////
-const Uint32* String::getData() const
+const std::uint32_t* String::getData() const
 {
     return m_string.c_str();
 }

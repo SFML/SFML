@@ -425,7 +425,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
 
     // Acquire audio data, also address EOF and error cases if they occur
     Chunk data = {nullptr, 0};
-    for (Uint32 retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
+    for (std::uint32_t retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
     {
         // Check if the stream must loop or stop
         if (!m_loop)

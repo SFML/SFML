@@ -66,7 +66,7 @@ public:
     /// \param color Number containing the RGBA components (in that order)
     ///
     ////////////////////////////////////////////////////////////
-    constexpr explicit Color(Uint32 color);
+    constexpr explicit Color(std::uint32_t color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Retrieve the color as a 32-bit unsigned integer
@@ -74,7 +74,7 @@ public:
     /// \return Color represented as a 32-bit unsigned integer
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Uint32 toInteger() const;
+    constexpr std::uint32_t toInteger() const;
 
     ////////////////////////////////////////////////////////////
     // Static member data

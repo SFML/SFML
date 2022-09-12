@@ -205,7 +205,7 @@ void Text::setLineSpacing(float spacingFactor)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setStyle(Uint32 style)
+void Text::setStyle(std::uint32_t style)
 {
     if (m_style != style)
     {
@@ -298,7 +298,7 @@ float Text::getLineSpacing() const
 
 
 ////////////////////////////////////////////////////////////
-Uint32 Text::getStyle() const
+std::uint32_t Text::getStyle() const
 {
     return m_style;
 }
@@ -344,11 +344,11 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
-    Vector2f position;
-    Uint32   prevChar = 0;
+    Vector2f      position;
+    std::uint32_t prevChar = 0;
     for (std::size_t i = 0; i < index; ++i)
     {
-        Uint32 curChar = m_string[i];
+        std::uint32_t curChar = m_string[i];
 
         // Apply the kerning offset
         position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
@@ -465,14 +465,14 @@ void Text::ensureGeometryUpdate() const
     auto  y           = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
-    auto   minX     = static_cast<float>(m_characterSize);
-    auto   minY     = static_cast<float>(m_characterSize);
-    float  maxX     = 0.f;
-    float  maxY     = 0.f;
-    Uint32 prevChar = 0;
+    auto          minX     = static_cast<float>(m_characterSize);
+    auto          minY     = static_cast<float>(m_characterSize);
+    float         maxX     = 0.f;
+    float         maxY     = 0.f;
+    std::uint32_t prevChar = 0;
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
-        Uint32 curChar = m_string[i];
+        std::uint32_t curChar = m_string[i];
 
         // Skip the \r char to avoid weird graphical issues
         if (curChar == U'\r')
