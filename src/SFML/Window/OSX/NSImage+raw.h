@@ -29,6 +29,7 @@
 #include <SFML/Config.hpp>
 
 #import <AppKit/AppKit.h>
+#include <cstdint>
 
 ////////////////////////////////////////////////////////////
 /// Extends NSImage with a convenience method to load images

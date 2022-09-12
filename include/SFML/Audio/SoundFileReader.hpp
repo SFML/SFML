@@ -30,6 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <cstdint>
+
 
 namespace sf
 {
@@ -48,9 +50,9 @@ public:
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        Uint64       sampleCount;  //!< Total number of samples in the file
-        unsigned int channelCount; //!< Number of channels of the sound
-        unsigned int sampleRate;   //!< Samples rate of the sound, in samples per second
+        std::uint64_t sampleCount;  //!< Total number of samples in the file
+        unsigned int  channelCount; //!< Number of channels of the sound
+        unsigned int  sampleRate;   //!< Samples rate of the sound, in samples per second
     };
 
     ////////////////////////////////////////////////////////////
@@ -89,7 +91,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset) = 0;
+    virtual void seek(std::uint64_t sampleOffset) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -100,7 +102,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual Uint64 read(std::int16_t* samples, Uint64 maxCount) = 0;
+    [[nodiscard]] virtual std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) = 0;
 };
 
 } // namespace sf
@@ -143,13 +145,13 @@ public:
 ///         // return true on success
 ///     }
 ///
-///     void seek(sf::Uint64 sampleOffset) override
+///     void seek(std::uint64_t sampleOffset) override
 ///     {
 ///         // advance to the sampleOffset-th sample from the beginning of the
 ///         sound
 ///     }
 ///
-///     sf::Uint64 read(std::int16_t* samples, sf::Uint64 maxCount) override
+///     std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override
 ///     {
 ///         // read up to 'maxCount' samples into the 'samples' array,
 ///         // convert them (for example from normalized float) if they are not stored

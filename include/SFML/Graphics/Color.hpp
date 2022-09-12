@@ -30,6 +30,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <cstdint>
+
 
 namespace sf
 {

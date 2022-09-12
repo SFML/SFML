@@ -72,7 +72,7 @@ public:
     /// \param count   Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    virtual void write(const std::int16_t* samples, Uint64 count) = 0;
+    virtual void write(const std::int16_t* samples, std::uint64_t count) = 0;
 };
 
 } // namespace sf
@@ -115,7 +115,7 @@ public:
 ///         // return true on success
 ///     }
 ///
-///     void write(const std::int16_t* samples, sf::Uint64 count) override
+///     void write(const std::int16_t* samples, std::uint64_t count) override
 ///     {
 ///         // write 'count' samples stored at address 'samples',
 ///         // convert them (for example to normalized float) if the format requires it

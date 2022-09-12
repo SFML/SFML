@@ -53,22 +53,22 @@ std::recursive_mutex mutex;
 
 // Unique identifier, used for identifying RenderTargets when
 // tracking the currently active RenderTarget within a given context
-sf::Uint64 getUniqueId()
+std::uint64_t getUniqueId()
 {
     std::scoped_lock lock(mutex);
 
-    static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
+    static std::uint64_t id = 1; // start at 1, zero is "no RenderTarget"
 
     return id++;
 }
 
 // Map to help us detect whether a different RenderTarget
 // has been activated within a single context
-using ContextRenderTargetMap = std::unordered_map<sf::Uint64, sf::Uint64>;
+using ContextRenderTargetMap = std::unordered_map<std::uint64_t, std::uint64_t>;
 ContextRenderTargetMap contextRenderTargetMap;
 
 // Check if a RenderTarget with the given ID is active in the current context
-bool isActive(sf::Uint64 id)
+bool isActive(std::uint64_t id)
 {
     auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
@@ -397,7 +397,7 @@ bool RenderTarget::setActive(bool active)
     {
         std::scoped_lock lock(RenderTargetImpl::mutex);
 
-        Uint64 contextId = Context::getActiveContextId();
+        std::uint64_t contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::contextRenderTargetMap;
         auto it = contextRenderTargetMap.find(contextId);
@@ -709,7 +709,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     }
     else
     {
-        Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
+        std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
         if (textureId != m_cache.lastTextureId)
             applyTexture(states.texture);
     }

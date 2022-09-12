@@ -110,7 +110,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    void seek(Uint64 sampleOffset) override;
+    void seek(std::uint64_t sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -121,16 +121,16 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(std::int16_t* samples, Uint64 maxCount) override;
+    [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override;
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mp3dec_io_t m_io;
-    mp3dec_ex_t m_decoder;
-    Uint64      m_numSamples; // Decompressed audio storage size
-    Uint64      m_position;   // Position in decompressed audio buffer
+    mp3dec_io_t   m_io;
+    mp3dec_ex_t   m_decoder;
+    std::uint64_t m_numSamples; // Decompressed audio storage size
+    std::uint64_t m_position;   // Position in decompressed audio buffer
 };
 
 } // namespace priv

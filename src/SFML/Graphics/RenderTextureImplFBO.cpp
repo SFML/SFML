@@ -45,7 +45,7 @@ namespace
 // Set to track all active FBO mappings
 // This is used to free active FBOs while their owning
 // RenderTextureImplFBO is still alive
-std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*> frameBuffers;
+std::unordered_set<std::unordered_map<std::uint64_t, unsigned int>*> frameBuffers;
 
 // Set to track all stale FBOs
 // This is used to free stale FBOs after their owning
@@ -53,7 +53,7 @@ std::unordered_set<std::unordered_map<sf::Uint64, unsigned int>*> frameBuffers;
 // An FBO cannot be destroyed until it's containing context
 // becomes active, so the destruction of the RenderTextureImplFBO
 // has to be decoupled from the destruction of the FBOs themselves
-std::set<std::pair<sf::Uint64, unsigned int>> staleFrameBuffers;
+std::set<std::pair<std::uint64_t, unsigned int>> staleFrameBuffers;
 
 // Mutex to protect both active and stale frame buffer sets
 std::recursive_mutex mutex;
@@ -63,7 +63,7 @@ std::recursive_mutex mutex;
 // might trigger deletion of its contained stale FBOs
 void destroyStaleFBOs()
 {
-    sf::Uint64 contextId = sf::Context::getActiveContextId();
+    std::uint64_t contextId = sf::Context::getActiveContextId();
 
     for (auto it = staleFrameBuffers.begin(); it != staleFrameBuffers.end();)
     {
@@ -86,7 +86,7 @@ void contextDestroyCallback(void* /*arg*/)
 {
     std::scoped_lock lock(mutex);
 
-    sf::Uint64 contextId = sf::Context::getActiveContextId();
+    std::uint64_t contextId = sf::Context::getActiveContextId();
 
     // Destroy active frame buffer objects
     for (auto* frameBuffer : frameBuffers)
@@ -552,7 +552,7 @@ bool RenderTextureImplFBO::activate(bool active)
         return true;
     }
 
-    Uint64 contextId = Context::getActiveContextId();
+    std::uint64_t contextId = Context::getActiveContextId();
 
     // In the odd case we have to activate and there is no active
     // context yet, we have to create one
@@ -582,7 +582,7 @@ bool RenderTextureImplFBO::activate(bool active)
     {
         std::scoped_lock lock(mutex);
 
-        std::unordered_map<Uint64, unsigned int>::iterator it;
+        std::unordered_map<std::uint64_t, unsigned int>::iterator it;
 
         if (m_multisample)
         {
@@ -632,7 +632,7 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
     // are already available within the current context
     if (m_multisample && m_size.x && m_size.y && activate(true))
     {
-        Uint64 contextId = Context::getActiveContextId();
+        std::uint64_t contextId = Context::getActiveContextId();
 
         std::scoped_lock lock(mutex);
 

@@ -90,7 +90,7 @@ bool decode(sf::InputStream& stream, std::uint32_t& value)
     return true;
 }
 
-const sf::Uint64 mainChunkSize = 12;
+const std::uint64_t mainChunkSize = 12;
 
 const std::uint16_t waveFormatPcm = 1;
 
@@ -139,7 +139,7 @@ bool SoundFileReaderWav::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderWav::seek(Uint64 sampleOffset)
+void SoundFileReaderWav::seek(std::uint64_t sampleOffset)
 {
     assert(m_stream);
 
@@ -149,12 +149,12 @@ void SoundFileReaderWav::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderWav::read(std::int16_t* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxCount)
 {
     assert(m_stream);
 
-    Uint64 count    = 0;
-    auto   startPos = static_cast<Uint64>(m_stream->tell());
+    std::uint64_t count    = 0;
+    auto          startPos = static_cast<std::uint64_t>(m_stream->tell());
 
     // Tracking of m_dataEnd is important to prevent sf::Music from reading
     // data until EOF, as WAV files may have metadata at the end.
@@ -341,7 +341,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             info.sampleCount = subChunkSize / m_bytesPerSample;
 
             // Store the start and end position of samples in the file
-            m_dataStart = static_cast<Uint64>(subChunkStart);
+            m_dataStart = static_cast<std::uint64_t>(subChunkStart);
             m_dataEnd   = m_dataStart + info.sampleCount * m_bytesPerSample;
 
             dataChunkFound = true;

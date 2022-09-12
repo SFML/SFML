@@ -125,7 +125,7 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterOgg::write(const std::int16_t* samples, Uint64 count)
+void SoundFileWriterOgg::write(const std::int16_t* samples, std::uint64_t count)
 {
     // Vorbis has issues with buffers that are too large, so we ask for 64K
     constexpr int bufferSize = 65536;

@@ -27,6 +27,8 @@
 
 #include <SFML/Config.hpp>
 
+#include <cstdint>
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////

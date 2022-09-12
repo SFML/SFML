@@ -93,7 +93,7 @@ public:
     /// \param count       Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const std::int16_t* samples, Uint64 count);
+    void write(const std::int16_t* samples, std::uint64_t count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file

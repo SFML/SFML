@@ -80,10 +80,10 @@ inline T reinterpret(const U& input)
 }
 
 // Combine outline thickness, boldness and font glyph index into a single 64-bit key
-sf::Uint64 combine(float outlineThickness, bool bold, std::uint32_t index)
+std::uint64_t combine(float outlineThickness, bool bold, std::uint32_t index)
 {
-    return (static_cast<sf::Uint64>(reinterpret<std::uint32_t>(outlineThickness)) << 32) |
-           (static_cast<sf::Uint64>(bold) << 31) | index;
+    return (static_cast<std::uint64_t>(reinterpret<std::uint32_t>(outlineThickness)) << 32) |
+           (static_cast<std::uint64_t>(bold) << 31) | index;
 }
 } // namespace
 
@@ -357,9 +357,9 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
     GlyphTable& glyphs = loadPage(characterSize).glyphs;
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
-    Uint64 key = combine(outlineThickness,
-                         bold,
-                         FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
+    std::uint64_t key = combine(outlineThickness,
+                                bold,
+                                FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
 
     // Search the glyph into the cache
     if (auto it = glyphs.find(key); it != glyphs.end())

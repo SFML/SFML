@@ -69,7 +69,7 @@ bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsign
 
 
 ////////////////////////////////////////////////////////////
-void OutputSoundFile::write(const std::int16_t* samples, Uint64 count)
+void OutputSoundFile::write(const std::int16_t* samples, std::uint64_t count)
 {
     if (m_writer && samples && count)
         m_writer->write(samples, count);

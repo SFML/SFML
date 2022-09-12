@@ -93,7 +93,7 @@ bool SoundFileWriterFlac::open(const std::filesystem::path& filename, unsigned i
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterFlac::write(const std::int16_t* samples, Uint64 count)
+void SoundFileWriterFlac::write(const std::int16_t* samples, std::uint64_t count)
 {
     while (count > 0)
     {

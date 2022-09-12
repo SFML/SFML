@@ -180,7 +180,7 @@ thread_local sf::priv::GlContext* currentContext(nullptr);
 std::unique_ptr<ContextType> sharedContext;
 
 // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
-sf::Uint64 id = 1; // start at 1, zero is "no context"
+std::uint64_t id = 1; // start at 1, zero is "no context"
 
 // Set containing callback functions to be called whenever a
 // context is going to be destroyed
@@ -601,7 +601,7 @@ const GlContext* GlContext::getActiveContext()
 
 
 ////////////////////////////////////////////////////////////
-Uint64 GlContext::getActiveContextId()
+std::uint64_t GlContext::getActiveContextId()
 {
     using GlContextImpl::currentContext;
     return currentContext ? currentContext->m_id : 0;

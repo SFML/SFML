@@ -11,9 +11,4 @@ TEST_CASE("SFML/Config.hpp")
         CHECK(SFML_VERSION_PATCH == EXPECTED_SFML_VERSION_PATCH);
         CHECK(SFML_VERSION_IS_RELEASE == EXPECTED_SFML_VERSION_IS_RELEASE);
     }
-
-    SUBCASE("Fixed width types")
-    {
-        CHECK(sizeof(sf::Uint64) == 8);
-    }
 }
