@@ -238,7 +238,7 @@ void Music::initialize()
     m_loopSpan.length = m_file.getSampleCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    m_samples.resize(static_cast<std::size_t>(m_file.getSampleRate()) * static_cast<std::size_t>(m_file.getChannelCount()));
+    m_samples.resize(m_file.getSampleRate() * m_file.getChannelCount());
 
     // Initialize the stream
     SoundStream::initialize(m_file.getChannelCount(), m_file.getSampleRate());
