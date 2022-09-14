@@ -315,7 +315,8 @@ else()
 
     # we need a dummy file in order to compile the framework
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp
-                       COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
+                       COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp
+                       VERBATIM)
 
     set(SFML_SOURCES ${SFML_HEADERS})
     list(APPEND SFML_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
@@ -346,14 +347,16 @@ else()
                        ${PROJECT_SOURCE_DIR}/include/SFML/System.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/Main.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/System
-                       $<TARGET_FILE_DIR:SFML>/Headers)
+                       $<TARGET_FILE_DIR:SFML>/Headers
+                       VERBATIM)
 
     # add window module headers if enabled
     if(SFML_BUILD_WINDOW)
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Window.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Window
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
     # add network module headers if enabled
@@ -361,7 +364,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
      # add graphics module headers if enabled
@@ -369,7 +373,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Graphics.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Graphics
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
      # add audio module headers if enabled
@@ -377,7 +382,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Audio.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Audio
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
     # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle

@@ -115,7 +115,7 @@ if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
         TARGET test-sfml-audio
         COMMENT "Copy OpenAL DLL"
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:test-sfml-audio>
-    )
+        VERBATIM)
 endif()
 
 # Automatically run the tests at the end of the build
@@ -153,12 +153,12 @@ if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
 
     add_custom_command(TARGET runtests
                        COMMENT "Run tests"
-                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:"${PROJECT_BINARY_DIR}/coverage.out" --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-    )
+                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
+                       VERBATIM)
 else()
     # Run tests without a coverage runner
     add_custom_command(TARGET runtests
                        COMMENT "Run tests"
                        POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-    )
+                       VERBATIM)
 endif()
