@@ -9,6 +9,8 @@ FetchContent_MakeAvailable(doctest)
 list(APPEND CMAKE_MODULE_PATH ${doctest_SOURCE_DIR}/scripts/cmake)
 include(doctest)
 
+add_subdirectory(install)
+
 add_library(sfml-test-main STATIC
     DoctestMain.cpp
     TestUtilities/SystemUtil.hpp
