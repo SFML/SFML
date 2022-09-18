@@ -39,7 +39,7 @@ include(cmake/Config.cmake)
 
 # we use the paths from the cmake GNUInstallDirs module as defaults
 # you can override these if you like
-# https://cmake.org/cmake/help/v3.0/module/GNUInstallDirs.html
+# https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
 include(GNUInstallDirs)
 
 # add an option for choosing the build type (shared or static)
