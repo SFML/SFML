@@ -84,8 +84,7 @@ if(SFML_OS_WINDOWS)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     if(SFML_USE_DRM)
         add_definitions(-DSFML_USE_DRM)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/DRM/CursorImpl.hpp
             ${SRCROOT}/DRM/CursorImpl.cpp
             ${SRCROOT}/DRM/ClipboardImpl.hpp
@@ -101,8 +100,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/DRM/WindowImplDRM.hpp
         )
     else()
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/Unix/CursorImpl.hpp
             ${SRCROOT}/Unix/CursorImpl.cpp
             ${SRCROOT}/Unix/ClipboardImpl.hpp
@@ -123,26 +121,22 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         )
     endif()
     if(SFML_OS_LINUX)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/Unix/JoystickImpl.cpp
             ${SRCROOT}/Unix/JoystickImpl.hpp
         )
     elseif(SFML_OS_FREEBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/FreeBSD/JoystickImpl.cpp
             ${SRCROOT}/FreeBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_OPENBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/OpenBSD/JoystickImpl.cpp
             ${SRCROOT}/OpenBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_NETBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/NetBSD/JoystickImpl.cpp
             ${SRCROOT}/NetBSD/JoystickImpl.hpp
         )
