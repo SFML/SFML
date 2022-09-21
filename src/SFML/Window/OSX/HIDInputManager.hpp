@@ -275,9 +275,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef    m_manager;                                       ///< Underlying HID Manager
+    IOHIDManagerRef    m_manager;                                             ///< Underlying HID Manager
     IOHIDElements      m_keys[Keyboard::Scan::ScancodeCount];                 ///< All the keys on any connected keyboard
-    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
+    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
     Keyboard::Key      m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////

@@ -713,9 +713,9 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
         case 0x57: return sf::Keyboard::W;
         case 0x58: return sf::Keyboard::X;
         case 0x59: return sf::Keyboard::Y;
+        case 0x5a: return sf::Keyboard::Z;
 
-        case 0x5a: return sf::Keyboard::Z; // lowercase A
-        case 0x61: return sf::Keyboard::A;
+        case 0x61: return sf::Keyboard::A; // lowercase A
         case 0x62: return sf::Keyboard::B;
         case 0x63: return sf::Keyboard::C;
         case 0x64: return sf::Keyboard::D;
