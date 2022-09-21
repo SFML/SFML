@@ -31,6 +31,7 @@
 #include <SFML/System/Export.hpp>
 
 #include <chrono>
+#include <cstdint>
 
 
 namespace sf
