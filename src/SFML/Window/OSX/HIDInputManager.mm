@@ -39,6 +39,8 @@ namespace
     }
 }
 
+static const sf::Uint8 UnknownVirtualCode = 0xff;
+
 namespace sf
 {
 namespace priv
@@ -373,7 +375,7 @@ void HIDInputManager::buildMappings()
         Keyboard::Scancode scan = static_cast<Keyboard::Scancode>(i);
         UInt8 virtualCode = scanToVirtualCode(scan);
 
-        if (virtualCode == 0xff) continue;
+        if (virtualCode == UnknownVirtualCode) continue;
 
         // Unicode string length is usually less or equal to 4
         UniCharCount const MAX_LENGTH = 4;
@@ -1286,7 +1288,7 @@ UInt8 HIDInputManager::scanToVirtualCode(Keyboard::Scancode code)
         case sf::Keyboard::Scan::RAlt:     return 0x3a;
         case sf::Keyboard::Scan::RSystem:  return 0x37;
 
-        default: return 0x00;
+        default: return UnknownVirtualCode;
     }
 }
 
