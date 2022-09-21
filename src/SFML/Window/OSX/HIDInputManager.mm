@@ -215,11 +215,11 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
 
         case sf::Keyboard::Scan::LControl: return "Left Control";
         case sf::Keyboard::Scan::LShift:   return "Left Shift";
-        case sf::Keyboard::Scan::LAlt:     return "Left Alt";
+        case sf::Keyboard::Scan::LAlt:     return "Left Option";
         case sf::Keyboard::Scan::LSystem:  return "Left Command";
         case sf::Keyboard::Scan::RControl: return "Right Control";
         case sf::Keyboard::Scan::RShift:   return "Right Shift";
-        case sf::Keyboard::Scan::RAlt:     return "Right Alt";
+        case sf::Keyboard::Scan::RAlt:     return "Right Option";
         case sf::Keyboard::Scan::RSystem:  return "Right Command";
 
         default:
