@@ -110,6 +110,9 @@ bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
 {
+    if (code == Keyboard::Scan::Unknown)
+        return Keyboard::Unknown;
+
     // TODO ensure mapping is still valid
     return m_scancodeToKeyMapping[code];
 }
@@ -118,6 +121,9 @@ Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode HIDInputManager::delocalize(Keyboard::Key key)
 {
+    if (key == Keyboard::Unknown)
+        return Keyboard::Scan::Unknown;
+
     // TODO ensure mapping is still valid
     return m_keyToScancodeMapping[key];
 }
