@@ -160,24 +160,24 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
         case sf::Keyboard::Scan::F23: return "F23";
         case sf::Keyboard::Scan::F24: return "F24";
 
-        case sf::Keyboard::Scan::CapsLock:    return "CapsLock";
-        case sf::Keyboard::Scan::PrintScreen: return "PrintScreen";
-        case sf::Keyboard::Scan::ScrollLock:  return "ScrollLock";
+        case sf::Keyboard::Scan::CapsLock:    return "Caps Lock";
+        case sf::Keyboard::Scan::PrintScreen: return "Print Screen";
+        case sf::Keyboard::Scan::ScrollLock:  return "Scroll Lock";
 
         case sf::Keyboard::Scan::Pause:    return "Pause";
         case sf::Keyboard::Scan::Insert:   return "Insert";
         case sf::Keyboard::Scan::Home:     return "Home";
-        case sf::Keyboard::Scan::PageUp:   return "PageUp";
+        case sf::Keyboard::Scan::PageUp:   return "Page Up";
         case sf::Keyboard::Scan::Delete:   return "Delete";
         case sf::Keyboard::Scan::End:      return "End";
-        case sf::Keyboard::Scan::PageDown: return "PageDown";
+        case sf::Keyboard::Scan::PageDown: return "Page Down";
 
         case sf::Keyboard::Scan::Left:  return "Left Arrow";
         case sf::Keyboard::Scan::Right: return "Right Arrow";
         case sf::Keyboard::Scan::Down:  return "Down Arrow";
         case sf::Keyboard::Scan::Up:    return "Up Arrow";
 
-        case sf::Keyboard::Scan::NumLock:        return "NumLock";
+        case sf::Keyboard::Scan::NumLock:        return "Num Lock";
         case sf::Keyboard::Scan::NumpadDivide:   return "Divide (Numpad)";
         case sf::Keyboard::Scan::NumpadMultiply: return "Multiply (Numpad)";
         case sf::Keyboard::Scan::NumpadMinus:    return "Minus (Numpad)";
