@@ -89,7 +89,7 @@ public:
     static CFDictionaryRef copyDevicesMask(UInt32 page, UInt32 usage);
 
     ////////////////////////////////////////////////////////////
-    /// Try to convert a character into a SFML key code.
+    /// \brief Try to convert a character into a SFML key code
     ///
     /// Return sf::Keyboard::Unknown if it doesn't match any 'localized' keys.
     ///
@@ -102,7 +102,7 @@ public:
     static Keyboard::Key localizedKey(UniChar ch);
 
     ////////////////////////////////////////////////////////////
-    /// Opposite transformation as localizedKeys
+    /// \brief Opposite transformation as localizedKeys
     ///
     /// Return 0x00 (NULL) for non-convertible keys/numpad numbers.
     /// For letters, uppercase codes are returned.
@@ -112,7 +112,7 @@ public:
     static UniChar toUnicode(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// Try to convert a virtual keycode (HID level) into a
+    /// \brief Try to convert a virtual keycode (HID level) into a
     /// SFML scancode.
     ///
     /// Return sf::Keyboard::Scan::Unknown if the keycode is unknown.
@@ -152,14 +152,6 @@ public:
     ////////////////////////////////////////////////////////////
     String getDescription(Keyboard::Scancode code);
 
-    ////////////////////////////////////////////////////////////
-    /// Regenerate the mappings from/to Key and Scancode.
-    ///
-    /// This function is public to allow regular update calls
-    /// from the manager in case there's a keyboard layout change.
-    ///
-    ////////////////////////////////////////////////////////////
-    void buildMappings();
 private:
 
     ////////////////////////////////////////////////////////////
@@ -212,6 +204,19 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void loadKey(IOHIDElementRef key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Regenerate the mappings from/to Key and Scancode
+    ///
+    ////////////////////////////////////////////////////////////
+    void buildMappings();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Callback to regenerate mappings from/to Key and
+    /// Scancode when there's a keyboard layout change
+    ///
+    ////////////////////////////////////////////////////////////
+    static void keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
@@ -275,9 +280,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef    m_manager;                                       ///< Underlying HID Manager
+    IOHIDManagerRef    m_manager;                                             ///< Underlying HID Manager
     IOHIDElements      m_keys[Keyboard::Scan::ScancodeCount];                 ///< All the keys on any connected keyboard
-    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];      ///< Mapping from Key to Scancode
+    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
     Keyboard::Key      m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////
@@ -288,7 +293,7 @@ private:
     /// HID keys.
     ///
     /// The mappings (both directions) get invalidated when the
-    /// keyboard layout changes. They both default to (s)Unknown.
+    /// keyboard layout changes. They both default to (Scan::)Unknown.
     ///
     ////////////////////////////////////////////////////////////
 };
