@@ -404,7 +404,8 @@ void HIDInputManager::buildMappings()
             continue;
 
         // Register the bi-mapping
-        m_keyToScancodeMapping[code] = scan;
+        if (m_keyToScancodeMapping[code] == Keyboard::Scan::Unknown)
+            m_keyToScancodeMapping[code] = scan;
         m_scancodeToKeyMapping[scan] = code;
     }
 
