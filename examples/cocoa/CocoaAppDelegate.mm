@@ -199,7 +199,7 @@ struct SFMLmainWindow
     if (self.initialized)
     {
         float angle = [sender floatValue];
-        self.mainWindow->sprite.setRotation(angle);
+        self.mainWindow->sprite.setRotation(sf::degrees(angle));
     }
 }
 

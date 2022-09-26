@@ -35,7 +35,7 @@ set(SRC CocoaAppDelegate.h
         NSString+stdstring.mm
         main.m)
 
-compile_xib(INPUT "MainMenu.xib" OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.nib")
+compile_xib(INPUT "${CMAKE_CURRENT_SOURCE_DIR}/MainMenu.xib" OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/MainMenu.nib")
 
 # all resource files
 set(RESOURCES resources/icon.icns
@@ -56,5 +56,5 @@ sfml_add_example(cocoa
                  DEPENDS SFML::System SFML::Window SFML::Graphics)
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE TRUE
-                      MACOSX_BUNDLE_INFO_PLIST resources/Cocoa-Info.plist)
+                      MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resources/Cocoa-Info.plist)
 target_link_libraries(cocoa PRIVATE "-framework Cocoa" "-framework Foundation" SFML::Graphics)
