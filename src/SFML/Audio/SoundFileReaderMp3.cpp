@@ -46,7 +46,7 @@
 #undef MINIMP3_NO_STDIO
 
 #include <SFML/Audio/SoundFileReaderMp3.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <cstring>
