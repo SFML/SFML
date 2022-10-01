@@ -359,12 +359,14 @@ private:
 /// \code
 /// class CustomRecorder : public sf::SoundRecorder
 /// {
+/// public:
 ///     ~CustomRecorder()
 ///     {
 ///         // Make sure to stop the recording thread
 ///         stop();
 ///     }
 ///
+/// private:
 ///     virtual bool onStart() // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts
@@ -374,7 +376,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount)
+///     virtual bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount)
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...
@@ -388,7 +390,7 @@ private:
 ///         // Clean up whatever has to be done after the capture ends
 ///         ...
 ///     }
-/// }
+/// };
 ///
 /// // Usage
 /// if (CustomRecorder::isAvailable())
