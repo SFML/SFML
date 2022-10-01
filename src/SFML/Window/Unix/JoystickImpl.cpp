@@ -234,12 +234,12 @@ namespace
                 // If not mapped before, map it now
                 if (record == joystickList.end())
                 {
-                    JoystickRecord nweRecord;
-                    nweRecord.deviceNode = devnode;
-                    nweRecord.systemPath = syspath;
-                    nweRecord.plugged    = true;
+                    JoystickRecord newRecord;
+                    newRecord.deviceNode = devnode;
+                    newRecord.systemPath = syspath;
+                    newRecord.plugged    = true;
 
-                    joystickList.push_back(nweRecord);
+                    joystickList.push_back(newRecord);
                 }
             }
 
