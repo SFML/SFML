@@ -43,6 +43,8 @@ namespace AlCheckImpl
 {
 thread_local ALenum lastError(AL_NO_ERROR);
 }
+
+
 } // namespace
 
 namespace sf
@@ -59,7 +61,10 @@ void alCheckError(const std::filesystem::path& file, unsigned int line, const ch
     {
         AlCheckImpl::lastError = errorCode;
 
-        std::string error       = "Unknown error";
+        std::
+
+
+            string  error       = "Unknown error";
         std::string description = "No description";
 
         // Decode the error code
