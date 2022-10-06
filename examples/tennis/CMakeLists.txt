@@ -1,6 +1,6 @@
 # all source files
 set(SRC Tennis.cpp)
-if (SFML_OS_IOS)
+if(SFML_OS_IOS)
     set(RESOURCES
         resources/ball.wav
         resources/tuffy.ttf)

@@ -3,7 +3,7 @@
 include(${PROJECT_SOURCE_DIR}/cmake/Macros.cmake)
 
 # let CMake know about our additional libraries paths
-if (SFML_OS_WINDOWS)
+if(SFML_OS_WINDOWS)
     list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers")
     if(SFML_COMPILER_GCC OR (SFML_COMPILER_CLANG AND MINGW))
         if(ARCH_32BITS)

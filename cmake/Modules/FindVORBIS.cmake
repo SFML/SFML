@@ -12,7 +12,7 @@ find_path(VORBIS_INCLUDE_DIR vorbis/vorbisfile.h)
 
 find_library(OGG_LIBRARY NAMES ogg)
 find_library(VORBIS_LIBRARY NAMES vorbis)
-if (NOT SFML_OS_IOS)
+if(NOT SFML_OS_IOS)
     find_library(VORBISFILE_LIBRARY NAMES vorbisfile)
     find_library(VORBISENC_LIBRARY NAMES vorbisenc)
     set(VORBIS_LIBRARIES ${VORBISENC_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
