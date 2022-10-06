@@ -184,14 +184,7 @@ VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtensions()
 {
-    static std::vector<const char*> extensions;
-
-    if (extensions.empty())
-    {
-        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-        extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
-    }
-
+    static const std::vector<const char*> extensions{VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_XLIB_SURFACE_EXTENSION_NAME};
     return extensions;
 }
 
