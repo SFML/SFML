@@ -58,13 +58,13 @@ int main()
         sf::Sprite background(backgroundTexture);
 
         // Create some text to draw on top of our OpenGL object
-        sf::Font font;
-        if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
+        std::optional<sf::Font> font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf");
+        if (!font.has_value())
             return EXIT_FAILURE;
 
-        sf::Text text("SFML / OpenGL demo", font);
-        sf::Text sRgbInstructions("Press space to toggle sRGB conversion", font);
-        sf::Text mipmapInstructions("Press return to toggle mipmapping", font);
+        sf::Text text("SFML / OpenGL demo", *font);
+        sf::Text sRgbInstructions("Press space to toggle sRGB conversion", *font);
+        sf::Text mipmapInstructions("Press return to toggle mipmapping", *font);
         text.setFillColor(sf::Color(255, 255, 255, 170));
         sRgbInstructions.setFillColor(sf::Color(255, 255, 255, 170));
         mipmapInstructions.setFillColor(sf::Color(255, 255, 255, 170));

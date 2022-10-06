@@ -90,8 +90,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
+    std::optional<sf::Font> font = sf::Font::loadFromFile("resources/tuffy.ttf");
+    if (!font.has_value())
         return EXIT_FAILURE;
 
     // Create all of our graphics resources
@@ -102,13 +102,13 @@ int main()
     sf::VertexBuffer terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Static);
 
     // Set up our text drawables
-    statusText.setFont(font);
+    statusText.setFont(*font);
     statusText.setCharacterSize(28);
     statusText.setFillColor(sf::Color::White);
     statusText.setOutlineColor(sf::Color::Black);
     statusText.setOutlineThickness(2.0f);
 
-    hudText.setFont(font);
+    hudText.setFont(*font);
     hudText.setCharacterSize(14);
     hudText.setFillColor(sf::Color::White);
     hudText.setOutlineColor(sf::Color::Black);

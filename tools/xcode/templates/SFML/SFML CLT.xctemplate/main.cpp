@@ -40,12 +40,11 @@ int main(int argc, char const** argv)
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
-    sf::Font font;
-    if (!font.loadFromFile("tuffy.ttf"))
-    {
+    std::optional<sf::Font> font = sf::Font::loadFromFile("tuffy.ttf");
+    if (!font.has_value())
         return EXIT_FAILURE;
-    }
-    sf::Text text("Hello SFML", font, 50);
+
+    sf::Text text("Hello SFML", *font, 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play

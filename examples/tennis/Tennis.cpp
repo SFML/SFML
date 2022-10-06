@@ -82,13 +82,13 @@ int main()
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Load the text font
-    sf::Font font;
-    if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
+    std::optional<sf::Font> font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf");
+    if (!font.has_value())
         return EXIT_FAILURE;
 
     // Initialize the pause message
     sf::Text pauseMessage;
-    pauseMessage.setFont(font);
+    pauseMessage.setFont(*font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);
