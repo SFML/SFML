@@ -280,7 +280,7 @@ target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/ext
 # CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability
 # (unless the OpenGL_GL_PREFERENCE was explicitly set)
 # See CMP0072 for more details (cmake --help-policy CMP0072)
-if (NOT OpenGL_GL_PREFERENCE)
+if(NOT OpenGL_GL_PREFERENCE)
     set(OpenGL_GL_PREFERENCE "LEGACY")
 endif()
 

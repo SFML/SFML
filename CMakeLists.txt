@@ -100,7 +100,7 @@ endif()
 # Android options
 if(SFML_OS_ANDROID)
     sfml_set_option(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK FALSE BOOL "TRUE to use an sf::Clock implementation which takes system sleep time into account (keeps advancing during suspension), FALSE to default to another available monotonic clock")
-    if (SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
+    if(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
         add_definitions(-DSFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
     endif()
 
@@ -108,7 +108,7 @@ if(SFML_OS_ANDROID)
     list(PREPEND CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR}")
 
     # make sure there's the android library available
-    if (CMAKE_ANDROID_API LESS 26)
+    if(CMAKE_ANDROID_API LESS 26)
         message(FATAL_ERROR "Android API level (${CMAKE_ANDROID_API}) must be equal or greater than 26.")
     endif()
 
@@ -123,7 +123,7 @@ if(SFML_OS_ANDROID)
     # we install libs in a subdirectory named after the ABI
     set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${CMAKE_ANDROID_ARCH_ABI}")
     # pass shared STL configuration (if any)
-    if (CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
+    if(CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
         add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
     endif()
 
@@ -230,8 +230,8 @@ if(SFML_OS_MACOSX)
     endif()
 
     # only the default x86_64 or arm64 are supported
-    foreach (arch IN LISTS CMAKE_OSX_ARCHITECTURES)
-        if (NOT (arch STREQUAL "x86_64" OR arch STREQUAL "arm64"))
+    foreach(arch IN LISTS CMAKE_OSX_ARCHITECTURES)
+        if(NOT (arch STREQUAL "x86_64" OR arch STREQUAL "arm64"))
             message(FATAL_ERROR "Invalid arch ${arch}")
         endif()
     endforeach()
@@ -256,7 +256,7 @@ if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 if(SFML_BUILD_TEST_SUITE)
-    if (SFML_OS_IOS)
+    if(SFML_OS_IOS)
         message( WARNING "Unit testing not supported on iOS")
     elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
         enable_testing()

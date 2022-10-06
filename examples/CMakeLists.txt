@@ -1,5 +1,5 @@
 # CLI based examples
-if (NOT SFML_OS_IOS)
+if(NOT SFML_OS_IOS)
     if(SFML_BUILD_NETWORK)
         add_subdirectory(ftp)
         add_subdirectory(sockets)
@@ -21,7 +21,7 @@ endif()
 if(SFML_BUILD_GRAPHICS)
     add_subdirectory(opengl)
 
-    if (NOT SFML_OS_IOS)
+    if(NOT SFML_OS_IOS)
         add_subdirectory(joystick)
         add_subdirectory(shader)
         add_subdirectory(island)

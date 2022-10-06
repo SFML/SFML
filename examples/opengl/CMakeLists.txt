@@ -1,7 +1,7 @@
 # all source files
 set(SRC OpenGL.cpp)
 
-if (SFML_OS_IOS)
+if(SFML_OS_IOS)
     set(RESOURCES
         resources/background.jpg
         resources/tuffy.ttf)
