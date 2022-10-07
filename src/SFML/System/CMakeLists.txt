@@ -67,6 +67,12 @@ endif()
 sfml_add_library(System
                  SOURCES ${SRC} ${PLATFORM_SRC})
 
+# enable precompiled headers
+if (SFML_ENABLE_PCH)
+    message(VERBOSE "enabling PCH for SFML library 'sfml-system' (reused as the PCH for other SFML libraries)")
+    target_precompile_headers(sfml-system PRIVATE ${PROJECT_SOURCE_DIR}/src/SFML/PCH.hpp)
+endif()
+
 if(SFML_OS_ANDROID)
     # glad sources
     target_include_directories(sfml-system PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")

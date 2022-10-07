@@ -3,6 +3,14 @@ include(CMakeParseArguments)
 # include the compiler warnings helpers
 include(${CMAKE_CURRENT_LIST_DIR}/CompilerWarnings.cmake)
 
+# helper function to tweak visibility of public symbols
+function(set_public_symbols_hidden target)
+    # ensure public symbols are hidden by default (exported ones are explicitly marked)
+    set_target_properties(${target} PROPERTIES
+                          CXX_VISIBILITY_PRESET hidden
+                          VISIBILITY_INLINES_HIDDEN YES)
+endfunction()
+
 # This little macro lets you set any Xcode specific property
 macro(sfml_set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
@@ -80,6 +88,13 @@ macro(sfml_add_library module)
     endif()
 
     set_target_warnings(${target})
+    set_public_symbols_hidden(${target})
+
+    # enable precompiled headers
+    if (SFML_ENABLE_PCH AND (NOT ${target} STREQUAL "sfml-system"))
+        message(VERBOSE "enabling PCH for SFML library '${target}'")
+        target_precompile_headers(${target} REUSE_FROM sfml-system)
+    endif()
 
     # define the export symbol of the module
     string(REPLACE "-" "_" NAME_UPPER "${target}")
@@ -164,17 +179,21 @@ macro(sfml_add_library module)
                                   PDB_NAME "${target}${SFML_PDB_POSTFIX}"
                                   PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
         else()
-            # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
-            set_target_properties(${target} PROPERTIES
-                                  COMPILE_PDB_NAME "${target}-s${SFML_PDB_POSTFIX}"
-                                  COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+            if(SFML_ENABLE_PCH)
+                message(VERBOSE "overriding PDB name for '${target}' with \"sfml-s${SFML_PDB_POSTFIX}\" due to PCH being enabled")
+
+                # For PCH builds with PCH reuse, the PDB name must be the same as the target that's being reused
+                set_target_properties(${target} PROPERTIES
+                                      COMPILE_PDB_NAME "sfml-system"
+                                      COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+            else()
+                # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
+                set_target_properties(${target} PROPERTIES
+                                      COMPILE_PDB_NAME "${target}-s${SFML_PDB_POSTFIX}"
+                                      COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+            endif()
         endif()
     endif()
-
-    # ensure public symbols are hidden by default (exported ones are explicitly marked)
-    set_target_properties(${target} PROPERTIES
-                          CXX_VISIBILITY_PRESET hidden
-                          VISIBILITY_INLINES_HIDDEN YES)
 
     # build frameworks or dylibs
     if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
@@ -285,7 +304,14 @@ macro(sfml_add_example target)
         set_property(TARGET ${target} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
 
+    # enable precompiled headers
+    if (SFML_ENABLE_PCH)
+        message(VERBOSE "enabling PCH for SFML example '${target}'")
+        target_precompile_headers(${target} REUSE_FROM sfml-system)
+    endif()
+
     set_target_warnings(${target})
+    set_public_symbols_hidden(${target})
 
     # set the debug suffix
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
@@ -322,6 +348,12 @@ function(sfml_add_test target SOURCES DEPENDS)
     # create the target
     add_executable(${target} ${SOURCES})
 
+    # enable precompiled headers
+    if (SFML_ENABLE_PCH)
+        message(VERBOSE "enabling PCH for SFML test '${target}'")
+        target_precompile_headers(${target} REUSE_FROM sfml-system)
+    endif()
+
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
 
@@ -329,6 +361,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
 
     set_target_warnings(${target})
+    set_public_symbols_hidden(${target})
 
     # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
     # to make sure the linker doesn't discard unused code sections before coverage can be measured
