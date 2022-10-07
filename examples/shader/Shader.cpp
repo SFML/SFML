@@ -354,11 +354,8 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the application font and pass it to the Effect class
-    std::optional<sf::Font> font = sf::Font::loadFromFile("resources/tuffy.ttf");
-    if (!font.has_value())
-        return EXIT_FAILURE;
-
-    Effect::setFont(*font);
+    sf::Font font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
+    Effect::setFont(font);
 
     // Create the effects
     Pixelate   pixelateEffect;
@@ -384,12 +381,12 @@ int main()
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
-    sf::Text description("Current effect: " + effects[current]->getName(), *font, 20);
+    sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
     description.setPosition({10.f, 530.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
-    sf::Text instructions("Press left and right arrows to change the current shader", *font, 20);
+    sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
     instructions.setPosition({280.f, 555.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
 

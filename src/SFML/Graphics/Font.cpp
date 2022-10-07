@@ -201,8 +201,8 @@ std::optional<Font> Font::loadFromFile(const std::filesystem::path& filename)
 #else
 
     Font result;
-    m_stream = std::make_unique<priv::ResourceStream>(filename);
-    return loadFromStream(*m_stream);
+    result.m_stream = std::make_unique<priv::ResourceStream>(filename);
+    return loadFromStream(*result.m_stream);
 
 #endif
 }

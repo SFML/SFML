@@ -94,9 +94,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the text font
-    std::optional<sf::Font> font = sf::Font::loadFromFile("resources/tuffy.ttf");
-    if (!font.has_value())
-        return EXIT_FAILURE;
+    sf::Font font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
 
     // Set up our string conversion parameters
     sstr.precision(2);
@@ -113,8 +111,8 @@ int main()
     sstr.str("");
     sstr << threshold << "  (Change with up/down arrow keys)";
 
-    texts["Threshold"].label.setPosition({5.f, 5.f + 2 * font->getLineSpacing(14)});
-    texts["Threshold"].value.setPosition({80.f, 5.f + 2 * font->getLineSpacing(14)});
+    texts["Threshold"].label.setPosition({5.f, 5.f + 2 * font.getLineSpacing(14)});
+    texts["Threshold"].value.setPosition({80.f, 5.f + 2 * font.getLineSpacing(14)});
 
     texts["Threshold"].label.setString("Threshold:");
     texts["Threshold"].value.setString(sstr.str());
@@ -124,10 +122,10 @@ int main()
     {
         JoystickObject& object = texts[axislabels[i]];
 
-        object.label.setPosition({5.f, 5.f + (static_cast<float>(i + 4) * font->getLineSpacing(14))});
+        object.label.setPosition({5.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
         object.label.setString(std::string(axislabels[i]) + ":");
 
-        object.value.setPosition({80.f, 5.f + (static_cast<float>(i + 4) * font->getLineSpacing(14))});
+        object.value.setPosition({80.f, 5.f + (static_cast<float>(i + 4) * font.getLineSpacing(14))});
         object.value.setString("N/A");
     }
 
@@ -138,21 +136,21 @@ int main()
         JoystickObject& object = texts[sstr.str()];
 
         object.label.setPosition(
-            {5.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font->getLineSpacing(14))});
+            {5.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
         object.label.setString(sstr.str() + ":");
 
         object.value.setPosition(
-            {80.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font->getLineSpacing(14))});
+            {80.f, 5.f + (static_cast<float>(sf::Joystick::AxisCount + i + 4) * font.getLineSpacing(14))});
         object.value.setString("N/A");
     }
 
     for (auto& [label, joystickObject] : texts)
     {
-        joystickObject.label.setFont(*font);
+        joystickObject.label.setFont(font);
         joystickObject.label.setCharacterSize(14);
         joystickObject.label.setFillColor(sf::Color::White);
 
-        joystickObject.value.setFont(*font);
+        joystickObject.value.setFont(font);
         joystickObject.value.setCharacterSize(14);
         joystickObject.value.setFillColor(sf::Color::White);
     }
