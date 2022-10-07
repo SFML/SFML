@@ -56,7 +56,7 @@ public:
     /// \param address IP address or network name
     ///
     ////////////////////////////////////////////////////////////
-    static std::optional<IpAddress> resolve(std::string_view address);
+    [[nodiscard]] static std::optional<IpAddress> resolve(std::string_view address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from 4 bytes
