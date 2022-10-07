@@ -4,8 +4,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
-#include "SFML/Graphics/Font.hpp"
-
 #define STB_PERLIN_IMPLEMENTATION
 #include <stb_perlin.h>
 
