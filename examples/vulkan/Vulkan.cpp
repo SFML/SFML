@@ -1833,13 +1833,15 @@ public:
     void setupTextureImage()
     {
         // Load the image data
-        sf::Image imageData;
+        std::optional<sf::Image> maybeImageData = sf::Image::loadFromFile("resources/logo.png");
 
-        if (!imageData.loadFromFile("resources/logo.png"))
+        if (!maybeImageData.has_value())
         {
             vulkanAvailable = false;
             return;
         }
+
+        sf::Image& imageData = *maybeImageData;
 
         // Create a staging buffer to transfer the data with
         VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;

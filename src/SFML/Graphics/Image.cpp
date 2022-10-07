@@ -28,85 +28,73 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
 #include <SFML/System/Err.hpp>
+
+
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
 #include <cstring>
+#include <optional>
 #include <ostream>
+#include <utility>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void Image::create(const Vector2u& size, const Color& color)
+Image::Image(Vector2u size, std::vector<std::uint8_t>&& pixels) : m_size(size), m_pixels(std::move(pixels))
 {
-    if (size.x && size.y)
+}
+
+////////////////////////////////////////////////////////////
+std::optional<Image> Image::create(const Vector2u& size, const Color& color)
+{
+    if (size.x == 0 || size.y == 0)
     {
-        // Create a new pixel buffer first for exception safety's sake
-        std::vector<std::uint8_t> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
-
-        // Fill it with the specified color
-        std::uint8_t* ptr = newPixels.data();
-        std::uint8_t* end = ptr + newPixels.size();
-        while (ptr < end)
-        {
-            *ptr++ = color.r;
-            *ptr++ = color.g;
-            *ptr++ = color.b;
-            *ptr++ = color.a;
-        }
-
-        // Commit the new pixel buffer
-        m_pixels.swap(newPixels);
-
-        // Assign the new size
-        m_size = size;
+        return std::nullopt;
     }
-    else
+
+    // Create a new pixel buffer first for exception safety's sake
+    std::vector<std::uint8_t> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
+
+    // Fill it with the specified color
+    std::uint8_t* ptr = newPixels.data();
+    std::uint8_t* end = ptr + newPixels.size();
+    while (ptr < end)
     {
-        // Dump the pixel buffer
-        std::vector<std::uint8_t>().swap(m_pixels);
-
-        // Assign the new size
-        m_size.x = 0;
-        m_size.y = 0;
+        *ptr++ = color.r;
+        *ptr++ = color.g;
+        *ptr++ = color.b;
+        *ptr++ = color.a;
     }
+
+    return {Image{size, std::move(newPixels)}};
 }
 
 
 ////////////////////////////////////////////////////////////
-void Image::create(const Vector2u& size, const std::uint8_t* pixels)
+std::optional<Image> Image::create(const Vector2u& size, const std::uint8_t* pixels)
 {
-    if (pixels && size.x && size.y)
+    if (pixels == nullptr || size.x == 0 || size.y == 0)
     {
-        // Create a new pixel buffer first for exception safety's sake
-        std::vector<std::uint8_t> newPixels(pixels, pixels + size.x * size.y * 4);
-
-        // Commit the new pixel buffer
-        m_pixels.swap(newPixels);
-
-        // Assign the new size
-        m_size = size;
+        return std::nullopt;
     }
-    else
-    {
-        // Dump the pixel buffer
-        std::vector<std::uint8_t>().swap(m_pixels);
 
-        // Assign the new size
-        m_size.x = 0;
-        m_size.y = 0;
-    }
+    return {Image{size, std::vector<std::uint8_t>(pixels, pixels + size.x * size.y * 4)}};
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::loadFromFile(const std::filesystem::path& filename)
+std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 {
 #ifndef SFML_SYSTEM_ANDROID
+    Vector2u                  outSize;
+    std::vector<std::uint8_t> outPixels;
 
-    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
+    return priv::ImageLoader::getInstance().loadImageFromFile(filename, outPixels, outSize)
+               ? std::optional<Image>{Image{outSize, std::move(outPixels)}}
+               : std::nullopt;
 
 #else
 
@@ -118,16 +106,26 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::loadFromMemory(const void* data, std::size_t size)
+std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 {
-    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, m_pixels, m_size);
+    Vector2u                  outSize;
+    std::vector<std::uint8_t> outPixels;
+
+    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, outPixels, outSize)
+               ? std::optional<Image>{Image{outSize, std::move(outPixels)}}
+               : std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::loadFromStream(InputStream& stream)
+std::optional<Image> Image::loadFromStream(InputStream& stream)
 {
-    return priv::ImageLoader::getInstance().loadImageFromStream(stream, m_pixels, m_size);
+    Vector2u                  outSize;
+    std::vector<std::uint8_t> outPixels;
+
+    return priv::ImageLoader::getInstance().loadImageFromStream(stream, outPixels, outSize)
+               ? std::optional<Image>{Image{outSize, std::move(outPixels)}}
+               : std::nullopt;
 }
 
 

@@ -33,6 +33,7 @@
 #include <SFML/Graphics/Rect.hpp>
 
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -49,13 +50,22 @@ class SFML_GRAPHICS_API Image
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Image() = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create the image and fill it with a unique color
+    ///
+    /// If \a size has any zero component, an unset optional is
+    /// returned.
     ///
     /// \param size  Width and height of the image
     /// \param color Fill color
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const Color& color = Color(0, 0, 0));
+    [[nodiscard]] static std::optional<Image> create(const Vector2u& size, const Color& color = Color(0, 0, 0));
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the image from an array of pixels
@@ -63,13 +73,15 @@ public:
     /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
     /// and have the given \a width and \a height. If not, this is
     /// an undefined behavior.
-    /// If \a pixels is null, an empty image is created.
+    ///
+    /// If \a pixels is null or \a size has any zero component, an
+    /// unset optional is returned.
     ///
     /// \param size   Width and height of the image
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const std::uint8_t* pixels);
+    [[nodiscard]] static std::optional<Image> create(const Vector2u& size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -77,16 +89,17 @@ public:
     /// The supported image formats are bmp, png, tga, jpg, gif,
     /// psd, hdr, pic and pnm. Some format options are not supported,
     /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
+    ///
+    /// If this function fails, an unset optional is returned.
     ///
     /// \param filename Path of the image file to load
     ///
-    /// \return True if loading was successful
+    /// \return A set optional if loading was successful
     ///
     /// \see loadFromMemory, loadFromStream, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<Image> loadFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file in memory
@@ -94,17 +107,18 @@ public:
     /// The supported image formats are bmp, png, tga, jpg, gif,
     /// psd, hdr, pic and pnm. Some format options are not supported,
     /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
+    ///
+    /// If this function fails, an unset optional is returned.
     ///
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
     ///
-    /// \return True if loading was successful
+    /// \return A set optional if loading was successful
     ///
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size);
+    [[nodiscard]] static std::optional<Image> loadFromMemory(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a custom stream
@@ -112,16 +126,17 @@ public:
     /// The supported image formats are bmp, png, tga, jpg, gif,
     /// psd, hdr, pic and pnm. Some format options are not supported,
     /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
+    ///
+    /// If this function fails, an unset optional is returned.
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading was successful
+    /// \return A set optional if loading was successful
     ///
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<Image> loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the image to a file on disk
@@ -275,6 +290,15 @@ public:
     void flipVertically();
 
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Create an image from \a size and \a pixels
+    ///
+    /// This constructor is private as the intended user API is
+    /// through static member functions returning optionals.
+    ///
+    ////////////////////////////////////////////////////////////
+    Image(Vector2u size, std::vector<std::uint8_t>&& pixels);
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

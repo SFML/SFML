@@ -41,6 +41,7 @@
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include FT_STROKER_H
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -680,7 +681,8 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
                 for (unsigned int x = padding; x < width - padding; ++x)
                 {
                     // The color channels remain white, just fill the alpha channel
-                    std::size_t index            = x + y * width;
+                    const std::size_t index = x + y * width;
+
                     m_pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
                 }
                 pixels += bitmap.pitch;
@@ -837,8 +839,9 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 Font::Page::Page(bool smooth) : nextRow(3)
 {
     // Make sure that the texture is initialized by default
-    sf::Image image;
-    image.create({128, 128}, Color(255, 255, 255, 0));
+    std::optional<Image> maybeImage = Image::create({128, 128}, Color(255, 255, 255, 0));
+    assert(maybeImage.has_value());
+    Image& image = *maybeImage;
 
     // Reserve a 2x2 white square for texturing underlines
     for (unsigned int x = 0; x < 2; ++x)

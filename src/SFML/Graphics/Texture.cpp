@@ -218,24 +218,24 @@ bool Texture::create(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromFile(const std::filesystem::path& filename, const IntRect& area)
 {
-    Image image;
-    return image.loadFromFile(filename) && loadFromImage(image, area);
+    const std::optional<Image> maybeImage = Image::loadFromFile(filename);
+    return maybeImage.has_value() && loadFromImage(*maybeImage, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromMemory(const void* data, std::size_t size, const IntRect& area)
 {
-    Image image;
-    return image.loadFromMemory(data, size) && loadFromImage(image, area);
+    const std::optional<Image> maybeImage = Image::loadFromMemory(data, size);
+    return maybeImage.has_value() && loadFromImage(*maybeImage, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 {
-    Image image;
-    return image.loadFromStream(stream) && loadFromImage(image, area);
+    const std::optional<Image> maybeImage = Image::loadFromStream(stream);
+    return maybeImage.has_value() && loadFromImage(*maybeImage, area);
 }
 
 
@@ -319,11 +319,11 @@ Vector2u Texture::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-Image Texture::copyToImage() const
+std::optional<Image> Texture::copyToImage() const
 {
     // Easy case: empty texture
     if (!m_texture)
-        return Image();
+        return std::nullopt;
 
     TransientContextLock lock;
 
@@ -393,10 +393,7 @@ Image Texture::copyToImage() const
 #endif // SFML_OPENGL_ES
 
     // Create the image
-    Image image;
-    image.create(m_size, pixels.data());
-
-    return image;
+    return Image::create(m_size, pixels.data());
 }
 
 
@@ -559,7 +556,8 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
 
 #endif // SFML_OPENGL_ES
 
-    update(texture.copyToImage(), dest);
+    if (const std::optional<Image> maybeCopy = texture.copyToImage(); maybeCopy.has_value())
+        update(*maybeCopy, dest);
 }
 
 
