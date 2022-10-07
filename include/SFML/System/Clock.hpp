@@ -122,7 +122,7 @@ private:
     using ClockImpl = priv::MostSuitableClock;
 
     static_assert(ClockImpl::is_steady, "Provided implementation is not a monotonic clock");
-    static_assert(std::ratio_less_equal<ClockImpl::period, std::micro>::value,
+    static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
                   "Clock resolution is too low. Expecting at least a microsecond precision");
 
     ////////////////////////////////////////////////////////////
