@@ -55,19 +55,18 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
-            NSLog(@"Couldn't load the font");
+        font = sf::Font::loadFromFile(resPath + "/tuffy.ttf")
 
         text.setFillColor(sf::Color::White);
         text.setFont(font);
     }
 
-    sf::RenderWindow renderWindow;
-    sf::Font         font;
-    sf::Text         text;
-    sf::Texture      logo;
-    sf::Sprite       sprite;
-    sf::Color        background;
+    sf::RenderWindow        renderWindow;
+    std::optional<sf::Font> font;
+    sf::Text                text;
+    sf::Texture             logo;
+    sf::Sprite              sprite;
+    sf::Color               background;
 };
 
 // Private stuff

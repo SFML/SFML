@@ -10,6 +10,7 @@ set(SRC
     ${INCROOT}/Clock.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
+    ${INCROOT}/Exception.hpp
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
     ${INCROOT}/NativeActivity.hpp

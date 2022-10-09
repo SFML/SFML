@@ -27,9 +27,7 @@
 ///     sf::Sprite sprite(texture);
 ///
 ///     // Create a graphical text to display
-///     sf::Font font;
-///     if (!font.loadFromFile("arial.ttf"))
-///         return EXIT_FAILURE;
+///     sf::Font font = sf::Font::loadFromFile("arial.ttf");
 ///     sf::Text text("Hello SFML", font, 50);
 ///
 ///     // Load a music to play

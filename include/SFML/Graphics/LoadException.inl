@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,34 +22,28 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
+namespace
+{
+[[nodiscard]] std::string formatDebugPathInfo(const std::filesystem::path& path)
+{
+    std::ostringstream stream;
+    stream << "    Provided path: " << path << '\n';
+    stream << "    Absolute path: " << std::filesystem::absolute(path);
+    return stream.str();
+}
+} // namespace
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
+inline LoadException::LoadException(const std::string& message) :
+    m_message(message)
+{
+}
 
-#include <SFML/Config.hpp>
+inline LoadException::LoadException(const std::filesystem::path& filePath, const std::string& message) :
+    m_message(message + "\n" + formatDebugPathInfo(filePath))
+{
+}
 
-#include <SFML/System/Angle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Exception.hpp>
-#include <SFML/System/FileInputStream.hpp>
-#include <SFML/System/InputStream.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Utf.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
-
-
-////////////////////////////////////////////////////////////
-/// \defgroup system System module
-///
-/// Base module of SFML, defining various utilities. It provides
-/// vector classes, Unicode strings and conversion functions,
-/// threads and mutexes, timing classes.
-///
-////////////////////////////////////////////////////////////
+inline const char* LoadException::what() const noexcept
+{
+    return m_message.c_str();
+}

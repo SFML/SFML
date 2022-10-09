@@ -82,9 +82,7 @@ int main()
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Load the text font
-    sf::Font font;
-    if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
-        return EXIT_FAILURE;
+    sf::Font font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf");
 
     // Initialize the pause message
     sf::Text pauseMessage;

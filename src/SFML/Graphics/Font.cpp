@@ -28,12 +28,12 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/LoadException.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
-#include <SFML/System/Utils.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -70,7 +70,7 @@ void close(FT_Stream)
 {
 }
 
-// Helper to intepret memory as a specific type
+// Helper to interpret memory as a specific type
 template <typename T, typename U>
 inline T reinterpret(const U& input)
 {
@@ -147,12 +147,11 @@ Font& Font::operator=(Font&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromFile(const std::filesystem::path& filename)
+Font Font::loadFromFile(const std::filesystem::path& filename)
 {
-#ifndef SFML_SYSTEM_ANDROID
+    Font font;
 
-    // Cleanup the previous resources
-    cleanup();
+#ifndef SFML_SYSTEM_ANDROID
 
     auto fontHandles = std::make_unique<FontHandles>();
 
@@ -162,8 +161,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font (failed to initialize FreeType)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        throw LoadException(filename, "Failed to load font (failed to initialize FreeType)");
     }
     fontHandles->library.reset(library);
 
@@ -171,8 +169,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Face face;
     if (FT_New_Face(library, filename.string().c_str(), 0, &face) != 0)
     {
-        err() << "Failed to load font (failed to create the font face)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        throw LoadException(filename, "Failed to load font (failed to create the font face)");
     }
     fontHandles->face.reset(face);
 
@@ -180,41 +177,37 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     FT_Stroker stroker;
     if (FT_Stroker_New(library, &stroker) != 0)
     {
-        err() << "Failed to load font (failed to create the stroker)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        throw LoadException(filename, "Failed to load font (failed to create the stroker)");
     }
     fontHandles->stroker.reset(stroker);
 
     // Select the unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font (failed to set the Unicode character set)\n"
-              << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        throw LoadException(filename, "Failed to load font (failed to set the Unicode character set)");
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    font.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    font.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return font;
 
 #else
 
-    m_stream = std::make_unique<priv::ResourceStream>(filename);
-    return loadFromStream(*m_stream);
+    font.m_stream = std::make_unique<priv::ResourceStream>(filename);
+    return loadFromStream(*font.m_stream);
 
 #endif
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
+Font Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    // Cleanup the previous resources
-    cleanup();
+    Font font;
 
     auto fontHandles = std::make_unique<FontHandles>();
 
@@ -224,8 +217,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from memory (failed to initialize FreeType)");
     }
     fontHandles->library.reset(library);
 
@@ -233,8 +225,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Face face;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
     {
-        err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from memory (failed to create the font face)");
     }
     fontHandles->face.reset(face);
 
@@ -242,33 +233,30 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     FT_Stroker stroker;
     if (FT_Stroker_New(library, &stroker) != 0)
     {
-        err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from memory (failed to create the stroker)");
     }
     fontHandles->stroker.reset(stroker);
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from memory (failed to set the Unicode character set)");
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    font.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    font.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return font;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromStream(InputStream& stream)
+Font Font::loadFromStream(InputStream& stream)
 {
-    // Cleanup the previous resources
-    cleanup();
+    Font font;
 
     auto fontHandles = std::make_unique<FontHandles>();
 
@@ -278,16 +266,14 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Library library;
     if (FT_Init_FreeType(&library) != 0)
     {
-        err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from stream (failed to initialize FreeType)");
     }
     fontHandles->library.reset(library);
 
     // Make sure that the stream's reading position is at the beginning
     if (stream.seek(0) == -1)
     {
-        err() << "Failed to seek font stream" << std::endl;
-        return false;
+        throw LoadException("Failed to seek font stream");
     }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
@@ -309,8 +295,7 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Face face;
     if (FT_Open_Face(library, &args, 0, &face) != 0)
     {
-        err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from stream (failed to create the font face)");
     }
     fontHandles->face.reset(face);
 
@@ -318,25 +303,23 @@ bool Font::loadFromStream(InputStream& stream)
     FT_Stroker stroker;
     if (FT_Stroker_New(library, &stroker) != 0)
     {
-        err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from stream (failed to create the stroker)");
     }
     fontHandles->stroker.reset(stroker);
 
     // Select the Unicode character map
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
-        err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
-        return false;
+        throw LoadException("Failed to load font from stream (failed to set the Unicode character set)");
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    font.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    font.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return font;
 }
 
 

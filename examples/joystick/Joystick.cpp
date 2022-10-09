@@ -94,9 +94,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the text font
-    sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
-        return EXIT_FAILURE;
+    sf::Font font = sf::Font::loadFromFile("resources/tuffy.ttf");
 
     // Set up our string conversion parameters
     sstr.precision(2);

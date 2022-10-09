@@ -42,11 +42,7 @@ int main(int, char const**)
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
-    sf::Font font;
-    if (!font.loadFromFile(resourcePath() + "tuffy.ttf"))
-    {
-        return EXIT_FAILURE;
-    }
+    sf::Font font = sf::Font::loadFromFile(resourcePath() + "tuffy.ttf");
     sf::Text text("Hello SFML", font, 50);
     text.setFillColor(sf::Color::Black);
 

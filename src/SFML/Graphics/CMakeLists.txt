@@ -23,6 +23,7 @@ set(SRC
     ${INCROOT}/Image.hpp
     ${SRCROOT}/ImageLoader.cpp
     ${SRCROOT}/ImageLoader.hpp
+    ${INCROOT}/LoadException.hpp
     ${INCROOT}/PrimitiveType.hpp
     ${INCROOT}/Rect.hpp
     ${INCROOT}/Rect.inl
