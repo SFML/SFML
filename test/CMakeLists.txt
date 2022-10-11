@@ -29,16 +29,16 @@ target_link_libraries(sfml-test-main PUBLIC SFML::System doctest::doctest_with_m
 set_target_warnings(sfml-test-main)
 
 set(SYSTEM_SRC
-    System/Angle.cpp
-    System/Clock.cpp
-    System/Config.cpp
-    System/Err.cpp
-    System/FileInputStream.cpp
-    System/MemoryInputStream.cpp
-    System/String.cpp
-    System/Time.cpp
-    System/Vector2.cpp
-    System/Vector3.cpp
+    System/Angle.test.cpp
+    System/Clock.test.cpp
+    System/Config.test.cpp
+    System/Err.test.cpp
+    System/FileInputStream.test.cpp
+    System/MemoryInputStream.test.cpp
+    System/String.test.cpp
+    System/Time.test.cpp
+    System/Vector2.test.cpp
+    System/Vector3.test.cpp
 )
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" SFML::System)
 target_compile_definitions(test-sfml-system PRIVATE
@@ -49,69 +49,69 @@ target_compile_definitions(test-sfml-system PRIVATE
 )
 
 set(WINDOW_SRC
-    Window/Context.cpp
-    Window/ContextSettings.cpp
-    Window/Cursor.cpp
-    Window/GlResource.cpp
-    Window/VideoMode.cpp
-    Window/Window.cpp
-    Window/WindowBase.cpp
+    Window/Context.test.cpp
+    Window/ContextSettings.test.cpp
+    Window/Cursor.test.cpp
+    Window/GlResource.test.cpp
+    Window/VideoMode.test.cpp
+    Window/Window.test.cpp
+    Window/WindowBase.test.cpp
 )
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
 set(GRAPHICS_SRC
-    Graphics/BlendMode.cpp
-    Graphics/CircleShape.cpp
-    Graphics/Color.cpp
-    Graphics/ConvexShape.cpp
-    Graphics/Drawable.cpp
-    Graphics/Font.cpp
-    Graphics/Glyph.cpp
-    Graphics/Image.cpp
-    Graphics/Rect.cpp
-    Graphics/RectangleShape.cpp
-    Graphics/RenderStates.cpp
-    Graphics/RenderTarget.cpp
-    Graphics/RenderTexture.cpp
-    Graphics/RenderWindow.cpp
-    Graphics/Shader.cpp
-    Graphics/Shape.cpp
-    Graphics/Sprite.cpp
-    Graphics/Text.cpp
-    Graphics/Texture.cpp
-    Graphics/Transform.cpp
-    Graphics/Transformable.cpp
-    Graphics/Vertex.cpp
-    Graphics/VertexArray.cpp
-    Graphics/VertexBuffer.cpp
-    Graphics/View.cpp
+    Graphics/BlendMode.test.cpp
+    Graphics/CircleShape.test.cpp
+    Graphics/Color.test.cpp
+    Graphics/ConvexShape.test.cpp
+    Graphics/Drawable.test.cpp
+    Graphics/Font.test.cpp
+    Graphics/Glyph.test.cpp
+    Graphics/Image.test.cpp
+    Graphics/Rect.test.cpp
+    Graphics/RectangleShape.test.cpp
+    Graphics/RenderStates.test.cpp
+    Graphics/RenderTarget.test.cpp
+    Graphics/RenderTexture.test.cpp
+    Graphics/RenderWindow.test.cpp
+    Graphics/Shader.test.cpp
+    Graphics/Shape.test.cpp
+    Graphics/Sprite.test.cpp
+    Graphics/Text.test.cpp
+    Graphics/Texture.test.cpp
+    Graphics/Transform.test.cpp
+    Graphics/Transformable.test.cpp
+    Graphics/Vertex.test.cpp
+    Graphics/VertexArray.test.cpp
+    Graphics/VertexBuffer.test.cpp
+    Graphics/View.test.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
 set(NETWORK_SRC
-    Network/Ftp.cpp
-    Network/Http.cpp
-    Network/IpAddress.cpp
-    Network/Packet.cpp
-    Network/Socket.cpp
-    Network/SocketSelector.cpp
-    Network/TcpListener.cpp
-    Network/TcpSocket.cpp
-    Network/UdpSocket.cpp
+    Network/Ftp.test.cpp
+    Network/Http.test.cpp
+    Network/IpAddress.test.cpp
+    Network/Packet.test.cpp
+    Network/Socket.test.cpp
+    Network/SocketSelector.test.cpp
+    Network/TcpListener.test.cpp
+    Network/TcpSocket.test.cpp
+    Network/UdpSocket.test.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
 set(AUDIO_SRC
-    Audio/AlResource.cpp
-    Audio/InputSoundFile.cpp
-    Audio/Music.cpp
-    Audio/OutputSoundFile.cpp
-    Audio/Sound.cpp
-    Audio/SoundBuffer.cpp
-    Audio/SoundBufferRecorder.cpp
-    Audio/SoundRecorder.cpp
-    Audio/SoundSource.cpp
-    Audio/SoundStream.cpp
+    Audio/AlResource.test.cpp
+    Audio/InputSoundFile.test.cpp
+    Audio/Music.test.cpp
+    Audio/OutputSoundFile.test.cpp
+    Audio/Sound.test.cpp
+    Audio/SoundBuffer.test.cpp
+    Audio/SoundBufferRecorder.test.cpp
+    Audio/SoundRecorder.test.cpp
+    Audio/SoundSource.test.cpp
+    Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 
