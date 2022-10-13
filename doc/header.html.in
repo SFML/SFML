@@ -8,6 +8,25 @@
         <link rel="stylesheet" type="text/css" href="doxygen.css" title="default" media="screen,print" />
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="dynsections.js"></script>
+        <link href="search/search.css" rel="stylesheet" type="text/css"/>
+        <style>
+            /* Override search/search.css rules to adjust seach box placement */
+            #MSearchBox {
+                position: relative;
+                display: block;
+            }
+            .right #MSearchClose {
+                margin: 0;
+                right: auto;
+            }
+        </style>
+        <script type="text/javascript" src="search/searchdata.js"></script>
+        <script type="text/javascript" src="search/search.js"></script>
+        <script type="text/javascript">
+        /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+          $(document).ready(function() { init_search(); });
+        /* @license-end */
+        </script>
     </head>
     <body>
         <div id="banner-container">

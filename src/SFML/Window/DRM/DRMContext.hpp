@@ -29,16 +29,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/OpenGL.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include <glad/egl.h>
+
 #include <drm-common.h>
-#define EGL_NO_X11
-#define MESA_EGL_NO_X11_HEADERS
-#include <EGL/egl.h>
 #include <gbm.h>
 #include <xf86drmMode.h>
 

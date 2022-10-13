@@ -376,12 +376,14 @@ private:
 /// \code
 /// class CustomRecorder : public sf::SoundRecorder
 /// {
+/// public:
 ///     ~CustomRecorder()
 ///     {
 ///         // Make sure to stop the recording thread
 ///         stop();
 ///     }
 ///
+/// private:
 ///     bool onStart() override // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts
@@ -405,7 +407,7 @@ private:
 ///         // Clean up whatever has to be done after the capture ends
 ///         ...
 ///     }
-/// }
+/// };
 ///
 /// // Usage
 /// if (CustomRecorder::isAvailable())

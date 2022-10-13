@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/Context.hpp>
-#include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/GlContext.hpp>
 
 #include <glad/gl.h>
@@ -52,6 +51,7 @@
 
 #if defined(SFML_OPENGL_ES)
 
+#include <SFML/Window/EglContext.hpp>
 using ContextType = sf::priv::EglContext;
 
 #else
@@ -64,14 +64,15 @@ using ContextType = sf::priv::WglContext;
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
     defined(SFML_SYSTEM_NETBSD)
 
-#if defined(SFML_OPENGL_ES)
-
-using ContextType = sf::priv::EglContext;
-
-#elif defined(SFML_USE_DRM)
+#if defined(SFML_USE_DRM)
 
 #include <SFML/Window/DRM/DRMContext.hpp>
 using ContextType = sf::priv::DRMContext;
+
+#elif defined(SFML_OPENGL_ES)
+
+#include <SFML/Window/EglContext.hpp>
+using ContextType = sf::priv::EglContext;
 
 #else
 
@@ -92,6 +93,7 @@ using ContextType = sf::priv::EaglContext;
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
+#include <SFML/Window/EglContext.hpp>
 using ContextType = sf::priv::EglContext;
 
 #endif

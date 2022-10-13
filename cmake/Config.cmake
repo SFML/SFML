@@ -79,6 +79,10 @@ endif()
 # - GNUCXX can still be set on macOS when using Clang
 if(MSVC)
     set(SFML_COMPILER_MSVC 1)
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(SFML_COMPILER_CLANG_CL 1)
+    endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(SFML_COMPILER_CLANG 1)
 elseif(CMAKE_COMPILER_IS_GNUCXX)
