@@ -49,14 +49,14 @@ RenderTexture::~RenderTexture()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer, bool useFloat = false)
+bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer, bool useFloat)
 {
     return create(width, height, ContextSettings(depthBuffer ? 32 : 0), useFloat);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings, bool useFloat = false)
+bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings, bool useFloat)
 {
     // Create the texture
     if (!m_texture.create(width, height, useFloat))
