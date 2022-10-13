@@ -170,6 +170,26 @@ static int get_resources(int fd, drmModeRes **resources)
 	return 0;
 }
 
+static int has_monitor_connected(int fd, drmModeRes* resources)
+{
+	int i;
+	drmModeConnector *connector;
+	for (i = 0; i < resources->count_connectors; i++)
+	{
+		connector = drmModeGetConnector(fd, resources->connectors[i]);
+		if (connector->connection == DRM_MODE_CONNECTED)
+		{
+			/* There is a monitor connected */
+			drmModeFreeConnector(connector);
+			connector = NULL;
+			return 1;
+		}
+		drmModeFreeConnector(connector);
+		connector = NULL;
+	}
+	return 0;
+}
+
 #define MAX_DRM_DEVICES 64
 
 static int find_drm_device(drmModeRes **resources)
@@ -199,7 +219,11 @@ static int find_drm_device(drmModeRes **resources)
 		if (fd < 0)
 			continue;
 		ret = get_resources(fd, resources);
-		if (!ret)
+		if(getenv("SFML_DRM_DEBUG"))
+		{
+			printf("DRM device used: %d\n", i);
+		}
+		if(!ret && has_monitor_connected(fd, *resources) != 0)
 			break;
 		close(fd);
 		fd = -1;
