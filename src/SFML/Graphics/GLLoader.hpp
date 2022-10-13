@@ -983,7 +983,10 @@ extern int sfogl_ext_ARB_geometry_shader4;
 #define GL_ZOOM_X 0x0D16
 #define GL_ZOOM_Y 0x0D17
 
-
+// Added for MultiRenderTarget
+#define GL_RGBA16F_EXT 0x881A
+#define GL_DEPTH_STENCIL_ATTACHMENT_EXT 0x821A
+#define GL_DEPTH24_STENCIL8_EXT 0x88F0
 
 #ifndef GL_EXT_blend_minmax
 #define GL_EXT_blend_minmax 1
@@ -1320,6 +1323,8 @@ extern GLboolean (GL_FUNCPTR *sf_ptrc_glIsRenderbufferEXT)(GLuint);
 #define glIsRenderbufferEXT sf_ptrc_glIsRenderbufferEXT
 extern void (GL_FUNCPTR *sf_ptrc_glRenderbufferStorageEXT)(GLenum, GLenum, GLsizei, GLsizei);
 #define glRenderbufferStorageEXT sf_ptrc_glRenderbufferStorageEXT
+extern void (GL_FUNCPTR *sf_ptrc_glDrawBuffersEXT)(GLsizei, const GLenum*);
+#define glDrawBuffersEXT sf_ptrc_glDrawBuffersEXT
 #endif // GL_EXT_framebuffer_object
 
 
@@ -1690,6 +1695,8 @@ GLAPI void APIENTRY glTexCoordPointer(GLint, GLenum, GLsizei, const void*);
 GLAPI void APIENTRY glTexSubImage1D(GLenum, GLint, GLint, GLsizei, GLenum, GLenum, const void*);
 GLAPI void APIENTRY glTexSubImage2D(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, const void*);
 GLAPI void APIENTRY glVertexPointer(GLint, GLenum, GLsizei, const void*);
+
+GLAPI void APIENTRY glDrawBuffers(GLsizei, const GLenum *);
 
 enum sfogl_LoadStatus
 {

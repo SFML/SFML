@@ -792,6 +792,7 @@ void (GL_FUNCPTR *sf_ptrc_glGetRenderbufferParameterivEXT)(GLenum, GLenum, GLint
 GLboolean (GL_FUNCPTR *sf_ptrc_glIsFramebufferEXT)(GLuint) = NULL;
 GLboolean (GL_FUNCPTR *sf_ptrc_glIsRenderbufferEXT)(GLuint) = NULL;
 void (GL_FUNCPTR *sf_ptrc_glRenderbufferStorageEXT)(GLenum, GLenum, GLsizei, GLsizei) = NULL;
+void (GL_FUNCPTR *sf_ptrc_glDrawBuffersEXT)(GLsizei, const GLenum *) = NULL;
 
 static int Load_EXT_framebuffer_object()
 {
@@ -863,6 +864,10 @@ static int Load_EXT_framebuffer_object()
 
     sf_ptrc_glRenderbufferStorageEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLenum, GLenum, GLsizei, GLsizei)>(glLoaderGetProcAddress("glRenderbufferStorageEXT"));
     if (!sf_ptrc_glRenderbufferStorageEXT)
+        numFailed++;
+
+    sf_ptrc_glDrawBuffersEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLsizei, const GLenum*)>(glLoaderGetProcAddress("glDrawBuffers"));
+    if (!sf_ptrc_glDrawBuffersEXT)
         numFailed++;
 
     return numFailed;

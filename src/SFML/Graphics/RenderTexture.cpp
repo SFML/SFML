@@ -49,17 +49,17 @@ RenderTexture::~RenderTexture()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
+bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer, bool useFloat = false)
 {
-    return create(width, height, ContextSettings(depthBuffer ? 32 : 0));
+    return create(width, height, ContextSettings(depthBuffer ? 32 : 0), useFloat);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
+bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings, bool useFloat = false)
 {
     // Create the texture
-    if (!m_texture.create(width, height))
+    if (!m_texture.create(width, height, useFloat))
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;

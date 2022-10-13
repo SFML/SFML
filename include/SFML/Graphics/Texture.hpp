@@ -35,6 +35,7 @@
 
 namespace sf
 {
+class MultipleRenderTexture;
 class InputStream;
 class RenderTarget;
 class RenderTexture;
@@ -94,7 +95,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height);
+    bool create(unsigned int width, unsigned int height, bool useFloat=false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -585,6 +586,7 @@ public:
 
 private:
 
+    friend class MultipleRenderTexture;
     friend class Text;
     friend class RenderTexture;
     friend class RenderTarget;

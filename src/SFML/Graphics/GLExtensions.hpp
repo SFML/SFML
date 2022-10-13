@@ -124,6 +124,10 @@
     #define GLEXT_GL_FRAMEBUFFER_BINDING              GL_FRAMEBUFFER_BINDING_OES
     #define GLEXT_GL_INVALID_FRAMEBUFFER_OPERATION    GL_INVALID_FRAMEBUFFER_OPERATION_OES
 
+    #define GLEXT_glDrawBuffers                       glDrawBuffersOES
+    #define GLEXT_GL_DEPTH_STENCIL_ATTACHMENT         GL_DEPTH_STENCIL_ATTACHMENT_OES
+    #define GLEXT_GL_DEPTH24_STENCIL8                 GL_DEPTH24_STENCIL8_OES
+
     // Core since 3.0
     #define GLEXT_packed_depth_stencil                false
 
@@ -301,6 +305,10 @@
     #define GLEXT_framebuffer_multisample             sfogl_ext_EXT_framebuffer_multisample
     #define GLEXT_glRenderbufferStorageMultisample    glRenderbufferStorageMultisampleEXT
     #define GLEXT_GL_MAX_SAMPLES                      GL_MAX_SAMPLES_EXT
+
+    #define GLEXT_RGBA16F                             GL_RGBA16F_EXT
+    #define GLEXT_glDrawBuffers                       glDrawBuffersEXT
+    #define GLEXT_GL_DEPTH_STENCIL_ATTACHMENT         GL_DEPTH_STENCIL_ATTACHMENT_EXT
 
     // Core since 3.1 - ARB_copy_buffer
     #define GLEXT_copy_buffer                         sfogl_ext_ARB_copy_buffer

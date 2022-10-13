@@ -86,7 +86,7 @@ public:
     /// \deprecated Use create(unsigned int, unsigned int, const ContextSettings&) instead.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer);
+    SFML_DEPRECATED bool create(unsigned int width, unsigned int height, bool depthBuffer, bool useFloat = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the render-texture
@@ -106,7 +106,7 @@ public:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings());
+    bool create(unsigned int width, unsigned int height, const ContextSettings& settings = ContextSettings(), bool useFloat = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
