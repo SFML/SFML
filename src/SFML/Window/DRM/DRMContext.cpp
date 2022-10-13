@@ -94,14 +94,18 @@ namespace
         if (!initialized)
             return;
 
-        drmModeSetCrtc(drmNode.fd,
-                       drmNode.original_crtc->crtc_id,
-                       drmNode.original_crtc->buffer_id,
-                       drmNode.original_crtc->x,
-                       drmNode.original_crtc->y,
-                       &drmNode.connector_id,
-                       1,
-                       &drmNode.original_crtc->mode);
+        /* Avoid a modeswitch if possible */
+        if (drmNode.mode != &drmNode.original_crtc->mode)
+            drmModeSetCrtc(drmNode.fd,
+                           drmNode.original_crtc->crtc_id,
+                           drmNode.original_crtc->buffer_id,
+                           drmNode.original_crtc->x,
+                           drmNode.original_crtc->y,
+                           &drmNode.connector_id,
+                           1,
+                           &drmNode.original_crtc->mode);
+        else if (getenv("SFML_DRM_DEBUG"))
+            printf("DRM keeping the same mode since using the original one\n");
 
         drmModeFreeConnector(drmNode.saved_connector);
         drmModeFreeEncoder(drmNode.saved_encoder);
