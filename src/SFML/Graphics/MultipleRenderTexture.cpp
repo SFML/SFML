@@ -51,7 +51,7 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
     m_size = Vector2u(width, height);
 
   //  if(m_context != NULL)
-    {
+    // {
       //  m_context->setActive(true);
         removeDepthBuffer();
 
@@ -62,7 +62,7 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
             m_frameBuffer = 0;
         }
       //  delete m_context;
-    }
+    // /}
 
     //m_context = new Context();
 
