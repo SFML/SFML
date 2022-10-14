@@ -14,10 +14,8 @@ unsigned int MultipleRenderTexture::getMaxColorAttachments()
 }
 
 MultipleRenderTexture::MultipleRenderTexture() :
-    //m_context    (NULL),
     m_frameBuffer(0),
-    m_depthBuffer(0)//,
-   // m_stencilBuffer(0)
+    m_depthBuffer(0)
 {
     m_size = Vector2u(0,0);
     m_textures = NULL;
@@ -26,23 +24,17 @@ MultipleRenderTexture::MultipleRenderTexture() :
 MultipleRenderTexture::~MultipleRenderTexture()
 {
 
-    //if(m_context != NULL)
+    if(m_textures != NULL)
+        delete m_textures;
+
+    removeDepthBuffer();
+
+    if (m_frameBuffer)
     {
-       // m_context->setActive(true);
-
-        if(m_textures != NULL)
-            delete m_textures;
-
-        removeDepthBuffer();
-
-        if (m_frameBuffer)
-        {
-            GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
-            glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
-        }
-
-        //delete m_context;
+        GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
+        glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
     }
+
 }
 
 
@@ -51,7 +43,7 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
     m_size = Vector2u(width, height);
 
   //  if(m_context != NULL)
-    // {
+     {
       //  m_context->setActive(true);
         removeDepthBuffer();
 
@@ -62,14 +54,14 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
             m_frameBuffer = 0;
         }
       //  delete m_context;
-    // /}
+    }
 
     //m_context = new Context();
 
     //m_context->setActive(true);
 
-    if(m_textures != NULL)
-        delete m_textures;
+    // if(m_textures != NULL)
+    //     delete m_textures;
 
     m_activeTextures.clear();
 
