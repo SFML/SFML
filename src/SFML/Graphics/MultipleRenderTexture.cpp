@@ -3,8 +3,6 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/System/Err.hpp>
 
-
-
 namespace sf
 {
 
@@ -16,7 +14,7 @@ unsigned int MultipleRenderTexture::getMaxColorAttachments()
 }
 
 MultipleRenderTexture::MultipleRenderTexture() :
-    m_context    (NULL),
+    //m_context    (NULL),
     m_frameBuffer(0),
     m_depthBuffer(0)//,
    // m_stencilBuffer(0)
@@ -27,12 +25,15 @@ MultipleRenderTexture::MultipleRenderTexture() :
 
 MultipleRenderTexture::~MultipleRenderTexture()
 {
-    if(m_context != NULL)
+
+    //if(m_context != NULL)
     {
-        m_context->setActive(true);
+       // m_context->setActive(true);
+
+        if(m_textures != NULL)
+            delete m_textures;
 
         removeDepthBuffer();
-        //removeStencilBuffer();
 
         if (m_frameBuffer)
         {
@@ -40,11 +41,8 @@ MultipleRenderTexture::~MultipleRenderTexture()
             glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
         }
 
-        delete m_context;
+        //delete m_context;
     }
-
-    if(m_textures != NULL)
-        delete m_textures;
 }
 
 
@@ -52,21 +50,33 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
 {
     m_size = Vector2u(width, height);
 
+  //  if(m_context != NULL)
+    {
+      //  m_context->setActive(true);
+        removeDepthBuffer();
+
+        if (m_frameBuffer)
+        {
+            GLuint frameBuffer = static_cast<GLuint>(m_frameBuffer);
+            glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
+            m_frameBuffer = 0;
+        }
+      //  delete m_context;
+    }
+
+    //m_context = new Context();
+
+    //m_context->setActive(true);
+
     if(m_textures != NULL)
         delete m_textures;
 
+    m_activeTextures.clear();
+
     m_textures = new Texture[getMaxColorAttachments()];
-
-    if(m_context != NULL)
-        delete m_context;
-
-    m_context = new Context();
 
     if(!createFBO(width,height))
         return false;
-
-    //if(!addRenderTarget(0,useFloat))
-      //  return false;
 
     return true;
 }
@@ -400,26 +410,30 @@ bool MultipleRenderTexture::generateMipmap(unsigned int renderingLocation)
 
 bool MultipleRenderTexture::setActive(bool active)
 {
-    if(m_context == NULL)
-        return false;
+    //if(m_context == NULL)
+      //  return false;
 
-    if(!m_context->setActive(active))
-        return false;
+    //if(!m_context->setActive(active))
+        //return false;
 
-    /*if(active)
+
+   // return true;
+
+
+    if(active)
     {
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, m_frameBuffer));
     } else {
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, 0));
-    }*/
+    }
 
-    return true;
+   return RenderTarget::setActive(active);
 }
 
-void MultipleRenderTexture::display(bool doFlush)
+void MultipleRenderTexture::display()
 {
-    if (doFlush && setActive(true))
-        glCheck(glFlush());
+   // if (doFlush && setActive(true))
+     //   glCheck(glFlush());
 
     std::vector<unsigned int>::iterator it;
     for(it = m_activeTextures.begin() ; it != m_activeTextures.end() ; ++it)
@@ -437,6 +451,7 @@ Vector2u MultipleRenderTexture::getSize() const
 
 Texture* MultipleRenderTexture::getTexture(unsigned int renderingLocation)
 {
+    //this->setActive(true);
     if(renderingLocation >= getMaxColorAttachments())
     {
         err()<< "Impossible to get texture from multiple render texture (location not available)" <<std::endl;
@@ -471,6 +486,8 @@ bool MultipleRenderTexture::createFBO(unsigned int width, unsigned int height)
     glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, m_frameBuffer));
 
     RenderTarget::initialize();
+
+    return true;
 }
 
 

@@ -39,7 +39,8 @@ public:
     bool generateMipmap(unsigned int renderingLocation);
 
     bool setActive(bool active);
-    void display(bool doFlush = true);
+    bool activateFBO(bool active);
+    void display();
 
     virtual sf::Vector2u getSize() const;
     Texture* getTexture(unsigned int renderingLocation);
@@ -49,6 +50,7 @@ protected:
     std::vector<unsigned int>::iterator findRenderTarget(unsigned int renderingLocation);
     bool createFBO(unsigned int width, unsigned int height);
     bool addTargetToFBO(unsigned int renderingLocation, unsigned int);
+  //  bool recreateFBO();
 
     static unsigned int getMaxColorAttachments();
 
@@ -58,7 +60,8 @@ private:
     std::vector<unsigned int> m_activeTextures;
     Vector2u m_size;
 
-    Context*     m_context;
+   // Context*     m_context;
+   // std::map<Uint64, unsigned int> m_frameBuffers;
     unsigned int m_frameBuffer;
     unsigned int m_depthBuffer;
 };
