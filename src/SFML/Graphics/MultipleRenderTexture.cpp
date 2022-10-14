@@ -24,8 +24,8 @@ MultipleRenderTexture::MultipleRenderTexture() :
 MultipleRenderTexture::~MultipleRenderTexture()
 {
 
-    if(m_textures != NULL)
-        delete m_textures;
+    // if(m_textures != NULL)
+    //     delete m_textures;
 
     removeDepthBuffer();
 
