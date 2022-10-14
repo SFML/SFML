@@ -6,6 +6,12 @@
 function(set_target_warnings target)
     option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
 
+    # For now if we're using MSVC-like clang interface on Windows
+    # we'll disable warnings as errors 
+    if(SFML_OS_WINDOWS AND SFML_COMPILER_CLANG_CL)
+        set(WARNINGS_AS_ERRORS FALSE)
+    endif()
+
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE
             $<$<BOOL:${WARNINGS_AS_ERRORS}>:/WX>

@@ -1062,10 +1062,18 @@ tr.heading h2 {
     display: table;
 }
 
+.tablist {
+    width: 100%;
+}
+
 .tablist li {
     float: left;
     display: table-cell;
     list-style: none;
+}
+
+#navrow1 .tablist li:last-child {
+    float: right;
 }
 
 #navrow1 {
@@ -1073,7 +1081,7 @@ tr.heading h2 {
     margin-top: 2em;
 }
 
-#navrow1 .tablist a, #navrow2 .tablist a, #navrow3 .tablist a, #navrow4 .tablist a {
+#navrow1 .tablist a:not(#MSearchClose), #navrow2 .tablist a, #navrow3 .tablist a, #navrow4 .tablist a {
     display: block;
     margin: 8px 0;
     padding: 0 8px;
@@ -1246,7 +1254,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2folderopen.png');
+    background-image:url('folderopen.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1257,7 +1265,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2folderclosed.png');
+    background-image:url('folderclosed.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1268,7 +1276,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('ftv2doc.png');
+    background-image:url('doc.png');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;

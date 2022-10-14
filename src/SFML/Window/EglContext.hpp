@@ -37,6 +37,7 @@
 #include <glad/egl.h>
 #if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #endif
 
 namespace sf

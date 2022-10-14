@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////
-/// \mainpage
+/// \mainpage SFML Documentation
 ///
 /// \section welcome Welcome
 /// Welcome to the official SFML documentation. Here you will find a detailed

@@ -68,7 +68,7 @@ void Http::Request::setUri(const std::string& uri)
 
     // Make sure it starts with a '/'
     if (m_uri.empty() || (m_uri[0] != '/'))
-        m_uri.insert(0, "/");
+        m_uri.insert(m_uri.begin(), '/');
 }
 
 
