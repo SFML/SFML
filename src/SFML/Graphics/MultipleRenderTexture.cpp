@@ -24,8 +24,8 @@ MultipleRenderTexture::MultipleRenderTexture() :
 MultipleRenderTexture::~MultipleRenderTexture()
 {
 
-    // if(m_textures != NULL)
-    //     delete m_textures;
+    if(m_textures != NULL)
+        m_textures = NULL;
 
     removeDepthBuffer();
 
@@ -60,8 +60,8 @@ bool MultipleRenderTexture::create(unsigned int width, unsigned int height)
 
     //m_context->setActive(true);
 
-    // if(m_textures != NULL)
-    //     delete m_textures;
+    if(m_textures != NULL)
+        m_textures = NULL;
 
     m_activeTextures.clear();
 
