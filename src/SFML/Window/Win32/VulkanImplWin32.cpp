@@ -134,7 +134,7 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
             // Retrieve the available instance extensions
             std::vector<VkExtensionProperties> extensionProperties;
 
-            uint32_t extensionCount = 0;
+            std::uint32_t extensionCount = 0;
 
             wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
@@ -183,14 +183,7 @@ VulkanFunctionPointer VulkanImplWin32::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 const std::vector<const char*>& VulkanImplWin32::getGraphicsRequiredInstanceExtensions()
 {
-    static std::vector<const char*> extensions;
-
-    if (extensions.empty())
-    {
-        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-        extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-    }
-
+    static const std::vector<const char*> extensions{VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_WIN32_SURFACE_EXTENSION_NAME};
     return extensions;
 }
 

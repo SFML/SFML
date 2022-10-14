@@ -70,7 +70,7 @@ public:
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const Uint8* pixels);
+    void create(const Vector2u& size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -157,7 +157,7 @@ public:
     /// \see create, loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const;
+    [[nodiscard]] bool saveToMemory(std::vector<std::uint8_t>& output, const std::string& format) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image
@@ -178,7 +178,7 @@ public:
     /// \param alpha Alpha value to assign to transparent pixels
     ///
     ////////////////////////////////////////////////////////////
-    void createMaskFromColor(const Color& color, Uint8 alpha = 0);
+    void createMaskFromColor(const Color& color, std::uint8_t alpha = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy pixels from another image onto this one
@@ -261,7 +261,7 @@ public:
     /// \return Read-only pointer to the array of pixels
     ///
     ////////////////////////////////////////////////////////////
-    const Uint8* getPixelsPtr() const;
+    const std::uint8_t* getPixelsPtr() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Flip the image horizontally (left <-> right)
@@ -279,8 +279,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2u           m_size;   //!< Image size
-    std::vector<Uint8> m_pixels; //!< Pixels of the image
+    Vector2u                  m_size;   //!< Image size
+    std::vector<std::uint8_t> m_pixels; //!< Pixels of the image
 };
 
 } // namespace sf

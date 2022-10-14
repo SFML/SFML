@@ -6,6 +6,8 @@ FetchContent_Declare(doctest
     GIT_TAG v2.4.9
 )
 FetchContent_MakeAvailable(doctest)
+list(APPEND CMAKE_MODULE_PATH ${doctest_SOURCE_DIR}/scripts/cmake)
+include(doctest)
 
 add_library(sfml-test-main STATIC
     DoctestMain.cpp
@@ -21,13 +23,14 @@ target_compile_definitions(sfml-test-main PUBLIC DOCTEST_CONFIG_REQUIRE_STRINGIF
 target_link_libraries(sfml-test-main PUBLIC SFML::System doctest::doctest)
 set_target_warnings(sfml-test-main)
 
-SET(SYSTEM_SRC
+set(SYSTEM_SRC
     System/Angle.cpp
     System/Clock.cpp
     System/Config.cpp
     System/Err.cpp
     System/FileInputStream.cpp
     System/MemoryInputStream.cpp
+    System/String.cpp
     System/Time.cpp
     System/Vector2.cpp
     System/Vector3.cpp
@@ -40,66 +43,85 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
-SET(WINDOW_SRC
+set(WINDOW_SRC
+    Window/Context.cpp
     Window/ContextSettings.cpp
+    Window/Cursor.cpp
+    Window/GlResource.cpp
     Window/VideoMode.cpp
+    Window/Window.cpp
+    Window/WindowBase.cpp
 )
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
-SET(GRAPHICS_SRC
+set(GRAPHICS_SRC
     Graphics/BlendMode.cpp
     Graphics/CircleShape.cpp
     Graphics/Color.cpp
     Graphics/ConvexShape.cpp
+    Graphics/Drawable.cpp
+    Graphics/Font.cpp
     Graphics/Glyph.cpp
     Graphics/Image.cpp
     Graphics/Rect.cpp
     Graphics/RectangleShape.cpp
-    Graphics/Shape.cpp
     Graphics/RenderStates.cpp
+    Graphics/RenderTarget.cpp
+    Graphics/RenderTexture.cpp
+    Graphics/RenderWindow.cpp
+    Graphics/Shader.cpp
+    Graphics/Shape.cpp
+    Graphics/Sprite.cpp
+    Graphics/Text.cpp
+    Graphics/Texture.cpp
     Graphics/Transform.cpp
     Graphics/Transformable.cpp
     Graphics/Vertex.cpp
     Graphics/VertexArray.cpp
+    Graphics/VertexBuffer.cpp
     Graphics/View.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
 
-SET(NETWORK_SRC
+set(NETWORK_SRC
+    Network/Ftp.cpp
+    Network/Http.cpp
     Network/IpAddress.cpp
     Network/Packet.cpp
+    Network/Socket.cpp
+    Network/SocketSelector.cpp
+    Network/TcpListener.cpp
+    Network/TcpSocket.cpp
+    Network/UdpSocket.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
-SET(AUDIO_SRC
-    Audio/Dummy.cpp # TODO: Remove when there are real tests
+set(AUDIO_SRC
+    Audio/AlResource.cpp
+    Audio/InputSoundFile.cpp
+    Audio/Music.cpp
+    Audio/OutputSoundFile.cpp
+    Audio/Sound.cpp
+    Audio/SoundBuffer.cpp
+    Audio/SoundBufferRecorder.cpp
+    Audio/SoundRecorder.cpp
+    Audio/SoundSource.cpp
+    Audio/SoundStream.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+
+if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
+    add_custom_command(
+        TARGET test-sfml-audio
+        COMMENT "Copy OpenAL DLL"
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:test-sfml-audio>
+        VERBATIM)
+endif()
 
 # Automatically run the tests at the end of the build
 add_custom_target(runtests ALL
                   DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio
 )
-
-if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
-    # Copy the binaries of SFML dependencies
-    list(APPEND BINARIES
-        "openal32.dll"
-    )
-
-    foreach (BINARY ${BINARIES})
-        if(ARCH_32BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x86/${BINARY}")
-        elseif(ARCH_64BITS)
-            list(APPEND BINARY_PATHS "${PROJECT_SOURCE_DIR}/extlibs/bin/x64/${BINARY}")
-        endif()
-    endforeach()
-
-    add_custom_command(TARGET runtests
-                       COMMENT "Copy binaries"
-                       POST_BUILD COMMAND "${CMAKE_COMMAND}" -E copy ${BINARY_PATHS} "$<TARGET_FILE_DIR:test-sfml-system>"
-    )
-endif()
 
 if(SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
@@ -131,12 +153,12 @@ if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
 
     add_custom_command(TARGET runtests
                        COMMENT "Run tests"
-                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:"${CMAKE_BINARY_DIR}/coverage.out" --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-    )
+                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
+                       VERBATIM)
 else()
     # Run tests without a coverage runner
     add_custom_command(TARGET runtests
                        COMMENT "Run tests"
                        POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-    )
+                       VERBATIM)
 endif()

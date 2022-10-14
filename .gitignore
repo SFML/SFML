@@ -33,6 +33,7 @@
 
 # Build folders
 build/
+cmake-build-*/
 
 # Cache/IDE folders
 .cache/

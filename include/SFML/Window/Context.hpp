@@ -33,6 +33,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/GlResource.hpp>
 
+#include <cstdint>
 #include <memory>
 
 
@@ -145,7 +146,7 @@ public:
     /// \return The active context's ID or 0 if no context is currently active
     ///
     ////////////////////////////////////////////////////////////
-    static Uint64 getActiveContextId();
+    static std::uint64_t getActiveContextId();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

@@ -62,7 +62,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         return Any;
 
     // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
-    if (const Uint32 ip = inet_addr(address.data()); ip != INADDR_NONE)
+    if (const std::uint32_t ip = inet_addr(address.data()); ip != INADDR_NONE)
         return IpAddress(ntohl(ip));
 
     // Not a valid address, try to convert it as a host name
@@ -75,7 +75,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         sockaddr_in sin;
         std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
 
-        const Uint32 ip = sin.sin_addr.s_addr;
+        const std::uint32_t ip = sin.sin_addr.s_addr;
         freeaddrinfo(result);
 
         return IpAddress(ntohl(ip));
@@ -86,14 +86,14 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
+IpAddress::IpAddress(std::uint8_t byte0, std::uint8_t byte1, std::uint8_t byte2, std::uint8_t byte3) :
 m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(Uint32 address) : m_address(htonl(address))
+IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
 {
 }
 
@@ -109,7 +109,7 @@ std::string IpAddress::toString() const
 
 
 ////////////////////////////////////////////////////////////
-Uint32 IpAddress::toInteger() const
+std::uint32_t IpAddress::toInteger() const
 {
     return ntohl(m_address);
 }
@@ -161,9 +161,9 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     // (not very hard: the web page contains only our IP address).
 
     Http           server("www.sfml-dev.org");
-    Http::Request  request("/ip-provider.php", Http::Request::Get);
+    Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
     Http::Response page = server.sendRequest(request, timeout);
-    if (page.getStatus() == Http::Response::Ok)
+    if (page.getStatus() == Http::Response::Status::Ok)
         return IpAddress::resolve(page.getBody());
 
     // Something failed: return an invalid address

@@ -19,7 +19,7 @@ void runUdpServer(unsigned short port)
     sf::UdpSocket socket;
 
     // Listen to messages on the specified port
-    if (socket.bind(port) != sf::Socket::Done)
+    if (socket.bind(port) != sf::Socket::Status::Done)
         return;
     std::cout << "Server is listening to port " << port << ", waiting for a message... " << std::endl;
 
@@ -28,13 +28,13 @@ void runUdpServer(unsigned short port)
     std::size_t                  received;
     std::optional<sf::IpAddress> sender;
     unsigned short               senderPort;
-    if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Done)
+    if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Status::Done)
         return;
     std::cout << "Message received from client " << sender.value() << ": " << std::quoted(in) << std::endl;
 
     // Send an answer to the client
     const char out[] = "Hi, I'm the server";
-    if (socket.send(out, sizeof(out), sender.value(), senderPort) != sf::Socket::Done)
+    if (socket.send(out, sizeof(out), sender.value(), senderPort) != sf::Socket::Status::Done)
         return;
     std::cout << "Message sent to the client: " << std::quoted(out) << std::endl;
 }
@@ -59,7 +59,7 @@ void runUdpClient(unsigned short port)
 
     // Send a message to the server
     const char out[] = "Hi, I'm a client";
-    if (socket.send(out, sizeof(out), server.value(), port) != sf::Socket::Done)
+    if (socket.send(out, sizeof(out), server.value(), port) != sf::Socket::Status::Done)
         return;
     std::cout << "Message sent to the server: " << std::quoted(out) << std::endl;
 
@@ -68,7 +68,7 @@ void runUdpClient(unsigned short port)
     std::size_t                  received;
     std::optional<sf::IpAddress> sender;
     unsigned short               senderPort;
-    if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Done)
+    if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Status::Done)
         return;
     std::cout << "Message received from " << sender.value() << ": " << std::quoted(in) << std::endl;
 }

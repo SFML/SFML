@@ -8,8 +8,8 @@
 #include <iostream>
 
 
-const sf::Uint8 clientAudioData   = 1;
-const sf::Uint8 clientEndOfStream = 2;
+const std::uint8_t clientAudioData   = 1;
+const std::uint8_t clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ private:
     ////////////////////////////////////////////////////////////
     bool onStart() override
     {
-        if (m_socket.connect(m_host, m_port) == sf::Socket::Done)
+        if (m_socket.connect(m_host, m_port) == sf::Socket::Status::Done)
         {
             std::cout << "Connected to server " << m_host << std::endl;
             return true;
@@ -64,15 +64,15 @@ private:
     /// \see SoundRecorder::onProcessSamples
     ///
     ////////////////////////////////////////////////////////////
-    bool onProcessSamples(const sf::Int16* samples, std::size_t sampleCount) override
+    bool onProcessSamples(const std::int16_t* samples, std::size_t sampleCount) override
     {
         // Pack the audio samples into a network packet
         sf::Packet packet;
         packet << clientAudioData;
-        packet.append(samples, sampleCount * sizeof(sf::Int16));
+        packet.append(samples, sampleCount * sizeof(std::int16_t));
 
         // Send the audio packet to the server
-        return m_socket.send(packet) == sf::Socket::Done;
+        return m_socket.send(packet) == sf::Socket::Status::Done;
     }
 
     ////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ private:
         sf::Packet packet;
         packet << clientEndOfStream;
 
-        if (m_socket.send(packet) != sf::Socket::Done)
+        if (m_socket.send(packet) != sf::Socket::Status::Done)
         {
             std::cerr << "Failed to send end-of-stream packet" << std::endl;
         }

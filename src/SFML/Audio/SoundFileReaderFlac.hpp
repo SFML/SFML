@@ -90,7 +90,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    void seek(Uint64 sampleOffset) override;
+    void seek(std::uint64_t sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -101,7 +101,7 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Uint64 read(Int16* samples, Uint64 maxCount) override;
+    [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override;
 
 public:
     ////////////////////////////////////////////////////////////
@@ -110,12 +110,12 @@ public:
     ////////////////////////////////////////////////////////////
     struct ClientData
     {
-        InputStream*          stream;
-        SoundFileReader::Info info;
-        Int16*                buffer;
-        Uint64                remaining;
-        std::vector<Int16>    leftovers;
-        bool                  error;
+        InputStream*              stream;
+        SoundFileReader::Info     info;
+        std::int16_t*             buffer;
+        std::uint64_t             remaining;
+        std::vector<std::int16_t> leftovers;
+        bool                      error;
     };
 
 private:

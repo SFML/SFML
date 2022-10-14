@@ -8,13 +8,18 @@
 // Use sf::Vector3i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
 
-TEST_CASE("sf::Vector3 class template - [system]")
+static_assert(std::is_copy_constructible_v<sf::Vector3i>);
+static_assert(std::is_copy_assignable_v<sf::Vector3i>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Vector3i>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Vector3i>);
+
+TEST_CASE("[System] sf::Vector3")
 {
     SUBCASE("Construction")
     {
         SUBCASE("Default constructor")
         {
-            sf::Vector3i vector;
+            const sf::Vector3i vector;
             CHECK(vector.x == 0);
             CHECK(vector.y == 0);
             CHECK(vector.z == 0);
@@ -22,7 +27,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
         SUBCASE("(x, y, z) coordinate constructor")
         {
-            sf::Vector3i vector(1, 2, 3);
+            const sf::Vector3i vector(1, 2, 3);
             CHECK(vector.x == 1);
             CHECK(vector.y == 2);
             CHECK(vector.z == 3);
@@ -30,8 +35,8 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
         SUBCASE("Conversion constructor")
         {
-            sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
-            sf::Vector3i vector(sourceVector);
+            const sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
+            const sf::Vector3i vector(sourceVector);
 
             CHECK(vector.x == static_cast<int>(sourceVector.x));
             CHECK(vector.y == static_cast<int>(sourceVector.y));
@@ -43,8 +48,8 @@ TEST_CASE("sf::Vector3 class template - [system]")
     {
         SUBCASE("-vector")
         {
-            sf::Vector3i vector(1, 2, 3);
-            sf::Vector3i negatedVector = -vector;
+            const sf::Vector3i vector(1, 2, 3);
+            const sf::Vector3i negatedVector = -vector;
 
             CHECK(negatedVector.x == -1);
             CHECK(negatedVector.y == -2);
@@ -54,8 +59,8 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
     SUBCASE("Arithmetic operations between two vectors")
     {
-        sf::Vector3i firstVector(2, 5, 6);
-        sf::Vector3i secondVector(8, 3, 7);
+        sf::Vector3i       firstVector(2, 5, 6);
+        const sf::Vector3i secondVector(8, 3, 7);
 
         SUBCASE("vector += vector")
         {
@@ -77,7 +82,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
         SUBCASE("vector + vector")
         {
-            sf::Vector3i result = firstVector + secondVector;
+            const sf::Vector3i result = firstVector + secondVector;
 
             CHECK(result.x == 10);
             CHECK(result.y == 8);
@@ -86,7 +91,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
         SUBCASE("vector - vector")
         {
-            sf::Vector3i result = firstVector - secondVector;
+            const sf::Vector3i result = firstVector - secondVector;
 
             CHECK(result.x == -6);
             CHECK(result.y == 2);
@@ -97,7 +102,7 @@ TEST_CASE("sf::Vector3 class template - [system]")
     SUBCASE("Arithmetic operations between vector and scalar value")
     {
         sf::Vector3i vector(26, 12, 6);
-        int          scalar = 2;
+        const int    scalar = 2;
 
         SUBCASE("vector * scalar")
         {
@@ -147,9 +152,9 @@ TEST_CASE("sf::Vector3 class template - [system]")
 
     SUBCASE("Comparison operations (two equal and one different vector)")
     {
-        sf::Vector3i firstEqualVector(1, 5, 6);
-        sf::Vector3i secondEqualVector(1, 5, 6);
-        sf::Vector3i differentVector(6, 9, 7);
+        const sf::Vector3i firstEqualVector(1, 5, 6);
+        const sf::Vector3i secondEqualVector(1, 5, 6);
+        const sf::Vector3i differentVector(6, 9, 7);
 
         SUBCASE("vector == vector")
         {

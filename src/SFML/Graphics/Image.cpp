@@ -44,11 +44,11 @@ void Image::create(const Vector2u& size, const Color& color)
     if (size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
+        std::vector<std::uint8_t> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
 
         // Fill it with the specified color
-        Uint8* ptr = newPixels.data();
-        Uint8* end = ptr + newPixels.size();
+        std::uint8_t* ptr = newPixels.data();
+        std::uint8_t* end = ptr + newPixels.size();
         while (ptr < end)
         {
             *ptr++ = color.r;
@@ -66,7 +66,7 @@ void Image::create(const Vector2u& size, const Color& color)
     else
     {
         // Dump the pixel buffer
-        std::vector<Uint8>().swap(m_pixels);
+        std::vector<std::uint8_t>().swap(m_pixels);
 
         // Assign the new size
         m_size.x = 0;
@@ -76,12 +76,12 @@ void Image::create(const Vector2u& size, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Image::create(const Vector2u& size, const Uint8* pixels)
+void Image::create(const Vector2u& size, const std::uint8_t* pixels)
 {
     if (pixels && size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<Uint8> newPixels(pixels, pixels + size.x * size.y * 4);
+        std::vector<std::uint8_t> newPixels(pixels, pixels + size.x * size.y * 4);
 
         // Commit the new pixel buffer
         m_pixels.swap(newPixels);
@@ -92,7 +92,7 @@ void Image::create(const Vector2u& size, const Uint8* pixels)
     else
     {
         // Dump the pixel buffer
-        std::vector<Uint8>().swap(m_pixels);
+        std::vector<std::uint8_t>().swap(m_pixels);
 
         // Assign the new size
         m_size.x = 0;
@@ -138,7 +138,7 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
 }
 
 ////////////////////////////////////////////////////////////
-bool Image::saveToMemory(std::vector<sf::Uint8>& output, const std::string& format) const
+bool Image::saveToMemory(std::vector<std::uint8_t>& output, const std::string& format) const
 {
     return priv::ImageLoader::getInstance().saveImageToMemory(format, output, m_pixels, m_size);
 }
@@ -152,14 +152,14 @@ Vector2u Image::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void Image::createMaskFromColor(const Color& color, Uint8 alpha)
+void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 {
     // Make sure that the image is not empty
     if (!m_pixels.empty())
     {
         // Replace the alpha of the pixels that match the transparent color
-        Uint8* ptr = m_pixels.data();
-        Uint8* end = ptr + m_pixels.size();
+        std::uint8_t* ptr = m_pixels.data();
+        std::uint8_t* end = ptr + m_pixels.size();
         while (ptr < end)
         {
             if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
@@ -177,40 +177,41 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
     if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
         return false;
 
-    // Make sure the sourceRect components are non-negative before casting them to unsigned values
-    if (sourceRect.left < 0 || sourceRect.top < 0 || sourceRect.width < 0 || sourceRect.height < 0)
+    IntRect srcRect(sourceRect);
+
+    // Make sure the position and size of sourceRect are not negative
+    if (srcRect.position.x < 0 || srcRect.position.y < 0 || srcRect.size.x < 0 || srcRect.size.y < 0)
         return false;
 
-    Rect<unsigned int> srcRect(sourceRect);
+    // If the provided source rectangle is empty, use the entire source image
+    if (srcRect.size.x == 0 || srcRect.size.y == 0)
+        srcRect = IntRect({0, 0}, Vector2i(source.m_size));
 
-    // Use the whole source image as srcRect if the provided source rectangle is empty
-    if (srcRect.width == 0 || srcRect.height == 0)
-    {
-        srcRect = Rect<unsigned int>({0, 0}, source.m_size);
-    }
     // Otherwise make sure the provided source rectangle fits into the source image
     else
     {
-        // Checking the bottom right corner is enough because
-        // left and top are non-negative and width and height are positive.
-        if (source.m_size.x < srcRect.left + srcRect.width || source.m_size.y < srcRect.top + srcRect.height)
+        const Vector2u end(srcRect.getEnd());
+
+        if (source.m_size.x < end.x || source.m_size.y < end.y)
             return false;
     }
 
     // Make sure the destination position is within this image bounds
-    if (m_size.x <= dest.x || m_size.y <= dest.y)
+    if (dest.x >= m_size.x || dest.y >= m_size.y)
         return false;
 
     // Then find the valid size of the destination rectangle
-    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width), std::min(m_size.y - dest.y, srcRect.height));
+    const Vector2u uSize(srcRect.size);
+    const Vector2u dstSize(std::min(m_size.x - dest.x, uSize.x), std::min(m_size.y - dest.y, uSize.y));
 
     // Precompute as much as possible
-    const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
-    const unsigned int srcStride = source.m_size.x * 4;
-    const unsigned int dstStride = m_size.x * 4;
+    const std::size_t pitch     = dstSize.x * 4;
+    const std::size_t srcStride = source.m_size.x * 4;
+    const std::size_t dstStride = m_size.x * 4;
 
-    const Uint8* srcPixels = source.m_pixels.data() + (srcRect.left + srcRect.top * source.m_size.x) * 4;
-    Uint8*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
+    const std::uint8_t* srcPixels = source.m_pixels.data() +
+                                    (srcRect.position.x + srcRect.position.y * static_cast<int>(source.m_size.x)) * 4;
+    std::uint8_t* dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)
@@ -221,19 +222,20 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
             for (unsigned int j = 0; j < dstSize.x; ++j)
             {
                 // Get a direct pointer to the components of the current pixel
-                const Uint8* src = srcPixels + j * 4;
-                Uint8*       dst = dstPixels + j * 4;
+                const std::uint8_t* src = srcPixels + j * 4;
+                std::uint8_t*       dst = dstPixels + j * 4;
 
                 // Interpolate RGBA components using the alpha values of the destination and source pixels
-                Uint8 src_alpha = src[3];
-                Uint8 dst_alpha = dst[3];
-                Uint8 out_alpha = static_cast<Uint8>(src_alpha + dst_alpha - src_alpha * dst_alpha / 255);
+                std::uint8_t src_alpha = src[3];
+                std::uint8_t dst_alpha = dst[3];
+                std::uint8_t out_alpha = static_cast<std::uint8_t>(src_alpha + dst_alpha - src_alpha * dst_alpha / 255);
 
                 dst[3] = out_alpha;
 
                 if (out_alpha)
                     for (int k = 0; k < 3; k++)
-                        dst[k] = static_cast<Uint8>((src[k] * src_alpha + dst[k] * (out_alpha - src_alpha)) / out_alpha);
+                        dst[k] = static_cast<std::uint8_t>(
+                            (src[k] * src_alpha + dst[k] * (out_alpha - src_alpha)) / out_alpha);
                 else
                     for (int k = 0; k < 3; k++)
                         dst[k] = src[k];
@@ -261,24 +263,24 @@ void Image::createMaskFromColor(const Color& color, Uint8 alpha)
 ////////////////////////////////////////////////////////////
 void Image::setPixel(const Vector2u& coords, const Color& color)
 {
-    Uint8* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
-    *pixel++     = color.r;
-    *pixel++     = color.g;
-    *pixel++     = color.b;
-    *pixel++     = color.a;
+    std::uint8_t* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
+    *pixel++            = color.r;
+    *pixel++            = color.g;
+    *pixel++            = color.b;
+    *pixel++            = color.a;
 }
 
 
 ////////////////////////////////////////////////////////////
 Color Image::getPixel(const Vector2u& coords) const
 {
-    const Uint8* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
+    const std::uint8_t* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
     return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Uint8* Image::getPixelsPtr() const
+const std::uint8_t* Image::getPixelsPtr() const
 {
     if (!m_pixels.empty())
     {
@@ -301,9 +303,9 @@ void Image::flipHorizontally()
 
         for (std::size_t y = 0; y < m_size.y; ++y)
         {
-            auto left  = m_pixels.begin() + static_cast<std::vector<Uint8>::iterator::difference_type>(y * rowSize);
+            auto left = m_pixels.begin() + static_cast<std::vector<std::uint8_t>::iterator::difference_type>(y * rowSize);
             auto right = m_pixels.begin() +
-                         static_cast<std::vector<Uint8>::iterator::difference_type>((y + 1) * rowSize - 4);
+                         static_cast<std::vector<std::uint8_t>::iterator::difference_type>((y + 1) * rowSize - 4);
 
             for (std::size_t x = 0; x < m_size.x / 2; ++x)
             {
@@ -322,7 +324,7 @@ void Image::flipVertically()
 {
     if (!m_pixels.empty())
     {
-        auto rowSize = static_cast<std::vector<Uint8>::iterator::difference_type>(m_size.x * 4);
+        auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x * 4);
 
         auto top    = m_pixels.begin();
         auto bottom = m_pixels.end() - rowSize;

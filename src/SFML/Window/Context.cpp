@@ -97,7 +97,7 @@ const Context* Context::getActiveContext()
 
 
 ////////////////////////////////////////////////////////////
-Uint64 Context::getActiveContextId()
+std::uint64_t Context::getActiveContextId()
 {
     return priv::GlContext::getActiveContextId();
 }

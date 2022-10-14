@@ -3,6 +3,13 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <type_traits>
+
+static_assert(!std::is_constructible_v<sf::Shape>);
+static_assert(!std::is_copy_constructible_v<sf::Shape>);
+static_assert(std::is_copy_assignable_v<sf::Shape>);
+static_assert(!std::is_move_constructible_v<sf::Shape>);
+static_assert(std::is_move_assignable_v<sf::Shape>);
 
 class TriangleShape : public sf::Shape
 {
@@ -35,7 +42,7 @@ private:
     sf::Vector2f m_size;
 };
 
-TEST_CASE("sf::Shape class - [graphics]")
+TEST_CASE("[Graphics] sf::Shape")
 {
     SUBCASE("Default constructor")
     {
@@ -94,9 +101,7 @@ TEST_CASE("sf::Shape class - [graphics]")
         triangleShape.move({1, 1});
         triangleShape.rotate(sf::degrees(90));
         CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds().left == Approx(-2.f));
-        CHECK(triangleShape.getGlobalBounds().top == Approx(1.f));
-        CHECK(triangleShape.getGlobalBounds().width == Approx(3.f));
-        CHECK(triangleShape.getGlobalBounds().height == Approx(2.f));
+        CHECK(triangleShape.getGlobalBounds().position == Approx(sf::Vector2f(-2, 1)));
+        CHECK(triangleShape.getGlobalBounds().size == Approx(sf::Vector2f(3, 2)));
     }
 }

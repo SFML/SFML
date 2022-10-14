@@ -213,42 +213,42 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int8& data);
+    Packet& operator>>(std::int8_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Uint8& data);
+    Packet& operator>>(std::uint8_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int16& data);
+    Packet& operator>>(std::int16_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Uint16& data);
+    Packet& operator>>(std::uint16_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int32& data);
+    Packet& operator>>(std::int32_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Uint32& data);
+    Packet& operator>>(std::uint32_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Int64& data);
+    Packet& operator>>(std::int64_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator>>(Uint64& data);
+    Packet& operator>>(std::uint64_t& data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -294,42 +294,42 @@ public:
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int8 data);
+    Packet& operator<<(std::int8_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Uint8 data);
+    Packet& operator<<(std::uint8_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int16 data);
+    Packet& operator<<(std::int16_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Uint16 data);
+    Packet& operator<<(std::uint16_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int32 data);
+    Packet& operator<<(std::int32_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Uint32 data);
+    Packet& operator<<(std::uint32_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Int64 data);
+    Packet& operator<<(std::int64_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
     ////////////////////////////////////////////////////////////
-    Packet& operator<<(Uint64 data);
+    Packet& operator<<(std::uint64_t data);
 
     ////////////////////////////////////////////////////////////
     /// \overload
@@ -461,14 +461,14 @@ private:
 /// It is designed to follow the behavior of standard C++ streams,
 /// using operators >> and << to extract and insert data.
 ///
-/// It is recommended to use only fixed-size types (like sf::Int32, etc.),
+/// It is recommended to use only fixed-size types (like std::int32_t, etc.),
 /// to avoid possible differences between the sender and the receiver.
 /// Indeed, the native C++ types may have different sizes on two platforms
 /// and your data may be corrupted if that happens.
 ///
 /// Usage example:
 /// \code
-/// sf::Uint32 x = 24;
+/// std::uint32_t x = 24;
 /// std::string s = "hello";
 /// double d = 5.89;
 ///
@@ -486,7 +486,7 @@ private:
 /// socket.receive(packet);
 ///
 /// // Extract the variables contained in the packet
-/// sf::Uint32 x;
+/// std::uint32_t x;
 /// std::string s;
 /// double d;
 /// if (packet >> x >> s >> d)
@@ -498,7 +498,7 @@ private:
 /// Packets have built-in operator >> and << overloads for
 /// standard types:
 /// \li bool
-/// \li fixed-size integer types (sf::Int8/16/32, sf::Uint8/16/32)
+/// \li fixed-size integer types (int[8|16|32]_t, uint[8|16|32]_t)
 /// \li floating point numbers (float, double)
 /// \li string types (char*, wchar_t*, std::string, std::wstring, sf::String)
 ///
@@ -510,7 +510,7 @@ private:
 /// struct MyStruct
 /// {
 ///     float       number;
-///     sf::Int8    integer;
+///     std::int8_t integer;
 ///     std::string str;
 /// };
 ///

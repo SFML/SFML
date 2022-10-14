@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-TEST_CASE("sf::err - [system]")
+TEST_CASE("[System] sf::err")
 {
     SUBCASE("Overflow default buffer")
     {

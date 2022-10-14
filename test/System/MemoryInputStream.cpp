@@ -5,7 +5,7 @@
 #include <ostream>
 #include <string_view>
 
-TEST_CASE("sf::MemoryInputStream class - [system]")
+TEST_CASE("[System] sf::MemoryInputStream")
 {
     SUBCASE("Empty stream")
     {

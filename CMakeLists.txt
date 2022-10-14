@@ -35,11 +35,11 @@ if(CCACHE_PROGRAM)
 endif()
 
 # include the configuration file
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
+include(cmake/Config.cmake)
 
 # we use the paths from the cmake GNUInstallDirs module as defaults
 # you can override these if you like
-# https://cmake.org/cmake/help/v3.0/module/GNUInstallDirs.html
+# https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
 include(GNUInstallDirs)
 
 # add an option for choosing the build type (shared or static)
@@ -100,15 +100,15 @@ endif()
 # Android options
 if(SFML_OS_ANDROID)
     sfml_set_option(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK FALSE BOOL "TRUE to use an sf::Clock implementation which takes system sleep time into account (keeps advancing during suspension), FALSE to default to another available monotonic clock")
-    if (SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
+    if(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
         add_definitions(-DSFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
     endif()
 
     # avoid missing libraries when building SFML for Android with NDK r19c and later
-    set(CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR};${CMAKE_FIND_ROOT_PATH}")
+    list(PREPEND CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR}")
 
     # make sure there's the android library available
-    if (CMAKE_ANDROID_API LESS 26)
+    if(CMAKE_ANDROID_API LESS 26)
         message(FATAL_ERROR "Android API level (${CMAKE_ANDROID_API}) must be equal or greater than 26.")
     endif()
 
@@ -123,13 +123,8 @@ if(SFML_OS_ANDROID)
     # we install libs in a subdirectory named after the ABI
     set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${CMAKE_ANDROID_ARCH_ABI}")
     # pass shared STL configuration (if any)
-    if (CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
+    if(CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
         add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
-    #    if(NOT CMAKE_ANDROID_STL_TYPE MATCHES "c\\+\\+_shared")
-    #        message("Android: Using ${CMAKE_ANDROID_STL_TYPE} as STL. Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
-    #    endif()
-    else()
-    #    message(WARNING "Android: You're using a static STL (${CMAKE_ANDROID_STL_TYPE}). Set CMAKE_ANDROID_STL_TYPE to c++_shared, if there are any issues.")
     endif()
 
     # let the user switch ABIs
@@ -168,9 +163,9 @@ if(SFML_USE_SYSTEM_DEPS)
         message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
     endif()
 
-    file(GLOB_RECURSE DEP_LIBS    "${CMAKE_SOURCE_DIR}/extlibs/libs*/*")
-    file(GLOB_RECURSE DEP_BINS    "${CMAKE_SOURCE_DIR}/extlibs/bin*/*")
-    file(GLOB_RECURSE DEP_HEADERS "${CMAKE_SOURCE_DIR}/extlibs/headers/*")
+    file(GLOB_RECURSE DEP_LIBS    "${PROJECT_SOURCE_DIR}/extlibs/libs*/*")
+    file(GLOB_RECURSE DEP_BINS    "${PROJECT_SOURCE_DIR}/extlibs/bin*/*")
+    file(GLOB_RECURSE DEP_HEADERS "${PROJECT_SOURCE_DIR}/extlibs/headers/*")
 
     foreach(DEP_FILE ${DEP_LIBS} ${DEP_BINS} ${DEP_HEADERS})
         get_filename_component(DEP_DIR ${DEP_FILE} PATH)
@@ -180,7 +175,7 @@ if(SFML_USE_SYSTEM_DEPS)
         endif()
 
         get_filename_component(DEP_PARENT_DIR ${DEP_DIR} PATH)
-        while(NOT DEP_PARENT_DIR STREQUAL "${CMAKE_SOURCE_DIR}/extlibs")
+        while(NOT DEP_PARENT_DIR STREQUAL "${PROJECT_SOURCE_DIR}/extlibs")
             if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
                 list(APPEND CMAKE_IGNORE_PATH "${DEP_PARENT_DIR}")
             endif()
@@ -195,9 +190,7 @@ endif()
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
-    sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise. Requires CMake 3.1.")
-
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
+    sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise.")
 endif()
 
 # define SFML_OPENGL_ES if needed
@@ -213,17 +206,6 @@ if(SFML_OS_WINDOWS)
     # the following combination of flags is not valid
     if(BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
         message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
-    endif()
-
-    # for VC++, we can apply it globally by modifying the compiler flags
-    if((SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW)) AND SFML_USE_STATIC_STD_LIBS)
-        foreach(flag
-                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-            if(${flag} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-        endforeach()
     endif()
 endif()
 
@@ -247,16 +229,12 @@ if(SFML_OS_MACOSX)
         endif()
     endif()
 
-    # only the default x86_64 or arm64 are supported
-    foreach (arch IN LISTS CMAKE_OSX_ARCHITECTURES)
-        if (NOT (arch STREQUAL "x86_64" OR arch STREQUAL "arm64"))
-            message(FATAL_ERROR "Invalid arch ${arch}")
-        endif()
-    endforeach()
-
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
 endif()
+
+# set the output directory for SFML DLLs and executables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # enable project folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -271,7 +249,7 @@ if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 if(SFML_BUILD_TEST_SUITE)
-    if (SFML_OS_IOS)
+    if(SFML_OS_IOS)
         message( WARNING "Unit testing not supported on iOS")
     elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
         enable_testing()
@@ -303,16 +281,27 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
     endforeach()
 endif()
 
+# option to enable precompiled headers
+sfml_set_option(SFML_ENABLE_PCH FALSE BOOL "TRUE to enable precompiled headers for SFML builds -- only supported on Windows/Linux and for static library builds")
+
+if(SFML_ENABLE_PCH AND BUILD_SHARED_LIBS)
+    message(FATAL_ERROR "Precompiled headers are currently not supported for shared library builds")
+endif()
+
+if(SFML_ENABLE_PCH AND SFML_OS_MACOSX)
+    message(FATAL_ERROR "Precompiled headers are currently not supported in MacOS builds")
+endif()
+
 # setup the install rules
 if(NOT SFML_BUILD_FRAMEWORKS)
-    install(DIRECTORY include
-            DESTINATION .
+    install(DIRECTORY include/
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
 
     if(SFML_GENERATE_PDB)
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib
-                DESTINATION .
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 COMPONENT devel
                 FILES_MATCHING PATTERN "*.pdb")
     endif()
@@ -326,7 +315,8 @@ else()
 
     # we need a dummy file in order to compile the framework
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp
-                       COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
+                       COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp
+                       VERBATIM)
 
     set(SFML_SOURCES ${SFML_HEADERS})
     list(APPEND SFML_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
@@ -357,14 +347,16 @@ else()
                        ${PROJECT_SOURCE_DIR}/include/SFML/System.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/Main.hpp
                        ${PROJECT_SOURCE_DIR}/include/SFML/System
-                       $<TARGET_FILE_DIR:SFML>/Headers)
+                       $<TARGET_FILE_DIR:SFML>/Headers
+                       VERBATIM)
 
     # add window module headers if enabled
     if(SFML_BUILD_WINDOW)
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Window.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Window
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
     # add network module headers if enabled
@@ -372,7 +364,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Network
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
      # add graphics module headers if enabled
@@ -380,7 +373,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Graphics.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Graphics
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
      # add audio module headers if enabled
@@ -388,7 +382,8 @@ else()
         add_custom_command(TARGET SFML POST_BUILD COMMAND cp -r
                            ${PROJECT_SOURCE_DIR}/include/SFML/Audio.hpp
                            ${PROJECT_SOURCE_DIR}/include/SFML/Audio
-                           $<TARGET_FILE_DIR:SFML>/Headers)
+                           $<TARGET_FILE_DIR:SFML>/Headers
+                           VERBATIM)
     endif()
 
     # adapt install directory to allow distributing dylibs/frameworks in user's frameworks/application bundle
@@ -432,33 +427,33 @@ if(SFML_OS_WINDOWS)
 elseif(SFML_OS_MACOSX)
     # install extlibs dependencies only when used
     if(SFML_BUILD_GRAPHICS)
-        if(FREETYPE_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
+        if(FREETYPE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endif()
 
     if(SFML_BUILD_AUDIO)
-        if(FLAC_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
+        if(FLAC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(OGG_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
+        if(OGG_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBIS_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
+        if(VORBIS_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBISENC_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
+        if(VORBISENC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBISFILE_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
+        if(VORBISFILE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
             install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(OPENAL_LIBRARY STREQUAL "${SFML_SOURCE_DIR}/extlibs/libs-osx/Frameworks/OpenAL.framework")
+        if(OPENAL_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/OpenAL.framework")
             install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endif()
@@ -481,7 +476,7 @@ elseif(SFML_OS_MACOSX)
 elseif(SFML_OS_IOS)
 
     # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
     if(NOT SFML_USE_SYSTEM_DEPS)
         # since the iOS libraries are built as static, we must install the SFML dependencies
@@ -540,4 +535,4 @@ endif()
 sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires minimum version 12")
 add_custom_target(format
     COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" VERBATIM)
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)

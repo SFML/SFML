@@ -53,8 +53,8 @@ public:
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const Int16* samples;     //!< Pointer to the audio samples
-        std::size_t  sampleCount; //!< Number of samples pointed by Samples
+        const std::int16_t* samples;     //!< Pointer to the audio samples
+        std::size_t         sampleCount; //!< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////
@@ -249,7 +249,7 @@ protected:
     /// \return The seek position after looping (or -1 if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Int64 onLoop();
+    virtual std::int64_t onLoop();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the processing interval
@@ -344,10 +344,10 @@ private:
     unsigned int                 m_buffers[BufferCount]; //!< Sound buffers used to store temporary audio data
     unsigned int                 m_channelCount;         //!< Number of channels (1 = mono, 2 = stereo, ...)
     unsigned int                 m_sampleRate;           //!< Frequency (samples / second)
-    Int32                        m_format;               //!< Format of the internal sound buffers
+    std::int32_t                 m_format;               //!< Format of the internal sound buffers
     bool                         m_loop;                 //!< Loop flag (true to loop, false to play once)
-    Uint64                       m_samplesProcessed;     //!< Number of samples processed since beginning of the stream
-    Int64                        m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    std::uint64_t                m_samplesProcessed;     //!< Number of samples processed since beginning of the stream
+    std::int64_t                 m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
     Time m_processingInterval; //!< Interval for checking and filling the internal sound buffers.
 };
 

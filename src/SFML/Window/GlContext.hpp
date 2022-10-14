@@ -34,6 +34,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 
+#include <cstdint>
 #include <memory>
 
 
@@ -174,7 +175,7 @@ public:
     /// \return The active context's ID or 0 if no context is currently active
     ///
     ////////////////////////////////////////////////////////////
-    static Uint64 getActiveContextId();
+    static std::uint64_t getActiveContextId();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -319,7 +320,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const Uint64 m_id; //!< Unique number that identifies the context
+    const std::uint64_t m_id; //!< Unique number that identifies the context
 };
 
 } // namespace priv

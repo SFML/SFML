@@ -3,8 +3,14 @@
 #include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
+#include <type_traits>
 
-TEST_CASE("sf::ConvexShape class - [graphics]")
+static_assert(std::is_copy_constructible_v<sf::ConvexShape>);
+static_assert(std::is_copy_assignable_v<sf::ConvexShape>);
+static_assert(std::is_move_constructible_v<sf::ConvexShape>);
+static_assert(std::is_move_assignable_v<sf::ConvexShape>);
+
+TEST_CASE("[Graphics] sf::ConvexShape")
 {
     SUBCASE("Default constructor")
     {

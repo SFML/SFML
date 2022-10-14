@@ -2,7 +2,14 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("sf::ContextSettings class - [window]")
+#include <type_traits>
+
+static_assert(std::is_copy_constructible_v<sf::ContextSettings>);
+static_assert(std::is_copy_assignable_v<sf::ContextSettings>);
+static_assert(std::is_nothrow_move_constructible_v<sf::ContextSettings>);
+static_assert(std::is_nothrow_move_assignable_v<sf::ContextSettings>);
+
+TEST_CASE("[Window] sf::ContextSettings")
 {
     SUBCASE("Construction")
     {

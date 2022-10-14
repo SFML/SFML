@@ -7,30 +7,26 @@
 
 namespace sf
 {
-std::ostream& operator<<(std::ostream& os, const sf::BlendMode& blendMode)
+std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode)
 {
-    os << "( " << blendMode.colorSrcFactor << ", " << blendMode.colorDstFactor << ", " << blendMode.colorEquation << ", "
-       << blendMode.alphaSrcFactor << ", " << blendMode.alphaDstFactor << ", " << blendMode.alphaEquation << " )";
-
-    return os;
+    return os << "( " << blendMode.colorSrcFactor << ", " << blendMode.colorDstFactor << ", " << blendMode.colorEquation
+              << ", " << blendMode.alphaSrcFactor << ", " << blendMode.alphaDstFactor << ", " << blendMode.alphaEquation
+              << " )";
 }
 
-std::ostream& operator<<(std::ostream& os, const sf::Color& color)
+std::ostream& operator<<(std::ostream& os, const Color& color)
 {
-    os << "0x" << std::hex << color.toInteger() << std::dec << " (r=" << static_cast<int>(color.r)
-       << ", g=" << static_cast<int>(color.g) << ", b=" << static_cast<int>(color.b)
-       << ", a=" << static_cast<int>(color.a) << ")";
-
-    return os;
+    return os << "0x" << std::hex << color.toInteger() << std::dec << " (r=" << static_cast<int>(color.r)
+              << ", g=" << static_cast<int>(color.g) << ", b=" << static_cast<int>(color.b)
+              << ", a=" << static_cast<int>(color.a) << ")";
 }
 
-std::ostream& operator<<(std::ostream& os, const sf::Transform& transform)
+std::ostream& operator<<(std::ostream& os, const Transform& transform)
 {
     const auto& matrix = transform.getMatrix();
     os << matrix[0] << ", " << matrix[4] << ", " << matrix[12] << ", ";
     os << matrix[1] << ", " << matrix[5] << ", " << matrix[13] << ", ";
     os << matrix[3] << ", " << matrix[7] << ", " << matrix[15];
-
     return os;
 }
 } // namespace sf

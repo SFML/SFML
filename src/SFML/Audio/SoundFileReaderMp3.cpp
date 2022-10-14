@@ -57,17 +57,17 @@ namespace
 std::size_t readCallback(void* ptr, std::size_t size, void* data)
 {
     sf::InputStream* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size)));
+    return static_cast<std::size_t>(stream->read(ptr, static_cast<std::int64_t>(size)));
 }
 
 int seekCallback(std::uint64_t offset, void* data)
 {
     sf::InputStream* stream   = static_cast<sf::InputStream*>(data);
-    sf::Int64        position = stream->seek(static_cast<sf::Int64>(offset));
+    std::int64_t     position = stream->seek(static_cast<std::int64_t>(offset));
     return position < 0 ? -1 : 0;
 }
 
-bool hasValidId3Tag(const sf::Uint8* header)
+bool hasValidId3Tag(const std::uint8_t* header)
 {
     return std::memcmp(header, "ID3", 3) == 0 &&
            !((header[5] & 15) || (header[6] & 0x80) || (header[7] & 0x80) || (header[8] & 0x80) || (header[9] & 0x80));
@@ -81,9 +81,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderMp3::check(InputStream& stream)
 {
-    Uint8 header[10];
+    std::uint8_t header[10];
 
-    if (static_cast<std::size_t>(stream.read(header, static_cast<Int64>(sizeof(header)))) < sizeof(header))
+    if (static_cast<std::size_t>(stream.read(header, static_cast<std::int64_t>(sizeof(header)))) < sizeof(header))
         return false;
 
     if (hasValidId3Tag(header))
@@ -136,7 +136,7 @@ bool SoundFileReaderMp3::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderMp3::seek(Uint64 sampleOffset)
+void SoundFileReaderMp3::seek(std::uint64_t sampleOffset)
 {
     m_position = std::min(sampleOffset, m_numSamples);
     mp3dec_ex_seek(&m_decoder, m_position);
@@ -144,10 +144,10 @@ void SoundFileReaderMp3::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderMp3::read(Int16* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderMp3::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    Uint64 toRead = std::min(maxCount, m_numSamples - m_position);
-    toRead        = static_cast<Uint64>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
+    std::uint64_t toRead = std::min(maxCount, m_numSamples - m_position);
+    toRead = static_cast<std::uint64_t>(mp3dec_ex_read(&m_decoder, samples, static_cast<std::size_t>(toRead)));
     m_position += toRead;
     return toRead;
 }

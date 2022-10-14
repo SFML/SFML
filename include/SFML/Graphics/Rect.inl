@@ -25,18 +25,12 @@
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect() : left(0), top(0), width(0), height(0)
-{
-}
+constexpr Rect<T>::Rect() = default;
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
-left(position.x),
-top(position.y),
-width(size.x),
-height(size.y)
+constexpr Rect<T>::Rect(const Vector2<T>& thePosition, const Vector2<T>& theSize) : position(thePosition), size(theSize)
 {
 }
 
@@ -44,12 +38,80 @@ height(size.y)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Rect<T>::Rect(const Rect<U>& rectangle) :
-left(static_cast<T>(rectangle.left)),
-top(static_cast<T>(rectangle.top)),
-width(static_cast<T>(rectangle.width)),
-height(static_cast<T>(rectangle.height))
+constexpr Rect<T>::Rect(const Rect<U>& rectangle) : position(rectangle.position), size(rectangle.size)
 {
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Rect<T>::getLeft() const
+{
+    return size.x >= 0 ? position.x : position.x + size.x;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Rect<T>::getTop() const
+{
+    return size.y >= 0 ? position.y : position.y + size.y;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Rect<T>::getRight() const
+{
+    return size.x >= 0 ? position.x + size.x : position.x;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr T Rect<T>::getBottom() const
+{
+    return size.y >= 0 ? position.y + size.y : position.y;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Rect<T>::getStart() const
+{
+    return Vector2<T>(getLeft(), getTop());
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Rect<T>::getEnd() const
+{
+    return Vector2<T>(getRight(), getBottom());
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Rect<T>::getCenter() const
+{
+    return position + size / static_cast<T>(2);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Rect<T>::getAbsoluteSize() const
+{
+    return Vector2<T>(size.x >= 0 ? size.x : -size.x, size.y >= 0 ? size.y : -size.y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Rect<T> Rect<T>::getAbsoluteRect() const
+{
+    return Rect<T>(getStart(), getAbsoluteSize());
 }
 
 
@@ -57,19 +119,7 @@ height(static_cast<T>(rectangle.height))
 template <typename T>
 constexpr bool Rect<T>::contains(const Vector2<T>& point) const
 {
-    // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
-    const auto min = [](T a, T b) { return (a < b) ? a : b; };
-    const auto max = [](T a, T b) { return (a < b) ? b : a; };
-
-    // Rectangles with negative dimensions are allowed, so we must handle them correctly
-
-    // Compute the real min and max of the rectangle on both axes
-    const T minX = min(left, static_cast<T>(left + width));
-    const T maxX = max(left, static_cast<T>(left + width));
-    const T minY = min(top, static_cast<T>(top + height));
-    const T maxY = max(top, static_cast<T>(top + height));
-
-    return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) && (point.y < maxY);
+    return getLeft() <= point.x && point.x < getRight() && getTop() <= point.y && point.y < getBottom();
 }
 
 
@@ -77,55 +127,27 @@ constexpr bool Rect<T>::contains(const Vector2<T>& point) const
 template <typename T>
 constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectangle) const
 {
-    // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
-    const auto min = [](T a, T b) { return (a < b) ? a : b; };
-    const auto max = [](T a, T b) { return (a < b) ? b : a; };
+    T left   = getLeft();
+    T top    = getTop();
+    T right  = getRight();
+    T bottom = getBottom();
 
-    // Rectangles with negative dimensions are allowed, so we must handle them correctly
+    T rectLeft   = rectangle.getLeft();
+    T rectTop    = rectangle.getTop();
+    T rectRight  = rectangle.getRight();
+    T rectBottom = rectangle.getBottom();
 
-    // Compute the min and max of the first rectangle on both axes
-    const T r1MinX = min(left, static_cast<T>(left + width));
-    const T r1MaxX = max(left, static_cast<T>(left + width));
-    const T r1MinY = min(top, static_cast<T>(top + height));
-    const T r1MaxY = max(top, static_cast<T>(top + height));
-
-    // Compute the min and max of the second rectangle on both axes
-    const T r2MinX = min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    const T r2MaxX = max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    const T r2MinY = min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
-    const T r2MaxY = max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
-
-    // Compute the intersection boundaries
-    const T interLeft   = max(r1MinX, r2MinX);
-    const T interTop    = max(r1MinY, r2MinY);
-    const T interRight  = min(r1MaxX, r2MaxX);
-    const T interBottom = min(r1MaxY, r2MaxY);
-
-    // If the intersection is valid (positive non zero area), then there is an intersection
-    if ((interLeft < interRight) && (interTop < interBottom))
-    {
-        return Rect<T>({interLeft, interTop}, {interRight - interLeft, interBottom - interTop});
-    }
-    else
+    if (rectRight <= left || rectBottom <= top || rectLeft >= right || rectTop >= bottom)
     {
         return std::nullopt;
     }
-}
 
+    T x      = rectLeft > left ? rectLeft : left;
+    T y      = rectTop > top ? rectTop : top;
+    T width  = rectRight < right ? rectRight - x : right - x;
+    T height = rectBottom < bottom ? rectBottom - y : bottom - y;
 
-////////////////////////////////////////////////////////////
-template <typename T>
-constexpr Vector2<T> Rect<T>::getPosition() const
-{
-    return Vector2<T>(left, top);
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-constexpr Vector2<T> Rect<T>::getSize() const
-{
-    return Vector2<T>(width, height);
+    return Rect({x, y}, {width, height});
 }
 
 
@@ -133,8 +155,7 @@ constexpr Vector2<T> Rect<T>::getSize() const
 template <typename T>
 constexpr bool operator==(const Rect<T>& left, const Rect<T>& right)
 {
-    return (left.left == right.left) && (left.width == right.width) && (left.top == right.top) &&
-           (left.height == right.height);
+    return left.position == right.position && left.size == right.size;
 }
 
 

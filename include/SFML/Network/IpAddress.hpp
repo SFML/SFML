@@ -56,7 +56,7 @@ public:
     /// \param address IP address or network name
     ///
     ////////////////////////////////////////////////////////////
-    static std::optional<IpAddress> resolve(std::string_view address);
+    [[nodiscard]] static std::optional<IpAddress> resolve(std::string_view address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from 4 bytes
@@ -71,7 +71,7 @@ public:
     /// \param byte3 Fourth byte of the address
     ///
     ////////////////////////////////////////////////////////////
-    IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3);
+    IpAddress(std::uint8_t byte0, std::uint8_t byte1, std::uint8_t byte2, std::uint8_t byte3);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from a 32-bits integer
@@ -86,7 +86,7 @@ public:
     /// \see toInteger
     ///
     ////////////////////////////////////////////////////////////
-    explicit IpAddress(Uint32 address);
+    explicit IpAddress(std::uint32_t address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a string representation of the address
@@ -116,7 +116,7 @@ public:
     /// \see toString
     ///
     ////////////////////////////////////////////////////////////
-    Uint32 toInteger() const;
+    std::uint32_t toInteger() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's local address
@@ -171,7 +171,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Uint32 m_address; //!< Address stored as an unsigned 32 bits integer
+    std::uint32_t m_address; //!< Address stored as an unsigned 32 bits integer
 };
 
 ////////////////////////////////////////////////////////////

@@ -64,8 +64,8 @@ int eof(void* user)
 // stb_image callback for constructing a buffer
 void bufferFromCallback(void* context, void* data, int size)
 {
-    auto* source = static_cast<sf::Uint8*>(data);
-    auto* dest   = static_cast<std::vector<sf::Uint8>*>(context);
+    auto* source = static_cast<std::uint8_t*>(data);
+    auto* dest   = static_cast<std::vector<std::uint8_t>*>(context);
     std::copy(source, source + size, std::back_inserter(*dest));
 }
 } // namespace
@@ -92,7 +92,7 @@ ImageLoader::ImageLoader()
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::vector<Uint8>& pixels, Vector2u& size)
+bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::vector<std::uint8_t>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
     pixels.clear();
@@ -133,7 +133,7 @@ bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<Uint8>& pixels, Vector2u& size)
+bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, std::vector<std::uint8_t>& pixels, Vector2u& size)
 {
     // Check input parameters
     if (data && dataSize)
@@ -183,7 +183,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& pixels, Vector2u& size)
+bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<std::uint8_t>& pixels, Vector2u& size)
 {
     // Clear the array (just in case)
     pixels.clear();
@@ -236,7 +236,9 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<Uint8>& p
 
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const std::vector<Uint8>& pixels, const Vector2u& size)
+bool ImageLoader::saveImageToFile(const std::filesystem::path&     filename,
+                                  const std::vector<std::uint8_t>& pixels,
+                                  const Vector2u&                  size)
 {
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
@@ -278,10 +280,10 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path& filename, const s
 }
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::saveImageToMemory(const std::string&        format,
-                                    std::vector<sf::Uint8>&   output,
-                                    const std::vector<Uint8>& pixels,
-                                    const Vector2u&           size)
+bool ImageLoader::saveImageToMemory(const std::string&               format,
+                                    std::vector<std::uint8_t>&       output,
+                                    const std::vector<std::uint8_t>& pixels,
+                                    const Vector2u&                  size)
 {
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))

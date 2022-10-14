@@ -543,7 +543,7 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const sf::Uint8*)pixels
+- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels
 {
     // Load image and set app icon.
     NSImage* icon = [NSImage imageWithRawData:pixels andSize:NSMakeSize(width, height)];

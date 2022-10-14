@@ -32,6 +32,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <cstdint>
 #include <memory>
 
 namespace sf
@@ -172,7 +173,7 @@ public:
     ///         false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromPixels(const Uint8* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor

@@ -240,7 +240,7 @@ protected:
     /// \return True to continue the capture, or false to stop it
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual bool onProcessSamples(const Int16* samples, std::size_t sampleCount) = 0;
+    [[nodiscard]] virtual bool onProcessSamples(const std::int16_t* samples, std::size_t sampleCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop capturing audio data
@@ -302,13 +302,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::thread        m_thread;             //!< Thread running the background recording task
-    std::vector<Int16> m_samples;            //!< Buffer to store captured samples
-    unsigned int       m_sampleRate;         //!< Sample rate
-    Time               m_processingInterval; //!< Time period between calls to onProcessSamples
-    bool               m_isCapturing;        //!< Capturing state
-    std::string        m_deviceName;         //!< Name of the audio capture device
-    unsigned int       m_channelCount;       //!< Number of recording channels
+    std::thread               m_thread;             //!< Thread running the background recording task
+    std::vector<std::int16_t> m_samples;            //!< Buffer to store captured samples
+    unsigned int              m_sampleRate;         //!< Sample rate
+    Time                      m_processingInterval; //!< Time period between calls to onProcessSamples
+    bool                      m_isCapturing;        //!< Capturing state
+    std::string               m_deviceName;         //!< Name of the audio capture device
+    unsigned int              m_channelCount;       //!< Number of recording channels
 };
 
 } // namespace sf
@@ -391,7 +391,7 @@ private:
 ///         return true;
 ///     }
 ///
-///     [[nodiscard]] bool onProcessSamples(const Int16* samples, std::size_t sampleCount) override
+///     [[nodiscard]] bool onProcessSamples(const std::int16_t* samples, std::size_t sampleCount) override
 ///     {
 ///         // Do something with the new chunk of samples (store them, send them, ...)
 ///         ...

@@ -53,12 +53,13 @@ namespace
 // FreeType callbacks that operate on a sf::InputStream
 unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
 {
-    auto  convertedOffset = static_cast<sf::Int64>(offset);
+    auto  convertedOffset = static_cast<std::int64_t>(offset);
     auto* stream          = static_cast<sf::InputStream*>(rec->descriptor.pointer);
     if (stream->seek(convertedOffset) == convertedOffset)
     {
         if (count > 0)
-            return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), static_cast<sf::Int64>(count)));
+            return static_cast<unsigned long>(
+                stream->read(reinterpret_cast<char*>(buffer), static_cast<std::int64_t>(count)));
         else
             return 0;
     }
@@ -79,10 +80,10 @@ inline T reinterpret(const U& input)
 }
 
 // Combine outline thickness, boldness and font glyph index into a single 64-bit key
-sf::Uint64 combine(float outlineThickness, bool bold, sf::Uint32 index)
+std::uint64_t combine(float outlineThickness, bool bold, std::uint32_t index)
 {
-    return (static_cast<sf::Uint64>(reinterpret<sf::Uint32>(outlineThickness)) << 32) |
-           (static_cast<sf::Uint64>(bold) << 31) | index;
+    return (static_cast<std::uint64_t>(reinterpret<std::uint32_t>(outlineThickness)) << 32) |
+           (static_cast<std::uint64_t>(bold) << 31) | index;
 }
 } // namespace
 
@@ -350,15 +351,15 @@ const Font::Info& Font::getInfo() const
 
 
 ////////////////////////////////////////////////////////////
-const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // Get the page corresponding to the character size
     GlyphTable& glyphs = loadPage(characterSize).glyphs;
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
-    Uint64 key = combine(outlineThickness,
-                         bold,
-                         FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
+    std::uint64_t key = combine(outlineThickness,
+                                bold,
+                                FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
 
     // Search the glyph into the cache
     if (auto it = glyphs.find(key); it != glyphs.end())
@@ -376,14 +377,14 @@ const Glyph& Font::getGlyph(Uint32 codePoint, unsigned int characterSize, bool b
 
 
 ////////////////////////////////////////////////////////////
-bool Font::hasGlyph(Uint32 codePoint) const
+bool Font::hasGlyph(std::uint32_t codePoint) const
 {
     return FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint) != 0;
 }
 
 
 ////////////////////////////////////////////////////////////
-float Font::getKerning(Uint32 first, Uint32 second, unsigned int characterSize, bool bold) const
+float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int characterSize, bool bold) const
 {
     // Special case where first or second is 0 (null character)
     if (first == 0 || second == 0)
@@ -536,7 +537,7 @@ void Font::cleanup()
 
     // Reset members
     m_pages.clear();
-    std::vector<Uint8>().swap(m_pixelBuffer);
+    std::vector<std::uint8_t>().swap(m_pixelBuffer);
 }
 
 
@@ -548,7 +549,7 @@ Font::Page& Font::loadPage(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // The glyph to return
     Glyph glyph;
@@ -635,6 +636,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         // Leave a small padding around characters, so that filtering doesn't
         // pollute them with pixels from neighbors
         const unsigned int padding = 2;
+        const Vector2i     paddingVec(Vector2u(padding, padding));
 
         width += 2 * padding;
         height += 2 * padding;
@@ -647,22 +649,18 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
-        glyph.textureRect.left += static_cast<int>(padding);
-        glyph.textureRect.top += static_cast<int>(padding);
-        glyph.textureRect.width -= static_cast<int>(2 * padding);
-        glyph.textureRect.height -= static_cast<int>(2 * padding);
+        glyph.textureRect.position += paddingVec;
+        glyph.textureRect.size -= paddingVec * 2;
 
         // Compute the glyph's bounding box
-        glyph.bounds.left   = static_cast<float>(bitmapGlyph->left);
-        glyph.bounds.top    = static_cast<float>(-bitmapGlyph->top);
-        glyph.bounds.width  = static_cast<float>(bitmap.width);
-        glyph.bounds.height = static_cast<float>(bitmap.rows);
+        glyph.bounds.position = Vector2f(Vector2i(bitmapGlyph->left, -bitmapGlyph->top));
+        glyph.bounds.size     = Vector2f(static_cast<float>(bitmap.width), static_cast<float>(bitmap.rows));
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
 
-        Uint8* current = m_pixelBuffer.data();
-        Uint8* end     = current + width * height * 4;
+        std::uint8_t* current = m_pixelBuffer.data();
+        std::uint8_t* end     = current + width * height * 4;
 
         while (current != end)
         {
@@ -673,7 +671,7 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         }
 
         // Extract the glyph's pixels from the bitmap
-        const Uint8* pixels = bitmap.buffer;
+        const std::uint8_t* pixels = bitmap.buffer;
         if (bitmap.pixel_mode == FT_PIXEL_MODE_MONO)
         {
             // Pixels are 1 bit monochrome values
@@ -704,11 +702,9 @@ Glyph Font::loadGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, f
         }
 
         // Write the pixels to the texture
-        unsigned int x = static_cast<unsigned int>(glyph.textureRect.left) - padding;
-        unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
-        unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
-        unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
-        page.texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
+        page.texture.update(m_pixelBuffer.data(),
+                            Vector2u(glyph.textureRect.size + paddingVec * 2),
+                            Vector2u(glyph.textureRect.position - paddingVec));
     }
 
     // Delete the FT glyph

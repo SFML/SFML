@@ -45,8 +45,8 @@ NSString* stringToNSString(const std::string& string)
 ////////////////////////////////////////////////////////////
 NSString* sfStringToNSString(const sf::String& string)
 {
-    sf::Uint32  length = static_cast<sf::Uint32>(string.getSize() * sizeof(sf::Uint32));
-    const void* data   = reinterpret_cast<const void*>(string.getData());
+    std::uint32_t length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
+    const void*   data   = reinterpret_cast<const void*>(string.getData());
 
     NSStringEncoding encoding;
     if (NSHostByteOrder() == NS_LittleEndian)

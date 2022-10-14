@@ -218,7 +218,8 @@ void SoundStream::setPlayingOffset(Time timeOffset)
     onSeek(timeOffset);
 
     // Restart streaming
-    m_samplesProcessed = static_cast<Uint64>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount;
+    m_samplesProcessed = static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) *
+                         m_channelCount;
 
     if (oldStatus == Stopped)
         return;
@@ -260,7 +261,7 @@ bool SoundStream::getLoop() const
 
 
 ////////////////////////////////////////////////////////////
-Int64 SoundStream::onLoop()
+std::int64_t SoundStream::onLoop()
 {
     onSeek(Time::Zero);
     return 0;
@@ -290,7 +291,7 @@ void SoundStream::streamData()
 
     // Create the buffers
     alCheck(alGenBuffers(BufferCount, m_buffers));
-    for (Int64& bufferSeek : m_bufferSeeks)
+    for (std::int64_t& bufferSeek : m_bufferSeeks)
         bufferSeek = NoLoop;
 
     // Fill the queue
@@ -354,7 +355,7 @@ void SoundStream::streamData()
             if (m_bufferSeeks[bufferNum] != NoLoop)
             {
                 // This was the last buffer before EOF or Loop End: reset the sample count
-                m_samplesProcessed       = static_cast<Uint64>(m_bufferSeeks[bufferNum]);
+                m_samplesProcessed       = static_cast<std::uint64_t>(m_bufferSeeks[bufferNum]);
                 m_bufferSeeks[bufferNum] = NoLoop;
             }
             else
@@ -377,7 +378,7 @@ void SoundStream::streamData()
                 }
                 else
                 {
-                    m_samplesProcessed += static_cast<Uint64>(size / (bits / 8));
+                    m_samplesProcessed += static_cast<std::uint64_t>(size / (bits / 8));
                 }
             }
 
@@ -425,7 +426,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
 
     // Acquire audio data, also address EOF and error cases if they occur
     Chunk data = {nullptr, 0};
-    for (Uint32 retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
+    for (std::uint32_t retryCount = 0; !onGetData(data) && (retryCount < BufferRetries); ++retryCount)
     {
         // Check if the stream must loop or stop
         if (!m_loop)
@@ -449,7 +450,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
         if (immediateLoop && (m_bufferSeeks[bufferNum] != NoLoop))
         {
             // We just tried to begin preloading at EOF or Loop End: reset the sample count
-            m_samplesProcessed       = static_cast<Uint64>(m_bufferSeeks[bufferNum]);
+            m_samplesProcessed       = static_cast<std::uint64_t>(m_bufferSeeks[bufferNum]);
             m_bufferSeeks[bufferNum] = NoLoop;
         }
 
@@ -462,7 +463,7 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
         unsigned int buffer = m_buffers[bufferNum];
 
         // Fill the buffer
-        auto size = static_cast<ALsizei>(data.sampleCount * sizeof(Int16));
+        auto size = static_cast<ALsizei>(data.sampleCount * sizeof(std::int16_t));
         alCheck(alBufferData(buffer, m_format, data.samples, size, static_cast<ALsizei>(m_sampleRate)));
 
         // Push it into the sound queue

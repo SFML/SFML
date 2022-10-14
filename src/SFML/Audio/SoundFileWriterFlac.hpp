@@ -88,7 +88,7 @@ public:
     /// \param count   Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count) override;
+    void write(const std::int16_t* samples, std::uint64_t count) override;
 
 private:
     ////////////////////////////////////////////////////////////
@@ -100,9 +100,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    FLAC__StreamEncoder* m_encoder;      //!< FLAC stream encoder
-    unsigned int         m_channelCount; //!< Number of channels
-    std::vector<Int32>   m_samples32;    //!< Conversion buffer
+    FLAC__StreamEncoder*      m_encoder;      //!< FLAC stream encoder
+    unsigned int              m_channelCount; //!< Number of channels
+    std::vector<std::int32_t> m_samples32;    //!< Conversion buffer
 };
 
 } // namespace priv

@@ -26,11 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp> // for sf::Uint8
+#include <SFML/Config.hpp>
 
 #include <SFML/Window/WindowHandle.hpp>
 
 #import <AppKit/AppKit.h>
+#include <cstdint>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -221,7 +222,7 @@ class WindowImplCocoa;
 /// \param pixels icon's data
 ///
 ////////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const sf::Uint8*)pixels;
+- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels;
 
 ////////////////////////////////////////////////////////////
 /// \brief Fetch new event

@@ -118,10 +118,7 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    auto width  = static_cast<float>(std::abs(m_textureRect.width));
-    auto height = static_cast<float>(std::abs(m_textureRect.height));
-
-    return FloatRect({0.f, 0.f}, {width, height});
+    return FloatRect({0, 0}, Vector2f(m_textureRect.getAbsoluteSize()));
 }
 
 
@@ -149,29 +146,24 @@ void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 ////////////////////////////////////////////////////////////
 void Sprite::updatePositions()
 {
-    FloatRect bounds = getLocalBounds();
+    Vector2f size(m_textureRect.getAbsoluteSize());
 
-    m_vertices[0].position = Vector2f(0, 0);
-    m_vertices[1].position = Vector2f(0, bounds.height);
-    m_vertices[2].position = Vector2f(bounds.width, 0);
-    m_vertices[3].position = Vector2f(bounds.width, bounds.height);
+    m_vertices[0].position = Vector2f();
+    m_vertices[1].position = Vector2f(0, size.y);
+    m_vertices[2].position = Vector2f(size.x, 0);
+    m_vertices[3].position = size;
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sprite::updateTexCoords()
 {
-    FloatRect convertedTextureRect(m_textureRect);
+    FloatRect textureRect(m_textureRect);
 
-    float left   = convertedTextureRect.left;
-    float right  = left + convertedTextureRect.width;
-    float top    = convertedTextureRect.top;
-    float bottom = top + convertedTextureRect.height;
-
-    m_vertices[0].texCoords = Vector2f(left, top);
-    m_vertices[1].texCoords = Vector2f(left, bottom);
-    m_vertices[2].texCoords = Vector2f(right, top);
-    m_vertices[3].texCoords = Vector2f(right, bottom);
+    m_vertices[0].texCoords = textureRect.position;
+    m_vertices[1].texCoords = Vector2f(textureRect.position.x, textureRect.position.y + textureRect.size.y);
+    m_vertices[2].texCoords = Vector2f(textureRect.position.x + textureRect.size.x, textureRect.position.y);
+    m_vertices[3].texCoords = textureRect.position + textureRect.size;
 }
 
 } // namespace sf

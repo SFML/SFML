@@ -36,7 +36,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-TcpListener::TcpListener() : Socket(Tcp)
+TcpListener::TcpListener() : Socket(Type::Tcp)
 {
 }
 
@@ -71,7 +71,7 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
 
     // Check if the address is valid
     if (address == IpAddress::Broadcast)
-        return Error;
+        return Status::Error;
 
     // Bind the socket to the specified port
     sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
@@ -79,7 +79,7 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
     {
         // Not likely to happen, but...
         err() << "Failed to bind listener socket to port " << port << std::endl;
-        return Error;
+        return Status::Error;
     }
 
     // Listen to the bound port
@@ -87,10 +87,10 @@ Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address
     {
         // Oops, socket is deaf
         err() << "Failed to listen to port " << port << std::endl;
-        return Error;
+        return Status::Error;
     }
 
-    return Done;
+    return Status::Done;
 }
 
 
@@ -109,7 +109,7 @@ Socket::Status TcpListener::accept(TcpSocket& socket)
     if (getHandle() == priv::SocketImpl::invalidSocket())
     {
         err() << "Failed to accept a new connection, the socket is not listening" << std::endl;
-        return Error;
+        return Status::Error;
     }
 
     // Accept a new connection
@@ -125,7 +125,7 @@ Socket::Status TcpListener::accept(TcpSocket& socket)
     socket.close();
     socket.create(remote);
 
-    return Done;
+    return Status::Done;
 }
 
 } // namespace sf

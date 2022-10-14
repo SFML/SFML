@@ -39,7 +39,7 @@ FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte 
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 count = data->stream->read(buffer, static_cast<sf::Int64>(*bytes));
+    std::int64_t count = data->stream->read(buffer, static_cast<std::int64_t>(*bytes));
     if (count > 0)
     {
         *bytes = static_cast<std::size_t>(count);
@@ -59,7 +59,7 @@ FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 position = data->stream->seek(static_cast<sf::Int64>(absoluteByteOffset));
+    std::int64_t position = data->stream->seek(static_cast<std::int64_t>(absoluteByteOffset));
     if (position >= 0)
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
     else
@@ -70,7 +70,7 @@ FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 position = data->stream->tell();
+    std::int64_t position = data->stream->tell();
     if (position >= 0)
     {
         *absoluteByteOffset = static_cast<FLAC__uint64>(position);
@@ -86,7 +86,7 @@ FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__u
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    sf::Int64 count = data->stream->getSize();
+    std::int64_t count = data->stream->getSize();
     if (count >= 0)
     {
         *streamLength = static_cast<FLAC__uint64>(count);
@@ -123,20 +123,20 @@ FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*,
         for (unsigned int j = 0; j < frame->header.channels; ++j)
         {
             // Decode the current sample
-            sf::Int16 sample = 0;
+            std::int16_t sample = 0;
             switch (frame->header.bits_per_sample)
             {
                 case 8:
-                    sample = static_cast<sf::Int16>(buffer[j][i] << 8);
+                    sample = static_cast<std::int16_t>(buffer[j][i] << 8);
                     break;
                 case 16:
-                    sample = static_cast<sf::Int16>(buffer[j][i]);
+                    sample = static_cast<std::int16_t>(buffer[j][i]);
                     break;
                 case 24:
-                    sample = static_cast<sf::Int16>(buffer[j][i] >> 8);
+                    sample = static_cast<std::int16_t>(buffer[j][i] >> 8);
                     break;
                 case 32:
-                    sample = static_cast<sf::Int16>(buffer[j][i] >> 16);
+                    sample = static_cast<std::int16_t>(buffer[j][i] >> 16);
                     break;
                 default:
                     assert(false);
@@ -271,7 +271,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderFlac::seek(Uint64 sampleOffset)
+void SoundFileReaderFlac::seek(std::uint64_t sampleOffset)
 {
     assert(m_decoder);
 
@@ -300,7 +300,7 @@ void SoundFileReaderFlac::seek(Uint64 sampleOffset)
 
 
 ////////////////////////////////////////////////////////////
-Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
+std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t maxCount)
 {
     assert(m_decoder);
 
@@ -312,11 +312,11 @@ Uint64 SoundFileReaderFlac::read(Int16* samples, Uint64 maxCount)
         {
             // There are more leftovers than needed
             std::copy(m_clientData.leftovers.begin(),
-                      m_clientData.leftovers.begin() + static_cast<std::vector<Int16>::difference_type>(maxCount),
+                      m_clientData.leftovers.begin() + static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
                       samples);
-            std::vector<Int16> leftovers(m_clientData.leftovers.begin() +
-                                             static_cast<std::vector<Int16>::difference_type>(maxCount),
-                                         m_clientData.leftovers.end());
+            std::vector<std::int16_t> leftovers(m_clientData.leftovers.begin() +
+                                                    static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
+                                                m_clientData.leftovers.end());
             m_clientData.leftovers.swap(leftovers);
             return maxCount;
         }

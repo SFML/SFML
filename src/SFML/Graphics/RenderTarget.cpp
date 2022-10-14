@@ -53,22 +53,22 @@ std::recursive_mutex mutex;
 
 // Unique identifier, used for identifying RenderTargets when
 // tracking the currently active RenderTarget within a given context
-sf::Uint64 getUniqueId()
+std::uint64_t getUniqueId()
 {
     std::scoped_lock lock(mutex);
 
-    static sf::Uint64 id = 1; // start at 1, zero is "no RenderTarget"
+    static std::uint64_t id = 1; // start at 1, zero is "no RenderTarget"
 
     return id++;
 }
 
 // Map to help us detect whether a different RenderTarget
 // has been activated within a single context
-using ContextRenderTargetMap = std::unordered_map<sf::Uint64, sf::Uint64>;
+using ContextRenderTargetMap = std::unordered_map<std::uint64_t, std::uint64_t>;
 ContextRenderTargetMap contextRenderTargetMap;
 
 // Check if a RenderTarget with the given ID is active in the current context
-bool isActive(sf::Uint64 id)
+bool isActive(std::uint64_t id)
 {
     auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
@@ -79,7 +79,7 @@ bool isActive(sf::Uint64 id)
 }
 
 // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
-sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
+std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
 {
     // clang-format off
     switch (blendFactor)
@@ -104,7 +104,7 @@ sf::Uint32 factorToGlConstant(sf::BlendMode::Factor blendFactor)
 
 
 // Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-sf::Uint32 equationToGlConstant(sf::BlendMode::Equation blendEquation)
+std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
 {
     switch (blendEquation)
     {
@@ -196,12 +196,12 @@ const View& RenderTarget::getDefaultView() const
 ////////////////////////////////////////////////////////////
 IntRect RenderTarget::getViewport(const View& view) const
 {
-    float            width    = static_cast<float>(getSize().x);
-    float            height   = static_cast<float>(getSize().y);
     const FloatRect& viewport = view.getViewport();
 
-    return IntRect({static_cast<int>(0.5f + width * viewport.left), static_cast<int>(0.5f + height * viewport.top)},
-                   {static_cast<int>(0.5f + width * viewport.width), static_cast<int>(0.5f + height * viewport.height)});
+    const Vector2f size(getSize());
+    const Vector2f offset(0.5f, 0.5f);
+
+    return IntRect(FloatRect(viewport.position.cwiseMul(size) + offset, viewport.size.cwiseMul(size) + offset));
 }
 
 
@@ -216,13 +216,14 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point) const
 Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
-    Vector2f  normalized;
-    FloatRect viewport = FloatRect(getViewport(view));
-    normalized.x       = -1.f + 2.f * (static_cast<float>(point.x) - viewport.left) / viewport.width;
-    normalized.y       = 1.f - 2.f * (static_cast<float>(point.y) - viewport.top) / viewport.height;
+    const FloatRect viewport(getViewport(view));
 
     // Then transform by the inverse of the view matrix
-    return view.getInverseTransform().transformPoint(normalized);
+    const Vector2f prepared = (sf::Vector2f(point) - viewport.position).cwiseDiv(viewport.size) * 2.f;
+    const Vector2f converted(prepared.x - 1.f, 1.f - prepared.y);
+    const Vector2f normalized = view.getInverseTransform().transformPoint(converted);
+
+    return normalized;
 }
 
 
@@ -236,16 +237,15 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
 ////////////////////////////////////////////////////////////
 Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
 {
-    // First, transform the point by the view matrix
-    Vector2f normalized = view.getTransform().transformPoint(point);
+    // First, convert to viewport coordinates
+    const FloatRect viewport(getViewport(view));
 
-    // Then convert to viewport coordinates
-    Vector2i  pixel;
-    FloatRect viewport = FloatRect(getViewport(view));
-    pixel.x            = static_cast<int>((normalized.x + 1.f) / 2.f * viewport.width + viewport.left);
-    pixel.y            = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+    // Then, transform the point by the view matrix
+    const Vector2f normalized = view.getTransform().transformPoint(point);
+    const Vector2f prepared(normalized.x + 1.f, 1.f - normalized.y);
+    const Vector2f converted = (prepared / 2.f).cwiseMul(viewport.size) + viewport.position;
 
-    return pixel;
+    return Vector2i(converted);
 }
 
 
@@ -397,7 +397,7 @@ bool RenderTarget::setActive(bool active)
     {
         std::scoped_lock lock(RenderTargetImpl::mutex);
 
-        Uint64 contextId = Context::getActiveContextId();
+        std::uint64_t contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::contextRenderTargetMap;
         auto it = contextRenderTargetMap.find(contextId);
@@ -565,8 +565,11 @@ void RenderTarget::applyCurrentView()
 {
     // Set the viewport
     IntRect viewport = getViewport(m_view);
-    int     top      = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
-    glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
+
+    glCheck(glViewport(viewport.position.x,
+                       static_cast<int>(getSize().y) - (viewport.position.x + viewport.size.x),
+                       viewport.size.x,
+                       viewport.size.y));
 
     // Set the projection matrix
     glCheck(glMatrixMode(GL_PROJECTION));
@@ -709,7 +712,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     }
     else
     {
-        Uint64 textureId = states.texture ? states.texture->m_cacheId : 0;
+        std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
         if (textureId != m_cache.lastTextureId)
             applyTexture(states.texture);
     }

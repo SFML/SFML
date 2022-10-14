@@ -54,6 +54,7 @@ SFML is an open-source project, and it needs your help to go on growing and impr
 -   Stefan Schindler (tank@sfml-dev.org)
 -   Artur Moreira (artturmoreira@gmail.com)
 -   Vittorio Romeo (vittorioromeo@sfml-dev.org)
+-   Chris Thrasher (thrasher@sfml-dev.org)
 -   And many other members of the SFML community
 
 ## License

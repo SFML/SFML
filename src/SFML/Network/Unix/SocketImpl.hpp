@@ -31,6 +31,7 @@
 #include <SFML/Network/Socket.hpp>
 
 #include <arpa/inet.h>
+#include <cstdint>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -55,7 +56,7 @@ public:
     // Types
     ////////////////////////////////////////////////////////////
     using AddrLength = socklen_t;
-    using Size       = size_t;
+    using Size       = std::size_t;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address
@@ -66,7 +67,7 @@ public:
     /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(Uint32 address, unsigned short port);
+    static sockaddr_in createAddress(std::uint32_t address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket

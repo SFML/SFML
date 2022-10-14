@@ -127,7 +127,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const Uint8* pixels) override;
+    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -220,7 +220,7 @@ private:
     /// \return Corresponding SFML key code
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key androidKeyToSF(int32_t key);
+    static Keyboard::Key androidKeyToSF(std::int32_t key);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get Unicode decoded from the input event

@@ -185,8 +185,15 @@ GLADapiproc getVulkanFunction(const char* name)
 }
 
 // Debug we pass to Vulkan to call when it detects warnings or errors
-VKAPI_ATTR VkBool32 VKAPI_CALL
-    debugCallback(VkDebugReportFlagsEXT, VkDebugReportObjectTypeEXT, uint64_t, size_t, int32_t, const char*, const char* pMessage, void*)
+VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugReportFlagsEXT,
+    VkDebugReportObjectTypeEXT,
+    std::uint64_t,
+    std::size_t,
+    std::int32_t,
+    const char*,
+    const char* pMessage,
+    void*)
 {
     std::cerr << pMessage << std::endl;
 
@@ -386,10 +393,10 @@ public:
     {
         // Swapchain teardown procedure
         for (VkFence fence : fences)
-            vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
+            vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
         if (commandBuffers.size())
-            vkFreeCommandBuffers(device, commandPool, static_cast<sf::Uint32>(commandBuffers.size()), commandBuffers.data());
+            vkFreeCommandBuffers(device, commandPool, static_cast<std::uint32_t>(commandBuffers.size()), commandBuffers.data());
 
         commandBuffers.clear();
 
@@ -470,7 +477,7 @@ public:
         }
 
         // Retrieve the available instance layers
-        uint32_t objectCount = 0;
+        std::uint32_t objectCount = 0;
 
         std::vector<VkLayerProperties> layers;
 
@@ -530,9 +537,9 @@ public:
         VkInstanceCreateInfo instanceCreateInfo    = VkInstanceCreateInfo();
         instanceCreateInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instanceCreateInfo.pApplicationInfo        = &applicationInfo;
-        instanceCreateInfo.enabledLayerCount       = static_cast<sf::Uint32>(validationLayers.size());
+        instanceCreateInfo.enabledLayerCount       = static_cast<std::uint32_t>(validationLayers.size());
         instanceCreateInfo.ppEnabledLayerNames     = validationLayers.data();
-        instanceCreateInfo.enabledExtensionCount   = static_cast<sf::Uint32>(requiredExtentions.size());
+        instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtentions.size());
         instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
         // Try to create a Vulkan instance with debug report enabled
@@ -543,7 +550,7 @@ public:
         {
             requiredExtentions.pop_back();
 
-            instanceCreateInfo.enabledExtensionCount   = static_cast<sf::Uint32>(requiredExtentions.size());
+            instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtentions.size());
             instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
             result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
@@ -600,7 +607,7 @@ public:
         }
 
         // Retrieve list of GPUs
-        uint32_t objectCount = 0;
+        std::uint32_t objectCount = 0;
 
         std::vector<VkPhysicalDevice> devices;
 
@@ -713,7 +720,7 @@ public:
     void setupLogicalDevice()
     {
         // Select a queue family that supports graphics operations and surface presentation
-        uint32_t objectCount = 0;
+        std::uint32_t objectCount = 0;
 
         std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 
@@ -727,7 +734,7 @@ public:
         {
             VkBool32 surfaceSupported = VK_FALSE;
 
-            vkGetPhysicalDeviceSurfaceSupportKHR(gpu, static_cast<sf::Uint32>(i), surface, &surfaceSupported);
+            vkGetPhysicalDeviceSurfaceSupportKHR(gpu, static_cast<std::uint32_t>(i), surface, &surfaceSupported);
 
             if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) && (surfaceSupported == VK_TRUE))
             {
@@ -747,7 +754,7 @@ public:
         VkDeviceQueueCreateInfo deviceQueueCreateInfo = VkDeviceQueueCreateInfo();
         deviceQueueCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         deviceQueueCreateInfo.queueCount              = 1;
-        deviceQueueCreateInfo.queueFamilyIndex        = static_cast<uint32_t>(queueFamilyIndex);
+        deviceQueueCreateInfo.queueFamilyIndex        = static_cast<std::uint32_t>(queueFamilyIndex);
         deviceQueueCreateInfo.pQueuePriorities        = &queuePriority;
 
         // Enable the swapchain extension
@@ -773,14 +780,14 @@ public:
         }
 
         // Retrieve a handle to the logical device command queue
-        vkGetDeviceQueue(device, static_cast<uint32_t>(queueFamilyIndex), 0, &queue);
+        vkGetDeviceQueue(device, static_cast<std::uint32_t>(queueFamilyIndex), 0, &queue);
     }
 
     // Query surface formats and set up swapchain
     void setupSwapchain()
     {
         // Select a surface format that supports RGBA color format
-        uint32_t objectCount = 0;
+        std::uint32_t objectCount = 0;
 
         std::vector<VkSurfaceFormatKHR> surfaceFormats;
 
@@ -864,14 +871,14 @@ public:
             return;
         }
 
-        swapchainExtent.width  = clamp<uint32_t>(window.getSize().x,
-                                                surfaceCapabilities.minImageExtent.width,
-                                                surfaceCapabilities.maxImageExtent.width);
-        swapchainExtent.height = clamp<uint32_t>(window.getSize().y,
-                                                 surfaceCapabilities.minImageExtent.height,
-                                                 surfaceCapabilities.maxImageExtent.height);
+        swapchainExtent.width  = clamp<std::uint32_t>(window.getSize().x,
+                                                     surfaceCapabilities.minImageExtent.width,
+                                                     surfaceCapabilities.maxImageExtent.width);
+        swapchainExtent.height = clamp<std::uint32_t>(window.getSize().y,
+                                                      surfaceCapabilities.minImageExtent.height,
+                                                      surfaceCapabilities.maxImageExtent.height);
 
-        auto imageCount = clamp<uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+        auto imageCount = clamp<std::uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
         VkSwapchainCreateInfoKHR swapchainCreateInfo = VkSwapchainCreateInfoKHR();
         swapchainCreateInfo.sType                    = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -901,7 +908,7 @@ public:
     void setupSwapchainImages()
     {
         // Retrieve swapchain images
-        uint32_t objectCount = 0;
+        std::uint32_t objectCount = 0;
 
         if (vkGetSwapchainImagesKHR(device, swapchain, &objectCount, 0) != VK_SUCCESS)
         {
@@ -961,7 +968,7 @@ public:
                 return;
             }
 
-            std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
+            std::vector<std::uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(std::uint32_t));
 
             if (file.read(buffer.data(), file.getSize()) != file.getSize())
             {
@@ -969,7 +976,7 @@ public:
                 return;
             }
 
-            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
+            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(std::uint32_t);
             shaderModuleCreateInfo.pCode    = buffer.data();
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &vertexShaderModule) != VK_SUCCESS)
@@ -989,7 +996,7 @@ public:
                 return;
             }
 
-            std::vector<uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(uint32_t));
+            std::vector<std::uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(std::uint32_t));
 
             if (file.read(buffer.data(), file.getSize()) != file.getSize())
             {
@@ -997,7 +1004,7 @@ public:
                 return;
             }
 
-            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(uint32_t);
+            shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(std::uint32_t);
             shaderModuleCreateInfo.pCode    = buffer.data();
 
             if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &fragmentShaderModule) != VK_SUCCESS)
@@ -1307,7 +1314,7 @@ public:
         // We want to be able to reset command buffers after submitting them
         VkCommandPoolCreateInfo commandPoolCreateInfo = VkCommandPoolCreateInfo();
         commandPoolCreateInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        commandPoolCreateInfo.queueFamilyIndex        = static_cast<uint32_t>(queueFamilyIndex);
+        commandPoolCreateInfo.queueFamilyIndex        = static_cast<std::uint32_t>(queueFamilyIndex);
         commandPoolCreateInfo.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
         // Create our command pool
@@ -1344,7 +1351,7 @@ public:
         VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties();
         vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
 
-        uint32_t memoryType = 0;
+        std::uint32_t memoryType = 0;
 
         for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
         {
@@ -1611,7 +1618,7 @@ public:
     void setupUniformBuffers()
     {
         // Create a uniform buffer for every frame that might be in flight to prevent clobbering
-        for (size_t i = 0; i < swapchainImages.size(); ++i)
+        for (std::size_t i = 0; i < swapchainImages.size(); ++i)
         {
             uniformBuffers.push_back(0);
             uniformBuffersMemory.push_back(0);
@@ -1630,8 +1637,8 @@ public:
     }
 
     // Helper to create a generic image with the specified size, format, usage and memory flags
-    bool createImage(uint32_t              width,
-                     uint32_t              height,
+    bool createImage(std::uint32_t         width,
+                     std::uint32_t         height,
                      VkFormat              format,
                      VkImageTiling         tiling,
                      VkImageUsageFlags     usage,
@@ -1667,7 +1674,7 @@ public:
         VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties();
         vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
 
-        uint32_t memoryType = 0;
+        std::uint32_t memoryType = 0;
 
         for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
         {
@@ -2172,17 +2179,17 @@ public:
 
         descriptorPoolSizes[0]                 = VkDescriptorPoolSize();
         descriptorPoolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        descriptorPoolSizes[0].descriptorCount = static_cast<uint32_t>(swapchainImages.size());
+        descriptorPoolSizes[0].descriptorCount = static_cast<std::uint32_t>(swapchainImages.size());
 
         descriptorPoolSizes[1]                 = VkDescriptorPoolSize();
         descriptorPoolSizes[1].type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        descriptorPoolSizes[1].descriptorCount = static_cast<uint32_t>(swapchainImages.size());
+        descriptorPoolSizes[1].descriptorCount = static_cast<std::uint32_t>(swapchainImages.size());
 
         VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = VkDescriptorPoolCreateInfo();
         descriptorPoolCreateInfo.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         descriptorPoolCreateInfo.poolSizeCount              = 2;
         descriptorPoolCreateInfo.pPoolSizes                 = descriptorPoolSizes;
-        descriptorPoolCreateInfo.maxSets                    = static_cast<uint32_t>(swapchainImages.size());
+        descriptorPoolCreateInfo.maxSets                    = static_cast<std::uint32_t>(swapchainImages.size());
 
         // Create the descriptor pool
         if (vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, 0, &descriptorPool) != VK_SUCCESS)
@@ -2201,7 +2208,7 @@ public:
         VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = VkDescriptorSetAllocateInfo();
         descriptorSetAllocateInfo.sType                       = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         descriptorSetAllocateInfo.descriptorPool              = descriptorPool;
-        descriptorSetAllocateInfo.descriptorSetCount          = static_cast<uint32_t>(swapchainImages.size());
+        descriptorSetAllocateInfo.descriptorSetCount          = static_cast<std::uint32_t>(swapchainImages.size());
         descriptorSetAllocateInfo.pSetLayouts                 = descriptorSetLayouts.data();
 
         descriptorSets.resize(swapchainImages.size());
@@ -2265,7 +2272,7 @@ public:
         commandBufferAllocateInfo.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         commandBufferAllocateInfo.commandPool                 = commandPool;
         commandBufferAllocateInfo.level                       = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        commandBufferAllocateInfo.commandBufferCount          = static_cast<uint32_t>(commandBuffers.size());
+        commandBufferAllocateInfo.commandBufferCount          = static_cast<std::uint32_t>(commandBuffers.size());
 
         // Allocate the command buffers from our command pool
         if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, commandBuffers.data()) != VK_SUCCESS)
@@ -2473,16 +2480,16 @@ public:
 
     void draw()
     {
-        uint32_t imageIndex = 0;
+        std::uint32_t imageIndex = 0;
 
         // If the objects we need to submit this frame are still pending, wait here
-        vkWaitForFences(device, 1, &fences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+        vkWaitForFences(device, 1, &fences[currentFrame], VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
         {
             // Get the next image in the swapchain
             VkResult result = vkAcquireNextImageKHR(device,
                                                     swapchain,
-                                                    std::numeric_limits<uint64_t>::max(),
+                                                    std::numeric_limits<std::uint64_t>::max(),
                                                     imageAvailableSemaphores[currentFrame],
                                                     VK_NULL_HANDLE,
                                                     &imageIndex);

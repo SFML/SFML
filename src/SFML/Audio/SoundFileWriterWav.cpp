@@ -38,19 +38,19 @@ namespace
 // The following functions takes integers in host byte order
 // and writes them to a stream as little endian
 
-void encode(std::ostream& stream, sf::Int16 value)
+void encode(std::ostream& stream, std::int16_t value)
 {
     unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
 
-void encode(std::ostream& stream, sf::Uint16 value)
+void encode(std::ostream& stream, std::uint16_t value)
 {
     unsigned char bytes[] = {static_cast<unsigned char>(value & 0xFF), static_cast<unsigned char>(value >> 8)};
     stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
 }
 
-void encode(std::ostream& stream, sf::Uint32 value)
+void encode(std::ostream& stream, std::uint32_t value)
 {
     unsigned char bytes[] = {
         static_cast<unsigned char>(value & 0x000000FF),
@@ -109,7 +109,7 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterWav::write(const Int16* samples, Uint64 count)
+void SoundFileWriterWav::write(const std::int16_t* samples, std::uint64_t count)
 {
     assert(m_file.good());
 
@@ -128,34 +128,34 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     m_file.write(mainChunkId, sizeof(mainChunkId));
 
     // Write the main chunk header
-    encode(m_file, static_cast<Uint32>(0)); // 0 is a placeholder, will be written later
+    encode(m_file, static_cast<std::uint32_t>(0)); // 0 is a placeholder, will be written later
     char mainChunkFormat[4] = {'W', 'A', 'V', 'E'};
     m_file.write(mainChunkFormat, sizeof(mainChunkFormat));
 
     // Write the sub-chunk 1 ("format") id and size
     char fmtChunkId[4] = {'f', 'm', 't', ' '};
     m_file.write(fmtChunkId, sizeof(fmtChunkId));
-    Uint32 fmtChunkSize = 16;
+    std::uint32_t fmtChunkSize = 16;
     encode(m_file, fmtChunkSize);
 
     // Write the format (PCM)
-    Uint16 format = 1;
+    std::uint16_t format = 1;
     encode(m_file, format);
 
     // Write the sound attributes
-    encode(m_file, static_cast<Uint16>(channelCount));
+    encode(m_file, static_cast<std::uint16_t>(channelCount));
     encode(m_file, sampleRate);
-    Uint32 byteRate = sampleRate * channelCount * 2;
+    std::uint32_t byteRate = sampleRate * channelCount * 2;
     encode(m_file, byteRate);
-    auto blockAlign = static_cast<Uint16>(channelCount * 2);
+    auto blockAlign = static_cast<std::uint16_t>(channelCount * 2);
     encode(m_file, blockAlign);
-    Uint16 bitsPerSample = 16;
+    std::uint16_t bitsPerSample = 16;
     encode(m_file, bitsPerSample);
 
     // Write the sub-chunk 2 ("data") id and size
     char dataChunkId[4] = {'d', 'a', 't', 'a'};
     m_file.write(dataChunkId, sizeof(dataChunkId));
-    Uint32 dataChunkSize = 0; // placeholder, will be written later
+    std::uint32_t dataChunkSize = 0; // placeholder, will be written later
     encode(m_file, dataChunkSize);
 
     return true;
@@ -171,7 +171,7 @@ void SoundFileWriterWav::close()
         m_file.flush();
 
         // Update the main chunk size and data sub-chunk size
-        Uint32 fileSize = static_cast<Uint32>(m_file.tellp());
+        std::uint32_t fileSize = static_cast<std::uint32_t>(m_file.tellp());
         m_file.seekp(4);
         encode(m_file, fileSize - 8); // 8 bytes RIFF header
         m_file.seekp(40);

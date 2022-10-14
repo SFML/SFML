@@ -3,8 +3,14 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <type_traits>
 
-TEST_CASE("sf::Transformable class - [graphics]")
+static_assert(std::is_copy_constructible_v<sf::Transformable>);
+static_assert(std::is_copy_assignable_v<sf::Transformable>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Transformable>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Transformable>);
+
+TEST_CASE("[Graphics] sf::Transformable")
 {
     SUBCASE("Construction")
     {

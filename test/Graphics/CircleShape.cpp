@@ -3,8 +3,14 @@
 #include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
+#include <type_traits>
 
-TEST_CASE("sf::CircleShape class - [graphics]")
+static_assert(std::is_copy_constructible_v<sf::CircleShape>);
+static_assert(std::is_copy_assignable_v<sf::CircleShape>);
+static_assert(std::is_move_constructible_v<sf::CircleShape>);
+static_assert(std::is_move_assignable_v<sf::CircleShape>);
+
+TEST_CASE("[Graphics] sf::CircleShape")
 {
     SUBCASE("Default constructor")
     {

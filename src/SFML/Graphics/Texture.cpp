@@ -50,11 +50,11 @@ std::recursive_mutex maximumSizeMutex;
 
 // Thread-safe unique identifier generator,
 // is used for states cache (see RenderTarget)
-sf::Uint64 getUniqueId()
+std::uint64_t getUniqueId()
 {
     std::scoped_lock lock(idMutex);
 
-    static sf::Uint64 id = 1; // start at 1, zero is "no texture"
+    static std::uint64_t id = 1; // start at 1, zero is "no texture"
 
     return id++;
 }
@@ -259,12 +259,19 @@ bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 bool Texture::loadFromImage(const Image& image, const IntRect& area)
 {
     // Retrieve the image size
-    int width  = static_cast<int>(image.getSize().x);
-    int height = static_cast<int>(image.getSize().y);
+    Vector2i size(image.getSize());
 
+    IntRect srcArea(area);
+
+    // Make sure the source area has positive size
+    if (srcArea.size.x < 0 || srcArea.size.y < 0)
+    {
+        return false;
+    }
     // Load the entire image if the source area is either empty or contains the whole image
-    if (area.width == 0 || (area.height == 0) ||
-        ((area.left <= 0) && (area.top <= 0) && (area.width >= width) && (area.height >= height)))
+    else if (srcArea.size.x == 0 || srcArea.size.y == 0 ||
+             (0 <= srcArea.position.x && 0 <= srcArea.position.y && srcArea.position.x + srcArea.size.x <= size.x &&
+              srcArea.position.y + srcArea.size.y <= size.y))
     {
         // Load the entire image
         if (create(image.getSize()))
@@ -283,18 +290,17 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         // Load a sub-area of the image
 
         // Adjust the rectangle to the size of the image
-        IntRect rectangle = area;
-        if (rectangle.left < 0)
-            rectangle.left = 0;
-        if (rectangle.top < 0)
-            rectangle.top = 0;
-        if (rectangle.left + rectangle.width > width)
-            rectangle.width = width - rectangle.left;
-        if (rectangle.top + rectangle.height > height)
-            rectangle.height = height - rectangle.top;
+        if (srcArea.position.x < 0)
+            srcArea.position.x = 0;
+        if (srcArea.position.y < 0)
+            srcArea.position.y = 0;
+        if (srcArea.position.x + srcArea.size.x > size.x)
+            srcArea.size.x = size.x - srcArea.position.x;
+        if (srcArea.position.y + srcArea.size.y > size.y)
+            srcArea.size.y = size.y - srcArea.position.y;
 
         // Create the texture and upload the pixels
-        if (create(Vector2u(rectangle.getSize())))
+        if (create(Vector2u(srcArea.size)))
         {
             TransientContextLock lock;
 
@@ -302,12 +308,12 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
             priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
-            const Uint8* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
+            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (srcArea.position.x + (size.x * srcArea.position.y));
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-            for (int i = 0; i < rectangle.height; ++i)
+            for (int i = 0; i < srcArea.size.y; ++i)
             {
-                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-                pixels += 4 * width;
+                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, srcArea.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+                pixels += 4 * size.x;
             }
 
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -347,7 +353,7 @@ Image Texture::copyToImage() const
     priv::TextureSaver save;
 
     // Create an array of pixels
-    std::vector<Uint8> pixels(static_cast<std::size_t>(m_size.x) * static_cast<std::size_t>(m_size.y) * 4);
+    std::vector<std::uint8_t> pixels(static_cast<std::size_t>(m_size.x) * static_cast<std::size_t>(m_size.y) * 4);
 
 #ifdef SFML_OPENGL_ES
 
@@ -381,14 +387,14 @@ Image Texture::copyToImage() const
         // Texture is either padded or flipped, we have to use a slower algorithm
 
         // All the pixels will first be copied to a temporary array
-        std::vector<Uint8> allPixels(
+        std::vector<std::uint8_t> allPixels(
             static_cast<std::size_t>(m_actualSize.x) * static_cast<std::size_t>(m_actualSize.y) * 4);
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
         // Then we copy the useful pixels from the temporary array to the final one
-        const Uint8* src = allPixels.data();
-        Uint8* dst = pixels.data();
+        const std::uint8_t* src = allPixels.data();
+        std::uint8_t* dst = pixels.data();
         int srcPitch = static_cast<int>(m_actualSize.x * 4);
         unsigned int dstPitch = m_size.x * 4;
 
@@ -418,7 +424,7 @@ Image Texture::copyToImage() const
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels)
+void Texture::update(const std::uint8_t* pixels)
 {
     // Update the whole texture
     update(pixels, m_size, {0, 0});
@@ -426,7 +432,7 @@ void Texture::update(const Uint8* pixels)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Uint8* pixels, const Vector2u& size, const Vector2u& dest)
+void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest)
 {
     assert(dest.x + size.x <= m_size.x);
     assert(dest.y + size.y <= m_size.y);

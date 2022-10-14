@@ -4,21 +4,34 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <cassert>
+#include <type_traits>
 #include <vector>
 
-namespace std
-{
-std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector)
-{
-    out << "{ ";
-    for (size_t i = 0; i + 1 < vector.size(); ++i)
-        out << vector[i] << ", ";
-    out << vector.back() << " }";
-    return out;
-}
-} // namespace std
+static_assert(std::is_copy_constructible_v<sf::Transform>);
+static_assert(std::is_copy_assignable_v<sf::Transform>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Transform>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Transform>);
 
-TEST_CASE("sf::Transform class - [graphics]")
+// Use StringMaker to avoid opening namespace std
+namespace doctest
+{
+template <>
+struct StringMaker<std::vector<float>>
+{
+    static String convert(const std::vector<float>& vector)
+    {
+        assert(!vector.empty());
+        doctest::String out = "{ ";
+        for (std::size_t i = 0; i + 1 < vector.size(); ++i)
+            out += toString(vector[i]) + ", ";
+        out += toString(vector.back()) + " }";
+        return out;
+    }
+};
+} // namespace doctest
+
+TEST_CASE("[Graphics] sf::Transform")
 {
     SUBCASE("Construction")
     {

@@ -3,8 +3,14 @@
 #include <doctest/doctest.h>
 
 #include <WindowUtil.hpp>
+#include <type_traits>
 
-TEST_CASE("sf::VideoMode class - [window]")
+static_assert(std::is_copy_constructible_v<sf::VideoMode>);
+static_assert(std::is_copy_assignable_v<sf::VideoMode>);
+static_assert(std::is_nothrow_move_constructible_v<sf::VideoMode>);
+static_assert(std::is_nothrow_move_assignable_v<sf::VideoMode>);
+
+TEST_CASE("[Window] sf::VideoMode")
 {
     SUBCASE("Construction")
     {

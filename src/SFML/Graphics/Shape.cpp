@@ -187,8 +187,7 @@ void Shape::update()
     m_insideBounds = m_vertices.getBounds();
 
     // Compute the center and make it the first vertex
-    m_vertices[0].position.x = m_insideBounds.left + m_insideBounds.width / 2;
-    m_vertices[0].position.y = m_insideBounds.top + m_insideBounds.height / 2;
+    m_vertices[0].position = m_insideBounds.getCenter();
 
     // Color
     updateFillColors();
@@ -232,15 +231,21 @@ void Shape::updateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::updateTexCoords()
 {
-    FloatRect convertedTextureRect(m_textureRect);
+    FloatRect textureRect(m_textureRect);
 
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        float xratio = m_insideBounds.width > 0 ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
-        float yratio = m_insideBounds.height > 0 ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height
-                                                 : 0;
-        m_vertices[i].texCoords.x = convertedTextureRect.left + convertedTextureRect.width * xratio;
-        m_vertices[i].texCoords.y = convertedTextureRect.top + convertedTextureRect.height * yratio;
+        float xratio = 0.f;
+        float yratio = 0.f;
+
+        if (m_insideBounds.size.x > 0.f)
+            xratio = (m_vertices[i].position.x - m_insideBounds.position.x) / m_insideBounds.size.x;
+
+        if (m_insideBounds.size.y > 0.f)
+            yratio = (m_vertices[i].position.y - m_insideBounds.position.y) / m_insideBounds.size.y;
+
+        m_vertices[i].texCoords.x = textureRect.position.x + textureRect.size.x * xratio;
+        m_vertices[i].texCoords.y = textureRect.position.y + textureRect.size.y * yratio;
     }
 }
 

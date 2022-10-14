@@ -46,9 +46,7 @@ struct SFMLmainWindow
         logo.setSmooth(true);
 
         sprite.setTexture(logo, true);
-        sf::FloatRect rect = sprite.getLocalBounds();
-        sf::Vector2f  size(rect.width, rect.height);
-        sprite.setOrigin(size / 2.f);
+        sprite.setOrigin(sprite.getLocalBounds().size / 2.f);
         sprite.scale({0.3f, 0.3f});
 
         unsigned int ww = renderWindow.getSize().x;
@@ -199,7 +197,7 @@ struct SFMLmainWindow
     if (self.initialized)
     {
         float angle = [sender floatValue];
-        self.mainWindow->sprite.setRotation(angle);
+        self.mainWindow->sprite.setRotation(sf::degrees(angle));
     }
 }
 

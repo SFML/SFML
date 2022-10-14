@@ -4,11 +4,17 @@
 
 #include <sstream>
 #include <string_view>
+#include <type_traits>
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-TEST_CASE("sf::IpAddress class - [network]")
+static_assert(std::is_copy_constructible_v<sf::IpAddress>);
+static_assert(std::is_copy_assignable_v<sf::IpAddress>);
+static_assert(std::is_nothrow_move_constructible_v<sf::IpAddress>);
+static_assert(std::is_nothrow_move_assignable_v<sf::IpAddress>);
+
+TEST_CASE("[Network] sf::IpAddress")
 {
     SUBCASE("Construction")
     {
@@ -51,7 +57,7 @@ TEST_CASE("sf::IpAddress class - [network]")
             CHECK(ipAddress.toInteger() == 0x8EFA45EE);
         }
 
-        SUBCASE("Uint32 constructor")
+        SUBCASE("std::uint32_t constructor")
         {
             const sf::IpAddress ipAddress(0xDEADBEEF);
             CHECK(ipAddress.toString() == "222.173.190.239"s);
@@ -71,10 +77,12 @@ TEST_CASE("sf::IpAddress class - [network]")
 
         SUBCASE("getPublicAddress")
         {
-            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress();
-            REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() != "0.0.0.0");
-            CHECK(ipAddress->toInteger() != 0);
+            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress(sf::seconds(1));
+            if (ipAddress.has_value())
+            {
+                CHECK(ipAddress->toString() != "0.0.0.0");
+                CHECK(ipAddress->toInteger() != 0);
+            }
         }
     }
 

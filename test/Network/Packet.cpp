@@ -1,53 +1,101 @@
-#include <SFML/Network.hpp>
+#include <SFML/Network/Packet.hpp>
 
 #include <doctest/doctest.h>
 
+#include <array>
 #include <limits>
+#include <type_traits>
 
-template <typename IntegerType>
-static void testPacketStreamOperators(IntegerType expected)
-{
-    sf::Packet packet;
-    packet << expected;
-    IntegerType received;
-    packet >> received;
-    CHECK(expected == received);
-}
+static_assert(std::is_copy_constructible_v<sf::Packet>);
+static_assert(std::is_copy_assignable_v<sf::Packet>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Packet>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Packet>);
 
-TEST_CASE("sf::Packet class - [network]")
+#define CHECK_PACKET_STREAM_OPERATORS(expected)              \
+    do                                                       \
+    {                                                        \
+        sf::Packet packet;                                   \
+        packet << expected;                                  \
+        CHECK(packet.getReadPosition() == 0);                \
+        CHECK(packet.getData() != nullptr);                  \
+        CHECK(packet.getDataSize() == sizeof(expected));     \
+        CHECK(!packet.endOfPacket());                        \
+        CHECK(static_cast<bool>(packet));                    \
+                                                             \
+        decltype(expected) received;                         \
+        packet >> received;                                  \
+        CHECK(packet.getReadPosition() == sizeof(expected)); \
+        CHECK(packet.getData() != nullptr);                  \
+        CHECK(packet.getDataSize() == sizeof(expected));     \
+        CHECK(packet.endOfPacket());                         \
+        CHECK(static_cast<bool>(packet));                    \
+        CHECK(expected == received);                         \
+    } while (false)
+
+TEST_CASE("[Network] sf::Packet")
 {
+    SUBCASE("Default constructor")
+    {
+        const sf::Packet packet;
+        CHECK(packet.getReadPosition() == 0);
+        CHECK(packet.getData() == nullptr);
+        CHECK(packet.getDataSize() == 0);
+        CHECK(packet.endOfPacket());
+        CHECK(static_cast<bool>(packet));
+    }
+
+    SUBCASE("Append and clear")
+    {
+        constexpr std::array data = {1, 2, 3, 4, 5, 6};
+
+        sf::Packet packet;
+        packet.append(data.data(), data.size());
+        CHECK(packet.getReadPosition() == 0);
+        CHECK(packet.getData() != nullptr);
+        CHECK(packet.getDataSize() == data.size());
+        CHECK(!packet.endOfPacket());
+        CHECK(static_cast<bool>(packet));
+
+        packet.clear();
+        CHECK(packet.getReadPosition() == 0);
+        CHECK(packet.getData() == nullptr);
+        CHECK(packet.getDataSize() == 0);
+        CHECK(packet.endOfPacket());
+        CHECK(static_cast<bool>(packet));
+    }
+
     SUBCASE("Stream operators")
     {
-        SUBCASE("Int8")
+        SUBCASE("std::int8_t")
         {
-            testPacketStreamOperators(sf::Int8(0));
-            testPacketStreamOperators(sf::Int8(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int8>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int8>::max());
+            CHECK_PACKET_STREAM_OPERATORS(std::int8_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::int8_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int8_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int8_t>::max());
         }
 
-        SUBCASE("Int16")
+        SUBCASE("std::int16_t")
         {
-            testPacketStreamOperators(sf::Int16(0));
-            testPacketStreamOperators(sf::Int16(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int16>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int16>::max());
+            CHECK_PACKET_STREAM_OPERATORS(std::int16_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::int16_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int16_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int16_t>::max());
         }
 
-        SUBCASE("Int32")
+        SUBCASE("std::int32_t")
         {
-            testPacketStreamOperators(sf::Int32(0));
-            testPacketStreamOperators(sf::Int32(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int32>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int32>::max());
+            CHECK_PACKET_STREAM_OPERATORS(std::int32_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::int32_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int32_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int32_t>::max());
         }
 
-        SUBCASE("Int64")
+        SUBCASE("std::int64_t")
         {
-            testPacketStreamOperators(sf::Int64(0));
-            testPacketStreamOperators(sf::Int64(1));
-            testPacketStreamOperators(std::numeric_limits<sf::Int64>::min());
-            testPacketStreamOperators(std::numeric_limits<sf::Int64>::max());
+            CHECK_PACKET_STREAM_OPERATORS(std::int64_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::int64_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::max());
         }
     }
 }

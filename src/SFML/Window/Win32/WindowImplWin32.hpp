@@ -63,7 +63,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings);
+    WindowImplWin32(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -126,7 +126,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const Uint8* pixels) override;
+    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -277,10 +277,10 @@ private:
     bool    m_keyRepeatEnabled; //!< Automatic key-repeat state for keydown events
     Vector2u m_lastSize;        //!< The last handled size of the window
     bool     m_resizing;        //!< Is the window being resized?
-    Uint16 m_surrogate; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool   m_mouseInside;   //!< Mouse is inside the window?
-    bool   m_fullscreen;    //!< Is the window fullscreen?
-    bool   m_cursorGrabbed; //!< Is the mouse cursor trapped?
+    std::uint16_t m_surrogate; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
+    bool          m_mouseInside;   //!< Mouse is inside the window?
+    bool          m_fullscreen;    //!< Is the window fullscreen?
+    bool          m_cursorGrabbed; //!< Is the mouse cursor trapped?
 };
 
 } // namespace priv

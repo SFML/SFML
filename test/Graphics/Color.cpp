@@ -3,8 +3,15 @@
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
+#include <type_traits>
+#include <vector>
 
-TEST_CASE("sf::Color class - [graphics]")
+static_assert(std::is_copy_constructible_v<sf::Color>);
+static_assert(std::is_copy_assignable_v<sf::Color>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Color>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Color>);
+
+TEST_CASE("[Graphics] sf::Color")
 {
     SUBCASE("Construction")
     {
@@ -35,7 +42,7 @@ TEST_CASE("sf::Color class - [graphics]")
             CHECK(color.a == 4);
         }
 
-        SUBCASE("Int32 constructor")
+        SUBCASE("std::int32_t constructor")
         {
             CHECK(sf::Color(0x00000000) == sf::Color(0, 0, 0, 0));
             CHECK(sf::Color(0x01020304) == sf::Color(1, 2, 3, 4));
@@ -151,5 +158,28 @@ TEST_CASE("sf::Color class - [graphics]")
         static_assert(color + color == sf::Color(2, 4, 6, 8));
 
         static_assert(sf::Color::Black == sf::Color(0, 0, 0, 255));
+    }
+
+    SUBCASE("Reinterpret as std::uint8_t*")
+    {
+        static_assert(sizeof(sf::Color) == 4);
+        static_assert(alignof(sf::Color) == 1);
+
+        const std::vector<sf::Color> pixels = {{10, 11, 12, 13}, {14, 15, 16, 17}, {18, 19, 20, 21}};
+        const std::uint8_t*          begin  = reinterpret_cast<const std::uint8_t*>(pixels.data());
+        CHECK(begin[0] == pixels[0].r);
+        CHECK(begin[1] == pixels[0].g);
+        CHECK(begin[2] == pixels[0].b);
+        CHECK(begin[3] == pixels[0].a);
+
+        CHECK(begin[4] == pixels[1].r);
+        CHECK(begin[5] == pixels[1].g);
+        CHECK(begin[6] == pixels[1].b);
+        CHECK(begin[7] == pixels[1].a);
+
+        CHECK(begin[8] == pixels[2].r);
+        CHECK(begin[9] == pixels[2].g);
+        CHECK(begin[10] == pixels[2].b);
+        CHECK(begin[11] == pixels[2].a);
     }
 }

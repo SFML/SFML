@@ -11,21 +11,25 @@ using namespace sf::Literals;
 // Use sf::Vector2i for tests (except for float vector algebra).
 // Test coverage is given, as there are no template specializations.
 
+static_assert(std::is_copy_constructible_v<sf::Vector2i>);
+static_assert(std::is_copy_assignable_v<sf::Vector2i>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Vector2i>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Vector2i>);
 
-TEST_CASE("sf::Vector2 class template - [system]")
+TEST_CASE("[System] sf::Vector2")
 {
     SUBCASE("Construction")
     {
         SUBCASE("Default constructor")
         {
-            sf::Vector2i vector;
+            const sf::Vector2i vector;
             CHECK(vector.x == 0);
             CHECK(vector.y == 0);
         }
 
         SUBCASE("(x, y) coordinate constructor")
         {
-            sf::Vector2i vector(1, 2);
+            const sf::Vector2i vector(1, 2);
             CHECK(vector.x == 1);
             CHECK(vector.y == 2);
         }
@@ -146,7 +150,7 @@ TEST_CASE("sf::Vector2 class template - [system]")
     SUBCASE("Arithmetic operations between vector and scalar value")
     {
         sf::Vector2i vector(26, 12);
-        int          scalar = 2;
+        const int    scalar = 2;
 
         SUBCASE("vector * scalar")
         {
