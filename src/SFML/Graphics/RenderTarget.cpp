@@ -129,7 +129,7 @@ RenderTarget::RenderTarget() :
 m_defaultView(),
 m_view       (),
 m_cache      (),
-m_id         (0)
+m_id         (getUniqueId())
 {
     m_cache.glStatesSet = false;
 }
@@ -547,10 +547,6 @@ void RenderTarget::initialize()
 
     // Set GL states only on first draw, so that we don't pollute user's states
     m_cache.glStatesSet = false;
-
-    // Generate a unique ID for this RenderTarget to track
-    // whether it is active within a specific context
-    m_id = getUniqueId();
 }
 
 
@@ -708,7 +704,7 @@ void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, s
     GLenum mode = modes[type];
 
     // Draw the primitives
-    glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertexCount)));
+    glCheck(glDrawArrays(mode, firstVertex, static_cast<GLsizei>(vertexCount)));
 }
 
 

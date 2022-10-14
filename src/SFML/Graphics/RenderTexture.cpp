@@ -59,7 +59,7 @@ bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBu
 bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings, bool useFloat)
 {
     // Create the texture
-    if (!m_texture.create(width, height, useFloat))
+    if (!m_texture.create(width, height,useFloat))
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
@@ -161,7 +161,7 @@ bool RenderTexture::setActive(bool active)
 void RenderTexture::display()
 {
     // Update the target texture
-    if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
+    if (priv::RenderTextureImplFBO::isAvailable() || setActive(true))
     {
         m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;

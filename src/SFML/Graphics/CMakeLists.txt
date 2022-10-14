@@ -85,8 +85,8 @@ set(RENDER_TEXTURE_SRC
     ${SRCROOT}/RenderTextureImplFBO.hpp
     ${SRCROOT}/RenderTextureImplDefault.cpp
     ${SRCROOT}/RenderTextureImplDefault.hpp
-    ${SRCROOT}/MultipleRenderTexture.cpp
-    ${INCROOT}/MultipleRenderTexture.hpp
+ 	${SRCROOT}/MultipleRenderTexture.cpp
+ 	${INCROOT}/MultipleRenderTexture.hpp
 )
 source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
 

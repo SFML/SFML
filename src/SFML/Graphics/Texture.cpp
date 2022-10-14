@@ -129,11 +129,6 @@ bool Texture::create(unsigned int width, unsigned int height, bool useFloat)
         return false;
     }
 
-    TransientContextLock lock;
-
-    // Make sure that extensions are initialized
-    priv::ensureExtensionsInit();
-
     // Compute the internal texture dimensions depending on NPOT textures support
     Vector2u actualSize(getValidSize(width), getValidSize(height));
 
@@ -155,6 +150,8 @@ bool Texture::create(unsigned int width, unsigned int height, bool useFloat)
     m_pixelsFlipped = false;
     m_fboAttachment = false;
 
+    TransientContextLock lock;
+
     // Create the OpenGL texture if it doesn't exist yet
     if (!m_texture)
     {
@@ -162,6 +159,9 @@ bool Texture::create(unsigned int width, unsigned int height, bool useFloat)
         glCheck(glGenTextures(1, &texture));
         m_texture = static_cast<unsigned int>(texture);
     }
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
 
     // Make sure that the current texture binding will be preserved
     priv::TextureSaver save;
@@ -210,6 +210,8 @@ bool Texture::create(unsigned int width, unsigned int height, bool useFloat)
         glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GLEXT_RGBA16F, m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_FLOAT, NULL));
     else
         glCheck(glTexImage2D(GL_TEXTURE_2D, 0, (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA), m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
+
+    //glCheck(glTexImage2D(GL_TEXTURE_2D, 0, (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA), m_actualSize.x, m_actualSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL));
 
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
@@ -856,6 +858,11 @@ unsigned int Texture::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getValidSize(unsigned int size)
 {
+    TransientContextLock lock;
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
+
     if (GLEXT_texture_non_power_of_two)
     {
         // If hardware supports NPOT textures, then just return the unmodified size

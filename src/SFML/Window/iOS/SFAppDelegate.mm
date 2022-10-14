@@ -56,10 +56,6 @@ namespace
 ////////////////////////////////////////////////////////////
 + (SFAppDelegate*)getInstance
 {
-    NSAssert(delegateInstance,
-             @"SFAppDelegate instance is nil, this means SFML was not properly initialized. "
-             "Make sure that the file defining your main() function includes <SFML/Main.hpp>");
-    
     return delegateInstance;
 }
 
@@ -177,7 +173,7 @@ namespace
 
     NSArray *supportedOrientations = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
     if (!supportedOrientations)
-        return (1 << orientation) & [rootViewController supportedInterfaceOrientations];
+        return false;
 
     int appFlags = 0;
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])

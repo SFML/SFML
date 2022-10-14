@@ -202,11 +202,5 @@
     return self;
 }
 
-////////////////////////////////////////////////////////////
-- (UITextAutocorrectionType) autocorrectionType
-{
-    return UITextAutocorrectionTypeNo;
-}
-
 
 @end

@@ -866,9 +866,10 @@ static int Load_EXT_framebuffer_object()
     if (!sf_ptrc_glRenderbufferStorageEXT)
         numFailed++;
 
-    sf_ptrc_glDrawBuffersEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLsizei, const GLenum*)>(glLoaderGetProcAddress("glDrawBuffers"));
-    if (!sf_ptrc_glDrawBuffersEXT)
-        numFailed++;
+
+	sf_ptrc_glDrawBuffersEXT = reinterpret_cast<void (GL_FUNCPTR *)(GLsizei, const GLenum*)>(glLoaderGetProcAddress("glDrawBuffers"));
+    	if (!sf_ptrc_glDrawBuffersEXT)
+        	numFailed++;
 
     return numFailed;
 }

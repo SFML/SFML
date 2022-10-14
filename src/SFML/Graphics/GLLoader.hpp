@@ -984,9 +984,9 @@ extern int sfogl_ext_ARB_geometry_shader4;
 #define GL_ZOOM_Y 0x0D17
 
 // Added for MultiRenderTarget
-#define GL_RGBA16F_EXT 0x881A
-#define GL_DEPTH_STENCIL_ATTACHMENT_EXT 0x821A
-#define GL_DEPTH24_STENCIL8_EXT 0x88F0
+    #define GL_RGBA16F_EXT 0x881A
+    #define GL_DEPTH_STENCIL_ATTACHMENT_EXT 0x821A
+    #define GL_DEPTH24_STENCIL8_EXT 0x88F0
 
 #ifndef GL_EXT_blend_minmax
 #define GL_EXT_blend_minmax 1

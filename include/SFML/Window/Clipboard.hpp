@@ -60,12 +60,7 @@ public:
     /// This function sets the content of the clipboard as a
     /// string.
     ///
-    /// \warning Due to limitations on some operating systems,
-    ///          setting the clipboard contents is only
-    ///          guaranteed to work if there is currently an
-    ///          open window for which events are being handled.
-    ///
-    /// \param text sf::String containing the data to be sent
+    /// \param text sf::String containing the data to be sent 
     /// to the clipboard
     ///
     ////////////////////////////////////////////////////////////
@@ -85,11 +80,6 @@ public:
 /// sf::Clipboard provides an interface for getting and
 /// setting the contents of the system clipboard.
 ///
-/// It is important to note that due to limitations on some
-/// operating systems, setting the clipboard contents is
-/// only guaranteed to work if there is currently an open
-/// window for which events are being handled.
-///
 /// Usage example:
 /// \code
 /// // get the clipboard content as a string
@@ -106,12 +96,11 @@ public:
 ///         // Using Ctrl + V to paste a string into SFML
 ///         if(event.key.control && event.key.code == sf::Keyboard::V)
 ///             string = sf::Clipboard::getString();
-///
-///         // Using Ctrl + C to copy a string out of SFML
-///         if(event.key.control && event.key.code == sf::Keyboard::C)
-///             sf::Clipboard::setString("Hello World!");
 ///     }
 /// }
+///
+/// // set the clipboard to a string
+/// sf::Clipboard::setString("Hello World!");
 /// \endcode
 ///
 /// \see sf::String, sf::Event
