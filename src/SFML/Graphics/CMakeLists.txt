@@ -48,8 +48,6 @@ set(SRC
     ${INCROOT}/View.hpp
     ${SRCROOT}/Vertex.cpp
     ${INCROOT}/Vertex.hpp
-    ${SRCROOT}/MultipleRenderTexture.cpp
-    ${INCROOT}/MultipleRenderTexture.hpp
 )
 if(NOT SFML_OPENGL_ES)
     list(APPEND SRC ${SRCROOT}/GLLoader.cpp)
@@ -87,6 +85,8 @@ set(RENDER_TEXTURE_SRC
     ${SRCROOT}/RenderTextureImplFBO.hpp
     ${SRCROOT}/RenderTextureImplDefault.cpp
     ${SRCROOT}/RenderTextureImplDefault.hpp
+    ${SRCROOT}/MultipleRenderTexture.cpp
+    ${INCROOT}/MultipleRenderTexture.hpp
 )
 source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
 
