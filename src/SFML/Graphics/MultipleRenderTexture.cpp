@@ -155,6 +155,8 @@ bool MultipleRenderTexture::addDepthBuffer()
         glCheck(GLEXT_glRenderbufferStorage(GLEXT_GL_RENDERBUFFER, GLEXT_GL_DEPTH_COMPONENT, m_size.x, m_size.y));
         glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_DEPTH_ATTACHMENT, GLEXT_GL_RENDERBUFFER, m_depthBuffer));
     }
+
+    return true;
 }
 
 bool MultipleRenderTexture::addDepthStencilBuffer()
@@ -177,6 +179,8 @@ bool MultipleRenderTexture::addDepthStencilBuffer()
         glCheck(GLEXT_glRenderbufferStorage(GLEXT_GL_RENDERBUFFER, GLEXT_GL_DEPTH24_STENCIL8, m_size.x, m_size.y));
         glCheck(GLEXT_glFramebufferRenderbuffer(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_DEPTH_STENCIL_ATTACHMENT, GLEXT_GL_RENDERBUFFER, m_depthBuffer));
     }
+
+    return true;
 }
 
 bool MultipleRenderTexture::removeRenderTarget(unsigned int renderingLocation)
@@ -206,6 +210,8 @@ bool MultipleRenderTexture::removeDepthBuffer()
         GLuint depthBuffer = static_cast<GLuint>(m_depthBuffer);
         glCheck(GLEXT_glDeleteFramebuffers(1, &depthBuffer));
     }
+
+    return true;
 }
 
 /*bool MultipleRenderTexture::removeStencilBuffer()
@@ -400,12 +406,13 @@ bool MultipleRenderTexture::isRepeated(unsigned int renderingLocation)
 
 bool MultipleRenderTexture::generateMipmap(unsigned int renderingLocation)
 {
-
     std::vector<unsigned int>::iterator renderIt;
     renderIt = findRenderTarget(renderingLocation);
 
     if(renderIt != m_activeTextures.end())
         m_textures[*renderIt-GL_COLOR_ATTACHMENT0_EXT].generateMipmap();
+
+    return true;
 }
 
 bool MultipleRenderTexture::setActive(bool active)

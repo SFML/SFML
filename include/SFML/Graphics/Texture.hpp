@@ -95,7 +95,7 @@ public:
     /// \return True if creation was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(unsigned int width, unsigned int height, bool useFloat=false );
+    bool create(unsigned int width, unsigned int height, bool useFloat = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
