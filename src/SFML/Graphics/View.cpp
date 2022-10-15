@@ -108,10 +108,8 @@ void View::setViewport(const FloatRect& viewport)
 ////////////////////////////////////////////////////////////
 void View::reset(const FloatRect& rectangle)
 {
-    m_center.x = rectangle.left + rectangle.width / 2.f;
-    m_center.y = rectangle.top + rectangle.height / 2.f;
-    m_size.x   = rectangle.width;
-    m_size.y   = rectangle.height;
+    m_center   = rectangle.getCenter();
+    m_size     = rectangle.size;
     m_rotation = Angle::Zero;
 
     m_transformUpdated    = false;

@@ -17,86 +17,132 @@ TEST_CASE("[Graphics] sf::Rect")
     {
         SUBCASE("Default constructor")
         {
-            sf::IntRect rectangle;
-            CHECK(rectangle.left == 0);
-            CHECK(rectangle.top == 0);
-            CHECK(rectangle.width == 0);
-            CHECK(rectangle.height == 0);
-        }
+            const sf::IntRect rectangle;
 
-        SUBCASE("(left, top, width, height) constructor")
-        {
-            sf::IntRect rectangle({1, 2}, {3, 4});
-            CHECK(rectangle.left == 1);
-            CHECK(rectangle.top == 2);
-            CHECK(rectangle.width == 3);
-            CHECK(rectangle.height == 4);
+            CHECK(rectangle.position == sf::Vector2i());
+            CHECK(rectangle.size == sf::Vector2i());
         }
 
         SUBCASE("(Vector2, Vector2) constructor")
         {
-            sf::Vector2i position(1, 2);
-            sf::Vector2i dimension(3, 4);
-            sf::IntRect  rectangle(position, dimension);
+            const sf::IntRect rectangle({1, 2}, {3, 4});
 
-            CHECK(rectangle.left == 1);
-            CHECK(rectangle.top == 2);
-            CHECK(rectangle.width == 3);
-            CHECK(rectangle.height == 4);
+            CHECK(rectangle.position == sf::Vector2i(1, 2));
+            CHECK(rectangle.size == sf::Vector2i(3, 4));
         }
 
         SUBCASE("Conversion constructor")
         {
-            sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
-            sf::IntRect   rectangle(sourceRectangle);
+            const sf::FloatRect sourceRectangle({1, 2}, {3, 4});
+            const sf::IntRect   rectangle(sourceRectangle);
 
-            CHECK(rectangle.left == static_cast<int>(sourceRectangle.left));
-            CHECK(rectangle.top == static_cast<int>(sourceRectangle.top));
-            CHECK(rectangle.width == static_cast<int>(sourceRectangle.width));
-            CHECK(rectangle.height == static_cast<int>(sourceRectangle.height));
+            CHECK(rectangle.position == sf::Vector2i(sourceRectangle.position));
+            CHECK(rectangle.size == sf::Vector2i(sourceRectangle.size));
+        }
+    }
+
+    SUBCASE("Acquiring edges")
+    {
+        SUBCASE("Positive size")
+        {
+            const sf::IntRect rectangle({1, 2}, {3, 4});
+
+            CHECK(rectangle.getLeft() == 1);
+            CHECK(rectangle.getTop() == 2);
+            CHECK(rectangle.getRight() == 4);
+            CHECK(rectangle.getBottom() == 6);
+        }
+
+        SUBCASE("Negative size")
+        {
+            const sf::IntRect rectangle({1, 2}, {-3, -4});
+
+            CHECK(rectangle.getLeft() == -2);
+            CHECK(rectangle.getTop() == -2);
+            CHECK(rectangle.getRight() == 1);
+            CHECK(rectangle.getBottom() == 2);
+        }
+    }
+
+    SUBCASE("Acquiring absolute measurements")
+    {
+        SUBCASE("Positive size")
+        {
+            const sf::IntRect rectangle({2, 4}, {6, 8});
+
+            CHECK(rectangle.getStart() == sf::Vector2i(2, 4));
+            CHECK(rectangle.getEnd() == sf::Vector2i(8, 12));
+            CHECK(rectangle.getCenter() == sf::Vector2i(5, 8));
+            CHECK(rectangle.getAbsoluteSize() == sf::Vector2i(6, 8));
+            CHECK(rectangle.getAbsoluteRect() == sf::IntRect({2, 4}, {6, 8}));
+        }
+
+        SUBCASE("Negative size")
+        {
+            const sf::IntRect rectangle({2, 4}, {-6, -8});
+
+            CHECK(rectangle.getStart() == sf::Vector2i(-4, -4));
+            CHECK(rectangle.getEnd() == sf::Vector2i(2, 4));
+            CHECK(rectangle.getCenter() == sf::Vector2i(-1, 0));
+            CHECK(rectangle.getAbsoluteSize() == sf::Vector2i(6, 8));
+            CHECK(rectangle.getAbsoluteRect() == sf::IntRect({-4, -4}, {6, 8}));
         }
     }
 
     SUBCASE("contains(Vector2)")
     {
-        sf::IntRect rectangle({0, 0}, {10, 10});
+        SUBCASE("Positive size")
+        {
+            const sf::IntRect rectangle({1, 2}, {3, 4});
 
-        CHECK(rectangle.contains(sf::Vector2i(0, 0)) == true);
-        CHECK(rectangle.contains(sf::Vector2i(9, 0)) == true);
-        CHECK(rectangle.contains(sf::Vector2i(0, 9)) == true);
-        CHECK(rectangle.contains(sf::Vector2i(9, 9)) == true);
-        CHECK(rectangle.contains(sf::Vector2i(9, 10)) == false);
-        CHECK(rectangle.contains(sf::Vector2i(10, 9)) == false);
-        CHECK(rectangle.contains(sf::Vector2i(10, 10)) == false);
-        CHECK(rectangle.contains(sf::Vector2i(15, 15)) == false);
+            CHECK(rectangle.contains(sf::Vector2i(1, 2)));
+            CHECK(rectangle.contains(sf::Vector2i(3, 5)));
+            CHECK_FALSE(rectangle.contains(sf::Vector2i(0, 1)));
+            CHECK_FALSE(rectangle.contains(sf::Vector2i(4, 6)));
+        }
+
+        SUBCASE("Negative size")
+        {
+            const sf::IntRect rectangle({1, 2}, {-3, -4});
+
+            CHECK(rectangle.contains(sf::Vector2i(-2, -2)));
+            CHECK(rectangle.contains(sf::Vector2i(0, 1)));
+            CHECK_FALSE(rectangle.contains(sf::Vector2i(-3, -3)));
+            CHECK_FALSE(rectangle.contains(sf::Vector2i(1, 2)));
+        }
     }
 
-    SUBCASE("findIntersection()")
+    SUBCASE("findIntersection(Rect)")
     {
-        const sf::IntRect rectangle({0, 0}, {10, 10});
-        const sf::IntRect intersectingRectangle({5, 5}, {10, 10});
+        const sf::IntRect rectangle1({1, 2}, {3, 4});
 
-        const auto intersectionResult = rectangle.findIntersection(intersectingRectangle);
-        REQUIRE(intersectionResult.has_value());
-        CHECK(intersectionResult->top == 5);
-        CHECK(intersectionResult->left == 5);
-        CHECK(intersectionResult->width == 5);
-        CHECK(intersectionResult->height == 5);
+        SUBCASE("Positive size")
+        {
+            // Interescts
+            const sf::IntRect rectangle2({2, 3}, {4, 5});
 
-        const sf::IntRect nonIntersectingRectangle({-5, -5}, {5, 5});
-        CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle).has_value());
-    }
+            const std::optional<sf::IntRect> intersection1(rectangle1.findIntersection(rectangle2));
+            REQUIRE(intersection1.has_value());
+            CHECK(*intersection1 == sf::IntRect({2, 3}, {2, 3}));
 
-    SUBCASE("getPosition()")
-    {
-        CHECK(sf::IntRect({}, {}).getPosition() == sf::Vector2i());
-        CHECK(sf::IntRect({1, 2}, {3, 4}).getPosition() == sf::Vector2i(1, 2));
-    }
+            // Doesn't intersect
+            const sf::IntRect rectangle4({4, 6}, {4, 6});
+            CHECK_FALSE(rectangle1.findIntersection(rectangle4).has_value());
+        }
 
-    SUBCASE("getSize()")
-    {
-        CHECK(sf::IntRect({}, {}).getSize() == sf::Vector2i());
-        CHECK(sf::IntRect({1, 2}, {3, 4}).getSize() == sf::Vector2i(3, 4));
+        SUBCASE("Negative size")
+        {
+            // Interescts
+            const sf::IntRect rectangle2({2, 3}, {-4, -5});
+
+            const std::optional<sf::IntRect> intersection1(rectangle1.findIntersection(rectangle2));
+            REQUIRE(intersection1.has_value());
+            CHECK(*intersection1 == sf::IntRect({1, 2}, {1, 1}));
+
+            // Doesn't intersect
+            const sf::IntRect rectangle4({1, 2}, {-3, -4});
+            CHECK_FALSE(rectangle1.findIntersection(rectangle4).has_value());
+        }
     }
 
     SUBCASE("Operators")

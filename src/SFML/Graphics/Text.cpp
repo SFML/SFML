@@ -62,31 +62,34 @@ void addLine(sf::VertexArray& vertices,
 // Add a glyph quad to the vertex array
 void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear)
 {
-    float padding = 1.0;
+    float padding = 1.f;
 
-    float left   = glyph.bounds.left - padding;
-    float top    = glyph.bounds.top - padding;
-    float right  = glyph.bounds.left + glyph.bounds.width + padding;
-    float bottom = glyph.bounds.top + glyph.bounds.height + padding;
+    float left   = glyph.bounds.getLeft() - padding;
+    float top    = glyph.bounds.getTop() - padding;
+    float right  = glyph.bounds.getRight() + padding;
+    float bottom = glyph.bounds.getBottom() + padding;
 
-    float u1 = static_cast<float>(glyph.textureRect.left) - padding;
-    float v1 = static_cast<float>(glyph.textureRect.top) - padding;
-    float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
-    float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
+    sf::FloatRect textureRect(glyph.textureRect);
 
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * top, position.y + top), color, sf::Vector2f(u1, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * bottom, position.y + bottom),
-                               color,
-                               sf::Vector2f(u2, v2)));
+    float u1 = textureRect.getLeft() - padding;
+    float v1 = textureRect.getTop() - padding;
+    float u2 = textureRect.getRight() + padding;
+    float v2 = textureRect.getBottom() + padding;
+
+    float xl = position.x + left;
+    float xr = position.x + right;
+    float yt = position.y + top;
+    float yb = position.y + bottom;
+
+    float it = italicShear * top;
+    float ib = italicShear * bottom;
+
+    vertices.append(sf::Vertex({xl - it, yt}, color, {u1, v1}));
+    vertices.append(sf::Vertex({xr - it, yt}, color, {u2, v1}));
+    vertices.append(sf::Vertex({xl - ib, yb}, color, {u1, v2}));
+    vertices.append(sf::Vertex({xl - ib, yb}, color, {u1, v2}));
+    vertices.append(sf::Vertex({xr - it, yt}, color, {u2, v1}));
+    vertices.append(sf::Vertex({xr - ib, yb}, color, {u2, v2}));
 }
 } // namespace
 
@@ -453,8 +456,7 @@ void Text::ensureGeometryUpdate() const
     // Compute the location of the strike through dynamically
     // We use the center point of the lowercase 'x' glyph as the reference
     // We reuse the underline thickness as the thickness of the strike through as well
-    FloatRect xBounds             = m_font->getGlyph(U'x', m_characterSize, isBold).bounds;
-    float     strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
+    float strikeThroughOffset = m_font->getGlyph(U'x', m_characterSize, isBold).bounds.getCenter().y;
 
     // Precompute the variables needed by the algorithm
     float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
@@ -546,10 +548,10 @@ void Text::ensureGeometryUpdate() const
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
 
         // Update the current bounds
-        float left   = glyph.bounds.left;
-        float top    = glyph.bounds.top;
-        float right  = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top + glyph.bounds.height;
+        float left   = glyph.bounds.position.x;
+        float top    = glyph.bounds.position.y;
+        float right  = glyph.bounds.position.x + glyph.bounds.size.x;
+        float bottom = glyph.bounds.position.y + glyph.bounds.size.y;
 
         minX = std::min(minX, x + left - italicShear * bottom);
         maxX = std::max(maxX, x + right - italicShear * top);
@@ -589,10 +591,8 @@ void Text::ensureGeometryUpdate() const
     }
 
     // Update the bounding rectangle
-    m_bounds.left   = minX;
-    m_bounds.top    = minY;
-    m_bounds.width  = maxX - minX;
-    m_bounds.height = maxY - minY;
+    m_bounds.position = Vector2f(minX, minY);
+    m_bounds.size     = Vector2f(maxX - minX, maxY - minY);
 }
 
 } // namespace sf

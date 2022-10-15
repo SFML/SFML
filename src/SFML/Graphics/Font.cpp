@@ -636,6 +636,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         // Leave a small padding around characters, so that filtering doesn't
         // pollute them with pixels from neighbors
         const unsigned int padding = 2;
+        const Vector2i     paddingVec(Vector2u(padding, padding));
 
         width += 2 * padding;
         height += 2 * padding;
@@ -648,16 +649,12 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
-        glyph.textureRect.left += static_cast<int>(padding);
-        glyph.textureRect.top += static_cast<int>(padding);
-        glyph.textureRect.width -= static_cast<int>(2 * padding);
-        glyph.textureRect.height -= static_cast<int>(2 * padding);
+        glyph.textureRect.position += paddingVec;
+        glyph.textureRect.size -= paddingVec * 2;
 
         // Compute the glyph's bounding box
-        glyph.bounds.left   = static_cast<float>(bitmapGlyph->left);
-        glyph.bounds.top    = static_cast<float>(-bitmapGlyph->top);
-        glyph.bounds.width  = static_cast<float>(bitmap.width);
-        glyph.bounds.height = static_cast<float>(bitmap.rows);
+        glyph.bounds.position = Vector2f(Vector2i(bitmapGlyph->left, -bitmapGlyph->top));
+        glyph.bounds.size     = Vector2f(static_cast<float>(bitmap.width), static_cast<float>(bitmap.rows));
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
@@ -705,11 +702,9 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         }
 
         // Write the pixels to the texture
-        unsigned int x = static_cast<unsigned int>(glyph.textureRect.left) - padding;
-        unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
-        unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
-        unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
-        page.texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
+        page.texture.update(m_pixelBuffer.data(),
+                            Vector2u(glyph.textureRect.size + paddingVec * 2),
+                            Vector2u(glyph.textureRect.position - paddingVec));
     }
 
     // Delete the FT glyph

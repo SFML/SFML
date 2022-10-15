@@ -101,9 +101,7 @@ TEST_CASE("[Graphics] sf::Shape")
         triangleShape.move({1, 1});
         triangleShape.rotate(sf::degrees(90));
         CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds().left == Approx(-2.f));
-        CHECK(triangleShape.getGlobalBounds().top == Approx(1.f));
-        CHECK(triangleShape.getGlobalBounds().width == Approx(3.f));
-        CHECK(triangleShape.getGlobalBounds().height == Approx(2.f));
+        CHECK(triangleShape.getGlobalBounds().position == Approx(sf::Vector2f(-2, 1)));
+        CHECK(triangleShape.getGlobalBounds().size == Approx(sf::Vector2f(3, 2)));
     }
 }

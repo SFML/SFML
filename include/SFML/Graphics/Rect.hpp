@@ -46,8 +46,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates an empty rectangle (it is equivalent to calling
-    /// Rect(0, 0, 0, 0)).
+    /// Creates an empty rectangle.
     ///
     ////////////////////////////////////////////////////////////
     constexpr Rect();
@@ -55,10 +54,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
     ///
-    /// Be careful, the last parameter is the size,
-    /// not the bottom-right corner!
-    ///
-    /// \param position Position of the top-left corner of the rectangle
+    /// \param position Position of the rectangle
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
@@ -67,10 +63,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
     ///
-    /// This constructor doesn't replace the copy constructor,
-    /// it's called only when U != T.
-    /// A call to this constructor will fail to compile if U
-    /// is not convertible to T.
+    /// This constructor does not replace the copy constructor.
     ///
     /// \param rectangle Rectangle to convert
     ///
@@ -79,14 +72,86 @@ public:
     constexpr explicit Rect(const Rect<U>& rectangle);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a point is inside the rectangle's area
+    /// \brief Get the left edge of the rectangle
     ///
-    /// This check is non-inclusive. If the point lies on the
-    /// edge of the rectangle, this function will return false.
+    /// \return Coordinate of the left edge of the rectangle
     ///
-    /// \param point Point to test
+    ////////////////////////////////////////////////////////////
+    constexpr T getLeft() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the top edge of the rectangle
     ///
-    /// \return True if the point is inside, false otherwise
+    /// \return Coordinate of the top edge of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T getTop() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the right edge of the rectangle
+    ///
+    /// \return Coordinate of the right edge of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T getRight() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the bottom edge of the rectangle
+    ///
+    /// \return Coordinate of the bottom edge of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr T getBottom() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the top-left point of the rectangle
+    ///
+    /// \return Top-left point of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2<T> getStart() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the bottom-right point of the rectangle
+    ///
+    /// \return Bottom-right point of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2<T> getEnd() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the center point of the rectangle
+    ///
+    /// \return Center point of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2<T> getCenter() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the absolute size of the rectangle
+    ///
+    /// \return Absolute size of the rectangle
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Vector2<T> getAbsoluteSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get positive sized representaion of the rectangle
+    ///
+    /// \return Same rectangle, represented with positive size
+    ///
+    ////////////////////////////////////////////////////////////
+    constexpr Rect<T> getAbsoluteRect() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the rectangle contains a given point
+    ///
+    /// This check assumes that a rectangle contains it's own left and
+    /// top edges, but does not contain it's right and bottom edges.
+    ///
+    /// \param point Point to check
+    ///
+    /// \return True if the rectangle contains the point, false otherwise
     ///
     /// \see findIntersection
     ///
@@ -94,44 +159,22 @@ public:
     constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check the intersection between two rectangles
+    /// \brief Find intersection between two rectangles
     ///
-    /// \param rectangle Rectangle to test
+    /// \param rectangle Rectangle to find intersection with
     ///
-    /// \return Intersection rectangle if intersecting, std::nullopt otherwise
+    /// \return Intersection rectangle if intersects, std::nullopt otherwise
     ///
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the position of the rectangle's top-left corner
-    ///
-    /// \return Position of rectangle
-    ///
-    /// \see getSize
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getPosition() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the rectangle
-    ///
-    /// \return Size of rectangle
-    ///
-    /// \see getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getSize() const;
+    [[nodiscard]] constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left;   //!< Left coordinate of the rectangle
-    T top;    //!< Top coordinate of the rectangle
-    T width;  //!< Width of the rectangle
-    T height; //!< Height of the rectangle
+    Vector2<T> position; //!< Position of the rectangle
+    Vector2<T> size;     //!< Size of the rectangle
 };
 
 ////////////////////////////////////////////////////////////
@@ -180,49 +223,32 @@ using FloatRect = Rect<float>;
 /// \class sf::Rect
 /// \ingroup graphics
 ///
-/// A rectangle is defined by its top-left corner and its size.
-/// It is a very simple class defined for convenience, so
-/// its member variables (left, top, width and height) are public
-/// and can be accessed directly, just like the vector classes
-/// (Vector2 and Vector3).
+/// A rectangle is defined by its sf::Vector2 position and size.
 ///
-/// To keep things simple, sf::Rect doesn't define
-/// functions to emulate the properties that are not directly
-/// members (such as right, bottom, center, etc.), it rather
-/// only provides intersection functions.
+/// sf::Rect is a template and may be used with any numeric type,
+/// but for simplicity the following type aliases are given:
+/// \li sf::IntRect = sf::Rect<int>
+/// \li sf::FloatRect = sf::Rect<float>
 ///
-/// sf::Rect uses the usual rules for its boundaries:
-/// \li The left and top edges are included in the rectangle's area
-/// \li The right (left + width) and bottom (top + height) edges are excluded from the rectangle's area
-///
-/// This means that sf::IntRect(0, 0, 1, 1) and sf::IntRect(1, 1, 1, 1)
-/// don't intersect.
-///
-/// sf::Rect is a template and may be used with any numeric type, but
-/// for simplicity type aliases for the instantiations used by SFML are given:
-/// \li sf::Rect<int> is sf::IntRect
-/// \li sf::Rect<float> is sf::FloatRect
-///
-/// So that you don't have to care about the template syntax.
+/// The methods of sf::Rect assume that a rectangle contains it's own
+/// left and top edges, but does not contain it's right and bottom edges.
 ///
 /// Usage example:
 /// \code
-/// // Define a rectangle, located at (0, 0) with a size of 20x5
-/// sf::IntRect r1(0, 0, 20, 5);
+/// // Define a rectangle located at {0, 0} with a size of {10, 10}
+/// sf::IntRect rect1({0, 0}, {10, 10});
 ///
-/// // Define another rectangle, located at (4, 2) with a size of 18x10
-/// sf::Vector2i position(4, 2);
-/// sf::Vector2i size(18, 10);
-/// sf::IntRect r2(position, size);
+/// // Be careful, negative size is allowed!
+/// sf::IntRect rect2({5, 5}, {-10, -10});
 ///
-/// // Test intersections with the point (3, 1)
-/// bool b1 = r1.contains(3, 1); // true
-/// bool b2 = r2.contains(3, 1); // false
+/// // Test intersection with a point
+/// bool test1 = rect1.contains({9, 9}); // true
+/// bool test2 = rect1.contains({10, 10}); // false
 ///
-/// // Test the intersection between r1 and r2
-/// std::optional<sf::IntRect> result = r1.findIntersection(r2);
+/// // Test intersection with another rectangle
+/// std::optional<sf::IntRect> result = rect1.findIntersection(rect2);
 /// // result.has_value() == true
-/// // result.value() == (4, 2, 16, 3)
+/// // result.value() == sf::IntRect({0, 0}, {5, 5})
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

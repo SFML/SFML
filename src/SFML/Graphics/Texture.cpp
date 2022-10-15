@@ -259,12 +259,19 @@ bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 bool Texture::loadFromImage(const Image& image, const IntRect& area)
 {
     // Retrieve the image size
-    int width  = static_cast<int>(image.getSize().x);
-    int height = static_cast<int>(image.getSize().y);
+    Vector2i size(image.getSize());
 
+    IntRect srcArea(area);
+
+    // Make sure the source area has positive size
+    if (srcArea.size.x < 0 || srcArea.size.y < 0)
+    {
+        return false;
+    }
     // Load the entire image if the source area is either empty or contains the whole image
-    if (area.width == 0 || (area.height == 0) ||
-        ((area.left <= 0) && (area.top <= 0) && (area.width >= width) && (area.height >= height)))
+    else if (srcArea.size.x == 0 || srcArea.size.y == 0 ||
+             (0 <= srcArea.position.x && 0 <= srcArea.position.y && srcArea.position.x + srcArea.size.x <= size.x &&
+              srcArea.position.y + srcArea.size.y <= size.y))
     {
         // Load the entire image
         if (create(image.getSize()))
@@ -283,18 +290,17 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         // Load a sub-area of the image
 
         // Adjust the rectangle to the size of the image
-        IntRect rectangle = area;
-        if (rectangle.left < 0)
-            rectangle.left = 0;
-        if (rectangle.top < 0)
-            rectangle.top = 0;
-        if (rectangle.left + rectangle.width > width)
-            rectangle.width = width - rectangle.left;
-        if (rectangle.top + rectangle.height > height)
-            rectangle.height = height - rectangle.top;
+        if (srcArea.position.x < 0)
+            srcArea.position.x = 0;
+        if (srcArea.position.y < 0)
+            srcArea.position.y = 0;
+        if (srcArea.position.x + srcArea.size.x > size.x)
+            srcArea.size.x = size.x - srcArea.position.x;
+        if (srcArea.position.y + srcArea.size.y > size.y)
+            srcArea.size.y = size.y - srcArea.position.y;
 
         // Create the texture and upload the pixels
-        if (create(Vector2u(rectangle.getSize())))
+        if (create(Vector2u(srcArea.size)))
         {
             TransientContextLock lock;
 
@@ -302,12 +308,12 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
             priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
-            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
+            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (srcArea.position.x + (size.x * srcArea.position.y));
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-            for (int i = 0; i < rectangle.height; ++i)
+            for (int i = 0; i < srcArea.size.y; ++i)
             {
-                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-                pixels += 4 * width;
+                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, srcArea.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+                pixels += 4 * size.x;
             }
 
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));

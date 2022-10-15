@@ -177,40 +177,41 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
     if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
         return false;
 
-    // Make sure the sourceRect components are non-negative before casting them to unsigned values
-    if (sourceRect.left < 0 || sourceRect.top < 0 || sourceRect.width < 0 || sourceRect.height < 0)
+    IntRect srcRect(sourceRect);
+
+    // Make sure the position and size of sourceRect are not negative
+    if (srcRect.position.x < 0 || srcRect.position.y < 0 || srcRect.size.x < 0 || srcRect.size.y < 0)
         return false;
 
-    Rect<unsigned int> srcRect(sourceRect);
+    // If the provided source rectangle is empty, use the entire source image
+    if (srcRect.size.x == 0 || srcRect.size.y == 0)
+        srcRect = IntRect({0, 0}, Vector2i(source.m_size));
 
-    // Use the whole source image as srcRect if the provided source rectangle is empty
-    if (srcRect.width == 0 || srcRect.height == 0)
-    {
-        srcRect = Rect<unsigned int>({0, 0}, source.m_size);
-    }
     // Otherwise make sure the provided source rectangle fits into the source image
     else
     {
-        // Checking the bottom right corner is enough because
-        // left and top are non-negative and width and height are positive.
-        if (source.m_size.x < srcRect.left + srcRect.width || source.m_size.y < srcRect.top + srcRect.height)
+        const Vector2u end(srcRect.getEnd());
+
+        if (source.m_size.x < end.x || source.m_size.y < end.y)
             return false;
     }
 
     // Make sure the destination position is within this image bounds
-    if (m_size.x <= dest.x || m_size.y <= dest.y)
+    if (dest.x >= m_size.x || dest.y >= m_size.y)
         return false;
 
     // Then find the valid size of the destination rectangle
-    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width), std::min(m_size.y - dest.y, srcRect.height));
+    const Vector2u uSize(srcRect.size);
+    const Vector2u dstSize(std::min(m_size.x - dest.x, uSize.x), std::min(m_size.y - dest.y, uSize.y));
 
     // Precompute as much as possible
-    const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
-    const unsigned int srcStride = source.m_size.x * 4;
-    const unsigned int dstStride = m_size.x * 4;
+    const std::size_t pitch     = dstSize.x * 4;
+    const std::size_t srcStride = source.m_size.x * 4;
+    const std::size_t dstStride = m_size.x * 4;
 
-    const std::uint8_t* srcPixels = source.m_pixels.data() + (srcRect.left + srcRect.top * source.m_size.x) * 4;
-    std::uint8_t*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
+    const std::uint8_t* srcPixels = source.m_pixels.data() +
+                                    (srcRect.position.x + srcRect.position.y * static_cast<int>(source.m_size.x)) * 4;
+    std::uint8_t* dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)

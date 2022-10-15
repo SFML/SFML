@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, const Rect<T>& rect)
 {
     const auto flags = os.flags();
     os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
-    os << "(left=" << rect.left << ", top=" << rect.top << ", width=" << rect.width << ", height=" << rect.height << ")";
+    os << "(position=" << rect.position << ", size=" << rect.size << ")";
     os.flags(flags);
     return os;
 }
