@@ -52,11 +52,11 @@ FileInputStream::~FileInputStream() = default;
 
 
 ////////////////////////////////////////////////////////////
-FileInputStream::FileInputStream(FileInputStream&&) = default;
+FileInputStream::FileInputStream(FileInputStream&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-FileInputStream& FileInputStream::operator=(FileInputStream&&) = default;
+FileInputStream& FileInputStream::operator=(FileInputStream&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
