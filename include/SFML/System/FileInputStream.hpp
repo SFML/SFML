@@ -83,13 +83,13 @@ public:
     /// \brief Move constructor
     ///
     ////////////////////////////////////////////////////////////
-    FileInputStream(FileInputStream&&);
+    FileInputStream(FileInputStream&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move assignment
     ///
     ////////////////////////////////////////////////////////////
-    FileInputStream& operator=(FileInputStream&&);
+    FileInputStream& operator=(FileInputStream&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path

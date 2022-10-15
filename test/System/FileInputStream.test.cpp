@@ -6,7 +6,13 @@
 #include <fstream>
 #include <sstream>
 #include <string_view>
+#include <type_traits>
 #include <utility>
+
+static_assert(!std::is_copy_constructible_v<sf::FileInputStream>);
+static_assert(!std::is_copy_assignable_v<sf::FileInputStream>);
+static_assert(std::is_nothrow_move_constructible_v<sf::FileInputStream>);
+static_assert(std::is_nothrow_move_assignable_v<sf::FileInputStream>);
 
 static std::string getTemporaryFilePath()
 {
