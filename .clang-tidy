@@ -1,0 +1,14 @@
+Checks: >
+  -*,
+  clang-analyzer-*,
+  -clang-analyzer-core.NonNullParamChecker,
+  -clang-analyzer-core.NullDereference,
+  -clang-analyzer-nullability.NullablePassedToNonnull,
+  -clang-analyzer-optin.cplusplus.VirtualCall,
+  -clang-analyzer-optin.osx.*,
+  -clang-analyzer-optin.portability.UnixAPI,
+  -clang-analyzer-osx.*,
+  -clang-analyzer-security.insecureAPI.rand,
+  -clang-analyzer-unix.Malloc,
+HeaderFilterRegex: '.*'
+WarningsAsErrors: '*'
