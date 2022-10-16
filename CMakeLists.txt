@@ -536,3 +536,5 @@ sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-form
 add_custom_target(format
     COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)
+
+add_custom_target(tidy COMMAND run-clang-tidy -p ${PROJECT_BINARY_DIR} VERBATIM)
