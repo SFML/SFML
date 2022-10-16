@@ -95,7 +95,7 @@ jobs:
 
     - name: Upload Coverage Report to Codecov
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         directory: ./build
         files: ./build/coverage.out
