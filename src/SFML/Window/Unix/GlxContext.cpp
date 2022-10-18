@@ -71,7 +71,7 @@ void ensureExtensionsInit(::Display* display, int screen)
 }
 
 
-int HandleXError(::Display*, XErrorEvent*)
+int handleXError(::Display*, XErrorEvent*)
 {
     glxErrorOccurred = true;
     return 0;
@@ -84,7 +84,7 @@ public:
     GlxErrorHandler(::Display* display) : m_lock(glxErrorMutex), m_display(display)
     {
         glxErrorOccurred  = false;
-        m_previousHandler = XSetErrorHandler(HandleXError);
+        m_previousHandler = XSetErrorHandler(handleXError);
     }
 
     ~GlxErrorHandler()
@@ -117,7 +117,7 @@ m_ownsWindow(false)
     m_settings = ContextSettings();
 
     // Open the connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Make sure that extensions are initialized
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
@@ -142,7 +142,7 @@ m_ownsWindow(false)
     m_settings = settings;
 
     // Open the connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Make sure that extensions are initialized
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
@@ -167,7 +167,7 @@ m_ownsWindow(false)
     m_settings = settings;
 
     // Open the connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Make sure that extensions are initialized
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
@@ -216,7 +216,7 @@ GlxContext::~GlxContext()
     }
 
     // Close the connection with the X server
-    CloseDisplay(m_display);
+    closeDisplay(m_display);
 }
 
 

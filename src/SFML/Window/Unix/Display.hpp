@@ -43,12 +43,12 @@ namespace priv
 /// \brief Get the shared Display
 ///
 /// This function increments the reference count of the display,
-/// it must be matched with a call to CloseDisplay.
+/// it must be matched with a call to closeDisplay.
 ///
 /// \return Pointer to the shared display
 ///
 ////////////////////////////////////////////////////////////
-Display* OpenDisplay();
+Display* openDisplay();
 
 ////////////////////////////////////////////////////////////
 /// \brief Release a reference to the shared display
@@ -56,7 +56,7 @@ Display* OpenDisplay();
 /// \param display Display to release
 ///
 ////////////////////////////////////////////////////////////
-void CloseDisplay(Display* display);
+void closeDisplay(Display* display);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the shared XIM context for the Display
@@ -69,7 +69,7 @@ void CloseDisplay(Display* display);
 /// \return XIM handle (a pointer) of the context
 ///
 ////////////////////////////////////////////////////////////
-XIM OpenXIM();
+XIM openXim();
 
 ////////////////////////////////////////////////////////////
 /// \brief Release a reference to the shared XIM context
@@ -77,7 +77,7 @@ XIM OpenXIM();
 /// \param xim XIM context to release
 ///
 ////////////////////////////////////////////////////////////
-void CloseXIM(XIM xim);
+void closeXim(XIM xim);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the atom with the specified name

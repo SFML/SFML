@@ -42,7 +42,7 @@ namespace priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() : m_display(OpenDisplay()), m_cursor(None)
+CursorImpl::CursorImpl() : m_display(openDisplay()), m_cursor(None)
 {
     // That's it.
 }
@@ -53,7 +53,7 @@ CursorImpl::~CursorImpl()
 {
     release();
 
-    CloseDisplay(m_display);
+    closeDisplay(m_display);
 }
 
 

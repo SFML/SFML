@@ -77,7 +77,7 @@ void ClipboardImpl::processEvents()
 ClipboardImpl::ClipboardImpl() : m_window(0), m_requestResponded(false)
 {
     // Open a connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Get the atoms we need to make use of the clipboard
     m_clipboard      = getAtom("CLIPBOARD", false);
@@ -105,7 +105,7 @@ ClipboardImpl::~ClipboardImpl()
     }
 
     // Close the connection with the X server
-    CloseDisplay(m_display);
+    closeDisplay(m_display);
 }
 
 
