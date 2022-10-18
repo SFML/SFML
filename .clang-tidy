@@ -1,6 +1,7 @@
 Checks: >
   -*,
   clang-analyzer-*,
+  readability-identifier-naming,
   -clang-analyzer-core.NonNullParamChecker,
   -clang-analyzer-core.NullDereference,
   -clang-analyzer-nullability.NullablePassedToNonnull,
@@ -10,5 +11,8 @@ Checks: >
   -clang-analyzer-osx.*,
   -clang-analyzer-security.insecureAPI.rand,
   -clang-analyzer-unix.Malloc,
+CheckOptions:
+  - { key: readability-identifier-naming.ClassCase,           value: CamelCase }
+  - { key: readability-identifier-naming.FunctionCase,        value: camelBack }
 HeaderFilterRegex: '.*'
 WarningsAsErrors: '*'

@@ -165,7 +165,7 @@ bool ewmhSupported()
     if (!netSupportingWmCheck || !netSupported)
         return false;
 
-    ::Display* display = sf::priv::OpenDisplay();
+    ::Display* display = sf::priv::openDisplay();
 
     Atom           actualType;
     int            actualFormat;
@@ -191,7 +191,7 @@ bool ewmhSupported()
         if (result == Success)
             XFree(data);
 
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -204,7 +204,7 @@ bool ewmhSupported()
 
     if (!rootWindow)
     {
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -226,7 +226,7 @@ bool ewmhSupported()
         if (result == Success)
             XFree(data);
 
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -239,14 +239,14 @@ bool ewmhSupported()
 
     if (!childWindow)
     {
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return false;
     }
 
     // Conforming window managers should return the same window for both queries
     if (rootWindow != childWindow)
     {
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -258,7 +258,7 @@ bool ewmhSupported()
 
     if (!netWmName)
     {
-        sf::priv::CloseDisplay(display);
+        sf::priv::closeDisplay(display);
         return true;
     }
 
@@ -293,7 +293,7 @@ bool ewmhSupported()
     if (result == Success)
         XFree(data);
 
-    sf::priv::CloseDisplay(display);
+    sf::priv::closeDisplay(display);
 
     return true;
 }
@@ -516,7 +516,7 @@ m_lastInputTime(0)
     using namespace WindowsImplX11Impl;
 
     // Open a connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Make sure to check for EWMH support before we do anything
     ewmhSupported();
@@ -567,7 +567,7 @@ m_lastInputTime(0)
     using namespace WindowsImplX11Impl;
 
     // Open a connection with the X server
-    m_display = OpenDisplay();
+    m_display = openDisplay();
 
     // Make sure to check for EWMH support before we do anything
     ewmhSupported();
@@ -804,10 +804,10 @@ WindowImplX11::~WindowImplX11()
 
     // Close the input method
     if (m_inputMethod)
-        CloseXIM(m_inputMethod);
+        closeXim(m_inputMethod);
 
     // Close the connection with the X server
-    CloseDisplay(m_display);
+    closeDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
     std::scoped_lock lock(allWindowsMutex);
@@ -1616,7 +1616,7 @@ void WindowImplX11::initialize()
     using namespace WindowsImplX11Impl;
 
     // Create the input context
-    m_inputMethod = OpenXIM();
+    m_inputMethod = openXim();
 
     if (m_inputMethod)
     {

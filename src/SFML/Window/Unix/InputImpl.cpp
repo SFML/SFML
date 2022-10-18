@@ -157,7 +157,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         return false;
 
     // Open a connection with the X server
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     // Convert to keycode
     KeyCode keycode = XKeysymToKeycode(display, keysym);
@@ -168,7 +168,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         XQueryKeymap(display, keys);
 
         // Close the connection with the X server
-        CloseDisplay(display);
+        closeDisplay(display);
 
         // Check our keycode
         return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
@@ -176,7 +176,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     else
     {
         // Close the connection with the X server
-        CloseDisplay(display);
+        closeDisplay(display);
 
         return false;
     }
@@ -194,7 +194,7 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     // we don't care about these but they are required
     ::Window root, child;
@@ -205,7 +205,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &wx, &wy, &buttons);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    closeDisplay(display);
 
     // clang-format off
     switch (button)
@@ -227,7 +227,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 Vector2i InputImpl::getMousePosition()
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     // we don't care about these but they are required
     ::Window     root, child;
@@ -239,7 +239,7 @@ Vector2i InputImpl::getMousePosition()
     XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &x, &y, &buttons);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    closeDisplay(display);
 
     return Vector2i(gx, gy);
 }
@@ -252,7 +252,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
     if (handle)
     {
         // Open a connection with the X server
-        Display* display = OpenDisplay();
+        Display* display = openDisplay();
 
         // we don't care about these but they are required
         ::Window     root, child;
@@ -264,7 +264,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
         XQueryPointer(display, handle, &root, &child, &gx, &gy, &x, &y, &buttons);
 
         // Close the connection with the X server
-        CloseDisplay(display);
+        closeDisplay(display);
 
         return Vector2i(x, y);
     }
@@ -279,13 +279,13 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 void InputImpl::setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, position.x, position.y);
     XFlush(display);
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    closeDisplay(display);
 }
 
 
@@ -293,7 +293,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     WindowHandle handle = relativeTo.getSystemHandle();
     if (handle)
@@ -303,7 +303,7 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
     }
 
     // Close the connection with the X server
-    CloseDisplay(display);
+    closeDisplay(display);
 }
 
 

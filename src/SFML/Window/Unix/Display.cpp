@@ -55,7 +55,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Display* OpenDisplay()
+Display* openDisplay()
 {
     std::scoped_lock lock(mutex);
 
@@ -78,7 +78,7 @@ Display* OpenDisplay()
 
 
 ////////////////////////////////////////////////////////////
-void CloseDisplay(Display* display)
+void closeDisplay(Display* display)
 {
     std::scoped_lock lock(mutex);
 
@@ -90,7 +90,7 @@ void CloseDisplay(Display* display)
 }
 
 ////////////////////////////////////////////////////////////
-XIM OpenXIM()
+XIM openXim()
 {
     std::scoped_lock lock(mutex);
 
@@ -128,7 +128,7 @@ XIM OpenXIM()
 }
 
 ////////////////////////////////////////////////////////////
-void CloseXIM(XIM xim)
+void closeXim(XIM xim)
 {
     std::scoped_lock lock(mutex);
 
@@ -146,11 +146,11 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
     if (auto it = atoms.find(name); it != atoms.end())
         return it->second;
 
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
 
-    CloseDisplay(display);
+    closeDisplay(display);
 
     atoms[name] = atom;
 
