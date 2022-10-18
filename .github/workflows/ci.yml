@@ -11,8 +11,10 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019,       os: windows-2019 }
-        - { name: Windows VS2022,       os: windows-2022 }
+        - { name: Windows VS2019 x86,   os: windows-2019, flags: -A Win32 }
+        - { name: Windows VS2019 x64,   os: windows-2019, flags: -A x64 }
+        - { name: Windows VS2022 x86,   os: windows-2022, flags: -A Win32 }
+        - { name: Windows VS2022 x64,   os: windows-2022, flags: -A x64 }
         - { name: Windows VS2022 Clang, os: windows-2022, flags: -T ClangCL }
         - { name: Linux GCC,            os: ubuntu-latest }
         - { name: Linux Clang,          os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
