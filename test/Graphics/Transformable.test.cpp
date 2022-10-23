@@ -65,23 +65,23 @@ TEST_CASE("[Graphics] sf::Transformable")
         CHECK(transformable.getTransform().getMatrix()[14] == Approx(transform.getMatrix()[14]));
         CHECK(transformable.getTransform().getMatrix()[15] == Approx(transform.getMatrix()[15]));
 
-        const sf::Transform inverse_transform = transform.getInverse();
-        CHECK(transformable.getInverseTransform().getMatrix()[0] == Approx(inverse_transform.getMatrix()[0]));
-        CHECK(transformable.getInverseTransform().getMatrix()[1] == Approx(inverse_transform.getMatrix()[1]));
-        CHECK(transformable.getInverseTransform().getMatrix()[2] == Approx(inverse_transform.getMatrix()[2]));
-        CHECK(transformable.getInverseTransform().getMatrix()[3] == Approx(inverse_transform.getMatrix()[3]));
-        CHECK(transformable.getInverseTransform().getMatrix()[4] == Approx(inverse_transform.getMatrix()[4]));
-        CHECK(transformable.getInverseTransform().getMatrix()[5] == Approx(inverse_transform.getMatrix()[5]));
-        CHECK(transformable.getInverseTransform().getMatrix()[6] == Approx(inverse_transform.getMatrix()[6]));
-        CHECK(transformable.getInverseTransform().getMatrix()[7] == Approx(inverse_transform.getMatrix()[7]));
-        CHECK(transformable.getInverseTransform().getMatrix()[8] == Approx(inverse_transform.getMatrix()[8]));
-        CHECK(transformable.getInverseTransform().getMatrix()[9] == Approx(inverse_transform.getMatrix()[9]));
-        CHECK(transformable.getInverseTransform().getMatrix()[10] == Approx(inverse_transform.getMatrix()[10]));
-        CHECK(transformable.getInverseTransform().getMatrix()[11] == Approx(inverse_transform.getMatrix()[11]));
-        CHECK(transformable.getInverseTransform().getMatrix()[12] == Approx(inverse_transform.getMatrix()[12]));
-        CHECK(transformable.getInverseTransform().getMatrix()[13] == Approx(inverse_transform.getMatrix()[13]));
-        CHECK(transformable.getInverseTransform().getMatrix()[14] == Approx(inverse_transform.getMatrix()[14]));
-        CHECK(transformable.getInverseTransform().getMatrix()[15] == Approx(inverse_transform.getMatrix()[15]));
+        const sf::Transform inverseTransform = transform.getInverse();
+        CHECK(transformable.getInverseTransform().getMatrix()[0] == Approx(inverseTransform.getMatrix()[0]));
+        CHECK(transformable.getInverseTransform().getMatrix()[1] == Approx(inverseTransform.getMatrix()[1]));
+        CHECK(transformable.getInverseTransform().getMatrix()[2] == Approx(inverseTransform.getMatrix()[2]));
+        CHECK(transformable.getInverseTransform().getMatrix()[3] == Approx(inverseTransform.getMatrix()[3]));
+        CHECK(transformable.getInverseTransform().getMatrix()[4] == Approx(inverseTransform.getMatrix()[4]));
+        CHECK(transformable.getInverseTransform().getMatrix()[5] == Approx(inverseTransform.getMatrix()[5]));
+        CHECK(transformable.getInverseTransform().getMatrix()[6] == Approx(inverseTransform.getMatrix()[6]));
+        CHECK(transformable.getInverseTransform().getMatrix()[7] == Approx(inverseTransform.getMatrix()[7]));
+        CHECK(transformable.getInverseTransform().getMatrix()[8] == Approx(inverseTransform.getMatrix()[8]));
+        CHECK(transformable.getInverseTransform().getMatrix()[9] == Approx(inverseTransform.getMatrix()[9]));
+        CHECK(transformable.getInverseTransform().getMatrix()[10] == Approx(inverseTransform.getMatrix()[10]));
+        CHECK(transformable.getInverseTransform().getMatrix()[11] == Approx(inverseTransform.getMatrix()[11]));
+        CHECK(transformable.getInverseTransform().getMatrix()[12] == Approx(inverseTransform.getMatrix()[12]));
+        CHECK(transformable.getInverseTransform().getMatrix()[13] == Approx(inverseTransform.getMatrix()[13]));
+        CHECK(transformable.getInverseTransform().getMatrix()[14] == Approx(inverseTransform.getMatrix()[14]));
+        CHECK(transformable.getInverseTransform().getMatrix()[15] == Approx(inverseTransform.getMatrix()[15]));
     }
 
     SUBCASE("move()")

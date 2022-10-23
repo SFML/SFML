@@ -77,6 +77,7 @@ private:
     std::string m_name;
     bool        m_isLoaded;
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static const sf::Font* s_font;
 };
 

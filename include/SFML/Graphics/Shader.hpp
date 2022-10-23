@@ -82,6 +82,7 @@ public:
     /// \see setUniform(const std::string&, CurrentTextureType)
     ///
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static CurrentTextureType CurrentTexture;
 
 public:

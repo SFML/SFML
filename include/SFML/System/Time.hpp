@@ -108,6 +108,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static const Time Zero; //!< Predefined "zero" time value
 
 private:

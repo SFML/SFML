@@ -56,8 +56,10 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTBEGIN(readability-identifier-naming)
     /// Represents an invalid position in the string
     static inline const std::size_t InvalidPos{std::basic_string<std::uint32_t>::npos};
+    // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

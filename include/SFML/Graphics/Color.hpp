@@ -81,6 +81,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTBEGIN(readability-identifier-naming)
     static const Color Black;       //!< Black predefined color
     static const Color White;       //!< White predefined color
     static const Color Red;         //!< Red predefined color
@@ -90,6 +91,7 @@ public:
     static const Color Magenta;     //!< Magenta predefined color
     static const Color Cyan;        //!< Cyan predefined color
     static const Color Transparent; //!< Transparent (black) predefined color
+    // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
     // Member data

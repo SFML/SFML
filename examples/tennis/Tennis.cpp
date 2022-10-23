@@ -100,8 +100,8 @@ int main()
 #endif
 
     // Define the paddles properties
-    sf::Clock      AITimer;
-    const sf::Time AITime           = sf::seconds(0.1f);
+    sf::Clock      aiTimer;
+    const sf::Time aiTime           = sf::seconds(0.1f);
     const float    paddleSpeed      = 400.f;
     float          rightPaddleSpeed = 0.f;
     const float    ballSpeed        = 400.f;
@@ -186,9 +186,9 @@ int main()
             }
 
             // Update the computer's paddle direction according to the ball position
-            if (AITimer.getElapsedTime() > AITime)
+            if (aiTimer.getElapsedTime() > aiTime)
             {
-                AITimer.restart();
+                aiTimer.restart();
                 if (ball.getPosition().y + ballRadius > rightPaddle.getPosition().y + paddleSize.y / 2)
                     rightPaddleSpeed = paddleSpeed;
                 else if (ball.getPosition().y - ballRadius < rightPaddle.getPosition().y - paddleSize.y / 2)

@@ -78,9 +78,9 @@ namespace priv
 ////////////////////////////////////////////////////////////
 ImageLoader& ImageLoader::getInstance()
 {
-    static ImageLoader Instance;
+    static ImageLoader instance;
 
-    return Instance;
+    return instance;
 }
 
 

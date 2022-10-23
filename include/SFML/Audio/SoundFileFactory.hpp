@@ -153,8 +153,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTBEGIN(readability-identifier-naming)
     static ReaderFactoryArray s_readers; //!< List of all registered readers
     static WriterFactoryArray s_writers; //!< List of all registered writers
+    // NOLINTEND(readability-identifier-naming)
 };
 
 } // namespace sf

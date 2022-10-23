@@ -259,6 +259,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static const Transform Identity; //!< The identity transform (does nothing)
 
 private:

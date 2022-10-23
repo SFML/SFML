@@ -135,19 +135,19 @@ public:
 
     bool onLoad() override
     {
-        std::uniform_real_distribution<float>        x_distribution(0, 800);
-        std::uniform_real_distribution<float>        y_distribution(0, 600);
-        std::uniform_int_distribution<std::uint16_t> color_distribution(0, 255);
+        std::uniform_real_distribution<float>        xDistribution(0, 800);
+        std::uniform_real_distribution<float>        yDistribution(0, 600);
+        std::uniform_int_distribution<std::uint16_t> colorDistribution(0, 255);
 
         // Create the points
         m_points.setPrimitiveType(sf::PrimitiveType::Points);
         for (int i = 0; i < 40000; ++i)
         {
-            auto x = x_distribution(rng);
-            auto y = y_distribution(rng);
-            auto r = static_cast<std::uint8_t>(color_distribution(rng));
-            auto g = static_cast<std::uint8_t>(color_distribution(rng));
-            auto b = static_cast<std::uint8_t>(color_distribution(rng));
+            auto x = xDistribution(rng);
+            auto y = yDistribution(rng);
+            auto r = static_cast<std::uint8_t>(colorDistribution(rng));
+            auto g = static_cast<std::uint8_t>(colorDistribution(rng));
+            auto b = static_cast<std::uint8_t>(colorDistribution(rng));
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
