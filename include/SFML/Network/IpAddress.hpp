@@ -161,9 +161,11 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTBEGIN(readability-identifier-naming)
     static const IpAddress Any;       //!< Value representing any address (0.0.0.0)
     static const IpAddress LocalHost; //!< The "localhost" address (for connecting a computer to itself locally)
     static const IpAddress Broadcast; //!< The "broadcast" address (for sending UDP messages to everyone on a local network)
+    // NOLINTEND(readability-identifier-naming)
 
 private:
     friend SFML_NETWORK_API bool operator<(const IpAddress& left, const IpAddress& right);

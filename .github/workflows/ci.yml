@@ -144,7 +144,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux, os: ubuntu-latest }
+        - { name: Linux, os: ubuntu-22.04 }
         - { name: macOS, os: macos-12 }
 
     steps:

@@ -36,7 +36,7 @@ namespace
 {
 // Using a custom run loop mode solve some issues that appears when SFML
 // is used with Cocoa.
-const CFStringRef RunLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
+const CFStringRef runLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
 } // namespace
 
 
@@ -92,7 +92,7 @@ HIDJoystickManager::HIDJoystickManager() : m_manager(0), m_joystickCount(0)
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager, pluggedIn, this);
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager, pluggedOut, this);
 
-    IOHIDManagerScheduleWithRunLoop(m_manager, CFRunLoopGetCurrent(), RunLoopMode);
+    IOHIDManagerScheduleWithRunLoop(m_manager, CFRunLoopGetCurrent(), runLoopMode);
 
     IOHIDManagerOpen(m_manager, kIOHIDOptionsTypeNone);
 }
@@ -101,7 +101,7 @@ HIDJoystickManager::HIDJoystickManager() : m_manager(0), m_joystickCount(0)
 ////////////////////////////////////////////////////////////
 HIDJoystickManager::~HIDJoystickManager()
 {
-    IOHIDManagerUnscheduleFromRunLoop(m_manager, CFRunLoopGetCurrent(), RunLoopMode);
+    IOHIDManagerUnscheduleFromRunLoop(m_manager, CFRunLoopGetCurrent(), runLoopMode);
 
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, 0);
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, 0);
@@ -117,7 +117,7 @@ void HIDJoystickManager::update()
 
     while (status == kCFRunLoopRunHandledSource)
     {
-        status = CFRunLoopRunInMode(RunLoopMode, 0, true);
+        status = CFRunLoopRunInMode(runLoopMode, 0, true);
     }
 }
 

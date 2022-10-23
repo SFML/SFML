@@ -632,9 +632,12 @@ m_lastInputTime(0)
     // change our window's decorations and functions according to the requested style)
     if (!m_fullscreen)
     {
-        Atom WMHintsAtom = getAtom("_MOTIF_WM_HINTS", false);
-        if (WMHintsAtom)
+        Atom wmHintsAtom = getAtom("_MOTIF_WM_HINTS", false);
+        if (wmHintsAtom)
         {
+            // NOLINTBEGIN(readability-identifier-naming)
+            // Disable naming check so these better match the contents of the Motif library
+            // https://sourceforge.net/p/motif/code/ci/master/tree/lib/Xm/MwmUtil.h
             constexpr unsigned long MWM_HINTS_FUNCTIONS   = 1 << 0;
             constexpr unsigned long MWM_HINTS_DECORATIONS = 1 << 1;
 
@@ -652,6 +655,7 @@ m_lastInputTime(0)
             constexpr unsigned long MWM_FUNC_MINIMIZE = 1 << 3;
             constexpr unsigned long MWM_FUNC_MAXIMIZE = 1 << 4;
             constexpr unsigned long MWM_FUNC_CLOSE    = 1 << 5;
+            // NOLINTEND(readability-identifier-naming)
 
             struct WMHints
             {
@@ -685,8 +689,8 @@ m_lastInputTime(0)
 
             XChangeProperty(m_display,
                             m_window,
-                            WMHintsAtom,
-                            WMHintsAtom,
+                            wmHintsAtom,
+                            wmHintsAtom,
                             32,
                             PropModeReplace,
                             reinterpret_cast<const unsigned char*>(&hints),
