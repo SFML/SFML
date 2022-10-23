@@ -51,12 +51,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
     ///
-    /// \param X X coordinate
-    /// \param Y Y coordinate
-    /// \param Z Z coordinate
+    /// \param x X coordinate
+    /// \param y Y coordinate
+    /// \param z Z coordinate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3(T X, T Y, T Z);
+    constexpr Vector3(T x, T y, T z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector

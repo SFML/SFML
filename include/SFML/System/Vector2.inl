@@ -31,10 +31,13 @@ constexpr Vector2<T>::Vector2() : x(0), y(0)
 
 
 ////////////////////////////////////////////////////////////
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 template <typename T>
-constexpr Vector2<T>::Vector2(T X, T Y) : x(X), y(Y)
+constexpr Vector2<T>::Vector2(T x, T y) : x(x), y(y)
 {
 }
+#pragma GCC diagnostic pop
 
 
 ////////////////////////////////////////////////////////////

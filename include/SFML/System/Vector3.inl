@@ -31,10 +31,13 @@ constexpr Vector3<T>::Vector3() : x(0), y(0), z(0)
 
 
 ////////////////////////////////////////////////////////////
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 template <typename T>
-constexpr Vector3<T>::Vector3(T X, T Y, T Z) : x(X), y(Y), z(Z)
+constexpr Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z)
 {
 }
+#pragma GCC diagnostic pop
 
 
 ////////////////////////////////////////////////////////////
