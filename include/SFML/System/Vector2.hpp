@@ -54,11 +54,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from cartesian coordinates
     ///
-    /// \param X X coordinate
-    /// \param Y Y coordinate
+    /// \param x X coordinate
+    /// \param y Y coordinate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2(T X, T Y);
+    constexpr Vector2(T x, T y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector

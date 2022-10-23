@@ -36,12 +36,12 @@
 
 ////////////////////////////////////////////////////////////
 template <typename InputIt, typename OutputIt>
-OutputIt priv::copy(InputIt first, InputIt last, OutputIt d_first)
+OutputIt priv::copy(InputIt first, InputIt last, OutputIt dFirst)
 {
     while (first != last)
-        *d_first++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
+        *dFirst++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
 
-    return d_first;
+    return dFirst;
 }
 
 template <typename In>

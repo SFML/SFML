@@ -102,15 +102,18 @@ struct Vector4
     ////////////////////////////////////////////////////////////
     /// \brief Construct from 4 vector components
     ///
-    /// \param X Component of the 4D vector
-    /// \param Y Component of the 4D vector
-    /// \param Z Component of the 4D vector
-    /// \param W Component of the 4D vector
+    /// \param x Component of the 4D vector
+    /// \param y Component of the 4D vector
+    /// \param z Component of the 4D vector
+    /// \param w Component of the 4D vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+    Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
     {
     }
+#pragma GCC diagnostic pop
 
     ////////////////////////////////////////////////////////////
     /// \brief Conversion constructor
