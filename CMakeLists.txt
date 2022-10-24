@@ -77,9 +77,14 @@ sfml_set_option(SFML_BUILD_NETWORK TRUE BOOL "TRUE to build SFML's Network modul
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
-# add an option for choosing the OpenGL implementation
 if(SFML_BUILD_WINDOW)
+    # add an option for choosing the OpenGL implementation
     sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
+
+    # add an option for choosing whether to use the DRM windowing backend
+    if(SFML_OS_LINUX)
+        sfml_set_option(SFML_USE_DRM FALSE BOOL "TRUE to use DRM windowing backend")
+    endif()
 endif()
 
 # add an option for building the test suite
