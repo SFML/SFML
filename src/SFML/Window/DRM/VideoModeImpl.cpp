@@ -28,7 +28,6 @@
 #include <SFML/Window/VideoModeImpl.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/System/Err.hpp>
-#include <drm-common.h>
 
 
 namespace sf
@@ -40,8 +39,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
-    drm* drm = sf::priv::DRMContext::getDRM();
-    drmModeConnectorPtr conn = drm->saved_connector;
+    Drm& drm = sf::priv::DRMContext::getDRM();
+    drmModeConnectorPtr conn = drm.savedConnector;
 
     if (conn)
     {
@@ -60,8 +59,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    drm* drm = sf::priv::DRMContext::getDRM();
-    drmModeModeInfoPtr ptr = drm->mode;
+    Drm& drm = sf::priv::DRMContext::getDRM();
+    drmModeModeInfoPtr ptr = drm.mode;
     if (ptr)
         return VideoMode(ptr->hdisplay, ptr->vdisplay);
     else
