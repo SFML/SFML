@@ -297,16 +297,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window           m_window;       ///< X identifier defining our window
-    ::Display*         m_display;      ///< Pointer to the display
-    int                m_screen;       ///< Screen identifier
-    XIM                m_inputMethod;  ///< Input method linked to the X display
-    XIC                m_inputContext; ///< Input context used to get unicode input in our window
-    std::deque<XEvent> m_events;       ///< Queue we use to store pending events for this window
-    bool               m_isExternal;   ///< Tell whether the window has been created externally or by SFML
-    RRMode             m_oldVideoMode; ///< Video mode in use before we switch to fullscreen
-    RRCrtc             m_oldRRCrtc;    ///< RRCrtc in use before we switch to fullscreen
-    ::Cursor           m_hiddenCursor; ///< As X11 doesn't provide cursor hiding, we must create a transparent one
+    ::Window   m_window;       ///< X identifier defining our window
+    ::Display* m_display;      ///< Pointer to the display
+    int        m_screen;       ///< Screen identifier
+    XIM        m_inputMethod;  ///< Input method linked to the X display
+    XIC        m_inputContext; ///< Input context used to get unicode input in our window
+    bool       m_isExternal;   ///< Tell whether the window has been created externally or by SFML
+    RRMode     m_oldVideoMode; ///< Video mode in use before we switch to fullscreen
+    RRCrtc     m_oldRRCrtc;    ///< RRCrtc in use before we switch to fullscreen
+    ::Cursor   m_hiddenCursor; ///< As X11 doesn't provide cursor hiding, we must create a transparent one
     ::Cursor m_lastCursor; ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     bool     m_keyRepeat; ///< Is the KeyRepeat feature enabled?
     Vector2i m_previousSize; ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)

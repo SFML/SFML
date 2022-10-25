@@ -170,6 +170,26 @@ static int get_resources(int fd, drmModeRes **resources)
 	return 0;
 }
 
+static int has_monitor_connected(int fd, drmModeRes* resources)
+{
+	int i;
+	drmModeConnector *connector;
+	for (i = 0; i < resources->count_connectors; i++)
+	{
+		connector = drmModeGetConnector(fd, resources->connectors[i]);
+		if (connector->connection == DRM_MODE_CONNECTED)
+		{
+			/* There is a monitor connected */
+			drmModeFreeConnector(connector);
+			connector = NULL;
+			return 1;
+		}
+		drmModeFreeConnector(connector);
+		connector = NULL;
+	}
+	return 0;
+}
+
 #define MAX_DRM_DEVICES 64
 
 static int find_drm_device(drmModeRes **resources)
@@ -199,7 +219,11 @@ static int find_drm_device(drmModeRes **resources)
 		if (fd < 0)
 			continue;
 		ret = get_resources(fd, resources);
-		if (!ret)
+		if(getenv("SFML_DRM_DEBUG"))
+		{
+			printf("DRM device used: %d\n", i);
+		}
+		if(!ret && has_monitor_connected(fd, *resources) != 0)
 			break;
 		close(fd);
 		fd = -1;
@@ -285,34 +309,6 @@ int init_drm(struct drm *drm, const char *device, const char *mode_str,
 			printf("requested mode not found, using default mode!\n");
 	}
 
-	/* find preferred mode or the highest resolution mode: */
-	if (!drm->mode)
-	{
-		for (i = 0, area = 0; i < connector->count_modes; i++)
-		{
-			drmModeModeInfo *current_mode = &connector->modes[i];
-
-			if (current_mode->type & DRM_MODE_TYPE_PREFERRED)
-			{
-				drm->mode = current_mode;
-				break;
-			}
-
-			int current_area = current_mode->hdisplay * current_mode->vdisplay;
-			if (current_area > area)
-			{
-				drm->mode = current_mode;
-				area = current_area;
-			}
-		}
-	}
-
-	if (!drm->mode)
-	{
-		printf("could not find mode!\n");
-		return -1;
-	}
-
 	/* find encoder: */
 	for (i = 0; i < resources->count_encoders; i++)
 	{
@@ -349,7 +345,17 @@ int init_drm(struct drm *drm, const char *device, const char *mode_str,
     // get original display mode so we can restore display mode after program exits
     drm->original_crtc = drmModeGetCrtc(drm->fd, drm->crtc_id);
 
-	if(getenv("SFML_DRM_DEBUG"))
+	/* Let's use the current mode rather than the preferred one if the user didn't
+	 * specify a mode with env vars
+	 */
+	if (!drm->mode)
+	{
+		if(getenv("SFML_DRM_DEBUG"))
+			printf("DRM using the current mode\n");
+		drm->mode = &(drm->original_crtc->mode);
+	}
+
+	if (getenv("SFML_DRM_DEBUG"))
 	{
 		printf("DRM Mode used: %s@%d\n", drm->mode->name, drm->mode->vrefresh);
 	}
