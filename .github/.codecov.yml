@@ -37,4 +37,4 @@ comment:
   require_base: no
 
 github_checks:
-  annotations: true
+  annotations: false
