@@ -46,6 +46,7 @@
 #include <X11/keysym.h>
 
 #include <algorithm>
+#include <bitset>
 #include <cassert>
 #include <cstring>
 #include <fcntl.h>
@@ -77,6 +78,7 @@ namespace WindowsImplX11Impl
 {
 sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
 std::vector<sf::priv::WindowImplX11*> allWindows;
+std::bitset<256>                      isKeyFiltered;
 std::recursive_mutex                  allWindowsMutex;
 sf::String                            windowManagerName;
 
@@ -87,23 +89,6 @@ constexpr unsigned long eventMask = FocusChangeMask | ButtonPressMask | ButtonRe
                                     EnterWindowMask | LeaveWindowMask | VisibilityChangeMask | PropertyChangeMask;
 
 constexpr unsigned int maxTrialsCount = 5;
-
-// Predicate we use to find key repeat events in processEvent
-struct KeyRepeatFinder
-{
-    KeyRepeatFinder(unsigned int initalKeycode, Time initialTime) : keycode(initalKeycode), time(initialTime)
-    {
-    }
-
-    // Predicate operator that checks event type, keycode and timestamp
-    bool operator()(const XEvent& event)
-    {
-        return ((event.type == KeyPress) && (event.xkey.keycode == keycode) && (event.xkey.time - time < 2));
-    }
-
-    unsigned int keycode;
-    Time         time;
-};
 
 // Filter the events received by windows (only allow those matching a specific window)
 Bool checkEvent(::Display*, XEvent* event, XPointer userData)
@@ -831,14 +816,61 @@ void WindowImplX11::processEvents()
 
     // Pick out the events that are interesting for this window
     while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
-        m_events.push_back(event);
-
-    // Handle the events for this window that we just picked out
-    while (!m_events.empty())
     {
-        event = m_events.front();
-        m_events.pop_front();
-        processEvent(event);
+        // This function implements a workaround to properly discard
+        // repeated key events when necessary. The problem is that the
+        // system's key events policy doesn't match SFML's one: X server will generate
+        // both repeated KeyPress and KeyRelease events when maintaining a key down, while
+        // SFML only wants repeated KeyPress events. Thus, we have to:
+        // - Discard duplicated KeyRelease events when m_keyRepeat is true
+        // - Discard both duplicated KeyPress and KeyRelease events when m_keyRepeat is false
+
+        bool processThisEvent = true;
+
+        // Detect repeated key events
+        while (event.type == KeyRelease)
+        {
+            XEvent nextEvent;
+            if (XCheckIfEvent(m_display, &nextEvent, checkEvent, reinterpret_cast<XPointer>(m_window)))
+            {
+                if ((nextEvent.type == KeyPress) && (nextEvent.xkey.keycode == event.xkey.keycode) &&
+                    (event.xkey.time <= nextEvent.xkey.time) && (nextEvent.xkey.time <= event.xkey.time + 1))
+                {
+                    // This sequence of events comes from maintaining a key down
+                    if (m_keyRepeat)
+                    {
+                        // Ignore the KeyRelease event and process the KeyPress event
+                        event = nextEvent;
+                        break;
+                    }
+                    else
+                    {
+                        // Ignore both events
+                        processThisEvent = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    // This sequence of events does not come from maintaining a key down,
+                    // so process the KeyRelease event normally,
+                    processEvent(event);
+                    // but loop because the next event can be the first half
+                    // of a sequence coming from maintaining a key down.
+                    event = nextEvent;
+                }
+            }
+            else
+            {
+                // No event after this KeyRelease event so assume it can be processed.
+                break;
+            }
+        }
+
+        if (processThisEvent)
+        {
+            processEvent(event);
+        }
     }
 
     // Process clipboard window events
@@ -1731,33 +1763,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 {
     using namespace WindowsImplX11Impl;
 
-    // This function implements a workaround to properly discard
-    // repeated key events when necessary. The problem is that the
-    // system's key events policy doesn't match SFML's one: X server will generate
-    // both repeated KeyPress and KeyRelease events when maintaining a key down, while
-    // SFML only wants repeated KeyPress events. Thus, we have to:
-    // - Discard duplicated KeyRelease events when KeyRepeatEnabled is true
-    // - Discard both duplicated KeyPress and KeyRelease events when KeyRepeatEnabled is false
-
-    // Detect repeated key events
-    if (windowEvent.type == KeyRelease)
-    {
-        // Find the next KeyPress event with matching keycode and time
-        auto it = std::find_if(m_events.begin(),
-                               m_events.end(),
-                               KeyRepeatFinder(windowEvent.xkey.keycode, windowEvent.xkey.time));
-
-        if (it != m_events.end())
-        {
-            // If we don't want repeated events, remove the next KeyPress from the queue
-            if (!m_keyRepeat)
-                m_events.erase(it);
-
-            // This KeyRelease is a repeated event and we don't want it
-            return false;
-        }
-    }
-
     // Convert the X11 event to a sf::Event
     switch (windowEvent.type)
     {
@@ -1913,10 +1918,30 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             event.key.control = windowEvent.xkey.state & ControlMask;
             event.key.shift   = windowEvent.xkey.state & ShiftMask;
             event.key.system  = windowEvent.xkey.state & Mod4Mask;
-            pushEvent(event);
 
-            // Generate a TextEntered event
-            if (!XFilterEvent(&windowEvent, None))
+            const bool filtered = XFilterEvent(&windowEvent, None);
+
+            // Generate a KeyPressed event if needed
+            if (filtered)
+            {
+                pushEvent(event);
+                isKeyFiltered.set(windowEvent.xkey.keycode);
+            }
+            else
+            {
+                // Push a KeyPressed event if the key has never been filtered before
+                // (a KeyPressed event would have already been pushed if it had been filtered).
+                //
+                // Some dummy IMs (like the built-in one you get by setting XMODIFIERS=@im=none)
+                // never filter events away, and we have to take care of that.
+                //
+                // In addition, ignore text-only KeyPress events generated by IMs (with keycode set to 0).
+                if (!isKeyFiltered.test(windowEvent.xkey.keycode) && windowEvent.xkey.keycode != 0)
+                    pushEvent(event);
+            }
+
+            // Generate TextEntered events if needed
+            if (!filtered)
             {
 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
