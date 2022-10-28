@@ -79,7 +79,7 @@ int getTouchID(DWORD id)
     }
     for (int i = 0; i < maxTouchPoints; ++i)
     {
-        if (touchIDs[i] == -1)
+        if (touchIDs[i] == static_cast<DWORD>(-1))
         {
             touchIDs[i] = id;
             return i;
