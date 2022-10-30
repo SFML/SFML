@@ -41,7 +41,7 @@ std::unique_ptr<SensorManager> SensorManager::singleInstance = nullptr;
 SensorManager& SensorManager::getInstance()
 {
     if (!singleInstance)
-        singleInstance = std::make_unique<SensorManager>();
+        singleInstance = std::unique_ptr<SensorManager>(new SensorManager());
     return *singleInstance;
 }
 
