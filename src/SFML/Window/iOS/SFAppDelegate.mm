@@ -38,7 +38,7 @@ SFAppDelegate* delegateInstance = nullptr;
 
 // Current touches positions
 std::vector<sf::Vector2i> touchPositions;
-}
+} // namespace
 
 
 @interface SFAppDelegate ()

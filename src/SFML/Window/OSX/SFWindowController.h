@@ -38,7 +38,7 @@ namespace priv
 {
 class WindowImplCocoa;
 }
-}
+} // namespace sf
 
 @class SFOpenGLView;
 
