@@ -145,8 +145,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Item m_sensors[Sensor::Count]; //!< Sensors information and state
-    static std::unique_ptr<SensorManager> singleInstance; //!< The single instance of the manager
+    Item                                  m_sensors[Sensor::Count]; //!< Sensors information and state
+    static std::unique_ptr<SensorManager> singleInstance;           //!< The single instance of the manager
 };
 
 } // namespace priv
