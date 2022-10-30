@@ -31,6 +31,8 @@
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 
+#include <memory>
+
 
 namespace sf
 {
