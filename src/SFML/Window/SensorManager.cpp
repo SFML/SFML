@@ -35,13 +35,13 @@ namespace sf
 {
 namespace priv
 {
-std::unique_ptr<SensorManager> SensorManager::singleInstance = nullptr;
+SensorManager* SensorManager::singleInstance = nullptr;
 
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
 {
-    if (!singleInstance)
-        singleInstance = std::unique_ptr<SensorManager>(new SensorManager());
+    if (singleInstance == nullptr)
+        singleInstance = new SensorManager();
     return *singleInstance;
 }
 
@@ -49,7 +49,8 @@ SensorManager& SensorManager::getInstance()
 ////////////////////////////////////////////////////////////
 void SensorManager::destroyInstance()
 {
-    singleInstance.reset();
+    delete singleInstance;
+    singleInstance = nullptr;
 }
 
 
