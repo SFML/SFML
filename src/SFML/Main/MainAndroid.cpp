@@ -125,7 +125,7 @@ static void terminateMain(ActivityStates* states)
 
     // The main thread has finished, we must explicitly ask the activity to finish
     states->mainOver = true;
-    Sensor::cleanUp();
+    SensorManager::destroyInstance();
     ANativeActivity_finish(states->activity);
 }
 

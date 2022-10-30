@@ -50,10 +50,4 @@ Vector3f Sensor::getValue(Type sensor)
     return priv::SensorManager::getInstance().getValue(sensor);
 }
 
-////////////////////////////////////////////////////////////
-void Sensor::cleanUp()
-{
-    priv::SensorManager::destroyInstance();
-}
-
 } // namespace sf
