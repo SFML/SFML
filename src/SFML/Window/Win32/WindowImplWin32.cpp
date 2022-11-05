@@ -92,8 +92,12 @@ namespace
             {
                 // We only check for E_INVALIDARG because we would get
                 // E_ACCESSDENIED if the DPI was already set previously
-                // and S_OK means the call was successful
-                if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
+                // and S_OK means the call was successful.
+                // We intentionally don't use Per Monitor V2 which can be
+                // enabled with SetProcessDpiAwarenessContext, because that
+                // would scale the title bar and thus change window size
+                // by default when moving the window between monitors.
+                if (SetProcessDpiAwarenessFunc(ProcessPerMonitorDpiAware) == E_INVALIDARG)
                 {
                     sf::err() << "Failed to set process DPI awareness" << std::endl;
                 }
