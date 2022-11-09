@@ -58,9 +58,7 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
     release();
 
     // Create the bitmap that will hold our color data
-    BITMAPV5HEADER bitmapHeader;
-    std::memset(&bitmapHeader, 0, sizeof(BITMAPV5HEADER));
-
+    auto bitmapHeader           = BITMAPV5HEADER();
     bitmapHeader.bV5Size        = sizeof(BITMAPV5HEADER);
     bitmapHeader.bV5Width       = static_cast<LONG>(size.x);
     bitmapHeader.bV5Height      = -static_cast<LONG>(size.y); // Negative indicates origin is in upper-left corner
@@ -108,9 +106,7 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
     }
 
     // Create the structure that describes our cursor
-    ICONINFO cursorInfo;
-    std::memset(&cursorInfo, 0, sizeof(ICONINFO));
-
+    auto cursorInfo     = ICONINFO();
     cursorInfo.fIcon    = FALSE; // This is a cursor and not an icon
     cursorInfo.xHotspot = hotspot.x;
     cursorInfo.yHotspot = hotspot.y;
