@@ -37,8 +37,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 sockaddr_in SocketImpl::createAddress(std::uint32_t address, unsigned short port)
 {
-    sockaddr_in addr;
-    std::memset(&addr, 0, sizeof(addr));
+    auto addr            = sockaddr_in();
     addr.sin_addr.s_addr = htonl(address);
     addr.sin_family      = AF_INET;
     addr.sin_port        = htons(port);
