@@ -30,15 +30,6 @@
 #include <SFML/System/Err.hpp>
 #include <AppKit/AppKit.h>
 
-namespace
-{
-    void keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
-    {
-        sf::priv::HIDInputManager* manager = static_cast<sf::priv::HIDInputManager*>(observer);
-        manager->buildMappings();
-    }
-}
-
 static const sf::Uint8 UnknownVirtualCode = 0xff;
 
 namespace sf
@@ -410,6 +401,14 @@ void HIDInputManager::buildMappings()
     }
 
     CFRelease(tis);
+}
+
+
+////////////////////////////////////////////////////////////
+void HIDInputManager::keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    HIDInputManager* manager = static_cast<HIDInputManager*>(observer);
+    manager->buildMappings();
 }
 
 
