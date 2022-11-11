@@ -1372,16 +1372,16 @@ Keyboard::Key HIDInputManager::localizedKeyFallback(Keyboard::Scancode code)
         case sf::Keyboard::Scan::NumpadMinus:    return sf::Keyboard::Subtract;
         case sf::Keyboard::Scan::NumpadPlus:     return sf::Keyboard::Add;
 
-        case sf::Keyboard::Scan::Numpad0:  return sf::Keyboard::Numpad1;
-        case sf::Keyboard::Scan::Numpad1:  return sf::Keyboard::Numpad2;
-        case sf::Keyboard::Scan::Numpad2:  return sf::Keyboard::Numpad3;
-        case sf::Keyboard::Scan::Numpad3:  return sf::Keyboard::Numpad4;
-        case sf::Keyboard::Scan::Numpad4:  return sf::Keyboard::Numpad5;
-        case sf::Keyboard::Scan::Numpad5:  return sf::Keyboard::Numpad6;
-        case sf::Keyboard::Scan::Numpad6:  return sf::Keyboard::Numpad7;
-        case sf::Keyboard::Scan::Numpad7:  return sf::Keyboard::Numpad8;
-        case sf::Keyboard::Scan::Numpad8:  return sf::Keyboard::Numpad9;
-        case sf::Keyboard::Scan::Numpad9:  return sf::Keyboard::Numpad0;
+        case sf::Keyboard::Scan::Numpad1:  return sf::Keyboard::Numpad1;
+        case sf::Keyboard::Scan::Numpad2:  return sf::Keyboard::Numpad2;
+        case sf::Keyboard::Scan::Numpad3:  return sf::Keyboard::Numpad3;
+        case sf::Keyboard::Scan::Numpad4:  return sf::Keyboard::Numpad4;
+        case sf::Keyboard::Scan::Numpad5:  return sf::Keyboard::Numpad5;
+        case sf::Keyboard::Scan::Numpad6:  return sf::Keyboard::Numpad6;
+        case sf::Keyboard::Scan::Numpad7:  return sf::Keyboard::Numpad7;
+        case sf::Keyboard::Scan::Numpad8:  return sf::Keyboard::Numpad8;
+        case sf::Keyboard::Scan::Numpad9:  return sf::Keyboard::Numpad9;
+        case sf::Keyboard::Scan::Numpad0:  return sf::Keyboard::Numpad0;
 
         case sf::Keyboard::Scan::LControl:  return sf::Keyboard::LControl;
         case sf::Keyboard::Scan::LShift:    return sf::Keyboard::LShift;
