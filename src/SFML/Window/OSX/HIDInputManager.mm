@@ -173,21 +173,21 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
 
         case NSMenuFunctionKey: return sf::Keyboard::Menu;
 
-        case 0x5b:   return sf::Keyboard::LBracket;
-        case 0x5d:   return sf::Keyboard::RBracket;
-        case 0x3b:   return sf::Keyboard::Semicolon;
-        case 0x2c:   return sf::Keyboard::Comma;
-        case 0x2e:   return sf::Keyboard::Period;
-        case 0x27:   return sf::Keyboard::Apostrophe;
-        case 0x2044: return sf::Keyboard::Slash; // 0x2f is Divide
-        case 0x5c:   return sf::Keyboard::Backslash;
-        case 0x7e:   return sf::Keyboard::Tilde;
-        case 0x3d:   return sf::Keyboard::Equal;
-        case 0x2013: return sf::Keyboard::Hyphen; // 0x2d is Subtract
-        case 0x20:   return sf::Keyboard::Space;
-        case 0x0d:   return sf::Keyboard::Enter;
-        case 0x7f:   return sf::Keyboard::Backspace; // NOTE backspace & delete are swapped on Mac.
-        case 0x09:   return sf::Keyboard::Tab;
+        case 0x5b: return sf::Keyboard::LBracket;
+        case 0x5d: return sf::Keyboard::RBracket;
+        case 0x3b: return sf::Keyboard::Semicolon;
+        case 0x2c: return sf::Keyboard::Comma;
+        case 0x2e: return sf::Keyboard::Period;
+        case 0x27: return sf::Keyboard::Apostrophe;
+        case 0x2f: return sf::Keyboard::Slash;
+        case 0x5c: return sf::Keyboard::Backslash;
+        case 0x7e: return sf::Keyboard::Tilde;
+        case 0x3d: return sf::Keyboard::Equal;
+        case 0x2d: return sf::Keyboard::Hyphen;
+        case 0x20: return sf::Keyboard::Space;
+        case 0x0d: return sf::Keyboard::Enter;
+        case 0x08: return sf::Keyboard::Backspace;
+        case 0x09: return sf::Keyboard::Tab;
 
         case NSPageUpFunctionKey:   return sf::Keyboard::PageUp;
         case NSPageDownFunctionKey: return sf::Keyboard::PageDown;
@@ -195,11 +195,12 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
         case NSHomeFunctionKey:     return sf::Keyboard::Home;
         case NSInsertFunctionKey:   return sf::Keyboard::Insert;
         case NSDeleteFunctionKey:   return sf::Keyboard::Delete;
+        case 0x7f:                  return sf::Keyboard::Delete;
 
         case 0x2b: return sf::Keyboard::Add;
-        case 0x2d: return sf::Keyboard::Subtract;
+        // case 0x: return sf::Keyboard::Subtract; // collision with sf::Keyboard::Hyphen
         case 0x2a: return sf::Keyboard::Multiply;
-        case 0x2f: return sf::Keyboard::Divide;
+        // case 0x: return sf::Keyboard::Divide; // collision with sf::Keyboard::Slash
 
         case NSLeftArrowFunctionKey:  return sf::Keyboard::Left;
         case NSRightArrowFunctionKey: return sf::Keyboard::Right;
@@ -306,14 +307,14 @@ UniChar HIDInputManager::toUnicode(Keyboard::Key key)
         case sf::Keyboard::Comma:      return 0x2c;
         case sf::Keyboard::Period:     return 0x2e;
         case sf::Keyboard::Apostrophe: return 0x27;
-        case sf::Keyboard::Slash:      return 0x2044; // 0x2f is Divide
+        case sf::Keyboard::Slash:      return 0x2f;
         case sf::Keyboard::Backslash:  return 0x5c;
         case sf::Keyboard::Tilde:      return 0x7e;
         case sf::Keyboard::Equal:      return 0x3d;
-        case sf::Keyboard::Hyphen:     return 0x2013; // 0x2d is Subtract
+        case sf::Keyboard::Hyphen:     return 0x2d;
         case sf::Keyboard::Space:      return 0x20;
         case sf::Keyboard::Enter:      return 0x0d;
-        case sf::Keyboard::Backspace:  return 0x7f; // NOTE backspace & delete are swapped on Mac.
+        case sf::Keyboard::Backspace:  return 0x08;
         case sf::Keyboard::Tab:        return 0x09;
 
         case sf::Keyboard::PageUp:   return NSPageUpFunctionKey;
@@ -820,29 +821,62 @@ void HIDInputManager::buildMappings()
         Keyboard::Scancode scan = static_cast<Keyboard::Scancode>(i);
         UInt8 virtualCode = scanToVirtualCode(scan);
 
-        if (virtualCode == UnknownVirtualCode) continue;
-
-        // Unicode string length is usually less or equal to 4
-        UniCharCount const MAX_LENGTH = 4;
-        UniChar string[MAX_LENGTH];
-        UniCharCount length = 0;
-        UInt32 deadKeyState = 0; // unused value
-        UInt32 const modifiers = 0x100; // no modifiers
-
-        // Use current layout for translation
-        OSStatus error = UCKeyTranslate(
-            layout, virtualCode, kUCKeyActionDown, modifiers, LMGetKbdType(),
-            kUCKeyTranslateNoDeadKeysBit, &deadKeyState, MAX_LENGTH, &length, string
-        );
-
-        if (error != noErr)
-        {
-            sf::err() << "Cannot translate the virtual key code, error: " << error << "\n";
+        if (virtualCode == UnknownVirtualCode)
             continue;
+
+        // Translating virtual code to string is not injective. For example, virtual codes corresponding to
+        // Scan::Num0 and Scan::Numpad0 may be both translated to the same string "0". We want to map those to
+        // different Keyboard::Key nonetheless. This is why we do not translate some layout-independent keys
+        // to string and use fallback mapping instead.
+        bool translateToString = true;
+        switch (scan)
+        {
+            case Keyboard::Scan::NumpadDivide:
+            case Keyboard::Scan::NumpadMultiply:
+            case Keyboard::Scan::NumpadMinus:
+            case Keyboard::Scan::NumpadPlus:
+            case Keyboard::Scan::Numpad1:
+            case Keyboard::Scan::Numpad2:
+            case Keyboard::Scan::Numpad3:
+            case Keyboard::Scan::Numpad4:
+            case Keyboard::Scan::Numpad5:
+            case Keyboard::Scan::Numpad6:
+            case Keyboard::Scan::Numpad7:
+            case Keyboard::Scan::Numpad8:
+            case Keyboard::Scan::Numpad9:
+            case Keyboard::Scan::Numpad0:
+                translateToString = false;
+                break;
+            default:
+                translateToString = true;
+                break;
         }
 
-        Keyboard::Key code = (length > 0) ? localizedKey(string[0]) : Keyboard::Unknown;
-        
+        Keyboard::Key code = Keyboard::Unknown;
+        if (translateToString)
+        {
+            // Unicode string length is usually less or equal to 4
+            UniCharCount const MAX_LENGTH = 4;
+            UniChar string[MAX_LENGTH];
+            UniCharCount length = 0;
+            UInt32 deadKeyState = 0; // unused value
+            UInt32 const modifiers = 0x100; // no modifiers
+
+            // Use current layout for translation
+            OSStatus error = UCKeyTranslate(
+                layout, virtualCode, kUCKeyActionDown, modifiers, LMGetKbdType(),
+                kUCKeyTranslateNoDeadKeysBit, &deadKeyState, MAX_LENGTH, &length, string
+            );
+
+            if (error != noErr)
+            {
+                sf::err() << "Cannot translate the virtual key code, error: " << error << "\n";
+                continue;
+            }
+
+            if (length > 0)
+                code = localizedKey(string[0]);
+        }
         if (code == Keyboard::Unknown)
             code = localizedKeyFallback(scan);
         if (code == Keyboard::Unknown)
