@@ -175,18 +175,18 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
 
         case 0x5b:   return sf::Keyboard::LBracket;
         case 0x5d:   return sf::Keyboard::RBracket;
-        case 0x3b:   return sf::Keyboard::SemiColon;
+        case 0x3b:   return sf::Keyboard::Semicolon;
         case 0x2c:   return sf::Keyboard::Comma;
         case 0x2e:   return sf::Keyboard::Period;
-        case 0x27:   return sf::Keyboard::Quote;
+        case 0x27:   return sf::Keyboard::Apostrophe;
         case 0x2044: return sf::Keyboard::Slash; // 0x2f is Divide
-        case 0x5c:   return sf::Keyboard::BackSlash;
+        case 0x5c:   return sf::Keyboard::Backslash;
         case 0x7e:   return sf::Keyboard::Tilde;
         case 0x3d:   return sf::Keyboard::Equal;
-        case 0x2013: return sf::Keyboard::Dash; // 0x2d is Subtract
+        case 0x2013: return sf::Keyboard::Hyphen; // 0x2d is Subtract
         case 0x20:   return sf::Keyboard::Space;
-        case 0x0d:   return sf::Keyboard::Return;
-        case 0x7f:   return sf::Keyboard::BackSpace; // NOTE backspace & delete are swapped on Mac.
+        case 0x0d:   return sf::Keyboard::Enter;
+        case 0x7f:   return sf::Keyboard::Backspace; // NOTE backspace & delete are swapped on Mac.
         case 0x09:   return sf::Keyboard::Tab;
 
         case NSPageUpFunctionKey:   return sf::Keyboard::PageUp;
@@ -300,21 +300,21 @@ UniChar HIDInputManager::toUnicode(Keyboard::Key key)
 
         case sf::Keyboard::Menu:  return NSMenuFunctionKey;
 
-        case sf::Keyboard::LBracket:  return 0x5b;
-        case sf::Keyboard::RBracket:  return 0x5d;
-        case sf::Keyboard::SemiColon: return 0x3b;
-        case sf::Keyboard::Comma:     return 0x2c;
-        case sf::Keyboard::Period:    return 0x2e;
-        case sf::Keyboard::Quote:     return 0x27;
-        case sf::Keyboard::Slash:     return 0x2044; // 0x2f is Divide
-        case sf::Keyboard::BackSlash: return 0x5c;
-        case sf::Keyboard::Tilde:     return 0x7e;
-        case sf::Keyboard::Equal:     return 0x3d;
-        case sf::Keyboard::Dash:      return 0x2013; // 0x2d is Subtract
-        case sf::Keyboard::Space:     return 0x20;
-        case sf::Keyboard::Return:    return 0x0d;
-        case sf::Keyboard::BackSpace: return 0x7f; // NOTE backspace & delete are swapped on Mac.
-        case sf::Keyboard::Tab:       return 0x09;
+        case sf::Keyboard::LBracket:   return 0x5b;
+        case sf::Keyboard::RBracket:   return 0x5d;
+        case sf::Keyboard::Semicolon:  return 0x3b;
+        case sf::Keyboard::Comma:      return 0x2c;
+        case sf::Keyboard::Period:     return 0x2e;
+        case sf::Keyboard::Apostrophe: return 0x27;
+        case sf::Keyboard::Slash:      return 0x2044; // 0x2f is Divide
+        case sf::Keyboard::Backslash:  return 0x5c;
+        case sf::Keyboard::Tilde:      return 0x7e;
+        case sf::Keyboard::Equal:      return 0x3d;
+        case sf::Keyboard::Hyphen:     return 0x2013; // 0x2d is Subtract
+        case sf::Keyboard::Space:      return 0x20;
+        case sf::Keyboard::Enter:      return 0x0d;
+        case sf::Keyboard::Backspace:  return 0x7f; // NOTE backspace & delete are swapped on Mac.
+        case sf::Keyboard::Tab:        return 0x09;
 
         case sf::Keyboard::PageUp:   return NSPageUpFunctionKey;
         case sf::Keyboard::PageDown: return NSPageDownFunctionKey;
@@ -1298,9 +1298,9 @@ Keyboard::Key HIDInputManager::localizedKeyFallback(Keyboard::Scancode code)
 {
     switch (code)
     {
-        case sf::Keyboard::Scan::Enter:      return sf::Keyboard::Return;
+        case sf::Keyboard::Scan::Enter:      return sf::Keyboard::Enter;
         case sf::Keyboard::Scan::Escape:     return sf::Keyboard::Escape;
-        case sf::Keyboard::Scan::Backspace:  return sf::Keyboard::BackSpace;
+        case sf::Keyboard::Scan::Backspace:  return sf::Keyboard::Backspace;
         case sf::Keyboard::Scan::Tab:        return sf::Keyboard::Tab;
         case sf::Keyboard::Scan::Space:      return sf::Keyboard::Space;
 
