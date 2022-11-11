@@ -1372,6 +1372,8 @@ Keyboard::Key HIDInputManager::localizedKeyFallback(Keyboard::Scancode code)
         case sf::Keyboard::Scan::NumpadMinus:    return sf::Keyboard::Subtract;
         case sf::Keyboard::Scan::NumpadPlus:     return sf::Keyboard::Add;
 
+        case sf::Keyboard::Scan::NumpadEnter: return sf::Keyboard::Enter;
+
         case sf::Keyboard::Scan::Numpad1:  return sf::Keyboard::Numpad1;
         case sf::Keyboard::Scan::Numpad2:  return sf::Keyboard::Numpad2;
         case sf::Keyboard::Scan::Numpad3:  return sf::Keyboard::Numpad3;
