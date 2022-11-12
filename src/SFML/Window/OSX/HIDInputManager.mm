@@ -734,7 +734,7 @@ void HIDInputManager::initializeKeyboard()
 {
     ////////////////////////////////////////////////////////////
     // The purpose of this function is to initialize m_keys so we can get
-    // the associate IOHIDElementRef with a Keyboard::Scancode
+    // the associate IOHIDElementRef with a sf::Keyboard::Scancode
     // in approximately constant time.
 
     // Get only keyboards
