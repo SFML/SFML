@@ -456,7 +456,7 @@ Keyboard::Scancode HIDInputManager::nonLocalizedKey(UniChar virtualKeycode)
         case 0x4F: return Keyboard::Scan::F18;
         case 0x50: return Keyboard::Scan::F19;
         case 0x5A: return Keyboard::Scan::F20;
-        
+
         /* TODO Those are missing:
          * case 0x: return Keyboard::Scan::F21;
          * case 0x: return Keyboard::Scan::F22;
@@ -938,7 +938,7 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
         CFRelease(devices);
         return NULL;
     }
-    
+
     return devices;
 }
 
