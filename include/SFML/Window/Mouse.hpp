@@ -72,6 +72,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check if a mouse button is pressed
     ///
+    /// \warning Checking the state of buttons Mouse::XButton1 and
+    /// Mouse::XButton2 is not supported on Linux with X11.
+    ///
     /// \param button Button to check
     ///
     /// \return True if the button is pressed, false otherwise

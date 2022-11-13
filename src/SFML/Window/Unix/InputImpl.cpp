@@ -202,6 +202,9 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     // Close the connection with the X server
     CloseDisplay(display);
 
+    // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
+    // There is no mask for buttons 8 and 9, so checking the state of buttons
+    // Mouse::XButton1 and Mouse::XButton2 is not supported.
     switch (button)
     {
         case Mouse::Left:     return buttons & Button1Mask;
