@@ -97,10 +97,8 @@ bool SoundFileReaderMp3::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderMp3::SoundFileReaderMp3() : m_numSamples(0), m_position(0)
+SoundFileReaderMp3::SoundFileReaderMp3() : m_io(), m_decoder(), m_numSamples(0), m_position(0)
 {
-    std::memset(&m_io, 0, sizeof(m_io));
-    std::memset(&m_decoder, 0, sizeof(m_decoder));
     m_io.read = readCallback;
     m_io.seek = seekCallback;
 }
