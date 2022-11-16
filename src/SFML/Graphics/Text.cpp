@@ -381,6 +381,70 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
 
 ////////////////////////////////////////////////////////////
+bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
+{
+    // Make sure that we have a valid font
+    if (!m_font)
+    {
+        oob = m_string.getSize();
+
+        return true;
+    }
+
+    // Precompute the variables needed by the algorithm
+    bool  isBold          = m_style & Bold;
+    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    whitespaceWidth += letterSpacing;
+    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+
+    // Compute the position
+    Vector2f      position;
+    std::uint32_t prevChar = 0;
+    for (std::size_t i = 0; i < m_string.getSize(); ++i)
+    {
+        std::uint32_t curChar = m_string[i];
+
+        // Apply the kerning offset
+        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
+        prevChar = curChar;
+
+        // Handle special characters
+        switch (curChar)
+        {
+            case U' ':
+                position.x += whitespaceWidth;
+                continue;
+            case U'\t':
+                position.x += whitespaceWidth * 4;
+                continue;
+            case U'\n':
+                position.y += lineSpacing;
+                position.x = 0;
+                continue;
+        }
+
+        // For regular characters, add the advance offset of the glyph
+        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
+
+        // Test character position against bounds
+        if (!bounds.contains(getTransform().transformPoint(position)))
+        {
+            // Set index to first out-of-bounds character and return failure
+            oob = i;
+
+            return false;
+        }
+    }
+
+    // Set first out-of-bounds character to invalid and return success
+    oob = m_string.getSize();
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
 FloatRect Text::getLocalBounds() const
 {
     ensureGeometryUpdate();

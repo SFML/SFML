@@ -379,6 +379,26 @@ public:
     Vector2f findCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Calculates if text will fit within a given AABB
+    ///
+    /// Iterates through every character in the string and tests
+    /// that they will fit within \b bounds. Each character is
+    /// fully transformed for this test, so translation,
+    /// rotation, scale and origin are considered.
+    /// When any character exceeds the bounds, \a oob will be
+    /// valid. If every character is contained, \a oob will be
+    /// set to the drawn character count.
+    ///
+    /// \param bounds Bounding box that all drawn characters will be tested against
+    ///
+    /// \param oob Index of the first out-of-bounds character
+    ///
+    /// \return true if every drawn character will appear within \a bounds
+    ///
+    ////////////////////////////////////////////////////////////
+    bool fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
     ///
     /// The returned rectangle is in local coordinates, which means
