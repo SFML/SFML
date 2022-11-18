@@ -337,11 +337,11 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         index = m_string.getSize();
 
     // Precompute the variables needed by the algorithm
-    bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    const bool  isBold          = m_style & Bold;
+    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
     whitespaceWidth += letterSpacing;
-    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
     Vector2f      position;
@@ -392,11 +392,11 @@ bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
     }
 
     // Precompute the variables needed by the algorithm
-    bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    const bool  isBold          = m_style & Bold;
+    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
     whitespaceWidth += letterSpacing;
-    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
     Vector2f      position;
