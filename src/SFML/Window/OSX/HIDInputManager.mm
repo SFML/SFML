@@ -31,6 +31,7 @@
 #include <AppKit/AppKit.h>
 
 static const sf::Uint8 UnknownVirtualCode = 0xff;
+static const bool IsIsoKeyboard = (KBGetLayoutType(LMGetKbdType()) == kKeyboardISO);
 
 namespace sf
 {
@@ -430,7 +431,8 @@ Keyboard::Scancode HIDInputManager::nonLocalizedKey(UniChar virtualKeycode)
         case 0x1b: return Keyboard::Scan::Hyphen;
         case 0x29: return Keyboard::Scan::Semicolon;
         case 0x27: return Keyboard::Scan::Apostrophe;
-        case 0x32: return Keyboard::Scan::Grave;
+        case 0x32: return IsIsoKeyboard ? Keyboard::Scan::NonUsBackslash : Keyboard::Scan::Grave;
+        case 0x0a: return Keyboard::Scan::Grave;
         case 0x2b: return Keyboard::Scan::Comma;
         case 0x2f: return Keyboard::Scan::Period;
         case 0x2c: return Keyboard::Scan::Slash;
@@ -505,7 +507,6 @@ Keyboard::Scancode HIDInputManager::nonLocalizedKey(UniChar virtualKeycode)
         case 0x52: return Keyboard::Scan::Numpad0;
 
         /* TODO Those are missing:
-         * case 0x: return Keyboard::Scan::NonUsBackslash;
          * case 0x: return Keyboard::Scan::Application;
          * case 0x: return Keyboard::Scan::Execute;
          * case 0x: return Keyboard::Scan::Help;
@@ -1032,7 +1033,7 @@ Keyboard::Scancode HIDInputManager::usageToScancode(UInt32 usage)
         case kHIDUsage_KeyboardNonUSPound:          return Keyboard::Scan::Backslash;
         case kHIDUsage_KeyboardSemicolon:           return Keyboard::Scan::Semicolon;
         case kHIDUsage_KeyboardQuote:               return Keyboard::Scan::Apostrophe;
-        case kHIDUsage_KeyboardGraveAccentAndTilde: return Keyboard::Scan::Grave;
+        case kHIDUsage_KeyboardGraveAccentAndTilde: return IsIsoKeyboard ? Keyboard::Scan::NonUsBackslash : Keyboard::Scan::Grave;
         case kHIDUsage_KeyboardComma:               return Keyboard::Scan::Comma;
         case kHIDUsage_KeyboardPeriod:              return Keyboard::Scan::Period;
         case kHIDUsage_KeyboardSlash:               return Keyboard::Scan::Slash;
@@ -1086,7 +1087,7 @@ Keyboard::Scancode HIDInputManager::usageToScancode(UInt32 usage)
         case kHIDUsage_Keypad9: return Keyboard::Scan::Numpad9;
         case kHIDUsage_Keypad0: return Keyboard::Scan::Numpad0;
 
-        case kHIDUsage_KeyboardNonUSBackslash: return Keyboard::Scan::NonUsBackslash;
+        case kHIDUsage_KeyboardNonUSBackslash: return IsIsoKeyboard ? Keyboard::Scan::Grave : Keyboard::Scan::NonUsBackslash;
         case kHIDUsage_KeyboardApplication:    return Keyboard::Scan::Application;
         case kHIDUsage_KeyboardPower:          return Keyboard::Scan::Unknown;
 
@@ -1233,7 +1234,7 @@ UInt8 HIDInputManager::scanToVirtualCode(Keyboard::Scancode code)
         case Keyboard::Scan::Hyphen:      return 0x1b;
         case Keyboard::Scan::Semicolon:   return 0x29;
         case Keyboard::Scan::Apostrophe:  return 0x27;
-        case Keyboard::Scan::Grave:       return 0x32;
+        case Keyboard::Scan::Grave:       return IsIsoKeyboard ? 0x0a : 0x32;
         case Keyboard::Scan::Comma:       return 0x2b;
         case Keyboard::Scan::Period:      return 0x2f;
         case Keyboard::Scan::Slash:       return 0x2c;
@@ -1293,8 +1294,9 @@ UInt8 HIDInputManager::scanToVirtualCode(Keyboard::Scancode code)
         case Keyboard::Scan::Numpad9: return 0x5c;
         case Keyboard::Scan::Numpad0: return 0x52;
 
+        case Keyboard::Scan::NonUsBackslash: return 0x32;
+
         /* TODO Those are missing:
-         * case Keyboard::Scan::NonUsBackslash: return 0;
          * case Keyboard::Scan::Application: return 0;
          * case Keyboard::Scan::Execute:     return 0;
          * case Keyboard::Scan::Help:        return 0;
