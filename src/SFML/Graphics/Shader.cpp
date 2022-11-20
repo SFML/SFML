@@ -40,8 +40,8 @@
 #include <iomanip>
 #include <mutex>
 #include <ostream>
+#include <utility>
 #include <vector>
-
 
 #ifndef SFML_OPENGL_ES
 
@@ -250,6 +250,38 @@ Shader::~Shader()
         glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
 }
 
+////////////////////////////////////////////////////////////
+Shader::Shader(Shader&& source) noexcept :
+m_shaderProgram(std::exchange(source.m_shaderProgram, 0U)),
+m_currentTexture(std::exchange(source.m_currentTexture, -1)),
+m_textures(std::move(source.m_textures)),
+m_uniforms(std::move(source.m_uniforms))
+{
+}
+
+////////////////////////////////////////////////////////////
+Shader& Shader::operator=(Shader&& right) noexcept
+{
+    // Make sure we aren't moving ourselves.
+    if (&right == this)
+    {
+        return *this;
+    }
+    // Explicit scope for RAII
+    {
+        // Destroy effect program
+        TransientContextLock lock;
+        if (m_shaderProgram)
+            glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
+    }
+
+    // Move the contents of right.
+    m_shaderProgram  = std::exchange(right.m_shaderProgram, 0U);
+    m_currentTexture = std::exchange(right.m_currentTexture, -1);
+    m_textures       = std::move(right.m_textures);
+    m_uniforms       = std::move(right.m_uniforms);
+    return *this;
+}
 
 ////////////////////////////////////////////////////////////
 bool Shader::loadFromFile(const std::filesystem::path& filename, Type type)
