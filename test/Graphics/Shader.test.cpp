@@ -159,8 +159,8 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Shader>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Shader>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Shader>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Shader>);
+        STATIC_CHECK(std::is_move_constructible_v<sf::Shader>);
+        STATIC_CHECK(std::is_move_assignable_v<sf::Shader>);
     }
 
     SECTION("Construction")
