@@ -18,7 +18,7 @@
 /// int main()
 /// {
 ///     // Create the main window
-///     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+///     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 ///     // Load a sprite to display
 ///     sf::Texture texture;
