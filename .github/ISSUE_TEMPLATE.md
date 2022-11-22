@@ -27,7 +27,7 @@ Tell us how to reproduce this issue. Please provide a [minimal, complete and ver
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Minimal, complete and verifiable example");
+    sf::RenderWindow window(sf::VideoMode({1280, 720}), "Minimal, complete and verifiable example");
     window.setFramerateLimit(60);
 
     while (window.isOpen())

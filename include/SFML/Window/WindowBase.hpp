@@ -508,7 +508,7 @@ private:
 /// Usage example:
 /// \code
 /// // Declare and create a new window
-/// sf::WindowBase window(sf::VideoMode(800, 600), "SFML window");
+/// sf::WindowBase window(sf::VideoMode({800, 600}), "SFML window");
 ///
 /// // The main loop - ends as soon as the window is closed
 /// while (window.isOpen())
