@@ -580,7 +580,6 @@ public:
     static unsigned int getMaximumSize();
 
 private:
-
     friend class Font;
     friend class RenderTexture;
     friend class RenderTarget;

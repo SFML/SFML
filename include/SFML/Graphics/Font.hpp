@@ -34,11 +34,11 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <list>
 
 
 #ifdef SFML_SYSTEM_ANDROID
@@ -430,7 +430,7 @@ private:
     std::shared_ptr<FontHandles> m_fontHandles; //!< Shared information about the internal font instance
     bool                         m_isSmooth;    //!< Status of the smooth filter
     Info                         m_info;        //!< Information about the font
-    mutable PageListTable            m_pageLists;       //!< Table containing the glyphs pages by character size
+    mutable PageListTable        m_pageLists;   //!< Table containing the glyphs pages by character size
     mutable std::vector<std::uint8_t> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
 #ifdef SFML_SYSTEM_ANDROID
     std::unique_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)

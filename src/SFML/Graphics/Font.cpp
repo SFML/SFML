@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
@@ -365,8 +365,8 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
     for (PageList::const_iterator it = pages.begin(); it != pages.end(); ++it)
     {
         // Search the glyph into the cache
-        const GlyphTable& glyphs = it->glyphs;
-        GlyphTable::const_iterator it2 = glyphs.find(key);
+        const GlyphTable&          glyphs = it->glyphs;
+        GlyphTable::const_iterator it2    = glyphs.find(key);
         if (it2 != glyphs.end())
         {
             // Found: just return it
@@ -683,7 +683,8 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
             if (glyph.textureRect.width == 0)
             {
                 // Oops, we've reached the maximum texture size even for a single glyph...
-                err() << "Failed to add a new character to the font: the maximum texture size has been reached" << std::endl;
+                err() << "Failed to add a new character to the font: the maximum texture size has been reached"
+                      << std::endl;
                 glyph.textureRect = IntRect({0, 0}, {2, 2});
             }
         }

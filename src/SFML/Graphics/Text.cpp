@@ -525,7 +525,7 @@ void Text::ensureGeometryUpdate() const
 
             if (m_outlineThickness != 0)
                 addLine(m_outlineVerticesMap[NULL], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
-          }
+        }
 
         prevChar = curChar;
 
