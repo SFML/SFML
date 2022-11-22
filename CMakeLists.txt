@@ -528,13 +528,12 @@ set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\
 
 include(CPack)
 
-if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    return()
+sfml_set_option(SFML_FORMAT TRUE BOOL "Set to enable SFML's format target")
+if(SFML_FORMAT)
+    sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires minimum version 12")
+    add_custom_target(format
+        COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)
+
+    add_custom_target(tidy COMMAND run-clang-tidy -p ${PROJECT_BINARY_DIR} VERBATIM)
 endif()
-
-sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires minimum version 12")
-add_custom_target(format
-    COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)
-
-add_custom_target(tidy COMMAND run-clang-tidy -p ${PROJECT_BINARY_DIR} VERBATIM)
