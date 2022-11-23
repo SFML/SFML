@@ -362,10 +362,10 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
                                 FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face.get() : nullptr, codePoint));
 
     // Search the glyph in the pages list
-    for (PageList::const_iterator it = pages.begin(); it != pages.end(); ++it)
+    for (const auto& page : pages)
     {
         // Search the glyph into the cache
-        const GlyphTable&          glyphs = it->glyphs;
+        const GlyphTable&          glyphs = page.glyphs;
         GlyphTable::const_iterator it2    = glyphs.find(key);
         if (it2 != glyphs.end())
         {
@@ -378,14 +378,14 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
     Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
 
     // Store the glyph in the page that contains it
-    for (PageList::iterator it = pages.begin(); it != pages.end(); ++it)
-        if (glyph.texture == &it->texture)
-            return it->glyphs.insert(std::make_pair(key, glyph)).first->second;
+    for (auto& page : pages)
+        if (glyph.texture == &page.texture)
+            return page.glyphs.emplace(key, glyph).first->second;
 
     // No page found (glyph.texture == NULL): simply store the glyph in the first page
     if (pages.empty())
-        pages.push_back(Page{m_isSmooth});
-    return pages.front().glyphs.insert(std::make_pair(key, glyph)).first->second;
+        pages.emplace_back(m_isSmooth);
+    return pages.front().glyphs.emplace(key, glyph).first->second;
 }
 
 
@@ -555,14 +555,6 @@ void Font::cleanup()
     // Reset members
     m_pageLists.clear();
     std::vector<std::uint8_t>().swap(m_pixelBuffer);
-}
-
-
-////////////////////////////////////////////////////////////
-Font::Page& Font::loadPage(unsigned int characterSize) const
-{
-    auto pageList = m_pageLists.try_emplace(characterSize, PageList{}).first->second;
-    return *pageList.insert(pageList.begin(), Page{m_isSmooth});
 }
 
 

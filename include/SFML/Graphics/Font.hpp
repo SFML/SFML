@@ -373,16 +373,6 @@ private:
     void cleanup();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Find or create the glyphs page corresponding to the given character size
-    ///
-    /// \param characterSize Reference character size
-    ///
-    /// \return The glyphs page corresponding to \a characterSize
-    ///
-    ////////////////////////////////////////////////////////////
-    Page& loadPage(unsigned int characterSize) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load a new glyph and store it in the cache
     ///
     /// \param codePoint        Unicode code point of the character to load
