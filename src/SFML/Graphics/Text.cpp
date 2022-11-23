@@ -230,9 +230,9 @@ void Text::setFillColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (VertexArrayMap::iterator it = m_fillVerticesMap.begin(); it != m_fillVerticesMap.end(); ++it)
+            for (auto& vertMap : m_fillVerticesMap)
             {
-                VertexArray& vertices = it->second;
+                VertexArray& vertices = vertMap.second;
                 for (std::size_t i = 0; i < vertices.getVertexCount(); ++i)
                     vertices[i].color = m_fillColor;
             }
@@ -252,9 +252,9 @@ void Text::setOutlineColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (VertexArrayMap::iterator it = m_outlineVerticesMap.begin(); it != m_outlineVerticesMap.end(); ++it)
+            for (auto& vertMap : m_outlineVerticesMap)
             {
-                VertexArray& vertices = it->second;
+                VertexArray& vertices = vertMap.second;
                 for (std::size_t i = 0; i < vertices.getVertexCount(); ++i)
                     vertices[i].color = m_outlineColor;
             }
@@ -421,22 +421,22 @@ void Text::draw(RenderTarget& target, const RenderStates& states) const
         // Only draw the outline if there is something to draw
         if (m_outlineThickness != 0)
         {
-            for (VertexArrayMap::iterator it = m_outlineVerticesMap.begin(); it != m_outlineVerticesMap.end(); ++it)
+            for (auto& [texture, verts] : m_outlineVerticesMap)
             {
-                if (it->second.getVertexCount() > 0)
+                if (verts.getVertexCount() > 0)
                 {
-                    statesCopy.texture = it->first;
-                    target.draw(it->second, statesCopy);
+                    statesCopy.texture = texture;
+                    target.draw(verts, statesCopy);
                 }
             }
         }
 
-        for (VertexArrayMap::iterator it = m_fillVerticesMap.begin(); it != m_fillVerticesMap.end(); ++it)
+        for (auto& [texture, verts] : m_fillVerticesMap)
         {
-            if (it->second.getVertexCount() > 0)
+            if (verts.getVertexCount() > 0)
             {
-                statesCopy.texture = it->first;
-                target.draw(it->second, statesCopy);
+                statesCopy.texture = texture;
+                target.draw(verts, statesCopy);
             }
         }
     }
@@ -460,10 +460,10 @@ void Text::ensureGeometryUpdate() const
     m_geometryNeedUpdate = false;
 
     // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
-    for (VertexArrayMap::iterator it = m_fillVerticesMap.begin(); it != m_fillVerticesMap.end(); ++it)
-        it->second.clear();
-    for (VertexArrayMap::iterator it = m_outlineVerticesMap.begin(); it != m_outlineVerticesMap.end(); ++it)
-        it->second.clear();
+    for (auto& verts : m_fillVerticesMap)
+        verts.second.clear();
+    for (auto& verts : m_outlineVerticesMap)
+        verts.second.clear();
     m_bounds = FloatRect();
 
     // No text: nothing to draw
@@ -623,10 +623,10 @@ void Text::ensureGeometryUpdate() const
     m_bounds.height = maxY - minY;
 
     // Finally, set type of primitives to triangles
-    for (VertexArrayMap::iterator it = m_fillVerticesMap.begin(); it != m_fillVerticesMap.end(); ++it)
-        it->second.setPrimitiveType(PrimitiveType::Triangles);
-    for (VertexArrayMap::iterator it = m_outlineVerticesMap.begin(); it != m_outlineVerticesMap.end(); ++it)
-        it->second.setPrimitiveType(PrimitiveType::Triangles);
+    for (auto& vertMap : m_fillVerticesMap)
+        vertMap.second.setPrimitiveType(PrimitiveType::Triangles);
+    for (auto& vertMap : m_outlineVerticesMap)
+        vertMap.second.setPrimitiveType(PrimitiveType::Triangles);
 }
 
 } // namespace sf
