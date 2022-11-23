@@ -496,12 +496,18 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
 }
 
 ////////////////////////////////////////////////////////////
-std::uint64_t Font::getTextureId(unsigned int characterSize) const
+std::unordered_set<std::uint64_t> Font::getTextureIds(unsigned int characterSize) const
 {
     PageList& pages = m_pageLists[characterSize];
     if (pages.empty())
         pages.push_back(Page{m_isSmooth});
-    return pages.front().texture.m_cacheId;
+    
+    std::unordered_set<std::uint64_t> textureIds;
+    for (const auto& page : pages)
+    {
+        textureIds.emplace(page.texture.m_cacheId);
+    }
+    return textureIds;
 }
 
 ////////////////////////////////////////////////////////////

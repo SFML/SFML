@@ -38,6 +38,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 
@@ -281,16 +282,16 @@ public:
     float getUnderlineThickness(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Retrieve the texture id
+    /// \brief Retrieve the texture ids
     ///
-    /// The texture id is used internally by sf::Text.
+    /// The texture ids are used internally by sf::Text.
     ///
     /// \param characterSize Reference character size
     ///
-    /// \return Texture id containing glyphs of the requested size
+    /// \return Texture ids used for glyphs of the requested size
     ///
     ////////////////////////////////////////////////////////////
-    std::uint64_t getTextureId(unsigned int characterSize) const;
+    std::unordered_set<std::uint64_t> getTextureIds(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the smooth filter

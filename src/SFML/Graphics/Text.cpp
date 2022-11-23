@@ -106,7 +106,7 @@ m_outlineColor(0, 0, 0),
 m_outlineThickness(0),
 m_bounds(),
 m_geometryNeedUpdate(false),
-m_fontTextureId(0)
+m_fontTextureIds()
 {
 }
 
@@ -124,7 +124,7 @@ m_outlineColor(0, 0, 0),
 m_outlineThickness(0),
 m_bounds(),
 m_geometryNeedUpdate(true),
-m_fontTextureId(0)
+m_fontTextureIds()
 {
 }
 
@@ -163,10 +163,6 @@ void Text::setFont(const Font& font)
     {
         m_font               = &font;
         m_geometryNeedUpdate = true;
-
-        // Glyph textures will change, so delete all VertexArray instances
-        m_fillVerticesMap.clear();
-        m_outlineVerticesMap.clear();
     }
 }
 
@@ -449,21 +445,32 @@ void Text::ensureGeometryUpdate() const
     if (!m_font)
         return;
 
-    // Do nothing, if geometry has not changed and the font texture has not changed
-    if (!m_geometryNeedUpdate && m_font->getTextureId(m_characterSize) == m_fontTextureId)
+    // Do nothing, if geometry has not changed and the font textures have not changed
+    const auto textureIds = m_font->getTextureIds(m_characterSize);
+    const auto textureNeedsUpdate = textureIds != m_fontTextureIds;
+    if (!m_geometryNeedUpdate && !textureNeedsUpdate)
         return;
 
-    // Save the current fonts texture id
-    m_fontTextureId = m_font->getTextureId(m_characterSize);
+    // Save the current fonts texture ids
+    m_fontTextureIds = textureIds;
 
     // Mark geometry as updated
     m_geometryNeedUpdate = false;
 
-    // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
-    for (auto& verts : m_fillVerticesMap)
-        verts.second.clear();
-    for (auto& verts : m_outlineVerticesMap)
-        verts.second.clear();
+    if (textureNeedsUpdate)
+    {
+        m_fillVerticesMap.clear();
+        m_outlineVerticesMap.clear();
+    }
+    else
+    {
+        // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
+        for (auto& verts : m_fillVerticesMap)
+            verts.second.clear();
+        for (auto& verts : m_outlineVerticesMap)
+            verts.second.clear();
+    }
+
     m_bounds = FloatRect();
 
     // No text: nothing to draw
