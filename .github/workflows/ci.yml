@@ -78,10 +78,14 @@ jobs:
       run: brew install gcovr
 
     - name: Install OpenCppCoverage and add to PATH
+      uses: nick-fields/retry@v2
       if: matrix.type.name == 'Debug' && runner.os == 'Windows'
-      run: |
-        choco install OpenCppCoverage -y
-        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+      with:
+        max_attempts: 10
+        timeout_minutes: 3
+        command: |
+          choco install OpenCppCoverage -y
+          echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Configure CMake
       shell: bash
