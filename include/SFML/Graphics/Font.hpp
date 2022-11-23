@@ -364,7 +364,7 @@ private:
     };
 
     using PageList = std::list<Page>; //!< List of pages, where each page corresponds to a texture
-    using PageListTable = std::unordered_map<unsigned int, PageList>; ///!< Table mapping a character size to its list of pages (textures)
+    using PageListTable = std::unordered_map<unsigned int, PageList>; //!< Table mapping a character size to its list of pages (textures)
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the internal resources
