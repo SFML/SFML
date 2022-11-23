@@ -4,7 +4,7 @@
 
 # Helper function to enable compiler warnings for a specific set of files
 function(set_file_warnings)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
 
     set(MSVC_WARNINGS
         /W4 # Baseline reasonable warnings
