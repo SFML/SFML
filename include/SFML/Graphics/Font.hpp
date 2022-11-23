@@ -363,10 +363,8 @@ private:
         std::vector<Row> rows;    //!< List containing the position of all the existing rows
     };
 
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    typedef std::list<Page> PageList; //!< List of pages, where each page corresponds to a texture
+    using PageList = std::list<Page>; //!< List of pages, where each page corresponds to a texture
+    using PageListTable = std::unordered_map<unsigned int, PageList>; ///!< Table mapping a character size to its list of pages (textures)
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the internal resources
@@ -419,14 +417,9 @@ private:
     [[nodiscard]] bool setCurrentSize(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
-    class FontHandles;
-    using PageListTable = std::unordered_map<unsigned int, PageList>; ///!< Table mapping a character size to its list of pages (textures)
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    class FontHandles;
     std::shared_ptr<FontHandles> m_fontHandles; //!< Shared information about the internal font instance
     bool                         m_isSmooth;    //!< Status of the smooth filter
     Info                         m_info;        //!< Information about the font
