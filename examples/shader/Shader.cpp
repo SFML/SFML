@@ -140,7 +140,7 @@ public:
         std::uniform_int_distribution<std::uint16_t> color_distribution(0, 255);
 
         // Create the points
-        m_points.setPrimitiveType(sf::Points);
+        m_points.setPrimitiveType(sf::PrimitiveType::Points);
         for (int i = 0; i < 40000; ++i)
         {
             auto x = x_distribution(rng);
@@ -270,7 +270,7 @@ private:
 class Geometry : public Effect
 {
 public:
-    Geometry() : Effect("Geometry Shader Billboards"), m_pointCloud(sf::Points, 10000)
+    Geometry() : Effect("Geometry Shader Billboards"), m_pointCloud(sf::PrimitiveType::Points, 10000)
     {
     }
 
