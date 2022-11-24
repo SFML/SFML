@@ -446,7 +446,7 @@ void Text::ensureGeometryUpdate() const
         return;
 
     // Do nothing, if geometry has not changed and the font textures have not changed
-    const auto textureIds = m_font->getTextureIds(m_characterSize);
+    const auto textureIds         = m_font->getTextureIds(m_characterSize);
     const auto textureNeedsUpdate = textureIds != m_fontTextureIds;
     if (!m_geometryNeedUpdate && !textureNeedsUpdate)
         return;

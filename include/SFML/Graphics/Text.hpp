@@ -447,9 +447,9 @@ private:
     float                                     m_outlineThickness;    //!< Thickness of the text's outline
     mutable VertexArrayMap                    m_fillVerticesMap;     //!< Vertex array containing the fill geometry
     mutable VertexArrayMap                    m_outlineVerticesMap;  //!< Vertex array containing the outline geometry
-    mutable FloatRect                         m_bounds;              //!< Bounding rectangle of the text (in local coordinates)
-    mutable bool                              m_geometryNeedUpdate;  //!< Does the geometry need to be recomputed?
-    mutable std::unordered_set<std::uint64_t> m_fontTextureIds;      //!< The font texture id
+    mutable FloatRect                         m_bounds; //!< Bounding rectangle of the text (in local coordinates)
+    mutable bool                              m_geometryNeedUpdate; //!< Does the geometry need to be recomputed?
+    mutable std::unordered_set<std::uint64_t> m_fontTextureIds;     //!< The font texture id
 };
 
 } // namespace sf
