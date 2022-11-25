@@ -115,28 +115,23 @@ jobs:
         cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
   format:
-    name: Formatting on ${{ matrix.platform.name }}
-    runs-on: ${{ matrix.platform.os }}
+    name: Formatting with clang-format-${{ matrix.version }}
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
       matrix:
-        platform:
-        - { name: Windows, os: windows-2022,  executable: clang-format }
-        - { name: Linux,   os: ubuntu-latest, executable: clang-format-12 }
-        - { name: macOS,   os: macos-12,      executable: clang-format }
+        version: [12, 13, 14]
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Install macOS Dependencies
-      if: runner.os == 'macOS'
-      run: brew install clang-format
+    - name: Install Dependencies
+      run: sudo apt-get install clang-format-${{ matrix.version }}
 
     - name: Format Code
-      shell: bash
-      run: cmake -DCLANG_FORMAT_EXECUTABLE=${{ matrix.platform.executable }} -P $GITHUB_WORKSPACE/cmake/Format.cmake
+      run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-${{ matrix.version }} -P $GITHUB_WORKSPACE/cmake/Format.cmake
 
     - name: Check Formatting
       run: git diff --exit-code
