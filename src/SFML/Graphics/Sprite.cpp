@@ -141,7 +141,7 @@ void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 
         statesCopy.transform *= getTransform();
         statesCopy.texture = m_texture;
-        target.draw(m_vertices, 4, TriangleStrip, statesCopy);
+        target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
     }
 }
 
