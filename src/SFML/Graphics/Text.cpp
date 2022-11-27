@@ -88,6 +88,26 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
                                color,
                                sf::Vector2f(u2, v2)));
 }
+
+// Trivial struct used within getTextLayoutStats()
+struct TextLayoutStats
+{
+    bool  isBold;
+    float whitespaceWidth;
+    float letterSpacing;
+    float lineSpacing;
+};
+// Compute a series of variables that are commonly used when building a text layout
+TextLayoutStats getTextLayoutStats(uint32_t style, const sf::Font* font, unsigned int characterSize, float letterSpacingFactor, float lineSpacingFactor)
+{
+    TextLayoutStats ret;
+    ret.isBold          = style & sf::Text::Style::Bold;
+    ret.whitespaceWidth = font->getGlyph(U' ', characterSize, ret.isBold).advance;
+    ret.letterSpacing   = (ret.whitespaceWidth / 3.f) * (letterSpacingFactor - 1.f);
+    ret.whitespaceWidth += ret.letterSpacing;
+    ret.lineSpacing = font->getLineSpacing(characterSize) * lineSpacingFactor;
+    return ret;
+}
 } // namespace
 
 
@@ -337,11 +357,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         index = m_string.getSize();
 
     // Precompute the variables needed by the algorithm
-    const bool  isBold          = m_style & Bold;
-    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
-    whitespaceWidth += letterSpacing;
-    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const TextLayoutStats stats = getTextLayoutStats(m_style, m_font, m_characterSize, m_letterSpacingFactor, m_lineSpacingFactor);
 
     // Compute the position
     Vector2f      position;
@@ -351,26 +367,26 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         std::uint32_t curChar = m_string[i];
 
         // Apply the kerning offset
-        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
+        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, stats.isBold);
         prevChar = curChar;
 
         // Handle special characters
         switch (curChar)
         {
             case U' ':
-                position.x += whitespaceWidth;
+                position.x += stats.whitespaceWidth;
                 continue;
             case U'\t':
-                position.x += whitespaceWidth * 4;
+                position.x += stats.whitespaceWidth * 4;
                 continue;
             case U'\n':
-                position.y += lineSpacing;
+                position.y += stats.lineSpacing;
                 position.x = 0;
                 continue;
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
+        position.x += m_font->getGlyph(curChar, m_characterSize, stats.isBold).advance + stats.letterSpacing;
     }
 
     // Transform the position to global coordinates
@@ -392,11 +408,7 @@ bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
     }
 
     // Precompute the variables needed by the algorithm
-    const bool  isBold          = m_style & Bold;
-    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
-    whitespaceWidth += letterSpacing;
-    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const TextLayoutStats stats = getTextLayoutStats(m_style, m_font, m_characterSize, m_letterSpacingFactor, m_lineSpacingFactor);
 
     // Compute the position
     Vector2f      position;
@@ -406,26 +418,26 @@ bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
         std::uint32_t curChar = m_string[i];
 
         // Apply the kerning offset
-        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
+        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, stats.isBold);
         prevChar = curChar;
 
         // Handle special characters
         switch (curChar)
         {
             case U' ':
-                position.x += whitespaceWidth;
+                position.x += stats.whitespaceWidth;
                 continue;
             case U'\t':
-                position.x += whitespaceWidth * 4;
+                position.x += stats.whitespaceWidth * 4;
                 continue;
             case U'\n':
-                position.y += lineSpacing;
+                position.y += stats.lineSpacing;
                 position.x = 0;
                 continue;
         }
 
         // For regular characters, add the advance offset of the glyph
-        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
+        position.x += m_font->getGlyph(curChar, m_characterSize, stats.isBold).advance + stats.letterSpacing;
 
         // Test character position against bounds
         if (!bounds.contains(getTransform().transformPoint(position)))
