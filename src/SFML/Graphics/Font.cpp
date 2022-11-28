@@ -501,7 +501,7 @@ std::unordered_set<std::uint64_t> Font::getTextureIds(unsigned int characterSize
 {
     PageList& pages = m_pageLists[characterSize];
     if (pages.empty())
-        pages.push_back(Page{m_isSmooth});
+        pages.emplace_back(m_isSmooth);
 
     std::unordered_set<std::uint64_t> textureIds;
     for (const auto& page : pages)
