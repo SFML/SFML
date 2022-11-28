@@ -674,7 +674,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         // If we didn't find a matching page, create a new one
         if (!page)
         {
-            page = pages.emplace_back(m_isSmooth);
+            page = &pages.emplace_back(m_isSmooth);
 
             // Try to find a good position for the new glyph into the texture
             glyph.textureRect = findGlyphRect(*page, {width, height});
