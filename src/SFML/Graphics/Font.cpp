@@ -382,7 +382,8 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
         if (glyph.texture == &page.texture)
             return page.glyphs.emplace(key, glyph).first->second;
 
-    // No page found (glyph.texture == NULL): simply store the glyph in the first page
+    // No page found: simply store the glyph in the first page
+    assert(glyph.texture == nullptr);
     if (pages.empty())
         pages.emplace_back(m_isSmooth);
     return pages.front().glyphs.emplace(key, glyph).first->second;
@@ -660,7 +661,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         PageList& pages = m_pageLists[characterSize];
 
         // Find a page that can fit well the glyph
-        Page* page = NULL;
+        Page* page{};
         for (PageList::iterator it = pages.begin(); it != pages.end() && !page; ++it)
         {
             // Try to find a good position for the new glyph into the texture
@@ -673,7 +674,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         // If we didn't find a matching page, create a new one
         if (!page)
         {
-            page = &*pages.insert(pages.end(), Page{m_isSmooth});
+            page = pages.emplace_back(m_isSmooth);
 
             // Try to find a good position for the new glyph into the texture
             glyph.textureRect = findGlyphRect(*page, {width, height});

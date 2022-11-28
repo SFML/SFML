@@ -519,19 +519,19 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_fillVerticesMap[NULL], x, y, m_fillColor, underlineOffset, underlineThickness);
+            addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVerticesMap[NULL], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_fillVerticesMap[NULL], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+            addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVerticesMap[NULL], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
         }
 
         prevChar = curChar;
@@ -608,19 +608,19 @@ void Text::ensureGeometryUpdate() const
     // If we're using the underlined style, add the last line
     if (isUnderlined && (x > 0))
     {
-        addLine(m_fillVerticesMap[NULL], x, y, m_fillColor, underlineOffset, underlineThickness);
+        addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, underlineOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVerticesMap[NULL], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
     if (isStrikeThrough && (x > 0))
     {
-        addLine(m_fillVerticesMap[NULL], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+        addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVerticesMap[NULL], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
     }
 
     // Update the bounding rectangle
