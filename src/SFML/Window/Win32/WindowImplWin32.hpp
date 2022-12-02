@@ -32,6 +32,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#include <list>
+
 
 namespace sf
 {
@@ -183,6 +185,16 @@ public:
     ////////////////////////////////////////////////////////////
     bool hasFocus() const override;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable file dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool setItemDroppingEnabled(bool enabled) override;
+
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
@@ -281,6 +293,7 @@ private:
     bool          m_mouseInside;   //!< Mouse is inside the window?
     bool          m_fullscreen;    //!< Is the window fullscreen?
     bool          m_cursorGrabbed; //!< Is the mouse cursor trapped?
+    std::list<String> m_droppedItems; //!< The drop item(s)
 };
 
 } // namespace priv

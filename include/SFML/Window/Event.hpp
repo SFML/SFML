@@ -35,6 +35,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Sensor.hpp>
 
+#include <memory>
 
 namespace sf
 {
