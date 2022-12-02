@@ -56,7 +56,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
-    static const std::size_t InvalidPos; //!< Represents an invalid position in the string
+    /// Represents an invalid position in the string
+    static inline const std::size_t InvalidPos{std::basic_string<std::uint32_t>::npos};
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

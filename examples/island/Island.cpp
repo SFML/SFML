@@ -99,7 +99,7 @@ int main()
     sf::Text         statusText;
     sf::Shader       terrainShader;
     sf::RenderStates terrainStates(&terrainShader);
-    sf::VertexBuffer terrain(sf::Triangles, sf::VertexBuffer::Static);
+    sf::VertexBuffer terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Static);
 
     // Set up our text drawables
     statusText.setFont(font);

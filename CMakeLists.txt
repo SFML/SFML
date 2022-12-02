@@ -532,7 +532,7 @@ if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     return()
 endif()
 
-sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires minimum version 12")
+sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires version 12, 13, or 14")
 add_custom_target(format
     COMMAND ${CMAKE_COMMAND} "-DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}" -P ./cmake/Format.cmake
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}" VERBATIM)

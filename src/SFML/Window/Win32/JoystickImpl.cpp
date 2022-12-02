@@ -545,7 +545,7 @@ bool JoystickImpl::openDInput(unsigned int index)
     for (int& button : m_buttons)
         button = -1;
 
-    std::memset(&m_deviceCaps, 0, sizeof(DIDEVCAPS));
+    m_deviceCaps        = {};
     m_deviceCaps.dwSize = sizeof(DIDEVCAPS);
     m_state             = JoystickState();
     m_buffered          = false;
@@ -566,8 +566,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Get vendor and product id of the device
-            DIPROPDWORD property;
-            std::memset(&property, 0, sizeof(property));
+            auto property              = DIPROPDWORD();
             property.diph.dwSize       = sizeof(property);
             property.diph.dwHeaderSize = sizeof(property.diph);
             property.diph.dwHow        = DIPH_DEVICE;
@@ -596,8 +595,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Get friendly product name of the device
-            DIPROPSTRING stringProperty;
-            std::memset(&stringProperty, 0, sizeof(stringProperty));
+            auto stringProperty              = DIPROPSTRING();
             stringProperty.diph.dwSize       = sizeof(stringProperty);
             stringProperty.diph.dwHeaderSize = sizeof(stringProperty.diph);
             stringProperty.diph.dwHow        = DIPH_DEVICE;
@@ -740,7 +738,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             {
                 if (axis != -1)
                 {
-                    std::memset(&property, 0, sizeof(property));
+                    property                   = {};
                     property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
                     property.diph.dwHow        = DIPH_DEVICE;
@@ -763,7 +761,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     if (property.dwData == DIPROPAXISMODE_ABS)
                         break;
 
-                    std::memset(&property, 0, sizeof(property));
+                    property                   = {};
                     property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
                     property.diph.dwHow        = DIPH_DEVICE;
@@ -772,7 +770,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     m_device->SetProperty(DIPROP_AXISMODE, &property.diph);
 
                     // Check if the axis mode has been set to absolute
-                    std::memset(&property, 0, sizeof(property));
+                    property                   = {};
                     property.diph.dwSize       = sizeof(property);
                     property.diph.dwHeaderSize = sizeof(property.diph);
                     property.diph.dwHow        = DIPH_DEVICE;
@@ -816,7 +814,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Try to enable buffering by setting the buffer size
-            std::memset(&property, 0, sizeof(property));
+            property                   = {};
             property.diph.dwSize       = sizeof(property);
             property.diph.dwHeaderSize = sizeof(property.diph);
             property.diph.dwHow        = DIPH_DEVICE;
@@ -1129,9 +1127,7 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
             return DIENUM_CONTINUE;
 
         // Set the axis' value range to that of a signed short: [-32768, 32767]
-        DIPROPRANGE propertyRange;
-
-        std::memset(&propertyRange, 0, sizeof(propertyRange));
+        auto propertyRange              = DIPROPRANGE();
         propertyRange.diph.dwSize       = sizeof(propertyRange);
         propertyRange.diph.dwHeaderSize = sizeof(propertyRange.diph);
         propertyRange.diph.dwObj        = deviceObjectInstance->dwType;

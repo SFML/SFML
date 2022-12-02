@@ -33,9 +33,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-MemoryInputStream::MemoryInputStream() : m_data(nullptr), m_size(0), m_offset(0)
-{
-}
+MemoryInputStream::MemoryInputStream() = default;
 
 
 ////////////////////////////////////////////////////////////

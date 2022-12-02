@@ -119,8 +119,8 @@ void cleanup()
     drmNode.fd   = -1;
     drmNode.mode = 0;
 
-    std::memset(&pollFD, 0, sizeof(pollfd));
-    std::memset(&drmEventCtx, 0, sizeof(drmEventContext));
+    pollFD      = {};
+    drmEventCtx = {};
 
     waitingForFlip = 0;
 

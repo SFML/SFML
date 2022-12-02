@@ -140,7 +140,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ClockImpl::time_point m_startTime; //!< Time of last reset
+    ClockImpl::time_point m_startTime{ClockImpl::now()}; //!< Time of last reset
 };
 
 } // namespace sf

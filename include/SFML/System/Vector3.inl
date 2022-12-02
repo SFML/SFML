@@ -25,19 +25,21 @@
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector3<T>::Vector3() : x(0), y(0), z(0)
-{
-}
+constexpr Vector3<T>::Vector3() = default;
 
 
 ////////////////////////////////////////////////////////////
+#if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
+#endif
 template <typename T>
 constexpr Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z)
 {
 }
+#if defined(__GNUC__)
 #pragma GCC diagnostic pop
+#endif
 
 
 ////////////////////////////////////////////////////////////

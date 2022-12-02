@@ -25,19 +25,21 @@
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>::Vector2() : x(0), y(0)
-{
-}
+constexpr Vector2<T>::Vector2() = default;
 
 
 ////////////////////////////////////////////////////////////
+#if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
+#endif
 template <typename T>
 constexpr Vector2<T>::Vector2(T x, T y) : x(x), y(y)
 {
 }
+#if defined(__GNUC__)
 #pragma GCC diagnostic pop
+#endif
 
 
 ////////////////////////////////////////////////////////////

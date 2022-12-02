@@ -293,8 +293,7 @@ bool Font::loadFromStream(InputStream& stream)
     }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
-    fontHandles->streamRec = std::make_unique<FT_StreamRec>();
-    std::memset(fontHandles->streamRec.get(), 0, sizeof(*fontHandles->streamRec));
+    fontHandles->streamRec                     = std::make_unique<FT_StreamRec>();
     fontHandles->streamRec->base               = nullptr;
     fontHandles->streamRec->size               = static_cast<unsigned long>(stream.getSize());
     fontHandles->streamRec->pos                = 0;

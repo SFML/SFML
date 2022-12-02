@@ -6,32 +6,32 @@
 int main()
 {
     // Audio
-    sf::InputSoundFile input_sound_file;
-    sf::Listener       listener;
-    sf::Music          music;
-    sf::Sound          sound;
+    [[maybe_unused]] sf::InputSoundFile inputSoundFile;
+    [[maybe_unused]] sf::Listener       listener;
+    [[maybe_unused]] sf::Music          music;
+    [[maybe_unused]] sf::Sound          sound;
 
     // Graphics
-    sf::Color        color;
-    sf::Font         font;
-    sf::RenderWindow render_window;
-    sf::Sprite       sprite;
-    sf::Vertex       vertex;
+    [[maybe_unused]] sf::Color        color;
+    [[maybe_unused]] sf::Font         font;
+    [[maybe_unused]] sf::RenderWindow renderWindow;
+    [[maybe_unused]] sf::Sprite       sprite;
+    [[maybe_unused]] sf::Vertex       vertex;
 
     // Network
-    sf::Ftp       ftp;
-    sf::Http      http;
-    sf::Packet    packet;
-    sf::UdpSocket udp_socket;
+    [[maybe_unused]] sf::Ftp       ftp;
+    [[maybe_unused]] sf::Http      http;
+    [[maybe_unused]] sf::Packet    packet;
+    [[maybe_unused]] sf::UdpSocket udpSocket;
 
     // System
-    sf::Angle           angle;
-    sf::FileInputStream file_input_stream;
-    sf::String          string;
-    sf::Time            time;
+    [[maybe_unused]] sf::Angle           angle;
+    [[maybe_unused]] sf::FileInputStream fileInputStream;
+    [[maybe_unused]] sf::String          string;
+    [[maybe_unused]] sf::Time            time;
 
     // Window
-    sf::Context   context;
-    sf::VideoMode video_mode;
-    sf::Window    window;
+    [[maybe_unused]] sf::Context   context;
+    [[maybe_unused]] sf::VideoMode videoMode;
+    [[maybe_unused]] sf::Window    window;
 }

@@ -108,12 +108,16 @@ struct Vector4
     /// \param w Component of the 4D vector
     ///
     ////////////////////////////////////////////////////////////
+#if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
+#endif
     Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
     {
     }
+#if defined(__GNUC__)
 #pragma GCC diagnostic pop
+#endif
 
     ////////////////////////////////////////////////////////////
     /// \brief Conversion constructor

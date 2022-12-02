@@ -39,8 +39,8 @@ m_position(0, 0),
 m_rotation(),
 m_scale(1, 1),
 m_transform(),
-m_transformNeedUpdate(true),
 m_inverseTransform(),
+m_transformNeedUpdate(true),
 m_inverseTransformNeedUpdate(true)
 {
 }

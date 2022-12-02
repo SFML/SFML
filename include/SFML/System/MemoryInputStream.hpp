@@ -105,9 +105,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const char*  m_data;   //!< Pointer to the data in memory
-    std::int64_t m_size;   //!< Total size of the data
-    std::int64_t m_offset; //!< Current reading position
+    const char*  m_data{nullptr}; //!< Pointer to the data in memory
+    std::int64_t m_size{0};       //!< Total size of the data
+    std::int64_t m_offset{0};     //!< Current reading position
 };
 
 } // namespace sf

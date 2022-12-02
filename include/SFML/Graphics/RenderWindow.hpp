@@ -195,7 +195,7 @@ private:
 ///
 /// \code
 /// // Declare and create a new render-window
-/// sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+/// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 /// // Limit the framerate to 60 frames per second (this step is optional)
 /// window.setFramerateLimit(60);
@@ -230,7 +230,7 @@ private:
 ///
 /// \code
 /// // Create the render window
-/// sf::RenderWindow window(sf::VideoMode(800, 600), "SFML OpenGL");
+/// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML OpenGL");
 ///
 /// // Create a sprite and a text to display
 /// sf::Sprite sprite;

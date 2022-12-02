@@ -662,8 +662,7 @@ m_lastInputTime(0)
                 unsigned long state;
             };
 
-            WMHints hints;
-            std::memset(&hints, 0, sizeof(hints));
+            auto hints        = WMHints();
             hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.decorations = 0;
             hints.functions   = 0;
@@ -1324,9 +1323,7 @@ void WindowImplX11::grabFocus()
 
     if (netActiveWindow)
     {
-        XEvent event;
-        std::memset(&event, 0, sizeof(event));
-
+        auto event                 = XEvent();
         event.type                 = ClientMessage;
         event.xclient.window       = m_window;
         event.xclient.format       = 32;
@@ -1550,9 +1547,7 @@ void WindowImplX11::switchToFullscreen()
             return;
         }
 
-        XEvent event;
-        std::memset(&event, 0, sizeof(event));
-
+        auto event                 = XEvent();
         event.type                 = ClientMessage;
         event.xclient.window       = m_window;
         event.xclient.format       = 32;
