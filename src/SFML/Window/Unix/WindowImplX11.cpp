@@ -2405,7 +2405,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     return monitorPosition;
 }
 
-void WindowImplX11::setItemDroppingEnabled(bool enabled)
+bool WindowImplX11::setItemDroppingEnabled(bool enabled)
 {
     // In order for file dropping to be enabled, the XdndAware property must be set.
     if (enabled)
@@ -2424,6 +2424,8 @@ void WindowImplX11::setItemDroppingEnabled(bool enabled)
     {
         XDeleteProperty(m_display, m_window, getAtom("XdndAware"));
     }
+
+    return true;
 }
 
 } // namespace priv

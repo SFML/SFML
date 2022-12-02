@@ -187,12 +187,14 @@ public:
     bool hasFocus() const override;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable item dropping
+    /// \brief Enable or disable file dropping
     ///
-    /// \param enabled Whether or not item dropping is enabled
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    void setItemDroppingEnabled(bool enabled) override;
+    bool setItemDroppingEnabled(bool enabled) override;
 
 protected:
     ////////////////////////////////////////////////////////////
