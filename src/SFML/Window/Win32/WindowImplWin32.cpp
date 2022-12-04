@@ -1025,7 +1025,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             const HDROP hDrop = (HDROP)wParam;
 
             // Get the count of files dropped
-            int count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+            const int count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
             if (count == 0)
                 break;
 
@@ -1047,13 +1047,12 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             // Add the temporary item to a vector of strings
             m_droppedItems.push_back(item);
 
-            // Create the event
-            Event event;
-
             // Get the position of the dropped item
             POINT point;
             DragQueryPoint(hDrop, &point);
 
+            // Create the event
+            Event event;
             event.type = sf::Event::ItemDropped;
             // Let the event.itemDropped.item point to the newly added string
             event.itemDropped.item = &m_droppedItems.back();
