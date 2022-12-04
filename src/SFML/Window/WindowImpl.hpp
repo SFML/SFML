@@ -241,7 +241,7 @@ public:
     virtual bool hasFocus() const = 0;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable file dropping
+    /// \brief Enable or disable item dropping
     ///
     /// \param enabled True to enable, false to disable
     ///

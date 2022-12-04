@@ -258,13 +258,13 @@ public:
     void display();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable file dropping
+    /// \brief Enable or disable item dropping
     ///
-    /// If file dropping is enabled, you will receive FilesDropped
-    /// events whenever the user drags and drops a file into the
+    /// If item dropping is enabled, you will receive ItemDropped
+    /// events whenever the user drags and drops an item into the
     /// window.
     ///
-    /// File dropping is disabled by default.
+    /// Item dropping is disabled by default.
     ///
     /// \param enabled True to enable, false to disable
     ///

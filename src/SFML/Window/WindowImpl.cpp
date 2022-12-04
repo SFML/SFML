@@ -297,7 +297,7 @@ void WindowImpl::processSensorEvents()
 bool WindowImpl::setItemDroppingEnabled(bool enabled)
 {
     // This is the fallback for unsupported platforms.
-    // Trying to enable file dropping returns a bad value
+    // Trying to enable item dropping returns a bad value
     // indicating an error, whereas disabling it is fine.
     return !enabled;
 }

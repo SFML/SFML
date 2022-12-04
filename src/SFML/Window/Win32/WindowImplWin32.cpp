@@ -38,9 +38,8 @@
 // or mingw-w64 addresses files in a case insensitive manner.
 #include <dbt.h>
 #include <ostream>
-#include <vector>
-
 #include <shellapi.h>
+#include <vector>
 
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
@@ -1030,10 +1029,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (count == 0)
                 break;
 
-            // Create a temporary string, which will put all the file names in
+            // Create a temporary string, which will have all the file names in
             String item;
 
-            // Get all the files names
+            // Get all the files' names
             for (int i = 0; i < count; i++)
             {
                 std::vector<wchar_t> buffer;
@@ -1055,7 +1054,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             POINT point;
             DragQueryPoint(hDrop, &point);
 
-            event.type             = sf::Event::ItemDropped;
+            event.type = sf::Event::ItemDropped;
             // Let the event.itemDropped.item point to the newly added string
             event.itemDropped.item = &m_droppedItems.back();
             event.itemDropped.x    = static_cast<int>(point.x);

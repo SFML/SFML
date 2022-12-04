@@ -2264,8 +2264,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                                                 &remainingBytes,
                                                 &data);
 
-                sf::String value;
-
                 if (result == Success)
                 {
                     // We don't support INCR for now
@@ -2402,7 +2400,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
 
 bool WindowImplX11::setItemDroppingEnabled(bool enabled)
 {
-    // In order for file dropping to be enabled, the XdndAware property must be set.
+    // In order for item dropping to be enabled, the XdndAware property must be set.
     if (enabled)
     {
         Atom xdnd_version = 5;
