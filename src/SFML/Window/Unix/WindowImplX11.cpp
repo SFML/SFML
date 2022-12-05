@@ -1886,6 +1886,57 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     }
                 }
             }
+
+            // Drag and drop position update
+            if (windowEvent.xclient.message_type == getAtom("XdndPosition"))
+            {
+                Atom XdndStatus = XInternAtom(m_display, "XdndStatus", false);
+
+                XEvent message;
+                message.xclient.type         = ClientMessage;
+                message.xclient.display      = m_display;
+                message.xclient.window       = m_otherWindow;
+                message.xclient.message_type = XdndStatus;
+                message.xclient.format       = 32;
+                message.xclient.data.l[0]    = static_cast<long int>(m_window); // The current window
+                message.xclient.data.l[1]    = 1;                               // Sets accept and want position flags
+
+                // Send back window rectangle coordinates and width
+                message.xclient.data.l[2] = 0;
+                message.xclient.data.l[3] = 0;
+
+                // Specify action we accept
+                message.xclient.data.l[4] = static_cast<long int>(getAtom("XdndActionCopy"));
+
+                XSendEvent(m_display, m_otherWindow, false, 0, &message);
+
+                // Store drop position
+                m_dropPosition.x = static_cast<int>(windowEvent.xclient.data.l[2] >> 16);
+                m_dropPosition.y = windowEvent.xclient.data.l[2] & 0xFFFF;
+            }
+
+            if (windowEvent.xclient.message_type == getAtom("XdndEnter"))
+            {
+                // Store the source window
+                m_otherWindow = static_cast<::Window>(windowEvent.xclient.data.l[0]);
+            }
+
+            // An item has been dropped
+            if (windowEvent.xclient.message_type == getAtom("XdndDrop"))
+            {
+                // Get the timestamp
+                ::Time dropTimestamp = static_cast<::Time>(windowEvent.xclient.data.l[2]);
+
+                // Get the selection, and pass the dropTimestamp
+                // Currently this only supports text/plain drops
+                XConvertSelection(m_display,
+                                  getAtom("XdndSelection"),
+                                  getAtom("text/plain"),
+                                  getAtom("XDND_DATA"),
+                                  m_window,
+                                  dropTimestamp);
+            }
+
             break;
         }
 
@@ -2182,6 +2233,65 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
             break;
         }
+
+        // XConvertSelection respose
+        case SelectionNotify:
+        {
+            if (windowEvent.xclient.message_type == getAtom("XdndSelection"))
+            {
+                // Notification that the current selection owner
+                // has responded to our request
+
+                Atom           type;
+                int            format;
+                unsigned long  items;
+                unsigned long  remainingBytes;
+                unsigned char* data = 0;
+
+                // The selection owner should have wrote the selection
+                // data to the specified window property
+                int result = XGetWindowProperty(m_display,
+                                                m_window,
+                                                windowEvent.xselection.property,
+                                                0,
+                                                0x7fffffff,
+                                                False,
+                                                AnyPropertyType,
+                                                &type,
+                                                &format,
+                                                &items,
+                                                &remainingBytes,
+                                                &data);
+
+                if (result == Success)
+                {
+                    // We don't support INCR for now
+                    // It is very unlikely that this will be returned
+                    // for purely text data transfer anyway
+                    if (type != getAtom("INCR", false))
+                    {
+                        // In the source code for the clipboard, we check if the data is what we expect,
+                        // but since we requested text/plain, we don't have to worry about that
+                        m_droppedItem = reinterpret_cast<char*>(data);
+                    }
+
+                    XFree(data);
+
+                    // The selection requestor must always delete the property themselves
+                    XDeleteProperty(m_display, m_window, windowEvent.xselection.property);
+                }
+
+                Event event;
+                event.type             = Event::ItemDropped;
+                event.itemDropped.item = &m_droppedItem;
+                event.itemDropped.x    = m_dropPosition.x;
+                event.itemDropped.y    = m_dropPosition.y;
+
+                pushEvent(event);
+            }
+
+            break;
+        }
     }
 
     return true;
@@ -2285,6 +2395,29 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     XRRFreeScreenResources(res);
 
     return monitorPosition;
+}
+
+bool WindowImplX11::setItemDroppingEnabled(bool enabled)
+{
+    // In order for item dropping to be enabled, the XdndAware property must be set.
+    if (enabled)
+    {
+        Atom xdnd_version = 5;
+        XChangeProperty(m_display,
+                        m_window,
+                        getAtom("XdndAware"),
+                        XA_ATOM,
+                        32,
+                        PropModeReplace,
+                        reinterpret_cast<unsigned char*>(&xdnd_version),
+                        true);
+    }
+    else
+    {
+        XDeleteProperty(m_display, m_window, getAtom("XdndAware"));
+    }
+
+    return true;
 }
 
 } // namespace priv

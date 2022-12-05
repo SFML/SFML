@@ -36,7 +36,7 @@ namespace priv
 {
 class WindowImplCocoa;
 }
-}
+} // namespace sf
 
 ////////////////////////////////////////////////////////////
 /// Keyboard Modifiers Helper

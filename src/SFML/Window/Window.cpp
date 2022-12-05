@@ -242,4 +242,10 @@ void Window::initialize()
     WindowBase::initialize();
 }
 
+void Window::setItemDroppingEnabled(bool enabled)
+{
+    if (m_impl)
+        m_impl->setItemDroppingEnabled(enabled);
+}
+
 } // namespace sf

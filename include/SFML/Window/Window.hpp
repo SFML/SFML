@@ -257,6 +257,22 @@ public:
     ////////////////////////////////////////////////////////////
     void display();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable item dropping
+    ///
+    /// If item dropping is enabled, you will receive ItemDropped
+    /// events whenever the user drags and drops an item into the
+    /// window.
+    ///
+    /// Item dropping is disabled by default.
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    void setItemDroppingEnabled(bool enabled);
+
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Processes an event before it is sent to the user

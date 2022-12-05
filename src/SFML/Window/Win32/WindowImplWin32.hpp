@@ -32,6 +32,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#include <list>
+
 
 namespace sf
 {
@@ -183,6 +185,16 @@ public:
     ////////////////////////////////////////////////////////////
     bool hasFocus() const override;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable item dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool setItemDroppingEnabled(bool enabled) override;
+
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
@@ -278,9 +290,10 @@ private:
     Vector2u m_lastSize;        //!< The last handled size of the window
     bool     m_resizing;        //!< Is the window being resized?
     std::uint16_t m_surrogate; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool          m_mouseInside;   //!< Mouse is inside the window?
-    bool          m_fullscreen;    //!< Is the window fullscreen?
-    bool          m_cursorGrabbed; //!< Is the mouse cursor trapped?
+    bool          m_mouseInside;      //!< Mouse is inside the window?
+    bool          m_fullscreen;       //!< Is the window fullscreen?
+    bool          m_cursorGrabbed;    //!< Is the mouse cursor trapped?
+    std::list<String> m_droppedItems; //!< The drop item(s)
 };
 
 } // namespace priv

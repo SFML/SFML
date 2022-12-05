@@ -241,6 +241,16 @@ public:
     virtual bool hasFocus() const = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable item dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual bool setItemDroppingEnabled(bool enabled);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a Vulkan rendering surface
     ///
     /// \param instance  Vulkan instance

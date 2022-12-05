@@ -293,6 +293,14 @@ void WindowImpl::processSensorEvents()
     }
 }
 
+////////////////////////////////////////////////////////////
+bool WindowImpl::setItemDroppingEnabled(bool enabled)
+{
+    // This is the fallback for unsupported platforms.
+    // Trying to enable item dropping returns a bad value
+    // indicating an error, whereas disabling it is fine.
+    return !enabled;
+}
 
 ////////////////////////////////////////////////////////////
 bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&            instance,

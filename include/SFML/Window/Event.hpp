@@ -35,6 +35,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Sensor.hpp>
 
+#include <memory>
 
 namespace sf
 {
@@ -167,6 +168,17 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Item dropped event parameters (ItemDropped)
+    ///
+    ////////////////////////////////////////////////////////////
+    struct ItemDroppedEvent
+    {
+        const String* item; //!< Item
+        int           x;    //!< X position of the mouse
+        int           y;    //!< Y position of the mouse
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the different types of events
     ///
     ////////////////////////////////////////////////////////////
@@ -194,6 +206,7 @@ public:
         TouchMoved,             //!< A touch moved (data in event.touch)
         TouchEnded,             //!< A touch event ended (data in event.touch)
         SensorChanged,          //!< A sensor value changed (data in event.sensor)
+        ItemDropped,            //!< Item was dropped onto the app (data in event.itemDropped)
 
         Count //!< Keep last -- the total number of event types
     };
@@ -214,8 +227,9 @@ public:
         JoystickMoveEvent     joystickMove;     //!< Joystick move event parameters (Event::JoystickMoved)
         JoystickButtonEvent joystickButton; //!< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
         JoystickConnectEvent joystickConnect; //!< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
-        TouchEvent  touch;  //!< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
-        SensorEvent sensor; //!< Sensor event parameters (Event::SensorChanged)
+        TouchEvent       touch;  //!< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
+        SensorEvent      sensor; //!< Sensor event parameters (Event::SensorChanged)
+        ItemDroppedEvent itemDropped; //!< Item dropped event parameters (Event::ItemDropped)
     };
 };
 

@@ -186,6 +186,16 @@ public:
     ////////////////////////////////////////////////////////////
     bool hasFocus() const override;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable item dropping
+    ///
+    /// \param enabled True to enable, false to disable
+    ///
+    /// \return True if operation was successful, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool setItemDroppingEnabled(bool enabled) override;
+
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
@@ -316,6 +326,9 @@ private:
     Pixmap   m_iconPixmap;     ///< The current icon pixmap if in use
     Pixmap   m_iconMaskPixmap; ///< The current icon mask pixmap if in use
     ::Time   m_lastInputTime;  ///< Last time we received user input
+    Vector2i m_dropPosition;   ///< Position where item was dropped
+    ::Window m_otherWindow;    ///< Other window which is giving the dropped item
+    String   m_droppedItem;    ///< String which contains the item that was drag and dropped
 };
 
 } // namespace priv

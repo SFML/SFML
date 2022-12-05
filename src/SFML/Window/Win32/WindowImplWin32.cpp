@@ -38,6 +38,7 @@
 // or mingw-w64 addresses files in a case insensitive manner.
 #include <dbt.h>
 #include <ostream>
+#include <shellapi.h>
 #include <vector>
 
 // MinGW lacks the definition of some Win32 constants
@@ -477,6 +478,13 @@ bool WindowImplWin32::hasFocus() const
     return m_handle == GetForegroundWindow();
 }
 
+bool WindowImplWin32::setItemDroppingEnabled(bool enabled)
+{
+    DragAcceptFiles(m_handle, enabled);
+
+    return true;
+}
+
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
@@ -560,7 +568,6 @@ void WindowImplWin32::setTracking(bool track)
     mouseEvent.dwHoverTime = HOVER_DEFAULT;
     TrackMouseEvent(&mouseEvent);
 }
-
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::grabCursor(bool grabbed)
@@ -1009,6 +1016,53 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                     JoystickImpl::updateConnections();
             }
 
+            break;
+        }
+
+        // File(s) dropped event
+        case WM_DROPFILES:
+        {
+            const HDROP hDrop = reinterpret_cast<HDROP>(wParam);
+
+            // Get the count of files dropped
+            const int count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+            if (count == 0)
+                break;
+
+            // Create a temporary string, which will have all the file names in
+            String item;
+
+            // Get all the files' names
+            for (int i = 0; i < count; i++)
+            {
+                std::vector<wchar_t> buffer;
+
+                buffer.resize(DragQueryFileW(hDrop, i, NULL, 0) + 1);
+                DragQueryFileW(hDrop, i, buffer.data(), static_cast<UINT>(buffer.size()));
+
+                // Insert the file name at the end
+                item.insert(item.getSize(), sf::String(buffer.data()) + "\n");
+            }
+
+            // Add the temporary item to a vector of strings
+            m_droppedItems.push_back(item);
+
+            // Get the position of the dropped item
+            POINT point;
+            DragQueryPoint(hDrop, &point);
+
+            // Create the event
+            Event event;
+            event.type = sf::Event::ItemDropped;
+            // Let the event.itemDropped.item point to the newly added string
+            event.itemDropped.item = &m_droppedItems.back();
+            event.itemDropped.x    = static_cast<int>(point.x);
+            event.itemDropped.y    = static_cast<int>(point.y);
+
+            // Let the Windows API know we are done
+            DragFinish(hDrop);
+
+            pushEvent(event);
             break;
         }
     }
