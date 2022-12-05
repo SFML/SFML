@@ -37,7 +37,7 @@ namespace priv
 {
 class WindowImplCocoa;
 }
-} // namespace sf
+}
 
 @class SFSilentResponder;
 

@@ -1890,10 +1890,9 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Drag and drop position update
             if (windowEvent.xclient.message_type == getAtom("XdndPosition"))
             {
-                XEvent message;
-
                 Atom XdndStatus = XInternAtom(m_display, "XdndStatus", false);
 
+                XEvent message;
                 message.xclient.type         = ClientMessage;
                 message.xclient.display      = m_display;
                 message.xclient.window       = m_otherWindow;

@@ -38,7 +38,7 @@ float toDegrees(float radians)
 {
     return sf::radians(radians).asDegrees();
 }
-} // namespace
+}
 
 
 namespace sf

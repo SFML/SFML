@@ -1022,7 +1022,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // File(s) dropped event
         case WM_DROPFILES:
         {
-            const HDROP hDrop = (HDROP)wParam;
+            const HDROP hDrop = static_cast<HDROP>(wParam);
 
             // Get the count of files dropped
             const int count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
@@ -1038,10 +1038,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 std::vector<wchar_t> buffer;
 
                 buffer.resize(DragQueryFileW(hDrop, i, NULL, 0) + 1);
-                DragQueryFileW(hDrop, i, &buffer.front(), static_cast<UINT>(buffer.size()));
+                DragQueryFileW(hDrop, i, buffer.data(), static_cast<UINT>(buffer.size()));
 
                 // Insert the file name at the end
-                item.insert(item.getSize(), sf::String(&buffer.front()) + "\n");
+                item.insert(item.getSize(), sf::String(buffer.data()) + "\n");
             }
 
             // Add the temporary item to a vector of strings

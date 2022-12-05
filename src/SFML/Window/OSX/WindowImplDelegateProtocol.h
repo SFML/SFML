@@ -42,7 +42,7 @@ namespace priv
 {
 class WindowImplCocoa;
 }
-} // namespace sf
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Interface of the delegate of the window implementation
