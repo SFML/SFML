@@ -1022,7 +1022,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // File(s) dropped event
         case WM_DROPFILES:
         {
-            const HDROP hDrop = static_cast<HDROP>(wParam);
+            const HDROP hDrop = reinterpret_cast<HDROP>(wParam);
 
             // Get the count of files dropped
             const int count = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
