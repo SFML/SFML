@@ -755,7 +755,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
         unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
         unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
-        page->texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
+        foundPage->texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
     }
 
     // Delete the FT glyph
