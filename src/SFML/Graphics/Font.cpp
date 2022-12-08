@@ -365,12 +365,11 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
     for (const auto& page : pages)
     {
         // Search the glyph into the cache
-        const GlyphTable&          glyphs = page.glyphs;
-        GlyphTable::const_iterator it2    = glyphs.find(key);
-        if (it2 != glyphs.end())
+        const auto& glyphs = page.glyphs;
+        const auto found   = glyphs.find(key);
+        if (found != glyphs.end())
         {
-            // Found: just return it
-            return it2->second;
+            return found->second;
         }
     }
 
