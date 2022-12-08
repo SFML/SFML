@@ -660,23 +660,26 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         PageList& pages = m_pageLists[characterSize];
 
         // Find a page that can fit well the glyph
-        Page* page = nullptr;
-        for (PageList::iterator it = pages.begin(); it != pages.end() && !page; ++it)
+        Page* foundPage = nullptr;
+        for (auto& page : pages)
         {
             // Try to find a good position for the new glyph into the texture
-            glyph.textureRect = findGlyphRect(*it, {width, height});
+            glyph.textureRect = findGlyphRect(page, {width, height});
 
             if (glyph.textureRect.width > 0)
-                page = &*it;
+            {
+                foundPage = &page;
+                break;
+            }
         }
 
         // If we didn't find a matching page, create a new one
-        if (!page)
+        if (!foundPage)
         {
-            page = &pages.emplace_back(m_isSmooth);
+            foundPage = &pages.emplace_back(m_isSmooth);
 
             // Try to find a good position for the new glyph into the texture
-            glyph.textureRect = findGlyphRect(*page, {width, height});
+            glyph.textureRect = findGlyphRect(*foundPage, {width, height});
 
             if (glyph.textureRect.width == 0)
             {
@@ -687,7 +690,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
             }
         }
 
-        glyph.texture = &page->texture;
+        glyph.texture = &foundPage->texture;
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle

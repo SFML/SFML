@@ -105,8 +105,7 @@ m_fillColor(255, 255, 255),
 m_outlineColor(0, 0, 0),
 m_outlineThickness(0),
 m_bounds(),
-m_geometryNeedUpdate(false),
-m_fontTextureIds()
+m_geometryNeedUpdate(false)
 {
 }
 
@@ -123,8 +122,7 @@ m_fillColor(255, 255, 255),
 m_outlineColor(0, 0, 0),
 m_outlineThickness(0),
 m_bounds(),
-m_geometryNeedUpdate(true),
-m_fontTextureIds()
+m_geometryNeedUpdate(true)
 {
 }
 
