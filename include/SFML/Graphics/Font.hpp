@@ -282,7 +282,7 @@ public:
     float getUnderlineThickness(unsigned int characterSize) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Retrieve the texture ids
+    /// \brief Retrieve the texture IDs
     ///
     /// The texture ids are used internally by sf::Text.
     ///
