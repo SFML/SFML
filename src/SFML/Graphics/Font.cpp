@@ -661,7 +661,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         PageList& pages = m_pageLists[characterSize];
 
         // Find a page that can fit well the glyph
-        Page* page{};
+        Page* page = nullptr;
         for (PageList::iterator it = pages.begin(); it != pages.end() && !page; ++it)
         {
             // Try to find a good position for the new glyph into the texture
