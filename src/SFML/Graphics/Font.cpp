@@ -366,7 +366,7 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
     {
         // Search the glyph into the cache
         const auto& glyphs = page.glyphs;
-        const auto found   = glyphs.find(key);
+        const auto  found  = glyphs.find(key);
         if (found != glyphs.end())
         {
             return found->second;
