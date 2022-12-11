@@ -69,9 +69,8 @@ function(set_file_warnings)
         ${NON_ANDROID_CLANG_AND_GCC_WARNINGS}
     )
     
-    # For now if we're using MSVC-like clang interface on Windows
-    # we'll disable warnings as errors 
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_CLANG_CL)
+    # Disable warnings as errors when using Clang on Windows to work around deprecation warnings in Windows APIs
+    if(SFML_OS_WINDOWS AND (SFML_COMPILER_CLANG OR SFML_COMPILER_CLANG_CL))
         set(WARNINGS_AS_ERRORS FALSE)
     endif()
     
