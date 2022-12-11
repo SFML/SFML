@@ -38,7 +38,6 @@ function(set_target_warnings target)
             /permissive- # standards conformance mode
 
             # Disables, remove when appropriate
-            /wd4996 # disable warnings about deprecated functions
             /wd4068 # disable warnings about unknown pragmas (e.g. #pragma GCC)
             /wd4505 # disable warnings about unused functions that might be platform-specific
             /wd4800 # disable warnings regarding implicit conversions to bool
@@ -84,5 +83,11 @@ function(set_target_warnings target)
         target_compile_options(${target} PRIVATE
             -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
         )
+    endif()
+
+    # Disable certain deprecation warnings
+    if(SFML_OS_WINDOWS)
+        target_compile_definitions(${target} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+        target_compile_definitions(${target} PRIVATE -D_WINSOCK_DEPRECATED_NO_WARNINGS)
     endif()
 endfunction()
