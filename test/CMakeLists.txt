@@ -129,7 +129,7 @@ add_custom_target(runtests ALL
                   DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio
 )
 
-if(SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC)
+if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
     find_program(OpenCppCoverage_BINARY "OpenCppCoverage.exe")
 
