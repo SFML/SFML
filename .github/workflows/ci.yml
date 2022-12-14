@@ -11,11 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019 x86,   os: windows-2019, flags: -A Win32 }
-        - { name: Windows VS2019 x64,   os: windows-2019, flags: -A x64 }
-        - { name: Windows VS2022 x86,   os: windows-2022, flags: -A Win32 }
-        - { name: Windows VS2022 x64,   os: windows-2022, flags: -A x64 }
-        - { name: Windows VS2022 Clang, os: windows-2022, flags: -T ClangCL }
+        - { name: Windows VS2019 x86,     os: windows-2019, flags: -A Win32 }
+        - { name: Windows VS2019 x64,     os: windows-2019, flags: -A x64 }
+        - { name: Windows VS2022 x86,     os: windows-2022, flags: -A Win32 }
+        - { name: Windows VS2022 x64,     os: windows-2022, flags: -A x64 }
+        - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -T ClangCL }
+        - { name: Windows VS2022 Clang,   os: windows-2022, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
         - { name: Linux GCC,            os: ubuntu-latest }
         - { name: Linux Clang,          os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: MacOS,                os: macos-11 }
@@ -111,7 +112,7 @@ jobs:
       if: matrix.platform.name != 'Android' && matrix.config.name != 'Frameworks' && matrix.config.name != 'iOS' && matrix.config.name != 'Static DRM'
       shell: bash
       run: |
-        cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+        cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
         cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
   format:
