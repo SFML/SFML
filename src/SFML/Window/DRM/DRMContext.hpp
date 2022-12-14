@@ -36,7 +36,6 @@
 
 #include <glad/egl.h>
 
-#include <drm-common.h>
 #include <gbm.h>
 #include <xf86drmMode.h>
 
@@ -45,6 +44,20 @@ namespace sf
 {
 namespace priv
 {
+struct Drm
+{
+    int fileDescriptor;
+
+    drmModeModeInfoPtr mode;
+    std::uint32_t      crtcId;
+    std::uint32_t      connectorId;
+
+    drmModeCrtcPtr originalCrtc;
+
+    drmModeConnectorPtr savedConnector;
+    drmModeEncoderPtr   savedEncoder;
+};
+
 class WindowImplDRM;
 
 class DRMContext : public GlContext
@@ -174,7 +187,7 @@ protected:
     /// \brief Get Direct Rendering Manager pointer
     ///
     ////////////////////////////////////////////////////////////
-    static drm* getDRM();
+    static Drm& getDRM();
 
 private:
     ////////////////////////////////////////////////////////////

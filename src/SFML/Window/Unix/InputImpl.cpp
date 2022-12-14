@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Window.hpp>
@@ -207,6 +206,9 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     // Close the connection with the X server
     closeDisplay(display);
 
+    // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
+    // There is no mask for buttons 8 and 9, so checking the state of buttons
+    // Mouse::XButton1 and Mouse::XButton2 is not supported.
     // clang-format off
     switch (button)
     {
