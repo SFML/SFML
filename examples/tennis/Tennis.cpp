@@ -93,8 +93,10 @@ int main()
     pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);
 
-#ifdef SFML_SYSTEM_IOS
+#if defined(SFML_SYSTEM_IOS)
     pauseMessage.setString("Welcome to SFML Tennis!\nTouch the screen to start the game.");
+#elif defined(SFML_SYSTEM_WINDOWS)
+    pauseMessage.setString("Welcome to SFML Tennis!\n\nPress space or touch the screen\nto start the game.");
 #else
     pauseMessage.setString("Welcome to SFML Tennis!\n\nPress space to start the game.");
 #endif
@@ -124,7 +126,7 @@ int main()
 
             // Space key pressed: play
             if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) ||
-                (event.type == sf::Event::TouchBegan))
+                ((event.type == sf::Event::TouchBegan) || (event.type == sf::Event::TouchMoved)))
             {
                 if (!isPlaying)
                 {
@@ -143,6 +145,20 @@ int main()
                         // Make sure the ball initial angle is not too much vertical
                         ballAngle = sf::degrees(std::uniform_real_distribution<float>(0, 360)(rng));
                     } while (std::abs(std::cos(ballAngle.asRadians())) < 0.7f);
+                }
+                else if (((event.type == sf::Event::TouchMoved) || (event.type == sf::Event::TouchBegan)) &&
+                         (event.touch.finger == 0))
+                {
+                    sf::Vector2f newPos = window.mapPixelToCoords({event.touch.x, event.touch.y});
+                    // Fixed x position
+                    newPos.x = 10.f + paddleSize.x / 2.f;
+                    // Constraint y position movement on top
+                    if (newPos.y < 5.f + paddleSize.y / 2)
+                        newPos.y = 5.f + paddleSize.y / 2;
+                    // Constraint y position movement on bottom
+                    if (newPos.y > gameHeight - 5.f - paddleSize.y / 2)
+                        newPos.y = gameHeight - 5.f - paddleSize.y / 2;
+                    leftPaddle.setPosition(newPos);
                 }
             }
 
@@ -169,13 +185,6 @@ int main()
                 (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move({0.f, paddleSpeed * deltaTime});
-            }
-
-            if (sf::Touch::isDown(0))
-            {
-                sf::Vector2i pos       = sf::Touch::getPosition(0);
-                sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
-                leftPaddle.setPosition({leftPaddle.getPosition().x, mappedPos.y});
             }
 
             // Move the computer's paddle

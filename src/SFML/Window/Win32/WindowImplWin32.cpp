@@ -56,67 +56,72 @@
 
 namespace
 {
+constexpr int maxTouchPoints = 10; // Current Windows API limitation
+
+// Define constants for tablet API to avoid pulling in an extra Tablet PC header
+const char*              tabletServiceProperty     = "MicrosoftTabletPenServiceProperty";
+const unsigned long long tabletDisablePressAndHold = 0x00000001ULL;
+
 unsigned int               windowCount      = 0; // Windows owned by SFML
 unsigned int               handleCount      = 0; // All window handles
 const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
+DWORD                      touchIDs[maxTouchPoints];
+POINT                      touches[maxTouchPoints];
+
+// Convert a hardware dependent ID to a 0 based index we can use
+int getTouchID(DWORD id)
+{
+    for (int i = 0; i < maxTouchPoints; ++i)
+    {
+        if (touchIDs[i] == id)
+            return i;
+    }
+    for (int i = 0; i < maxTouchPoints; ++i)
+    {
+        if (touchIDs[i] == static_cast<DWORD>(-1))
+        {
+            touchIDs[i] = id;
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Get a system error string from an error code
+std::string getErrorString(DWORD error)
+{
+    PTCHAR buffer;
+
+    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+                      nullptr,
+                      error,
+                      0,
+                      reinterpret_cast<PTCHAR>(&buffer),
+                      0,
+                      nullptr) == 0)
+        return "Unknown error.";
+
+    const sf::String message = buffer;
+    LocalFree(buffer);
+    return message.toAnsiString();
+}
 
 const GUID GUID_DEVINTERFACE_HID = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
 
 void setProcessDpiAware()
 {
-    // Try SetProcessDpiAwareness first
-    HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
-
-    if (shCoreDll)
+#if 0
+    // Windows 8.1+
+    if (SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE) == E_INVALIDARG)
     {
-        enum ProcessDpiAwareness
-        {
-            ProcessDpiUnaware         = 0,
-            ProcessSystemDpiAware     = 1,
-            ProcessPerMonitorDpiAware = 2
-        };
-
-        using SetProcessDpiAwarenessFuncType = HRESULT(WINAPI*)(ProcessDpiAwareness);
-        auto SetProcessDpiAwarenessFunc      = reinterpret_cast<SetProcessDpiAwarenessFuncType>(
-            reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
-
-        if (SetProcessDpiAwarenessFunc)
-        {
-            // We only check for E_INVALIDARG because we would get
-            // E_ACCESSDENIED if the DPI was already set previously
-            // and S_OK means the call was successful
-            if (SetProcessDpiAwarenessFunc(ProcessSystemDpiAware) == E_INVALIDARG)
-            {
-                sf::err() << "Failed to set process DPI awareness" << std::endl;
-            }
-            else
-            {
-                FreeLibrary(shCoreDll);
-                return;
-            }
-        }
-
-        FreeLibrary(shCoreDll);
+        sf::err() << "Failed to set process DPI awareness" << std::endl;
     }
+#endif
 
-    // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
-    // is not available on this system
-    HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
-
-    if (user32Dll)
+    if (!SetProcessDPIAware())
     {
-        using SetProcessDPIAwareFuncType = BOOL(WINAPI*)();
-        auto SetProcessDPIAwareFunc      = reinterpret_cast<SetProcessDPIAwareFuncType>(
-            reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
-
-        if (SetProcessDPIAwareFunc)
-        {
-            if (!SetProcessDPIAwareFunc())
-                sf::err() << "Failed to set process DPI awareness" << std::endl;
-        }
-
-        FreeLibrary(user32Dll);
+        sf::err() << "Failed to set process DPI awareness" << std::endl;
     }
 }
 } // namespace
@@ -140,20 +145,26 @@ m_mouseInside(false),
 m_fullscreen(false),
 m_cursorGrabbed(false)
 {
-    // Set that this process is DPI aware and can handle DPI scaling
-    setProcessDpiAware();
+    // If we're the first window handle
 
     if (m_handle)
     {
-        // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
+        // If we're the first window handle, set DPI Awareness
+        // plus we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
+        {
+            setProcessDpiAware();
             JoystickImpl::setLazyUpdates(true);
+        }
 
         ++handleCount;
 
         // We change the event procedure of the control (it is important to save the old one)
         SetWindowLongPtrW(m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
         m_callback = SetWindowLongPtrW(m_handle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowImplWin32::globalOnEvent));
+
+        // Try to prepare touch events, if necessary
+        prepareTouch();
     }
 }
 
@@ -173,19 +184,21 @@ m_mouseInside(false),
 m_fullscreen((style & Style::Fullscreen) != 0),
 m_cursorGrabbed(m_fullscreen)
 {
+    // If we're the first window handle
     // Set that this process is DPI aware and can handle DPI scaling
-    setProcessDpiAware();
+    if (handleCount == 0)
+        setProcessDpiAware();
 
     // Register the window class at first call
     if (windowCount == 0)
         registerWindowClass();
 
     // Compute position and size
-    HDC screenDC = GetDC(nullptr);
-    int left     = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
-    int top      = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
-    int width    = static_cast<int>(mode.size.x);
-    int height   = static_cast<int>(mode.size.y);
+    const HDC screenDC = GetDC(nullptr);
+    const int left     = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
+    const int top      = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
+    int       width    = static_cast<int>(mode.size.x);
+    int       height   = static_cast<int>(mode.size.y);
     ReleaseDC(nullptr, screenDC);
 
     // Choose the window style according to the Style parameter
@@ -238,18 +251,21 @@ m_cursorGrabbed(m_fullscreen)
             JoystickImpl::setLazyUpdates(true);
 
         ++handleCount;
+
+        // By default, the OS limits the size of the window the the desktop size,
+        // we have to resize it after creation to apply the real size
+        setSize(mode.size);
+
+        // Switch to fullscreen if requested
+        if (m_fullscreen)
+            switchToFullscreen(mode);
+
+        // Try to prepare touch events, if necessary
+        prepareTouch();
+
+        // Increment window count
+        ++windowCount;
     }
-
-    // By default, the OS limits the size of the window the the desktop size,
-    // we have to resize it after creation to apply the real size
-    setSize(mode.size);
-
-    // Switch to fullscreen if requested
-    if (m_fullscreen)
-        switchToFullscreen(mode);
-
-    // Increment window count
-    ++windowCount;
 }
 
 
@@ -267,6 +283,8 @@ WindowImplWin32::~WindowImplWin32()
     {
         --handleCount;
 
+        // This was the last handle
+        // Reenable automatic joystick polling
         if (handleCount == 0)
             JoystickImpl::setLazyUpdates(false);
     }
@@ -783,7 +801,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             position.y = static_cast<std::int16_t>(HIWORD(lParam));
             ScreenToClient(m_handle, &position);
 
-            auto delta = static_cast<std::int16_t>(HIWORD(wParam));
+            const auto delta = static_cast<std::int16_t>(HIWORD(wParam));
 
             Event event;
 
@@ -933,8 +951,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE:
         {
             // Extract the mouse local coordinates
-            int x = static_cast<std::int16_t>(LOWORD(lParam));
-            int y = static_cast<std::int16_t>(HIWORD(lParam));
+            const int x = static_cast<std::int16_t>(LOWORD(lParam));
+            const int y = static_cast<std::int16_t>(HIWORD(lParam));
 
             // Get the client area of the window
             RECT area;
@@ -1003,12 +1021,76 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
             {
                 // Some sort of device change has happened, update joystick connections if it is a device interface
-                auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
+                const auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
 
                 if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
                     JoystickImpl::updateConnections();
             }
 
+            break;
+        }
+        case WM_TOUCH:
+        {
+            // Get the number of events
+            const unsigned int count = LOWORD(wParam);
+
+            // Reserve memory
+            std::vector<TOUCHINPUT> events(count);
+
+            if (GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam), count, events.data(), sizeof(TOUCHINPUT)))
+            {
+                POINT point;
+                for (unsigned int i = 0; i < count; ++i)
+                {
+                    Event event;
+                    int   index = getTouchID(events[i].dwID);
+
+                    // Out of IDs? Should never happen
+                    if (index == -1)
+                        continue;
+
+                    event.touch.finger = static_cast<unsigned int>(index);
+                    point.x            = TOUCH_COORD_TO_PIXEL(events[i].x);
+                    point.y            = TOUCH_COORD_TO_PIXEL(events[i].y);
+
+                    POINT cpoint = point;
+                    ScreenToClient(m_handle, &cpoint);
+                    event.touch.x = cpoint.x;
+                    event.touch.y = cpoint.y;
+
+                    if (events[i].dwFlags & TOUCHEVENTF_DOWN)
+                    {
+                        event.type = Event::TouchBegan;
+                        pushEvent(event);
+
+                        // Prevent initial move event
+                        touches[index] = point;
+                    }
+                    if (events[i].dwFlags & TOUCHEVENTF_UP)
+                    {
+                        event.type = Event::TouchEnded;
+                        pushEvent(event);
+
+                        // Remove the stored ID
+                        touchIDs[index] = static_cast<DWORD>(-1);
+                    }
+                    if (events[i].dwFlags & TOUCHEVENTF_MOVE)
+                    {
+                        // Only handle real movement
+                        if (touches[index].x != point.x || touches[index].y != point.y)
+                        {
+                            touches[index] = point;
+                            event.type     = Event::TouchMoved;
+                            pushEvent(event);
+                        }
+                    }
+                }
+                CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(lParam));
+            }
+            else
+            {
+                err() << "Failed to get touch input info: " << getErrorString(GetLastError()) << std::endl;
+            }
             break;
         }
     }
@@ -1172,6 +1254,42 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
         return 0;
 
     return DefWindowProcW(handle, message, wParam, lParam);
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::prepareTouch()
+{
+    static bool prepared = false;
+    if (!prepared)
+    {
+        prepared = true;
+
+        // Reset touch IDs
+        std::fill_n(touchIDs, maxTouchPoints, static_cast<DWORD>(-1));
+    }
+
+    // Tell Windows this window is touch aware
+    RegisterTouchWindow(m_handle, 0);
+
+    // Disable right mouse button emulation by long touching
+    const ATOM atom = GlobalAddAtomA(tabletServiceProperty);
+    if (atom)
+    {
+        SetPropA(m_handle, tabletServiceProperty, reinterpret_cast<HANDLE>(tabletDisablePressAndHold));
+        GlobalDeleteAtom(atom);
+    }
+}
+
+////////////////////////////////////////////////////////////
+bool WindowImplWin32::isTouchDown(unsigned int finger)
+{
+    return touchIDs[finger] != static_cast<DWORD>(-1);
+}
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplWin32::getTouchPosition(unsigned int finger)
+{
+    return Vector2i(touches[finger].x, touches[finger].y);
 }
 
 } // namespace priv
