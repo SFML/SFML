@@ -2030,8 +2030,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse button pressed
         case ButtonPress:
         {
-            // XXX: Why button 8 and 9?
-            // Because 4 and 5 are the vertical wheel and 6 and 7 are horizontal wheel ;)
+            // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
             unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {

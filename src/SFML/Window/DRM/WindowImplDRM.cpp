@@ -32,8 +32,6 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-#include <drm-common.h>
-
 
 namespace sf
 {
@@ -64,8 +62,8 @@ WindowImplDRM::~WindowImplDRM()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplDRM::getSystemHandle() const
 {
-    drm* drm = sf::priv::DRMContext::getDRM();
-    return static_cast<WindowHandle>(drm->fd);
+    Drm& drm = sf::priv::DRMContext::getDRM();
+    return static_cast<WindowHandle>(drm.fileDescriptor);
 }
 
 ////////////////////////////////////////////////////////////
