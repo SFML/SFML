@@ -20,4 +20,7 @@ else()
 endif()
 
 # Run
-execute_process(COMMAND run-clang-tidy -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -p ${PROJECT_BINARY_DIR})
+execute_process(COMMAND run-clang-tidy -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -p ${PROJECT_BINARY_DIR} RESULTS_VARIABLE EXIT_CODE)
+if(NOT EXIT_CODE STREQUAL 0)
+    message(FATAL_ERROR "Analysis failed")
+endif()
