@@ -288,6 +288,12 @@ target_link_libraries(sfml-window PUBLIC SFML::System)
 # glad sources
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
+# When static linking on macOS, we need to add this flag for objective C to work
+# https://developer.apple.com/library/archive/qa/qa1490/_index.html
+if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
+    target_link_libraries(sfml-window PRIVATE -ObjC)
+endif()
+
 # Vulkan headers
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
 
