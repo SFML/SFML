@@ -102,11 +102,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* shared) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr)
+EglContext::EglContext(EglContext* shared)
 {
     EglContextImpl::ensureInit();
 
@@ -132,11 +128,7 @@ m_config(nullptr)
 EglContext::EglContext(EglContext*                        shared,
                        const ContextSettings&             settings,
                        [[maybe_unused]] const WindowImpl& owner,
-                       unsigned int                       bitsPerPixel) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr)
+                       unsigned int                       bitsPerPixel)
 {
     EglContextImpl::ensureInit();
 
@@ -170,11 +162,7 @@ m_config(nullptr)
 
 
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, const Vector2u& /*size*/) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr)
+EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, const Vector2u& /*size*/)
 {
     EglContextImpl::ensureInit();
 

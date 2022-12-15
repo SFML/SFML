@@ -69,7 +69,7 @@ CFSetRef HIDJoystickManager::copyJoysticks()
 
 
 ////////////////////////////////////////////////////////////
-HIDJoystickManager::HIDJoystickManager() : m_manager(0), m_joystickCount(0)
+HIDJoystickManager::HIDJoystickManager()
 {
     m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 

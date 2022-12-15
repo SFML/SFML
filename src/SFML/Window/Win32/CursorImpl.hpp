@@ -49,7 +49,7 @@ public:
     /// Refer to sf::Cursor::Cursor().
     ///
     ////////////////////////////////////////////////////////////
-    CursorImpl();
+    CursorImpl() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -99,8 +99,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void* m_cursor; // Type erasure via `void*` is used here to avoid depending on `windows.h`
-    bool  m_systemCursor;
+    void* m_cursor{nullptr}; // Type erasure via `void*` is used here to avoid depending on `windows.h`
+    bool  m_systemCursor{false};
 };
 
 } // namespace priv

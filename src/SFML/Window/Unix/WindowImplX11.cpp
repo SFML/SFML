@@ -478,25 +478,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(WindowHandle handle) :
-m_window(0),
-m_screen(0),
-m_inputMethod(nullptr),
-m_inputContext(nullptr),
-m_isExternal(true),
-m_oldVideoMode(0),
-m_oldRRCrtc(0),
-m_hiddenCursor(0),
-m_lastCursor(None),
-m_keyRepeat(true),
-m_previousSize(-1, -1),
-m_useSizeHints(false),
-m_fullscreen(false),
-m_cursorGrabbed(false),
-m_windowMapped(false),
-m_iconPixmap(0),
-m_iconMaskPixmap(0),
-m_lastInputTime(0)
+WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 {
     using namespace WindowsImplX11Impl;
 
@@ -530,24 +512,9 @@ m_lastInputTime(0)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
-m_window(0),
-m_screen(0),
-m_inputMethod(nullptr),
-m_inputContext(nullptr),
 m_isExternal(false),
-m_oldVideoMode(0),
-m_oldRRCrtc(0),
-m_hiddenCursor(0),
-m_lastCursor(None),
-m_keyRepeat(true),
-m_previousSize(-1, -1),
-m_useSizeHints(false),
 m_fullscreen((style & Style::Fullscreen) != 0),
-m_cursorGrabbed(m_fullscreen),
-m_windowMapped(false),
-m_iconPixmap(0),
-m_iconMaskPixmap(0),
-m_lastInputTime(0)
+m_cursorGrabbed(m_fullscreen)
 {
     using namespace WindowsImplX11Impl;
 

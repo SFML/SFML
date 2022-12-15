@@ -44,7 +44,7 @@ namespace priv
 
 
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared) : m_context(0), m_view(0), m_window(0)
+SFContext::SFContext(SFContext* shared)
 {
     AutoreleasePool pool;
     // Create the context
@@ -53,10 +53,7 @@ SFContext::SFContext(SFContext* shared) : m_context(0), m_view(0), m_window(0)
 
 
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_context(0),
-m_view(0),
-m_window(0)
+SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
     AutoreleasePool pool;
     // Create the context.
@@ -69,10 +66,7 @@ m_window(0)
 
 
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size) :
-m_context(0),
-m_view(0),
-m_window(0)
+SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size)
 {
     AutoreleasePool pool;
     // Ensure the process is setup in order to create a valid window.

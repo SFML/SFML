@@ -81,7 +81,7 @@ int handleXError(::Display*, XErrorEvent*)
 class GlxErrorHandler
 {
 public:
-    GlxErrorHandler(::Display* display) : m_lock(glxErrorMutex), m_display(display)
+    GlxErrorHandler(::Display* display) : m_display(display)
     {
         glxErrorOccurred  = false;
         m_previousHandler = XSetErrorHandler(handleXError);
@@ -94,7 +94,7 @@ public:
     }
 
 private:
-    std::scoped_lock<std::recursive_mutex> m_lock;
+    std::scoped_lock<std::recursive_mutex> m_lock{glxErrorMutex};
     ::Display*                             m_display;
     int (*m_previousHandler)(::Display*, XErrorEvent*);
 };
@@ -106,12 +106,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared) :
-m_display(nullptr),
-m_window(0),
-m_context(nullptr),
-m_pbuffer(0),
-m_ownsWindow(false)
+GlxContext::GlxContext(GlxContext* shared)
 {
     // Save the creation settings
     m_settings = ContextSettings();
@@ -131,12 +126,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int /*bitsPerPixel*/) :
-m_display(nullptr),
-m_window(0),
-m_context(nullptr),
-m_pbuffer(0),
-m_ownsWindow(false)
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int /*bitsPerPixel*/)
 {
     // Save the creation settings
     m_settings = settings;
@@ -156,12 +146,7 @@ m_ownsWindow(false)
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size) :
-m_display(nullptr),
-m_window(0),
-m_context(nullptr),
-m_pbuffer(0),
-m_ownsWindow(false)
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size)
 {
     // Save the creation settings
     m_settings = settings;

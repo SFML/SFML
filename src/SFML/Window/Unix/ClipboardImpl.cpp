@@ -74,7 +74,7 @@ void ClipboardImpl::processEvents()
 
 
 ////////////////////////////////////////////////////////////
-ClipboardImpl::ClipboardImpl() : m_window(0), m_requestResponded(false)
+ClipboardImpl::ClipboardImpl()
 {
     // Open a connection with the X server
     m_display = openDisplay();

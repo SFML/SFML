@@ -435,13 +435,6 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-JoystickImpl::JoystickImpl() : m_file(-1)
-{
-    std::fill(m_mapping, m_mapping + ABS_MAX + 1, 0);
-}
-
-
-////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
     udevContext = udev_new();

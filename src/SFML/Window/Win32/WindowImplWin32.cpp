@@ -130,19 +130,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(WindowHandle handle) :
-m_handle(handle),
-m_callback(0),
-m_cursorVisible(true), // might need to call GetCursorInfo
-m_lastCursor(LoadCursor(nullptr, IDC_ARROW)),
-m_icon(nullptr),
-m_keyRepeatEnabled(true),
-m_lastSize(0, 0),
-m_resizing(false),
-m_surrogate(0),
-m_mouseInside(false),
-m_fullscreen(false),
-m_cursorGrabbed(false)
+WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -164,16 +152,7 @@ m_cursorGrabbed(false)
 
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& /*settings*/) :
-m_handle(nullptr),
-m_callback(0),
-m_cursorVisible(true), // might need to call GetCursorInfo
-m_lastCursor(LoadCursor(nullptr, IDC_ARROW)),
-m_icon(nullptr),
-m_keyRepeatEnabled(true),
 m_lastSize(mode.size),
-m_resizing(false),
-m_surrogate(0),
-m_mouseInside(false),
 m_fullscreen((style & Style::Fullscreen) != 0),
 m_cursorGrabbed(m_fullscreen)
 {

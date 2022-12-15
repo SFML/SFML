@@ -85,7 +85,7 @@ void showMouseCursor()
 #pragma mark WindowImplCocoa's ctor/dtor
 
 ////////////////////////////////////////////////////////////
-WindowImplCocoa::WindowImplCocoa(WindowHandle handle) : m_showCursor(true)
+WindowImplCocoa::WindowImplCocoa(WindowHandle handle)
 {
     AutoreleasePool pool;
     // Treat the handle as it real type
@@ -118,8 +118,7 @@ WindowImplCocoa::WindowImplCocoa(WindowHandle handle) : m_showCursor(true)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplCocoa::WindowImplCocoa(VideoMode mode, const String& title, unsigned long style, const ContextSettings& /*settings*/) :
-m_showCursor(true)
+WindowImplCocoa::WindowImplCocoa(VideoMode mode, const String& title, unsigned long style, const ContextSettings& /*settings*/)
 {
     AutoreleasePool pool;
     // Transform the app process.

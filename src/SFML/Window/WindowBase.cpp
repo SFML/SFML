@@ -46,20 +46,18 @@ const sf::WindowBase* fullscreenWindow = nullptr;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase() : m_impl(), m_size(0, 0)
-{
-}
+WindowBase::WindowBase() = default;
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style) : m_impl(), m_size(0, 0)
+WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style)
 {
     WindowBase::create(mode, title, style);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(WindowHandle handle) : m_impl(), m_size(0, 0)
+WindowBase::WindowBase(WindowHandle handle)
 {
     WindowBase::create(handle);
 }

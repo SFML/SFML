@@ -511,17 +511,7 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr),
-m_currentBO(nullptr),
-m_nextBO(nullptr),
-m_gbmSurface(nullptr),
-m_size(0, 0),
-m_shown(false),
-m_scanOut(false)
+DRMContext::DRMContext(DRMContext* shared)
 {
     contextCount++;
 
@@ -543,17 +533,7 @@ m_scanOut(false)
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr),
-m_currentBO(nullptr),
-m_nextBO(nullptr),
-m_gbmSurface(nullptr),
-m_size(0, 0),
-m_shown(false),
-m_scanOut(false)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
     contextCount++;
 
@@ -573,17 +553,7 @@ m_scanOut(false)
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size) :
-m_display(EGL_NO_DISPLAY),
-m_context(EGL_NO_CONTEXT),
-m_surface(EGL_NO_SURFACE),
-m_config(nullptr),
-m_currentBO(nullptr),
-m_nextBO(nullptr),
-m_gbmSurface(nullptr),
-m_size(0, 0),
-m_shown(false),
-m_scanOut(false)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size)
 {
     contextCount++;
 

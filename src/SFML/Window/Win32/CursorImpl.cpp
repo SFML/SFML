@@ -37,14 +37,6 @@ namespace sf
 {
 namespace priv
 {
-
-////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() : m_cursor(nullptr), m_systemCursor(false)
-{
-    // That's it.
-}
-
-
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
 {
