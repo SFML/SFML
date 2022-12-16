@@ -17,8 +17,8 @@ jobs:
         - { name: Windows VS2022 x64,     os: windows-2022, flags: -A x64 }
         - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -T ClangCL }
         - { name: Windows VS2022 Clang,   os: windows-2022, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
-        - { name: Linux GCC,            os: ubuntu-latest }
-        - { name: Linux Clang,          os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC,            os: ubuntu-latest, prefix: xvfb-run -a }
+        - { name: Linux Clang,          os: ubuntu-latest, prefix: xvfb-run -a, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: MacOS,                os: macos-11 }
         - { name: MacOS Xcode,          os: macos-11, flags: -GXcode }
         config:
@@ -57,7 +57,7 @@ jobs:
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -94,7 +94,7 @@ jobs:
 
     - name: Build
       shell: bash
-      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      run: ${{matrix.platform.prefix}} cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
 
     - name: Generate Coverage Report
       if: matrix.type.name == 'Debug' && runner.os != 'Windows' # Coverage is already generated on Windows when running tests.
