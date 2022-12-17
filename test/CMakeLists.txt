@@ -157,14 +157,10 @@ if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
     string(REPLACE "/" "\\" COVERAGE_SRC "${PROJECT_SOURCE_DIR}/src")
     string(REPLACE "/" "\\" COVERAGE_INCLUDE "${PROJECT_SOURCE_DIR}/include")
 
-    add_custom_command(TARGET runtests
-                       COMMENT "Run tests"
-                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-                       VERBATIM)
-else()
-    # Run tests without a coverage runner
-    add_custom_command(TARGET runtests
-                       COMMENT "Run tests"
-                       POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-                       VERBATIM)
+    set(COVERAGE_PREFIX ${OpenCppCoverage_BINARY} ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" --)
 endif()
+
+add_custom_command(TARGET runtests
+                   COMMENT "Run tests"
+                   POST_BUILD COMMAND ${COVERAGE_PREFIX} ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
+                   VERBATIM)
