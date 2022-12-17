@@ -69,6 +69,7 @@ struct ModifiersState
     BOOL leftAlternateWasDown;
     BOOL leftControlWasDown;
     BOOL rightControlWasDown;
+    BOOL capsLockWasOn;
 };
 
 
@@ -140,6 +141,7 @@ void initialiseKeyboardHelper(void)
     state.rightAlternateWasDown   = isKeyMaskActive(modifiers, NSRightAlternateKeyMask);
     state.leftControlWasDown      = isKeyMaskActive(modifiers, NSLeftControlKeyMask);
     state.rightControlWasDown     = isKeyMaskActive(modifiers, NSRightControlKeyMask);
+    state.capsLockWasOn           = isKeyMaskActive(modifiers, NSEventModifierFlagCapsLock);
 
     isStateInitialized = YES;
 }
@@ -200,6 +202,16 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
         state.leftControlWasDown, state.rightControlWasDown,
         sf::Keyboard::LControl, sf::Keyboard::RControl,
         sf::Keyboard::Scan::LControl, sf::Keyboard::Scan::RControl,
+        requester
+    );
+
+    // Handle caps lock
+    processOneModifier(
+        modifiers,
+        NSEventModifierFlagCapsLock,
+        state.capsLockWasOn,
+        sf::Keyboard::Unknown,
+        sf::Keyboard::Scan::CapsLock,
         requester
     );
 }
