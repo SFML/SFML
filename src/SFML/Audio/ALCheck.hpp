@@ -92,8 +92,8 @@ ALenum alGetLastErrorImpl();
 } // namespace sf
 
 
-#endif // SFML_ALCHECK_HPP
-
 #if defined(__APPLE__)
 #pragma GCC diagnostic pop
 #endif
+
+#endif // SFML_ALCHECK_HPP
