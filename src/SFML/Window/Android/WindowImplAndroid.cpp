@@ -633,7 +633,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(int32_t key)
         case AKEYCODE_ENTER:              return Keyboard::Enter;
         case AKEYCODE_DEL:                return Keyboard::Backspace;
         case AKEYCODE_FORWARD_DEL:        return Keyboard::Delete;
-        case AKEYCODE_GRAVE:              return Keyboard::Tilde;
+        case AKEYCODE_GRAVE:              return Keyboard::Grave;
         case AKEYCODE_MINUS:              return Keyboard::Subtract;
         case AKEYCODE_EQUALS:             return Keyboard::Equal;
         case AKEYCODE_LEFT_BRACKET:       return Keyboard::LBracket;
