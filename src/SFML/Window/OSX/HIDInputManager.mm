@@ -866,7 +866,7 @@ void HIDInputManager::buildMappings()
             // Use current layout for translation
             OSStatus error = UCKeyTranslate(
                 layout, virtualCode, kUCKeyActionDown, modifiers, LMGetKbdType(),
-                kUCKeyTranslateNoDeadKeysBit, &deadKeyState, MAX_LENGTH, &length, string
+                kUCKeyTranslateNoDeadKeysMask, &deadKeyState, MAX_LENGTH, &length, string
             );
 
             if (error != noErr)
