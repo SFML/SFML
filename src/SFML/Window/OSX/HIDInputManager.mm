@@ -182,7 +182,7 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
         case 0x27: return Keyboard::Apostrophe;
         case 0x2f: return Keyboard::Slash;
         case 0x5c: return Keyboard::Backslash;
-        case 0x7e: return Keyboard::Tilde;
+        case 0x60: return Keyboard::Grave;
         case 0x3d: return Keyboard::Equal;
         case 0x2d: return Keyboard::Hyphen;
         case 0x20: return Keyboard::Space;
@@ -310,7 +310,7 @@ UniChar HIDInputManager::toUnicode(Keyboard::Key key)
         case Keyboard::Apostrophe: return 0x27;
         case Keyboard::Slash:      return 0x2f;
         case Keyboard::Backslash:  return 0x5c;
-        case Keyboard::Tilde:      return 0x7e;
+        case Keyboard::Grave:      return 0x60;
         case Keyboard::Equal:      return 0x3d;
         case Keyboard::Hyphen:     return 0x2d;
         case Keyboard::Space:      return 0x20;

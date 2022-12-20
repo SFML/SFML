@@ -108,7 +108,7 @@ public:
         Apostrophe,   //!< The ' key
         Slash,        //!< The / key
         Backslash,    //!< The \ key
-        Tilde,        //!< The ~ key
+        Grave,        //!< The ` key
         Equal,        //!< The = key
         Hyphen,       //!< The - key (hyphen)
         Space,        //!< The Space key
@@ -160,6 +160,7 @@ public:
 
         // Deprecated values:
 
+        Tilde     = Grave,     //!< \deprecated Use Grave instead
         Dash      = Hyphen,    //!< \deprecated Use Hyphen instead
         BackSpace = Backspace, //!< \deprecated Use Backspace instead
         BackSlash = Backslash, //!< \deprecated Use Backslash instead
