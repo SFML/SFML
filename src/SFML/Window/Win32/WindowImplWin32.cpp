@@ -1169,7 +1169,7 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         case VK_OEM_PERIOD: return Keyboard::Period;
         case VK_OEM_7:      return Keyboard::Apostrophe;
         case VK_OEM_5:      return Keyboard::Backslash;
-        case VK_OEM_3:      return Keyboard::Tilde;
+        case VK_OEM_3:      return Keyboard::Grave;
         case VK_ESCAPE:     return Keyboard::Escape;
         case VK_SPACE:      return Keyboard::Space;
         case VK_RETURN:     return Keyboard::Enter;

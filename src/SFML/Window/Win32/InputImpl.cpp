@@ -106,7 +106,7 @@ Keyboard::Key virtualKeyToSfKey(UINT virtualKey)
         case VK_OEM_7:      key = Keyboard::Apostrophe; break;
         case VK_OEM_2:      key = Keyboard::Slash;      break;
         case VK_OEM_5:      key = Keyboard::Backslash;  break;
-        case VK_OEM_3:      key = Keyboard::Tilde;      break;
+        case VK_OEM_3:      key = Keyboard::Grave;      break;
         case VK_OEM_PLUS:   key = Keyboard::Equal;      break;
         case VK_OEM_MINUS:  key = Keyboard::Hyphen;     break;
         case VK_SPACE:      key = Keyboard::Space;      break;
@@ -218,7 +218,7 @@ int sfKeyToVirtualKey(Keyboard::Key key)
         case Keyboard::Apostrophe: virtualKey = VK_OEM_7;      break;
         case Keyboard::Slash:      virtualKey = VK_OEM_2;      break;
         case Keyboard::Backslash:  virtualKey = VK_OEM_5;      break;
-        case Keyboard::Tilde:      virtualKey = VK_OEM_3;      break;
+        case Keyboard::Grave:      virtualKey = VK_OEM_3;      break;
         case Keyboard::Equal:      virtualKey = VK_OEM_PLUS;   break;
         case Keyboard::Hyphen:     virtualKey = VK_OEM_MINUS;  break;
         case Keyboard::Space:      virtualKey = VK_SPACE;      break;

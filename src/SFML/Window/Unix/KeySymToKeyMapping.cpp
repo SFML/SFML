@@ -59,7 +59,7 @@ Keyboard::Key keySymToKey(KeySym symbol)
         case XK_period:       return Keyboard::Period;
         case XK_apostrophe:   return Keyboard::Quote;
         case XK_backslash:    return Keyboard::BackSlash;
-        case XK_grave:        return Keyboard::Tilde;
+        case XK_grave:        return Keyboard::Grave;
         case XK_space:        return Keyboard::Space;
         case XK_Return:       return Keyboard::Return;
         case XK_KP_Enter:     return Keyboard::Return;
@@ -172,7 +172,7 @@ KeySym keyToKeySym(Keyboard::Key key)
         case Keyboard::Period:     return XK_period;
         case Keyboard::Quote:      return XK_apostrophe;
         case Keyboard::BackSlash:  return XK_backslash;
-        case Keyboard::Tilde:      return XK_grave;
+        case Keyboard::Grave:      return XK_grave;
         case Keyboard::Space:      return XK_space;
         case Keyboard::Return:     return XK_Return;
         case Keyboard::BackSpace:  return XK_BackSpace;

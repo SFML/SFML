@@ -218,7 +218,7 @@ namespace
             case KEY_L:             return sf::Keyboard::L;
             case KEY_SEMICOLON:     return sf::Keyboard::Semicolon;
             case KEY_APOSTROPHE:    return sf::Keyboard::Quote;
-            case KEY_GRAVE:         return sf::Keyboard::Tilde;
+            case KEY_GRAVE:         return sf::Keyboard::Grave;
             case KEY_LEFTSHIFT:     return sf::Keyboard::LShift;
             case KEY_BACKSLASH:     return sf::Keyboard::Backslash;
             case KEY_Z:             return sf::Keyboard::Z;
