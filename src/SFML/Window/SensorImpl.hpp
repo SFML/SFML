@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPL_HPP
-#define SFML_SENSORIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -54,6 +53,3 @@
 #include <SFML/Window/Android/SensorImpl.hpp>
 
 #endif
-
-
-#endif // SFML_SENSORIMPL_HPP

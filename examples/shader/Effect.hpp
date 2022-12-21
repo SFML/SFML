@@ -1,5 +1,4 @@
-#ifndef EFFECT_HPP
-#define EFFECT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -80,5 +79,3 @@ private:
     // NOLINTNEXTLINE(readability-identifier-naming)
     static const sf::Font* s_font;
 };
-
-#endif // EFFECT_HPP

@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLCOCOA_HPP
-#define SFML_WINDOWIMPLCOCOA_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -373,5 +372,3 @@ private:
 } // namespace sf
 
 #pragma GCC diagnostic pop
-
-#endif // SFML_WINDOWIMPLCOCOA_HPP

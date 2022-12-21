@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_TRANSFORM_HPP
-#define SFML_TRANSFORM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -348,9 +347,6 @@ constexpr Vector2f operator*(const Transform& left, const Vector2f& right);
 #include <SFML/Graphics/Transform.inl>
 
 } // namespace sf
-
-
-#endif // SFML_TRANSFORM_HPP
 
 
 ////////////////////////////////////////////////////////////

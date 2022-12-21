@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLDRM_HPP
-#define SFML_WINDOWIMPLDRM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -196,6 +195,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_WINDOWIMPLDRM_HPP

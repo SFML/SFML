@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLEXTENSIONS_HPP
-#define SFML_GLEXTENSIONS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -349,6 +348,3 @@ void ensureExtensionsInit();
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_GLEXTENSIONS_HPP

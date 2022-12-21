@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VECTOR3_HPP
-#define SFML_VECTOR3_HPP
+#pragma once
 
 #include <SFML/System/Export.hpp>
 
@@ -317,9 +316,6 @@ using Vector3i = Vector3<int>;
 using Vector3f = Vector3<float>;
 
 } // namespace sf
-
-
-#endif // SFML_VECTOR3_HPP
 
 
 ////////////////////////////////////////////////////////////

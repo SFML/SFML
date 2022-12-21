@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLUNIX_HPP
-#define SFML_CURSORIMPLUNIX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -131,5 +130,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_CUSROSIMPLUNIX_HPP

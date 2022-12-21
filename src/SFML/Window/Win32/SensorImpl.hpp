@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPLWIN32_HPP
-#define SFML_SENSORIMPLWIN32_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -100,6 +99,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SENSORIMPLWIN32_HPP

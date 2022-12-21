@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EAGLCONTEXT_HPP
-#define SFML_EAGLCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -172,5 +171,3 @@ private:
 } // namespace sf
 
 #pragma GCC diagnostic pop
-
-#endif // SFML_EAGLCONTEXT_HPP

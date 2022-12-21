@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWSTYLE_HPP
-#define SFML_WINDOWSTYLE_HPP
+#pragma once
 
 
 namespace sf
@@ -48,6 +47,3 @@ enum
 } // namespace Style
 
 } // namespace sf
-
-
-#endif // SFML_WINDOWSTYLE_HPP

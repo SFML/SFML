@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETIMPL_HPP
-#define SFML_SOCKETIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -106,6 +105,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SOCKETIMPL_HPP

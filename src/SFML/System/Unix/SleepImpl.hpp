@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SLEEPIMPLUNIX_HPP
-#define SFML_SLEEPIMPLUNIX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -47,6 +46,3 @@ namespace sf::priv
 void sleepImpl(Time time);
 
 } // namespace sf::priv
-
-
-#endif // SFML_SLEEPIMPLUNIX_HPP

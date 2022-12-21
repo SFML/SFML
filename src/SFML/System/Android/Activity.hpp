@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_ACTIVITY_HPP
-#define SFML_ACTIVITY_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -101,6 +100,3 @@ SFML_SYSTEM_API ActivityStates& getActivity();
 
 } // namespace priv
 } // namespace sf
-
-
-#endif // SFML_ACTIVITY_HPP

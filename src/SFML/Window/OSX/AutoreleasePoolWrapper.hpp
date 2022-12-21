@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_AUTORELEASEPOOL_HPP
-#define SFML_AUTORELEASEPOOL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 /// Predefine OBJ-C classes
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace sf
-
-#endif // SFML_AUTORELEASEPOOL_HPP

@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_DRMCONTEXT_HPP
-#define SFML_DRMCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -215,6 +214,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_DRMCONTEXT_HPP

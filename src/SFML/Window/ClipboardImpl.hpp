@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARDIMPL_HPP
-#define SFML_CLIPBOARDIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -46,5 +45,3 @@
 #elif defined(SFML_SYSTEM_ANDROID)
 #include <SFML/Window/Android/ClipboardImpl.hpp>
 #endif
-
-#endif // SFML_CLIPBOARDIMPL_HPP

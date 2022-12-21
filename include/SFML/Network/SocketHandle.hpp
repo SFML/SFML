@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOCKETHANDLE_HPP
-#define SFML_SOCKETHANDLE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -52,6 +51,3 @@ using SocketHandle = int;
 #endif
 
 } // namespace sf
-
-
-#endif // SFML_SOCKETHANDLE_HPP

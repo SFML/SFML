@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPLOSX_HPP
-#define SFML_SENSORIMPLOSX_HPP
+#pragma once
 
 
 namespace sf
@@ -95,6 +94,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SENSORIMPLOSX_HPP

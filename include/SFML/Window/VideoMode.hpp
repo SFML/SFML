@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VIDEOMODE_HPP
-#define SFML_VIDEOMODE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -177,9 +176,6 @@ SFML_WINDOW_API bool operator<=(const VideoMode& left, const VideoMode& right);
 SFML_WINDOW_API bool operator>=(const VideoMode& left, const VideoMode& right);
 
 } // namespace sf
-
-
-#endif // SFML_VIDEOMODE_HPP
 
 
 ////////////////////////////////////////////////////////////

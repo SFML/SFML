@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EGLCONTEXT_HPP
-#define SFML_EGLCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -197,6 +196,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_EGLCONTEXT_HPP

@@ -22,13 +22,9 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFMAIN_HPP
-#define SFML_SFMAIN_HPP
+#pragma once
 
 
 int sfmlMain(int argc, char** argv);
 
 int sfmlMain();
-
-
-#endif // SFML_SFMAIN_HPP

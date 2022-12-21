@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERTEXTUREIMPLFBO_HPP
-#define SFML_RENDERTEXTUREIMPLFBO_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -152,6 +151,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_RENDERTEXTUREIMPLFBO_HPP

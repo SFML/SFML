@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPL_HPP
-#define SFML_INPUTIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -46,5 +45,3 @@
 #elif defined(SFML_SYSTEM_ANDROID)
 #include <SFML/Window/Android/InputImpl.hpp>
 #endif
-
-#endif // SFML_INPUTIMPL_HPP

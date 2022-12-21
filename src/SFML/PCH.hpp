@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_PCH_HPP
-#define SFML_SFML_PCH_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Precompiled Headers
@@ -58,5 +57,3 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#endif // SFML_SFML_PCH_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPLIOS_HPP
-#define SFML_INPUTIMPLIOS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -162,6 +161,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_INPUTIMPLIOS_HPP

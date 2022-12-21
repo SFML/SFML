@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VULKANIMPLWIN32_HPP
-#define SFML_VULKANIMPLWIN32_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -101,6 +100,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_VULKANIMPLWIN32_HPP

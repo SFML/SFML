@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VECTOR2_HPP
-#define SFML_VECTOR2_HPP
+#pragma once
 
 #include <SFML/System/Export.hpp>
 
@@ -402,9 +401,6 @@ template <typename T>
 #include <SFML/System/Vector2.inl>
 
 } // namespace sf
-
-
-#endif // SFML_VECTOR2_HPP
 
 
 ////////////////////////////////////////////////////////////

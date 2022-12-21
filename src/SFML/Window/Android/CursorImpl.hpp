@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLANDROID_HPP
-#define SFML_CURSORIMPLANDROID_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -86,5 +85,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_CURSORIMPLANDROID_HPP

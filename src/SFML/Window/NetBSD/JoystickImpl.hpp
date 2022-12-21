@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLNETBSD_HPP
-#define SFML_JOYSTICKIMPLNETBSD_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -123,6 +122,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLNETBSD_HPP

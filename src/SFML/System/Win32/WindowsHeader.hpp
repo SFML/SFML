@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWSHEADER_HPP
-#define SFML_WINDOWSHEADER_HPP
+#pragma once
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -46,5 +45,3 @@
 #endif
 
 #include <windows.h>
-
-#endif // SFML_WINDOWSHEADER_HPP

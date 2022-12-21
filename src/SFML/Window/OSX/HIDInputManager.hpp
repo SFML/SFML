@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_HIDINPUTMANAGER_HPP
-#define SFML_HIDINPUTMANAGER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -240,5 +239,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif

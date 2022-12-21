@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPLANDROID_HPP
-#define SFML_INPUTIMPLANDROID_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -162,6 +161,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_INPUTIMPLANDROID_HPP

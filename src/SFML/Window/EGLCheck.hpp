@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EGLCHECK_HPP
-#define SFML_EGLCHECK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -70,6 +69,3 @@ void eglCheckError(const std::filesystem::path& file, unsigned int line, const c
 
 } // namespace priv
 } // namespace sf
-
-
-#endif // SFML_EGLCHECK_HPP

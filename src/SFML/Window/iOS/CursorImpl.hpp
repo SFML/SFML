@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLIOS_HPP
-#define SFML_CURSORIMPLIOS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -86,5 +85,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_CURSORIMPLIOS_HPP

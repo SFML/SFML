@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_HIDJOYSTICKMANAGER_HPP
-#define SFML_HIDJOYSTICKMANAGER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -131,5 +130,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif

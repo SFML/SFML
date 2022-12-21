@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLWIN32_HPP
-#define SFML_CURSORIMPLWIN32_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -106,5 +105,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_CUSROSIMPLWIN32_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GRAPHICS_EXPORT_HPP
-#define SFML_GRAPHICS_EXPORT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -43,6 +42,3 @@
 #define SFML_GRAPHICS_API SFML_API_IMPORT
 
 #endif
-
-
-#endif // SFML_GRAPHICS_EXPORT_HPP

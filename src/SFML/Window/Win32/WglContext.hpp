@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WGLCONTEXT_HPP
-#define SFML_WGLCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -189,5 +188,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_WGLCONTEXT_HPP

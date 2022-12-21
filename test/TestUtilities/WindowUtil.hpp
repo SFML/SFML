@@ -3,8 +3,7 @@
 // For a new window module test case, include this header.
 // This ensures that string conversions are visible and can be used by doctest for debug output.
 
-#ifndef SFML_TESTUTILITIES_WINDOW_HPP
-#define SFML_TESTUTILITIES_WINDOW_HPP
+#pragma once
 
 #include <SystemUtil.hpp>
 
@@ -15,5 +14,3 @@ class VideoMode;
 
 std::ostream& operator<<(std::ostream& os, const VideoMode& videoMode);
 } // namespace sf
-
-#endif // SFML_TESTUTILITIES_WINDOW_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPLX11_HPP
-#define SFML_INPUTIMPLX11_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -162,6 +161,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_INPUTIMPLX11_HPP

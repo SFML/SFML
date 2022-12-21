@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFVIEW_HPP
-#define SFML_SFVIEW_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -56,5 +55,3 @@
 @property(nonatomic) sf::priv::EaglContext* context; ///< The attached EAGL context
 
 @end
-
-#endif // SFML_SFVIEW_HPP
