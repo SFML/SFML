@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SHAREDDISPLAY_HPP
-#define SFML_SHAREDDISPLAY_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -93,6 +92,3 @@ Atom getAtom(const std::string& name, bool onlyIfExists = false);
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SHAREDDISPLAY_HPP

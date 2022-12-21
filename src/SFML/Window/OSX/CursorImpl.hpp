@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLOSX_HPP
-#define SFML_CURSORIMPLOSX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -114,5 +113,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_CURSORIMPLOSX_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SLEEP_HPP
-#define SFML_SLEEP_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -51,6 +50,3 @@ class Time;
 void SFML_SYSTEM_API sleep(Time duration);
 
 } // namespace sf
-
-
-#endif // SFML_SLEEP_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLOPENBSD_HPP
-#define SFML_JOYSTICKIMPLOPENBSD_HPP
+#pragma once
 
 
 namespace sf
@@ -110,6 +109,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLOPENBSD_HPP

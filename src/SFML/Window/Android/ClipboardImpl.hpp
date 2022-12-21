@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARDIMPLANDROID_HPP
-#define SFML_CLIPBOARDIMPLANDROID_HPP
+#pragma once
 
 
 namespace sf
@@ -67,6 +66,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_CLIPBOARDIMPLANDROID_HPP

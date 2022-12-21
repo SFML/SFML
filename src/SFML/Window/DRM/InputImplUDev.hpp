@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPLUDEV_HPP
-#define SFML_INPUTIMPLUDEV_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -186,6 +185,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_INPUTIMPLUDEV_HPP

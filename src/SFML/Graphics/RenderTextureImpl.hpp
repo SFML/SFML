@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERTEXTUREIMPL_HPP
-#define SFML_RENDERTEXTUREIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -114,6 +113,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_RENDERTEXTUREIMPL_HPP

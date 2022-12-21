@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLXCONTEXT_HPP
-#define SFML_GLXCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -186,5 +185,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#endif // SFML_GLXCONTEXT_HPP

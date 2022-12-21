@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLANDROID_HPP
-#define SFML_JOYSTICKIMPLANDROID_HPP
+#pragma once
 
 
 namespace sf
@@ -109,6 +108,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLANDROID_HPP

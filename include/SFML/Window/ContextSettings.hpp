@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTSETTINGS_HPP
-#define SFML_CONTEXTSETTINGS_HPP
+#pragma once
 
 #include <SFML/Config.hpp>
 
@@ -92,9 +91,6 @@ struct ContextSettings
 };
 
 } // namespace sf
-
-
-#endif // SFML_CONTEXTSETTINGS_HPP
 
 
 ////////////////////////////////////////////////////////////

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_BLENDMODE_HPP
-#define SFML_BLENDMODE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -162,9 +161,6 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with
 // NOLINTEND(readability-identifier-naming)
 
 } // namespace sf
-
-
-#endif // SFML_BLENDMODE_HPP
 
 
 ////////////////////////////////////////////////////////////

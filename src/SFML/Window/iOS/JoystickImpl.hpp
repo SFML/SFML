@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLIOS_HPP
-#define SFML_JOYSTICKIMPLIOS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -108,6 +107,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLIOS_HPP

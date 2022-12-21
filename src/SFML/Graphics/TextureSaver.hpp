@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_TEXTURESAVER_HPP
-#define SFML_TEXTURESAVER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -68,6 +67,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_TEXTURESAVER_HPP

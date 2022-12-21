@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_IPADDRESS_HPP
-#define SFML_IPADDRESS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -265,9 +264,6 @@ SFML_NETWORK_API std::istream& operator>>(std::istream& stream, std::optional<Ip
 SFML_NETWORK_API std::ostream& operator<<(std::ostream& stream, const IpAddress& address);
 
 } // namespace sf
-
-
-#endif // SFML_IPADDRESS_HPP
 
 
 ////////////////////////////////////////////////////////////

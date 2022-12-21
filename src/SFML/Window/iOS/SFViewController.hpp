@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFVIEWCONTROLLER_HPP
-#define SFML_SFVIEWCONTROLLER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -61,5 +60,3 @@
 @property(nonatomic) bool orientationCanChange; ///< Tells whether the controller's view can rotate or not
 
 @end
-
-#endif // SFML_SFVIEWCONTROLLER_HPP

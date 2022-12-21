@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_PRIMITIVETYPE_HPP
-#define SFML_PRIMITIVETYPE_HPP
+#pragma once
 
 namespace sf
 {
@@ -47,6 +46,3 @@ enum class PrimitiveType
 };
 
 } // namespace sf
-
-
-#endif // SFML_PRIMITIVETYPE_HPP

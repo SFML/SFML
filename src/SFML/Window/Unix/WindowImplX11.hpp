@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLX11_HPP
-#define SFML_WINDOWIMPLX11_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -321,6 +320,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_WINDOWIMPLX11_HPP

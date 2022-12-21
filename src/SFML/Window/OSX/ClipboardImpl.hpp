@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARDIMPLCOCOA_HPP
-#define SFML_CLIPBOARDIMPLCOCOA_HPP
+#pragma once
 
 
 namespace sf
@@ -68,6 +67,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_CLIPBOARDIMPLCOCOA_HPP

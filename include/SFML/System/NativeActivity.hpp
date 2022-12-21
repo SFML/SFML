@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_NATIVEACTIVITY_HPP
-#define SFML_NATIVEACTIVITY_HPP
+#pragma once
 
 
 ////////////////////////////////////////////////////////////
@@ -57,6 +56,3 @@ namespace sf
 SFML_SYSTEM_API ANativeActivity* getNativeActivity();
 
 } // namespace sf
-
-
-#endif // SFML_NATIVEACTIVITY_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEWRITEROGG_HPP
-#define SFML_SOUNDFILEWRITEROGG_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -117,6 +116,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SOUNDFILEWRITEROGG_HPP

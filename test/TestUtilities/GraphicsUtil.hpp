@@ -3,8 +3,7 @@
 // For a new graphics module test case, include this header.
 // This ensures that string conversions are visible and can be used by doctest for debug output.
 
-#ifndef SFML_TESTUTILITIES_GRAPHICS_HPP
-#define SFML_TESTUTILITIES_GRAPHICS_HPP
+#pragma once
 
 #include <SFML/Graphics/Rect.hpp>
 
@@ -34,5 +33,3 @@ std::ostream& operator<<(std::ostream& os, const Rect<T>& rect)
 } // namespace sf
 
 bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs);
-
-#endif // SFML_TESTUTILITIES_GRAPHICS_HPP

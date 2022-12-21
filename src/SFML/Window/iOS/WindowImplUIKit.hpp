@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLUIKIT_HPP
-#define SFML_WINDOWIMPLUIKIT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -226,6 +225,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_WINDOWIMPLUIKIT_HPP

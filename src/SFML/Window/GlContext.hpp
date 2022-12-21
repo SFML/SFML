@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLCONTEXT_HPP
-#define SFML_GLCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -326,6 +325,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_GLCONTEXT_HPP

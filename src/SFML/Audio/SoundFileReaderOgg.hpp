@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEREADEROGG_HPP
-#define SFML_SOUNDFILEREADEROGG_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -121,6 +120,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SOUNDFILEREADEROGG_HPP

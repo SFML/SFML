@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_OBJCTYPE_HPP
-#define SFML_OBJCTYPE_HPP
+#pragma once
 
 
 // Forward declare an Objective-C class
@@ -32,6 +31,3 @@
 #else
 #define SFML_DECLARE_OBJC_CLASS(c) typedef struct objc_object c
 #endif
-
-
-#endif // SFML_OBJCTYPE_HPP

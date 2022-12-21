@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RESOURCESTREAM_HPP
-#define SFML_RESOURCESTREAM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -110,6 +109,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_RESOURCESTREAM_HPP

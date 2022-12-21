@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPLIOS_HPP
-#define SFML_SENSORIMPLIOS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -107,6 +106,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SENSORIMPLIOS_HPP

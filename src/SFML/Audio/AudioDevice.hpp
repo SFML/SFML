@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_AUDIODEVICE_HPP
-#define SFML_AUDIODEVICE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -186,6 +185,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_AUDIODEVICE_HPP

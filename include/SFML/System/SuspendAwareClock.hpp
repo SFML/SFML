@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////
 
 
-#ifndef SFML_SUSPENDAWARECLOCK_HPP
-#define SFML_SUSPENDAWARECLOCK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -76,5 +75,3 @@ public:
 };
 
 } // namespace sf
-
-#endif // SFML_SUSPENDAWARECLOCK_HPP

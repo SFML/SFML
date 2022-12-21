@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CG_SF_CONVERSION_HPP
-#define SFML_CG_SF_CONVERSION_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -69,5 +68,3 @@ CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 
 } // namespace priv
 } // namespace sf
-
-#endif

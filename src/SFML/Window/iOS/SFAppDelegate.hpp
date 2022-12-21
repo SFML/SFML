@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFAPPDELEGATE_HPP
-#define SFML_SFAPPDELEGATE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -131,5 +130,3 @@
 @property(nonatomic) CGFloat                    backingScaleFactor;
 
 @end
-
-#endif // SFML_SFAPPDELEGATE_HPP

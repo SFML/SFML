@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPL_HPP
-#define SFML_JOYSTICKIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -97,6 +96,3 @@ struct JoystickState
 #include <SFML/Window/Android/JoystickImpl.hpp>
 
 #endif
-
-
-#endif // SFML_JOYSTICKIMPL_HPP

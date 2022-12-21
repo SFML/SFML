@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLANDROID_HPP
-#define SFML_WINDOWIMPLANDROID_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -241,6 +240,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_WINDOWIMPLANDROID_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_STRING_HPP
-#define SFML_STRING_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -629,9 +628,6 @@ SFML_SYSTEM_API String operator+(const String& left, const String& right);
 #include <SFML/System/String.inl>
 
 } // namespace sf
-
-
-#endif // SFML_STRING_HPP
 
 
 ////////////////////////////////////////////////////////////

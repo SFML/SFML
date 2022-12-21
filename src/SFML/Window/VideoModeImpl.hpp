@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VIDEOMODEIMPL_HPP
-#define SFML_VIDEOMODEIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -62,6 +61,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_VIDEOMODEIMPL_HPP

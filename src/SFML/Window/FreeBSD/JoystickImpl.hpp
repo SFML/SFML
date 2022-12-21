@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLFREEBSD_HPP
-#define SFML_JOYSTICKIMPLFREEBSD_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -122,6 +121,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLFREEBSD_HPP

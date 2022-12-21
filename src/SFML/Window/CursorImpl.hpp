@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPL_HPP
-#define SFML_CURSORIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -46,6 +45,3 @@
 #elif defined(SFML_SYSTEM_ANDROID)
 #include <SFML/Window/Android/CursorImpl.hpp>
 #endif
-
-
-#endif // SFML_CURSORIMPL_HPP

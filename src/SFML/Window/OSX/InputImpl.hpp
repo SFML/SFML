@@ -23,8 +23,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_INPUTIMPLOSX_HPP
-#define SFML_INPUTIMPLOSX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -163,6 +162,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_INPUTIMPLOSX_HPP

@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CLIPBOARDIMPLDRM_HPP
-#define SFML_CLIPBOARDIMPLDRM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -70,6 +69,3 @@ public:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_CLIPBOARDIMPLDRM_HPP

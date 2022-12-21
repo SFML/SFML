@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLCHECK_HPP
-#define SFML_GLCHECK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -73,6 +72,3 @@ void glCheckError(const std::filesystem::path& file, unsigned int line, const ch
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_GLCHECK_HPP

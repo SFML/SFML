@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_ALCHECK_HPP
-#define SFML_ALCHECK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -95,5 +94,3 @@ ALenum alGetLastErrorImpl();
 #if defined(__APPLE__)
 #pragma GCC diagnostic pop
 #endif
-
-#endif // SFML_ALCHECK_HPP

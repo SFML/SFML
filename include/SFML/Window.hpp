@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFML_WINDOW_HPP
-#define SFML_SFML_WINDOW_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -45,8 +44,6 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-
-#endif // SFML_SFML_WINDOW_HPP
 
 ////////////////////////////////////////////////////////////
 /// \defgroup window Window module

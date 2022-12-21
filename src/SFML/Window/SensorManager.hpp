@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORMANAGER_HPP
-#define SFML_SENSORMANAGER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -142,6 +141,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_SENSORMANAGER_HPP

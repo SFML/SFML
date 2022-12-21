@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_IMAGELOADER_HPP
-#define SFML_IMAGELOADER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -146,6 +145,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_IMAGELOADER_HPP

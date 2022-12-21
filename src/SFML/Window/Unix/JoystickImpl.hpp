@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLLINUX_HPP
-#define SFML_JOYSTICKIMPLLINUX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -119,6 +118,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLLINUX_HPP
