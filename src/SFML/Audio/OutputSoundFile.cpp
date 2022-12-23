@@ -37,11 +37,7 @@ OutputSoundFile::OutputSoundFile() = default;
 
 
 ////////////////////////////////////////////////////////////
-OutputSoundFile::~OutputSoundFile()
-{
-    // Close the file in case it was open
-    close();
-}
+OutputSoundFile::~OutputSoundFile() = default;
 
 
 ////////////////////////////////////////////////////////////

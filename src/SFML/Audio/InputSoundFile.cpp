@@ -66,11 +66,7 @@ InputSoundFile::InputSoundFile() = default;
 
 
 ////////////////////////////////////////////////////////////
-InputSoundFile::~InputSoundFile()
-{
-    // Close the file in case it was open
-    close();
-}
+InputSoundFile::~InputSoundFile() = default;
 
 
 ////////////////////////////////////////////////////////////
