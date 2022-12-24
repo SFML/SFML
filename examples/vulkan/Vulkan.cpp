@@ -9,13 +9,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
 #include <iostream>
 #include <limits>
 #include <vector>
-#include <algorithm>
 
 
 ////////////////////////////////////////////////////////////
