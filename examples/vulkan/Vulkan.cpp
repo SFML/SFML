@@ -870,8 +870,8 @@ public:
                                                           surfaceCapabilities.minImageExtent.width,
                                                           surfaceCapabilities.maxImageExtent.width);
         swapchainExtent.height = std::clamp<std::uint32_t>(window.getSize().y,
-                                                          surfaceCapabilities.minImageExtent.height,
-                                                          surfaceCapabilities.maxImageExtent.height);
+                                                           surfaceCapabilities.minImageExtent.height,
+                                                           surfaceCapabilities.maxImageExtent.height);
 
         auto imageCount = std::clamp<std::uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
