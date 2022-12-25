@@ -48,9 +48,7 @@ public:
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~InputStream()
-    {
-    }
+    virtual ~InputStream() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream

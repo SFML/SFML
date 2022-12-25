@@ -48,9 +48,7 @@ public:
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Drawable()
-    {
-    }
+    virtual ~Drawable() = default;
 
 protected:
     friend class RenderTarget;

@@ -87,12 +87,6 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode, const String& /* title */, unsi
 
 
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::~WindowImplUIKit()
-{
-}
-
-
-////////////////////////////////////////////////////////////
 void WindowImplUIKit::processEvents()
 {
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.0001, true) == kCFRunLoopRunHandledSource)

@@ -55,7 +55,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderTextureImpl();
+    virtual ~RenderTextureImpl() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
