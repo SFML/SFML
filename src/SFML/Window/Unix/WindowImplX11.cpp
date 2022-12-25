@@ -495,6 +495,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     (false),
 m_cursorGrabbed  (false),
@@ -546,6 +547,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed  (m_fullscreen),
@@ -981,7 +983,12 @@ void WindowImplX11::setSize(const Vector2u& size)
         XFree(sizeHints);
     }
 
-    XResizeWindow(m_display, m_window, size.x, size.y);
+    m_resizeOccuredDuringSetSize = false;
+    while(getSize() != size && !m_resizeOccuredDuringSetSize)
+    {
+        processEvents();
+        XResizeWindow(m_display, m_window, size.x, size.y);
+    }
     XFlush(m_display);
 }
 
@@ -1837,6 +1844,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
+                m_resizeOccuredDuringSetSize = true;
                 Event event;
                 event.type        = Event::Resized;
                 event.size.width  = static_cast<unsigned int>(windowEvent.xconfigure.width);
