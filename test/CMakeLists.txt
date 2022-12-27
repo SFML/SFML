@@ -49,6 +49,14 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
+# FIXME Remove this once the Buildbot supports handling display tests on Linux platforms
+if(SFML_OS_WINDOWS OR SFML_OS_MACOSX)
+    set(SFML_RUN_DISPLAY_TESTS_DEFAULT ON)
+else()
+    set(SFML_RUN_DISPLAY_TESTS_DEFAULT OFF)
+endif()
+sfml_set_option(SFML_RUN_DISPLAY_TESTS ${SFML_RUN_DISPLAY_TESTS_DEFAULT} BOOL "TRUE to run tests that require a display, FALSE to ignore it")
+
 set(WINDOW_SRC
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
@@ -88,6 +96,9 @@ set(GRAPHICS_SRC
     Graphics/View.test.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
+if(SFML_RUN_DISPLAY_TESTS)
+    target_compile_definitions(test-sfml-graphics PRIVATE SFML_RUN_DISPLAY_TESTS)
+endif()
 
 set(NETWORK_SRC
     Network/Ftp.test.cpp
