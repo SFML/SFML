@@ -12,7 +12,7 @@ static_assert(!std::is_nothrow_move_constructible_v<sf::Texture>);
 static_assert(std::is_move_assignable_v<sf::Texture>);
 static_assert(!std::is_nothrow_move_assignable_v<sf::Texture>);
 
-TEST_CASE("[Graphics] sf::Texture")
+TEST_CASE("[Graphics] sf::Texture" * doctest::skip(skipDisplayTests))
 {
     SUBCASE("Construction")
     {
