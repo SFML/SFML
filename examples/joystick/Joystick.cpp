@@ -210,7 +210,7 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             newThreshold -= 0.1f;
 
-        newThreshold = std::min(std::max(newThreshold, 0.1f), 100.0f);
+        newThreshold = std::clamp(newThreshold, 0.1f, 100.0f);
 
         if (newThreshold != threshold)
         {
