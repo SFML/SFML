@@ -40,59 +40,57 @@ class WindowBase;
 /// \brief Give access to the real-time state of the touches
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Touch
+namespace Touch
 {
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a touch event is currently down
-    ///
-    /// \param finger Finger index
-    ///
-    /// \return True if \a finger is currently touching the screen, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool isDown(unsigned int finger);
+////////////////////////////////////////////////////////////
+/// \brief Check if a touch event is currently down
+///
+/// \param finger Finger index
+///
+/// \return True if \a finger is currently touching the screen, false otherwise
+///
+////////////////////////////////////////////////////////////
+SFML_WINDOW_API bool isDown(unsigned int finger);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of a touch in desktop coordinates
-    ///
-    /// This function returns the current touch position
-    /// in global (desktop) coordinates.
-    ///
-    /// \param finger Finger index
-    ///
-    /// \return Current position of \a finger, or undefined if it's not down
-    ///
-    ////////////////////////////////////////////////////////////
-    static Vector2i getPosition(unsigned int finger);
+////////////////////////////////////////////////////////////
+/// \brief Get the current position of a touch in desktop coordinates
+///
+/// This function returns the current touch position
+/// in global (desktop) coordinates.
+///
+/// \param finger Finger index
+///
+/// \return Current position of \a finger, or undefined if it's not down
+///
+////////////////////////////////////////////////////////////
+SFML_WINDOW_API Vector2i getPosition(unsigned int finger);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of a touch in window coordinates
-    ///
-    /// This function returns the current touch position
-    /// relative to the given window.
-    ///
-    /// \param finger Finger index
-    /// \param relativeTo Reference window
-    ///
-    /// \return Current position of \a finger, or undefined if it's not down
-    ///
-    ////////////////////////////////////////////////////////////
-    static Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo);
-};
+////////////////////////////////////////////////////////////
+/// \brief Get the current position of a touch in window coordinates
+///
+/// This function returns the current touch position
+/// relative to the given window.
+///
+/// \param finger Finger index
+/// \param relativeTo Reference window
+///
+/// \return Current position of \a finger, or undefined if it's not down
+///
+////////////////////////////////////////////////////////////
+SFML_WINDOW_API Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo);
+} // namespace Touch
 
 } // namespace sf
 
 
 ////////////////////////////////////////////////////////////
-/// \class sf::Touch
+/// \namespace sf::Touch
 /// \ingroup window
 ///
 /// sf::Touch provides an interface to the state of the
-/// touches. It only contains static functions, so it's not
-/// meant to be instantiated.
+/// touches.
 ///
-/// This class allows users to query the touches state at any
+/// This namespace allows users to query the touches state at any
 /// time and directly, without having to deal with a window and
 /// its events. Compared to the TouchBegan, TouchMoved
 /// and TouchEnded events, sf::Touch can retrieve the

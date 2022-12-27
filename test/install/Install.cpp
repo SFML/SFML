@@ -6,10 +6,10 @@
 int main()
 {
     // Audio
-    [[maybe_unused]] sf::InputSoundFile inputSoundFile;
-    [[maybe_unused]] sf::Listener       listener;
-    [[maybe_unused]] sf::Music          music;
-    [[maybe_unused]] sf::Sound          sound;
+    [[maybe_unused]] sf::InputSoundFile      inputSoundFile;
+    [[maybe_unused]] sf::SoundBufferRecorder soundBufferRecorder;
+    [[maybe_unused]] sf::Music               music;
+    [[maybe_unused]] sf::Sound               sound;
 
     // Graphics
     [[maybe_unused]] sf::Color        color;
