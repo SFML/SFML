@@ -172,7 +172,6 @@ void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPl
     result[3][3] = 0.f;
 }
 
-
 // Helper function we pass to GLAD to load Vulkan functions via SFML
 GLADapiproc getVulkanFunction(const char* name)
 {
