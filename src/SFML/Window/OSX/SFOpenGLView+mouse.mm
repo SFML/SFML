@@ -384,8 +384,8 @@
         NSSize  size   = [self frame].size;
         NSPoint origin = [self frame].origin;
         NSPoint oldPos = rawPos;
-        rawPos.x       = std::min(std::max(origin.x, rawPos.x), origin.x + size.width - 1);
-        rawPos.y       = std::min(std::max(origin.y + 1, rawPos.y), origin.y + size.height);
+        rawPos.x       = std::clamp(rawPos.x, origin.x, origin.x + size.width - 1);
+        rawPos.y       = std::clamp(rawPos.y, origin.y + 1, origin.y + size.height);
         // Note: the `-1` and `+1` on the two lines above prevent the user to click
         // on the left or below the window, repectively, and therefore prevent the
         // application to lose focus by accident. The sign of this offset is determinded

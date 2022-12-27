@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
@@ -169,13 +170,6 @@ void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPl
     result[3][1] = 0.f;
     result[3][2] = -((2.f * farPlane * nearPlane) / (farPlane - nearPlane));
     result[3][3] = 0.f;
-}
-
-// Clamp a value between low and high values
-template <typename T>
-T clamp(T value, T low, T high)
-{
-    return (value <= low) ? low : ((value >= high) ? high : value);
 }
 
 // Helper function we pass to GLAD to load Vulkan functions via SFML
@@ -871,14 +865,14 @@ public:
             return;
         }
 
-        swapchainExtent.width  = clamp<std::uint32_t>(window.getSize().x,
-                                                     surfaceCapabilities.minImageExtent.width,
-                                                     surfaceCapabilities.maxImageExtent.width);
-        swapchainExtent.height = clamp<std::uint32_t>(window.getSize().y,
-                                                      surfaceCapabilities.minImageExtent.height,
-                                                      surfaceCapabilities.maxImageExtent.height);
+        swapchainExtent.width  = std::clamp(window.getSize().x,
+                                           surfaceCapabilities.minImageExtent.width,
+                                           surfaceCapabilities.maxImageExtent.width);
+        swapchainExtent.height = std::clamp(window.getSize().y,
+                                            surfaceCapabilities.minImageExtent.height,
+                                            surfaceCapabilities.maxImageExtent.height);
 
-        auto imageCount = clamp<std::uint32_t>(2, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+        auto imageCount = std::clamp(2u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
         VkSwapchainCreateInfoKHR swapchainCreateInfo = VkSwapchainCreateInfoKHR();
         swapchainCreateInfo.sType                    = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -2434,8 +2428,8 @@ public:
         // Translate the model based on the mouse position
         sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
         sf::Vector2f windowSize    = sf::Vector2f(window.getSize());
-        float        x             = clamp(mousePosition.x * 2.f / windowSize.x - 1.f, -1.0f, 1.0f) * 2.0f;
-        float        y             = clamp(-mousePosition.y * 2.f / windowSize.y + 1.f, -1.0f, 1.0f) * 1.5f;
+        float        x             = std::clamp(mousePosition.x * 2.f / windowSize.x - 1.f, -1.0f, 1.0f) * 2.0f;
+        float        y             = std::clamp(-mousePosition.y * 2.f / windowSize.y + 1.f, -1.0f, 1.0f) * 1.5f;
 
         model[3][0] -= x;
         model[3][2] += y;
