@@ -66,10 +66,6 @@ SocketSelector::SocketSelector(const SocketSelector& copy) : m_impl(std::make_un
 
 
 ////////////////////////////////////////////////////////////
-SocketSelector::~SocketSelector() = default;
-
-
-////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
     SocketHandle handle = socket.getHandle();

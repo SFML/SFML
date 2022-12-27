@@ -990,12 +990,6 @@ Shader::Shader() = default;
 
 
 ////////////////////////////////////////////////////////////
-Shader::~Shader()
-{
-}
-
-
-////////////////////////////////////////////////////////////
 bool Shader::loadFromFile(const std::filesystem::path& /* filename */, Type /* type */)
 {
     return false;

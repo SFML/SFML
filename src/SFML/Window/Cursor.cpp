@@ -41,10 +41,6 @@ Cursor::Cursor() : m_impl(std::make_unique<priv::CursorImpl>())
 
 
 ////////////////////////////////////////////////////////////
-Cursor::~Cursor() = default;
-
-
-////////////////////////////////////////////////////////////
 bool Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
