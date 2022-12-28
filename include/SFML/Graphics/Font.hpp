@@ -96,6 +96,14 @@ public:
     Font& operator=(Font&&) noexcept;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    /// Cleans up all the internal resources used by the font
+    ///
+    ////////////////////////////////////////////////////////////
+    ~Font();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Load the font from a file
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
