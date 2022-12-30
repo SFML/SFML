@@ -421,7 +421,7 @@ bool eventProcess(sf::Event& event)
                         event.key.shift   = shiftDown();
                         event.key.system  = systemDown();
 
-                        keyMap[kb] = inputEvent.value;
+                        keyMap[static_cast<std::size_t>(kb)] = inputEvent.value;
 
                         if (special && inputEvent.value)
                             doDeferredText = special;
@@ -501,7 +501,7 @@ bool eventProcess(sf::Event& event)
     //
     // We only clear the ICANON flag for the time of reading
 
-    newTerminalConfig.c_lflag &= ~(tcflag_t)ICANON;
+    newTerminalConfig.c_lflag &= ~static_cast<tcflag_t>(ICANON);
     tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig);
 
     timeval timeout;
@@ -572,7 +572,7 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
         return false;
 
     update();
-    return keyMap[key];
+    return keyMap[static_cast<std::size_t>(key)];
 }
 
 
@@ -698,14 +698,14 @@ void InputImpl::setTerminalConfig()
     std::scoped_lock lock(inputMutex);
     initFileDescriptors();
 
-    tcgetattr(STDIN_FILENO, &newTerminalConfig);          // get current terminal config
-    oldTerminalConfig = newTerminalConfig;                // create a backup
-    newTerminalConfig.c_lflag &= ~(tcflag_t)ECHO;         // disable console feedback
-    newTerminalConfig.c_lflag &= ~(tcflag_t)ISIG;         // disable signals
-    newTerminalConfig.c_lflag |= ICANON;                  // disable noncanonical mode
-    newTerminalConfig.c_iflag |= IGNCR;                   // ignore carriage return
-    tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig); // set our new config
-    tcflush(STDIN_FILENO, TCIFLUSH);                      // flush the buffer
+    tcgetattr(STDIN_FILENO, &newTerminalConfig);               // get current terminal config
+    oldTerminalConfig = newTerminalConfig;                     // create a backup
+    newTerminalConfig.c_lflag &= ~static_cast<tcflag_t>(ECHO); // disable console feedback
+    newTerminalConfig.c_lflag &= ~static_cast<tcflag_t>(ISIG); // disable signals
+    newTerminalConfig.c_lflag |= ICANON;                       // disable noncanonical mode
+    newTerminalConfig.c_iflag |= IGNCR;                        // ignore carriage return
+    tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig);      // set our new config
+    tcflush(STDIN_FILENO, TCIFLUSH);                           // flush the buffer
 }
 
 

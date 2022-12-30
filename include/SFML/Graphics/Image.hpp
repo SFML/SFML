@@ -75,8 +75,8 @@ public:
     /// \brief Load the image from a file on disk
     ///
     /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr and pic. Some format options are not supported,
-    /// like progressive jpeg.
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
     /// If this function fails, the image is left unchanged.
     ///
     /// \param filename Path of the image file to load
@@ -92,8 +92,8 @@ public:
     /// \brief Load the image from a file in memory
     ///
     /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr and pic. Some format options are not supported,
-    /// like progressive jpeg.
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
     /// If this function fails, the image is left unchanged.
     ///
     /// \param data Pointer to the file data in memory
@@ -110,8 +110,8 @@ public:
     /// \brief Load the image from a custom stream
     ///
     /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr and pic. Some format options are not supported,
-    /// like progressive jpeg.
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
     /// If this function fails, the image is left unchanged.
     ///
     /// \param stream Source stream to read from
