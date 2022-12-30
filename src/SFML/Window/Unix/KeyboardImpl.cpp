@@ -51,7 +51,7 @@ sf::Keyboard::Scancode keycodeToScancode[MaxKeyCode]; ///< Mapping of X11 KeyCod
 bool isValidKeycode(KeyCode keycode)
 {
     // Valid key code range is [8,255], according to the Xlib manual
-    return (keycode >= 8);
+    return keycode >= 8;
 }
 
 
@@ -790,20 +790,17 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
 {
-    Keyboard::Key key = Keyboard::Unknown;
-
     // Try each KeySym index (modifier group) until we get a match
     for (int i = 0; i < 4; ++i)
     {
         // Get the SFML keyboard code from the keysym of the key that has been pressed
         KeySym keysym = XLookupKeysym(&event, i);
-        key = keySymToKey(keysym);
-
+        Keyboard::Key key = keySymToKey(keysym);
         if (key != Keyboard::Unknown)
-            break;
+            return key;
     }
 
-    return key;
+    return Keyboard::Unknown;
 }
 
 

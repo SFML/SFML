@@ -30,8 +30,11 @@
 #include <SFML/System/Err.hpp>
 #include <AppKit/AppKit.h>
 
+namespace
+{
 static const sf::Uint8 UnknownVirtualCode = 0xff;
 static const bool IsIsoKeyboard = (KBGetLayoutType(LMGetKbdType()) == kKeyboardISO);
+}
 
 namespace sf
 {
@@ -562,7 +565,6 @@ Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
     if (code == Keyboard::Scan::Unknown)
         return Keyboard::Unknown;
 
-    // TODO ensure mapping is still valid
     return m_scancodeToKeyMapping[code];
 }
 
@@ -573,7 +575,6 @@ Keyboard::Scancode HIDInputManager::delocalize(Keyboard::Key key)
     if (key == Keyboard::Unknown)
         return Keyboard::Scan::Unknown;
 
-    // TODO ensure mapping is still valid
     return m_keyToScancodeMapping[key];
 }
 
@@ -712,13 +713,12 @@ m_manager(0)
 
     // Register for notification on keyboard layout changes
     CFNotificationCenterAddObserver(
-      CFNotificationCenterGetDistributedCenter(),
-      this,
-      keyboardChanged, // callback
-      kTISNotifySelectedKeyboardInputSourceChanged,
-      NULL, // use callback
-      CFNotificationSuspensionBehaviorDeliverImmediately
-    );
+        CFNotificationCenterGetDistributedCenter(),
+        this,
+        keyboardChanged, // callback
+        kTISNotifySelectedKeyboardInputSourceChanged,
+        NULL, // use callback
+        CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 
@@ -773,7 +773,7 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
     {
         IOHIDElementRef elem = static_cast<IOHIDElementRef>(key);
         if (IOHIDElementGetUsagePage(elem) == kHIDPage_KeyboardOrKeypad)
-          loadKey(elem);
+            loadKey(elem);
     }
 
     CFRelease(underlying);
@@ -894,7 +894,7 @@ void HIDInputManager::buildMappings()
 
 
 ////////////////////////////////////////////////////////////
-void HIDInputManager::keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+void HIDInputManager::keyboardChanged(CFNotificationCenterRef /* center */, void* observer, CFStringRef /* name */, const void* /* object */, CFDictionaryRef /* userInfo */)
 {
     HIDInputManager* manager = static_cast<HIDInputManager*>(observer);
     manager->buildMappings();

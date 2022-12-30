@@ -175,7 +175,7 @@ private:
     ///
     ///     for each connected keyboard kb:
     ///       for each key k of kb:
-    ///         memorise k -> scancode mapping
+    ///         memorize k -> scancode mapping
     ///
     ////////////////////////////////////////////////////////////
     void initializeKeyboard();
@@ -216,7 +216,7 @@ private:
     /// Scancode when there's a keyboard layout change
     ///
     ////////////////////////////////////////////////////////////
-    static void keyboardChanged(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
+    static void keyboardChanged(CFNotificationCenterRef /* center */, void* observer, CFStringRef /* name */, const void* /* object */, CFDictionaryRef /* userInfo */);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release all resources
