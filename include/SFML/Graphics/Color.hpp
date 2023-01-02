@@ -95,9 +95,9 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::uint8_t r{0};   //!< Red component
-    std::uint8_t g{0};   //!< Green component
-    std::uint8_t b{0};   //!< Blue component
+    std::uint8_t r{};    //!< Red component
+    std::uint8_t g{};    //!< Green component
+    std::uint8_t b{};    //!< Blue component
     std::uint8_t a{255}; //!< Alpha (opacity) component
 };
 

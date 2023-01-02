@@ -485,7 +485,7 @@ private:
         };
 
         bool          enable;                       //!< Is the cache enabled?
-        bool          glStatesSet{false};           //!< Are our internal GL states set yet?
+        bool          glStatesSet{};                //!< Are our internal GL states set yet?
         bool          viewChanged;                  //!< Has the current view changed since last draw?
         BlendMode     lastBlendMode;                //!< Cached blending mode
         std::uint64_t lastTextureId;                //!< Cached texture
@@ -500,7 +500,7 @@ private:
     View          m_defaultView; //!< Default view
     View          m_view;        //!< Current view
     StatesCache   m_cache;       //!< Render states cache
-    std::uint64_t m_id{0};       //!< Unique number that identifies the RenderTarget
+    std::uint64_t m_id{};        //!< Unique number that identifies the RenderTarget
 };
 
 } // namespace sf

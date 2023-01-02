@@ -144,8 +144,8 @@ struct Vector4
         copyVector(color, *this);
     }
 
-    T x{0}; //!< 1st component (X) of the 4D vector
-    T y{0}; //!< 2nd component (Y) of the 4D vector
-    T z{0}; //!< 3rd component (Z) of the 4D vector
-    T w{0}; //!< 4th component (W) of the 4D vector
+    T x{}; //!< 1st component (X) of the 4D vector
+    T y{}; //!< 2nd component (Y) of the 4D vector
+    T z{}; //!< 3rd component (Z) of the 4D vector
+    T w{}; //!< 4th component (W) of the 4D vector
 };

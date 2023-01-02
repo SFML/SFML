@@ -272,7 +272,7 @@ int findDrmDevice(drmModeResPtr& resources)
 {
     static const int maxDrmDevices = 64;
 
-    drmDevicePtr devices[maxDrmDevices] = {nullptr};
+    drmDevicePtr devices[maxDrmDevices] = {};
 
     const int numDevices = drmGetDevices2(0, devices, maxDrmDevices);
     if (numDevices < 0)

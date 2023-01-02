@@ -99,8 +99,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2u     size;            //!< Video mode width and height, in pixels
-    unsigned int bitsPerPixel{0}; //!< Video mode pixel depth, in bits per pixels
+    Vector2u     size;           //!< Video mode width and height, in pixels
+    unsigned int bitsPerPixel{}; //!< Video mode pixel depth, in bits per pixels
 };
 
 ////////////////////////////////////////////////////////////

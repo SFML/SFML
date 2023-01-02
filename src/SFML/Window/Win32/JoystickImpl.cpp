@@ -103,7 +103,7 @@ namespace
 {
 struct ConnectionCache
 {
-    bool      connected{false};
+    bool      connected{};
     sf::Clock timer;
 };
 const sf::Time connectionRefreshDelay = sf::milliseconds(500);

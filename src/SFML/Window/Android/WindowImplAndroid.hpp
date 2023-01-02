@@ -232,9 +232,9 @@ private:
     static int getUnicode(AInputEvent* event);
 
     Vector2u m_size;
-    bool     m_windowBeingCreated{false};
-    bool     m_windowBeingDestroyed{false};
-    bool     m_hasFocus{false};
+    bool     m_windowBeingCreated{};
+    bool     m_windowBeingDestroyed{};
+    bool     m_hasFocus{};
 };
 
 } // namespace priv

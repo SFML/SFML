@@ -113,8 +113,8 @@ public:
     ////////////////////////////////////////////////////////////
     BlendMode      blendMode{BlendAlpha}; //!< Blending mode
     Transform      transform;             //!< Transform
-    const Texture* texture{nullptr};      //!< Texture
-    const Shader*  shader{nullptr};       //!< Shader
+    const Texture* texture{};             //!< Texture
+    const Shader*  shader{};              //!< Shader
 };
 
 } // namespace sf
