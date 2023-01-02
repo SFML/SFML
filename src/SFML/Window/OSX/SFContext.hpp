@@ -155,9 +155,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSOpenGLContextRef m_context{0}; ///< OpenGL context.
-    NSOpenGLViewRef    m_view{0};    ///< Only for offscreen context.
-    NSWindowRef        m_window{0};  ///< Only for offscreen context.
+    NSOpenGLContextRef m_context{}; ///< OpenGL context.
+    NSOpenGLViewRef    m_view{};    ///< Only for offscreen context.
+    NSWindowRef        m_window{};  ///< Only for offscreen context.
 };
 
 } // namespace priv

@@ -71,8 +71,8 @@ enum Axis
 struct SFML_WINDOW_API Identification
 {
     String       name{"No Joystick"}; //!< Name of the joystick
-    unsigned int vendorId{0};         //!< Manufacturer identifier
-    unsigned int productId{0};        //!< Product identifier
+    unsigned int vendorId{};          //!< Manufacturer identifier
+    unsigned int productId{};         //!< Product identifier
 };
 
 ////////////////////////////////////////////////////////////

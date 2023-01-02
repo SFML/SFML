@@ -328,8 +328,8 @@ public:
         ////////////////////////////////////////////////////////////
         FieldTable   m_fields;                           //!< Fields of the header
         Status       m_status{Status::ConnectionFailed}; //!< Status code
-        unsigned int m_majorVersion{0};                  //!< Major HTTP version
-        unsigned int m_minorVersion{0};                  //!< Minor HTTP version
+        unsigned int m_majorVersion{};                   //!< Major HTTP version
+        unsigned int m_minorVersion{};                   //!< Minor HTTP version
         std::string  m_body;                             //!< Body of the response
     };
 
@@ -411,7 +411,7 @@ private:
     TcpSocket                m_connection; //!< Connection to the host
     std::optional<IpAddress> m_host;       //!< Web host address
     std::string              m_hostName;   //!< Web host name
-    unsigned short           m_port{0};    //!< Port used for connection with host
+    unsigned short           m_port{};     //!< Port used for connection with host
 };
 
 } // namespace sf

@@ -89,11 +89,11 @@ struct VulkanLibraryWrapper
         return (entryPoint != nullptr);
     }
 
-    HMODULE library{nullptr};
+    HMODULE library{};
 
-    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr{nullptr};
-    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties{nullptr};
-    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties{nullptr};
+    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr{};
+    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties{};
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties{};
 };
 
 VulkanLibraryWrapper wrapper;

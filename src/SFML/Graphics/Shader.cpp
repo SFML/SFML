@@ -224,10 +224,10 @@ struct Shader::UniformBinder
     ////////////////////////////////////////////////////////////
     UniformBinder& operator=(const UniformBinder&) = delete;
 
-    TransientContextLock lock;            //!< Lock to keep context active while uniform is bound
-    GLEXT_GLhandle       savedProgram{0}; //!< Handle to the previously active program object
-    GLEXT_GLhandle       currentProgram;  //!< Handle to the program object of the modified sf::Shader instance
-    GLint                location{-1};    //!< Uniform location, used by the surrounding sf::Shader code
+    TransientContextLock lock;           //!< Lock to keep context active while uniform is bound
+    GLEXT_GLhandle       savedProgram{}; //!< Handle to the previously active program object
+    GLEXT_GLhandle       currentProgram; //!< Handle to the program object of the modified sf::Shader instance
+    GLint                location{-1};   //!< Uniform location, used by the surrounding sf::Shader code
 };
 
 

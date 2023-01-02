@@ -42,7 +42,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 struct JoystickCaps
 {
-    unsigned int buttonCount{0};              //!< Number of buttons supported by the joystick
+    unsigned int buttonCount{};               //!< Number of buttons supported by the joystick
     bool         axes[Joystick::AxisCount]{}; //!< Support for each axis
 };
 
@@ -53,7 +53,7 @@ struct JoystickCaps
 ////////////////////////////////////////////////////////////
 struct JoystickState
 {
-    bool  connected{false};                 //!< Is the joystick currently connected?
+    bool  connected{};                      //!< Is the joystick currently connected?
     float axes[Joystick::AxisCount]{};      //!< Position of each axis, in range [-100, 100]
     bool  buttons[Joystick::ButtonCount]{}; //!< Status of each button (true = pressed)
 };

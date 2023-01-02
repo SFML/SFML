@@ -201,14 +201,14 @@ private:
     EGLDisplay m_display{EGL_NO_DISPLAY}; ///< The internal EGL display
     EGLContext m_context{EGL_NO_CONTEXT}; ///< The internal EGL context
     EGLSurface m_surface{EGL_NO_SURFACE}; ///< The internal EGL surface
-    EGLConfig  m_config{nullptr};         ///< The internal EGL config
+    EGLConfig  m_config{};                ///< The internal EGL config
 
-    gbm_bo*      m_currentBO{nullptr};
-    gbm_bo*      m_nextBO{nullptr};
-    gbm_surface* m_gbmSurface{nullptr};
+    gbm_bo*      m_currentBO{};
+    gbm_bo*      m_nextBO{};
+    gbm_surface* m_gbmSurface{};
     Vector2u     m_size;
-    bool         m_shown{false};
-    bool         m_scanOut{false};
+    bool         m_shown{};
+    bool         m_scanOut{};
 };
 
 } // namespace priv

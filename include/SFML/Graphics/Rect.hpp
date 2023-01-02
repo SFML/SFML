@@ -127,10 +127,10 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left{0};   //!< Left coordinate of the rectangle
-    T top{0};    //!< Top coordinate of the rectangle
-    T width{0};  //!< Width of the rectangle
-    T height{0}; //!< Height of the rectangle
+    T left{};   //!< Left coordinate of the rectangle
+    T top{};    //!< Top coordinate of the rectangle
+    T width{};  //!< Width of the rectangle
+    T height{}; //!< Height of the rectangle
 };
 
 ////////////////////////////////////////////////////////////

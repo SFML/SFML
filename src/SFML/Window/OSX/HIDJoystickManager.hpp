@@ -122,8 +122,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef m_manager{0};       ///< HID Manager
-    unsigned int    m_joystickCount{0}; ///< Number of joysticks currently connected
+    IOHIDManagerRef m_manager{};       ///< HID Manager
+    unsigned int    m_joystickCount{}; ///< Number of joysticks currently connected
 };
 
 

@@ -339,9 +339,9 @@ private:
         {
         }
 
-        unsigned int width{0}; //!< Current width of the row
-        unsigned int top;      //!< Y position of the row into the texture
-        unsigned int height;   //!< Height of the row
+        unsigned int width{}; //!< Current width of the row
+        unsigned int top;     //!< Y position of the row into the texture
+        unsigned int height;  //!< Height of the row
     };
 
     ////////////////////////////////////////////////////////////

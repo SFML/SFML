@@ -165,7 +165,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_defaultFrameBuffer{0}; //!< Framebuffer to bind when targeting this window
+    unsigned int m_defaultFrameBuffer{}; //!< Framebuffer to bind when targeting this window
 };
 
 } // namespace sf
