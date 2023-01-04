@@ -206,7 +206,7 @@ private:
     /// \brief Deleter for input streams that only conditionally deletes
     ///
     ////////////////////////////////////////////////////////////
-    struct StreamDeleter
+    struct SFML_AUDIO_API StreamDeleter
     {
         StreamDeleter(bool theOwned);
 
