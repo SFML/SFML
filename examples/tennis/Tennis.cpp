@@ -284,4 +284,6 @@ int main()
         // Display things on screen
         window.display();
     }
+
+    return EXIT_SUCCESS;
 }
