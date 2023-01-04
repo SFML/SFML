@@ -182,4 +182,6 @@ int main()
         // Finally, display the rendered frame on screen
         window.display();
     }
+
+    return EXIT_SUCCESS;
 }
