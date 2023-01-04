@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
-#include <cstdlib>
 #include <iostream>
 
 #define GLAD_GL_IMPLEMENTATION
@@ -334,6 +333,4 @@ int main()
             window.display();
         }
     }
-
-    return EXIT_SUCCESS;
 }

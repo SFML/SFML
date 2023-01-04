@@ -164,6 +164,4 @@ int main()
 
     // Don't forget to unregister the window class
     UnregisterClass(TEXT("SFML App"), instance);
-
-    return EXIT_SUCCESS;
 }

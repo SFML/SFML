@@ -54,6 +54,4 @@ int main()
     std::cout << "Press enter to exit..." << std::endl;
     std::cin.ignore(10000, '\n');
     std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
 }

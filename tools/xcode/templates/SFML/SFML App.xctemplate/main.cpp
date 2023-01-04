@@ -91,6 +91,4 @@ int main(int, char const**)
         // Update the window
         window.display();
     }
-
-    return EXIT_SUCCESS;
 }

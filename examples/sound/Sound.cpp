@@ -100,6 +100,4 @@ int main()
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
     std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
 }

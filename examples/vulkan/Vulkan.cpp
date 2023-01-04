@@ -2661,6 +2661,4 @@ int main()
     VulkanExample example;
 
     example.run();
-
-    return EXIT_SUCCESS;
 }

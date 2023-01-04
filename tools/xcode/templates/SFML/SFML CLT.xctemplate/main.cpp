@@ -89,6 +89,4 @@ int main(int argc, char const** argv)
         // Update the window
         window.display();
     }
-
-    return EXIT_SUCCESS;
 }

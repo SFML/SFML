@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <iostream>
@@ -276,8 +275,6 @@ int main()
         threads.back().join();
         threads.pop_back();
     }
-
-    return EXIT_SUCCESS;
 }
 
 

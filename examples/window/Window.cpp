@@ -13,7 +13,6 @@
 #endif
 
 #include <array>
-#include <cstdlib>
 #include <iostream>
 
 ////////////////////////////////////////////////////////////
@@ -182,6 +181,4 @@ int main()
         // Finally, display the rendered frame on screen
         window.display();
     }
-
-    return EXIT_SUCCESS;
 }
