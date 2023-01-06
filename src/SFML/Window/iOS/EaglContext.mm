@@ -88,9 +88,7 @@ void ensureInit()
 }
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
@@ -315,6 +313,4 @@ void EaglContext::createContext(EaglContext*           shared,
     makeCurrent(false);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

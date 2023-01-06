@@ -32,9 +32,7 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief High-level wrapper around the audio API, it manages
@@ -182,6 +180,4 @@ public:
     static Vector3f getUpVector();
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -125,9 +125,7 @@ void setProcessDpiAware()
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
@@ -1157,6 +1155,4 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     return DefWindowProcW(handle, message, wParam, lParam);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

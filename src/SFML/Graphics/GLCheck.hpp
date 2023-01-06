@@ -34,9 +34,7 @@
 #include <filesystem>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// Let's define a macro to quickly check every OpenGL API call
@@ -69,6 +67,4 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

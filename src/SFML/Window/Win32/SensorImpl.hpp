@@ -30,9 +30,7 @@
 #include <SFML/Window/Sensor.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of sensors
@@ -96,6 +94,4 @@ public:
     void setEnabled(bool enabled);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

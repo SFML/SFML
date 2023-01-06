@@ -39,9 +39,7 @@
 #include <xf86drmMode.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 struct Drm
 {
@@ -211,6 +209,4 @@ private:
     bool         m_scanOut{};
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

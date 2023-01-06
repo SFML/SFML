@@ -47,9 +47,7 @@ Bool checkEvent(::Display*, XEvent* event, XPointer userData)
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -380,6 +378,4 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

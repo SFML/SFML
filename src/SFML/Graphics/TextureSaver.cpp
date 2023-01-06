@@ -28,9 +28,7 @@
 #include <SFML/Graphics/TextureSaver.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 TextureSaver::TextureSaver()
@@ -45,6 +43,4 @@ TextureSaver::~TextureSaver()
     glCheck(glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(m_textureBinding)));
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

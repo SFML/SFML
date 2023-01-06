@@ -35,9 +35,7 @@
 #include <mmsystem.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of joysticks
@@ -227,6 +225,4 @@ private:
     bool                     m_buffered;       //!< true if the device uses buffering, false if the device uses polling
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

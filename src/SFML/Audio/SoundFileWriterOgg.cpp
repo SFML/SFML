@@ -36,9 +36,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
@@ -206,6 +204,4 @@ void SoundFileWriterOgg::close()
     vorbis_info_clear(&m_vorbis);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

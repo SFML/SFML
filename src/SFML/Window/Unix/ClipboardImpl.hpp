@@ -35,9 +35,7 @@
 #include <deque>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -147,6 +145,4 @@ private:
     bool               m_requestResponded{}; ///< Holds whether our selection request has been responded to or not
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

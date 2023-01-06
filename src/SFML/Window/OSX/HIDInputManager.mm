@@ -32,9 +32,7 @@
 #include <AppKit/AppKit.h>
 #include <ostream>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 HIDInputManager& HIDInputManager::getInstance()
@@ -866,6 +864,4 @@ Keyboard::Key HIDInputManager::nonLocalizedKeys(UniChar virtualKeycode)
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

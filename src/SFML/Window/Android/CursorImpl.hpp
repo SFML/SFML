@@ -31,10 +31,7 @@
 #include <SFML/Window/Cursor.hpp>
 
 
-namespace sf
-{
-
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Android implementation of Cursor
@@ -82,6 +79,4 @@ public:
     bool loadFromSystem(Cursor::Type type);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

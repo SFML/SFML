@@ -28,9 +28,7 @@
 #include <SFML/Window/SensorImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
@@ -83,6 +81,4 @@ void SensorImpl::setEnabled(bool /*enabled*/)
     // To be implemented
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

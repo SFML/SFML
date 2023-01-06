@@ -50,9 +50,7 @@ using AtomMap = std::unordered_map<std::string, Atom>;
 AtomMap atoms;
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 Display* openDisplay()
@@ -157,6 +155,4 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
     return atom;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -27,9 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/iOS/CursorImpl.hpp>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const std::uint8_t* /* pixels */, Vector2u /* size */, Vector2u /* hotspot */)
@@ -47,6 +45,4 @@ bool CursorImpl::loadFromSystem(Cursor::Type /* type */)
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

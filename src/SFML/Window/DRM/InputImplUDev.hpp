@@ -32,9 +32,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Linux (DRM) implementation of inputs (keyboard + mouse)
@@ -182,6 +180,4 @@ private:
     static void restoreTerminalConfig();
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

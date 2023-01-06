@@ -37,9 +37,7 @@
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class WindowImpl;
 
@@ -322,6 +320,4 @@ private:
     const std::uint64_t m_id; //!< Unique number that identifies the context
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

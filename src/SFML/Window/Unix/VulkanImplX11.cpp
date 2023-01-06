@@ -101,9 +101,7 @@ VulkanLibraryWrapper wrapper;
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool VulkanImplX11::isAvailable(bool requireGraphics)
@@ -213,6 +211,4 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
     return result;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

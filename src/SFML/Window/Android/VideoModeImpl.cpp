@@ -32,9 +32,7 @@
 
 #include <mutex>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
@@ -59,6 +57,4 @@ VideoMode VideoModeImpl::getDesktopMode()
     return VideoMode(Vector2u(states.screenSize));
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

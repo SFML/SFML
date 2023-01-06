@@ -32,9 +32,7 @@
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -95,5 +93,4 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     return mode;
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

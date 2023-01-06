@@ -36,9 +36,7 @@
 #include <cstdlib>
 #include <vector>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -216,6 +214,4 @@ void CursorImpl::release()
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -36,12 +36,9 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class WindowImplCocoa;
-}
 }
 
 ////////////////////////////////////////////////////////////

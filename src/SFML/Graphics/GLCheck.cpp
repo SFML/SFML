@@ -32,9 +32,7 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
@@ -108,6 +106,4 @@ void glCheckError(const std::filesystem::path& file, unsigned int line, const ch
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

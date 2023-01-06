@@ -33,9 +33,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles FLAC files
@@ -131,6 +129,4 @@ private:
     ClientData           m_clientData; //!< Structure passed to the decoder callbacks
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -31,9 +31,7 @@
 #include <usbhid.h>
 #include <vector>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief FreeBSD implementation of joysticks
@@ -118,6 +116,4 @@ private:
     JoystickState            m_state;          ///< Current state of the joystick
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

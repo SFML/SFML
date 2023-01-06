@@ -25,9 +25,7 @@
 #pragma once
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Mac OS X implementation of sensors
@@ -91,6 +89,4 @@ public:
     void setEnabled(bool enabled);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

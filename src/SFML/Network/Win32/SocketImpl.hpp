@@ -35,9 +35,7 @@
 #include <ws2tcpip.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Helper class implementing all the non-portable
@@ -98,6 +96,4 @@ public:
     static Socket::Status getErrorStatus();
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

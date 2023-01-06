@@ -40,9 +40,7 @@
 
 #include <ostream>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -525,6 +523,4 @@ bool WindowImplCocoa::hasFocus() const
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

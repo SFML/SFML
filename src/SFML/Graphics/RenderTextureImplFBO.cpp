@@ -112,9 +112,7 @@ void contextDestroyCallback(void* /*arg*/)
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO()
@@ -652,6 +650,4 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 #endif // SFML_OPENGL_ES
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

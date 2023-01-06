@@ -101,9 +101,7 @@ private:
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 GlxContext::GlxContext(GlxContext* shared)
@@ -784,6 +782,4 @@ void GlxContext::createContext(GlxContext* shared)
     XFree(visualInfo);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

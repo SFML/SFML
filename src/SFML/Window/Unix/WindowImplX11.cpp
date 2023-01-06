@@ -473,9 +473,7 @@ sf::Keyboard::Key keysymToSF(KeySym symbol)
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
@@ -2257,6 +2255,4 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     return monitorPosition;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

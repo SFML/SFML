@@ -53,9 +53,7 @@ using NSWindowRef        = void*;
 #endif
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief OSX (Cocoa) implementation of OpenGL contexts
@@ -160,6 +158,4 @@ private:
     NSWindowRef        m_window{};  ///< Only for offscreen context.
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

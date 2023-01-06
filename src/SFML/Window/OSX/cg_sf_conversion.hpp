@@ -32,9 +32,7 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Get bpp of a video mode for OS 10.6 or later
@@ -66,5 +64,4 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
 ////////////////////////////////////////////////////////////
 CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

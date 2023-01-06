@@ -37,9 +37,7 @@
 #include <deque>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Linux (X11) implementation of WindowImpl
@@ -317,6 +315,4 @@ private:
     ::Time   m_lastInputTime{};  ///< Last time we received user input
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
