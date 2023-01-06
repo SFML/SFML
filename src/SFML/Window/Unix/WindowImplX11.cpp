@@ -2212,7 +2212,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     XRRScreenResources* res = XRRGetScreenResources(m_display, rootWindow);
     if (!res)
     {
-        err() << "Failed to get the current screen resources for.primary monitor position" << std::endl;
+        err() << "Failed to get the current screen resources for primary monitor position" << std::endl;
         return monitorPosition;
     }
 
@@ -2233,7 +2233,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
         if (outputInfo)
             XRRFreeOutputInfo(outputInfo);
 
-        err() << "Failed to get output info for.primary monitor position" << std::endl;
+        err() << "Failed to get output info for primary monitor position" << std::endl;
         return monitorPosition;
     }
 
@@ -2243,7 +2243,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     {
         XRRFreeScreenResources(res);
         XRRFreeOutputInfo(outputInfo);
-        err() << "Failed to get crtc info for.primary monitor position" << std::endl;
+        err() << "Failed to get crtc info for primary monitor position" << std::endl;
         return monitorPosition;
     }
 
