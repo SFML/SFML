@@ -193,8 +193,7 @@ std::basic_string<std::uint32_t> String::toUtf32() const
 
 
 ////////////////////////////////////////////////////////////
-String& String::operator=(const String& right)
-= default;
+String& String::operator=(const String& right) = default;
 
 
 ////////////////////////////////////////////////////////////

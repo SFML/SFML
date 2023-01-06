@@ -139,7 +139,6 @@ public:
                            std::vector<std::uint8_t>&       output,
                            const std::vector<std::uint8_t>& pixels,
                            const Vector2u&                  size);
-
 };
 
 } // namespace priv
