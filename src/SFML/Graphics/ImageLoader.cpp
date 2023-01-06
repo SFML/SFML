@@ -83,11 +83,6 @@ ImageLoader& ImageLoader::getInstance()
     return instance;
 }
 
-
-////////////////////////////////////////////////////////////
-ImageLoader::ImageLoader() = default;
-
-
 ////////////////////////////////////////////////////////////
 bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::vector<std::uint8_t>& pixels, Vector2u& size)
 {

@@ -129,11 +129,11 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             std::uint32_t extensionCount = 0;
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
             bool hasVkKhrSurface         = false;
@@ -167,7 +167,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 {
     if (!isAvailable(false))
-        return 0;
+        return nullptr;
 
     return reinterpret_cast<VulkanFunctionPointer>(dlsym(wrapper.library, name));
 }
