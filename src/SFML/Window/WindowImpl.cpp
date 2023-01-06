@@ -89,9 +89,7 @@ using WindowImplType = sf::priv::WindowImplAndroid;
 #endif
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -310,6 +308,4 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
 #endif
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

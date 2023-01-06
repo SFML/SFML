@@ -100,9 +100,7 @@ VulkanLibraryWrapper wrapper;
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool VulkanImplWin32::isAvailable(bool requireGraphics)
@@ -206,6 +204,4 @@ bool VulkanImplWin32::createVulkanSurface(const VkInstance&            instance,
     return (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

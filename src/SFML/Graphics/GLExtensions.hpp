@@ -334,9 +334,7 @@
 #define GLEXT_GL_VERSION_4_5 SF_GLAD_GL_VERSION_4_5
 #define GLEXT_GL_VERSION_4_6 SF_GLAD_GL_VERSION_4_6
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -345,6 +343,4 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit();
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

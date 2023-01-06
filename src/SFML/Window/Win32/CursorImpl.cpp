@@ -33,9 +33,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
@@ -185,6 +183,4 @@ void CursorImpl::release()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

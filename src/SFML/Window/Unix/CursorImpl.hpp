@@ -33,10 +33,7 @@
 
 #include <X11/Xlib.h>
 
-namespace sf
-{
-
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Unix implementation of Cursor
@@ -127,6 +124,4 @@ private:
     ::Cursor   m_cursor{None};
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

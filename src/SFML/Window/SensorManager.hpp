@@ -31,9 +31,7 @@
 #include <SFML/Window/SensorImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Global sensor manager
@@ -138,6 +136,4 @@ private:
     Item m_sensors[Sensor::Count]; //!< Sensors information and state
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

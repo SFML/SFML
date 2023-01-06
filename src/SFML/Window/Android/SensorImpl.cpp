@@ -48,9 +48,7 @@ sf::Vector3f       sensorData[sf::Sensor::Count];
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
@@ -220,6 +218,4 @@ int SensorImpl::processSensorEvents(int /* fd */, int /* events */, void* /* sen
     return 1;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

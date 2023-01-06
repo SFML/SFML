@@ -30,9 +30,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
@@ -74,6 +72,4 @@ void CursorImpl::release()
 {
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

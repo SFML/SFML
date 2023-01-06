@@ -34,9 +34,7 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Get the shared Display
@@ -89,6 +87,4 @@ void closeXim(XIM xim);
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists = false);
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

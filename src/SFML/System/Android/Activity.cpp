@@ -54,9 +54,7 @@ std::streambuf::int_type LogcatStream::overflow(std::streambuf::int_type c)
     return traits_type::not_eof(c);
 }
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ActivityStates*& getActivityStatesPtr()
@@ -77,5 +75,4 @@ ActivityStates& getActivity()
     return *states;
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

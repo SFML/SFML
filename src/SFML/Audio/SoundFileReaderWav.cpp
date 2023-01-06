@@ -101,9 +101,7 @@ const char* waveSubformatPcm =
     "\x80\x00\x00\xAA\x00\x38\x9B\x71";
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderWav::check(InputStream& stream)
@@ -355,6 +353,4 @@ bool SoundFileReaderWav::parseHeader(Info& info)
     return true;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

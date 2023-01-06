@@ -28,9 +28,7 @@
 #include <SFML/Window/DRM/ClipboardImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 String ClipboardImpl::getString()
@@ -44,6 +42,4 @@ void ClipboardImpl::setString(const String& /*text*/)
 {
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

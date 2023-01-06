@@ -62,9 +62,7 @@ void encode(std::ostream& stream, std::uint32_t value)
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterWav::check(const std::filesystem::path& filename)
@@ -179,6 +177,4 @@ void SoundFileWriterWav::close()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

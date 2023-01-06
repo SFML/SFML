@@ -31,9 +31,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
@@ -134,6 +132,4 @@ SensorManager::~SensorManager()
     SensorImpl::cleanup();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

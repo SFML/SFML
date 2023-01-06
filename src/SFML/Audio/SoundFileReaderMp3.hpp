@@ -51,9 +51,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles MP3 files
@@ -132,6 +130,4 @@ private:
     std::uint64_t m_position{};   // Position in decompressed audio buffer
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -32,9 +32,7 @@
 #include <vorbis/vorbisfile.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles OGG/Vorbis files
@@ -117,6 +115,4 @@ private:
     unsigned int   m_channelCount{}; // number of channels of the open sound file
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

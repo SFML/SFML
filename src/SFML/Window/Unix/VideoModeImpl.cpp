@@ -36,9 +36,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
@@ -194,6 +192,4 @@ VideoMode VideoModeImpl::getDesktopMode()
     return desktopMode;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

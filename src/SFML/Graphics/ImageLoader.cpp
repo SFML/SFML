@@ -71,9 +71,7 @@ void bufferFromCallback(void* context, void* data, int size)
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 ImageLoader& ImageLoader::getInstance()
@@ -320,6 +318,4 @@ bool ImageLoader::saveImageToMemory(const std::string&               format,
     return false;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

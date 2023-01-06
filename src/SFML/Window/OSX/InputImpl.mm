@@ -46,9 +46,7 @@
 ///
 ////////////////////////////////////////////////////////////
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Extract the dedicated SFOpenGLView from the SFML window
@@ -236,6 +234,4 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& 
     return Vector2i();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -30,9 +30,7 @@
 #include <SFML/Window/Sensor.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief iOS implementation of sensors
@@ -103,6 +101,4 @@ private:
     bool         m_enabled; ///< Enable state of the sensor
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

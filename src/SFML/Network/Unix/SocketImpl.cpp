@@ -34,9 +34,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 sockaddr_in SocketImpl::createAddress(std::uint32_t address, unsigned short port)
@@ -109,6 +107,4 @@ Socket::Status SocketImpl::getErrorStatus()
     // clang-format on
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -37,11 +37,8 @@
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
@@ -293,6 +290,4 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
     [pixFmt release];
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

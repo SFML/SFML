@@ -34,9 +34,7 @@
 #include <glad/glx.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Linux (GLX) implementation of OpenGL contexts
@@ -182,6 +180,4 @@ private:
     bool       m_ownsWindow{}; ///< Do we own the window associated to the context?
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -30,9 +30,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief DRM implementation of WindowImpl
@@ -192,6 +190,4 @@ private:
     Vector2u m_size; ///< Window size
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

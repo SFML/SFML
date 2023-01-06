@@ -31,9 +31,7 @@
 #include <algorithm>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -89,5 +87,4 @@ void copyVector(const Color& source, Vector4<int>& dest)
     dest.w = static_cast<int>(source.a);
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

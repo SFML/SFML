@@ -47,9 +47,7 @@ NSCursor* loadFromSelector(SEL selector)
 
 }
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -141,6 +139,4 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

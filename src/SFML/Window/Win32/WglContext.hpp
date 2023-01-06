@@ -32,9 +32,7 @@
 #include <glad/wgl.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows (WGL) implementation of OpenGL contexts
@@ -185,6 +183,4 @@ private:
     bool        m_ownsWindow{};    //!< Do we own the target window?
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

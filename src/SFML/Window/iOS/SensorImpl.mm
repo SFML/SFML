@@ -41,9 +41,7 @@ float toDegrees(float radians)
 }
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
@@ -238,6 +236,4 @@ void SensorImpl::setEnabled(bool enabled)
     m_enabled = enabled;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

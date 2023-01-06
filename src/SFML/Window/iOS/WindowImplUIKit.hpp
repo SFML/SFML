@@ -37,9 +37,7 @@ SFML_DECLARE_OBJC_CLASS(SFView);
 SFML_DECLARE_OBJC_CLASS(SFViewController);
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief iOS (UIKit) implementation of WindowImpl
@@ -222,6 +220,4 @@ private:
     float             m_backingScale;   ///< Converts from points to pixels and vice versa
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

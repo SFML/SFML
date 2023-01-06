@@ -30,9 +30,7 @@
 #include <SFML/Window/Window.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
@@ -258,6 +256,4 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& 
     return Vector2i();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -325,9 +325,7 @@ bool parseVersionString(const char* version, const char* prefix, unsigned int& m
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void GlContext::initResource()
@@ -965,6 +963,4 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings)
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

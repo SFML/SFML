@@ -36,9 +36,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Mac OS X implementation of joysticks
@@ -129,6 +127,4 @@ private:
     /// location or 0 if there isn't currently a connected joystick device
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

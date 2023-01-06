@@ -45,9 +45,7 @@ thread_local ALenum lastError(AL_NO_ERROR);
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void alCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
@@ -115,6 +113,4 @@ ALenum alGetLastErrorImpl()
     return std::exchange(AlCheckImpl::lastError, AL_NO_ERROR);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

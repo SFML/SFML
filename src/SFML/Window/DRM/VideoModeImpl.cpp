@@ -30,9 +30,7 @@
 #include <SFML/Window/VideoModeImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
@@ -65,6 +63,4 @@ VideoMode VideoModeImpl::getDesktopMode()
         return VideoMode({0, 0});
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -506,9 +506,7 @@ EGLDisplay getInitializedDisplay()
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 DRMContext::DRMContext(DRMContext* shared)
@@ -828,6 +826,4 @@ Drm& DRMContext::getDRM()
     return drmNode;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

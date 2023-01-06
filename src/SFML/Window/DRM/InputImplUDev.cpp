@@ -560,9 +560,7 @@ void update()
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
@@ -719,6 +717,4 @@ void InputImpl::restoreTerminalConfig()
     tcflush(STDIN_FILENO, TCIFLUSH);                      // flush the buffer
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

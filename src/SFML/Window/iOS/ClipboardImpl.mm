@@ -30,9 +30,7 @@
 
 #import <UIKit/UIKit.h>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -65,6 +63,4 @@ void ClipboardImpl::setString(const String& text)
     pboard.string        = data;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -57,9 +57,7 @@
 
 extern int main(int argc, char* argv[]);
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -149,8 +147,7 @@ void* main(ActivityStates* states)
     return nullptr;
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv
 
 
 ////////////////////////////////////////////////////////////

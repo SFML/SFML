@@ -31,9 +31,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of inputs (keyboard + mouse)
@@ -158,6 +156,4 @@ public:
     static Vector2i getTouchPosition(unsigned int finger, const WindowBase& relativeTo);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
