@@ -1478,8 +1478,8 @@ public:
         // clang-format on
 
         // Create a staging buffer that is writable by the CPU
-        VkBuffer       stagingBuffer       = nullptr;
-        VkDeviceMemory stagingBufferMemory = nullptr;
+        VkBuffer       stagingBuffer{};
+        VkDeviceMemory stagingBufferMemory{};
 
         if (!createBuffer(sizeof(vertexData),
                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
