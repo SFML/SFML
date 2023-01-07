@@ -126,9 +126,9 @@ bool JoystickImpl::isConnected(unsigned int index)
         // opened joystick devices then we find the new one.
 
         unsigned int openedCount = 0;
-        for (unsigned int i(0); i < sf::Joystick::Count; ++i)
+        for (const auto& locationID : m_locationIDs)
         {
-            if (m_locationIDs[i] != 0)
+            if (locationID != 0)
                 ++openedCount;
         }
 

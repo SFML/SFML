@@ -314,12 +314,12 @@ void HIDInputManager::freeUp()
 
     m_manager = nil;
 
-    for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
+    for (auto& key : m_keys)
     {
-        for (IOHIDElementRef iohidElementRef : m_keys[i])
+        for (IOHIDElementRef iohidElementRef : key)
             CFRelease(iohidElementRef);
 
-        m_keys[i].clear();
+        key.clear();
     }
 }
 

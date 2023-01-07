@@ -87,8 +87,8 @@ bool systemDown()
 
 void uninitFileDescriptors()
 {
-    for (std::vector<int>::iterator itr = fileDescriptors.begin(); itr != fileDescriptors.end(); ++itr)
-        close(*itr);
+    for (const auto& fileDescriptor : fileDescriptors)
+        close(fileDescriptor);
 }
 
 #define BITS_PER_LONG        (sizeof(unsigned long) * 8)
@@ -317,35 +317,35 @@ TouchSlot& atSlot(int idx)
 
 void processSlots()
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
+    for (auto& slot : touchSlots)
     {
         sf::Event event;
 
-        event.touch.x = slot->pos.x;
-        event.touch.y = slot->pos.y;
+        event.touch.x = slot.pos.x;
+        event.touch.y = slot.pos.y;
 
-        if (slot->oldId == slot->id)
+        if (slot.oldId == slot.id)
         {
             event.type         = sf::Event::TouchMoved;
-            event.touch.finger = static_cast<unsigned int>(slot->id);
+            event.touch.finger = static_cast<unsigned int>(slot.id);
             pushEvent(event);
         }
         else
         {
-            if (slot->oldId != -1)
+            if (slot.oldId != -1)
             {
                 event.type         = sf::Event::TouchEnded;
-                event.touch.finger = static_cast<unsigned int>(slot->oldId);
+                event.touch.finger = static_cast<unsigned int>(slot.oldId);
                 pushEvent(event);
             }
-            if (slot->id != -1)
+            if (slot.id != -1)
             {
                 event.type         = sf::Event::TouchBegan;
-                event.touch.finger = static_cast<unsigned int>(slot->id);
+                event.touch.finger = static_cast<unsigned int>(slot.id);
                 pushEvent(event);
             }
 
-            slot->oldId = slot->id;
+            slot.oldId = slot.id;
         }
     }
 }
@@ -371,10 +371,10 @@ bool eventProcess(sf::Event& event)
     ssize_t bytesRead;
 
     // Check all the open file descriptors for the next event
-    for (std::vector<int>::iterator itr = fileDescriptors.begin(); itr != fileDescriptors.end(); ++itr)
+    for (auto& fileDescriptor : fileDescriptors)
     {
         input_event inputEvent;
-        bytesRead = read(*itr, &inputEvent, sizeof(inputEvent));
+        bytesRead = read(fileDescriptor, &inputEvent, sizeof(inputEvent));
 
         while (bytesRead > 0)
         {
@@ -467,30 +467,30 @@ bool eventProcess(sf::Event& event)
                 {
                     case ABS_MT_SLOT:
                         currentSlot = inputEvent.value;
-                        touchFd     = *itr;
+                        touchFd     = fileDescriptor;
                         break;
                     case ABS_MT_TRACKING_ID:
                         atSlot(currentSlot).id = inputEvent.value;
-                        touchFd                = *itr;
+                        touchFd                = fileDescriptor;
                         break;
                     case ABS_MT_POSITION_X:
                         atSlot(currentSlot).pos.x = inputEvent.value;
-                        touchFd                   = *itr;
+                        touchFd                   = fileDescriptor;
                         break;
                     case ABS_MT_POSITION_Y:
                         atSlot(currentSlot).pos.y = inputEvent.value;
-                        touchFd                   = *itr;
+                        touchFd                   = fileDescriptor;
                         break;
                 }
             }
-            else if (inputEvent.type == EV_SYN && inputEvent.code == SYN_REPORT && *itr == touchFd)
+            else if (inputEvent.type == EV_SYN && inputEvent.code == SYN_REPORT && fileDescriptor == touchFd)
             {
                 // This pushes events directly to the queue, because it
                 // can generate more than one event.
                 processSlots();
             }
 
-            bytesRead = read(*itr, &inputEvent, sizeof(inputEvent));
+            bytesRead = read(fileDescriptor, &inputEvent, sizeof(inputEvent));
         }
 
         if ((bytesRead < 0) && (errno != EAGAIN))
@@ -628,9 +628,9 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& /*r
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
+    for (const auto& slot : touchSlots)
     {
-        if (slot->id == static_cast<int>(finger))
+        if (slot.id == static_cast<int>(finger))
             return true;
     }
 
@@ -641,10 +641,10 @@ bool InputImpl::isTouchDown(unsigned int finger)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
+    for (const auto& slot : touchSlots)
     {
-        if (slot->id == static_cast<int>(finger))
-            return slot->pos;
+        if (slot.id == static_cast<int>(finger))
+            return slot.pos;
     }
 
     return Vector2i();
