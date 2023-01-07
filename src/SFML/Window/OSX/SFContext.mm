@@ -33,7 +33,6 @@
 
 #include <dlfcn.h>
 #include <ostream>
-#include <stdint.h>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
