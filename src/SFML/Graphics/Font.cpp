@@ -124,9 +124,14 @@ Font::Font() = default;
 
 
 ////////////////////////////////////////////////////////////
-Font::Font(const Font& copy)
-
-    = default;
+Font::Font(const Font& copy) :
+m_fontHandles(copy.m_fontHandles),
+m_isSmooth(copy.m_isSmooth),
+m_info(copy.m_info),
+m_pages(copy.m_pages),
+m_pixelBuffer(copy.m_pixelBuffer.begin(), copy.m_pixelBuffer.end())
+{
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -505,18 +510,20 @@ bool Font::isSmooth() const
 ////////////////////////////////////////////////////////////
 Font& Font::operator=(const Font& right)
 {
-    Font temp(right);
+    if (this != &right)
+    {
+        Font temp(right);
 
-    std::swap(m_fontHandles, temp.m_fontHandles);
-    std::swap(m_isSmooth, temp.m_isSmooth);
-    std::swap(m_info, temp.m_info);
-    std::swap(m_pages, temp.m_pages);
-    std::swap(m_pixelBuffer, temp.m_pixelBuffer);
+        std::swap(m_fontHandles, temp.m_fontHandles);
+        std::swap(m_isSmooth, temp.m_isSmooth);
+        std::swap(m_info, temp.m_info);
+        std::swap(m_pages, temp.m_pages);
+        std::swap(m_pixelBuffer, temp.m_pixelBuffer);
 
 #ifdef SFML_SYSTEM_ANDROID
-    std::swap(m_stream, temp.m_stream);
+        std::swap(m_stream, temp.m_stream);
 #endif
-
+    }
     return *this;
 }
 
