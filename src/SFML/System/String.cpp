@@ -120,9 +120,7 @@ String::String(const std::basic_string<std::uint32_t>& utf32String) : m_string(u
 
 
 ////////////////////////////////////////////////////////////
-String::String(const String& copy) : m_string(copy.m_string)
-{
-}
+String::String(const String& copy) = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -211,11 +209,7 @@ std::basic_string<std::uint32_t> String::toUtf32() const
 
 
 ////////////////////////////////////////////////////////////
-String& String::operator=(const String& right)
-{
-    m_string = right.m_string;
-    return *this;
-}
+String& String::operator=(const String& right) = default;
 
 
 ////////////////////////////////////////////////////////////

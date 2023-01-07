@@ -41,8 +41,8 @@
 
 namespace
 {
-udev*         udevContext = 0;
-udev_monitor* udevMonitor = 0;
+udev*         udevContext = nullptr;
+udev_monitor* udevMonitor = nullptr;
 
 struct JoystickRecord
 {
@@ -461,7 +461,7 @@ void JoystickImpl::initialize()
                   << error << std::endl;
 
             udev_monitor_unref(udevMonitor);
-            udevMonitor = 0;
+            udevMonitor = nullptr;
         }
         else
         {
@@ -473,7 +473,7 @@ void JoystickImpl::initialize()
                       << error << std::endl;
 
                 udev_monitor_unref(udevMonitor);
-                udevMonitor = 0;
+                udevMonitor = nullptr;
             }
         }
     }
@@ -490,14 +490,14 @@ void JoystickImpl::cleanup()
     if (udevMonitor)
     {
         udev_monitor_unref(udevMonitor);
-        udevMonitor = 0;
+        udevMonitor = nullptr;
     }
 
     // Unreference the udev context to destroy it
     if (udevContext)
     {
         udev_unref(udevContext);
-        udevContext = 0;
+        udevContext = nullptr;
     }
 }
 
