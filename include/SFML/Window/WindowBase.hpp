@@ -157,7 +157,7 @@ public:
     bool isOpen() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Pop the event on top of the event queue, if any, and return it
+    /// \brief Pop the event from top of the event queue, if any, and return it
     ///
     /// This function is not blocking: if there's no pending event then
     /// it will return false and leave \a event unmodified.
