@@ -17,7 +17,8 @@
 #include <limits>
 #include <vector>
 
-
+// Disable clang-tidy for this file
+// NOLINTBEGIN
 ////////////////////////////////////////////////////////////
 // Helper functions
 ////////////////////////////////////////////////////////////
@@ -209,36 +210,36 @@ public:
     maxFramesInFlight(2),
     currentFrame(0),
     swapchainOutOfDate(false),
-    instance(nullptr),
-    debugReportCallback(nullptr),
-    surface(nullptr),
-    gpu(nullptr),
+    instance(0),
+    debugReportCallback(0),
+    surface(0),
+    gpu(0),
     queueFamilyIndex(-1),
-    device(nullptr),
-    queue(nullptr),
+    device(0),
+    queue(0),
     swapchainFormat(),
     swapchainExtent(),
-    swapchain(nullptr),
+    swapchain(0),
     depthFormat(VK_FORMAT_UNDEFINED),
-    depthImage(nullptr),
-    depthImageMemory(nullptr),
-    depthImageView(nullptr),
-    vertexShaderModule(nullptr),
-    fragmentShaderModule(nullptr),
-    descriptorSetLayout(nullptr),
-    pipelineLayout(nullptr),
-    renderPass(nullptr),
-    graphicsPipeline(nullptr),
-    commandPool(nullptr),
-    vertexBuffer(nullptr),
-    vertexBufferMemory(nullptr),
-    indexBuffer(nullptr),
-    indexBufferMemory(nullptr),
-    textureImage(nullptr),
-    textureImageMemory(nullptr),
-    textureImageView(nullptr),
-    textureSampler(nullptr),
-    descriptorPool(nullptr)
+    depthImage(0),
+    depthImageMemory(0),
+    depthImageView(0),
+    vertexShaderModule(0),
+    fragmentShaderModule(0),
+    descriptorSetLayout(0),
+    pipelineLayout(0),
+    renderPass(0),
+    graphicsPipeline(0),
+    commandPool(0),
+    vertexBuffer(0),
+    vertexBufferMemory(0),
+    indexBuffer(0),
+    indexBufferMemory(0),
+    textureImage(0),
+    textureImageMemory(0),
+    textureImageView(0),
+    textureSampler(0),
+    descriptorPool(0)
     {
         // Vulkan setup procedure
         if (vulkanAvailable)
@@ -462,7 +463,7 @@ public:
     void setupInstance()
     {
         // Load bootstrap entry points
-        gladLoadVulkan(nullptr, getVulkanFunction);
+        gladLoadVulkan(0, getVulkanFunction);
 
         if (!vkCreateInstance)
         {
@@ -558,7 +559,7 @@ public:
         }
 
         // Load instance entry points
-        gladLoadVulkan(nullptr, getVulkanFunction);
+        gladLoadVulkan(0, getVulkanFunction);
     }
 
     // Setup our debug callback function to be called by Vulkan
@@ -1615,8 +1616,8 @@ public:
         // Create a uniform buffer for every frame that might be in flight to prevent clobbering
         for (std::size_t i = 0; i < swapchainImages.size(); ++i)
         {
-            uniformBuffers.push_back(nullptr);
-            uniformBuffersMemory.push_back(nullptr);
+            uniformBuffers.push_back(0);
+            uniformBuffersMemory.push_back(0);
 
             // The uniform buffer will be host visible and coherent since we use it for streaming data every frame
             if (!createBuffer(sizeof(Matrix) * 3,
@@ -2379,7 +2380,7 @@ public:
         // Create a semaphore to track when an swapchain image is available for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            imageAvailableSemaphores.push_back(nullptr);
+            imageAvailableSemaphores.push_back(0);
 
             if (vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS)
             {
@@ -2392,7 +2393,7 @@ public:
         // Create a semaphore to track when rendering is complete for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            renderFinishedSemaphores.push_back(nullptr);
+            renderFinishedSemaphores.push_back(0);
 
             if (vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS)
             {
@@ -2414,7 +2415,7 @@ public:
         // Create a fence to track when queue submission is complete for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            fences.push_back(nullptr);
+            fences.push_back(0);
 
             if (vkCreateFence(device, &fenceCreateInfo, nullptr, &fences[i]) != VK_SUCCESS)
             {
@@ -2668,3 +2669,4 @@ int main()
 
     return EXIT_SUCCESS;
 }
+// NOLINTEND
