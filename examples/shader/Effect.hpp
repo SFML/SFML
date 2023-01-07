@@ -15,9 +15,8 @@
 class Effect : public sf::Drawable
 {
 public:
-    ~Effect() override
-    {
-    }
+    ~Effect() override = default;
+
 
     static void setFont(const sf::Font& font)
     {
