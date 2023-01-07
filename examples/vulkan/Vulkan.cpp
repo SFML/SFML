@@ -1557,8 +1557,8 @@ public:
         // clang-format on
 
         // Create a staging buffer that is writable by the CPU
-        VkBuffer       stagingBuffer       = nullptr;
-        VkDeviceMemory stagingBufferMemory = nullptr;
+        VkBuffer       stagingBuffer       = {};
+        VkDeviceMemory stagingBufferMemory = {};
 
         if (!createBuffer(sizeof(indexData),
                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1845,8 +1845,8 @@ public:
         // Create a staging buffer to transfer the data with
         VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;
 
-        VkBuffer       stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+        VkBuffer       stagingBuffer = {};
+        VkDeviceMemory stagingBufferMemory = {};
         createBuffer(imageSize,
                      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
