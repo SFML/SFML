@@ -1845,7 +1845,7 @@ public:
         // Create a staging buffer to transfer the data with
         VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;
 
-        VkBuffer       stagingBuffer = {};
+        VkBuffer       stagingBuffer       = {};
         VkDeviceMemory stagingBufferMemory = {};
         createBuffer(imageSize,
                      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
