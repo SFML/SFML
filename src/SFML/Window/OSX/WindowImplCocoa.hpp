@@ -90,7 +90,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WindowImplCocoa();
+    ~WindowImplCocoa() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Closed Event - called by the cocoa window object

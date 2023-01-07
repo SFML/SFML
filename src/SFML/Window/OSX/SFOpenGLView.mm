@@ -101,7 +101,7 @@
 {
     if ((self = [super initWithFrame:frameRect]))
     {
-        [self setRequesterTo:0];
+        [self setRequesterTo:nullptr];
         [self enableKeyRepeat];
 
         // Register for mouse move event
@@ -242,7 +242,7 @@
     m_scaleFactor            = m_highDpi ? [screen backingScaleFactor] : 1.0;
 
     // Send a resize event if the scaling factor changed
-    if ((m_scaleFactor != oldScaleFactor) && (m_requester != 0))
+    if ((m_scaleFactor != oldScaleFactor) && (m_requester != nullptr))
     {
         NSSize newSize = [self frame].size;
         m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
@@ -272,7 +272,7 @@
     [self update];
 
     // Send an event
-    if (m_requester == 0)
+    if (m_requester == nullptr)
         return;
 
     // The new size
@@ -319,7 +319,7 @@
     [self addTrackingArea:m_trackingArea];
 
     // Fire an mouse entered event if needed
-    if (!m_mouseIsIn && (m_requester != 0))
+    if (!m_mouseIsIn && (m_requester != nullptr))
         m_requester->mouseMovedIn();
 
     // Update status
@@ -333,7 +333,7 @@
     [self removeTrackingArea:m_trackingArea];
 
     // Fire an mouse left event if needed
-    if (m_mouseIsIn && (m_requester != 0))
+    if (m_mouseIsIn && (m_requester != nullptr))
         m_requester->mouseMovedOut();
 
     // Update status
@@ -359,7 +359,7 @@
     [m_silentResponder release];
     [m_trackingArea release];
 
-    [self setRequesterTo:0];
+    [self setRequesterTo:nullptr];
 
     [super dealloc];
 }
