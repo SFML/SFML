@@ -41,7 +41,7 @@ namespace sf::priv
 /// \brief Implementation of sound file writer that handles OGG/Vorbis files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileWriterOgg : public SoundFileWriter
+class SoundFileWriterOgg final : public SoundFileWriter
 {
 public:
     ////////////////////////////////////////////////////////////

@@ -47,7 +47,7 @@ class Font;
 /// \brief Graphical text that can be drawn to a render target
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Text : public Drawable, public Transformable
+class SFML_GRAPHICS_API Text final : public Drawable, public Transformable
 {
 public:
     ////////////////////////////////////////////////////////////

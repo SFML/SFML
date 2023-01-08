@@ -57,7 +57,7 @@ namespace sf::priv
 /// \brief Implementation of sound file reader that handles MP3 files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileReaderMp3 : public SoundFileReader
+class SoundFileReaderMp3 final : public SoundFileReader
 {
 public:
     ////////////////////////////////////////////////////////////

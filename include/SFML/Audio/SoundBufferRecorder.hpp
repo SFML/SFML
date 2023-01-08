@@ -42,7 +42,7 @@ namespace sf
 ///        audio data into a sound buffer
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundBufferRecorder : public SoundRecorder
+class SFML_AUDIO_API SoundBufferRecorder final : public SoundRecorder
 {
 public:
     ////////////////////////////////////////////////////////////

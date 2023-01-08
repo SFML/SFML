@@ -39,7 +39,7 @@ namespace sf
 /// \brief Window that can serve as a target for 2D drawing
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderWindow : public Window, public RenderTarget
+class SFML_GRAPHICS_API RenderWindow final : public Window, public RenderTarget
 {
 public:
     ////////////////////////////////////////////////////////////

@@ -47,7 +47,7 @@ class RenderTextureImpl;
 /// \brief Target for off-screen 2D rendering into a texture
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderTexture : public RenderTarget
+class SFML_GRAPHICS_API RenderTexture final : public RenderTarget
 {
 public:
     ////////////////////////////////////////////////////////////

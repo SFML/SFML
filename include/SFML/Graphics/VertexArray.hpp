@@ -43,7 +43,7 @@ namespace sf
 /// \brief Define a set of one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API VertexArray : public Drawable
+class SFML_GRAPHICS_API VertexArray final : public Drawable
 {
 public:
     ////////////////////////////////////////////////////////////

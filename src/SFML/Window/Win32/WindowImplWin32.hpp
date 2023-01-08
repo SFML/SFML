@@ -42,7 +42,7 @@ namespace priv
 /// \brief Windows implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplWin32 : public WindowImpl
+class WindowImplWin32 final : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////

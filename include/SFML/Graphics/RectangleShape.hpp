@@ -38,7 +38,7 @@ namespace sf
 /// \brief Specialized shape representing a rectangle
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RectangleShape : public Shape
+class SFML_GRAPHICS_API RectangleShape final : public Shape
 {
 public:
     ////////////////////////////////////////////////////////////

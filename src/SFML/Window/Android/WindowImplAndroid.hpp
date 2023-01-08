@@ -41,7 +41,7 @@ namespace sf::priv
 /// \brief Android implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplAndroid : public WindowImpl
+class WindowImplAndroid final : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////

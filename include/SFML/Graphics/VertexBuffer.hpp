@@ -45,7 +45,7 @@ class Vertex;
 /// \brief Vertex buffer storage for one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API VertexBuffer : public Drawable, private GlResource
+class SFML_GRAPHICS_API VertexBuffer final : public Drawable, private GlResource
 {
 public:
     ////////////////////////////////////////////////////////////

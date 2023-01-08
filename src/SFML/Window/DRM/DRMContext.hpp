@@ -57,7 +57,7 @@ struct Drm
 
 class WindowImplDRM;
 
-class DRMContext : public GlContext
+class DRMContext final : public GlContext
 {
 public:
     ////////////////////////////////////////////////////////////

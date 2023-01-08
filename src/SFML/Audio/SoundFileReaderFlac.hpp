@@ -39,7 +39,7 @@ namespace sf::priv
 /// \brief Implementation of sound file reader that handles FLAC files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileReaderFlac : public SoundFileReader
+class SoundFileReaderFlac final : public SoundFileReader
 {
 public:
     ////////////////////////////////////////////////////////////

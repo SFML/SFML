@@ -44,7 +44,7 @@ class Packet;
 /// \brief Specialized socket using the UDP protocol
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API UdpSocket : public Socket
+class SFML_NETWORK_API UdpSocket final : public Socket
 {
 public:
     ////////////////////////////////////////////////////////////

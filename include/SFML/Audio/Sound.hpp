@@ -43,7 +43,7 @@ class SoundBuffer;
 /// \brief Regular sound that can be played in the audio environment
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API Sound : public SoundSource
+class SFML_AUDIO_API Sound final : public SoundSource
 {
 public:
     ////////////////////////////////////////////////////////////

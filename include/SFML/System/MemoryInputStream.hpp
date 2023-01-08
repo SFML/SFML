@@ -42,7 +42,7 @@ namespace sf
 /// \brief Implementation of input stream based on a memory chunk
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API MemoryInputStream : public InputStream
+class SFML_SYSTEM_API MemoryInputStream final : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////

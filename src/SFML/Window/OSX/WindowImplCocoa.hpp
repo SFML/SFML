@@ -64,7 +64,7 @@ namespace priv
 /// \brief Mac OS X (Cocoa) implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplCocoa : public WindowImpl
+class WindowImplCocoa final : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////

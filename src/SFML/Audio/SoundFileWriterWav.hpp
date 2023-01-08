@@ -39,7 +39,7 @@ namespace sf::priv
 /// \brief Implementation of sound file writer that handles wav files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileWriterWav : public SoundFileWriter
+class SoundFileWriterWav final : public SoundFileWriter
 {
 public:
     ////////////////////////////////////////////////////////////

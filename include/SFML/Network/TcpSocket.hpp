@@ -45,7 +45,7 @@ class Packet;
 /// \brief Specialized socket using the TCP protocol
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API TcpSocket : public Socket
+class SFML_NETWORK_API TcpSocket final : public Socket
 {
 public:
     ////////////////////////////////////////////////////////////

@@ -50,7 +50,7 @@ class Transform;
 /// \brief Shader class (vertex, geometry and fragment)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shader : GlResource
+class SFML_GRAPHICS_API Shader final : GlResource
 {
 public:
     ////////////////////////////////////////////////////////////

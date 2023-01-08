@@ -48,7 +48,7 @@ class InputStream;
 /// \brief Storage for audio samples defining a sound
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundBuffer : AlResource
+class SFML_AUDIO_API SoundBuffer final : AlResource
 {
 public:
     ////////////////////////////////////////////////////////////

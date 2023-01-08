@@ -36,7 +36,7 @@ namespace sf::priv
 /// \brief Implementation of sound file reader that handles wav files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileReaderWav : public SoundFileReader
+class SoundFileReaderWav final : public SoundFileReader
 {
 public:
     ////////////////////////////////////////////////////////////

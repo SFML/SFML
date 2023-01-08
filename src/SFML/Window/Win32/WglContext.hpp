@@ -38,7 +38,7 @@ namespace sf::priv
 /// \brief Windows (WGL) implementation of OpenGL contexts
 ///
 ////////////////////////////////////////////////////////////
-class WglContext : public GlContext
+class WglContext final : public GlContext
 {
 public:
     ////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@ namespace sf::priv
 /// \brief DRM implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplDRM : public WindowImpl
+class WindowImplDRM final : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////

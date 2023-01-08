@@ -51,7 +51,7 @@ using GlFunctionPointer = void (*)();
 /// \brief Class holding a valid drawing context
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Context : GlResource
+class SFML_WINDOW_API Context final : GlResource
 {
 public:
     ////////////////////////////////////////////////////////////

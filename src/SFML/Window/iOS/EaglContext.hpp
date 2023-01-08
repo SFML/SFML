@@ -48,7 +48,7 @@ class WindowImplUIKit;
 /// \brief iOS (EAGL) implementation of OpenGL contexts
 ///
 ////////////////////////////////////////////////////////////
-class EaglContext : public GlContext
+class EaglContext final : public GlContext
 {
 public:
     ////////////////////////////////////////////////////////////

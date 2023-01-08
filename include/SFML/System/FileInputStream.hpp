@@ -52,7 +52,7 @@ namespace sf
 /// \brief Implementation of input stream based on a file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API FileInputStream : public InputStream
+class SFML_SYSTEM_API FileInputStream final : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////

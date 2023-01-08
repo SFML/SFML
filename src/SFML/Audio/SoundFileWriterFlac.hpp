@@ -40,7 +40,7 @@ namespace sf::priv
 /// \brief Implementation of sound file writer that handles FLAC files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileWriterFlac : public SoundFileWriter
+class SoundFileWriterFlac final : public SoundFileWriter
 {
 public:
     ////////////////////////////////////////////////////////////

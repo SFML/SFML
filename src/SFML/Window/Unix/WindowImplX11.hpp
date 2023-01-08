@@ -43,7 +43,7 @@ namespace sf::priv
 /// \brief Linux (X11) implementation of WindowImpl
 ///
 ////////////////////////////////////////////////////////////
-class WindowImplX11 : public WindowImpl
+class WindowImplX11 final : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////

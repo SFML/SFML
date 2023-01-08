@@ -44,7 +44,7 @@ class Texture;
 ///        own transformations, color, etc.
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Sprite : public Drawable, public Transformable
+class SFML_GRAPHICS_API Sprite final : public Drawable, public Transformable
 {
 public:
     ////////////////////////////////////////////////////////////

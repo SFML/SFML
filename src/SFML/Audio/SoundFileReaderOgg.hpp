@@ -38,7 +38,7 @@ namespace sf::priv
 /// \brief Implementation of sound file reader that handles OGG/Vorbis files
 ///
 ////////////////////////////////////////////////////////////
-class SoundFileReaderOgg : public SoundFileReader
+class SoundFileReaderOgg final : public SoundFileReader
 {
 public:
     ////////////////////////////////////////////////////////////

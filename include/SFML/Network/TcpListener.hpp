@@ -41,7 +41,7 @@ class TcpSocket;
 /// \brief Socket that listens to new TCP connections
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API TcpListener : public Socket
+class SFML_NETWORK_API TcpListener final : public Socket
 {
 public:
     ////////////////////////////////////////////////////////////

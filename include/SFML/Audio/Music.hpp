@@ -46,7 +46,7 @@ class InputStream;
 /// \brief Streamed music played from an audio file
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API Music : public SoundStream
+class SFML_AUDIO_API Music final : public SoundStream
 {
 public:
     ////////////////////////////////////////////////////////////
