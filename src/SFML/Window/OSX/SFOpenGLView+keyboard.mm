@@ -78,7 +78,7 @@
     // Transmit to non-SFML responder
     [[self nextResponder] keyDown:theEvent];
 
-    if (m_requester == 0)
+    if (m_requester == nil)
         return;
 
     // Handle key down event
@@ -153,7 +153,7 @@
     // Transmit to non-SFML responder
     [[self nextResponder] keyUp:theEvent];
 
-    if (m_requester == 0)
+    if (m_requester == nil)
         return;
 
     sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
@@ -169,7 +169,7 @@
     // Transmit to non-SFML responder
     [[self nextResponder] flagsChanged:theEvent];
 
-    if (m_requester == 0)
+    if (m_requester == nil)
         return;
 
     NSUInteger modifiers = [theEvent modifierFlags];

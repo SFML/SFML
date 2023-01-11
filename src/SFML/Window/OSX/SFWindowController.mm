@@ -99,7 +99,7 @@
     {
         m_window        = nil;
         m_oglView       = nil;
-        m_requester     = 0;
+        m_requester     = nil;
         m_fullscreen    = NO; // assuming this is the case... too hard to handle anyway.
         m_restoreResize = NO;
         m_highDpi       = NO;
@@ -152,7 +152,7 @@
     {
         m_window        = nil;
         m_oglView       = nil;
-        m_requester     = 0;
+        m_requester     = nil;
         m_fullscreen    = ((style & sf::Style::Fullscreen) != 0) ? YES : NO;
         m_restoreResize = NO;
         m_highDpi       = NO;
@@ -465,7 +465,7 @@
             height = static_cast<unsigned int>(maxVisibleHeight);
 
             // The size is not the requested one, we fire an event
-            if (m_requester != 0)
+            if (m_requester != nil)
                 m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
         }
 
@@ -506,7 +506,7 @@
     [self applyContext:nil];
     [m_window close];
     [m_window setDelegate:nil];
-    [self setRequesterTo:0];
+    [self setRequesterTo:nil];
     [SFApplication processEvent];
 }
 
@@ -570,7 +570,7 @@
     }
 
     // If we don't have a requester we don't fetch event.
-    if (m_requester != 0)
+    if (m_requester != nil)
         [SFApplication processEvent];
 }
 
@@ -592,7 +592,7 @@
 {
     (void)sender;
 
-    if (m_requester == 0)
+    if (m_requester == nil)
         return YES;
 
     m_requester->windowClosed();

@@ -109,7 +109,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
     }
     else
     {
-        if (nsHandle != 0)
+        if (nsHandle != nil)
             sf::err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
                       << "object. This shouldn't happen." << std::endl;
         // Else: this probably means the SFML window was previously closed.
