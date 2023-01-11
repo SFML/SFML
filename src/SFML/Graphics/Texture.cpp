@@ -52,7 +52,7 @@ std::recursive_mutex maximumSizeMutex;
 // is used for states cache (see RenderTarget)
 std::uint64_t getUniqueId()
 {
-    std::scoped_lock lock(idMutex);
+    std::lock_guard lock(idMutex);
 
     static std::uint64_t id = 1; // start at 1, zero is "no texture"
 
@@ -833,7 +833,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    std::scoped_lock lock(TextureImpl::maximumSizeMutex);
+    std::lock_guard lock(TextureImpl::maximumSizeMutex);
 
     static bool  checked = false;
     static GLint size    = 0;

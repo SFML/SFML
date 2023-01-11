@@ -55,7 +55,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 Display* openDisplay()
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     if (referenceCount == 0)
     {
@@ -78,7 +78,7 @@ Display* openDisplay()
 ////////////////////////////////////////////////////////////
 void closeDisplay(Display* display)
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     assert(display == sharedDisplay);
 
@@ -90,7 +90,7 @@ void closeDisplay(Display* display)
 ////////////////////////////////////////////////////////////
 XIM openXim()
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     assert(sharedDisplay != nullptr);
 
@@ -128,7 +128,7 @@ XIM openXim()
 ////////////////////////////////////////////////////////////
 void closeXim(XIM xim)
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     assert(xim == sharedXIM);
 

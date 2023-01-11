@@ -94,8 +94,8 @@ public:
     }
 
 private:
-    std::scoped_lock<std::recursive_mutex> m_lock{glxErrorMutex};
-    ::Display*                             m_display;
+    std::lock_guard<std::recursive_mutex> m_lock{glxErrorMutex};
+    ::Display*                            m_display;
     int (*m_previousHandler)(::Display*, XErrorEvent*);
 };
 } // namespace
