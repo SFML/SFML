@@ -352,7 +352,7 @@ void processSlots()
 
 bool eventProcess(sf::Event& event)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
 
     // Ensure that we are initialized
     initFileDescriptors();
@@ -565,7 +565,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if ((key < 0) || (key >= static_cast<int>(keyMap.size())))
         return false;
 
@@ -584,7 +584,7 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if ((button < 0) || (button >= static_cast<int>(mouseMap.size())))
         return false;
 
@@ -596,7 +596,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     return mousePos;
 }
 
@@ -611,7 +611,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& /*relativeTo*/)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     mousePos = position;
 }
 
@@ -659,7 +659,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /*re
 ////////////////////////////////////////////////////////////
 bool InputImpl::checkEvent(sf::Event& event)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if (!eventQueue.empty())
     {
         event = eventQueue.front();
@@ -693,7 +693,7 @@ bool InputImpl::checkEvent(sf::Event& event)
 ////////////////////////////////////////////////////////////
 void InputImpl::setTerminalConfig()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcgetattr(STDIN_FILENO, &newTerminalConfig);               // get current terminal config
@@ -710,7 +710,7 @@ void InputImpl::setTerminalConfig()
 ////////////////////////////////////////////////////////////
 void InputImpl::restoreTerminalConfig()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldTerminalConfig); // restore terminal config

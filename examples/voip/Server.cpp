@@ -81,7 +81,7 @@ private:
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
         {
-            std::scoped_lock lock(m_mutex);
+            std::lock_guard lock(m_mutex);
             m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<std::int16_t>::difference_type>(m_offset),
                                 m_samples.end());
         }
@@ -130,8 +130,8 @@ private:
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
-                    std::scoped_lock lock(m_mutex);
-                    std::size_t      oldSize = m_samples.size();
+                    std::lock_guard lock(m_mutex);
+                    std::size_t     oldSize = m_samples.size();
                     m_samples.resize(oldSize + sampleCount);
                     std::memcpy(&(m_samples[oldSize]),
                                 static_cast<const char*>(packet.getData()) + 1,

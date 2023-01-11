@@ -745,7 +745,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    std::scoped_lock lock(isAvailableMutex);
+    std::lock_guard lock(isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;
@@ -770,7 +770,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    std::scoped_lock lock(isAvailableMutex);
+    std::lock_guard lock(isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;

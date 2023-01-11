@@ -336,7 +336,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    std::scoped_lock lock(VertexBufferImpl::isAvailableMutex);
+    std::lock_guard lock(VertexBufferImpl::isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;

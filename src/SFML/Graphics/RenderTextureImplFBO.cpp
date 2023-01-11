@@ -84,7 +84,7 @@ void destroyStaleFBOs()
 // Callback that is called every time a context is destroyed
 void contextDestroyCallback(void* /*arg*/)
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     std::uint64_t contextId = sf::Context::getActiveContextId();
 
@@ -117,7 +117,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO()
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     // Register the context destruction callback
     registerContextDestroyCallback(contextDestroyCallback, nullptr);
@@ -133,7 +133,7 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 {
     TransientContextLock contextLock;
 
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     // Remove the frame buffer mapping from the set of all active mappings
     frameBuffers.erase(&m_frameBuffers);
@@ -462,7 +462,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
     }
 
     {
-        std::scoped_lock lock(mutex);
+        std::lock_guard lock(mutex);
 
         // Insert the FBO into our map
         m_frameBuffers.emplace(Context::getActiveContextId(), frameBuffer);
@@ -519,7 +519,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
         }
 
         {
-            std::scoped_lock lock(mutex);
+            std::lock_guard lock(mutex);
 
             // Insert the FBO into our map
             m_multisampleFrameBuffers.emplace(Context::getActiveContextId(), multisampleFrameBuffer);
@@ -570,7 +570,7 @@ bool RenderTextureImplFBO::activate(bool active)
     // If none is found, there is no FBO corresponding to the
     // currently active context so we will have to create a new FBO
     {
-        std::scoped_lock lock(mutex);
+        std::lock_guard lock(mutex);
 
         std::unordered_map<std::uint64_t, unsigned int>::iterator it;
 
@@ -624,7 +624,7 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
     {
         std::uint64_t contextId = Context::getActiveContextId();
 
-        std::scoped_lock lock(mutex);
+        std::lock_guard lock(mutex);
 
         auto frameBufferIt = m_frameBuffers.find(contextId);
         auto multisampleIt = m_multisampleFrameBuffers.find(contextId);

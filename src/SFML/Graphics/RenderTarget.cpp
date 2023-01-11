@@ -55,7 +55,7 @@ std::recursive_mutex mutex;
 // tracking the currently active RenderTarget within a given context
 std::uint64_t getUniqueId()
 {
-    std::scoped_lock lock(mutex);
+    std::lock_guard lock(mutex);
 
     static std::uint64_t id = 1; // start at 1, zero is "no RenderTarget"
 
@@ -392,7 +392,7 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        std::scoped_lock lock(RenderTargetImpl::mutex);
+        std::lock_guard lock(RenderTargetImpl::mutex);
 
         std::uint64_t contextId = Context::getActiveContextId();
 

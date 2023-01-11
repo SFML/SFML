@@ -763,7 +763,7 @@ WindowImplX11::~WindowImplX11()
     closeDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
-    std::scoped_lock lock(allWindowsMutex);
+    std::lock_guard lock(allWindowsMutex);
     allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
 }
 
@@ -1217,7 +1217,7 @@ void WindowImplX11::requestFocus()
     bool sfmlWindowFocused = false;
 
     {
-        std::scoped_lock lock(allWindowsMutex);
+        std::lock_guard lock(allWindowsMutex);
         for (sf::priv::WindowImplX11* windowPtr : allWindows)
         {
             if (windowPtr->hasFocus())
@@ -1662,7 +1662,7 @@ void WindowImplX11::initialize()
     XFlush(m_display);
 
     // Add this window to the global list of windows (required for focus request)
-    std::scoped_lock lock(allWindowsMutex);
+    std::lock_guard lock(allWindowsMutex);
     allWindows.push_back(this);
 }
 
