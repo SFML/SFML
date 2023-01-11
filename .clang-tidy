@@ -2,6 +2,7 @@ Checks: >
   -*,
   clang-analyzer-*,
   modernize-concat-nested-namespaces,
+  modernize-use-nullptr,
   readability-identifier-naming,
   -clang-analyzer-core.NonNullParamChecker,
   -clang-analyzer-core.NullDereference,

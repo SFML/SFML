@@ -209,36 +209,36 @@ public:
     maxFramesInFlight(2),
     currentFrame(0),
     swapchainOutOfDate(false),
-    instance(0),
-    debugReportCallback(0),
-    surface(0),
-    gpu(0),
+    instance(),
+    debugReportCallback(),
+    surface(),
+    gpu(),
     queueFamilyIndex(-1),
-    device(0),
-    queue(0),
+    device(),
+    queue(),
     swapchainFormat(),
     swapchainExtent(),
-    swapchain(0),
+    swapchain(),
     depthFormat(VK_FORMAT_UNDEFINED),
-    depthImage(0),
-    depthImageMemory(0),
-    depthImageView(0),
-    vertexShaderModule(0),
-    fragmentShaderModule(0),
-    descriptorSetLayout(0),
-    pipelineLayout(0),
-    renderPass(0),
-    graphicsPipeline(0),
-    commandPool(0),
-    vertexBuffer(0),
-    vertexBufferMemory(0),
-    indexBuffer(0),
-    indexBufferMemory(0),
-    textureImage(0),
-    textureImageMemory(0),
-    textureImageView(0),
-    textureSampler(0),
-    descriptorPool(0)
+    depthImage(),
+    depthImageMemory(),
+    depthImageView(),
+    vertexShaderModule(),
+    fragmentShaderModule(),
+    descriptorSetLayout(),
+    pipelineLayout(),
+    renderPass(),
+    graphicsPipeline(),
+    commandPool(),
+    vertexBuffer(),
+    vertexBufferMemory(),
+    indexBuffer(),
+    indexBufferMemory(),
+    textureImage(),
+    textureImageMemory(),
+    textureImageView(),
+    textureSampler(),
+    descriptorPool()
     {
         // Vulkan setup procedure
         if (vulkanAvailable)
@@ -316,70 +316,70 @@ public:
 
         // Vulkan teardown procedure
         for (VkFence fence : fences)
-            vkDestroyFence(device, fence, 0);
+            vkDestroyFence(device, fence, nullptr);
 
         for (VkSemaphore renderFinishedSemaphore : renderFinishedSemaphores)
-            vkDestroySemaphore(device, renderFinishedSemaphore, 0);
+            vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 
         for (VkSemaphore imageAvailableSemaphore : imageAvailableSemaphores)
-            vkDestroySemaphore(device, imageAvailableSemaphore, 0);
+            vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 
         if (descriptorPool)
-            vkDestroyDescriptorPool(device, descriptorPool, 0);
+            vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
         for (VkDeviceMemory i : uniformBuffersMemory)
-            vkFreeMemory(device, i, 0);
+            vkFreeMemory(device, i, nullptr);
 
         for (VkBuffer uniformBuffer : uniformBuffers)
-            vkDestroyBuffer(device, uniformBuffer, 0);
+            vkDestroyBuffer(device, uniformBuffer, nullptr);
 
         if (textureSampler)
-            vkDestroySampler(device, textureSampler, 0);
+            vkDestroySampler(device, textureSampler, nullptr);
 
         if (textureImageView)
-            vkDestroyImageView(device, textureImageView, 0);
+            vkDestroyImageView(device, textureImageView, nullptr);
 
         if (textureImageMemory)
-            vkFreeMemory(device, textureImageMemory, 0);
+            vkFreeMemory(device, textureImageMemory, nullptr);
 
         if (textureImage)
-            vkDestroyImage(device, textureImage, 0);
+            vkDestroyImage(device, textureImage, nullptr);
 
         if (indexBufferMemory)
-            vkFreeMemory(device, indexBufferMemory, 0);
+            vkFreeMemory(device, indexBufferMemory, nullptr);
 
         if (indexBuffer)
-            vkDestroyBuffer(device, indexBuffer, 0);
+            vkDestroyBuffer(device, indexBuffer, nullptr);
 
         if (vertexBufferMemory)
-            vkFreeMemory(device, vertexBufferMemory, 0);
+            vkFreeMemory(device, vertexBufferMemory, nullptr);
 
         if (vertexBuffer)
-            vkDestroyBuffer(device, vertexBuffer, 0);
+            vkDestroyBuffer(device, vertexBuffer, nullptr);
 
         if (commandPool)
-            vkDestroyCommandPool(device, commandPool, 0);
+            vkDestroyCommandPool(device, commandPool, nullptr);
 
         if (descriptorSetLayout)
-            vkDestroyDescriptorSetLayout(device, descriptorSetLayout, 0);
+            vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
         if (fragmentShaderModule)
-            vkDestroyShaderModule(device, fragmentShaderModule, 0);
+            vkDestroyShaderModule(device, fragmentShaderModule, nullptr);
 
         if (vertexShaderModule)
-            vkDestroyShaderModule(device, vertexShaderModule, 0);
+            vkDestroyShaderModule(device, vertexShaderModule, nullptr);
 
         if (device)
-            vkDestroyDevice(device, 0);
+            vkDestroyDevice(device, nullptr);
 
         if (surface)
-            vkDestroySurfaceKHR(instance, surface, 0);
+            vkDestroySurfaceKHR(instance, surface, nullptr);
 
         if (debugReportCallback)
-            vkDestroyDebugReportCallbackEXT(instance, debugReportCallback, 0);
+            vkDestroyDebugReportCallbackEXT(instance, debugReportCallback, nullptr);
 
         if (instance)
-            vkDestroyInstance(instance, 0);
+            vkDestroyInstance(instance, nullptr);
     }
 
     // Cleanup swapchain
@@ -395,35 +395,35 @@ public:
         commandBuffers.clear();
 
         for (VkFramebuffer swapchainFramebuffer : swapchainFramebuffers)
-            vkDestroyFramebuffer(device, swapchainFramebuffer, 0);
+            vkDestroyFramebuffer(device, swapchainFramebuffer, nullptr);
 
         swapchainFramebuffers.clear();
 
         if (graphicsPipeline)
-            vkDestroyPipeline(device, graphicsPipeline, 0);
+            vkDestroyPipeline(device, graphicsPipeline, nullptr);
 
         if (renderPass)
-            vkDestroyRenderPass(device, renderPass, 0);
+            vkDestroyRenderPass(device, renderPass, nullptr);
 
         if (pipelineLayout)
-            vkDestroyPipelineLayout(device, pipelineLayout, 0);
+            vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 
         if (depthImageView)
-            vkDestroyImageView(device, depthImageView, 0);
+            vkDestroyImageView(device, depthImageView, nullptr);
 
         if (depthImageMemory)
-            vkFreeMemory(device, depthImageMemory, 0);
+            vkFreeMemory(device, depthImageMemory, nullptr);
 
         if (depthImage)
-            vkDestroyImage(device, depthImage, 0);
+            vkDestroyImage(device, depthImage, nullptr);
 
         for (VkImageView swapchainImageView : swapchainImageViews)
-            vkDestroyImageView(device, swapchainImageView, 0);
+            vkDestroyImageView(device, swapchainImageView, nullptr);
 
         swapchainImageViews.clear();
 
         if (swapchain)
-            vkDestroySwapchainKHR(device, swapchain, 0);
+            vkDestroySwapchainKHR(device, swapchain, nullptr);
     }
 
     // Cleanup and recreate swapchain
@@ -462,7 +462,7 @@ public:
     void setupInstance()
     {
         // Load bootstrap entry points
-        gladLoadVulkan(0, getVulkanFunction);
+        gladLoadVulkan({}, getVulkanFunction);
 
         if (!vkCreateInstance)
         {
@@ -475,7 +475,7 @@ public:
 
         std::vector<VkLayerProperties> layers;
 
-        if (vkEnumerateInstanceLayerProperties(&objectCount, 0) != VK_SUCCESS)
+        if (vkEnumerateInstanceLayerProperties(&objectCount, nullptr) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -537,7 +537,7 @@ public:
         instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
         // Try to create a Vulkan instance with debug report enabled
-        VkResult result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
+        VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
 
         // If an extension is missing, try disabling debug report
         if (result == VK_ERROR_EXTENSION_NOT_PRESENT)
@@ -547,7 +547,7 @@ public:
             instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtentions.size());
             instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
-            result = vkCreateInstance(&instanceCreateInfo, 0, &instance);
+            result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
         }
 
         // If instance creation still fails, give up
@@ -558,7 +558,7 @@ public:
         }
 
         // Load instance entry points
-        gladLoadVulkan(0, getVulkanFunction);
+        gladLoadVulkan({}, getVulkanFunction);
     }
 
     // Setup our debug callback function to be called by Vulkan
@@ -576,7 +576,8 @@ public:
         debugReportCallbackCreateInfo.pfnCallback = debugCallback;
 
         // Create the debug callback
-        if (vkCreateDebugReportCallbackEXT(instance, &debugReportCallbackCreateInfo, 0, &debugReportCallback) != VK_SUCCESS)
+        if (vkCreateDebugReportCallbackEXT(instance, &debugReportCallbackCreateInfo, nullptr, &debugReportCallback) !=
+            VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -605,7 +606,7 @@ public:
 
         std::vector<VkPhysicalDevice> devices;
 
-        if (vkEnumeratePhysicalDevices(instance, &objectCount, 0) != VK_SUCCESS)
+        if (vkEnumeratePhysicalDevices(instance, &objectCount, nullptr) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -627,7 +628,7 @@ public:
 
             std::vector<VkExtensionProperties> extensions;
 
-            if (vkEnumerateDeviceExtensionProperties(dev, 0, &objectCount, 0) != VK_SUCCESS)
+            if (vkEnumerateDeviceExtensionProperties(dev, nullptr, &objectCount, nullptr) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -635,7 +636,7 @@ public:
 
             extensions.resize(objectCount);
 
-            if (vkEnumerateDeviceExtensionProperties(dev, 0, &objectCount, extensions.data()) != VK_SUCCESS)
+            if (vkEnumerateDeviceExtensionProperties(dev, nullptr, &objectCount, extensions.data()) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -718,7 +719,7 @@ public:
 
         std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 
-        vkGetPhysicalDeviceQueueFamilyProperties(gpu, &objectCount, 0);
+        vkGetPhysicalDeviceQueueFamilyProperties(gpu, &objectCount, nullptr);
 
         queueFamilyProperties.resize(objectCount);
 
@@ -767,7 +768,7 @@ public:
         deviceCreateInfo.pEnabledFeatures        = &physicalDeviceFeatures;
 
         // Create our logical device
-        if (vkCreateDevice(gpu, &deviceCreateInfo, 0, &device) != VK_SUCCESS)
+        if (vkCreateDevice(gpu, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -785,7 +786,7 @@ public:
 
         std::vector<VkSurfaceFormatKHR> surfaceFormats;
 
-        if (vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &objectCount, 0) != VK_SUCCESS)
+        if (vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &objectCount, nullptr) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -830,7 +831,7 @@ public:
         // Select a swapchain present mode
         std::vector<VkPresentModeKHR> presentModes;
 
-        if (vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &objectCount, 0) != VK_SUCCESS)
+        if (vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &objectCount, nullptr) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -891,7 +892,7 @@ public:
         swapchainCreateInfo.oldSwapchain             = VK_NULL_HANDLE;
 
         // Create the swapchain
-        if (vkCreateSwapchainKHR(device, &swapchainCreateInfo, 0, &swapchain) != VK_SUCCESS)
+        if (vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -904,7 +905,7 @@ public:
         // Retrieve swapchain images
         std::uint32_t objectCount = 0;
 
-        if (vkGetSwapchainImagesKHR(device, swapchain, &objectCount, 0) != VK_SUCCESS)
+        if (vkGetSwapchainImagesKHR(device, swapchain, &objectCount, nullptr) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -938,7 +939,7 @@ public:
         {
             imageViewCreateInfo.image = swapchainImages[i];
 
-            if (vkCreateImageView(device, &imageViewCreateInfo, 0, &swapchainImageViews[i]) != VK_SUCCESS)
+            if (vkCreateImageView(device, &imageViewCreateInfo, nullptr, &swapchainImageViews[i]) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -973,7 +974,7 @@ public:
             shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(std::uint32_t);
             shaderModuleCreateInfo.pCode    = buffer.data();
 
-            if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &vertexShaderModule) != VK_SUCCESS)
+            if (vkCreateShaderModule(device, &shaderModuleCreateInfo, nullptr, &vertexShaderModule) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -1001,7 +1002,7 @@ public:
             shaderModuleCreateInfo.codeSize = buffer.size() * sizeof(std::uint32_t);
             shaderModuleCreateInfo.pCode    = buffer.data();
 
-            if (vkCreateShaderModule(device, &shaderModuleCreateInfo, 0, &fragmentShaderModule) != VK_SUCCESS)
+            if (vkCreateShaderModule(device, &shaderModuleCreateInfo, nullptr, &fragmentShaderModule) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -1082,7 +1083,7 @@ public:
         renderPassCreateInfo.pDependencies          = &subpassDependency;
 
         // Create the renderpass
-        if (vkCreateRenderPass(device, &renderPassCreateInfo, 0, &renderPass) != VK_SUCCESS)
+        if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &renderPass) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -1114,7 +1115,7 @@ public:
         descriptorSetLayoutCreateInfo.pBindings    = descriptorSetLayoutBindings;
 
         // Create descriptor set layout
-        if (vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, 0, &descriptorSetLayout) != VK_SUCCESS)
+        if (vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -1130,7 +1131,7 @@ public:
         pipelineLayoutCreateInfo.pSetLayouts                = &descriptorSetLayout;
 
         // Create pipeline layout
-        if (vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, 0, &pipelineLayout) != VK_SUCCESS)
+        if (vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -1265,7 +1266,7 @@ public:
         graphicsPipelineCreateInfo.subpass                      = 0;
 
         // Create our graphics pipeline
-        if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, 0, &graphicsPipeline) !=
+        if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline) !=
             VK_SUCCESS)
         {
             vulkanAvailable = false;
@@ -1294,7 +1295,7 @@ public:
             framebufferCreateInfo.pAttachments = attachments;
 
             // Create the framebuffer
-            if (vkCreateFramebuffer(device, &framebufferCreateInfo, 0, &swapchainFramebuffers[i]) != VK_SUCCESS)
+            if (vkCreateFramebuffer(device, &framebufferCreateInfo, nullptr, &swapchainFramebuffers[i]) != VK_SUCCESS)
             {
                 vulkanAvailable = false;
                 return;
@@ -1312,7 +1313,7 @@ public:
         commandPoolCreateInfo.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
         // Create our command pool
-        if (vkCreateCommandPool(device, &commandPoolCreateInfo, 0, &commandPool) != VK_SUCCESS)
+        if (vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, &commandPool) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -1334,7 +1335,7 @@ public:
         bufferCreateInfo.sharingMode        = VK_SHARING_MODE_EXCLUSIVE;
 
         // Create the buffer, this does not allocate any memory for it yet
-        if (vkCreateBuffer(device, &bufferCreateInfo, 0, &buffer) != VK_SUCCESS)
+        if (vkCreateBuffer(device, &bufferCreateInfo, nullptr, &buffer) != VK_SUCCESS)
             return false;
 
         // Check what kind of memory we need to request from the GPU
@@ -1363,7 +1364,7 @@ public:
         memoryAllocateInfo.memoryTypeIndex      = memoryType;
 
         // Allocate the memory out of the GPU pool for the required memory type
-        if (vkAllocateMemory(device, &memoryAllocateInfo, 0, &memory) != VK_SUCCESS)
+        if (vkAllocateMemory(device, &memoryAllocateInfo, nullptr, &memory) != VK_SUCCESS)
             return false;
 
         // Bind the allocated memory to our buffer object
@@ -1476,8 +1477,8 @@ public:
         // clang-format on
 
         // Create a staging buffer that is writable by the CPU
-        VkBuffer       stagingBuffer       = 0;
-        VkDeviceMemory stagingBufferMemory = 0;
+        VkBuffer       stagingBuffer       = {};
+        VkDeviceMemory stagingBufferMemory = {};
 
         if (!createBuffer(sizeof(vertexData),
                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1494,8 +1495,8 @@ public:
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, sizeof(vertexData), 0, &ptr) != VK_SUCCESS)
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1514,8 +1515,8 @@ public:
                           vertexBuffer,
                           vertexBufferMemory))
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1525,8 +1526,8 @@ public:
         vulkanAvailable = copyBuffer(vertexBuffer, stagingBuffer, sizeof(vertexData));
 
         // Free the staging buffer and its memory
-        vkFreeMemory(device, stagingBufferMemory, 0);
-        vkDestroyBuffer(device, stagingBuffer, 0);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
     }
 
     // Create our index buffer and upload its data
@@ -1555,8 +1556,8 @@ public:
         // clang-format on
 
         // Create a staging buffer that is writable by the CPU
-        VkBuffer       stagingBuffer       = 0;
-        VkDeviceMemory stagingBufferMemory = 0;
+        VkBuffer       stagingBuffer       = {};
+        VkDeviceMemory stagingBufferMemory = {};
 
         if (!createBuffer(sizeof(indexData),
                           VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1573,8 +1574,8 @@ public:
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, sizeof(indexData), 0, &ptr) != VK_SUCCESS)
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1593,8 +1594,8 @@ public:
                           indexBuffer,
                           indexBufferMemory))
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1604,8 +1605,8 @@ public:
         vulkanAvailable = copyBuffer(indexBuffer, stagingBuffer, sizeof(indexData));
 
         // Free the staging buffer and its memory
-        vkFreeMemory(device, stagingBufferMemory, 0);
-        vkDestroyBuffer(device, stagingBuffer, 0);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
     }
 
     // Create our uniform buffer but don't upload any data yet
@@ -1614,8 +1615,8 @@ public:
         // Create a uniform buffer for every frame that might be in flight to prevent clobbering
         for (std::size_t i = 0; i < swapchainImages.size(); ++i)
         {
-            uniformBuffers.push_back(0);
-            uniformBuffersMemory.push_back(0);
+            uniformBuffers.push_back({});
+            uniformBuffersMemory.push_back({});
 
             // The uniform buffer will be host visible and coherent since we use it for streaming data every frame
             if (!createBuffer(sizeof(Matrix) * 3,
@@ -1657,7 +1658,7 @@ public:
         imageCreateInfo.sharingMode       = VK_SHARING_MODE_EXCLUSIVE;
 
         // Create the image, this does not allocate any memory for it yet
-        if (vkCreateImage(device, &imageCreateInfo, 0, &image) != VK_SUCCESS)
+        if (vkCreateImage(device, &imageCreateInfo, nullptr, &image) != VK_SUCCESS)
             return false;
 
         // Check what kind of memory we need to request from the GPU
@@ -1686,7 +1687,7 @@ public:
         memoryAllocateInfo.memoryTypeIndex      = memoryType;
 
         // Allocate the memory out of the GPU pool for the required memory type
-        if (vkAllocateMemory(device, &memoryAllocateInfo, 0, &imageMemory) != VK_SUCCESS)
+        if (vkAllocateMemory(device, &memoryAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
             return false;
 
         // Bind the allocated memory to our image object
@@ -1768,9 +1769,9 @@ public:
                              VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
                              0,
                              0,
+                             nullptr,
                              0,
-                             0,
-                             0,
+                             nullptr,
                              1,
                              &barrier);
 
@@ -1821,7 +1822,7 @@ public:
         imageViewCreateInfo.subresourceRange.layerCount     = 1;
 
         // Create the depth image view
-        if (vkCreateImageView(device, &imageViewCreateInfo, 0, &depthImageView) != VK_SUCCESS)
+        if (vkCreateImageView(device, &imageViewCreateInfo, nullptr, &depthImageView) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -1843,8 +1844,8 @@ public:
         // Create a staging buffer to transfer the data with
         VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;
 
-        VkBuffer       stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+        VkBuffer       stagingBuffer       = {};
+        VkDeviceMemory stagingBufferMemory = {};
         createBuffer(imageSize,
                      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -1856,8 +1857,8 @@ public:
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &ptr) != VK_SUCCESS)
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1879,8 +1880,8 @@ public:
                          textureImage,
                          textureImageMemory))
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1897,8 +1898,8 @@ public:
 
         if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
         {
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1918,8 +1919,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1941,14 +1942,23 @@ public:
         barrier.srcAccessMask                   = 0;
         barrier.dstAccessMask                   = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, 0, 0, 0, 1, &barrier);
+        vkCmdPipelineBarrier(commandBuffer,
+                             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                             VK_PIPELINE_STAGE_TRANSFER_BIT,
+                             0,
+                             0,
+                             nullptr,
+                             0,
+                             nullptr,
+                             1,
+                             &barrier);
 
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1958,8 +1968,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1970,8 +1980,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -1982,8 +1992,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2012,8 +2022,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2023,8 +2033,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2035,8 +2045,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2047,8 +2057,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2065,9 +2075,9 @@ public:
                              VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                              0,
                              0,
+                             nullptr,
                              0,
-                             0,
-                             0,
+                             nullptr,
                              1,
                              &barrier);
 
@@ -2076,8 +2086,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2087,8 +2097,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2099,8 +2109,8 @@ public:
         {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-            vkFreeMemory(device, stagingBufferMemory, 0);
-            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
 
             vulkanAvailable = false;
             return;
@@ -2109,8 +2119,8 @@ public:
         // Free the command buffer
         vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 
-        vkFreeMemory(device, stagingBufferMemory, 0);
-        vkDestroyBuffer(device, stagingBuffer, 0);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
     }
 
     // Create an image view for our texture
@@ -2128,7 +2138,7 @@ public:
         imageViewCreateInfo.subresourceRange.layerCount     = 1;
 
         // Create our texture image view
-        if (vkCreateImageView(device, &imageViewCreateInfo, 0, &textureImageView) != VK_SUCCESS)
+        if (vkCreateImageView(device, &imageViewCreateInfo, nullptr, &textureImageView) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -2158,7 +2168,7 @@ public:
         samplerCreateInfo.maxLod                  = 0.0f;
 
         // Create our sampler
-        if (vkCreateSampler(device, &samplerCreateInfo, 0, &textureSampler) != VK_SUCCESS)
+        if (vkCreateSampler(device, &samplerCreateInfo, nullptr, &textureSampler) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -2186,7 +2196,7 @@ public:
         descriptorPoolCreateInfo.maxSets                    = static_cast<std::uint32_t>(swapchainImages.size());
 
         // Create the descriptor pool
-        if (vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, 0, &descriptorPool) != VK_SUCCESS)
+        if (vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool) != VK_SUCCESS)
         {
             vulkanAvailable = false;
             return;
@@ -2251,7 +2261,7 @@ public:
             writeDescriptorSets[1].pImageInfo      = &descriptorImageInfo;
 
             // Update the desciptor set
-            vkUpdateDescriptorSets(device, 2, writeDescriptorSets, 0, 0);
+            vkUpdateDescriptorSets(device, 2, writeDescriptorSets, 0, nullptr);
         }
     }
 
@@ -2343,7 +2353,7 @@ public:
                                     1,
                                     &descriptorSets[i],
                                     0,
-                                    0);
+                                    nullptr);
 
             // Draw our primitives
             vkCmdDrawIndexed(commandBuffers[i], 36, 1, 0, 0, 0);
@@ -2369,9 +2379,9 @@ public:
         // Create a semaphore to track when an swapchain image is available for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            imageAvailableSemaphores.push_back(0);
+            imageAvailableSemaphores.push_back({});
 
-            if (vkCreateSemaphore(device, &semaphoreCreateInfo, 0, &imageAvailableSemaphores[i]) != VK_SUCCESS)
+            if (vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS)
             {
                 imageAvailableSemaphores.pop_back();
                 vulkanAvailable = false;
@@ -2382,9 +2392,9 @@ public:
         // Create a semaphore to track when rendering is complete for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            renderFinishedSemaphores.push_back(0);
+            renderFinishedSemaphores.push_back({});
 
-            if (vkCreateSemaphore(device, &semaphoreCreateInfo, 0, &renderFinishedSemaphores[i]) != VK_SUCCESS)
+            if (vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS)
             {
                 renderFinishedSemaphores.pop_back();
                 vulkanAvailable = false;
@@ -2404,9 +2414,9 @@ public:
         // Create a fence to track when queue submission is complete for each frame in flight
         for (std::size_t i = 0; i < maxFramesInFlight; ++i)
         {
-            fences.push_back(0);
+            fences.push_back({});
 
-            if (vkCreateFence(device, &fenceCreateInfo, 0, &fences[i]) != VK_SUCCESS)
+            if (vkCreateFence(device, &fenceCreateInfo, nullptr, &fences[i]) != VK_SUCCESS)
             {
                 fences.pop_back();
                 vulkanAvailable = false;

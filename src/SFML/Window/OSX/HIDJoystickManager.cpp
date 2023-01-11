@@ -101,8 +101,8 @@ HIDJoystickManager::~HIDJoystickManager()
 {
     IOHIDManagerUnscheduleFromRunLoop(m_manager, CFRunLoopGetCurrent(), runLoopMode);
 
-    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, 0);
-    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, 0);
+    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, nullptr);
+    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, nullptr);
 
     IOHIDManagerClose(m_manager, kIOHIDOptionsTypeNone);
 }

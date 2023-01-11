@@ -139,7 +139,7 @@ WindowImplCocoa::~WindowImplCocoa()
     // Tell the window/view controller (and the OpenGL view) that the delegate
     // (this object) no longer exists to prevent events being sent to the window
     // after it has been deleted.
-    [m_delegate setRequesterTo:0];
+    [m_delegate setRequesterTo:nil];
     [m_delegate release];
 
     // Put the next window in front, if any.

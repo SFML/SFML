@@ -98,7 +98,7 @@ HIDInputManager::HIDInputManager()
     TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource();
     m_layoutData          = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
 
-    if (m_layoutData == 0)
+    if (m_layoutData == nil)
     {
         sf::err() << "Cannot get the keyboard layout" << std::endl;
         freeUp();
@@ -303,16 +303,16 @@ void HIDInputManager::freeUp()
 {
     m_isValid = false;
 
-    if (m_layoutData != 0)
+    if (m_layoutData != nil)
         CFRelease(m_layoutData);
 
-    m_layoutData = 0;
+    m_layoutData = nil;
 
     // Do not release m_layout! It is owned by m_layoutData.
-    if (m_manager != 0)
+    if (m_manager != nil)
         CFRelease(m_manager);
 
-    m_manager = 0;
+    m_manager = nil;
 
     for (unsigned int i = 0; i < Keyboard::KeyCount; ++i)
     {
@@ -333,7 +333,7 @@ CFSetRef HIDInputManager::copyDevices(UInt32 page, UInt32 usage)
     IOHIDManagerSetDeviceMatching(m_manager, mask);
 
     CFRelease(mask);
-    mask = 0;
+    mask = nil;
 
     CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
     if (devices == nullptr)
@@ -360,7 +360,7 @@ bool HIDInputManager::isPressed(IOHIDElements& elements)
 
     for (auto it = elements.begin(); it != elements.end(); /* noop */)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
 
         IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
         IOHIDDeviceGetValue(device, *it, &value);

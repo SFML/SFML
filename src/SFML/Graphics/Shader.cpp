@@ -737,7 +737,7 @@ void Shader::bind(const Shader* shader)
     else
     {
         // Bind no shader
-        glCheck(GLEXT_glUseProgramObject(0));
+        glCheck(GLEXT_glUseProgramObject({}));
     }
 }
 

@@ -216,7 +216,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             int            format;
             unsigned long  items;
             unsigned long  remainingBytes;
-            unsigned char* data = 0;
+            unsigned char* data = nullptr;
 
             // The selection owner should have wrote the selection
             // data to the specified window property

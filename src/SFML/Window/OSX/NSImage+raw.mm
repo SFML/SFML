@@ -34,7 +34,7 @@
 {
     // Create an empty image representation.
     NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc]
-        initWithBitmapDataPlanes:0 // if 0: only allocate memory
+        initWithBitmapDataPlanes:nil // if nil: only allocate memory
                       pixelsWide:(static_cast<NSInteger>(size.width))pixelsHigh
                                 :(static_cast<NSInteger>(size.height))bitsPerSample:8 // The number of bits used to specify
                  // one pixel in a single component of the data.

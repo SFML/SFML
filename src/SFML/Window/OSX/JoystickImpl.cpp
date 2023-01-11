@@ -202,15 +202,15 @@ bool JoystickImpl::open(unsigned int index)
     CFSetGetValues(devices, devicesArray.data());
 
     // Get the desired joystick.
-    IOHIDDeviceRef self = 0;
-    for (CFIndex i(0); self == 0 && i < joysticksCount; ++i)
+    IOHIDDeviceRef self = nil;
+    for (CFIndex i(0); self == nil && i < joysticksCount; ++i)
     {
         IOHIDDeviceRef d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
         if (deviceLoc == HIDInputManager::getLocationID(d))
             self = d;
     }
 
-    if (self == 0)
+    if (self == nil)
     {
         CFRelease(devices);
         return false;
@@ -440,7 +440,7 @@ JoystickState JoystickImpl::update()
     unsigned int i = 0;
     for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it, ++i)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(*it), *it, &value);
 
         // Check for plug out.
@@ -456,7 +456,7 @@ JoystickState JoystickImpl::update()
     // Update axes' state
     for (const auto& [axis, iohidElementRef] : m_axis)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(iohidElementRef), iohidElementRef, &value);
 
         // Check for plug out.
@@ -493,7 +493,7 @@ JoystickState JoystickImpl::update()
     //
     if (m_hat != nullptr)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(m_hat), m_hat, &value);
 
         // Check for plug out.

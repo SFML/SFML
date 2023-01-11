@@ -79,7 +79,7 @@
     m_mouseIsIn     = [self isMouseInside];
 
     // Send event if needed.
-    if (m_requester != 0)
+    if (m_requester != nil)
     {
         if (mouseWasIn && !m_mouseIsIn)
             m_requester->mouseMovedOut();
@@ -133,7 +133,7 @@
 {
     sf::Mouse::Button button = [SFOpenGLView mouseButtonFromEvent:theEvent];
 
-    if (m_requester != 0)
+    if (m_requester != nil)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
@@ -178,7 +178,7 @@
 {
     sf::Mouse::Button button = [SFOpenGLView mouseButtonFromEvent:theEvent];
 
-    if (m_requester != 0)
+    if (m_requester != nil)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
@@ -243,7 +243,7 @@
     // (mouseEntered: and mouseExited: are not immediately called
     //  when the mouse is dragged. That would be too easy!)
     [self updateMouseState];
-    if ((m_requester != 0) && m_mouseIsIn)
+    if ((m_requester != nil) && m_mouseIsIn)
         m_requester->mouseMovedAt(static_cast<int>(loc.x), static_cast<int>(loc.y));
 }
 
@@ -299,7 +299,7 @@
 ////////////////////////////////////////////////////////
 - (void)scrollWheel:(NSEvent*)theEvent
 {
-    if (m_requester != 0)
+    if (m_requester != nil)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
         m_requester->mouseWheelScrolledAt(static_cast<float>([theEvent deltaX]),
