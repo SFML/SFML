@@ -2,6 +2,8 @@ Checks: >
   -*,
   clang-analyzer-*,
   modernize-concat-nested-namespaces,
+  modernize-use-equals-default,
+  modernize-use-equals-delete,  
   modernize-use-nullptr,
   readability-identifier-naming,
   -clang-analyzer-core.NonNullParamChecker,

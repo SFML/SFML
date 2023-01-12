@@ -124,6 +124,7 @@ Font::Font() = default;
 
 
 ////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(modernize-use-equals-default)
 Font::Font(const Font& copy) :
 m_fontHandles(copy.m_fontHandles),
 m_isSmooth(copy.m_isSmooth),
