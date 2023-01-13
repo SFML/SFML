@@ -145,6 +145,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+        - { name: Windows,   os: windows-2022, flags: -GNinja }
         - { name: Linux,     os: ubuntu-22.04 }
         - { name: Linux DRM, os: ubuntu-22.04, flags: -DSFML_USE_DRM=TRUE }
         - { name: macOS,     os: macos-12 }
@@ -152,6 +153,10 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+
+    - name: Install Windows Dependencies
+      if: runner.os == 'Windows'
+      run: curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
@@ -164,7 +169,9 @@ jobs:
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
     - name: Configure
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
+      shell: bash
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
 
     - name: Analyze Code
+      shell: bash
       run: cmake --build $GITHUB_WORKSPACE/build --target tidy
