@@ -145,8 +145,9 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux, os: ubuntu-22.04 }
-        - { name: macOS, os: macos-12 }
+        - { name: Linux,     os: ubuntu-22.04 }
+        - { name: Linux DRM, os: ubuntu-22.04, flags: -DSFML_USE_DRM=TRUE }
+        - { name: macOS,     os: macos-12 }
 
     steps:
     - name: Checkout Code
@@ -154,7 +155,7 @@ jobs:
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
+      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
@@ -163,7 +164,7 @@ jobs:
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
     - name: Configure
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
 
     - name: Analyze Code
       run: cmake --build $GITHUB_WORKSPACE/build --target tidy

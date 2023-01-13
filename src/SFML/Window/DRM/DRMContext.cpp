@@ -121,7 +121,7 @@ void cleanup()
     close(drmNode.fileDescriptor);
 
     drmNode.fileDescriptor = -1;
-    drmNode.mode           = 0;
+    drmNode.mode           = nullptr;
 
     pollFD      = {};
     drmEventCtx = {};
@@ -161,8 +161,8 @@ DrmFb* drmFbGetFromBo(gbm_bo& bo)
     std::uint32_t offsets[4]   = {0};
     std::uint64_t modifiers[4] = {0};
     modifiers[0]               = gbm_bo_get_modifier(&bo);
-    const int num_planes       = gbm_bo_get_plane_count(&bo);
-    for (int i = 0; i < num_planes; ++i)
+    const int numPlanes        = gbm_bo_get_plane_count(&bo);
+    for (int i = 0; i < numPlanes; ++i)
     {
         strides[i]   = gbm_bo_get_stride_for_plane(&bo, i);
         handles[i]   = gbm_bo_get_handle(&bo).u32;

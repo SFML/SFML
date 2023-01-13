@@ -63,8 +63,8 @@ int                    touchFd = -1;    // file descriptor we have seen MT event
 std::vector<TouchSlot> touchSlots;      // track the state of each touch "slot"
 int                    currentSlot = 0; // which slot are we currently updating?
 
-std::queue<sf::Event> eventQueue;     // events received and waiting to be consumed
-const int             MAX_QUEUE = 64; // The maximum size we let eventQueue grow to
+std::queue<sf::Event> eventQueue;    // events received and waiting to be consumed
+const int             maxQueue = 64; // The maximum size we let eventQueue grow to
 
 termios newTerminalConfig, oldTerminalConfig; // Terminal configurations
 
@@ -101,30 +101,30 @@ void uninitFileDescriptors()
 // Joysticks are handled in /src/SFML/Window/Unix/JoystickImpl.cpp
 bool keepFileDescriptor(int fileDesc)
 {
-    unsigned long bitmask_ev[NBITS(EV_MAX)];
-    unsigned long bitmask_key[NBITS(KEY_MAX)];
-    unsigned long bitmask_abs[NBITS(ABS_MAX)];
-    unsigned long bitmask_rel[NBITS(REL_MAX)];
+    unsigned long bitmaskEv[NBITS(EV_MAX)];
+    unsigned long bitmaskKey[NBITS(KEY_MAX)];
+    unsigned long bitmaskAbs[NBITS(ABS_MAX)];
+    unsigned long bitmaskRel[NBITS(REL_MAX)];
 
-    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmask_ev)), &bitmask_ev);
-    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmask_key)), &bitmask_key);
-    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmask_abs)), &bitmask_abs);
-    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmask_rel)), &bitmask_rel);
+    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmaskEv)), &bitmaskEv);
+    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmaskKey)), &bitmaskKey);
+    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmaskAbs)), &bitmaskAbs);
+    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmaskRel)), &bitmaskRel);
 
     // This is the keyboard test used by SDL.
     // The first 32 bits are ESC, numbers and Q to D;  If we have any of those,
     // consider it a keyboard device; do not test for KEY_RESERVED, though
-    bool is_keyboard = (bitmask_key[0] & 0xFFFFFFFE);
+    bool isKeyboard = (bitmaskKey[0] & 0xFFFFFFFE);
 
-    bool is_abs = TEST_BIT(EV_ABS, bitmask_ev) && TEST_BIT(ABS_X, bitmask_abs) && TEST_BIT(ABS_Y, bitmask_abs);
+    bool isAbs = TEST_BIT(EV_ABS, bitmaskEv) && TEST_BIT(ABS_X, bitmaskAbs) && TEST_BIT(ABS_Y, bitmaskAbs);
 
-    bool is_rel = TEST_BIT(EV_REL, bitmask_ev) && TEST_BIT(REL_X, bitmask_rel) && TEST_BIT(REL_Y, bitmask_rel);
+    bool isRel = TEST_BIT(EV_REL, bitmaskEv) && TEST_BIT(REL_X, bitmaskRel) && TEST_BIT(REL_Y, bitmaskRel);
 
-    bool is_mouse = (is_abs || is_rel) && TEST_BIT(BTN_MOUSE, bitmask_key);
+    bool isMouse = (isAbs || isRel) && TEST_BIT(BTN_MOUSE, bitmaskKey);
 
-    bool is_touch = is_abs && (TEST_BIT(BTN_TOOL_FINGER, bitmask_key) || TEST_BIT(BTN_TOUCH, bitmask_key));
+    bool isTouch = isAbs && (TEST_BIT(BTN_TOOL_FINGER, bitmaskKey) || TEST_BIT(BTN_TOUCH, bitmaskKey));
 
-    return is_keyboard || is_mouse || is_touch;
+    return isKeyboard || isMouse || isTouch;
 }
 
 void initFileDescriptors()
@@ -302,7 +302,7 @@ sf::Keyboard::Key toKey(int code)
 
 void pushEvent(sf::Event& event)
 {
-    if (eventQueue.size() >= MAX_QUEUE)
+    if (eventQueue.size() >= maxQueue)
         eventQueue.pop();
 
     eventQueue.push(event);
@@ -533,6 +533,8 @@ bool eventProcess(sf::Event& event)
             code      = 0;
         }
     }
+
+    (void)bytesRead; // Ignore clang-tidy dead store warning
 
     newTerminalConfig.c_lflag |= ICANON;
     tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig);
