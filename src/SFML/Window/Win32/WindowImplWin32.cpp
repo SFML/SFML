@@ -61,7 +61,7 @@ unsigned int               handleCount      = 0; // All window handles
 const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
-const GUID GUID_DEVINTERFACE_HID = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
+const GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
 
 void setProcessDpiAware()
 {
@@ -78,10 +78,10 @@ void setProcessDpiAware()
         };
 
         using SetProcessDpiAwarenessFuncType = HRESULT(WINAPI*)(ProcessDpiAwareness);
-        auto SetProcessDpiAwarenessFunc      = reinterpret_cast<SetProcessDpiAwarenessFuncType>(
+        auto setProcessDpiAwarenessFunc      = reinterpret_cast<SetProcessDpiAwarenessFuncType>(
             reinterpret_cast<void*>(GetProcAddress(shCoreDll, "SetProcessDpiAwareness")));
 
-        if (SetProcessDpiAwarenessFunc)
+        if (setProcessDpiAwarenessFunc)
         {
             // We only check for E_INVALIDARG because we would get
             // E_ACCESSDENIED if the DPI was already set previously
@@ -90,7 +90,7 @@ void setProcessDpiAware()
             // enabled with SetProcessDpiAwarenessContext, because that
             // would scale the title bar and thus change window size
             // by default when moving the window between monitors.
-            if (SetProcessDpiAwarenessFunc(ProcessPerMonitorDpiAware) == E_INVALIDARG)
+            if (setProcessDpiAwarenessFunc(ProcessPerMonitorDpiAware) == E_INVALIDARG)
             {
                 sf::err() << "Failed to set process DPI awareness" << std::endl;
             }
@@ -111,12 +111,12 @@ void setProcessDpiAware()
     if (user32Dll)
     {
         using SetProcessDPIAwareFuncType = BOOL(WINAPI*)();
-        auto SetProcessDPIAwareFunc      = reinterpret_cast<SetProcessDPIAwareFuncType>(
+        auto setProcessDPIAwareFunc      = reinterpret_cast<SetProcessDPIAwareFuncType>(
             reinterpret_cast<void*>(GetProcAddress(user32Dll, "SetProcessDPIAware")));
 
-        if (SetProcessDPIAwareFunc)
+        if (setProcessDPIAwareFunc)
         {
-            if (!SetProcessDPIAwareFunc())
+            if (!setProcessDPIAwareFunc())
                 sf::err() << "Failed to set process DPI awareness" << std::endl;
         }
 
@@ -209,7 +209,7 @@ m_cursorGrabbed(m_fullscreen)
 
     // Register to receive device interface change notifications (used for joystick connection handling)
     DEV_BROADCAST_DEVICEINTERFACE deviceInterface =
-        {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, GUID_DEVINTERFACE_HID, {0}};
+        {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, guidDevinterfaceHid, {0}};
     RegisterDeviceNotification(m_handle, &deviceInterface, DEVICE_NOTIFY_WINDOW_HANDLE);
 
     // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
