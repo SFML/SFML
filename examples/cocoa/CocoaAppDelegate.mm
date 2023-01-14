@@ -55,7 +55,7 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        font = sf::Font::loadFromFile(resPath + "/tuffy.ttf")
+        font = sf::Font::loadFromFile(resPath + "/tuffy.ttf");
 
         text.setFillColor(sf::Color::White);
         text.setFont(font);
