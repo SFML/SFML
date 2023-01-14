@@ -33,13 +33,12 @@ namespace
 }
 } // namespace
 
-inline LoadException::LoadException(const std::string& message) :
-    m_message(message)
+inline LoadException::LoadException(const std::string& message) : m_message(message)
 {
 }
 
 inline LoadException::LoadException(const std::filesystem::path& filePath, const std::string& message) :
-    m_message(message + "\n" + formatDebugPathInfo(filePath))
+m_message(message + "\n" + formatDebugPathInfo(filePath))
 {
 }
 

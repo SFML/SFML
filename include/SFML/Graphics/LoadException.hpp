@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Exception.hpp>
+
 #include <filesystem>
 #include <sstream>
 #include <string>
