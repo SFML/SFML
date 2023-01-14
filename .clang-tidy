@@ -20,3 +20,4 @@ CheckOptions:
   - { key: readability-identifier-naming.ParameterCase,       value: camelBack }
 HeaderFilterRegex: '.*'
 WarningsAsErrors: '*'
+UseColor: true
