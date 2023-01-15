@@ -60,7 +60,7 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
     static const auto modes = []
     {
         std::vector<VideoMode> result = priv::VideoModeImpl::getFullscreenModes();
-        std::sort(result.begin(), result.end(), std::greater<VideoMode>());
+        std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();
 
