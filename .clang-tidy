@@ -1,15 +1,7 @@
 Checks: >
   -*,
   clang-analyzer-*,
-  modernize-concat-nested-namespaces,
-  modernize-deprecated-headers,
-  modernize-loop-convert,
-  modernize-use-default-member-init,
-  modernize-use-equals-default,
-  modernize-use-equals-delete,  
-  modernize-use-nullptr,
-  modernize-use-override,
-  modernize-use-transparent-functors,
+  modernize-*,
   portability-*,
   readability-container-size-empty,
   readability-identifier-naming,
@@ -23,6 +15,13 @@ Checks: >
   -clang-analyzer-osx.*,
   -clang-analyzer-security.insecureAPI.rand,
   -clang-analyzer-unix.Malloc,
+  -modernize-avoid-c-arrays,
+  -modernize-macro-to-enum,
+  -modernize-pass-by-value,
+  -modernize-return-braced-init-list,
+  -modernize-use-auto,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type,
 CheckOptions:
   - { key: readability-identifier-naming.ClassCase,           value: CamelCase }
   - { key: readability-identifier-naming.FunctionCase,        value: camelBack }
