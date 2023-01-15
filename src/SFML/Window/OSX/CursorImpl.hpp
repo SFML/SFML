@@ -104,7 +104,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSCursorRef m_cursor; ///< System cursor handle
+    NSCursorRef m_cursor{}; ///< System cursor handle
 };
 
 } // namespace sf::priv
