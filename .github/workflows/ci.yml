@@ -132,7 +132,7 @@ jobs:
       run: sudo apt-get install clang-format-${{ matrix.version }}
 
     - name: Format Code
-      run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-${{ matrix.version }} -P $GITHUB_WORKSPACE/cmake/Format.cmake
+      run: cmake -DSFML_FORMAT=ON -DCLANG_FORMAT_EXECUTABLE=clang-format-${{ matrix.version }} -P $GITHUB_WORKSPACE/cmake/Format.cmake
 
     - name: Check Formatting
       run: git diff --exit-code
@@ -170,7 +170,7 @@ jobs:
 
     - name: Configure
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DSFML_TIDY=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
 
     - name: Analyze Code
       shell: bash
