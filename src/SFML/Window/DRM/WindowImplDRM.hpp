@@ -62,7 +62,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WindowImplDRM();
+    ~WindowImplDRM() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -70,7 +70,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getSystemHandle() const override;
+    WindowHandle getSystemHandle() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -78,7 +78,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i getPosition() const override;
+    Vector2i getPosition() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -86,7 +86,7 @@ public:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setPosition(const Vector2i& position) override;
+    void setPosition(const Vector2i& position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -94,7 +94,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const override;
+    Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -102,7 +102,7 @@ public:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setSize(const Vector2u& size) override;
+    void setSize(const Vector2u& size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -110,7 +110,7 @@ public:
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const String& title) override;
+    void setTitle(const String& title) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
@@ -119,7 +119,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
+    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -127,7 +127,7 @@ public:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVisible(bool visible) override;
+    void setVisible(bool visible) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -135,7 +135,7 @@ public:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursorVisible(bool visible) override;
+    void setMouseCursorVisible(bool visible) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Grab or release the mouse cursor
@@ -143,7 +143,7 @@ public:
     /// \param grabbed True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursorGrabbed(bool grabbed) override;
+    void setMouseCursorGrabbed(bool grabbed) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the displayed cursor to a native system cursor
@@ -151,7 +151,7 @@ public:
     /// \param cursor Native system cursor type to display
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursor(const CursorImpl& cursor) override;
+    void setMouseCursor(const CursorImpl& cursor) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -159,14 +159,14 @@ public:
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setKeyRepeatEnabled(bool enabled) override;
+    void setKeyRepeatEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Request the current window to be made the active
     ///        foreground window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void requestFocus() override;
+    void requestFocus() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus
@@ -174,14 +174,14 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const override;
+    bool hasFocus() const override;
 
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void processEvents() override;
+    void processEvents() override;
 
 private:
     ////////////////////////////////////////////////////////////
