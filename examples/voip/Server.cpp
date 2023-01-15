@@ -26,7 +26,7 @@ public:
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    NetworkAudioStream() : m_offset(0), m_hasFinished(false)
+    NetworkAudioStream()
     {
         // Set the sound parameters
         initialize(1, 44100);
@@ -161,8 +161,8 @@ private:
     std::recursive_mutex      m_mutex;
     std::vector<std::int16_t> m_samples;
     std::vector<std::int16_t> m_tempBuffer;
-    std::size_t               m_offset;
-    bool                      m_hasFinished;
+    std::size_t               m_offset{};
+    bool                      m_hasFinished{};
 };
 
 

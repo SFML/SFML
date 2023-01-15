@@ -199,7 +199,7 @@ struct TransientContext
     /// \brief Constructor
     ///
     ////////////////////////////////////////////////////////////
-    TransientContext() : referenceCount(0), context(nullptr), sharedContextLock(), useSharedContext(false)
+    TransientContext()
     {
         if (resourceCount == 0)
         {
@@ -241,10 +241,10 @@ struct TransientContext
     ///////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int                                         referenceCount;
+    unsigned int                                         referenceCount{};
     std::unique_ptr<sf::Context>                         context;
     std::optional<std::lock_guard<std::recursive_mutex>> sharedContextLock;
-    bool                                                 useSharedContext;
+    bool                                                 useSharedContext{};
 };
 
 // This per-thread variable tracks if and how a transient

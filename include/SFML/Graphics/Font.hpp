@@ -357,10 +357,10 @@ private:
     {
         explicit Page(bool smooth);
 
-        GlyphTable       glyphs;  //!< Table mapping code points to their corresponding glyph
-        Texture          texture; //!< Texture containing the pixels of the glyphs
-        unsigned int     nextRow; //!< Y position of the next new row in the texture
-        std::vector<Row> rows;    //!< List containing the position of all the existing rows
+        GlyphTable       glyphs;     //!< Table mapping code points to their corresponding glyph
+        Texture          texture;    //!< Texture containing the pixels of the glyphs
+        unsigned int     nextRow{3}; //!< Y position of the next new row in the texture
+        std::vector<Row> rows;       //!< List containing the position of all the existing rows
     };
 
     ////////////////////////////////////////////////////////////

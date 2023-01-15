@@ -54,7 +54,7 @@ public:
     }
 
 protected:
-    Effect(const std::string& name) : m_name(name), m_isLoaded(false)
+    Effect(const std::string& name) : m_name(name)
     {
     }
 
@@ -72,7 +72,7 @@ private:
 
 private:
     std::string m_name;
-    bool        m_isLoaded;
+    bool        m_isLoaded{};
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     static const sf::Font* s_font;

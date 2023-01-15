@@ -4,6 +4,7 @@ Checks: >
   modernize-concat-nested-namespaces,
   modernize-deprecated-headers,
   modernize-loop-convert,
+  modernize-use-default-member-init,
   modernize-use-equals-default,
   modernize-use-equals-delete,  
   modernize-use-nullptr,

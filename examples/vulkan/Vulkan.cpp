@@ -203,42 +203,7 @@ class VulkanExample
 {
 public:
     // Constructor
-    VulkanExample() :
-    window(sf::VideoMode({800, 600}), "SFML window with Vulkan", sf::Style::Default),
-    vulkanAvailable(sf::Vulkan::isAvailable()),
-    maxFramesInFlight(2),
-    currentFrame(0),
-    swapchainOutOfDate(false),
-    instance(),
-    debugReportCallback(),
-    surface(),
-    gpu(),
-    queueFamilyIndex(-1),
-    device(),
-    queue(),
-    swapchainFormat(),
-    swapchainExtent(),
-    swapchain(),
-    depthFormat(VK_FORMAT_UNDEFINED),
-    depthImage(),
-    depthImageMemory(),
-    depthImageView(),
-    vertexShaderModule(),
-    fragmentShaderModule(),
-    descriptorSetLayout(),
-    pipelineLayout(),
-    renderPass(),
-    graphicsPipeline(),
-    commandPool(),
-    vertexBuffer(),
-    vertexBufferMemory(),
-    indexBuffer(),
-    indexBufferMemory(),
-    textureImage(),
-    textureImageMemory(),
-    textureImageView(),
-    textureSampler(),
-    descriptorPool()
+    VulkanExample()
     {
         // Vulkan setup procedure
         if (vulkanAvailable)
@@ -2602,50 +2567,50 @@ public:
     }
 
 private:
-    sf::WindowBase window;
+    sf::WindowBase window{sf::VideoMode({800, 600}), "SFML window with Vulkan", sf::Style::Default};
 
-    bool vulkanAvailable;
+    bool vulkanAvailable{sf::Vulkan::isAvailable()};
 
-    const unsigned int maxFramesInFlight;
-    unsigned int       currentFrame;
-    bool               swapchainOutOfDate;
+    const unsigned int maxFramesInFlight{2};
+    unsigned int       currentFrame{};
+    bool               swapchainOutOfDate{};
 
-    VkInstance                      instance;
-    VkDebugReportCallbackEXT        debugReportCallback;
-    VkSurfaceKHR                    surface;
-    VkPhysicalDevice                gpu;
-    int                             queueFamilyIndex;
-    VkDevice                        device;
-    VkQueue                         queue;
-    VkSurfaceFormatKHR              swapchainFormat;
-    VkExtent2D                      swapchainExtent;
-    VkSwapchainKHR                  swapchain;
+    VkInstance                      instance{};
+    VkDebugReportCallbackEXT        debugReportCallback{};
+    VkSurfaceKHR                    surface{};
+    VkPhysicalDevice                gpu{};
+    int                             queueFamilyIndex{-1};
+    VkDevice                        device{};
+    VkQueue                         queue{};
+    VkSurfaceFormatKHR              swapchainFormat{};
+    VkExtent2D                      swapchainExtent{};
+    VkSwapchainKHR                  swapchain{};
     std::vector<VkImage>            swapchainImages;
     std::vector<VkImageView>        swapchainImageViews;
-    VkFormat                        depthFormat;
-    VkImage                         depthImage;
-    VkDeviceMemory                  depthImageMemory;
-    VkImageView                     depthImageView;
-    VkShaderModule                  vertexShaderModule;
-    VkShaderModule                  fragmentShaderModule;
+    VkFormat                        depthFormat{VK_FORMAT_UNDEFINED};
+    VkImage                         depthImage{};
+    VkDeviceMemory                  depthImageMemory{};
+    VkImageView                     depthImageView{};
+    VkShaderModule                  vertexShaderModule{};
+    VkShaderModule                  fragmentShaderModule{};
     VkPipelineShaderStageCreateInfo shaderStages[2];
-    VkDescriptorSetLayout           descriptorSetLayout;
-    VkPipelineLayout                pipelineLayout;
-    VkRenderPass                    renderPass;
-    VkPipeline                      graphicsPipeline;
+    VkDescriptorSetLayout           descriptorSetLayout{};
+    VkPipelineLayout                pipelineLayout{};
+    VkRenderPass                    renderPass{};
+    VkPipeline                      graphicsPipeline{};
     std::vector<VkFramebuffer>      swapchainFramebuffers;
-    VkCommandPool                   commandPool;
-    VkBuffer                        vertexBuffer;
-    VkDeviceMemory                  vertexBufferMemory;
-    VkBuffer                        indexBuffer;
-    VkDeviceMemory                  indexBufferMemory;
+    VkCommandPool                   commandPool{};
+    VkBuffer                        vertexBuffer{};
+    VkDeviceMemory                  vertexBufferMemory{};
+    VkBuffer                        indexBuffer{};
+    VkDeviceMemory                  indexBufferMemory{};
     std::vector<VkBuffer>           uniformBuffers;
     std::vector<VkDeviceMemory>     uniformBuffersMemory;
-    VkImage                         textureImage;
-    VkDeviceMemory                  textureImageMemory;
-    VkImageView                     textureImageView;
-    VkSampler                       textureSampler;
-    VkDescriptorPool                descriptorPool;
+    VkImage                         textureImage{};
+    VkDeviceMemory                  textureImageMemory{};
+    VkImageView                     textureImageView{};
+    VkSampler                       textureSampler{};
+    VkDescriptorPool                descriptorPool{};
     std::vector<VkDescriptorSet>    descriptorSets;
     std::vector<VkCommandBuffer>    commandBuffers;
     std::vector<VkSemaphore>        imageAvailableSemaphores;

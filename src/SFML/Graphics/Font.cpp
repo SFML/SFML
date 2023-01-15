@@ -835,7 +835,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Font::Page::Page(bool smooth) : nextRow(3)
+Font::Page::Page(bool smooth)
 {
     // Make sure that the texture is initialized by default
     sf::Image image;
