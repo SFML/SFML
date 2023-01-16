@@ -5,6 +5,7 @@ Checks: >
   modernize-use-equals-default,
   modernize-use-equals-delete,  
   modernize-use-nullptr,
+  portability-*,
   readability-container-size-empty,
   readability-identifier-naming,
   readability-isolate-declaration,
