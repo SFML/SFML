@@ -191,16 +191,38 @@ void Text::setStyle(std::uint32_t style)
 ////////////////////////////////////////////////////////////
 void Text::setFillColor(const Color& color)
 {
-    if (color != m_fillColor)
+    //In case we use the same color on all characters, no need to store
+    //the same color multiple times
+    if (m_fillColor.size() != 1)
+        m_fillColor.resize(1, Color(255, 255, 255));
+    m_fillColor[0] = color;
+
+    // Change vertex colors directly, no need to update whole geometry
+    // (if geometry is updated anyway, we can skip this step)
+    if (!m_geometryNeedUpdate)
     {
-        m_fillColor = color;
+        for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
+            m_vertices[i].color = color;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setFillColor(const Color& color, unsigned int index)
+{
+    //Resize the vector so that each character can have a unique color
+    if (m_fillColor.size() != m_string.getSize())
+        m_fillColor.resize(m_string.getSize(), Color(255, 255, 255));
+    if (color != m_fillColor[index])
+    {
+        m_fillColor[index] = color;
 
         // Change vertex colors directly, no need to update whole geometry
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-                m_vertices[i].color = m_fillColor;
+            for (std::size_t i = index * 6; i < (index + 1) * 6; ++i)
+                m_vertices[i].color = color;
         }
     }
 }
@@ -209,16 +231,38 @@ void Text::setFillColor(const Color& color)
 ////////////////////////////////////////////////////////////
 void Text::setOutlineColor(const Color& color)
 {
-    if (color != m_outlineColor)
+    //In case we use the same color on all characters, no need to store
+    //the same color multiple times
+    if (m_outlineColor.size() != 1)
+        m_outlineColor.resize(1, Color(0, 0, 0));
+    m_outlineColor[0] = color;
+
+    // Change vertex colors directly, no need to update whole geometry
+    // (if geometry is updated anyway, we can skip this step)
+    if (!m_geometryNeedUpdate)
     {
-        m_outlineColor = color;
+        for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
+            m_outlineVertices[i].color = color;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setOutlineColor(const Color& color, unsigned int index)
+{
+    //Resize the vector so that each character can have a unique color
+    if (m_outlineColor.size() != m_string.getSize())
+        m_outlineColor.resize(m_string.getSize(), Color(0, 0, 0));
+    if (color != m_outlineColor[index])
+    {
+        m_outlineColor[index] = color;
 
         // Change vertex colors directly, no need to update whole geometry
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
-                m_outlineVertices[i].color = m_outlineColor;
+            for (std::size_t i = index * 6; i < (index + 1) * 6; ++i)
+                m_outlineVertices[i].color = color;
         }
     }
 }
@@ -231,6 +275,43 @@ void Text::setOutlineThickness(float thickness)
     {
         m_outlineThickness   = thickness;
         m_geometryNeedUpdate = true;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setUnderlineColor(const Color& color)
+{
+    m_underlineFillColor = color;
+
+    // Change vertex colors directly, no need to update whole geometry
+    // (if geometry is updated anyway, we can skip this step)
+    if (!m_geometryNeedUpdate)
+    {
+        bool isUnderlined    = m_style & Underlined;
+        bool isStrikeThrough = m_style & StrikeThrough;
+        for (std::size_t i = m_vertices.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough;
+            i < m_vertices.getVertexCount(); ++i)
+            m_vertices[i].color = color;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setUnderlineOutlineColor(const Color& color)
+{
+    m_underlineOutlineColor = color;
+
+    // Change vertex colors directly, no need to update whole geometry
+    // (if geometry is updated anyway, we can skip this step)
+    if (!m_geometryNeedUpdate)
+    {
+        bool isUnderlined    = m_style & Underlined;
+        bool isStrikeThrough = m_style & StrikeThrough;
+        for (std::size_t i = m_outlineVertices.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough;
+             i < m_outlineVertices.getVertexCount();
+             ++i)
+            m_outlineVertices[i].color = color;
     }
 }
 
@@ -280,14 +361,28 @@ std::uint32_t Text::getStyle() const
 ////////////////////////////////////////////////////////////
 const Color& Text::getFillColor() const
 {
-    return m_fillColor;
+    return getFillColor(0);
+}
+
+
+////////////////////////////////////////////////////////////
+const Color& Text::getFillColor(unsigned int index) const
+{
+    return m_fillColor[index];
 }
 
 
 ////////////////////////////////////////////////////////////
 const Color& Text::getOutlineColor() const
 {
-    return m_outlineColor;
+    return getOutlineColor(0);
+}
+
+
+////////////////////////////////////////////////////////////
+const Color& Text::getOutlineColor(unsigned int index) const
+{
+    return m_outlineColor[index];
 }
 
 
@@ -295,6 +390,20 @@ const Color& Text::getOutlineColor() const
 float Text::getOutlineThickness() const
 {
     return m_outlineThickness;
+}
+
+
+////////////////////////////////////////////////////////////
+const Color& Text::getUnderlineColor() const
+{
+    return m_underlineFillColor;
+}
+
+
+////////////////////////////////////////////////////////////
+const Color& Text::getUnderlineOutlineColor() const
+{
+    return m_underlineOutlineColor;
 }
 
 
@@ -419,6 +528,8 @@ void Text::ensureGeometryUpdate() const
     bool  isBold             = m_style & Bold;
     bool  isUnderlined       = m_style & Underlined;
     bool  isStrikeThrough    = m_style & StrikeThrough;
+    bool  multipleCol        = (m_fillColor.size() > 1);
+    bool  multipleOutlineCol = (m_outlineColor.size() > 1);
     float italicShear        = (m_style & Italic) ? sf::degrees(12).asRadians() : 0.f;
     float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
     float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
@@ -457,19 +568,31 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+            addLine(m_vertices, x, y, multipleCol ? m_fillColor[i] : m_fillColor[0], underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices,
+                        x,
+                        y,
+                        multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                        underlineOffset,
+                        underlineThickness,
+                        m_outlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+            addLine(m_vertices, x, y, multipleCol ? m_fillColor[i] : m_fillColor[0], strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices,
+                        x,
+                        y,
+                        multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                        strikeThroughOffset,
+                        underlineThickness,
+                        m_outlineThickness);
         }
 
         prevChar = curChar;
@@ -509,14 +632,18 @@ void Text::ensureGeometryUpdate() const
             const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold, m_outlineThickness);
 
             // Add the outline glyph to the vertices
-            addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear);
+            addGlyphQuad(m_outlineVertices,
+                         Vector2f(x, y),
+                         multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                         glyph,
+                         italicShear);
         }
 
         // Extract the current glyph's description
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
 
         // Add the glyph to the vertices
-        addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
+        addGlyphQuad(m_vertices, Vector2f(x, y), multipleCol ? m_fillColor[i] : m_fillColor[0], glyph, italicShear);
 
         // Update the current bounds
         float left   = glyph.bounds.left;
@@ -546,19 +673,19 @@ void Text::ensureGeometryUpdate() const
     // If we're using the underlined style, add the last line
     if (isUnderlined && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+        addLine(m_vertices, x, y, m_underlineFillColor, underlineOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, x, y, m_underlineOutlineColor, underlineOffset, underlineThickness, m_outlineThickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
     if (isStrikeThrough && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+        addLine(m_vertices, x, y, m_underlineFillColor, strikeThroughOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, x, y, m_underlineOutlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
     }
 
     // Update the bounding rectangle
