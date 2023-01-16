@@ -194,7 +194,7 @@ void Text::setFillColor(const Color& color)
     //In case we use the same color on all characters, no need to store
     //the same color multiple times
     if (m_fillColor.size() != 1)
-        m_fillColor.resize(1, Color(255, 255, 255));
+        m_fillColor.resize(1, Color::White);
     m_fillColor[0] = color;
 
     // Change vertex colors directly, no need to update whole geometry
