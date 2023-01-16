@@ -428,7 +428,7 @@ private:
     /// \param transform Transform to apply
     ///
     ////////////////////////////////////////////////////////////
-    void applyTransform(const Transform& transform);
+    static void applyTransform(const Transform& transform);
 
     ////////////////////////////////////////////////////////////
     /// \brief Apply a new texture
@@ -444,7 +444,7 @@ private:
     /// \param shader Shader to apply
     ///
     ////////////////////////////////////////////////////////////
-    void applyShader(const Shader* shader);
+    static void applyShader(const Shader* shader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Setup environment for drawing
@@ -463,7 +463,7 @@ private:
     /// \param vertexCount Number of vertices to use when drawing
     ///
     ////////////////////////////////////////////////////////////
-    void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount);
+    static void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clean up environment after drawing

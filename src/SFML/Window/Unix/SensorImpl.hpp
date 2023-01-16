@@ -64,7 +64,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(Sensor::Type sensor);
+    [[nodiscard]] static bool open(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the sensor
@@ -78,7 +78,7 @@ public:
     /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector3f update();
+    [[nodiscard]] static Vector3f update();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor

@@ -467,7 +467,7 @@ private:
     /// \return The fullscreen window or a null pointer if there is none
     ///
     ////////////////////////////////////////////////////////////
-    const WindowBase* getFullscreenWindow();
+    static const WindowBase* getFullscreenWindow();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set a window as the fullscreen window
@@ -475,7 +475,7 @@ private:
     /// \param window Window to set as fullscreen window
     ///
     ////////////////////////////////////////////////////////////
-    void setFullscreenWindow(const WindowBase* window);
+    static void setFullscreenWindow(const WindowBase* window);
 
     ////////////////////////////////////////////////////////////
     // Member data

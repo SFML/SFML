@@ -67,7 +67,7 @@ public:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    static bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -75,7 +75,7 @@ public:
     /// Refer to sf::Cursor::loadFromSystem().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromSystem(Cursor::Type type);
+    static bool loadFromSystem(Cursor::Type type);
 
 private:
     friend class WindowImplDRM;
@@ -84,7 +84,7 @@ private:
     /// \brief Checks if colored cursors are supported for this display.
     ///
     ////////////////////////////////////////////////////////////
-    bool isColorCursorSupported();
+    static bool isColorCursorSupported();
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image (ARGB support)
@@ -92,7 +92,7 @@ private:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    static bool loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image (monochrome)
@@ -100,7 +100,7 @@ private:
     /// Refer to sf::Cursor::loadFromPixels().
     ///
     ////////////////////////////////////////////////////////////
-    bool loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    static bool loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Release the cursor, if we have loaded one.
