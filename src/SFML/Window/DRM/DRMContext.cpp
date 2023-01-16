@@ -483,7 +483,8 @@ EGLDisplay getInitializedDisplay()
 
         eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
-        EGLint major, minor;
+        EGLint major;
+        EGLint minor;
         eglCheck(eglInitialize(display, &major, &minor));
 
         gladLoaderLoadEGL(display);

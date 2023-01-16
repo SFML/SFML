@@ -111,7 +111,8 @@ int main()
     sf::RenderWindow sfmlView2(view2);
 
     // Load some textures to display
-    sf::Texture texture1, texture2;
+    sf::Texture texture1;
+    sf::Texture texture2;
     if (!texture1.loadFromFile("resources/image1.jpg") || !texture2.loadFromFile("resources/image2.jpg"))
         return EXIT_FAILURE;
     sf::Sprite sprite1(texture1);

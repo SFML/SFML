@@ -138,7 +138,8 @@ bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u s
                                               size.y);
 
     // Define the foreground color as white and the background as black.
-    XColor fg, bg;
+    XColor fg;
+    XColor bg;
     fg.red   = 0xFFFF;
     fg.blue  = 0xFFFF;
     fg.green = 0xFFFF;

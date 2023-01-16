@@ -389,7 +389,7 @@ public:
         for (VkFence fence : fences)
             vkWaitForFences(device, 1, &fence, VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
-        if (commandBuffers.size())
+        if (!commandBuffers.empty())
             vkFreeCommandBuffers(device, commandPool, static_cast<std::uint32_t>(commandBuffers.size()), commandBuffers.data());
 
         commandBuffers.clear();

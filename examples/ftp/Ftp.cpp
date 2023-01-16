@@ -43,7 +43,8 @@ int main()
         return EXIT_FAILURE;
 
     // Ask for user name and password
-    std::string user, password;
+    std::string user;
+    std::string password;
     std::cout << "User name: ";
     std::cin >> user;
     std::cout << "Password: ";
@@ -141,7 +142,8 @@ int main()
             case 6:
             {
                 // Rename a file
-                std::string source, destination;
+                std::string source;
+                std::string destination;
                 std::cout << "Name of the file to rename: ";
                 std::cin >> source;
                 std::cout << "New name: ";
@@ -163,7 +165,8 @@ int main()
             case 8:
             {
                 // Download a file from server
-                std::string filename, directory;
+                std::string filename;
+                std::string directory;
                 std::cout << "Filename of the file to download (relative to current directory): ";
                 std::cin >> filename;
                 std::cout << "Directory to download the file to: ";
@@ -175,7 +178,8 @@ int main()
             case 9:
             {
                 // Upload a file to server
-                std::string filename, directory;
+                std::string filename;
+                std::string directory;
                 std::cout << "Path of the file to upload (absolute or relative to working directory): ";
                 std::cin >> filename;
                 std::cout << "Directory to upload the file to (relative to current directory): ";

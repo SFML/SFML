@@ -346,7 +346,8 @@ void SoundStream::streamData()
             }
             else
             {
-                ALint size, bits;
+                ALint size;
+                ALint bits;
                 alCheck(alGetBufferi(buffer, AL_SIZE, &size));
                 alCheck(alGetBufferi(buffer, AL_BITS, &bits));
 

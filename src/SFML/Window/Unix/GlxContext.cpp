@@ -333,7 +333,15 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 continue;
 
             // Extract the components of the current visual
-            int red, green, blue, alpha, depth, stencil, multiSampling, samples, sRgb;
+            int red;
+            int green;
+            int blue;
+            int alpha;
+            int depth;
+            int stencil;
+            int multiSampling;
+            int samples;
+            int sRgb;
             glXGetConfig(display, &visuals[i], GLX_RED_SIZE, &red);
             glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE, &green);
             glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE, &blue);
@@ -402,7 +410,11 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 {
     // Update the creation settings from the chosen format
-    int depth, stencil, multiSampling, samples, sRgb;
+    int depth;
+    int stencil;
+    int multiSampling;
+    int samples;
+    int sRgb;
     glXGetConfig(m_display, visualInfo, GLX_DEPTH_SIZE, &depth);
     glXGetConfig(m_display, visualInfo, GLX_STENCIL_SIZE, &stencil);
 

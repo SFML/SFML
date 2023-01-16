@@ -92,7 +92,9 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     vorbis_comment_init(&comment);
 
     // Generate the header packets
-    ogg_packet header, headerComm, headerCode;
+    ogg_packet header;
+    ogg_packet headerComm;
+    ogg_packet headerCode;
     status = vorbis_analysis_headerout(&m_state, &comment, &header, &headerComm, &headerCode);
     vorbis_comment_clear(&comment);
     if (status < 0)
