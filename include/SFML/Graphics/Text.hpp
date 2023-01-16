@@ -229,7 +229,7 @@ public:
     void setStyle(std::uint32_t style);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the fill color of the text
+    /// \brief Set the fill color of the whole text
     ///
     /// By default, the text's fill color is opaque white.
     /// Setting the fill color to a transparent color with an outline
@@ -243,6 +243,21 @@ public:
     void setFillColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the fill color of a specific character in text
+    ///
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
+    ///
+    /// \param color New fill color of the character
+    /// \param index Index of the character in the string
+    ///
+    /// \see getFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setFillColor(const Color& color, unsigned int index);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the outline color of the text
     ///
     /// By default, the text's outline color is opaque black.
@@ -253,6 +268,19 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline color of a specific character in text
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// \param color New outline color of the character
+    /// \param index Index of the character in the string
+    ///
+    /// \see getOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOutlineColor(const Color& color, unsigned int index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the thickness of the text's outline
@@ -268,6 +296,30 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineThickness(float thickness);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the underline/strikethrough color of the text
+    ///
+    /// By default, the text's outline color is opaque white.
+    ///
+    /// \param color New underline/strikethrough color of the text
+    ///
+    /// \see getUnderlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUnderlineColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline underline/strikethrough color of the text
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// \param color New outline underline/strikethrough color of the text
+    ///
+    /// \see getUnderlineOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUnderlineOutlineColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -353,6 +405,18 @@ public:
     const Color& getFillColor() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the fill color of the character
+    ///
+    /// \return Fill color of the text
+    ///
+    /// \param Index of the character
+    ///
+    /// \see setFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getFillColor(unsigned int index) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the outline color of the text
     ///
     /// \return Outline color of the text
@@ -363,6 +427,18 @@ public:
     const Color& getOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the outline color of the character
+    ///
+    /// \return Outline color of the text
+    ///
+    /// \param Index of the character
+    ///
+    /// \see setOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getOutlineColor(unsigned int index) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the outline thickness of the text
     ///
     /// \return Outline thickness of the text, in pixels
@@ -371,6 +447,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     float getOutlineThickness() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the underline/strikethrough color of the text
+    ///
+    /// \param color New underline/strikethrough color of the text
+    ///
+    /// \see setUnderlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getUnderlineColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline underline/strikethrough color of the text
+    ///
+    /// \param color New outline underline/strikethrough color of the text
+    ///
+    /// \see setUnderlineOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getUnderlineOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
@@ -445,8 +541,10 @@ private:
     float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
     float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
     std::uint32_t         m_style{Regular};                            //!< Text style (see Style enum)
-    Color                 m_fillColor{Color::White};                   //!< Text fill color
-    Color                 m_outlineColor{Color::Black};                //!< Text outline color
+    std::vector<Color>    m_fillColor{{255, 255, 255}};                //!< Text fill color
+    Color                 m_underlineFillColor{255, 255, 255};         //!< Text underline/strikethrough fill color
+    std::vector<Color>    m_outlineColor{{0, 0, 0}};                   //!< Text outline color
+    Color                 m_underlineOutlineColor{0, 0, 0};            //!< Text underline/strikethrough outline color
     float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
     mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
