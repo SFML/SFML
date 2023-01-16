@@ -428,7 +428,8 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 void WindowImplWin32::requestFocus()
 {
     // Allow focus stealing only within the same process; compare PIDs of current and foreground window
-    DWORD thisPid, foregroundPid;
+    DWORD thisPid;
+    DWORD foregroundPid;
     GetWindowThreadProcessId(m_handle, &thisPid);
     GetWindowThreadProcessId(GetForegroundWindow(), &foregroundPid);
 

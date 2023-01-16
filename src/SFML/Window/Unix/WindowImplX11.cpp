@@ -286,7 +286,8 @@ bool ewmhSupported()
 // Get the parent window.
 ::Window getParentWindow(::Display* disp, ::Window win)
 {
-    ::Window     root, parent;
+    ::Window     root;
+    ::Window     parent;
     ::Window*    children = nullptr;
     unsigned int numChildren;
 
@@ -858,7 +859,8 @@ Vector2i WindowImplX11::getPosition() const
     // go using setPosition() and XMoveWindow(). To have the two match
     // as expected, we may have to subtract decorations and borders.
     ::Window child;
-    int      xAbsRelToRoot, yAbsRelToRoot;
+    int      xAbsRelToRoot;
+    int      yAbsRelToRoot;
 
     XTranslateCoordinates(m_display, m_window, DefaultRootWindow(m_display), 0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
@@ -871,7 +873,8 @@ Vector2i WindowImplX11::getPosition() const
     // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
     // with the exact frame size to subtract, so if present, we prefer it and
     // query it first. According to spec, this already includes any borders.
-    long xFrameExtent, yFrameExtent;
+    long xFrameExtent;
+    long yFrameExtent;
 
     if (getEWMHFrameExtents(m_display, m_window, xFrameExtent, yFrameExtent))
     {
@@ -904,8 +907,12 @@ Vector2i WindowImplX11::getPosition() const
 
     // Get final X/Y coordinates: take the relative position to
     // the root of the furthest ancestor window.
-    int          xRelToRoot, yRelToRoot;
-    unsigned int width, height, borderWidth, depth;
+    int          xRelToRoot;
+    int          yRelToRoot;
+    unsigned int width;
+    unsigned int height;
+    unsigned int borderWidth;
+    unsigned int depth;
 
     XGetGeometry(m_display, ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
 
@@ -1331,7 +1338,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
 
     // Check if the XRandR extension is present
-    int xRandRMajor, xRandRMinor;
+    int xRandRMajor;
+    int xRandRMinor;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
     {
         // XRandR extension is not supported: we cannot use fullscreen mode
@@ -1426,7 +1434,8 @@ void WindowImplX11::resetVideoMode()
     {
         // Try to set old configuration
         // Check if the XRandR extension
-        int xRandRMajor, xRandRMinor;
+        int xRandRMajor;
+        int xRandRMinor;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
             XRRScreenResources* res = XRRGetScreenResources(m_display, DefaultRootWindow(m_display));
@@ -2215,7 +2224,8 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Get xRandr version
-    int xRandRMajor, xRandRMinor;
+    int xRandRMajor;
+    int xRandRMinor;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
         xRandRMajor = xRandRMinor = 0;
 

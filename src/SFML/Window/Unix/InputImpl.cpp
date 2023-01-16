@@ -194,9 +194,12 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
     Display* display = openDisplay();
 
     // we don't care about these but they are required
-    ::Window root, child;
-    int      wx, wy;
-    int      gx, gy;
+    ::Window root;
+    ::Window child;
+    int      wx;
+    int      wy;
+    int      gx;
+    int      gy;
 
     unsigned int buttons = 0;
     XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &wx, &wy, &buttons);
@@ -230,8 +233,10 @@ Vector2i InputImpl::getMousePosition()
     Display* display = openDisplay();
 
     // we don't care about these but they are required
-    ::Window     root, child;
-    int          x, y;
+    ::Window     root;
+    ::Window     child;
+    int          x;
+    int          y;
     unsigned int buttons;
 
     int gx = 0;
@@ -255,8 +260,10 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
         Display* display = openDisplay();
 
         // we don't care about these but they are required
-        ::Window     root, child;
-        int          gx, gy;
+        ::Window     root;
+        ::Window     child;
+        int          gx;
+        int          gy;
         unsigned int buttons;
 
         int x = 0;
