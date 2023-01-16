@@ -249,7 +249,8 @@ public:
     /// \return True if surface creation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator);
+    //NOLINT(readability-convert-member-functions-to-static)
+    bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator);
 
 protected:
     ////////////////////////////////////////////////////////////

@@ -85,7 +85,7 @@ void SensorManager::update()
     {
         // Only process available sensors
         if (item.available)
-            item.value = item.sensor.update();
+            item.value = sf::priv::SensorImpl::update();
     }
 }
 
@@ -105,7 +105,7 @@ SensorManager::SensorManager()
         // Open the available sensors
         if (m_sensors[i].available)
         {
-            if (m_sensors[i].sensor.open(static_cast<Sensor::Type>(i)))
+            if (sf::priv::SensorImpl::open(static_cast<Sensor::Type>(i)))
             {
                 m_sensors[i].sensor.setEnabled(false);
             }

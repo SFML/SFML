@@ -9,6 +9,7 @@ Checks: >
   readability-convert-member-functions-to-static,
   readability-identifier-naming,
   readability-isolate-declaration,
+  readability-static-accessed-through-instance,
   -clang-analyzer-core.NonNullParamChecker,
   -clang-analyzer-core.NullDereference,
   -clang-analyzer-nullability.NullablePassedToNonnull,
