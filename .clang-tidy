@@ -1,18 +1,20 @@
 Checks: >
   -*,
   clang-analyzer-*,
+  misc-*,
   modernize-*,
   portability-*,
   readability-*,
-  -clang-analyzer-core.NonNullParamChecker,
-  -clang-analyzer-core.NullDereference,
   -clang-analyzer-nullability.NullablePassedToNonnull,
   -clang-analyzer-optin.cplusplus.VirtualCall,
   -clang-analyzer-optin.osx.*,
-  -clang-analyzer-optin.portability.UnixAPI,
   -clang-analyzer-osx.*,
   -clang-analyzer-security.insecureAPI.rand,
   -clang-analyzer-unix.Malloc,
+  -misc-const-correctness,
+  -misc-misplaced-const,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
   -modernize-avoid-c-arrays,
   -modernize-macro-to-enum,
   -modernize-pass-by-value,
@@ -31,7 +33,6 @@ Checks: >
   -readability-magic-numbers,
   -readability-named-parameter,
   -readability-uppercase-literal-suffix,
-
 CheckOptions:
   - { key: readability-identifier-naming.ClassCase,           value: CamelCase }
   - { key: readability-identifier-naming.FunctionCase,        value: camelBack }
