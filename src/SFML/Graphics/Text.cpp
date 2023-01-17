@@ -291,7 +291,8 @@ void Text::setUnderlineColor(const Color& color)
         bool isUnderlined    = m_style & Underlined;
         bool isStrikeThrough = m_style & StrikeThrough;
         for (std::size_t i = m_vertices.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough;
-            i < m_vertices.getVertexCount(); ++i)
+             i < m_vertices.getVertexCount();
+             ++i)
             m_vertices[i].color = color;
     }
 }
