@@ -193,8 +193,9 @@ void Text::setFillColor(const Color& color)
 {
     //In case we use the same color on all characters, no need to store
     //the same color multiple times
-    if (m_fillColor.size() != 1)
+    if (m_multiFillColor)
         m_fillColor.resize(1, Color::White);
+    m_multiFillColor = 0;
     m_fillColor[0] = color;
 
     // Change vertex colors directly, no need to update whole geometry
@@ -208,11 +209,22 @@ void Text::setFillColor(const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setFillColor(const Color& color, unsigned int index)
+void Text::setCharacterFillColor(unsigned int index, const Color& color)
 {
+    //Set the new per character colors to the color set by setFillColor()
+    if (!m_multiFillColor)
+    {
+        m_fillColor.resize(m_string.getSize());
+        for (std::size_t i = 0; i < m_fillColor.size(); i++)
+            m_fillColor[i] = m_fillColor[0];
+    }
     //Resize the vector so that each character can have a unique color
-    if (m_fillColor.size() != m_string.getSize())
-        m_fillColor.resize(m_string.getSize(), Color::White);
+    //If index is out of bounds the vector will resize to be able to store it
+    if (m_fillColor.size() < index + 1)
+    {
+        m_fillColor.resize(index + 1, Color::White);
+    }
+    m_multiFillColor = 1;
     if (color != m_fillColor[index])
     {
         m_fillColor[index] = color;
@@ -233,8 +245,9 @@ void Text::setOutlineColor(const Color& color)
 {
     //In case we use the same color on all characters, no need to store
     //the same color multiple times
-    if (m_outlineColor.size() != 1)
+    if (m_multiOutlineColor)
         m_outlineColor.resize(1, Color::Black);
+    m_multiOutlineColor = 0;
     m_outlineColor[0] = color;
 
     // Change vertex colors directly, no need to update whole geometry
@@ -248,11 +261,22 @@ void Text::setOutlineColor(const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setOutlineColor(const Color& color, unsigned int index)
+void Text::setCharacterOutlineColor(unsigned int index, const Color& color)
 {
+    //Set the new per character colors to the color set by setFillColor()
+    if (!m_multiOutlineColor)
+    {
+        m_outlineColor.resize(m_string.getSize());
+        for (std::size_t i = 0; i < m_outlineColor.size(); i++)
+            m_outlineColor[i] = m_outlineColor[0];
+    }
     //Resize the vector so that each character can have a unique color
-    if (m_outlineColor.size() != m_string.getSize())
-        m_outlineColor.resize(m_string.getSize(), Color::Black);
+    //If index is out of bounds the vector will resize to be able to store it
+    if (m_outlineColor.size() < index + 1)
+    {
+        m_outlineColor.resize(index + 1, Color::Black);
+    }
+    m_multiOutlineColor = 1;
     if (color != m_outlineColor[index])
     {
         m_outlineColor[index] = color;
@@ -280,7 +304,7 @@ void Text::setOutlineThickness(float thickness)
 
 
 ////////////////////////////////////////////////////////////
-void Text::setUnderlineColor(const Color& color)
+void Text::setUnderlineFillColor(const Color& color)
 {
     m_underlineFillColor = color;
 
@@ -288,12 +312,7 @@ void Text::setUnderlineColor(const Color& color)
     // (if geometry is updated anyway, we can skip this step)
     if (!m_geometryNeedUpdate)
     {
-        bool isUnderlined    = m_style & Underlined;
-        bool isStrikeThrough = m_style & StrikeThrough;
-        for (std::size_t i = m_vertices.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough;
-             i < m_vertices.getVertexCount();
-             ++i)
-            m_vertices[i].color = color;
+        updateUnderline(m_vertices, color);
     }
 }
 
@@ -307,12 +326,7 @@ void Text::setUnderlineOutlineColor(const Color& color)
     // (if geometry is updated anyway, we can skip this step)
     if (!m_geometryNeedUpdate)
     {
-        bool isUnderlined    = m_style & Underlined;
-        bool isStrikeThrough = m_style & StrikeThrough;
-        for (std::size_t i = m_outlineVertices.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough;
-             i < m_outlineVertices.getVertexCount();
-             ++i)
-            m_outlineVertices[i].color = color;
+        updateUnderline(m_outlineVertices, color);
     }
 }
 
@@ -362,12 +376,12 @@ std::uint32_t Text::getStyle() const
 ////////////////////////////////////////////////////////////
 const Color& Text::getFillColor() const
 {
-    return getFillColor(0);
+    return getCharacterFillColor(0);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Text::getFillColor(unsigned int index) const
+const Color& Text::getCharacterFillColor(unsigned int index) const
 {
     return m_fillColor[index];
 }
@@ -376,12 +390,12 @@ const Color& Text::getFillColor(unsigned int index) const
 ////////////////////////////////////////////////////////////
 const Color& Text::getOutlineColor() const
 {
-    return getOutlineColor(0);
+    return getCharacterOutlineColor(0);
 }
 
 
 ////////////////////////////////////////////////////////////
-const Color& Text::getOutlineColor(unsigned int index) const
+const Color& Text::getCharacterOutlineColor(unsigned int index) const
 {
     return m_outlineColor[index];
 }
@@ -395,7 +409,7 @@ float Text::getOutlineThickness() const
 
 
 ////////////////////////////////////////////////////////////
-const Color& Text::getUnderlineColor() const
+const Color& Text::getUnderlineFillColor() const
 {
     return m_underlineFillColor;
 }
@@ -525,12 +539,16 @@ void Text::ensureGeometryUpdate() const
     if (m_string.isEmpty())
         return;
 
+    //In case that string size changed in between this function and setCharacterColor()
+    if (m_fillColor.size() < m_string.getSize())
+        m_fillColor.resize(m_string.getSize(), Color::White);
+    if (m_outlineColor.size() < m_string.getSize())
+        m_outlineColor.resize(m_string.getSize(), Color::Black);
+
     // Compute values related to the text style
     bool  isBold             = m_style & Bold;
     bool  isUnderlined       = m_style & Underlined;
     bool  isStrikeThrough    = m_style & StrikeThrough;
-    bool  multipleCol        = (m_fillColor.size() > 1);
-    bool  multipleOutlineCol = (m_outlineColor.size() > 1);
     float italicShear        = (m_style & Italic) ? sf::degrees(12).asRadians() : 0.f;
     float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
     float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
@@ -569,13 +587,13 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, multipleCol ? m_fillColor[i] : m_fillColor[0], underlineOffset, underlineThickness);
+            addLine(m_vertices, x, y, m_underlineFillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
                 addLine(m_outlineVertices,
                         x,
                         y,
-                        multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                        m_underlineOutlineColor,
                         underlineOffset,
                         underlineThickness,
                         m_outlineThickness);
@@ -584,13 +602,13 @@ void Text::ensureGeometryUpdate() const
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, multipleCol ? m_fillColor[i] : m_fillColor[0], strikeThroughOffset, underlineThickness);
+            addLine(m_vertices, x, y, m_underlineFillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
                 addLine(m_outlineVertices,
                         x,
                         y,
-                        multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                        m_underlineOutlineColor,
                         strikeThroughOffset,
                         underlineThickness,
                         m_outlineThickness);
@@ -635,7 +653,7 @@ void Text::ensureGeometryUpdate() const
             // Add the outline glyph to the vertices
             addGlyphQuad(m_outlineVertices,
                          Vector2f(x, y),
-                         multipleOutlineCol ? m_outlineColor[i] : m_outlineColor[0],
+                         m_multiOutlineColor ? m_outlineColor[i] : m_outlineColor[0],
                          glyph,
                          italicShear);
         }
@@ -644,7 +662,7 @@ void Text::ensureGeometryUpdate() const
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
 
         // Add the glyph to the vertices
-        addGlyphQuad(m_vertices, Vector2f(x, y), multipleCol ? m_fillColor[i] : m_fillColor[0], glyph, italicShear);
+        addGlyphQuad(m_vertices, Vector2f(x, y), m_multiFillColor ? m_fillColor[i] : m_fillColor[0], glyph, italicShear);
 
         // Update the current bounds
         float left   = glyph.bounds.left;
@@ -694,6 +712,40 @@ void Text::ensureGeometryUpdate() const
     m_bounds.top    = minY;
     m_bounds.width  = maxX - minX;
     m_bounds.height = maxY - minY;
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::updateUnderline(VertexArray& arr, const Color& color) const
+{
+    bool isUnderlined    = m_style & Underlined;
+    bool isStrikeThrough = m_style & StrikeThrough;
+
+    //In case of newlines, find them and change lines
+    std::uint32_t lineCount = 0;
+    std::uint32_t prevChar  = 0;
+    for (std::size_t i = 0; i < m_string.getSize(); ++i)
+    {
+        std::uint32_t curChar = m_string[i];
+
+        if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
+        {
+            for (int j = 0; j < 6; j++)
+                arr[(i + lineCount) * 6 + j].color = color;
+            lineCount++;
+        }
+        if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
+        {
+            for (int j = 0; j < 6; j++)
+                arr[(i + lineCount) * 6 + j].color = color;
+            lineCount++;
+        }
+        if (curChar == U'\n' && prevChar != U'\n')
+            lineCount--;
+    }
+    //At the end, there is an extra line
+    for (std::size_t i = arr.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough; i < arr.getVertexCount(); ++i)
+        arr[i].color = color;
 }
 
 } // namespace sf
