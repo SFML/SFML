@@ -541,10 +541,10 @@ private:
     float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
     float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
     std::uint32_t         m_style{Regular};                            //!< Text style (see Style enum)
-    std::vector<Color>    m_fillColor{{255, 255, 255}};                //!< Text fill color
-    Color                 m_underlineFillColor{255, 255, 255};         //!< Text underline/strikethrough fill color
-    std::vector<Color>    m_outlineColor{{0, 0, 0}};                   //!< Text outline color
-    Color                 m_underlineOutlineColor{0, 0, 0};            //!< Text underline/strikethrough outline color
+    std::vector<Color>    m_fillColor{Color::White};                   //!< Text fill color
+    Color                 m_underlineFillColor{Color::White};          //!< Text underline/strikethrough fill color
+    std::vector<Color>    m_outlineColor{Color::Black};                //!< Text outline color
+    Color                 m_underlineOutlineColor{Color::Black};       //!< Text underline/strikethrough outline color
     float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
     mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry

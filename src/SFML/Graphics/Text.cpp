@@ -212,7 +212,7 @@ void Text::setFillColor(const Color& color, unsigned int index)
 {
     //Resize the vector so that each character can have a unique color
     if (m_fillColor.size() != m_string.getSize())
-        m_fillColor.resize(m_string.getSize(), Color(255, 255, 255));
+        m_fillColor.resize(m_string.getSize(), Color::White);
     if (color != m_fillColor[index])
     {
         m_fillColor[index] = color;
@@ -234,7 +234,7 @@ void Text::setOutlineColor(const Color& color)
     //In case we use the same color on all characters, no need to store
     //the same color multiple times
     if (m_outlineColor.size() != 1)
-        m_outlineColor.resize(1, Color(0, 0, 0));
+        m_outlineColor.resize(1, Color::Black);
     m_outlineColor[0] = color;
 
     // Change vertex colors directly, no need to update whole geometry
@@ -252,7 +252,7 @@ void Text::setOutlineColor(const Color& color, unsigned int index)
 {
     //Resize the vector so that each character can have a unique color
     if (m_outlineColor.size() != m_string.getSize())
-        m_outlineColor.resize(m_string.getSize(), Color(0, 0, 0));
+        m_outlineColor.resize(m_string.getSize(), Color::Black);
     if (color != m_outlineColor[index])
     {
         m_outlineColor[index] = color;
