@@ -285,7 +285,7 @@ public:
     /// seen as long as the character count is < index + 1.
     /// Calling setOutlineColor() will overwrite all character outline colors
     /// in the current string.
-    /// 
+    ///
     /// \param color New outline color of the character
     /// \param index Index of the character in the string
     ///
@@ -421,7 +421,7 @@ public:
     ///
     /// The validity of the index is not checked, passing an invalid
     /// index results in an undefined behaviour.
-    /// 
+    ///
     /// \return Fill color of the character
     ///
     /// \param Index of the character
@@ -561,20 +561,20 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String                m_string;                                    //!< String to display
-    const Font*           m_font{};                                    //!< Font used to display the string
-    unsigned int          m_characterSize{30};                         //!< Base size of characters, in pixels
-    float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
-    float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
-    std::uint32_t         m_style{Regular};                            //!< Text style (see Style enum)
-    Color                 m_underlineFillColor{Color::White};          //!< Text underline/strikethrough fill color
-    Color                 m_underlineOutlineColor{Color::Black};       //!< Text underline/strikethrough outline color
-    bool                  m_multiFillColor{0};                         //!< Should the text have more than a single fill color
-    bool                  m_multiOutlineColor{0};                      //!< Should the text have more than a single outline color
-    float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
-    mutable std::vector<Color> m_fillColor{Color::White};              //!< Text fill color(s)
-    mutable std::vector<Color> m_outlineColor{Color::Black};           //!< Text outline color(s)
-    mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
+    String                     m_string;                                    //!< String to display
+    const Font*                m_font{};                                    //!< Font used to display the string
+    unsigned int               m_characterSize{30};                         //!< Base size of characters, in pixels
+    float                      m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
+    float                      m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
+    std::uint32_t              m_style{Regular};                            //!< Text style (see Style enum)
+    Color                      m_underlineFillColor{Color::White};          //!< Text underline/strikethrough fill color
+    Color                      m_underlineOutlineColor{Color::Black};       //!< Text underline/strikethrough outline color
+    bool                       m_multiFillColor{0};                         //!< Should the text have more than a single fill color
+    bool                       m_multiOutlineColor{0};                      //!< Should the text have more than a single outline color
+    float                      m_outlineThickness{0.f};                     //!< Thickness of the text's outline
+    mutable std::vector<Color> m_fillColor{Color::White};                   //!< Text fill color(s)
+    mutable std::vector<Color> m_outlineColor{Color::Black};                //!< Text outline color(s)
+    mutable VertexArray        m_vertices{PrimitiveType::Triangles};   //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
     mutable bool          m_geometryNeedUpdate{}; //!< Does the geometry need to be recomputed?

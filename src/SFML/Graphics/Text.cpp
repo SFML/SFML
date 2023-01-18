@@ -196,7 +196,7 @@ void Text::setFillColor(const Color& color)
     if (m_multiFillColor)
         m_fillColor.resize(1, Color::White);
     m_multiFillColor = 0;
-    m_fillColor[0] = color;
+    m_fillColor[0]   = color;
 
     // Change vertex colors directly, no need to update whole geometry
     // (if geometry is updated anyway, we can skip this step)
@@ -248,7 +248,7 @@ void Text::setOutlineColor(const Color& color)
     if (m_multiOutlineColor)
         m_outlineColor.resize(1, Color::Black);
     m_multiOutlineColor = 0;
-    m_outlineColor[0] = color;
+    m_outlineColor[0]   = color;
 
     // Change vertex colors directly, no need to update whole geometry
     // (if geometry is updated anyway, we can skip this step)
@@ -590,13 +590,7 @@ void Text::ensureGeometryUpdate() const
             addLine(m_vertices, x, y, m_underlineFillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices,
-                        x,
-                        y,
-                        m_underlineOutlineColor,
-                        underlineOffset,
-                        underlineThickness,
-                        m_outlineThickness);
+                addLine(m_outlineVertices, x, y, m_underlineOutlineColor, underlineOffset, underlineThickness, m_outlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
@@ -605,13 +599,7 @@ void Text::ensureGeometryUpdate() const
             addLine(m_vertices, x, y, m_underlineFillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices,
-                        x,
-                        y,
-                        m_underlineOutlineColor,
-                        strikeThroughOffset,
-                        underlineThickness,
-                        m_outlineThickness);
+                addLine(m_outlineVertices, x, y, m_underlineOutlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
         }
 
         prevChar = curChar;
@@ -722,7 +710,7 @@ void Text::updateUnderline(VertexArray& arr, const Color& color) const
     bool isStrikeThrough = m_style & StrikeThrough;
 
     //In case of newlines, find them and change lines
-    unsigned int lineCount = 0;
+    unsigned int  lineCount = 0;
     std::uint32_t prevChar  = 0;
     for (unsigned int i = 0; i < m_string.getSize(); ++i)
     {
