@@ -18,7 +18,7 @@ TEST_CASE("[System] sf::err")
     SUBCASE("Redirect buffer to observe contents")
     {
         sf::err() << "We'll never be able to observe this" << std::endl; // Ensure buffer is flushed
-        const auto defaultStreamBuffer = sf::err().rdbuf();
+        auto* const defaultStreamBuffer = sf::err().rdbuf();
         CHECK(defaultStreamBuffer != nullptr);
 
         std::stringstream stream;
