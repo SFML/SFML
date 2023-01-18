@@ -269,7 +269,7 @@ public:
     /// By default, the text's outline color is opaque black.
     /// This function also overwrites all of the character outline
     /// colors set by setCharacterOutlineColor().
-    /// 
+    ///
     /// \param color New outline color of the text
     ///
     /// \see getOutlineColor
@@ -569,11 +569,11 @@ private:
     std::uint32_t              m_style{Regular};                            //!< Text style (see Style enum)
     Color                      m_underlineFillColor{Color::White};          //!< Text underline/strikethrough fill color
     Color                      m_underlineOutlineColor{Color::Black};       //!< Text underline/strikethrough outline color
-    bool                       m_multiFillColor{0};                         //!< Should the text have more than a single fill color
-    bool                       m_multiOutlineColor{0};                      //!< Should the text have more than a single outline color
-    float                      m_outlineThickness{0.f};                     //!< Thickness of the text's outline
-    mutable std::vector<Color> m_fillColor{Color::White};                   //!< Text fill color(s)
-    mutable std::vector<Color> m_outlineColor{Color::Black};                //!< Text outline color(s)
+    bool                       m_multiFillColor{0};          //!< Should the text have more than a single fill color
+    bool                       m_multiOutlineColor{0};       //!< Should the text have more than a single outline color
+    float                      m_outlineThickness{0.f};      //!< Thickness of the text's outline
+    mutable std::vector<Color> m_fillColor{Color::White};    //!< Text fill color(s)
+    mutable std::vector<Color> m_outlineColor{Color::Black}; //!< Text outline color(s)
     mutable VertexArray        m_vertices{PrimitiveType::Triangles};   //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
