@@ -722,22 +722,22 @@ void Text::updateUnderline(VertexArray& arr, const Color& color) const
     bool isStrikeThrough = m_style & StrikeThrough;
 
     //In case of newlines, find them and change lines
-    std::uint32_t lineCount = 0;
+    unsigned int lineCount = 0;
     std::uint32_t prevChar  = 0;
-    for (std::size_t i = 0; i < m_string.getSize(); ++i)
+    for (unsigned int i = 0; i < m_string.getSize(); ++i)
     {
         std::uint32_t curChar = m_string[i];
 
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            for (int j = 0; j < 6; j++)
-                arr[(i + lineCount) * 6 + j].color = color;
+            for (unsigned int j = 0; j < 6; j++)
+                arr[(i + lineCount) * 6U + j].color = color;
             lineCount++;
         }
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            for (int j = 0; j < 6; j++)
-                arr[(i + lineCount) * 6 + j].color = color;
+            for (unsigned int j = 0; j < 6; j++)
+                arr[(i + lineCount) * 6U + j].color = color;
             lineCount++;
         }
         if (curChar == U'\n' && prevChar != U'\n')
