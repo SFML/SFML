@@ -70,7 +70,6 @@ private:
     virtual void onUpdate(float time, float x, float y)                                 = 0;
     virtual void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const = 0;
 
-private:
     std::string m_name;
     bool        m_isLoaded{};
 

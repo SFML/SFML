@@ -66,7 +66,6 @@ public:
         std::string family; //!< The font family
     };
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

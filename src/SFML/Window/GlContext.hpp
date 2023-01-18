@@ -134,7 +134,6 @@ public:
     ////////////////////////////////////////////////////////////
     static std::unique_ptr<GlContext> create(const ContextSettings& settings, const Vector2u& size);
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether a given OpenGL extension is available
     ///

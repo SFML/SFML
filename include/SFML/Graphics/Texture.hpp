@@ -61,7 +61,6 @@ public:
         Pixels      //!< Texture coordinates in range [0 .. size]
     };
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///

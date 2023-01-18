@@ -67,7 +67,6 @@ public:
         AnyPort = 0 //!< Special value that tells the system to pick any available port
     };
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
