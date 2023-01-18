@@ -3,30 +3,33 @@
 // Other first party headers
 #include <SFML/Graphics/Vertex.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <array>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::VertexBuffer>);
-static_assert(std::is_copy_assignable_v<sf::VertexBuffer>);
-static_assert(std::is_move_constructible_v<sf::VertexBuffer>);
-static_assert(!std::is_nothrow_move_constructible_v<sf::VertexBuffer>);
-static_assert(std::is_move_assignable_v<sf::VertexBuffer>);
-static_assert(!std::is_nothrow_move_assignable_v<sf::VertexBuffer>);
-static_assert(std::is_nothrow_swappable_v<sf::VertexBuffer>);
-
-// Skip these tests because they produce flakey failures in CI when using xvfb-run
-TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
+// Skip these tests with [.display] because they produce flakey failures in CI when using xvfb-run
+TEST_CASE("[Graphics] sf::VertexBuffer", "[.display]")
 {
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_move_constructible_v<sf::VertexBuffer>);
+        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_move_assignable_v<sf::VertexBuffer>);
+        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_nothrow_swappable_v<sf::VertexBuffer>);
+    }
+
     // Skip tests if vertex buffers aren't available
     if (!sf::VertexBuffer::isAvailable())
         return;
 
-    SUBCASE("Construction")
+    SECTION("Construction")
     {
-        SUBCASE("Default constructor")
+        SECTION("Default constructor")
         {
             const sf::VertexBuffer vertexBuffer;
             CHECK(vertexBuffer.getVertexCount() == 0);
@@ -35,7 +38,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBuffer.getUsage() == sf::VertexBuffer::Stream);
         }
 
-        SUBCASE("Primitive type constructor")
+        SECTION("Primitive type constructor")
         {
             const sf::VertexBuffer vertexBuffer(sf::PrimitiveType::Triangles);
             CHECK(vertexBuffer.getVertexCount() == 0);
@@ -44,7 +47,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBuffer.getUsage() == sf::VertexBuffer::Stream);
         }
 
-        SUBCASE("Usage constructor")
+        SECTION("Usage constructor")
         {
             const sf::VertexBuffer vertexBuffer(sf::VertexBuffer::Static);
             CHECK(vertexBuffer.getVertexCount() == 0);
@@ -53,7 +56,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBuffer.getUsage() == sf::VertexBuffer::Static);
         }
 
-        SUBCASE("Primitive type and usage constructor")
+        SECTION("Primitive type and usage constructor")
         {
             const sf::VertexBuffer vertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
             CHECK(vertexBuffer.getVertexCount() == 0);
@@ -63,11 +66,11 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
         }
     }
 
-    SUBCASE("Copy semantics")
+    SECTION("Copy semantics")
     {
         const sf::VertexBuffer vertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
 
-        SUBCASE("Construction")
+        SECTION("Construction")
         {
             const sf::VertexBuffer vertexBufferCopy(vertexBuffer); // NOLINT(performance-unnecessary-copy-initialization)
             CHECK(vertexBufferCopy.getVertexCount() == 0);
@@ -76,7 +79,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBufferCopy.getUsage() == sf::VertexBuffer::Dynamic);
         }
 
-        SUBCASE("Assignment")
+        SECTION("Assignment")
         {
             sf::VertexBuffer vertexBufferCopy;
             vertexBufferCopy = vertexBuffer;
@@ -87,28 +90,28 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
         }
     }
 
-    SUBCASE("create()")
+    SECTION("create()")
     {
         sf::VertexBuffer vertexBuffer;
         CHECK(vertexBuffer.create(100));
         CHECK(vertexBuffer.getVertexCount() == 100);
     }
 
-    SUBCASE("update()")
+    SECTION("update()")
     {
         sf::VertexBuffer            vertexBuffer;
         std::array<sf::Vertex, 128> vertices{};
 
-        SUBCASE("Vertices")
+        SECTION("Vertices")
         {
-            SUBCASE("Uninitialized buffer")
+            SECTION("Uninitialized buffer")
             {
                 CHECK(!vertexBuffer.update(vertices.data()));
             }
 
             CHECK(vertexBuffer.create(128));
 
-            SUBCASE("Null vertices")
+            SECTION("Null vertices")
             {
                 CHECK(!vertexBuffer.update(nullptr));
             }
@@ -118,11 +121,11 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBuffer.getNativeHandle() != 0);
         }
 
-        SUBCASE("Vertices, count, and offset")
+        SECTION("Vertices, count, and offset")
         {
             CHECK(vertexBuffer.create(128));
 
-            SUBCASE("Count + offset too large")
+            SECTION("Count + offset too large")
             {
                 CHECK(!vertexBuffer.update(vertices.data(), 100, 100));
             }
@@ -131,7 +134,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
             CHECK(vertexBuffer.getVertexCount() == 128);
         }
 
-        SUBCASE("Another buffer")
+        SECTION("Another buffer")
         {
             sf::VertexBuffer otherVertexBuffer;
 
@@ -141,7 +144,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
         }
     }
 
-    SUBCASE("swap()")
+    SECTION("swap()")
     {
         sf::VertexBuffer vertexBuffer1(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
         CHECK(vertexBuffer1.create(50));
@@ -162,14 +165,14 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
         CHECK(vertexBuffer2.getUsage() == sf::VertexBuffer::Dynamic);
     }
 
-    SUBCASE("Set/get primitive type")
+    SECTION("Set/get primitive type")
     {
         sf::VertexBuffer vertexBuffer;
         vertexBuffer.setPrimitiveType(sf::PrimitiveType::TriangleFan);
         CHECK(vertexBuffer.getPrimitiveType() == sf::PrimitiveType::TriangleFan);
     }
 
-    SUBCASE("Set/get usage")
+    SECTION("Set/get usage")
     {
         sf::VertexBuffer vertexBuffer;
         vertexBuffer.setUsage(sf::VertexBuffer::Dynamic);

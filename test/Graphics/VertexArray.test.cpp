@@ -1,20 +1,23 @@
 #include <SFML/Graphics/VertexArray.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::VertexArray>);
-static_assert(std::is_copy_assignable_v<sf::VertexArray>);
-static_assert(std::is_nothrow_move_constructible_v<sf::VertexArray>);
-static_assert(std::is_nothrow_move_assignable_v<sf::VertexArray>);
-
 TEST_CASE("[Graphics] sf::VertexArray")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        SUBCASE("Default constructor")
+        STATIC_CHECK(std::is_copy_constructible_v<sf::VertexArray>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::VertexArray>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::VertexArray>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::VertexArray>);
+    }
+
+    SECTION("Construction")
+    {
+        SECTION("Default constructor")
         {
             const sf::VertexArray vertexArray;
             CHECK(vertexArray.getVertexCount() == 0);
@@ -22,7 +25,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
             CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
         }
 
-        SUBCASE("Explicit constructor with default argument")
+        SECTION("Explicit constructor with default argument")
         {
             const sf::VertexArray vertexArray(sf::PrimitiveType::Lines);
             CHECK(vertexArray.getVertexCount() == 0);
@@ -30,7 +33,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
             CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
         }
 
-        SUBCASE("Explicit constructor")
+        SECTION("Explicit constructor")
         {
             const sf::VertexArray vertexArray(sf::PrimitiveType::Lines, 10);
             CHECK(vertexArray.getVertexCount() == 10);
@@ -45,7 +48,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
         }
     }
 
-    SUBCASE("Resize array")
+    SECTION("Resize array")
     {
         sf::VertexArray vertexArray;
         vertexArray.resize(42);
@@ -58,7 +61,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
         }
     }
 
-    SUBCASE("Clear array")
+    SECTION("Clear array")
     {
         sf::VertexArray vertexArray;
         vertexArray.append({});
@@ -66,7 +69,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
         CHECK(vertexArray.getVertexCount() == 0);
     }
 
-    SUBCASE("Append to array")
+    SECTION("Append to array")
     {
         sf::VertexArray  vertexArray;
         const sf::Vertex vertex({1, 2}, {3, 4, 5, 6}, {7, 8});
@@ -77,7 +80,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
         CHECK(vertexArray[0].texCoords == vertex.texCoords);
     }
 
-    SUBCASE("Write to array")
+    SECTION("Write to array")
     {
         sf::VertexArray vertexArray;
         vertexArray.resize(10);
@@ -88,14 +91,14 @@ TEST_CASE("[Graphics] sf::VertexArray")
         CHECK(vertexArray[9].texCoords == otherVertex.texCoords);
     }
 
-    SUBCASE("Set primitive type")
+    SECTION("Set primitive type")
     {
         sf::VertexArray vertexArray;
         vertexArray.setPrimitiveType(sf::PrimitiveType::TriangleStrip);
         CHECK(vertexArray.getPrimitiveType() == sf::PrimitiveType::TriangleStrip);
     }
 
-    SUBCASE("Get bounds")
+    SECTION("Get bounds")
     {
         sf::VertexArray vertexArray;
         vertexArray.append(sf::Vertex({1, 1}));

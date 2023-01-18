@@ -1,28 +1,31 @@
 #include <SFML/Graphics/Image.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <array>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::Image>);
-static_assert(std::is_copy_assignable_v<sf::Image>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Image>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Image>);
-
 TEST_CASE("[Graphics] sf::Image")
 {
-    SUBCASE("Default constructor")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Image>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Image>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Image>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Image>);
+    }
+
+    SECTION("Default constructor")
     {
         const sf::Image image;
         CHECK(image.getSize() == sf::Vector2u());
         CHECK(image.getPixelsPtr() == nullptr);
     }
 
-    SUBCASE("Create")
+    SECTION("Create")
     {
-        SUBCASE("create(Vector2)")
+        SECTION("create(Vector2)")
         {
             sf::Image image;
             image.create(sf::Vector2u(10, 10));
@@ -38,7 +41,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("create(Vector2, Color)")
+        SECTION("create(Vector2, Color)")
         {
             sf::Image image;
             image.create(sf::Vector2u(10, 10), sf::Color::Red);
@@ -55,7 +58,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("create(Vector2, std::uint8_t*)")
+        SECTION("create(Vector2, std::uint8_t*)")
         {
             // 10 x 10, with 4 colour channels array
             std::array<std::uint8_t, 400> pixels;
@@ -83,7 +86,7 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
-    SUBCASE("Set/get pixel")
+    SECTION("Set/get pixel")
     {
         sf::Image image;
 
@@ -94,9 +97,9 @@ TEST_CASE("[Graphics] sf::Image")
         CHECK(image.getPixel(sf::Vector2u(2, 2)) == sf::Color::Blue);
     }
 
-    SUBCASE("Copy from Image")
+    SECTION("Copy from Image")
     {
-        SUBCASE("Copy (Image, Vector2u)")
+        SECTION("Copy (Image, Vector2u)")
         {
             sf::Image image1;
             image1.create(sf::Vector2u(10, 10), sf::Color::Blue);
@@ -114,7 +117,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("Copy (Image, Vector2u, IntRect)")
+        SECTION("Copy (Image, Vector2u, IntRect)")
         {
             sf::Image image1;
             image1.create(sf::Vector2u(5, 5), sf::Color::Blue);
@@ -135,7 +138,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("Copy (Image, Vector2u, IntRect, bool)")
+        SECTION("Copy (Image, Vector2u, IntRect, bool)")
         {
             const sf::Color dest(255, 0, 0, 255);
             const sf::Color source(5, 255, 78, 232);
@@ -166,7 +169,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("Copy (Empty image)")
+        SECTION("Copy (Empty image)")
         {
             const sf::Image image1;
             sf::Image       image2;
@@ -183,7 +186,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("Copy (Out of bounds sourceRect)")
+        SECTION("Copy (Out of bounds sourceRect)")
         {
             sf::Image image1;
             image1.create(sf::Vector2u(5, 5), sf::Color::Blue);
@@ -203,9 +206,9 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
-    SUBCASE("Create mask from color")
+    SECTION("Create mask from color")
     {
-        SUBCASE("createMaskFromColor(Color)")
+        SECTION("createMaskFromColor(Color)")
         {
             sf::Image image;
             image.create(sf::Vector2u(10, 10), sf::Color::Blue);
@@ -220,7 +223,7 @@ TEST_CASE("[Graphics] sf::Image")
             }
         }
 
-        SUBCASE("createMaskFromColor(Color, std::uint8_t)")
+        SECTION("createMaskFromColor(Color, std::uint8_t)")
         {
             sf::Image image;
             image.create(sf::Vector2u(10, 10), sf::Color::Blue);
@@ -236,7 +239,7 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
-    SUBCASE("Flip horizontally")
+    SECTION("Flip horizontally")
     {
         sf::Image image;
         image.create(sf::Vector2u(10, 10), sf::Color::Red);
@@ -246,7 +249,7 @@ TEST_CASE("[Graphics] sf::Image")
         CHECK(image.getPixel(sf::Vector2u(9, 0)) == sf::Color::Green);
     }
 
-    SUBCASE("Flip vertically")
+    SECTION("Flip vertically")
     {
         sf::Image image;
         image.create(sf::Vector2u(10, 10), sf::Color::Red);

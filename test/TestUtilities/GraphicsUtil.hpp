@@ -1,7 +1,7 @@
 // Header for SFML unit tests.
 //
 // For a new graphics module test case, include this header.
-// This ensures that string conversions are visible and can be used by doctest for debug output.
+// This ensures that string conversions are visible and can be used by Catch2 for debug output.
 
 #pragma once
 

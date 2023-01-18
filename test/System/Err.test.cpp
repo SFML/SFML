@@ -1,21 +1,21 @@
 #include <SFML/System/Err.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <sstream>
 
 TEST_CASE("[System] sf::err")
 {
-    SUBCASE("Overflow default buffer")
+    SECTION("Overflow default buffer")
     {
-        // No assertion macros in this subcase since nothing about this can be directly observed.
+        // No assertion macros in this section since nothing about this can be directly observed.
         // Intention is to ensure DefaultErrStreamBuf::overflow gets called.
         sf::err() << "SFML is a simple, fast, cross-platform and object-oriented multimedia API."
                      "It provides access to windowing, graphics, audio and network."
                      "It is written in C++, and has bindings for various languages such as C, .Net, Ruby, Python.";
     }
 
-    SUBCASE("Redirect buffer to observe contents")
+    SECTION("Redirect buffer to observe contents")
     {
         sf::err() << "We'll never be able to observe this" << std::endl; // Ensure buffer is flushed
         auto* const defaultStreamBuffer = sf::err().rdbuf();

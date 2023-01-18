@@ -1,13 +1,21 @@
 #include <SFML/System/MemoryInputStream.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <ostream>
 #include <string_view>
 
 TEST_CASE("[System] sf::MemoryInputStream")
 {
-    SUBCASE("Empty stream")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::MemoryInputStream>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::MemoryInputStream>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::MemoryInputStream>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::MemoryInputStream>);
+    }
+
+    SECTION("Empty stream")
     {
         sf::MemoryInputStream mis;
 
@@ -17,7 +25,7 @@ TEST_CASE("[System] sf::MemoryInputStream")
         CHECK(mis.getSize() == -1);
     }
 
-    SUBCASE("Open memory stream")
+    SECTION("Open memory stream")
     {
         using namespace std::literals::string_view_literals;
         constexpr auto        memoryContents = "hello world"sv;
