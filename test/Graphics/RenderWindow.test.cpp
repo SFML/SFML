@@ -8,19 +8,22 @@
 
 #include <SFML/System/String.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(!std::is_copy_constructible_v<sf::RenderWindow>);
-static_assert(!std::is_copy_assignable_v<sf::RenderWindow>);
-static_assert(!std::is_nothrow_move_constructible_v<sf::RenderWindow>);
-static_assert(!std::is_nothrow_move_assignable_v<sf::RenderWindow>);
-
-TEST_CASE("[Graphics] sf::RenderWindow" * doctest::skip(skipDisplayTests))
+TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::RenderWindow>);
+        STATIC_CHECK(!std::is_copy_assignable_v<sf::RenderWindow>);
+        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::RenderWindow>);
+        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::RenderWindow>);
+    }
+
+    SECTION("Construction")
     {
         const sf::RenderWindow window(sf::VideoMode(sf::Vector2u(256, 256), 24),
                                       "Window Title",
@@ -29,7 +32,7 @@ TEST_CASE("[Graphics] sf::RenderWindow" * doctest::skip(skipDisplayTests))
         CHECK(window.getSize() == sf::Vector2u(256, 256));
     }
 
-    SUBCASE("Clear")
+    SECTION("Clear")
     {
         sf::RenderWindow window(sf::VideoMode(sf::Vector2u(256, 256), 24),
                                 "Window Title",

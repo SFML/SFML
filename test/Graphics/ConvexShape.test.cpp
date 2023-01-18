@@ -1,24 +1,27 @@
 #include <SFML/Graphics/ConvexShape.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::ConvexShape>);
-static_assert(std::is_copy_assignable_v<sf::ConvexShape>);
-static_assert(std::is_nothrow_move_constructible_v<sf::ConvexShape>);
-static_assert(std::is_nothrow_move_assignable_v<sf::ConvexShape>);
-
 TEST_CASE("[Graphics] sf::ConvexShape")
 {
-    SUBCASE("Default constructor")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::ConvexShape>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::ConvexShape>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::ConvexShape>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::ConvexShape>);
+    }
+
+    SECTION("Default constructor")
     {
         const sf::ConvexShape convex;
         CHECK(convex.getPointCount() == 0);
     }
 
-    SUBCASE("Point count constructor")
+    SECTION("Point count constructor")
     {
         const sf::ConvexShape convex(15);
         CHECK(convex.getPointCount() == 15);
@@ -26,7 +29,7 @@ TEST_CASE("[Graphics] sf::ConvexShape")
             CHECK(convex.getPoint(i) == sf::Vector2f(0, 0));
     }
 
-    SUBCASE("Set point count")
+    SECTION("Set point count")
     {
         sf::ConvexShape convex;
         convex.setPointCount(42);
@@ -35,7 +38,7 @@ TEST_CASE("[Graphics] sf::ConvexShape")
             CHECK(convex.getPoint(i) == sf::Vector2f(0, 0));
     }
 
-    SUBCASE("Set point")
+    SECTION("Set point")
     {
         sf::ConvexShape convex;
         convex.setPointCount(1);

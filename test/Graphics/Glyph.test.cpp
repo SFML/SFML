@@ -1,18 +1,21 @@
 #include <SFML/Graphics/Glyph.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::Glyph>);
-static_assert(std::is_copy_assignable_v<sf::Glyph>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Glyph>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Glyph>);
-
 TEST_CASE("[Graphics] sf::Glyph")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Glyph>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Glyph>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glyph>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glyph>);
+    }
+
+    SECTION("Construction")
     {
         const sf::Glyph glyph;
         CHECK(glyph.advance == 0.f);

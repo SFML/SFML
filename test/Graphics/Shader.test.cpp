@@ -1,13 +1,8 @@
 #include <SFML/Graphics/Shader.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <type_traits>
-
-static_assert(!std::is_copy_constructible_v<sf::Shader>);
-static_assert(!std::is_copy_assignable_v<sf::Shader>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Shader>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Shader>);
 
 namespace
 {
@@ -117,17 +112,37 @@ constexpr bool skipShaderDummyTest = true;
 constexpr bool skipShaderFullTest  = true;
 #endif
 
+std::string skipShaderDummyTests()
+{
+    if constexpr (skipShaderDummyTest)
+        // https://github.com/catchorg/Catch2/blob/devel/docs/test-cases-and-sections.md#special-tags
+        // This tag tells Catch2 to not run a given TEST_CASE
+        return "[.shaderDummy]";
+    else
+        return "";
+}
+
+std::string skipShaderFullTests()
+{
+    if constexpr (skipShaderFullTest)
+        // https://github.com/catchorg/Catch2/blob/devel/docs/test-cases-and-sections.md#special-tags
+        // This tag tells Catch2 to not run a given TEST_CASE
+        return "[.shaderFull]";
+    else
+        return "";
+}
+
 } // namespace
 
-TEST_CASE("[Graphics] sf::Shader (Dummy Implementation)" * doctest::skip(skipShaderDummyTest))
+TEST_CASE("[Graphics] sf::Shader (Dummy Implementation)", skipShaderDummyTests())
 {
-    SUBCASE("Available")
+    SECTION("Available")
     {
         CHECK_FALSE(sf::Shader::isAvailable());
         CHECK_FALSE(sf::Shader::isGeometryAvailable());
     }
 
-    SUBCASE("Load")
+    SECTION("Load")
     {
         sf::Shader shader;
         CHECK_FALSE(shader.loadFromMemory(vertexSource, sf::Shader::Type::Vertex));
@@ -138,12 +153,20 @@ TEST_CASE("[Graphics] sf::Shader (Dummy Implementation)" * doctest::skip(skipSha
     }
 }
 
-TEST_CASE("[Graphics] sf::Shader" * doctest::skip(skipShaderFullTest))
+TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
 {
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::Shader>);
+        STATIC_CHECK(!std::is_copy_assignable_v<sf::Shader>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Shader>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Shader>);
+    }
+
     if (!sf::Shader::isAvailable())
         return;
 
-    SUBCASE("Load")
+    SECTION("Load")
     {
         sf::Shader shader;
         CHECK(shader.loadFromMemory(vertexSource, sf::Shader::Type::Vertex));

@@ -1,20 +1,23 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <thread>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::Clock>);
-static_assert(std::is_copy_assignable_v<sf::Clock>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Clock>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Clock>);
-
 TEST_CASE("[System] sf::Clock")
 {
-    SUBCASE("getElapsedTime()")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Clock>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Clock>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Clock>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Clock>);
+    }
+
+    SECTION("getElapsedTime()")
     {
         const sf::Clock clock;
         CHECK(clock.getElapsedTime() >= sf::microseconds(0));
@@ -23,7 +26,7 @@ TEST_CASE("[System] sf::Clock")
         CHECK(clock.getElapsedTime() > elapsed);
     }
 
-    SUBCASE("restart()")
+    SECTION("restart()")
     {
         sf::Clock clock;
         CHECK(clock.restart() >= sf::microseconds(0));

@@ -112,7 +112,7 @@ IncludeCategories:
   - Priority: 8
     Regex: '^<SFML\/System'
   - Priority: 9
-    Regex: '^<(glad|gl|X11|jni|android|stb_|GLES2|vorbis|doctest)'
+    Regex: '^<(glad|gl|X11|jni|android|stb_|GLES2|vorbis|catch2)'
   - Priority: 10
     Regex: '^<([^c](.+)|coroutine|charconv|chrono|complex|concepts|condition_variable)>$'
   - Priority: 11

@@ -3,7 +3,7 @@
 // Other 1st party headers
 #include <SFML/Window/ContextSettings.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
 #include <string>
@@ -15,21 +15,24 @@
 #define GLAPI
 #endif
 
-static_assert(!std::is_copy_constructible_v<sf::Context>);
-static_assert(!std::is_copy_assignable_v<sf::Context>);
-static_assert(!std::is_nothrow_move_constructible_v<sf::Context>);
-static_assert(!std::is_nothrow_move_assignable_v<sf::Context>);
-
-TEST_CASE("[Window] sf::Context" * doctest::skip(skipDisplayTests))
+TEST_CASE("[Window] sf::Context", runDisplayTests())
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::Context>);
+        STATIC_CHECK(!std::is_copy_assignable_v<sf::Context>);
+        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Context>);
+        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Context>);
+    }
+
+    SECTION("Construction")
     {
         const sf::Context context;
 
         CHECK(context.getSettings().majorVersion > 0);
     }
 
-    SUBCASE("Version String")
+    SECTION("Version String")
     {
         sf::Context context;
 
@@ -39,7 +42,7 @@ TEST_CASE("[Window] sf::Context" * doctest::skip(skipDisplayTests))
 
         auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::Context::getFunction("glGetString"));
 
-        REQUIRE_UNARY(!!glGetStringFunc);
+        REQUIRE(glGetStringFunc);
 
         constexpr unsigned int glVendor   = 0x1F00;
         constexpr unsigned int glRenderer = 0x1F01;
@@ -53,11 +56,8 @@ TEST_CASE("[Window] sf::Context" * doctest::skip(skipDisplayTests))
         REQUIRE(renderer != nullptr);
         REQUIRE(version != nullptr);
 
-        MESSAGE("\nOpenGL vendor: ",
-                std::string(vendor),
-                "\nOpenGL renderer: ",
-                std::string(renderer),
-                "\nOpenGL version: ",
-                std::string(version));
+        SUCCEED(std::string("OpenGL vendor: ") + vendor);
+        SUCCEED(std::string("OpenGL renderer: ") + renderer);
+        SUCCEED(std::string("OpenGL version: ") + version);
     }
 }

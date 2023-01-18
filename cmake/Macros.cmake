@@ -376,7 +376,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     # Add the test
-    doctest_discover_tests(${target})
+    catch_discover_tests(${target})
 endfunction()
 
 # Find the requested package and make an INTERFACE library from it

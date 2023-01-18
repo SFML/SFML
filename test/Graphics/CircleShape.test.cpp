@@ -1,18 +1,21 @@
 #include <SFML/Graphics/CircleShape.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::CircleShape>);
-static_assert(std::is_copy_assignable_v<sf::CircleShape>);
-static_assert(std::is_nothrow_move_constructible_v<sf::CircleShape>);
-static_assert(std::is_nothrow_move_assignable_v<sf::CircleShape>);
-
 TEST_CASE("[Graphics] sf::CircleShape")
 {
-    SUBCASE("Default constructor")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(std::is_copy_constructible_v<sf::CircleShape>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::CircleShape>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::CircleShape>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::CircleShape>);
+    }
+
+    SECTION("Default constructor")
     {
         const sf::CircleShape circle;
         CHECK(circle.getRadius() == 0.f);
@@ -21,7 +24,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
             CHECK(circle.getPoint(i) == sf::Vector2f(0, 0));
     }
 
-    SUBCASE("Radius constructor")
+    SECTION("Radius constructor")
     {
         const sf::CircleShape circle(15.f);
         CHECK(circle.getRadius() == 15.f);
@@ -58,7 +61,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(29) == Approx(sf::Vector2f(11.881320953f, 0.327786446f)));
     }
 
-    SUBCASE("Radius and point count constructor")
+    SECTION("Radius and point count constructor")
     {
         const sf::CircleShape circle(5.f, 8);
         CHECK(circle.getRadius() == 5.f);
@@ -73,7 +76,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(7) == Approx(sf::Vector2f(1.464465857f, 1.464466572f)));
     }
 
-    SUBCASE("Set radius")
+    SECTION("Set radius")
     {
         sf::CircleShape circle(1.f, 6);
         circle.setRadius(10.f);
@@ -87,7 +90,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(5) == Approx(sf::Vector2f(1.339745522f, 5.000000000f)));
     }
 
-    SUBCASE("Set point count")
+    SECTION("Set point count")
     {
         sf::CircleShape circle(4.f, 10);
         circle.setPointCount(4);
@@ -99,7 +102,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(3) == Approx(sf::Vector2f(0.000000000f, 3.999999762f)));
     }
 
-    SUBCASE("Equilateral triangle")
+    SECTION("Equilateral triangle")
     {
         const sf::CircleShape triangle(2.f, 3);
         CHECK(triangle.getRadius() == 2.f);

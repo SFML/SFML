@@ -1,34 +1,37 @@
 #include <SFML/Window/VideoMode.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::VideoMode>);
-static_assert(std::is_copy_assignable_v<sf::VideoMode>);
-static_assert(std::is_nothrow_move_constructible_v<sf::VideoMode>);
-static_assert(std::is_nothrow_move_assignable_v<sf::VideoMode>);
-
 TEST_CASE("[Window] sf::VideoMode")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        SUBCASE("Default constructor")
+        STATIC_CHECK(std::is_copy_constructible_v<sf::VideoMode>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::VideoMode>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::VideoMode>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::VideoMode>);
+    }
+
+    SECTION("Construction")
+    {
+        SECTION("Default constructor")
         {
             sf::VideoMode videoMode;
             CHECK(videoMode.size == sf::Vector2u(0, 0));
             CHECK(videoMode.bitsPerPixel == 0);
         }
 
-        SUBCASE("Width, height constructor")
+        SECTION("Width, height constructor")
         {
             sf::VideoMode videoMode({800, 600});
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 32);
         }
 
-        SUBCASE("Width, height, bit depth constructor")
+        SECTION("Width, height, bit depth constructor")
         {
             sf::VideoMode videoMode({800, 600}, 24);
             CHECK(videoMode.size == sf::Vector2u(800, 600));
@@ -36,16 +39,16 @@ TEST_CASE("[Window] sf::VideoMode")
         }
     }
 
-    SUBCASE("Operators")
+    SECTION("Operators")
     {
-        SUBCASE("operator==")
+        SECTION("operator==")
         {
             CHECK(sf::VideoMode() == sf::VideoMode());
             CHECK(sf::VideoMode({0, 0}, 0) == sf::VideoMode({0, 0}, 0));
             CHECK(sf::VideoMode({1080, 1920}, 64) == sf::VideoMode({1080, 1920}, 64));
         }
 
-        SUBCASE("operator!=")
+        SECTION("operator!=")
         {
             CHECK(sf::VideoMode() != sf::VideoMode({1, 0}));
             CHECK(sf::VideoMode() != sf::VideoMode({0, 1}));
@@ -54,7 +57,7 @@ TEST_CASE("[Window] sf::VideoMode")
             CHECK(sf::VideoMode({1080, 1920}, 16) != sf::VideoMode({400, 600}));
         }
 
-        SUBCASE("operator<")
+        SECTION("operator<")
         {
             CHECK(sf::VideoMode() < sf::VideoMode({0, 0}, 1));
             CHECK(sf::VideoMode({800, 800}, 24) < sf::VideoMode({1080, 1920}, 48));
@@ -62,7 +65,7 @@ TEST_CASE("[Window] sf::VideoMode")
             CHECK(sf::VideoMode({400, 400}, 48) < sf::VideoMode({400, 600}, 48));
         }
 
-        SUBCASE("operator>")
+        SECTION("operator>")
         {
             CHECK(sf::VideoMode({1, 0}) > sf::VideoMode({0, 0}, 1));
             CHECK(sf::VideoMode({800, 800}, 48) > sf::VideoMode({1080, 1920}, 24));
@@ -70,7 +73,7 @@ TEST_CASE("[Window] sf::VideoMode")
             CHECK(sf::VideoMode({400, 600}, 48) > sf::VideoMode({400, 400}, 48));
         }
 
-        SUBCASE("operator<=")
+        SECTION("operator<=")
         {
             CHECK(sf::VideoMode() <= sf::VideoMode({0, 0}, 1));
             CHECK(sf::VideoMode({800, 800}, 24) <= sf::VideoMode({1080, 1920}, 48));
@@ -81,7 +84,7 @@ TEST_CASE("[Window] sf::VideoMode")
             CHECK(sf::VideoMode({1080, 1920}, 64) <= sf::VideoMode({1080, 1920}, 64));
         }
 
-        SUBCASE("operator>=")
+        SECTION("operator>=")
         {
             CHECK(sf::VideoMode({1, 0}) >= sf::VideoMode({0, 0}, 1));
             CHECK(sf::VideoMode({800, 800}, 48) >= sf::VideoMode({1080, 1920}, 24));

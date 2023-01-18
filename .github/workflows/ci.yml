@@ -139,13 +139,13 @@ jobs:
           if [ "${{ runner.os }}" == "Windows" ]; then
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
             # We have to convert the backslashes in $GITHUB_WORKSPACE to (forward) slashes so bash doesn't try to escape them in the sh command
-            find $(echo $GITHUB_WORKSPACE | sed 's/\\\\/\\//g')/build/bin -name test-sfml-window.exe -exec sh -c "{} --test-case=\"[Window] sf::Context\" --subcase=\"Version String\" | grep OpenGL" \;
+            find $(echo $GITHUB_WORKSPACE | sed 's/\\\\/\\//g')/build/bin -name test-sfml-window.exe -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
             # Run the tests
             cmake --build $GITHUB_WORKSPACE/build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
             # Coverage is already generated on Windows when running tests.
           else
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
-            find $GITHUB_WORKSPACE/build/bin -name test-sfml-window -exec sh -c "{} --test-case=\"[Window] sf::Context\" --subcase=\"Version String\" | grep OpenGL" \;
+            find $GITHUB_WORKSPACE/build/bin -name test-sfml-window -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
             # Run the tests
             ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
             # Run gcovr to extract coverage information from the test run

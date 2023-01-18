@@ -1,20 +1,23 @@
 #include <SFML/Graphics/View.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::View>);
-static_assert(std::is_copy_assignable_v<sf::View>);
-static_assert(std::is_nothrow_move_constructible_v<sf::View>);
-static_assert(std::is_nothrow_move_assignable_v<sf::View>);
-
 TEST_CASE("[Graphics] sf::View")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        SUBCASE("Default constructor")
+        STATIC_CHECK(std::is_copy_constructible_v<sf::View>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::View>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::View>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::View>);
+    }
+
+    SECTION("Construction")
+    {
+        SECTION("Default constructor")
         {
             const sf::View view;
             CHECK(view.getCenter() == sf::Vector2f(500, 500));
@@ -25,7 +28,7 @@ TEST_CASE("[Graphics] sf::View")
             CHECK(view.getInverseTransform() == Approx(sf::Transform(500, 0, 500, 0, -500, 500, 0, 0, 1)));
         }
 
-        SUBCASE("Rectangle constructor")
+        SECTION("Rectangle constructor")
         {
             const sf::View view(sf::FloatRect({10, 20}, {400, 600}));
             CHECK(view.getCenter() == sf::Vector2f(210, 320));
@@ -36,7 +39,7 @@ TEST_CASE("[Graphics] sf::View")
             CHECK(view.getInverseTransform() == Approx(sf::Transform(200, 0, 210, 0, -300, 320, 0, 0, 1)));
         }
 
-        SUBCASE("Center + size constructor")
+        SECTION("Center + size constructor")
         {
             const sf::View view({520, 960}, {1080, 1920});
             CHECK(view.getCenter() == sf::Vector2f(520, 960));
@@ -48,7 +51,7 @@ TEST_CASE("[Graphics] sf::View")
         }
     }
 
-    SUBCASE("Set/get center")
+    SECTION("Set/get center")
     {
         sf::View view;
         view.setCenter({3.14f, 4.2f});
@@ -57,7 +60,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(500, 0, 3.14f, 0, -500, 4.2f, 0, 0, 1)));
     }
 
-    SUBCASE("Set/get size")
+    SECTION("Set/get size")
     {
         sf::View view;
         view.setSize({600, 900});
@@ -66,7 +69,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(300, 0, 500, 0, -450, 500, 0, 0, 1)));
     }
 
-    SUBCASE("Set/get rotation")
+    SECTION("Set/get rotation")
     {
         sf::View view;
         view.setRotation(sf::degrees(-345));
@@ -83,7 +86,7 @@ TEST_CASE("[Graphics] sf::View")
               Approx(sf::Transform(383.022f, 321.394f, 500, 321.394f, -383.022f, 500, 0, 0, 1)));
     }
 
-    SUBCASE("Set/get viewport")
+    SECTION("Set/get viewport")
     {
         sf::View view;
         view.setViewport({{150, 250}, {500, 750}});
@@ -92,7 +95,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(500, 0, 500, 0, -500, 500, 0, 0, 1)));
     }
 
-    SUBCASE("reset()")
+    SECTION("reset()")
     {
         sf::View view;
         view.setCenter({3.14f, 4.2f});
@@ -108,7 +111,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(1.5f, 0, 2.5f, 0, -2, 4, 0, 0, 1)));
     }
 
-    SUBCASE("move()")
+    SECTION("move()")
     {
         sf::View view;
         view.setCenter({25, 25});
@@ -118,7 +121,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(500, 0, 40, 0, -500, 50, 0, 0, 1)));
     }
 
-    SUBCASE("rotate()")
+    SECTION("rotate()")
     {
         sf::View view;
         view.setRotation(sf::degrees(45));
@@ -129,7 +132,7 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getInverseTransform() == Approx(sf::Transform(433.013f, 250, 500, 250, -433.013f, 500, 0, 0, 1)));
     }
 
-    SUBCASE("zoom()")
+    SECTION("zoom()")
     {
         sf::View view;
         view.setSize({25, 25});

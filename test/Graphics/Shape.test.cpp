@@ -1,16 +1,9 @@
 #include <SFML/Graphics/Shape.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
-
-static_assert(!std::is_constructible_v<sf::Shape>);
-static_assert(!std::is_copy_constructible_v<sf::Shape>);
-static_assert(std::is_copy_assignable_v<sf::Shape>);
-static_assert(!std::is_move_constructible_v<sf::Shape>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Shape>);
-static_assert(std::has_virtual_destructor_v<sf::Shape>);
 
 class TriangleShape : public sf::Shape
 {
@@ -45,7 +38,17 @@ private:
 
 TEST_CASE("[Graphics] sf::Shape")
 {
-    SUBCASE("Default constructor")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(!std::is_constructible_v<sf::Shape>);
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::Shape>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Shape>);
+        STATIC_CHECK(!std::is_move_constructible_v<sf::Shape>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Shape>);
+        STATIC_CHECK(std::has_virtual_destructor_v<sf::Shape>);
+    }
+
+    SECTION("Default constructor")
     {
         const TriangleShape triangleShape({0, 0});
         CHECK(triangleShape.getTexture() == nullptr);
@@ -57,35 +60,35 @@ TEST_CASE("[Graphics] sf::Shape")
         CHECK(triangleShape.getGlobalBounds() == sf::FloatRect());
     }
 
-    SUBCASE("Set/get texture rect")
+    SECTION("Set/get texture rect")
     {
         TriangleShape triangleShape({});
         triangleShape.setTextureRect({{4, 5}, {6, 7}});
         CHECK(triangleShape.getTextureRect() == sf::IntRect({4, 5}, {6, 7}));
     }
 
-    SUBCASE("Set/get fill color")
+    SECTION("Set/get fill color")
     {
         TriangleShape triangleShape({});
         triangleShape.setFillColor(sf::Color::Cyan);
         CHECK(triangleShape.getFillColor() == sf::Color::Cyan);
     }
 
-    SUBCASE("Set/get outline color")
+    SECTION("Set/get outline color")
     {
         TriangleShape triangleShape({});
         triangleShape.setOutlineColor(sf::Color::Magenta);
         CHECK(triangleShape.getOutlineColor() == sf::Color::Magenta);
     }
 
-    SUBCASE("Set/get outline thickness")
+    SECTION("Set/get outline thickness")
     {
         TriangleShape triangleShape({});
         triangleShape.setOutlineThickness(3.14f);
         CHECK(triangleShape.getOutlineThickness() == 3.14f);
     }
 
-    SUBCASE("Virtual functions: getPoint, getPointCount")
+    SECTION("Virtual functions: getPoint, getPointCount")
     {
         const TriangleShape triangleShape({2, 2});
         CHECK(triangleShape.getPointCount() == 3);
@@ -94,7 +97,7 @@ TEST_CASE("[Graphics] sf::Shape")
         CHECK(triangleShape.getPoint(2) == sf::Vector2f(2, 2));
     }
 
-    SUBCASE("Get bounds")
+    SECTION("Get bounds")
     {
         TriangleShape triangleShape({2, 3});
         CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));

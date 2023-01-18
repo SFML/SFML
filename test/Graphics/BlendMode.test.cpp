@@ -1,20 +1,23 @@
 #include <SFML/Graphics/BlendMode.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::BlendMode>);
-static_assert(std::is_copy_assignable_v<sf::BlendMode>);
-static_assert(std::is_nothrow_move_constructible_v<sf::BlendMode>);
-static_assert(std::is_nothrow_move_assignable_v<sf::BlendMode>);
-
 TEST_CASE("[Graphics] sf::BlendMode")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        SUBCASE("Default constructor")
+        STATIC_CHECK(std::is_copy_constructible_v<sf::BlendMode>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::BlendMode>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::BlendMode>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::BlendMode>);
+    }
+
+    SECTION("Construction")
+    {
+        SECTION("Default constructor")
         {
             const sf::BlendMode blendMode;
             CHECK(blendMode.colorSrcFactor == sf::BlendMode::SrcAlpha);
@@ -25,7 +28,7 @@ TEST_CASE("[Graphics] sf::BlendMode")
             CHECK(blendMode.alphaEquation == sf::BlendMode::Add);
         }
 
-        SUBCASE("Combined color and alpha constructor using default parameter")
+        SECTION("Combined color and alpha constructor using default parameter")
         {
             const sf::BlendMode blendMode(sf::BlendMode::Zero, sf::BlendMode::SrcColor);
             CHECK(blendMode.colorSrcFactor == sf::BlendMode::Zero);
@@ -36,7 +39,7 @@ TEST_CASE("[Graphics] sf::BlendMode")
             CHECK(blendMode.alphaEquation == sf::BlendMode::Add);
         }
 
-        SUBCASE("Combined color and alpha constructor")
+        SECTION("Combined color and alpha constructor")
         {
             const sf::BlendMode blendMode(sf::BlendMode::Zero, sf::BlendMode::SrcColor, sf::BlendMode::ReverseSubtract);
             CHECK(blendMode.colorSrcFactor == sf::BlendMode::Zero);
@@ -47,7 +50,7 @@ TEST_CASE("[Graphics] sf::BlendMode")
             CHECK(blendMode.alphaEquation == sf::BlendMode::ReverseSubtract);
         }
 
-        SUBCASE("Separate color and alpha constructor")
+        SECTION("Separate color and alpha constructor")
         {
             const sf::BlendMode blendMode(sf::BlendMode::Zero,
                                           sf::BlendMode::SrcColor,
@@ -64,9 +67,9 @@ TEST_CASE("[Graphics] sf::BlendMode")
         }
     }
 
-    SUBCASE("Operators")
+    SECTION("Operators")
     {
-        SUBCASE("operator==")
+        SECTION("operator==")
         {
             CHECK(sf::BlendMode() == sf::BlendMode());
             CHECK(sf::BlendMode(sf::BlendMode::Zero, sf::BlendMode::One) ==
@@ -102,7 +105,7 @@ TEST_CASE("[Graphics] sf::BlendMode")
                               sf::BlendMode::Max));
         }
 
-        SUBCASE("operator!=")
+        SECTION("operator!=")
         {
             CHECK_FALSE(sf::BlendMode() != sf::BlendMode());
             CHECK_FALSE(sf::BlendMode(sf::BlendMode::Zero, sf::BlendMode::One) !=
@@ -139,7 +142,7 @@ TEST_CASE("[Graphics] sf::BlendMode")
         }
     }
 
-    SUBCASE("Static constants")
+    SECTION("Static constants")
     {
         CHECK(sf::BlendAlpha.colorSrcFactor == sf::BlendMode::SrcAlpha);
         CHECK(sf::BlendAlpha.colorDstFactor == sf::BlendMode::OneMinusSrcAlpha);
