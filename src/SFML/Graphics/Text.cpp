@@ -706,8 +706,8 @@ void Text::ensureGeometryUpdate() const
 ////////////////////////////////////////////////////////////
 void Text::updateUnderline(VertexArray& arr, const Color& color) const
 {
-    bool isUnderlined    = m_style & Underlined;
-    bool isStrikeThrough = m_style & StrikeThrough;
+    const bool isUnderlined    = m_style & Underlined;
+    const bool isStrikeThrough = m_style & StrikeThrough;
 
     //In case of newlines, find them and change lines
     unsigned int  lineCount = 0;
