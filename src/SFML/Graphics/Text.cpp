@@ -194,9 +194,9 @@ void Text::setFillColor(const Color& color)
     // In case we use the same color on all characters, no need to store
     // the same color multiple times
     if (m_multiFillColor)
-        m_fillColor.resize(1, Color::White);
+        m_fillColors.resize(1, Color::White);
     m_multiFillColor = 0;
-    m_fillColor[0]   = color;
+    m_fillColors[0]   = color;
 
     // Change vertex colors directly, no need to update whole geometry
     // (if geometry is updated anyway, we can skip this step)
@@ -214,20 +214,20 @@ void Text::setCharacterFillColor(unsigned int index, const Color& color)
     // Set the new per character colors to the color set by setFillColor()
     if (!m_multiFillColor)
     {
-        m_fillColor.resize(m_string.getSize());
-        for (std::size_t i = 0; i < m_fillColor.size(); i++)
-            m_fillColor[i] = m_fillColor[0];
+        m_fillColors.resize(m_string.getSize());
+        for (std::size_t i = 0; i < m_fillColors.size(); i++)
+            m_fillColors[i] = m_fillColors[0];
     }
     // Resize the vector so that each character can have a unique color
     // If index is out of bounds the vector will resize to be able to store it
-    if (m_fillColor.size() < index + 1)
+    if (m_fillColors.size() < index + 1)
     {
-        m_fillColor.resize(index + 1, Color::White);
+        m_fillColors.resize(index + 1, Color::White);
     }
     m_multiFillColor = 1;
-    if (color != m_fillColor[index])
+    if (color != m_fillColors[index])
     {
-        m_fillColor[index] = color;
+        m_fillColors[index] = color;
 
         // Change vertex colors directly, no need to update whole geometry
         // (if geometry is updated anyway, we can skip this step)
@@ -246,9 +246,9 @@ void Text::setOutlineColor(const Color& color)
     // In case we use the same color on all characters, no need to store
     // the same color multiple times
     if (m_multiOutlineColor)
-        m_outlineColor.resize(1, Color::Black);
+        m_outlineColors.resize(1, Color::Black);
     m_multiOutlineColor = 0;
-    m_outlineColor[0]   = color;
+    m_outlineColors[0]   = color;
 
     // Change vertex colors directly, no need to update whole geometry
     // (if geometry is updated anyway, we can skip this step)
@@ -266,20 +266,20 @@ void Text::setCharacterOutlineColor(unsigned int index, const Color& color)
     // Set the new per character colors to the color set by setFillColor()
     if (!m_multiOutlineColor)
     {
-        m_outlineColor.resize(m_string.getSize());
-        for (std::size_t i = 0; i < m_outlineColor.size(); i++)
-            m_outlineColor[i] = m_outlineColor[0];
+        m_outlineColors.resize(m_string.getSize());
+        for (std::size_t i = 0; i < m_outlineColors.size(); i++)
+            m_outlineColors[i] = m_outlineColors[0];
     }
     // Resize the vector so that each character can have a unique color
     // If index is out of bounds the vector will resize to be able to store it
-    if (m_outlineColor.size() < index + 1)
+    if (m_outlineColors.size() < index + 1)
     {
-        m_outlineColor.resize(index + 1, Color::Black);
+        m_outlineColors.resize(index + 1, Color::Black);
     }
     m_multiOutlineColor = 1;
-    if (color != m_outlineColor[index])
+    if (color != m_outlineColors[index])
     {
-        m_outlineColor[index] = color;
+        m_outlineColors[index] = color;
 
         // Change vertex colors directly, no need to update whole geometry
         // (if geometry is updated anyway, we can skip this step)
@@ -383,7 +383,7 @@ const Color& Text::getFillColor() const
 ////////////////////////////////////////////////////////////
 const Color& Text::getCharacterFillColor(unsigned int index) const
 {
-    return m_fillColor[index];
+    return m_fillColors[index];
 }
 
 
@@ -397,7 +397,7 @@ const Color& Text::getOutlineColor() const
 ////////////////////////////////////////////////////////////
 const Color& Text::getCharacterOutlineColor(unsigned int index) const
 {
-    return m_outlineColor[index];
+    return m_outlineColors[index];
 }
 
 
@@ -540,10 +540,10 @@ void Text::ensureGeometryUpdate() const
         return;
 
     // In case that string size changed in between this function and setCharacterColor()
-    if (m_fillColor.size() < m_string.getSize())
-        m_fillColor.resize(m_string.getSize(), Color::White);
-    if (m_outlineColor.size() < m_string.getSize())
-        m_outlineColor.resize(m_string.getSize(), Color::Black);
+    if (m_fillColors.size() < m_string.getSize())
+        m_fillColors.resize(m_string.getSize(), Color::White);
+    if (m_outlineColors.size() < m_string.getSize())
+        m_outlineColors.resize(m_string.getSize(), Color::Black);
 
     // Compute values related to the text style
     bool  isBold             = m_style & Bold;
@@ -641,7 +641,7 @@ void Text::ensureGeometryUpdate() const
             // Add the outline glyph to the vertices
             addGlyphQuad(m_outlineVertices,
                          Vector2f(x, y),
-                         m_multiOutlineColor ? m_outlineColor[i] : m_outlineColor[0],
+                         m_multiOutlineColor ? m_outlineColors[i] : m_outlineColors[0],
                          glyph,
                          italicShear);
         }
@@ -650,7 +650,7 @@ void Text::ensureGeometryUpdate() const
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
 
         // Add the glyph to the vertices
-        addGlyphQuad(m_vertices, Vector2f(x, y), m_multiFillColor ? m_fillColor[i] : m_fillColor[0], glyph, italicShear);
+        addGlyphQuad(m_vertices, Vector2f(x, y), m_multiFillColor ? m_fillColors[i] : m_fillColors[0], glyph, italicShear);
 
         // Update the current bounds
         float left   = glyph.bounds.left;
