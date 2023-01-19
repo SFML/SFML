@@ -191,8 +191,8 @@ void Text::setStyle(std::uint32_t style)
 ////////////////////////////////////////////////////////////
 void Text::setFillColor(const Color& color)
 {
-    //In case we use the same color on all characters, no need to store
-    //the same color multiple times
+    // In case we use the same color on all characters, no need to store
+    // the same color multiple times
     if (m_multiFillColor)
         m_fillColor.resize(1, Color::White);
     m_multiFillColor = 0;
@@ -211,15 +211,15 @@ void Text::setFillColor(const Color& color)
 ////////////////////////////////////////////////////////////
 void Text::setCharacterFillColor(unsigned int index, const Color& color)
 {
-    //Set the new per character colors to the color set by setFillColor()
+    // Set the new per character colors to the color set by setFillColor()
     if (!m_multiFillColor)
     {
         m_fillColor.resize(m_string.getSize());
         for (std::size_t i = 0; i < m_fillColor.size(); i++)
             m_fillColor[i] = m_fillColor[0];
     }
-    //Resize the vector so that each character can have a unique color
-    //If index is out of bounds the vector will resize to be able to store it
+    // Resize the vector so that each character can have a unique color
+    // If index is out of bounds the vector will resize to be able to store it
     if (m_fillColor.size() < index + 1)
     {
         m_fillColor.resize(index + 1, Color::White);
@@ -243,8 +243,8 @@ void Text::setCharacterFillColor(unsigned int index, const Color& color)
 ////////////////////////////////////////////////////////////
 void Text::setOutlineColor(const Color& color)
 {
-    //In case we use the same color on all characters, no need to store
-    //the same color multiple times
+    // In case we use the same color on all characters, no need to store
+    // the same color multiple times
     if (m_multiOutlineColor)
         m_outlineColor.resize(1, Color::Black);
     m_multiOutlineColor = 0;
@@ -263,15 +263,15 @@ void Text::setOutlineColor(const Color& color)
 ////////////////////////////////////////////////////////////
 void Text::setCharacterOutlineColor(unsigned int index, const Color& color)
 {
-    //Set the new per character colors to the color set by setFillColor()
+    // Set the new per character colors to the color set by setFillColor()
     if (!m_multiOutlineColor)
     {
         m_outlineColor.resize(m_string.getSize());
         for (std::size_t i = 0; i < m_outlineColor.size(); i++)
             m_outlineColor[i] = m_outlineColor[0];
     }
-    //Resize the vector so that each character can have a unique color
-    //If index is out of bounds the vector will resize to be able to store it
+    // Resize the vector so that each character can have a unique color
+    // If index is out of bounds the vector will resize to be able to store it
     if (m_outlineColor.size() < index + 1)
     {
         m_outlineColor.resize(index + 1, Color::Black);
@@ -539,7 +539,7 @@ void Text::ensureGeometryUpdate() const
     if (m_string.isEmpty())
         return;
 
-    //In case that string size changed in between this function and setCharacterColor()
+    // In case that string size changed in between this function and setCharacterColor()
     if (m_fillColor.size() < m_string.getSize())
         m_fillColor.resize(m_string.getSize(), Color::White);
     if (m_outlineColor.size() < m_string.getSize())
@@ -709,7 +709,7 @@ void Text::updateUnderline(VertexArray& arr, const Color& color) const
     const bool isUnderlined    = m_style & Underlined;
     const bool isStrikeThrough = m_style & StrikeThrough;
 
-    //In case of newlines, find them and change lines
+    // In case of newlines, find them and change lines
     unsigned int  lineCount = 0;
     std::uint32_t prevChar  = 0;
     for (unsigned int i = 0; i < m_string.getSize(); ++i)
@@ -731,7 +731,7 @@ void Text::updateUnderline(VertexArray& arr, const Color& color) const
         if (curChar == U'\n' && prevChar != U'\n')
             lineCount--;
     }
-    //At the end, there is an extra line
+    // At the end, there is an extra line
     for (std::size_t i = arr.getVertexCount() - 6 * isUnderlined - 6 * isStrikeThrough; i < arr.getVertexCount(); ++i)
         arr[i].color = color;
 }
