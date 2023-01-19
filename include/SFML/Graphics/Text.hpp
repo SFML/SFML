@@ -572,8 +572,8 @@ private:
     bool                       m_multiFillColor{0};          //!< Should the text have more than a single fill color
     bool                       m_multiOutlineColor{0};       //!< Should the text have more than a single outline color
     float                      m_outlineThickness{0.f};      //!< Thickness of the text's outline
-    mutable std::vector<Color> m_fillColor{Color::White};    //!< Text fill color(s)
-    mutable std::vector<Color> m_outlineColor{Color::Black}; //!< Text outline color(s)
+    mutable std::vector<Color> m_fillColors{Color::White};    //!< Text fill color(s)
+    mutable std::vector<Color> m_outlineColors{Color::Black}; //!< Text outline color(s)
     mutable VertexArray        m_vertices{PrimitiveType::Triangles};   //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
