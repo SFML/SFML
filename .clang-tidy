@@ -8,6 +8,8 @@ Checks: >
   readability-isolate-declaration,
   readability-qualified-auto,
   readability-redundant-access-specifiers,
+  readability-redundant-*,
+  readability-simplify-*,
   -clang-analyzer-core.NonNullParamChecker,
   -clang-analyzer-core.NullDereference,
   -clang-analyzer-nullability.NullablePassedToNonnull,

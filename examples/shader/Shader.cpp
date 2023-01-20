@@ -97,10 +97,7 @@ public:
         m_text.setPosition({30.f, 20.f});
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
-            return false;
-
-        return true;
+        return m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag");
     }
 
     void onUpdate(float time, float x, float y) override
@@ -152,10 +149,7 @@ public:
         }
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
-            return false;
-
-        return true;
+        return m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag");
     }
 
     void onUpdate(float time, float x, float y) override

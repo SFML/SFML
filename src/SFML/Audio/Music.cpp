@@ -195,7 +195,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point
     return (data.sampleCount != 0) && (currentOffset < m_file.getSampleCount()) &&
-           !(currentOffset == loopEnd && m_loopSpan.length != 0);
+           (currentOffset != loopEnd || m_loopSpan.length == 0);
 }
 
 

@@ -52,10 +52,8 @@ SoundBuffer::SoundBuffer()
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
-m_samples(copy.m_samples),
-m_duration(copy.m_duration),
-m_sounds() // don't copy the attached sounds
+SoundBuffer::SoundBuffer(const SoundBuffer& copy) : m_samples(copy.m_samples), m_duration(copy.m_duration)
+// don't copy the attached sounds
 {
     // Create the buffer
     alCheck(alGenBuffers(1, &m_buffer));

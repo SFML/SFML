@@ -72,10 +72,7 @@ bool isActive(std::uint64_t id)
 {
     auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
-    if ((it == contextRenderTargetMap.end()) || (it->second != id))
-        return false;
-
-    return true;
+    return (it != contextRenderTargetMap.end()) && (it->second == id);
 }
 
 // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
