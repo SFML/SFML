@@ -470,11 +470,11 @@ public:
             // -- VK_LAYER_GOOGLE_unique_objects
             // These layers perform error checking and warn about bad or sub-optimal Vulkan API usage
             // VK_LAYER_LUNARG_monitor appends an FPS counter to the window title
-            if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_standard_validation"))
+            if (std::string_view(layer.layerName) == "VK_LAYER_LUNARG_standard_validation")
             {
                 validationLayers.push_back("VK_LAYER_LUNARG_standard_validation");
             }
-            else if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_monitor"))
+            else if (std::string_view(layer.layerName) == "VK_LAYER_LUNARG_monitor")
             {
                 validationLayers.push_back("VK_LAYER_LUNARG_monitor");
             }
@@ -611,7 +611,7 @@ public:
 
             for (VkExtensionProperties& extension : extensions)
             {
-                if (!std::strcmp(extension.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME))
+                if (std::string_view(extension.extensionName) == VK_KHR_SWAPCHAIN_EXTENSION_NAME)
                 {
                     supportsSwapchain = true;
                     break;

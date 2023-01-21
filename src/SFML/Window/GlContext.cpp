@@ -932,7 +932,7 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 
     if (vendorName && rendererName)
     {
-        if ((std::strcmp(vendorName, "Microsoft Corporation") == 0) && (std::strcmp(rendererName, "GDI Generic") == 0))
+        if (std::string_view(vendorName) == "Microsoft Corporation" && std::string_view(rendererName) == "GDI Generic")
         {
             err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << '\n'
                   << "The current OpenGL implementation is not hardware-accelerated" << std::endl;

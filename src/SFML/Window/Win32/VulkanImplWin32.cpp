@@ -28,7 +28,6 @@
 #include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
 
-#include <cstring>
 #include <map>
 #include <string>
 #define VK_USE_PLATFORM_WIN32_KHR
@@ -138,11 +137,11 @@ bool VulkanImplWin32::isAvailable(bool requireGraphics)
 
             for (const VkExtensionProperties& properties : extensionProperties)
             {
-                if (!std::strcmp(properties.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
+                if (std::string_view(properties.extensionName) == VK_KHR_SURFACE_EXTENSION_NAME)
                 {
                     hasVkKhrSurface = true;
                 }
-                else if (!std::strcmp(properties.extensionName, VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
+                else if (std::string_view(properties.extensionName) == VK_KHR_WIN32_SURFACE_EXTENSION_NAME)
                 {
                     hasVkKhrPlatformSurface = true;
                 }

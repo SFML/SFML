@@ -28,7 +28,6 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/VulkanImplX11.hpp>
 
-#include <cstring>
 #include <dlfcn.h>
 #include <map>
 #include <string>
@@ -139,11 +138,11 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             for (const VkExtensionProperties& properties : extensionProperties)
             {
-                if (!std::strcmp(properties.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
+                if (std::string_view(properties.extensionName) == VK_KHR_SURFACE_EXTENSION_NAME)
                 {
                     hasVkKhrSurface = true;
                 }
-                else if (!std::strcmp(properties.extensionName, VK_KHR_XLIB_SURFACE_EXTENSION_NAME))
+                else if (std::string_view(properties.extensionName) == VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
                 {
                     hasVkKhrPlatformSurface = true;
                 }
