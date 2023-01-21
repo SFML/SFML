@@ -365,7 +365,7 @@ int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigne
         {
             drmModeModeInfoPtr currentMode = &connector->modes[i];
 
-            if (std::strcmp(currentMode->name, modeStr) == 0)
+            if (std::string_view(currentMode->name) == modeStr)
             {
                 if (vrefresh == 0 || currentMode->vrefresh == vrefresh)
                 {
