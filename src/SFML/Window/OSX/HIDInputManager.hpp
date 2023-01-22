@@ -257,7 +257,7 @@ private:
     /// \see isKeyPressed, isMouseButtonPressed
     ///
     ////////////////////////////////////////////////////////////
-    bool isPressed(IOHIDElements& elements);
+    bool isPressed(IOHIDElements& elements) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a HID key usage to its corresponding scancode

@@ -35,6 +35,7 @@
 
 namespace sf
 {
+// NOLINTBEGIN(readability-make-member-function-const)
 ////////////////////////////////////////////////////////////
 /// \brief Base class defining a sound's properties
 ///
@@ -291,6 +292,7 @@ protected:
     unsigned int m_source; //!< OpenAL source identifier
 };
 
+// NOLINTEND(readability-make-member-function-const)
 } // namespace sf
 
 

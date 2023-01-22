@@ -64,13 +64,13 @@ int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;
 int             waitingForFlip = 0;
 
-static void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
+void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
 {
     int* temp = static_cast<int*>(data);
     *temp     = 0;
 }
 
-static bool waitForFlip(int timeout)
+bool waitForFlip(int timeout)
 {
     while (waitingForFlip)
     {

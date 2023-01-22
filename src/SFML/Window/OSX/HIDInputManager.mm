@@ -34,8 +34,8 @@
 
 namespace
 {
-static const std::uint8_t unknownVirtualCode = 0xff;
-static const bool         isIsoKeyboard      = (KBGetLayoutType(LMGetKbdType()) == kKeyboardISO);
+const std::uint8_t unknownVirtualCode = 0xff;
+const bool         isIsoKeyboard      = (KBGetLayoutType(LMGetKbdType()) == kKeyboardISO);
 }
 
 namespace sf::priv
@@ -962,7 +962,7 @@ CFSetRef HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
 
 
 ////////////////////////////////////////////////////////////
-bool HIDInputManager::isPressed(IOHIDElements& elements)
+bool HIDInputManager::isPressed(IOHIDElements& elements) const
 {
     bool pressed = false;
     for (auto it = elements.begin(); it != elements.end() && !pressed; /* noop */)

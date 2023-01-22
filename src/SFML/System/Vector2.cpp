@@ -67,13 +67,13 @@ Angle Vector2<T>::angle() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Vector2<T>::rotatedBy(Angle angle) const
+Vector2<T> Vector2<T>::rotatedBy(Angle phi) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::rotatedBy() is only supported for floating point types");
 
     // No zero vector assert, because rotating a zero vector is well-defined (yields always itself)
-    T cos = std::cos(static_cast<T>(angle.asRadians()));
-    T sin = std::sin(static_cast<T>(angle.asRadians()));
+    T cos = std::cos(static_cast<T>(phi.asRadians()));
+    T sin = std::sin(static_cast<T>(phi.asRadians()));
 
     // Don't manipulate x and y separately, otherwise they're overwritten too early
     return Vector2<T>(cos * x - sin * y, sin * x + cos * y);
