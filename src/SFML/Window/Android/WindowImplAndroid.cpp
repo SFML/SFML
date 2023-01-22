@@ -647,7 +647,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
         case AKEYCODE_RIGHT_BRACKET:      return Keyboard::RBracket;
         case AKEYCODE_BACKSLASH:          return Keyboard::Backslash;
         case AKEYCODE_SEMICOLON:          return Keyboard::Semicolon;
-        case AKEYCODE_APOSTROPHE:         return Keyboard::Quote;
+        case AKEYCODE_APOSTROPHE:         return Keyboard::Apostrophe;
         case AKEYCODE_SLASH:              return Keyboard::Slash;
         case AKEYCODE_AT:
         case AKEYCODE_NUM:
