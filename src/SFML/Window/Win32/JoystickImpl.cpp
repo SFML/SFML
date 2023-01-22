@@ -31,6 +31,7 @@
 #include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <iomanip>
@@ -473,13 +474,9 @@ void JoystickImpl::cleanupDInput()
 bool JoystickImpl::isConnectedDInput(unsigned int index)
 {
     // Check if a joystick with the given index is in the connected list
-    for (const JoystickRecord& record : joystickList)
-    {
-        if (record.index == index)
-            return true;
-    }
-
-    return false;
+    return std::any_of(joystickList.cbegin(),
+                       joystickList.cend(),
+                       [index](const JoystickRecord& record) { return record.index == index; });
 }
 
 

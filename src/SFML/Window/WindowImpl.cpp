@@ -295,7 +295,7 @@ void WindowImpl::processSensorEvents()
 ////////////////////////////////////////////////////////////
 bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&            instance,
                                      [[maybe_unused]] VkSurfaceKHR&                surface,
-                                     [[maybe_unused]] const VkAllocationCallbacks* allocator)
+                                     [[maybe_unused]] const VkAllocationCallbacks* allocator) const
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 

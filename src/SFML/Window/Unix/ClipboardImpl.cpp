@@ -40,6 +40,7 @@
 namespace
 {
 // Filter the events received by windows (only allow those matching a specific window)
+// NOLINTNEXTLINE(readability-non-const-parameter)
 Bool checkEvent(::Display*, XEvent* event, XPointer userData)
 {
     // Just check if the event matches the window

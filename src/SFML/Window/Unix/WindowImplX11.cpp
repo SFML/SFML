@@ -92,6 +92,7 @@ constexpr unsigned long eventMask = FocusChangeMask | ButtonPressMask | ButtonRe
 constexpr unsigned int maxTrialsCount = 5;
 
 // Filter the events received by windows (only allow those matching a specific window)
+// NOLINTNEXTLINE(readability-non-const-parameter)
 Bool checkEvent(::Display*, XEvent* event, XPointer userData)
 {
     // Just check if the event matches the window
@@ -350,13 +351,9 @@ bool isWMAbsolutePositionGood()
     if (!ewmhSupported())
         return false;
 
-    for (const sf::String& name : wmAbsPosGood)
-    {
-        if (name == windowManagerName)
-            return true;
-    }
-
-    return false;
+    return std::any_of(std::begin(wmAbsPosGood),
+                       std::end(wmAbsPosGood),
+                       [&](const sf::String& name) { return name == windowManagerName; });
 }
 } // namespace WindowsImplX11Impl
 } // namespace

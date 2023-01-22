@@ -64,7 +64,7 @@ long tell(void* data)
     return static_cast<long>(stream->tell());
 }
 
-static ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
 } // namespace
 
 namespace sf::priv

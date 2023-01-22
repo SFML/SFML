@@ -311,7 +311,7 @@ private:
     /// \param requestedSettings Requested settings during context creation
     ///
     ////////////////////////////////////////////////////////////
-    void checkSettings(const ContextSettings& requestedSettings);
+    void checkSettings(const ContextSettings& requestedSettings) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

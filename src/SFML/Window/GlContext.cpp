@@ -913,7 +913,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 
 
 ////////////////////////////////////////////////////////////
-void GlContext::checkSettings(const ContextSettings& requestedSettings)
+void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
 

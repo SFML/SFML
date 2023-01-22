@@ -34,6 +34,7 @@
 
 namespace sf
 {
+// NOLINTBEGIN(readability-make-member-function-const)
 ////////////////////////////////////////////////////////////
 SoundSource::SoundSource()
 {
@@ -204,5 +205,6 @@ SoundSource::Status SoundSource::getStatus() const
 
     return Stopped;
 }
+// NOLINTEND(readability-make-member-function-const)
 
 } // namespace sf

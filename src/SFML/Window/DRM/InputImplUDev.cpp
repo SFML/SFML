@@ -28,6 +28,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 
+#include <algorithm>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -664,13 +665,9 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& /*r
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    for (const auto& slot : touchSlots)
-    {
-        if (slot.id == static_cast<int>(finger))
-            return true;
-    }
-
-    return false;
+    return std::any_of(touchSlots.cbegin(),
+                       touchSlots.cend(),
+                       [finger](const TouchSlot& slot) { return slot.id == static_cast<int>(finger); });
 }
 
 
