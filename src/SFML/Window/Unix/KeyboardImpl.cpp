@@ -647,12 +647,23 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
     // these scancodes actually correspond to keys with input
     // but we want to return their description, not their behaviour
-    if (code == Keyboard::Scan::Enter || code == Keyboard::Scan::Escape || code == Keyboard::Scan::Backspace ||
-        code == Keyboard::Scan::Tab || code == Keyboard::Scan::Space || code == Keyboard::Scan::ScrollLock ||
-        code == Keyboard::Scan::Pause || code == Keyboard::Scan::Delete || code == Keyboard::Scan::NumpadDivide ||
-        code == Keyboard::Scan::NumpadMultiply || code == Keyboard::Scan::NumpadMinus ||
-        code == Keyboard::Scan::NumpadPlus || code == Keyboard::Scan::NumpadEqual ||
-        code == Keyboard::Scan::NumpadEnter || code == Keyboard::Scan::NumpadDecimal)
+    // clang-format off
+    if (code == Keyboard::Scan::Enter ||
+        code == Keyboard::Scan::Escape ||
+        code == Keyboard::Scan::Backspace ||
+        code == Keyboard::Scan::Tab ||
+        code == Keyboard::Scan::Space ||
+        code == Keyboard::Scan::ScrollLock ||
+        code == Keyboard::Scan::Pause ||
+        code == Keyboard::Scan::Delete ||
+        code == Keyboard::Scan::NumpadDivide ||
+        code == Keyboard::Scan::NumpadMultiply ||
+        code == Keyboard::Scan::NumpadMinus ||
+        code == Keyboard::Scan::NumpadPlus ||
+        code == Keyboard::Scan::NumpadEqual ||
+        code == Keyboard::Scan::NumpadEnter ||
+        code == Keyboard::Scan::NumpadDecimal)
+    // clang-format on
     {
         checkInput = false;
     }
