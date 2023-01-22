@@ -266,6 +266,16 @@ private:
     static LRESULT CALLBACK globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert a Win32 scancode to an sfml scancode
+    ///
+    /// \param flags input flags
+    ///
+    /// \return SFML scancode corresponding to the key
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Scancode toScancode(WPARAM wParam, LPARAM lParam);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     HWND     m_handle{};            //!< Win32 handle of the window

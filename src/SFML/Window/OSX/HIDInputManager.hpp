@@ -74,16 +74,6 @@ public:
     static HIDInputManager& getInstance();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a key is pressed
-    ///
-    /// \param key Key to check
-    ///
-    /// \return True if the key is pressed, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    bool isKeyPressed(Keyboard::Key key);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the usb location ID of a given device
     ///
     /// This location ID is unique and can be used a usb port identifier
@@ -102,28 +92,69 @@ public:
     /// \return a retained CFDictionaryRef
     ///
     ////////////////////////////////////////////////////////////
-    static CFDictionaryRef copyDevicesMask(UInt32 page, UInt32 usage);
+    static CFDictionaryRef copyDevicesMask(std::uint32_t page, std::uint32_t usage);
 
     ////////////////////////////////////////////////////////////
-    /// Try to convert a character into a SFML key code.
+    /// \brief Try to convert a character into a SFML key code
     ///
     /// Return sf::Keyboard::Unknown if it doesn't match any 'localized' keys.
     ///
-    /// By 'localized' I mean keys that depend on the keyboard layout
-    /// and might not be the same as the US keycode in some country
-    /// (e.g. the keys 'Y' and 'Z' are switched on QWERTZ keyboard and
+    /// By 'localized' we mean keys that depend on the keyboard layout
+    /// and might not be the same as the US keycode for some countries
+    /// (e.g. the keys 'Y' and 'Z' are swapped on QWERTZ keyboard and
     /// US keyboard layouts.)
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key localizedKeys(UniChar ch);
+    static Keyboard::Key localizedKey(UniChar ch);
 
     ////////////////////////////////////////////////////////////
-    /// Try to convert a virtual keycode into a SFML key code.
+    /// \brief Opposite transformation as localizedKeys
     ///
-    /// Return sf::Keyboard::Unknown if the keycode is unknown.
+    /// Return 0x00 (NULL) for non-convertible keys/numpad numbers.
+    /// For letters, uppercase codes are returned.
+    /// Some returned value are specific to macOS.
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key nonLocalizedKeys(UniChar virtualKeycode);
+    static UniChar toUnicode(Keyboard::Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Try to convert a virtual keycode (HID level) into a
+    /// SFML scancode.
+    ///
+    /// Return sf::Keyboard::Scan::Unknown if the keycode is unknown.
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Scancode nonLocalizedKey(UniChar virtualKeycode);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::isKeyPressed(Key)
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isKeyPressed(Keyboard::Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::isKeyPressed(Scancode)
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isKeyPressed(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::localize
+    ///
+    ////////////////////////////////////////////////////////////
+    Keyboard::Key localize(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::delocalize
+    ///
+    ////////////////////////////////////////////////////////////
+    Keyboard::Scancode delocalize(Keyboard::Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::getDescription
+    ///
+    ////////////////////////////////////////////////////////////
+    String getDescription(Keyboard::Scancode code);
 
 private:
     ////////////////////////////////////////////////////////////
@@ -141,7 +172,13 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the keyboard part of this class
     ///
-    /// If something went wrong freeUp is called
+    /// If something went wrong freeUp is called.
+    ///
+    /// In a nutshell, this function does this:
+    ///
+    ///     for each connected keyboard kb:
+    ///       for each key k of kb:
+    ///         memorize k -> scancode mapping
     ///
     ////////////////////////////////////////////////////////////
     void initializeKeyboard();
@@ -150,9 +187,11 @@ private:
     /// \brief Load the given keyboard into m_keys
     ///
     /// If the given keyboard has no key this function simply
-    /// returns. freeUp is _not_ called because this is not fatal.
+    /// returns without calling freeUp because this is not fatal.
     ///
     /// \param keyboard Keyboard to load
+    ///
+    /// \see initializeKeyboard
     ///
     ////////////////////////////////////////////////////////////
     void loadKeyboard(IOHIDDeviceRef keyboard);
@@ -160,18 +199,38 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Load the given key into m_keys
     ///
-    /// freeUp is _not_ called by this function.
+    /// On error, freeUp is _not_ called by this function.
     ///
     /// \param key Key to load
+    ///
+    /// \see initializeKeyboard
     ///
     ////////////////////////////////////////////////////////////
     void loadKey(IOHIDElementRef key);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Regenerate the mappings from/to Key and Scancode
+    ///
+    ////////////////////////////////////////////////////////////
+    void buildMappings();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Callback to regenerate mappings from/to Key and
+    /// Scancode when there's a keyboard layout change
+    ///
+    ////////////////////////////////////////////////////////////
+    static void keyboardChanged(CFNotificationCenterRef /* center */,
+                                void* observer,
+                                CFStringRef /* name */,
+                                const void* /* object */,
+                                CFDictionaryRef /* userInfo */);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Release all resources
     ///
-    /// Close all connections to any devices, if required
-    /// Set m_isValid to false
+    /// Close all connections to any devices.
+    ///
+    /// \see initializeKeyboard
     ///
     ////////////////////////////////////////////////////////////
     void freeUp();
@@ -179,14 +238,14 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Filter the devices and return them
     ///
-    /// freeUp is _not_ called by this function.
+    /// On error, freeUp is _not_ called by this function.
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
-    /// \return a retained CFSetRef of IOHIDDeviceRef or a null pointer
+    /// \return a retained, non-empty CFSetRef of IOHIDDeviceRef or a null pointer
     ///
     ////////////////////////////////////////////////////////////
-    CFSetRef copyDevices(UInt32 page, UInt32 usage);
+    CFSetRef copyDevices(std::uint32_t page, std::uint32_t usage);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a key is pressed
@@ -201,33 +260,45 @@ private:
     bool isPressed(IOHIDElements& elements);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a HID key usage to its corresponding virtual code
-    ///
-    /// See IOHIDUsageTables.h
+    /// \brief Convert a HID key usage to its corresponding scancode
     ///
     /// \param usage Any kHIDUsage_Keyboard* usage
-    /// \return the virtual code associate with the given HID key usage
-    ///         or 0xff if it is associate with no virtual code
+    /// \return the scancode associated with the given HID key usage
+    ///         or Scan::Unknown if it is associated with no scancode.
     ///
     ////////////////////////////////////////////////////////////
-    static UInt8 usageToVirtualCode(UInt32 usage);
+    static Keyboard::Scancode usageToScancode(std::uint32_t usage);
+
+    ////////////////////////////////////////////////////////////
+    /// Convert the scancode to the expected virtual code.
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::uint8_t scanToVirtualCode(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// Fallback convertion for keys which aren't expected to be impacted
+    /// by the layout. Can return Unknown.
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Key localizedKeyFallback(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    bool              m_isValid{true}; ///< If any error occurs this variable is false
-    CFDataRef         m_layoutData{};  ///< CFData containing the layout
-    UCKeyboardLayout* m_layout{};      ///< Current Keyboard Layout
-    IOHIDManagerRef   m_manager{};     ///< HID Manager
-
-    IOHIDElements m_keys[Keyboard::KeyCount]; ///< All the keys on any connected keyboard
+    IOHIDManagerRef    m_manager{};                                ///< Underlying HID Manager
+    IOHIDElements      m_keys[Keyboard::Scan::ScancodeCount];      ///< All the keys on any connected keyboard
+    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount]; ///< Mapping from Key to Scancode
+    Keyboard::Key      m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////
-    /// m_keys' index corresponds to sf::Keyboard::Key enum.
-    /// if no key is assigned with key XYZ then m_keys[XYZ].size() == 0.
-    /// if there are several keyboards connected and several HID keys associate
+    /// m_keys' index corresponds to sf::Keyboard::Scancode enum.
+    /// If no key is assigned with key XYZ then m_keys[XYZ].size() == 0.
+    /// If there are several keyboards connected and several HID keys associated
     /// with the same sf::Keyboard::Key then m_keys[XYZ] contains all these
     /// HID keys.
+    ///
+    /// The mappings (both directions) get invalidated when the
+    /// keyboard layout changes. They both default to (Scan::)Unknown.
     ///
     ////////////////////////////////////////////////////////////
 };

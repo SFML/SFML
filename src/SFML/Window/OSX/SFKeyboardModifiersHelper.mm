@@ -62,6 +62,7 @@ struct ModifiersState
     BOOL leftAlternateWasDown;
     BOOL leftControlWasDown;
     BOOL rightControlWasDown;
+    BOOL capsLockWasOn;
 };
 
 
@@ -95,6 +96,7 @@ void processOneModifier(NSUInteger                 modifiers,
                         NSUInteger                 mask,
                         BOOL&                      wasDown,
                         sf::Keyboard::Key          key,
+                        sf::Keyboard::Scancode     code,
                         sf::priv::WindowImplCocoa& requester);
 
 
@@ -112,6 +114,8 @@ void processLeftRightModifiers(
     BOOL&                      rightWasDown,
     sf::Keyboard::Key          leftKey,
     sf::Keyboard::Key          rightKey,
+    sf::Keyboard::Scancode     leftCode,
+    sf::Keyboard::Scancode     rightCode,
     sf::priv::WindowImplCocoa& requester);
 
 
@@ -137,20 +141,22 @@ void initialiseKeyboardHelper()
     state.rightAlternateWasDown = isKeyMaskActive(modifiers, NSRightAlternateKeyMask);
     state.leftControlWasDown    = isKeyMaskActive(modifiers, NSLeftControlKeyMask);
     state.rightControlWasDown   = isKeyMaskActive(modifiers, NSRightControlKeyMask);
+    state.capsLockWasOn         = isKeyMaskActive(modifiers, NSEventModifierFlagCapsLock);
 
     isStateInitialized = YES;
 }
 
 
 ////////////////////////////////////////////////////////
-sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key)
+sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
 {
     sf::Event::KeyEvent event;
-    event.code    = key;
-    event.alt     = modifiers & NSAlternateKeyMask;
-    event.control = modifiers & NSControlKeyMask;
-    event.shift   = modifiers & NSShiftKeyMask;
-    event.system  = modifiers & NSCommandKeyMask;
+    event.code     = key;
+    event.scancode = code;
+    event.alt      = modifiers & NSAlternateKeyMask;
+    event.control  = modifiers & NSControlKeyMask;
+    event.shift    = modifiers & NSShiftKeyMask;
+    event.system   = modifiers & NSCommandKeyMask;
 
     return event;
 }
@@ -167,6 +173,8 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
                               state.rightShiftWasDown,
                               sf::Keyboard::LShift,
                               sf::Keyboard::RShift,
+                              sf::Keyboard::Scan::LShift,
+                              sf::Keyboard::Scan::RShift,
                               requester);
 
     // Handle command
@@ -177,6 +185,8 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
                               state.rightCommandWasDown,
                               sf::Keyboard::LSystem,
                               sf::Keyboard::RSystem,
+                              sf::Keyboard::Scan::LSystem,
+                              sf::Keyboard::Scan::RSystem,
                               requester);
 
     // Handle option (alt)
@@ -187,6 +197,8 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
                               state.rightAlternateWasDown,
                               sf::Keyboard::LAlt,
                               sf::Keyboard::RAlt,
+                              sf::Keyboard::Scan::LAlt,
+                              sf::Keyboard::Scan::RAlt,
                               requester);
 
     // Handle control
@@ -197,7 +209,17 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
                               state.rightControlWasDown,
                               sf::Keyboard::LControl,
                               sf::Keyboard::RControl,
+                              sf::Keyboard::Scan::LControl,
+                              sf::Keyboard::Scan::RControl,
                               requester);
+
+    // Handle caps lock
+    processOneModifier(modifiers,
+                       NSEventModifierFlagCapsLock,
+                       state.capsLockWasOn,
+                       sf::Keyboard::Unknown,
+                       sf::Keyboard::Scan::CapsLock,
+                       requester);
 }
 
 
@@ -212,10 +234,15 @@ BOOL isKeyMaskActive(NSUInteger modifiers, NSUInteger mask)
 
 
 ////////////////////////////////////////////////////////
-void processOneModifier(NSUInteger modifiers, NSUInteger mask, BOOL& wasDown, sf::Keyboard::Key key, sf::priv::WindowImplCocoa& requester)
+void processOneModifier(NSUInteger                 modifiers,
+                        NSUInteger                 mask,
+                        BOOL&                      wasDown,
+                        sf::Keyboard::Key          key,
+                        sf::Keyboard::Scancode     code,
+                        sf::priv::WindowImplCocoa& requester)
 {
     // Setup a potential event key.
-    sf::Event::KeyEvent event = keyEventWithModifiers(modifiers, key);
+    sf::Event::KeyEvent event = keyEventWithModifiers(modifiers, key, code);
 
     // State
     BOOL isDown = isKeyMaskActive(modifiers, mask);
@@ -244,8 +271,10 @@ void processLeftRightModifiers(
     BOOL&                      rightWasDown,
     sf::Keyboard::Key          leftKey,
     sf::Keyboard::Key          rightKey,
+    sf::Keyboard::Scancode     leftCode,
+    sf::Keyboard::Scancode     rightCode,
     sf::priv::WindowImplCocoa& requester)
 {
-    processOneModifier(modifiers, leftMask, leftWasDown, leftKey, requester);
-    processOneModifier(modifiers, rightMask, rightWasDown, rightKey, requester);
+    processOneModifier(modifiers, leftMask, leftWasDown, leftKey, leftCode, requester);
+    processOneModifier(modifiers, rightMask, rightWasDown, rightKey, rightCode, requester);
 }

@@ -227,7 +227,7 @@ sf::Keyboard::Key toKey(int code)
         case KEY_L:             return sf::Keyboard::L;
         case KEY_SEMICOLON:     return sf::Keyboard::Semicolon;
         case KEY_APOSTROPHE:    return sf::Keyboard::Quote;
-        case KEY_GRAVE:         return sf::Keyboard::Tilde;
+        case KEY_GRAVE:         return sf::Keyboard::Grave;
         case KEY_LEFTSHIFT:     return sf::Keyboard::LShift;
         case KEY_BACKSLASH:     return sf::Keyboard::Backslash;
         case KEY_Z:             return sf::Keyboard::Z;
@@ -414,12 +414,13 @@ bool eventProcess(sf::Event& event)
                     {
                         // key down and key up events
                         //
-                        event.type        = inputEvent.value ? sf::Event::KeyPressed : sf::Event::KeyReleased;
-                        event.key.code    = kb;
-                        event.key.alt     = altDown();
-                        event.key.control = controlDown();
-                        event.key.shift   = shiftDown();
-                        event.key.system  = systemDown();
+                        event.type         = inputEvent.value ? sf::Event::KeyPressed : sf::Event::KeyReleased;
+                        event.key.code     = kb;
+                        event.key.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
+                        event.key.alt      = altDown();
+                        event.key.control  = controlDown();
+                        event.key.shift    = shiftDown();
+                        event.key.system   = systemDown();
 
                         keyMap[static_cast<std::size_t>(kb)] = inputEvent.value;
 
@@ -573,6 +574,41 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
     update();
     return keyMap[static_cast<std::size_t>(key)];
+}
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isKeyPressed(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::isKeyPressed(Keyboard::Scancode) is not implemented for DRM." << std::endl;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::localize is not implemented for DRM." << std::endl;
+    return Keyboard::Unknown;
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::delocalize is not implemented for DRM." << std::endl;
+    return Keyboard::Scan::Unknown;
+}
+
+
+////////////////////////////////////////////////////////////
+String InputImpl::getDescription(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::getDescription is not implemented for DRM." << std::endl;
+    return "";
 }
 
 
