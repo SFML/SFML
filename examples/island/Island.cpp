@@ -276,8 +276,6 @@ int main()
         threads.back().join();
         threads.pop_back();
     }
-
-    return EXIT_SUCCESS;
 }
 
 
