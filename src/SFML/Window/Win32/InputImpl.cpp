@@ -33,8 +33,8 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
-Keyboard::Key      InputImpl::m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
+Keyboard::Scancode InputImpl::m_keyToScancodeMapping[Keyboard::KeyCount]; ///< Mapping from Key to Scancode
+Keyboard::Key      InputImpl::m_scancodeToKeyMapping[static_cast<std::size_t>(Keyboard::Scan::ScancodeCount)]; ///< Mapping from Scancode to Key
 
 ////////////////////////////////////////////////////////////
 Keyboard::Key virtualKeyToSfKey(UINT virtualKey)
@@ -541,14 +541,14 @@ void InputImpl::ensureMappings()
         key = Keyboard::Unknown;
 
     // Phase 2: Translate scancode to virtual code to key names
-    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
+    for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
         Keyboard::Scancode scan       = static_cast<Keyboard::Scancode>(i);
         UINT               virtualKey = sfScanToVirtualKey(scan);
         Keyboard::Key      key        = virtualKeyToSfKey(virtualKey);
         if (key != Keyboard::Unknown && m_keyToScancodeMapping[key] == Keyboard::Scan::Unknown)
             m_keyToScancodeMapping[key] = scan;
-        m_scancodeToKeyMapping[scan] = key;
+        m_scancodeToKeyMapping[static_cast<std::size_t>(scan)] = key;
     }
 
     isMappingInitialized = true;
@@ -576,7 +576,7 @@ Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
 
     ensureMappings();
 
-    return m_scancodeToKeyMapping[code];
+    return m_scancodeToKeyMapping[static_cast<std::size_t>(code)];
 }
 
 ////////////////////////////////////////////////////////////

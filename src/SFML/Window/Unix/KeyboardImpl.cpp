@@ -44,10 +44,10 @@
 namespace
 {
 
-const KeyCode nullKeyCode = 0;
-const int     maxKeyCode  = 256;
-KeyCode       scancodeToKeycode[sf::Keyboard::Scan::ScancodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[maxKeyCode];               ///< Mapping of X11 KeyCode to SFML scancode
+const KeyCode          nullKeyCode = 0;
+const int              maxKeyCode  = 256;
+KeyCode                scancodeToKeycode[static_cast<std::size_t>(sf::Keyboard::Scan::ScancodeCount)]; ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[maxKeyCode]; ///< Mapping of X11 KeyCode to SFML scancode
 
 ////////////////////////////////////////////////////////////
 bool isValidKeycode(KeyCode keycode)
@@ -491,7 +491,7 @@ void ensureMapping()
             scancode = mappedScancode->second;
 
         if (scancode != sf::Keyboard::Scan::Unknown)
-            scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);
+            scancodeToKeycode[static_cast<std::size_t>(scancode)] = static_cast<KeyCode>(keycode);
 
         keycodeToScancode[keycode] = scancode;
     }
@@ -506,8 +506,9 @@ void ensureMapping()
         {
             scancode = translateKeyCode(display, static_cast<KeyCode>(keycode));
 
-            if (scancode != sf::Keyboard::Scan::Unknown && scancodeToKeycode[scancode] == nullKeyCode)
-                scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);
+            if (scancode != sf::Keyboard::Scan::Unknown &&
+                scancodeToKeycode[static_cast<std::size_t>(scancode)] == nullKeyCode)
+                scancodeToKeycode[static_cast<std::size_t>(scancode)] = static_cast<KeyCode>(keycode);
 
             keycodeToScancode[keycode] = scancode;
         }
@@ -525,7 +526,7 @@ KeyCode scancodeToKeyCode(sf::Keyboard::Scancode code)
     ensureMapping();
 
     if (code != sf::Keyboard::Scan::Unknown)
-        return scancodeToKeycode[code];
+        return scancodeToKeycode[static_cast<std::size_t>(code)];
 
     return nullKeyCode;
 }
@@ -560,7 +561,7 @@ KeyCode keyToKeyCode(sf::Keyboard::Key key)
 
     // Fallback for when XKeysymToKeycode cannot tell the KeyCode for XK_Alt_R
     if (key == sf::Keyboard::RAlt)
-        return scancodeToKeycode[sf::Keyboard::Scan::RAlt];
+        return scancodeToKeycode[static_cast<std::size_t>(sf::Keyboard::Scan::RAlt)];
 
     return nullKeyCode;
 }

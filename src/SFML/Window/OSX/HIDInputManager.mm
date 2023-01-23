@@ -561,7 +561,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 {
-    return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[code]);
+    return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[static_cast<std::size_t>(code)]);
 }
 
 
@@ -571,7 +571,7 @@ Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
     if (code == Keyboard::Scan::Unknown)
         return Keyboard::Unknown;
 
-    return m_scancodeToKeyMapping[code];
+    return m_scancodeToKeyMapping[static_cast<std::size_t>(code)];
 }
 
 
@@ -794,7 +794,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     if (code != Keyboard::Scan::Unknown)
     {
         CFRetain(key);
-        m_keys[code].push_back(key);
+        m_keys[static_cast<std::size_t>(code)].push_back(key);
     }
 }
 
@@ -823,7 +823,7 @@ void HIDInputManager::buildMappings()
 
     // For each scancode having a IOHIDElement, we translate the corresponding
     // virtual code to a localized Key.
-    for (int i = 0; i < Keyboard::Scan::ScancodeCount; ++i)
+    for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
         Keyboard::Scancode scan        = static_cast<Keyboard::Scancode>(i);
         std::uint8_t       virtualCode = scanToVirtualCode(scan);
@@ -898,7 +898,7 @@ void HIDInputManager::buildMappings()
         // Register the bi-mapping
         if (m_keyToScancodeMapping[code] == Keyboard::Scan::Unknown)
             m_keyToScancodeMapping[code] = scan;
-        m_scancodeToKeyMapping[scan] = code;
+        m_scancodeToKeyMapping[static_cast<std::size_t>(scan)] = code;
     }
 
     CFRelease(tis);
