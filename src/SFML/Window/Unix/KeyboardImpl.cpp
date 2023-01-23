@@ -37,8 +37,8 @@
 #include <X11/keysym.h>
 
 #include <cstring>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 namespace
@@ -275,9 +275,9 @@ sf::Keyboard::Scancode translateKeyCode(Display* display, KeyCode keycode)
 }
 
 ////////////////////////////////////////////////////////////
-std::map<std::string, sf::Keyboard::Scancode> getNameScancodeMap()
+std::unordered_map<std::string, sf::Keyboard::Scancode> getNameScancodeMap()
 {
-    std::map<std::string, sf::Keyboard::Scancode> mapping;
+    std::unordered_map<std::string, sf::Keyboard::Scancode> mapping;
 
     mapping.emplace("LSGT", sf::Keyboard::Scan::NonUsBackslash);
 
@@ -471,8 +471,8 @@ void ensureMapping()
     XkbDescPtr descriptor = XkbGetMap(display, 0, XkbUseCoreKbd);
     XkbGetNames(display, XkbKeyNamesMask, descriptor);
 
-    std::map<std::string, sf::Keyboard::Scancode> nameScancodeMap = getNameScancodeMap();
-    sf::Keyboard::Scancode                        scancode        = sf::Keyboard::Scan::Unknown;
+    std::unordered_map<std::string, sf::Keyboard::Scancode> nameScancodeMap = getNameScancodeMap();
+    sf::Keyboard::Scancode                                  scancode        = sf::Keyboard::Scan::Unknown;
 
     for (int keycode = descriptor->min_key_code; keycode <= descriptor->max_key_code; ++keycode)
     {
@@ -484,8 +484,9 @@ void ensureMapping()
         std::memcpy(name, descriptor->names->keys[keycode].name, XkbKeyNameLength);
         name[XkbKeyNameLength] = '\0';
 
-        std::map<std::string, sf::Keyboard::Scancode>::iterator mappedScancode = nameScancodeMap.find(std::string(name));
-        scancode                                                               = sf::Keyboard::Scan::Unknown;
+        std::unordered_map<std::string, sf::Keyboard::Scancode>::iterator mappedScancode = nameScancodeMap.find(
+            std::string(name));
+        scancode = sf::Keyboard::Scan::Unknown;
 
         if (mappedScancode != nameScancodeMap.end())
             scancode = mappedScancode->second;
