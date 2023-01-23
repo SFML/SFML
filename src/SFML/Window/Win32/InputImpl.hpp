@@ -30,6 +30,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include <cstddef>
+
 
 namespace sf::priv
 {
@@ -184,8 +186,8 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     // NOLINTBEGIN(readability-identifier-naming)
-    static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount];            ///< Mapping from Key to Scancode
-    static Keyboard::Key      m_scancodeToKeyMapping[Keyboard::Scan::ScancodeCount]; ///< Mapping from Scancode to Key
+    static Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount]; ///< Mapping from Key to Scancode
+    static Keyboard::Key m_scancodeToKeyMapping[static_cast<std::size_t>(Keyboard::Scan::ScancodeCount)]; ///< Mapping from Scancode to Key
     // NOLINTEND(readability-identifier-naming)
 };
 
