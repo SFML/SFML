@@ -114,7 +114,7 @@ void updatePluggedList()
 
     if (directory)
     {
-        int            joystickCount  = 0;
+        unsigned int   joystickCount  = 0;
         struct dirent* directoryEntry = readdir(directory);
 
         while (directoryEntry && joystickCount < sf::Joystick::Count)
