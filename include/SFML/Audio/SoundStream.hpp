@@ -327,11 +327,10 @@ private:
     ////////////////////////////////////////////////////////////
     void awaitStreamingThread();
 
-    enum
-    {
-        BufferCount   = 3, //!< Number of audio buffers used by the streaming loop
-        BufferRetries = 2  //!< Number of retries (excluding initial try) for onGetData()
-    };
+    // NOLINTBEGIN(readability-identifier-naming)
+    static constexpr unsigned int BufferCount{3};   //!< Number of audio buffers used by the streaming loop
+    static constexpr unsigned int BufferRetries{2}; //!< Number of retries (excluding initial try) for onGetData()
+    // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
     // Member data

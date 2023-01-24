@@ -479,10 +479,7 @@ private:
     ////////////////////////////////////////////////////////////
     struct StatesCache
     {
-        enum
-        {
-            VertexCacheSize = 4
-        };
+        static constexpr std::size_t VertexCacheSize{4}; // NOLINT(readability-identifier-naming)
 
         bool          enable;                       //!< Is the cache enabled?
         bool          glStatesSet{};                //!< Are our internal GL states set yet?

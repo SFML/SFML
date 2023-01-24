@@ -668,7 +668,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     data[8 * 4 + i].dwFlags = 0;
                 }
 
-                for (int i = 0; i < sf::Joystick::ButtonCount; ++i)
+                for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
                 {
                     data[8 * 4 + 4 + i].pguid   = nullptr;
                     data[8 * 4 + 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_BUTTON(i));
@@ -872,7 +872,7 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     }
 
     // Check which axes have valid offsets
-    for (int i = 0; i < Joystick::AxisCount; ++i)
+    for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
         caps.axes[i] = (m_axes[i] != -1);
 
     return caps;
@@ -923,7 +923,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
         bool eventHandled = false;
 
         // Get the current state of each axis
-        for (int j = 0; j < Joystick::AxisCount; ++j)
+        for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
         {
             if (m_axes[j] == static_cast<int>(events[i].dwOfs))
             {
@@ -959,7 +959,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
             continue;
 
         // Get the current state of each button
-        for (int j = 0; j < Joystick::ButtonCount; ++j)
+        for (unsigned int j = 0; j < Joystick::ButtonCount; ++j)
         {
             if (m_buttons[j] == static_cast<int>(events[i].dwOfs))
                 m_state.buttons[j] = (events[i].dwData != 0);
@@ -1012,7 +1012,7 @@ JoystickState JoystickImpl::updateDInputPolled()
         }
 
         // Get the current state of each axis
-        for (int i = 0; i < Joystick::AxisCount; ++i)
+        for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
         {
             if (m_axes[i] != -1)
             {
@@ -1049,7 +1049,7 @@ JoystickState JoystickImpl::updateDInputPolled()
         }
 
         // Get the current state of each button
-        for (int i = 0; i < Joystick::ButtonCount; ++i)
+        for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
         {
             if (m_buttons[i] != -1)
             {
@@ -1153,11 +1153,11 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
     else if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_BUTTON)
     {
         // Buttons
-        for (int i = 0; i < Joystick::ButtonCount; ++i)
+        for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
         {
             if (joystick.m_buttons[i] == -1)
             {
-                joystick.m_buttons[i] = DIJOFS_BUTTON(i);
+                joystick.m_buttons[i] = DIJOFS_BUTTON(static_cast<int>(i));
                 break;
             }
         }

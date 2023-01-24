@@ -50,10 +50,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Constants
     ////////////////////////////////////////////////////////////
-    enum
-    {
-        MaxDatagramSize = 65507 //!< The maximum number of bytes that can be sent in a single UDP datagram
-    };
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr std::size_t MaxDatagramSize{65507}; //!< The maximum number of bytes that can be sent in a single UDP datagram
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor

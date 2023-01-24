@@ -62,10 +62,8 @@ public:
     /// \brief Some special values used by sockets
     ///
     ////////////////////////////////////////////////////////////
-    enum
-    {
-        AnyPort = 0 //!< Special value that tells the system to pick any available port
-    };
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr unsigned short AnyPort{0}; //!< Special value that tells the system to pick any available port
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
