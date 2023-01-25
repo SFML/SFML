@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -36,9 +36,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
@@ -94,7 +92,9 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     vorbis_comment_init(&comment);
 
     // Generate the header packets
-    ogg_packet header, headerComm, headerCode;
+    ogg_packet header;
+    ogg_packet headerComm;
+    ogg_packet headerCode;
     status = vorbis_analysis_headerout(&m_state, &comment, &header, &headerComm, &headerCode);
     vorbis_comment_clear(&comment);
     if (status < 0)
@@ -206,6 +206,4 @@ void SoundFileWriterOgg::close()
     vorbis_info_clear(&m_vorbis);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

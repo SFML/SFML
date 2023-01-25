@@ -224,7 +224,7 @@ int main()
         if (prerequisitesSupported)
         {
             {
-                std::scoped_lock lock(workQueueMutex);
+                std::lock_guard lock(workQueueMutex);
 
                 // Don't bother updating/drawing the VertexBuffer while terrain is being regenerated
                 if (!pendingWorkCount)
@@ -267,7 +267,7 @@ int main()
 
     // Shut down our thread pool
     {
-        std::scoped_lock lock(workQueueMutex);
+        std::lock_guard lock(workQueueMutex);
         workPending = false;
     }
 
@@ -276,8 +276,6 @@ int main()
         threads.back().join();
         threads.pop_back();
     }
-
-    return EXIT_SUCCESS;
 }
 
 
@@ -581,7 +579,7 @@ void threadFunction()
 
         // Check if there are new work items in the queue
         {
-            std::scoped_lock lock(workQueueMutex);
+            std::lock_guard lock(workQueueMutex);
 
             if (!workPending)
                 return;
@@ -604,7 +602,7 @@ void threadFunction()
         processWorkItem(vertices, workItem);
 
         {
-            std::scoped_lock lock(workQueueMutex);
+            std::lock_guard lock(workQueueMutex);
 
             --pendingWorkCount;
         }
@@ -626,7 +624,7 @@ void generateTerrain(sf::Vertex* buffer)
     for (;;)
     {
         {
-            std::scoped_lock lock(workQueueMutex);
+            std::lock_guard lock(workQueueMutex);
 
             if (workQueue.empty())
                 break;
@@ -637,7 +635,7 @@ void generateTerrain(sf::Vertex* buffer)
 
     // Queue all the new work items
     {
-        std::scoped_lock lock(workQueueMutex);
+        std::lock_guard lock(workQueueMutex);
 
         for (unsigned int i = 0; i < blockCount; ++i)
         {

@@ -45,9 +45,7 @@
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 WindowImplAndroid* WindowImplAndroid::singleInstance = nullptr;
 
@@ -64,8 +62,8 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const ContextSettings& /* settings */) :
 m_size(mode.size)
 {
-    ActivityStates&  states = getActivity();
-    std::scoped_lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::lock_guard lock(states.mutex);
 
     if (style & Style::Fullscreen)
         states.fullscreen = true;
@@ -90,8 +88,8 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getSystemHandle() const
 {
-    ActivityStates&  states = getActivity();
-    std::scoped_lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::lock_guard lock(states.mutex);
 
     return states.window;
 }
@@ -103,8 +101,8 @@ void WindowImplAndroid::processEvents()
     // Process incoming OS events
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates&  states = getActivity();
-    std::scoped_lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::lock_guard lock(states.mutex);
 
     if (m_windowBeingCreated)
     {
@@ -241,8 +239,8 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* data */)
 {
-    ActivityStates&  states = getActivity();
-    std::scoped_lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::lock_guard lock(states.mutex);
 
     AInputEvent* _event = nullptr;
 
@@ -642,7 +640,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
         case AKEYCODE_ENTER:              return Keyboard::Enter;
         case AKEYCODE_DEL:                return Keyboard::Backspace;
         case AKEYCODE_FORWARD_DEL:        return Keyboard::Delete;
-        case AKEYCODE_GRAVE:              return Keyboard::Tilde;
+        case AKEYCODE_GRAVE:              return Keyboard::Grave;
         case AKEYCODE_MINUS:              return Keyboard::Subtract;
         case AKEYCODE_EQUALS:             return Keyboard::Equal;
         case AKEYCODE_LEFT_BRACKET:       return Keyboard::LBracket;
@@ -695,8 +693,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
-    ActivityStates&  states = getActivity();
-    std::scoped_lock lock(states.mutex);
+    ActivityStates& states = getActivity();
+    std::lock_guard lock(states.mutex);
 
     // Initializes JNI
     jint lResult;
@@ -755,5 +753,4 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     return unicode;
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -73,7 +73,7 @@ constexpr Color operator+(const Color& left, const Color& right)
 {
     const auto clampedAdd = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
     {
-        const int intResult = static_cast<int>(lhs) + static_cast<int>(rhs);
+        const int intResult = int{lhs} + int{rhs};
         return static_cast<std::uint8_t>(intResult < 255 ? intResult : 255);
     };
 
@@ -89,7 +89,7 @@ constexpr Color operator-(const Color& left, const Color& right)
 {
     const auto clampedSub = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
     {
-        const int intResult = static_cast<int>(lhs) - static_cast<int>(rhs);
+        const int intResult = int{lhs} - int{rhs};
         return static_cast<std::uint8_t>(intResult > 0 ? intResult : 0);
     };
 
@@ -105,8 +105,7 @@ constexpr Color operator*(const Color& left, const Color& right)
 {
     const auto scaledMul = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
     {
-        const auto uint16Result = static_cast<std::uint16_t>(
-            static_cast<std::uint16_t>(lhs) * static_cast<std::uint16_t>(rhs));
+        const auto uint16Result = static_cast<std::uint16_t>(std::uint16_t{lhs} * std::uint16_t{rhs});
         return static_cast<std::uint8_t>(uint16Result / 255u);
     };
 

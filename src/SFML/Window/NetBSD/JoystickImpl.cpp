@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //               2013-2013 David Demelier (demelier.david@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -114,7 +114,7 @@ void updatePluggedList()
 
     if (directory)
     {
-        int            joystickCount  = 0;
+        unsigned int   joystickCount  = 0;
         struct dirent* directoryEntry = readdir(directory);
 
         while (directoryEntry && joystickCount < sf::Joystick::Count)
@@ -164,9 +164,7 @@ void hatValueToSfml(int value, sf::priv::JoystickState& state)
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
@@ -353,6 +351,4 @@ JoystickState JoystickImpl::JoystickImpl::update()
     return m_state;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

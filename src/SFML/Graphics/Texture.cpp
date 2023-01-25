@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -52,7 +52,7 @@ std::recursive_mutex maximumSizeMutex;
 // is used for states cache (see RenderTarget)
 std::uint64_t getUniqueId()
 {
-    std::scoped_lock lock(idMutex);
+    std::lock_guard lock(idMutex);
 
     static std::uint64_t id = 1; // start at 1, zero is "no texture"
 
@@ -331,7 +331,7 @@ Image Texture::copyToImage() const
     priv::TextureSaver save;
 
     // Create an array of pixels
-    std::vector<std::uint8_t> pixels(static_cast<std::size_t>(m_size.x) * static_cast<std::size_t>(m_size.y) * 4);
+    std::vector<std::uint8_t> pixels(m_size.x * m_size.y * 4);
 
 #ifdef SFML_OPENGL_ES
 
@@ -365,8 +365,7 @@ Image Texture::copyToImage() const
         // Texture is either padded or flipped, we have to use a slower algorithm
 
         // All the pixels will first be copied to a temporary array
-        std::vector<std::uint8_t> allPixels(
-            static_cast<std::size_t>(m_actualSize.x) * static_cast<std::size_t>(m_actualSize.y) * 4);
+        std::vector<std::uint8_t> allPixels(m_actualSize.x * m_actualSize.y * 4);
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
@@ -833,7 +832,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    std::scoped_lock lock(TextureImpl::maximumSizeMutex);
+    std::lock_guard lock(TextureImpl::maximumSizeMutex);
 
     static bool  checked = false;
     static GLint size    = 0;

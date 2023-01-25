@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -47,15 +47,11 @@ NSCursor* loadFromSelector(SEL selector)
 
 }
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() : m_cursor(nil)
-{
-}
+CursorImpl::CursorImpl() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -141,6 +137,4 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

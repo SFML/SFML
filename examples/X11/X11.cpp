@@ -299,6 +299,4 @@ int main()
 
     // Close the display
     XCloseDisplay(display);
-
-    return EXIT_SUCCESS;
 }

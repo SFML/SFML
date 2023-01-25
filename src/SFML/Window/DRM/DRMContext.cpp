@@ -64,13 +64,13 @@ int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;
 int             waitingForFlip = 0;
 
-static void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
+void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
 {
     int* temp = static_cast<int*>(data);
     *temp     = 0;
 }
 
-static bool waitForFlip(int timeout)
+bool waitForFlip(int timeout)
 {
     while (waitingForFlip)
     {
@@ -121,7 +121,7 @@ void cleanup()
     close(drmNode.fileDescriptor);
 
     drmNode.fileDescriptor = -1;
-    drmNode.mode           = 0;
+    drmNode.mode           = nullptr;
 
     pollFD      = {};
     drmEventCtx = {};
@@ -161,8 +161,8 @@ DrmFb* drmFbGetFromBo(gbm_bo& bo)
     std::uint32_t offsets[4]   = {0};
     std::uint64_t modifiers[4] = {0};
     modifiers[0]               = gbm_bo_get_modifier(&bo);
-    const int num_planes       = gbm_bo_get_plane_count(&bo);
-    for (int i = 0; i < num_planes; ++i)
+    const int numPlanes        = gbm_bo_get_plane_count(&bo);
+    for (int i = 0; i < numPlanes; ++i)
     {
         strides[i]   = gbm_bo_get_stride_for_plane(&bo, i);
         handles[i]   = gbm_bo_get_handle(&bo).u32;
@@ -483,7 +483,8 @@ EGLDisplay getInitializedDisplay()
 
         eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
-        EGLint major, minor;
+        EGLint major;
+        EGLint minor;
         eglCheck(eglInitialize(display, &major, &minor));
 
         gladLoaderLoadEGL(display);
@@ -506,9 +507,7 @@ EGLDisplay getInitializedDisplay()
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 DRMContext::DRMContext(DRMContext* shared)
@@ -828,6 +827,4 @@ Drm& DRMContext::getDRM()
     return drmNode;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

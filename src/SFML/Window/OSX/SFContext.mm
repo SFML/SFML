@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -33,15 +33,11 @@
 
 #include <dlfcn.h>
 #include <ostream>
-#include <stdint.h>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-
 
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
@@ -116,7 +112,7 @@ GlFunctionPointer SFContext::getFunction(const char* name)
     if (!image)
         image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
 
-    return (image ? reinterpret_cast<GlFunctionPointer>(reinterpret_cast<intptr_t>(dlsym(image, name))) : 0);
+    return (image ? reinterpret_cast<GlFunctionPointer>(reinterpret_cast<intptr_t>(dlsym(image, name))) : nil);
 }
 
 
@@ -293,6 +289,4 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
     [pixFmt release];
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

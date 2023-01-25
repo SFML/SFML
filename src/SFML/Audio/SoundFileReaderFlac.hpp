@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,9 +33,7 @@
 #include <vector>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles FLAC files
@@ -54,7 +52,6 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(InputStream& stream);
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -102,7 +99,6 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override;
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Hold the state that is passed to the decoder callbacks
     ///
@@ -131,6 +127,4 @@ private:
     ClientData           m_clientData; //!< Structure passed to the decoder callbacks
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

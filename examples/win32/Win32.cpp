@@ -107,11 +107,12 @@ int main()
                               nullptr,
                               instance,
                               nullptr);
-    sf::RenderWindow SFMLView1(view1);
-    sf::RenderWindow SFMLView2(view2);
+    sf::RenderWindow sfmlView1(view1);
+    sf::RenderWindow sfmlView2(view2);
 
     // Load some textures to display
-    sf::Texture texture1, texture2;
+    sf::Texture texture1;
+    sf::Texture texture2;
     if (!texture1.loadFromFile("resources/image1.jpg") || !texture2.loadFromFile("resources/image2.jpg"))
         return EXIT_FAILURE;
     sf::Sprite sprite1(texture1);
@@ -138,32 +139,30 @@ int main()
             float time = clock.getElapsedTime().asSeconds();
 
             // Clear views
-            SFMLView1.clear();
-            SFMLView2.clear();
+            sfmlView1.clear();
+            sfmlView2.clear();
 
             // Draw sprite 1 on view 1
             sprite1.setRotation(sf::degrees(time * 100));
-            SFMLView1.draw(sprite1);
+            sfmlView1.draw(sprite1);
 
             // Draw sprite 2 on view 2
             sprite2.setPosition({std::cos(time) * 100.f, 0.f});
-            SFMLView2.draw(sprite2);
+            sfmlView2.draw(sprite2);
 
             // Display each view on screen
-            SFMLView1.display();
-            SFMLView2.display();
+            sfmlView1.display();
+            sfmlView2.display();
         }
     }
 
     // Close our SFML views before destroying the underlying window
-    SFMLView1.close();
-    SFMLView2.close();
+    sfmlView1.close();
+    sfmlView2.close();
 
     // Destroy the main window (all its child controls will be destroyed)
     DestroyWindow(window);
 
     // Don't forget to unregister the window class
     UnregisterClass(TEXT("SFML App"), instance);
-
-    return EXIT_SUCCESS;
 }

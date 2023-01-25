@@ -39,9 +39,7 @@
 #include <xf86drmMode.h>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 struct Drm
 {
@@ -95,7 +93,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~DRMContext();
+    ~DRMContext() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate the context as the current target
@@ -106,13 +104,13 @@ public:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent(bool current) override;
+    bool makeCurrent(bool current) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void display() override;
+    void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -125,7 +123,7 @@ public:
     /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVerticalSyncEnabled(bool enabled) override;
+    void setVerticalSyncEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL context
@@ -211,6 +209,4 @@ private:
     bool         m_scanOut{};
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

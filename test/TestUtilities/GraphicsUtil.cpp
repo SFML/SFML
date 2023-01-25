@@ -16,9 +16,8 @@ std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode)
 
 std::ostream& operator<<(std::ostream& os, const Color& color)
 {
-    return os << "0x" << std::hex << color.toInteger() << std::dec << " (r=" << static_cast<int>(color.r)
-              << ", g=" << static_cast<int>(color.g) << ", b=" << static_cast<int>(color.b)
-              << ", a=" << static_cast<int>(color.a) << ")";
+    return os << "0x" << std::hex << color.toInteger() << std::dec << " (r=" << int{color.r} << ", g=" << int{color.g}
+              << ", b=" << int{color.b} << ", a=" << int{color.a} << ")";
 }
 
 std::ostream& operator<<(std::ostream& os, const Transform& transform)

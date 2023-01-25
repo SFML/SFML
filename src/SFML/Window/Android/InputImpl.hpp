@@ -31,9 +31,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief iOS implementation of inputs (keyboard + mouse)
@@ -43,19 +41,37 @@ class InputImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Check if a key is pressed
-    ///
-    /// \param key Key to check
-    ///
-    /// \return True if the key is pressed, false otherwise
+    /// \copydoc sf::Keyboard::isKeyPressed(Key)
     ///
     ////////////////////////////////////////////////////////////
     static bool isKeyPressed(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Show or hide the virtual keyboard
+    /// \copydoc sf::Keyboard::isKeyPressed(Scancode)
     ///
-    /// \param visible True to show, false to hide
+    ////////////////////////////////////////////////////////////
+    static bool isKeyPressed(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::localize
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Key localize(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::delocalize
+    ///
+    ////////////////////////////////////////////////////////////
+    static Keyboard::Scancode delocalize(Keyboard::Key key);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::getDescription
+    ///
+    ////////////////////////////////////////////////////////////
+    static String getDescription(Keyboard::Scancode code);
+
+    ////////////////////////////////////////////////////////////
+    /// \copydoc sf::Keyboard::setVirtualKeyboardVisible
     ///
     ////////////////////////////////////////////////////////////
     static void setVirtualKeyboardVisible(bool visible);
@@ -158,6 +174,4 @@ public:
     static Vector2i getTouchPosition(unsigned int finger, const WindowBase& relativeTo);
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

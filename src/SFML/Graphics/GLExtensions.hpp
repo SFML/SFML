@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -334,9 +334,7 @@
 #define GLEXT_GL_VERSION_4_5 SF_GLAD_GL_VERSION_4_5
 #define GLEXT_GL_VERSION_4_6 SF_GLAD_GL_VERSION_4_6
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -345,6 +343,4 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit();
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

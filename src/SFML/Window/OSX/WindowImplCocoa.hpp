@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -90,7 +90,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WindowImplCocoa();
+    ~WindowImplCocoa() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Closed Event - called by the cocoa window object
@@ -239,7 +239,6 @@ public:
     ////////////////////////////////////////////////////////////
     static void setUpProcess();
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
     ///

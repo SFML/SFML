@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -40,9 +40,7 @@ const CFStringRef runLoopMode = CFSTR("SFML_RUN_LOOP_MODE");
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 HIDJoystickManager& HIDJoystickManager::getInstance()
@@ -103,8 +101,8 @@ HIDJoystickManager::~HIDJoystickManager()
 {
     IOHIDManagerUnscheduleFromRunLoop(m_manager, CFRunLoopGetCurrent(), runLoopMode);
 
-    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, 0);
-    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, 0);
+    IOHIDManagerRegisterDeviceMatchingCallback(m_manager, nullptr, nullptr);
+    IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, nullptr);
 
     IOHIDManagerClose(m_manager, kIOHIDOptionsTypeNone);
 }
@@ -138,6 +136,4 @@ void HIDJoystickManager::pluggedOut(void* context, IOReturn, void*, IOHIDDeviceR
 }
 
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

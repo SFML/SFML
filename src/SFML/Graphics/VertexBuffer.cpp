@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -256,10 +256,7 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
-    if ((sourceResult == GL_FALSE) || (destinationResult == GL_FALSE))
-        return false;
-
-    return true;
+    return (sourceResult == GL_TRUE) && (destinationResult == GL_TRUE);
 
 #endif // SFML_OPENGL_ES
 }
@@ -336,7 +333,7 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    std::scoped_lock lock(VertexBufferImpl::isAvailableMutex);
+    std::lock_guard lock(VertexBufferImpl::isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;

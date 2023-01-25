@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -36,9 +36,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Mac OS X implementation of joysticks
@@ -129,6 +127,4 @@ private:
     /// location or 0 if there isn't currently a connected joystick device
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

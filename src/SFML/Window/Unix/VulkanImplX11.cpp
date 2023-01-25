@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -101,9 +101,7 @@ VulkanLibraryWrapper wrapper;
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool VulkanImplX11::isAvailable(bool requireGraphics)
@@ -129,11 +127,11 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             std::uint32_t extensionCount = 0;
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
             bool hasVkKhrSurface         = false;
@@ -167,7 +165,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 {
     if (!isAvailable(false))
-        return 0;
+        return nullptr;
 
     return reinterpret_cast<VulkanFunctionPointer>(dlsym(wrapper.library, name));
 }
@@ -213,6 +211,4 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
     return result;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

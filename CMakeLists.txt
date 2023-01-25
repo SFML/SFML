@@ -53,21 +53,11 @@ else()
     endif()
 endif()
 
-# add an option for building the examples
-if(NOT SFML_OS_ANDROID)
-    sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
-else()
-    set(SFML_BUILD_EXAMPLES FALSE)
-endif()
-
 # add options to select which modules to build
 sfml_set_option(SFML_BUILD_WINDOW TRUE BOOL "TRUE to build SFML's Window module. This setting is ignored, if the graphics module is built.")
 sfml_set_option(SFML_BUILD_GRAPHICS TRUE BOOL "TRUE to build SFML's Graphics module.")
 sfml_set_option(SFML_BUILD_AUDIO TRUE BOOL "TRUE to build SFML's Audio module.")
 sfml_set_option(SFML_BUILD_NETWORK TRUE BOOL "TRUE to build SFML's Network module.")
-
-# add an option for building the API documentation
-sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
 
 if(SFML_BUILD_WINDOW)
     # add an option for choosing the OpenGL implementation
@@ -78,12 +68,6 @@ if(SFML_BUILD_WINDOW)
         sfml_set_option(SFML_USE_DRM FALSE BOOL "TRUE to use DRM windowing backend")
     endif()
 endif()
-
-# add an option for building the test suite
-sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
-
-# add an option for enabling coverage reporting
-sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
 
 # macOS specific options
 if(SFML_OS_MACOSX)
@@ -247,22 +231,6 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 # add the subdirectories
 add_subdirectory(src/SFML)
-if(SFML_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
-if(SFML_BUILD_DOC)
-    add_subdirectory(doc)
-endif()
-if(SFML_BUILD_TEST_SUITE)
-    if(SFML_OS_IOS)
-        message( WARNING "Unit testing not supported on iOS")
-    elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
-        enable_testing()
-        add_subdirectory(test)
-    else()
-        message(WARNING "Cannot build unit testing unless all modules are enabled")
-    endif()
-endif()
 
 # on Linux and BSD-like OS, install pkg-config files by default
 set(SFML_INSTALL_PKGCONFIG_DEFAULT FALSE)
@@ -533,8 +501,45 @@ set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\
 
 include(CPack)
 
-if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+# configure extras by default when building SFML directly, otherwise hide them
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    set(SFML_CONFIGURE_EXTRAS_DEFAULT TRUE)
+else()
+    set(SFML_CONFIGURE_EXTRAS_DEFAULT FALSE)
+endif()
+sfml_set_option(SFML_CONFIGURE_EXTRAS ${SFML_CONFIGURE_EXTRAS_DEFAULT} BOOL "TRUE to configure extras, FALSE to ignore them")
+
+if(NOT SFML_CONFIGURE_EXTRAS)
     return()
+endif()
+
+# add an option for building the API documentation
+sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
+if(SFML_BUILD_DOC)
+    add_subdirectory(doc)
+endif()
+
+# add an option for building the examples
+sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+if(SFML_BUILD_EXAMPLES AND NOT SFML_OS_ANDROID)
+    add_subdirectory(examples)
+endif()
+
+# add an option for building the test suite
+sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
+
+# add an option for enabling coverage reporting
+sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
+
+if(SFML_BUILD_TEST_SUITE)
+    if(SFML_OS_IOS)
+        message(WARNING "Unit testing not supported on iOS")
+    elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
+        enable_testing()
+        add_subdirectory(test)
+    else()
+        message(WARNING "Cannot build unit testing unless all modules are enabled")
+    endif()
 endif()
 
 sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires version 12, 13, or 14")

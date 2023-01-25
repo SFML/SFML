@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -48,9 +48,7 @@ sf::Vector3f listenerDirection(0.f, 0.f, -1.f);
 sf::Vector3f listenerUpVector(0.f, 1.f, 0.f);
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 AudioDevice::AudioDevice()
@@ -233,6 +231,4 @@ Vector3f AudioDevice::getUpVector()
     return listenerUpVector;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

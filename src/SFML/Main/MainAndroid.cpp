@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -57,9 +57,7 @@
 
 extern int main(int argc, char* argv[]);
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -96,7 +94,7 @@ ActivityStates* retrieveStates(ANativeActivity* activity)
 static void initializeMain(ActivityStates* states)
 {
     // Protect from concurrent access
-    std::scoped_lock lock(states->mutex);
+    std::lock_guard lock(states->mutex);
 
     // Prepare and share the looper to be read later
     ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
@@ -120,7 +118,7 @@ static void initializeMain(ActivityStates* states)
 static void terminateMain(ActivityStates* states)
 {
     // Protect from concurrent access
-    std::scoped_lock lock(states->mutex);
+    std::lock_guard lock(states->mutex);
 
     // The main thread has finished, we must explicitly ask the activity to finish
     states->mainOver = true;
@@ -141,7 +139,7 @@ void* main(ActivityStates* states)
     terminateMain(states);
 
     {
-        std::scoped_lock lock(states->mutex);
+        std::lock_guard lock(states->mutex);
 
         states->terminated = true;
     }
@@ -149,8 +147,7 @@ void* main(ActivityStates* states)
     return nullptr;
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv
 
 
 ////////////////////////////////////////////////////////////
@@ -264,7 +261,7 @@ static void onResume(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    std::scoped_lock          lock(states->mutex);
+    std::lock_guard           lock(states->mutex);
 
     if (states->fullscreen)
         goToFullscreenMode(activity);
@@ -282,7 +279,7 @@ static void onPause(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    std::scoped_lock          lock(states->mutex);
+    std::lock_guard           lock(states->mutex);
 
     // Send an event to warn people the activity has been paused
     sf::Event event;
@@ -306,7 +303,7 @@ static void onDestroy(ANativeActivity* activity)
 
     // Send an event to warn people the activity is being destroyed
     {
-        std::scoped_lock lock(states->mutex);
+        std::lock_guard lock(states->mutex);
 
         // If the main thread hasn't yet finished, send the event and wait for
         // it to finish.
@@ -348,7 +345,7 @@ static void onDestroy(ANativeActivity* activity)
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 {
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    std::scoped_lock          lock(states->mutex);
+    std::lock_guard           lock(states->mutex);
 
     // Update the activity states
     states->window = window;
@@ -373,7 +370,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /* window */)
 {
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    std::scoped_lock          lock(states->mutex);
+    std::lock_guard           lock(states->mutex);
 
     // Update the activity states
     states->window = nullptr;
@@ -414,7 +411,7 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 
     // Attach the input queue
     {
-        std::scoped_lock lock(states->mutex);
+        std::lock_guard lock(states->mutex);
 
         AInputQueue_attachLooper(queue, states->looper, 1, states->processEvent, nullptr);
         states->inputQueue = queue;
@@ -430,7 +427,7 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 
     // Detach the input queue
     {
-        std::scoped_lock lock(states->mutex);
+        std::lock_guard lock(states->mutex);
 
         AInputQueue_detachLooper(queue);
         states->inputQueue = nullptr;
@@ -451,7 +448,7 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* /* rect
 {
     // Retrieve our activity states from the activity instance
     sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
-    std::scoped_lock          lock(states->mutex);
+    std::lock_guard           lock(states->mutex);
 
     // Make sure the window still exists before we access the dimensions on it
     if (states->window != nullptr)

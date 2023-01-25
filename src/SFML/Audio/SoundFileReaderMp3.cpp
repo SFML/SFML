@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -74,9 +74,7 @@ bool hasValidId3Tag(const std::uint8_t* header)
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderMp3::check(InputStream& stream)
@@ -150,6 +148,4 @@ std::uint64_t SoundFileReaderMp3::read(std::int16_t* samples, std::uint64_t maxC
     return toRead;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

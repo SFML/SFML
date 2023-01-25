@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -39,9 +39,7 @@
 #include <al.h>
 #include <alc.h>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// Let's define a macro to quickly check every OpenAL API call
@@ -86,9 +84,7 @@ void alCheckError(const std::filesystem::path& file, unsigned int line, const ch
 ////////////////////////////////////////////////////////////
 ALenum alGetLastErrorImpl();
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #if defined(__APPLE__)

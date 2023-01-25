@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,9 +37,7 @@
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class WindowImpl;
 
@@ -136,7 +134,6 @@ public:
     ////////////////////////////////////////////////////////////
     static std::unique_ptr<GlContext> create(const ContextSettings& settings, const Vector2u& size);
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether a given OpenGL extension is available
     ///
@@ -314,7 +311,7 @@ private:
     /// \param requestedSettings Requested settings during context creation
     ///
     ////////////////////////////////////////////////////////////
-    void checkSettings(const ContextSettings& requestedSettings);
+    void checkSettings(const ContextSettings& requestedSettings) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -322,6 +319,4 @@ private:
     const std::uint64_t m_id; //!< Unique number that identifies the context
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

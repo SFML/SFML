@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -66,7 +66,6 @@ public:
         std::string family; //!< The font family
     };
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -357,10 +356,10 @@ private:
     {
         explicit Page(bool smooth);
 
-        GlyphTable       glyphs;  //!< Table mapping code points to their corresponding glyph
-        Texture          texture; //!< Texture containing the pixels of the glyphs
-        unsigned int     nextRow; //!< Y position of the next new row in the texture
-        std::vector<Row> rows;    //!< List containing the position of all the existing rows
+        GlyphTable       glyphs;     //!< Table mapping code points to their corresponding glyph
+        Texture          texture;    //!< Texture containing the pixels of the glyphs
+        unsigned int     nextRow{3}; //!< Y position of the next new row in the texture
+        std::vector<Row> rows;       //!< List containing the position of all the existing rows
     };
 
     ////////////////////////////////////////////////////////////

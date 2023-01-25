@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -31,9 +31,7 @@
 #include <SFML/Window/JoystickImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Global joystick manager
@@ -42,6 +40,18 @@ namespace priv
 class JoystickManager
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickManager(const JoystickManager&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickManager& operator=(const JoystickManager&) = delete;
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the global unique instance of the manager
     ///
@@ -100,18 +110,6 @@ private:
     ~JoystickManager();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickManager(const JoystickManager&) = delete;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickManager& operator=(const JoystickManager&) = delete;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Joystick information and state
     ///
     ////////////////////////////////////////////////////////////
@@ -129,6 +127,4 @@ private:
     Item m_joysticks[Joystick::Count]; //!< Joysticks information and state
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

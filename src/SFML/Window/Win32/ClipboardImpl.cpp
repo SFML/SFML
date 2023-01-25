@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,9 +33,7 @@
 #include <ostream>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 String ClipboardImpl::getString()
@@ -54,17 +52,17 @@ String ClipboardImpl::getString()
         return text;
     }
 
-    HANDLE clipboard_handle = GetClipboardData(CF_UNICODETEXT);
+    HANDLE clipboardHandle = GetClipboardData(CF_UNICODETEXT);
 
-    if (!clipboard_handle)
+    if (!clipboardHandle)
     {
         err() << "Failed to get Win32 handle for clipboard content." << std::endl;
         CloseClipboard();
         return text;
     }
 
-    text = String(static_cast<wchar_t*>(GlobalLock(clipboard_handle)));
-    GlobalUnlock(clipboard_handle);
+    text = String(static_cast<wchar_t*>(GlobalLock(clipboardHandle)));
+    GlobalUnlock(clipboardHandle);
 
     CloseClipboard();
     return text;
@@ -87,19 +85,17 @@ void ClipboardImpl::setString(const String& text)
     }
 
     // Create a Win32-compatible string
-    std::size_t string_size   = (text.getSize() + 1) * sizeof(WCHAR);
-    HANDLE      string_handle = GlobalAlloc(GMEM_MOVEABLE, string_size);
+    std::size_t stringSize   = (text.getSize() + 1) * sizeof(WCHAR);
+    HANDLE      stringHandle = GlobalAlloc(GMEM_MOVEABLE, stringSize);
 
-    if (string_handle)
+    if (stringHandle)
     {
-        memcpy(GlobalLock(string_handle), text.toWideString().data(), string_size);
-        GlobalUnlock(string_handle);
-        SetClipboardData(CF_UNICODETEXT, string_handle);
+        memcpy(GlobalLock(stringHandle), text.toWideString().data(), stringSize);
+        GlobalUnlock(stringHandle);
+        SetClipboardData(CF_UNICODETEXT, stringHandle);
     }
 
     CloseClipboard();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

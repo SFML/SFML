@@ -28,6 +28,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 
+#include <algorithm>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -63,8 +64,8 @@ int                    touchFd = -1;    // file descriptor we have seen MT event
 std::vector<TouchSlot> touchSlots;      // track the state of each touch "slot"
 int                    currentSlot = 0; // which slot are we currently updating?
 
-std::queue<sf::Event> eventQueue;     // events received and waiting to be consumed
-const int             MAX_QUEUE = 64; // The maximum size we let eventQueue grow to
+std::queue<sf::Event> eventQueue;    // events received and waiting to be consumed
+const int             maxQueue = 64; // The maximum size we let eventQueue grow to
 
 termios newTerminalConfig, oldTerminalConfig; // Terminal configurations
 
@@ -87,8 +88,8 @@ bool systemDown()
 
 void uninitFileDescriptors()
 {
-    for (std::vector<int>::iterator itr = fileDescriptors.begin(); itr != fileDescriptors.end(); ++itr)
-        close(*itr);
+    for (const auto& fileDescriptor : fileDescriptors)
+        close(fileDescriptor);
 }
 
 #define BITS_PER_LONG        (sizeof(unsigned long) * 8)
@@ -101,30 +102,30 @@ void uninitFileDescriptors()
 // Joysticks are handled in /src/SFML/Window/Unix/JoystickImpl.cpp
 bool keepFileDescriptor(int fileDesc)
 {
-    unsigned long bitmask_ev[NBITS(EV_MAX)];
-    unsigned long bitmask_key[NBITS(KEY_MAX)];
-    unsigned long bitmask_abs[NBITS(ABS_MAX)];
-    unsigned long bitmask_rel[NBITS(REL_MAX)];
+    unsigned long bitmaskEv[NBITS(EV_MAX)];
+    unsigned long bitmaskKey[NBITS(KEY_MAX)];
+    unsigned long bitmaskAbs[NBITS(ABS_MAX)];
+    unsigned long bitmaskRel[NBITS(REL_MAX)];
 
-    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmask_ev)), &bitmask_ev);
-    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmask_key)), &bitmask_key);
-    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmask_abs)), &bitmask_abs);
-    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmask_rel)), &bitmask_rel);
+    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmaskEv)), &bitmaskEv);
+    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmaskKey)), &bitmaskKey);
+    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmaskAbs)), &bitmaskAbs);
+    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmaskRel)), &bitmaskRel);
 
     // This is the keyboard test used by SDL.
     // The first 32 bits are ESC, numbers and Q to D;  If we have any of those,
     // consider it a keyboard device; do not test for KEY_RESERVED, though
-    bool is_keyboard = (bitmask_key[0] & 0xFFFFFFFE);
+    bool isKeyboard = (bitmaskKey[0] & 0xFFFFFFFE);
 
-    bool is_abs = TEST_BIT(EV_ABS, bitmask_ev) && TEST_BIT(ABS_X, bitmask_abs) && TEST_BIT(ABS_Y, bitmask_abs);
+    bool isAbs = TEST_BIT(EV_ABS, bitmaskEv) && TEST_BIT(ABS_X, bitmaskAbs) && TEST_BIT(ABS_Y, bitmaskAbs);
 
-    bool is_rel = TEST_BIT(EV_REL, bitmask_ev) && TEST_BIT(REL_X, bitmask_rel) && TEST_BIT(REL_Y, bitmask_rel);
+    bool isRel = TEST_BIT(EV_REL, bitmaskEv) && TEST_BIT(REL_X, bitmaskRel) && TEST_BIT(REL_Y, bitmaskRel);
 
-    bool is_mouse = (is_abs || is_rel) && TEST_BIT(BTN_MOUSE, bitmask_key);
+    bool isMouse = (isAbs || isRel) && TEST_BIT(BTN_MOUSE, bitmaskKey);
 
-    bool is_touch = is_abs && (TEST_BIT(BTN_TOOL_FINGER, bitmask_key) || TEST_BIT(BTN_TOUCH, bitmask_key));
+    bool isTouch = isAbs && (TEST_BIT(BTN_TOOL_FINGER, bitmaskKey) || TEST_BIT(BTN_TOUCH, bitmaskKey));
 
-    return is_keyboard || is_mouse || is_touch;
+    return isKeyboard || isMouse || isTouch;
 }
 
 void initFileDescriptors()
@@ -227,7 +228,7 @@ sf::Keyboard::Key toKey(int code)
         case KEY_L:             return sf::Keyboard::L;
         case KEY_SEMICOLON:     return sf::Keyboard::Semicolon;
         case KEY_APOSTROPHE:    return sf::Keyboard::Quote;
-        case KEY_GRAVE:         return sf::Keyboard::Tilde;
+        case KEY_GRAVE:         return sf::Keyboard::Grave;
         case KEY_LEFTSHIFT:     return sf::Keyboard::LShift;
         case KEY_BACKSLASH:     return sf::Keyboard::Backslash;
         case KEY_Z:             return sf::Keyboard::Z;
@@ -302,7 +303,7 @@ sf::Keyboard::Key toKey(int code)
 
 void pushEvent(sf::Event& event)
 {
-    if (eventQueue.size() >= MAX_QUEUE)
+    if (eventQueue.size() >= maxQueue)
         eventQueue.pop();
 
     eventQueue.push(event);
@@ -317,42 +318,42 @@ TouchSlot& atSlot(int idx)
 
 void processSlots()
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
+    for (auto& slot : touchSlots)
     {
         sf::Event event;
 
-        event.touch.x = slot->pos.x;
-        event.touch.y = slot->pos.y;
+        event.touch.x = slot.pos.x;
+        event.touch.y = slot.pos.y;
 
-        if (slot->oldId == slot->id)
+        if (slot.oldId == slot.id)
         {
             event.type         = sf::Event::TouchMoved;
-            event.touch.finger = static_cast<unsigned int>(slot->id);
+            event.touch.finger = static_cast<unsigned int>(slot.id);
             pushEvent(event);
         }
         else
         {
-            if (slot->oldId != -1)
+            if (slot.oldId != -1)
             {
                 event.type         = sf::Event::TouchEnded;
-                event.touch.finger = static_cast<unsigned int>(slot->oldId);
+                event.touch.finger = static_cast<unsigned int>(slot.oldId);
                 pushEvent(event);
             }
-            if (slot->id != -1)
+            if (slot.id != -1)
             {
                 event.type         = sf::Event::TouchBegan;
-                event.touch.finger = static_cast<unsigned int>(slot->id);
+                event.touch.finger = static_cast<unsigned int>(slot.id);
                 pushEvent(event);
             }
 
-            slot->oldId = slot->id;
+            slot.oldId = slot.id;
         }
     }
 }
 
 bool eventProcess(sf::Event& event)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
 
     // Ensure that we are initialized
     initFileDescriptors();
@@ -371,10 +372,10 @@ bool eventProcess(sf::Event& event)
     ssize_t bytesRead;
 
     // Check all the open file descriptors for the next event
-    for (std::vector<int>::iterator itr = fileDescriptors.begin(); itr != fileDescriptors.end(); ++itr)
+    for (auto& fileDescriptor : fileDescriptors)
     {
         input_event inputEvent;
-        bytesRead = read(*itr, &inputEvent, sizeof(inputEvent));
+        bytesRead = read(fileDescriptor, &inputEvent, sizeof(inputEvent));
 
         while (bytesRead > 0)
         {
@@ -414,12 +415,13 @@ bool eventProcess(sf::Event& event)
                     {
                         // key down and key up events
                         //
-                        event.type        = inputEvent.value ? sf::Event::KeyPressed : sf::Event::KeyReleased;
-                        event.key.code    = kb;
-                        event.key.alt     = altDown();
-                        event.key.control = controlDown();
-                        event.key.shift   = shiftDown();
-                        event.key.system  = systemDown();
+                        event.type         = inputEvent.value ? sf::Event::KeyPressed : sf::Event::KeyReleased;
+                        event.key.code     = kb;
+                        event.key.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
+                        event.key.alt      = altDown();
+                        event.key.control  = controlDown();
+                        event.key.shift    = shiftDown();
+                        event.key.system   = systemDown();
 
                         keyMap[static_cast<std::size_t>(kb)] = inputEvent.value;
 
@@ -467,30 +469,30 @@ bool eventProcess(sf::Event& event)
                 {
                     case ABS_MT_SLOT:
                         currentSlot = inputEvent.value;
-                        touchFd     = *itr;
+                        touchFd     = fileDescriptor;
                         break;
                     case ABS_MT_TRACKING_ID:
                         atSlot(currentSlot).id = inputEvent.value;
-                        touchFd                = *itr;
+                        touchFd                = fileDescriptor;
                         break;
                     case ABS_MT_POSITION_X:
                         atSlot(currentSlot).pos.x = inputEvent.value;
-                        touchFd                   = *itr;
+                        touchFd                   = fileDescriptor;
                         break;
                     case ABS_MT_POSITION_Y:
                         atSlot(currentSlot).pos.y = inputEvent.value;
-                        touchFd                   = *itr;
+                        touchFd                   = fileDescriptor;
                         break;
                 }
             }
-            else if (inputEvent.type == EV_SYN && inputEvent.code == SYN_REPORT && *itr == touchFd)
+            else if (inputEvent.type == EV_SYN && inputEvent.code == SYN_REPORT && fileDescriptor == touchFd)
             {
                 // This pushes events directly to the queue, because it
                 // can generate more than one event.
                 processSlots();
             }
 
-            bytesRead = read(*itr, &inputEvent, sizeof(inputEvent));
+            bytesRead = read(fileDescriptor, &inputEvent, sizeof(inputEvent));
         }
 
         if ((bytesRead < 0) && (errno != EAGAIN))
@@ -534,6 +536,8 @@ bool eventProcess(sf::Event& event)
         }
     }
 
+    (void)bytesRead; // Ignore clang-tidy dead store warning
+
     newTerminalConfig.c_lflag |= ICANON;
     tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig);
 
@@ -560,19 +564,52 @@ void update()
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if ((key < 0) || (key >= static_cast<int>(keyMap.size())))
         return false;
 
     update();
     return keyMap[static_cast<std::size_t>(key)];
+}
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isKeyPressed(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::isKeyPressed(Keyboard::Scancode) is not implemented for DRM." << std::endl;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::localize is not implemented for DRM." << std::endl;
+    return Keyboard::Unknown;
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::delocalize is not implemented for DRM." << std::endl;
+    return Keyboard::Scan::Unknown;
+}
+
+
+////////////////////////////////////////////////////////////
+String InputImpl::getDescription(Keyboard::Scancode /* code */)
+{
+    // TODO: not implemented
+    err() << "sf::Keyboard::getDescription is not implemented for DRM." << std::endl;
+    return "";
 }
 
 
@@ -586,7 +623,7 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if ((button < 0) || (button >= static_cast<int>(mouseMap.size())))
         return false;
 
@@ -598,7 +635,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     return mousePos;
 }
 
@@ -613,7 +650,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& /*relativeTo*/)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     mousePos = position;
 }
 
@@ -628,23 +665,19 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& /*r
 ////////////////////////////////////////////////////////////
 bool InputImpl::isTouchDown(unsigned int finger)
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
-    {
-        if (slot->id == static_cast<int>(finger))
-            return true;
-    }
-
-    return false;
+    return std::any_of(touchSlots.cbegin(),
+                       touchSlots.cend(),
+                       [finger](const TouchSlot& slot) { return slot.id == static_cast<int>(finger); });
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getTouchPosition(unsigned int finger)
 {
-    for (std::vector<TouchSlot>::iterator slot = touchSlots.begin(); slot != touchSlots.end(); ++slot)
+    for (const auto& slot : touchSlots)
     {
-        if (slot->id == static_cast<int>(finger))
-            return slot->pos;
+        if (slot.id == static_cast<int>(finger))
+            return slot.pos;
     }
 
     return Vector2i();
@@ -661,7 +694,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /*re
 ////////////////////////////////////////////////////////////
 bool InputImpl::checkEvent(sf::Event& event)
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     if (!eventQueue.empty())
     {
         event = eventQueue.front();
@@ -695,7 +728,7 @@ bool InputImpl::checkEvent(sf::Event& event)
 ////////////////////////////////////////////////////////////
 void InputImpl::setTerminalConfig()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcgetattr(STDIN_FILENO, &newTerminalConfig);               // get current terminal config
@@ -712,13 +745,11 @@ void InputImpl::setTerminalConfig()
 ////////////////////////////////////////////////////////////
 void InputImpl::restoreTerminalConfig()
 {
-    std::scoped_lock lock(inputMutex);
+    std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldTerminalConfig); // restore terminal config
     tcflush(STDIN_FILENO, TCIFLUSH);                      // flush the buffer
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

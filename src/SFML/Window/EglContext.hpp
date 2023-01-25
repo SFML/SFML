@@ -39,9 +39,7 @@
 #include <X11/Xutil.h>
 #endif
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class EglContext : public GlContext
 {
@@ -193,6 +191,4 @@ private:
     EGLConfig  m_config{};                //!< The internal EGL config
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -17,8 +17,8 @@ jobs:
         - { name: Windows VS2022 x64,     os: windows-2022, flags: -A x64 }
         - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -T ClangCL }
         - { name: Windows VS2022 Clang,   os: windows-2022, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
-        - { name: Linux GCC,            os: ubuntu-latest }
-        - { name: Linux Clang,          os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC,            os: ubuntu-latest, prefix: xvfb-run -a }
+        - { name: Linux Clang,          os: ubuntu-latest, prefix: xvfb-run -a, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++, gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: MacOS,                os: macos-11 }
         - { name: MacOS Xcode,          os: macos-11, flags: -GXcode }
         config:
@@ -48,16 +48,16 @@ jobs:
         - platform: { name: Android, os: ubuntu-latest  }
           config: { name: x86_64, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r23b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 -DANDROID_PLATFORM=26 }
         - platform: { name: Linux GCC, os: ubuntu-latest  }
-          config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
+          config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
         - platform: { name: Linux GCC, os: ubuntu-latest  }
-          config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
+          config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -94,7 +94,7 @@ jobs:
 
     - name: Build
       shell: bash
-      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      run: ${{matrix.platform.prefix}} cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
 
     - name: Generate Coverage Report
       if: matrix.type.name == 'Debug' && runner.os != 'Windows' # Coverage is already generated on Windows when running tests.
@@ -145,16 +145,22 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux, os: ubuntu-22.04 }
-        - { name: macOS, os: macos-12 }
+        - { name: Windows,   os: windows-2022, flags: -GNinja }
+        - { name: Linux,     os: ubuntu-22.04 }
+        - { name: Linux DRM, os: ubuntu-22.04, flags: -DSFML_USE_DRM=TRUE }
+        - { name: macOS,     os: macos-12 }
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Install Windows Dependencies
+      if: runner.os == 'Windows'
+      run: curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
+
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
+      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
@@ -163,7 +169,9 @@ jobs:
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
     - name: Configure
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE
+      shell: bash
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
 
     - name: Analyze Code
+      shell: bash
       run: cmake --build $GITHUB_WORKSPACE/build --target tidy

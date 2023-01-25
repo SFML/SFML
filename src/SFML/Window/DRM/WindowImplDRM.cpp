@@ -33,9 +33,7 @@
 #include <SFML/Window/WindowStyle.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
@@ -154,6 +152,4 @@ void WindowImplDRM::processEvents()
         pushEvent(ev);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -49,6 +49,14 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
+# FIXME Remove this once the Buildbot supports handling display tests on Linux platforms
+if(SFML_OS_WINDOWS OR SFML_OS_MACOSX)
+    set(SFML_RUN_DISPLAY_TESTS_DEFAULT ON)
+else()
+    set(SFML_RUN_DISPLAY_TESTS_DEFAULT OFF)
+endif()
+sfml_set_option(SFML_RUN_DISPLAY_TESTS ${SFML_RUN_DISPLAY_TESTS_DEFAULT} BOOL "TRUE to run tests that require a display, FALSE to ignore it")
+
 set(WINDOW_SRC
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
@@ -88,6 +96,9 @@ set(GRAPHICS_SRC
     Graphics/View.test.cpp
 )
 sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
+if(SFML_RUN_DISPLAY_TESTS)
+    target_compile_definitions(test-sfml-graphics PRIVATE SFML_RUN_DISPLAY_TESTS)
+endif()
 
 set(NETWORK_SRC
     Network/Ftp.test.cpp
@@ -157,14 +168,10 @@ if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
     string(REPLACE "/" "\\" COVERAGE_SRC "${PROJECT_SOURCE_DIR}/src")
     string(REPLACE "/" "\\" COVERAGE_INCLUDE "${PROJECT_SOURCE_DIR}/include")
 
-    add_custom_command(TARGET runtests
-                       COMMENT "Run tests"
-                       POST_BUILD COMMAND "${OpenCppCoverage_BINARY}" ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" -- "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-                       VERBATIM)
-else()
-    # Run tests without a coverage runner
-    add_custom_command(TARGET runtests
-                       COMMENT "Run tests"
-                       POST_BUILD COMMAND "${CMAKE_CTEST_COMMAND}" --output-on-failure -C $<CONFIG>
-                       VERBATIM)
+    set(COVERAGE_PREFIX ${OpenCppCoverage_BINARY} ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" --)
 endif()
+
+add_custom_command(TARGET runtests
+                   COMMENT "Run tests"
+                   POST_BUILD COMMAND ${COVERAGE_PREFIX} ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
+                   VERBATIM)

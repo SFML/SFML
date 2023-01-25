@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -41,8 +41,8 @@
 
 namespace
 {
-udev*         udevContext = 0;
-udev_monitor* udevMonitor = 0;
+udev*         udevContext = nullptr;
+udev_monitor* udevMonitor = nullptr;
 
 struct JoystickRecord
 {
@@ -430,9 +430,7 @@ std::string getJoystickName(unsigned int index)
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
@@ -461,7 +459,7 @@ void JoystickImpl::initialize()
                   << error << std::endl;
 
             udev_monitor_unref(udevMonitor);
-            udevMonitor = 0;
+            udevMonitor = nullptr;
         }
         else
         {
@@ -473,7 +471,7 @@ void JoystickImpl::initialize()
                       << error << std::endl;
 
                 udev_monitor_unref(udevMonitor);
-                udevMonitor = 0;
+                udevMonitor = nullptr;
             }
         }
     }
@@ -490,14 +488,14 @@ void JoystickImpl::cleanup()
     if (udevMonitor)
     {
         udev_monitor_unref(udevMonitor);
-        udevMonitor = 0;
+        udevMonitor = nullptr;
     }
 
     // Unreference the udev context to destroy it
     if (udevContext)
     {
         udev_unref(udevContext);
-        udevContext = 0;
+        udevContext = nullptr;
     }
 }
 
@@ -711,6 +709,4 @@ JoystickState JoystickImpl::JoystickImpl::update()
     return m_state;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

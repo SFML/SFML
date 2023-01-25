@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -41,14 +41,9 @@
 /// In order to keep track of the keyboard's state and mouse buttons' state
 /// we use the HID manager. Mouse position is handled differently.
 ///
-/// NB: we probably could use
-/// NSEvent +addGlobalMonitorForEventsMatchingMask:handler: for mouse only.
-///
 ////////////////////////////////////////////////////////////
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Extract the dedicated SFOpenGLView from the SFML window
@@ -111,7 +106,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
     }
     else
     {
-        if (nsHandle != 0)
+        if (nsHandle != nil)
             sf::err() << "The system handle is neither a <NSWindow*> nor <NSView*>"
                       << "object. This shouldn't happen." << std::endl;
         // Else: this probably means the SFML window was previously closed.
@@ -120,11 +115,40 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
     return view;
 }
 
+
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
     AutoreleasePool pool;
     return HIDInputManager::getInstance().isKeyPressed(key);
+}
+
+
+////////////////////////////////////////////////////////////
+bool InputImpl::isKeyPressed(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().isKeyPressed(code);
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().localize(code);
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
+{
+    return HIDInputManager::getInstance().delocalize(key);
+}
+
+
+////////////////////////////////////////////////////////////
+String InputImpl::getDescription(Keyboard::Scancode code)
+{
+    return HIDInputManager::getInstance().getDescription(code);
 }
 
 
@@ -236,6 +260,4 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& 
     return Vector2i();
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

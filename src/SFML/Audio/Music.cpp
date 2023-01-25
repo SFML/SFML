@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -176,7 +176,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
 ////////////////////////////////////////////////////////////
 bool Music::onGetData(SoundStream::Chunk& data)
 {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard lock(m_mutex);
 
     std::size_t   toFill        = m_samples.size();
     std::uint64_t currentOffset = m_file.getSampleOffset();
@@ -195,14 +195,14 @@ bool Music::onGetData(SoundStream::Chunk& data)
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point
     return (data.sampleCount != 0) && (currentOffset < m_file.getSampleCount()) &&
-           !(currentOffset == loopEnd && m_loopSpan.length != 0);
+           (currentOffset != loopEnd || m_loopSpan.length == 0);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Music::onSeek(Time timeOffset)
 {
-    std::scoped_lock lock(m_mutex);
+    std::lock_guard lock(m_mutex);
     m_file.seek(timeOffset);
 }
 
@@ -211,8 +211,8 @@ void Music::onSeek(Time timeOffset)
 std::int64_t Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
-    std::scoped_lock lock(m_mutex);
-    std::uint64_t    currentOffset = m_file.getSampleOffset();
+    std::lock_guard lock(m_mutex);
+    std::uint64_t   currentOffset = m_file.getSampleOffset();
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset == m_loopSpan.offset + m_loopSpan.length))
     {
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
@@ -238,7 +238,7 @@ void Music::initialize()
     m_loopSpan.length = m_file.getSampleCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    m_samples.resize(static_cast<std::size_t>(m_file.getSampleRate()) * static_cast<std::size_t>(m_file.getChannelCount()));
+    m_samples.resize(m_file.getSampleRate() * m_file.getChannelCount());
 
     // Initialize the stream
     SoundStream::initialize(m_file.getChannelCount(), m_file.getSampleRate());

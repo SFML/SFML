@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -41,12 +41,11 @@ namespace sf::Joystick
 /// \brief Constants related to joysticks capabilities
 ///
 ////////////////////////////////////////////////////////////
-enum
-{
-    Count       = 8,  //!< Maximum number of supported joysticks
-    ButtonCount = 32, //!< Maximum number of supported buttons
-    AxisCount   = 8   //!< Maximum number of supported axes
-};
+// NOLINTBEGIN(readability-identifier-naming)
+static constexpr unsigned int Count{8};        //!< Maximum number of supported joysticks
+static constexpr unsigned int ButtonCount{32}; //!< Maximum number of supported buttons
+static constexpr unsigned int AxisCount{8};    //!< Maximum number of supported axes
+// NOLINTEND(readability-identifier-naming)
 
 ////////////////////////////////////////////////////////////
 /// \brief Axes supported by SFML joysticks

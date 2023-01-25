@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -124,6 +124,7 @@ Font::Font() = default;
 
 
 ////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(modernize-use-equals-default)
 Font::Font(const Font& copy) :
 m_fontHandles(copy.m_fontHandles),
 m_isSmooth(copy.m_isSmooth),
@@ -387,7 +388,7 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
     if (first == 0 || second == 0)
         return 0.f;
 
-    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
+    auto* face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -425,7 +426,7 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
 ////////////////////////////////////////////////////////////
 float Font::getLineSpacing(unsigned int characterSize) const
 {
-    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
+    auto* face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -441,7 +442,7 @@ float Font::getLineSpacing(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlinePosition(unsigned int characterSize) const
 {
-    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
+    auto* face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -462,7 +463,7 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlineThickness(unsigned int characterSize) const
 {
-    auto face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
+    auto* face = m_fontHandles ? m_fontHandles->face.get() : nullptr;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -556,7 +557,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         return glyph;
 
     // Get our FT_Face
-    auto face = m_fontHandles->face.get();
+    auto* face = m_fontHandles->face.get();
     if (!face)
         return glyph;
 
@@ -583,13 +584,13 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
     {
         if (bold)
         {
-            auto outlineGlyph = reinterpret_cast<FT_OutlineGlyph>(glyphDesc);
+            auto* outlineGlyph = reinterpret_cast<FT_OutlineGlyph>(glyphDesc);
             FT_Outline_Embolden(&outlineGlyph->outline, weight);
         }
 
         if (outlineThickness != 0)
         {
-            auto stroker = m_fontHandles->stroker.get();
+            auto* stroker = m_fontHandles->stroker.get();
 
             FT_Stroker_Set(stroker,
                            static_cast<FT_Fixed>(outlineThickness * static_cast<float>(1 << 6)),
@@ -604,7 +605,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
     // Warning! After this line, do not read any data from glyphDesc directly, use
     // bitmapGlyph.root to access the FT_Glyph data.
     FT_Glyph_To_Bitmap(&glyphDesc, FT_RENDER_MODE_NORMAL, nullptr, 1);
-    auto       bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyphDesc);
+    auto*      bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyphDesc);
     FT_Bitmap& bitmap      = bitmapGlyph->bitmap;
 
     // Apply bold if necessary -- fallback technique using bitmap (lower quality)
@@ -798,7 +799,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
     // only when necessary to avoid killing performances
 
     // m_fontHandles and m_fontHandles->face are checked to be non-null before calling this method
-    auto      face        = m_fontHandles->face.get();
+    auto*     face        = m_fontHandles->face.get();
     FT_UShort currentSize = face->size->metrics.x_ppem;
 
     if (currentSize != characterSize)
@@ -834,7 +835,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Font::Page::Page(bool smooth) : nextRow(3)
+Font::Page::Page(bool smooth)
 {
     // Make sure that the texture is initialized by default
     sf::Image image;

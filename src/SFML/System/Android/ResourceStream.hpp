@@ -37,9 +37,7 @@
 #include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Read from Android asset files
@@ -106,6 +104,4 @@ private:
     AAsset* m_file; ///< The asset file to read
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

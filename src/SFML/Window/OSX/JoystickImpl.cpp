@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -86,9 +86,7 @@ unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop, unsigned int in
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 JoystickImpl::Location JoystickImpl::m_locationIDs[sf::Joystick::Count] = {0};
@@ -128,9 +126,9 @@ bool JoystickImpl::isConnected(unsigned int index)
         // opened joystick devices then we find the new one.
 
         unsigned int openedCount = 0;
-        for (unsigned int i(0); i < sf::Joystick::Count; ++i)
+        for (const auto& locationID : m_locationIDs)
         {
-            if (m_locationIDs[i] != 0)
+            if (locationID != 0)
                 ++openedCount;
         }
 
@@ -204,15 +202,15 @@ bool JoystickImpl::open(unsigned int index)
     CFSetGetValues(devices, devicesArray.data());
 
     // Get the desired joystick.
-    IOHIDDeviceRef self = 0;
-    for (CFIndex i(0); self == 0 && i < joysticksCount; ++i)
+    IOHIDDeviceRef self = nil;
+    for (CFIndex i(0); self == nil && i < joysticksCount; ++i)
     {
         IOHIDDeviceRef d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
         if (deviceLoc == HIDInputManager::getLocationID(d))
             self = d;
     }
 
-    if (self == 0)
+    if (self == nil)
     {
         CFRelease(devices);
         return false;
@@ -442,7 +440,7 @@ JoystickState JoystickImpl::update()
     unsigned int i = 0;
     for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it, ++i)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(*it), *it, &value);
 
         // Check for plug out.
@@ -458,7 +456,7 @@ JoystickState JoystickImpl::update()
     // Update axes' state
     for (const auto& [axis, iohidElementRef] : m_axis)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(iohidElementRef), iohidElementRef, &value);
 
         // Check for plug out.
@@ -495,7 +493,7 @@ JoystickState JoystickImpl::update()
     //
     if (m_hat != nullptr)
     {
-        IOHIDValueRef value = 0;
+        IOHIDValueRef value = nil;
         IOHIDDeviceGetValue(IOHIDElementGetDevice(m_hat), m_hat, &value);
 
         // Check for plug out.
@@ -550,6 +548,4 @@ JoystickState JoystickImpl::update()
     return state;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

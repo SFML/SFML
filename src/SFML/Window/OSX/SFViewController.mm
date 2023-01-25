@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -44,7 +44,7 @@
 {
     if ((self = [super init]))
     {
-        m_requester = 0;
+        m_requester = nullptr;
 
         // Retain the view for our own use.
         m_view = [view retain];
@@ -261,7 +261,7 @@
     }
 
     // If we don't have a requester we don't fetch event.
-    if (m_requester != 0)
+    if (m_requester != nullptr)
         [SFApplication processEvent];
 }
 
