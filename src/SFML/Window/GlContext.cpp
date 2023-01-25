@@ -276,6 +276,7 @@ void loadExtensions()
     {
         // Try to load the < 3.0 way
         const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS));
+        assert(extensionString);
 
         do
         {
