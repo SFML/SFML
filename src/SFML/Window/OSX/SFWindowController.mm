@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -630,8 +630,7 @@
     NSDictionary* deviceDescription = [[m_window screen] deviceDescription];
     NSNumber* screenNumber = [deviceDescription valueForKey:@"NSScreenNumber"];
     CGDirectDisplayID screenID = static_cast<CGDirectDisplayID>([screenNumber intValue]);
-    CGFloat height = CGDisplayPixelsHigh(screenID);
-    return static_cast<float>(height);
+    return static_cast<float>(CGDisplayPixelsHigh(screenID));
 }
 
 

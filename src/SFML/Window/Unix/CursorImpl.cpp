@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -172,7 +172,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
         case Cursor::Arrow:           shape = XC_arrow;               break;
         case Cursor::Wait:            shape = XC_watch;               break;
         case Cursor::Text:            shape = XC_xterm;               break;
-        case Cursor::Hand:            shape = XC_hand1;               break;
+        case Cursor::Hand:            shape = XC_hand2;               break;
         case Cursor::SizeHorizontal:  shape = XC_sb_h_double_arrow;   break;
         case Cursor::SizeVertical:    shape = XC_sb_v_double_arrow;   break;
         case Cursor::SizeLeft:        shape = XC_left_side;           break;
