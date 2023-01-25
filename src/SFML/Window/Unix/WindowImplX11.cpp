@@ -35,6 +35,8 @@
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Clock.hpp>
 #include <bitset> // <X11/Xlibint.h> defines min/max as macros, so <bitset> has to come before that
 #include <X11/Xlibint.h>
 #include <X11/Xutil.h>
@@ -385,6 +387,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     (false),
 m_cursorGrabbed  (false),
@@ -436,6 +439,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed  (m_fullscreen),
@@ -871,7 +875,15 @@ void WindowImplX11::setSize(const Vector2u& size)
         XFree(sizeHints);
     }
 
-    XResizeWindow(m_display, m_window, size.x, size.y);
+    m_resizeOccuredDuringSetSize = false;
+    sf::Clock loopStartTimer;
+    while((getSize() != size) &&
+        !m_resizeOccuredDuringSetSize &&
+        (loopStartTimer.getElapsedTime() < sf::milliseconds(50))) {
+        processEvents();
+        XResizeWindow(m_display, m_window, size.x, size.y);
+        sf::sleep(sf::milliseconds(2));
+    }
     XFlush(m_display);
 }
 
@@ -1735,6 +1747,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
+
+                m_resizeOccuredDuringSetSize = true;
             }
             break;
         }
