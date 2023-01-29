@@ -59,9 +59,7 @@ std::size_t Packet::getReadPosition() const
 ////////////////////////////////////////////////////////////
 void Packet::clear()
 {
-    m_data.clear();
-    m_readPos = 0;
-    m_isValid = true;
+    *this = {};
 }
 
 
