@@ -245,11 +245,11 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
     sfml_set_option(SFML_PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
 
     foreach(sfml_module IN ITEMS all system window graphics audio network)
-        CONFIGURE_FILE(
+        configure_file(
             "tools/pkg-config/sfml-${sfml_module}.pc.in"
             "tools/pkg-config/sfml-${sfml_module}.pc"
             @ONLY)
-        INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
             DESTINATION "${SFML_PKGCONFIG_INSTALL_PREFIX}")
     endforeach()
 endif()
