@@ -310,7 +310,7 @@ Ftp::Response Ftp::download(const std::filesystem::path& remoteFile, const std::
 
             // If the download was unsuccessful, delete the partial file
             if (!response.isOk())
-                std::remove(filepath.string().c_str());
+                std::filesystem::remove(filepath);
         }
     }
 
@@ -322,7 +322,7 @@ Ftp::Response Ftp::download(const std::filesystem::path& remoteFile, const std::
 Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remotePath, TransferMode mode, bool append)
 {
     // Get the contents of the file to send
-    std::ifstream file(localFile.c_str(), std::ios_base::binary);
+    std::ifstream file(localFile, std::ios_base::binary);
     if (!file)
         return Response(Response::Status::InvalidFile);
 
