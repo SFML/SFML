@@ -880,6 +880,7 @@ void WindowImplX11::setSize(const Vector2u& size)
         (cancellationTimer.getElapsedTime() < sf::milliseconds(100))) 
     {
         XResizeWindow(m_display, m_window, size.x, size.y);
+        sf::sleep(sf::milliseconds(10));
     }
     XFlush(m_display);
 }
