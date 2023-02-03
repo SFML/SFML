@@ -387,7 +387,6 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
-m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     (false),
 m_cursorGrabbed  (false),
@@ -439,7 +438,6 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
-m_resizeOccuredDuringSetSize(false),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed  (m_fullscreen),
@@ -875,12 +873,12 @@ void WindowImplX11::setSize(const Vector2u& size)
         XFree(sizeHints);
     }
 
-    m_resizeOccuredDuringSetSize = false;
-    sf::Clock loopStartTimer;
+    Vector2u original_size = getSize();
+    sf::Clock cancellationTimer;
     while((getSize() != size) &&
-        !m_resizeOccuredDuringSetSize &&
-        (loopStartTimer.getElapsedTime() < sf::milliseconds(50))) {
-        processEvents();
+        getSize() == original_size &&
+        (cancellationTimer.getElapsedTime() < sf::milliseconds(100))) 
+    {
         XResizeWindow(m_display, m_window, size.x, size.y);
     }
     XFlush(m_display);
@@ -1746,8 +1744,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
-
-                m_resizeOccuredDuringSetSize = true;
             }
             break;
         }
