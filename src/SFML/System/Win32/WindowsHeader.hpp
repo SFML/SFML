@@ -33,7 +33,7 @@
 #endif
 
 #ifndef _WIN32_WINDOWS
-#define _WIN32_WINDOWS 0x0501
+#define _WIN32_WINDOWS 0x0501 // NOLINT(bugprone-reserved-identifier)
 #endif
 
 #ifndef _WIN32_WINNT
@@ -49,7 +49,7 @@
 #endif
 
 #ifndef _UNICODE
-#define _UNICODE 1
+#define _UNICODE 1 // NOLINT(bugprone-reserved-identifier)
 #endif
 
 #include <windows.h>

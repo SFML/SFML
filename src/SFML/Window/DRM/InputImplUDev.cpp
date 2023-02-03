@@ -93,10 +93,10 @@ void uninitFileDescriptors()
 }
 
 #define BITS_PER_LONG        (sizeof(unsigned long) * 8)
-#define NBITS(x)             (((x - 1) / BITS_PER_LONG) + 1)
-#define OFF(x)               (x % BITS_PER_LONG)
-#define LONG(x)              (x / BITS_PER_LONG)
-#define TEST_BIT(bit, array) ((array[LONG(bit)] >> OFF(bit)) & 1)
+#define NBITS(x)             ((((x)-1) / BITS_PER_LONG) + 1)
+#define OFF(x)               ((x) % BITS_PER_LONG)
+#define LONG(x)              ((x) / BITS_PER_LONG)
+#define TEST_BIT(bit, array) (((array)[LONG(bit)] >> OFF(bit)) & 1)
 
 // Only keep fileDescriptors that we think are a keyboard, mouse or touchpad/touchscreen
 // Joysticks are handled in /src/SFML/Window/Unix/JoystickImpl.cpp
