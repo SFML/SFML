@@ -43,10 +43,6 @@ namespace
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Clock::Clock() = default;
-
-
-////////////////////////////////////////////////////////////
 Time Clock::getElapsedTime() const
 {
     return durationToTime(priv::ClockImpl::now() - m_startTime);
