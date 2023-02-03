@@ -29,23 +29,12 @@
 #include <SFML/System/Time.hpp>
 
 
-namespace
-{
-[[nodiscard]] sf::Time durationToTime(const std::chrono::nanoseconds& duration)
-{
-    using std::chrono::duration_cast;
-    using std::chrono::microseconds;
-    return sf::microseconds(duration_cast<microseconds>(duration).count());
-}
-} // namespace
-
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 Time Clock::getElapsedTime() const
 {
-    return durationToTime(priv::ClockImpl::now() - m_startTime);
+    return std::chrono::duration_cast<std::chrono::microseconds>(priv::ClockImpl::now() - m_startTime);
 }
 
 
@@ -53,7 +42,7 @@ Time Clock::getElapsedTime() const
 Time Clock::restart()
 {
     const auto now     = priv::ClockImpl::now();
-    const auto elapsed = durationToTime(now - m_startTime);
+    const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - m_startTime);
     m_startTime        = now;
 
     return elapsed;
