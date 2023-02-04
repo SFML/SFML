@@ -873,18 +873,23 @@ void WindowImplX11::setSize(const Vector2u& size)
         XFree(sizeHints);
     }
 
-    // Sometimes, Xorg doesn't want to let the XResizeWindow function call to work.
-    // Looping is an attempt to convice Xorg to allow this resize to occur.
-    // If xorg doesn't allow this resize after 100 milliseconds, or another resize occurs, quit trying.
     Vector2u original_size = getSize();
+    XSync(m_display, False);
+    XResizeWindow(m_display, m_window, size.x, size.y);
+
+    // Sometimes, Xorg doesn't want to let the XResizeWindow function call to
+    // work. Looping is an attempt to convice Xorg to allow this resize to
+    // occur. If xorg doesn't allow this resize after 100 milliseconds, or
+    // another resize occurs, quit trying.
     sf::Clock cancellationTimer;
     while((getSize() != size) &&
         getSize() == original_size &&
         (cancellationTimer.getElapsedTime() < sf::milliseconds(100))) 
     {
-        XResizeWindow(m_display, m_window, size.x, size.y);
+        XSync(m_display, False);
         sf::sleep(sf::milliseconds(10));
     }
+    XSync(m_display, True);
     XFlush(m_display);
 }
 
