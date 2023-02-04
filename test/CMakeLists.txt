@@ -67,6 +67,9 @@ set(WINDOW_SRC
     Window/WindowBase.test.cpp
 )
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
+if(SFML_RUN_DISPLAY_TESTS)
+    target_compile_definitions(test-sfml-window PRIVATE SFML_RUN_DISPLAY_TESTS)
+endif()
 
 set(GRAPHICS_SRC
     Graphics/BlendMode.test.cpp

@@ -11,12 +11,6 @@
 #include <iomanip>
 #include <limits>
 
-#ifdef SFML_RUN_DISPLAY_TESTS
-static constexpr bool skipDisplayTests = false;
-#else
-static constexpr bool skipDisplayTests = true;
-#endif
-
 namespace sf
 {
 struct BlendMode;
