@@ -7,6 +7,12 @@
 
 #include <SystemUtil.hpp>
 
+#ifdef SFML_RUN_DISPLAY_TESTS
+static constexpr bool skipDisplayTests = false;
+#else
+static constexpr bool skipDisplayTests = true;
+#endif
+
 // String conversions for doctest framework
 namespace sf
 {
