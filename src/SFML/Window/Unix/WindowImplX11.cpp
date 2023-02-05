@@ -889,7 +889,11 @@ void WindowImplX11::setSize(const Vector2u& size)
         XSync(m_display, False);
         sf::sleep(sf::milliseconds(10));
     }
+    // Flush all of the queued resizes to prevent the window from spazzing.
     XSync(m_display, True);
+    // Do one last resize to ensure the correct resize is queued
+    // This just makes our setSize a bit less lossy than SDL
+    XResizeWindow(m_display, m_window, size.x, size.y);
     XFlush(m_display);
 }
 
