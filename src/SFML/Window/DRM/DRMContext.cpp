@@ -112,7 +112,8 @@ void cleanup()
     drmModeFreeEncoder(drmNode.savedEncoder);
     drmModeFreeCrtc(drmNode.originalCrtc);
 
-    eglTerminate(display);
+    if (display != EGL_NO_DISPLAY)
+        eglTerminate(display);
     display = EGL_NO_DISPLAY;
 
     gbm_device_destroy(gbmDevice);
