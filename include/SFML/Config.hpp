@@ -30,8 +30,8 @@
 // Define the SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR 2
-#define SFML_VERSION_MINOR 5
-#define SFML_VERSION_PATCH 1
+#define SFML_VERSION_MINOR 6
+#define SFML_VERSION_PATCH 0
 
 
 ////////////////////////////////////////////////////////////
