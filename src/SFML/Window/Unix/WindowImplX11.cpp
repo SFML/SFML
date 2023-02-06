@@ -873,7 +873,7 @@ void WindowImplX11::setSize(const Vector2u& size)
         XFree(sizeHints);
     }
 
-    Vector2u original_size = getSize();
+    Vector2u originalSize = getSize();
     XSync(m_display, False);
     XResizeWindow(m_display, m_window, size.x, size.y);
 
@@ -883,7 +883,7 @@ void WindowImplX11::setSize(const Vector2u& size)
     // another resize occurs, quit trying.
     sf::Clock cancellationTimer;
     while((getSize() != size) &&
-        getSize() == original_size &&
+        getSize() == originalSize &&
         (cancellationTimer.getElapsedTime() < sf::milliseconds(100))) 
     {
         XSync(m_display, False);
