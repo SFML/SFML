@@ -99,7 +99,11 @@ struct TextLayoutStats
 };
 
 // Compute a series of variables that are commonly used when building a text layout
-TextLayoutStats getTextLayoutStats(uint32_t style, const sf::Font* font, unsigned int characterSize, float letterSpacingFactor, float lineSpacingFactor)
+TextLayoutStats getTextLayoutStats(uint32_t        style,
+                                   const sf::Font* font,
+                                   unsigned int    characterSize,
+                                   float           letterSpacingFactor,
+                                   float           lineSpacingFactor)
 {
     TextLayoutStats ret;
     ret.isBold          = style & sf::Text::Bold;
