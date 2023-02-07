@@ -97,6 +97,7 @@ struct TextLayoutStats
     float letterSpacing;
     float lineSpacing;
 };
+
 // Compute a series of variables that are commonly used when building a text layout
 TextLayoutStats getTextLayoutStats(uint32_t style, const sf::Font* font, unsigned int characterSize, float letterSpacingFactor, float lineSpacingFactor)
 {
@@ -397,14 +398,12 @@ Vector2f Text::findCharacterPos(std::size_t index) const
 
 
 ////////////////////////////////////////////////////////////
-bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
+std::optional<std::size_t> Text::findOutOfBoundsCharacter(const sf::FloatRect& bounds) const
 {
     // Make sure that we have a valid font
     if (!m_font)
     {
-        oob = m_string.getSize();
-
-        return true;
+        return std::nullopt;
     }
 
     // Precompute the variables needed by the algorithm
@@ -443,16 +442,12 @@ bool Text::fitsWithinBounds(const sf::FloatRect& bounds, std::size_t& oob) const
         if (!bounds.contains(getTransform().transformPoint(position)))
         {
             // Set index to first out-of-bounds character and return failure
-            oob = i;
-
-            return false;
+            return i;
         }
     }
 
     // Set first out-of-bounds character to invalid and return success
-    oob = m_string.getSize();
-
-    return true;
+    return std::nullopt;
 }
 
 
