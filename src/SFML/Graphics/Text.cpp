@@ -102,7 +102,7 @@ struct TextLayoutStats
 TextLayoutStats getTextLayoutStats(uint32_t style, const sf::Font* font, unsigned int characterSize, float letterSpacingFactor, float lineSpacingFactor)
 {
     TextLayoutStats ret;
-    ret.isBold          = style & sf::Text::Style::Bold;
+    ret.isBold          = style & sf::Text::Bold;
     ret.whitespaceWidth = font->getGlyph(U' ', characterSize, ret.isBold).advance;
     ret.letterSpacing   = (ret.whitespaceWidth / 3.f) * (letterSpacingFactor - 1.f);
     ret.whitespaceWidth += ret.letterSpacing;
