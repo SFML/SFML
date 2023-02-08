@@ -143,16 +143,17 @@ if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
   endforeach()
 endif()
 
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Freetype DEFAULT_MSG FREETYPE_LIBRARY FREETYPE_INCLUDE_DIRS FREETYPE_VERSION_STRING)
 
-# set FREETYPE_FOUND to TRUE if all listed variables are TRUE
-if(FREETYPE_LIBRARY AND FREETYPE_INCLUDE_DIRS AND FREETYPE_VERSION_STRING)
-  set(FREETYPE_FOUND TRUE)
-else()
-  set(FREETYPE_FOUND FALSE)
+mark_as_advanced(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)
+
+if(NOT TARGET Freetype::Freetype)
+  add_library(Freetype::Freetype IMPORTED UNKNOWN)
+  set_target_properties(Freetype::Freetype PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${FREETYPE_INCLUDE_DIRS}")
+  if(FREETYPE_LIBRARY MATCHES "/([^/]+)\\.framework$")
+    set_target_properties(Freetype::Freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY}/${CMAKE_MATCH_1})
+  else()
+    set_target_properties(Freetype::Freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY})
+  endif()
 endif()
-
-mark_as_advanced(
-  FREETYPE_LIBRARY
-  FREETYPE_INCLUDE_DIR_freetype2
-  FREETYPE_INCLUDE_DIR_ft2build
-)
