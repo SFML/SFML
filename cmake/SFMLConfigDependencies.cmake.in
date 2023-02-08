@@ -67,7 +67,7 @@ if(SFML_STATIC_LIBRARIES)
     # SFML::Graphics
     list(FIND SFML_FIND_COMPONENTS "Graphics" FIND_SFML_GRAPHICS_COMPONENT_INDEX)
     if(FIND_SFML_GRAPHICS_COMPONENT_INDEX GREATER -1)
-        sfml_bind_dependency(TARGET Freetype FRIENDLY_NAME "FreeType" SEARCH_NAMES "freetype")
+        find_package(Freetype)
     endif()
 
     # SFML::Audio
