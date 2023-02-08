@@ -69,12 +69,14 @@ namespace priv
 ///
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_ANDROID) && defined(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
-using MostSuitableClock = SuspendAwareClock;
+using ClockImpl = SuspendAwareClock;
 #else
-using MostSuitableClock = std::conditional_t<std::chrono::high_resolution_clock::is_steady,
-                                             std::chrono::high_resolution_clock,
-                                             std::chrono::steady_clock>;
+using ClockImpl = std::conditional_t<std::chrono::high_resolution_clock::is_steady, std::chrono::high_resolution_clock, std::chrono::steady_clock>;
 #endif
+
+static_assert(ClockImpl::is_steady, "Provided implementation is not a monotonic clock");
+static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
+              "Clock resolution is too low. Expecting at least a microsecond precision");
 
 } // namespace priv
 
@@ -119,16 +121,10 @@ public:
     Time restart();
 
 private:
-    using ClockImpl = priv::MostSuitableClock;
-
-    static_assert(ClockImpl::is_steady, "Provided implementation is not a monotonic clock");
-    static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
-                  "Clock resolution is too low. Expecting at least a microsecond precision");
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ClockImpl::time_point m_startTime{ClockImpl::now()}; //!< Time of last reset
+    priv::ClockImpl::time_point m_startTime{priv::ClockImpl::now()}; //!< Time of last reset
 };
 
 } // namespace sf

@@ -49,16 +49,16 @@ Clock::Clock() = default;
 ////////////////////////////////////////////////////////////
 Time Clock::getElapsedTime() const
 {
-    return durationToTime(ClockImpl::now() - m_startTime);
+    return durationToTime(priv::ClockImpl::now() - m_startTime);
 }
 
 
 ////////////////////////////////////////////////////////////
 Time Clock::restart()
 {
-    const ClockImpl::time_point now     = ClockImpl::now();
-    Time                        elapsed = durationToTime(now - m_startTime);
-    m_startTime                         = now;
+    const auto now     = priv::ClockImpl::now();
+    const auto elapsed = durationToTime(now - m_startTime);
+    m_startTime        = now;
 
     return elapsed;
 }
