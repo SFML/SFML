@@ -107,7 +107,7 @@ jobs:
         fail_ci_if_error: true
 
     - name: Test Install Interface
-      if: matrix.platform.name != 'Android' && matrix.config.name != 'Frameworks' && matrix.config.name != 'iOS' && matrix.config.name != 'Static DRM'
+      if: matrix.platform.name != 'Android' && matrix.config.name != 'Frameworks' && matrix.config.name != 'iOS'
       shell: bash
       run: |
         cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
