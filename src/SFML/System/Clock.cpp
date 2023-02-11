@@ -32,33 +32,20 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Clock::Clock() = default;
-
-
-////////////////////////////////////////////////////////////
 Time Clock::getElapsedTime() const
 {
-    return durationToTime(ClockImpl::now() - m_startTime);
+    return std::chrono::duration_cast<std::chrono::microseconds>(priv::ClockImpl::now() - m_startTime);
 }
 
 
 ////////////////////////////////////////////////////////////
 Time Clock::restart()
 {
-    const ClockImpl::time_point now     = ClockImpl::now();
-    Time                        elapsed = durationToTime(now - m_startTime);
-    m_startTime                         = now;
+    const auto now     = priv::ClockImpl::now();
+    const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - m_startTime);
+    m_startTime        = now;
 
     return elapsed;
-}
-
-
-////////////////////////////////////////////////////////////
-Time Clock::durationToTime(Clock::ClockImpl::duration duration)
-{
-    using std::chrono::duration_cast;
-    using std::chrono::microseconds;
-    return duration_cast<microseconds>(duration);
 }
 
 } // namespace sf
