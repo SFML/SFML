@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,34 +23,36 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#import <SFML/Window/macOS/WindowImplDelegateProtocol.h>
 
-#include <SFML/Window/Sensor.hpp>
+////////////////////////////////////////////////////////////
+/// Predefine some classes
+////////////////////////////////////////////////////////////
+@class SFOpenGLView;
 
-#if defined(SFML_SYSTEM_WINDOWS)
+////////////////////////////////////////////////////////////
+/// \brief Implementation of WindowImplDelegateProtocol for view management
+///
+////////////////////////////////////////////////////////////
 
-#include <SFML/Window/Win32/SensorImpl.hpp>
+@interface SFViewController : NSObject<WindowImplDelegateProtocol>
+{
+    NSView*                    m_view;      ///< Underlying Cocoa view
+    SFOpenGLView*              m_oglView;   ///< OpenGL view
+    sf::priv::WindowImplCocoa* m_requester; ///< View's requester
+}
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
-    defined(SFML_SYSTEM_NETBSD)
+////////////////////////////////////////////////////////////
+/// \brief Initialize the view controller
+///
+/// \param view view to be controlled
+///
+/// \return an initialized view controller
+///
+////////////////////////////////////////////////////////////
+- (id)initWithView:(NSView*)view;
 
-#include <SFML/Window/Unix/SensorImpl.hpp>
-
-#elif defined(SFML_SYSTEM_MACOS)
-
-#include <SFML/Window/macOS/SensorImpl.hpp>
-
-#elif defined(SFML_SYSTEM_IOS)
-
-#include <SFML/Window/iOS/SensorImpl.hpp>
-
-#elif defined(SFML_SYSTEM_ANDROID)
-
-#include <SFML/Window/Android/SensorImpl.hpp>
-
-#endif
+@end

@@ -55,29 +55,29 @@ public:
     /// Refer to the following table to determine which cursor
     /// is available on which platform.
     ///
-    ///  Type                               | Linux | Mac OS X | Windows  |
-    /// ------------------------------------|:-----:|:--------:|:--------:|
-    ///  sf::Cursor::Arrow                  |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::ArrowWait              |  no   |    no    |   yes    |
-    ///  sf::Cursor::Wait                   |  yes  |    no    |   yes    |
-    ///  sf::Cursor::Text                   |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::Hand                   |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeHorizontal         |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeVertical           |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    yes*  |   yes    |
-    ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    yes*  |   yes    |
-    ///  sf::Cursor::SizeLeft               |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeRight              |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTop                |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottom             |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTopLeft            |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTopRight           |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottomLeft         |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottomRight        |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeAll                |  yes  |    no    |   yes    |
-    ///  sf::Cursor::Cross                  |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::Help                   |  yes  |    yes*  |   yes    |
-    ///  sf::Cursor::NotAllowed             |  yes  |    yes   |   yes    |
+    ///  Type                               | Linux | macOS | Windows  |
+    /// ------------------------------------|:-----:|:-----:|:--------:|
+    ///  sf::Cursor::Arrow                  |  yes  | yes   |   yes    |
+    ///  sf::Cursor::ArrowWait              |  no   | no    |   yes    |
+    ///  sf::Cursor::Wait                   |  yes  | no    |   yes    |
+    ///  sf::Cursor::Text                   |  yes  | yes   |   yes    |
+    ///  sf::Cursor::Hand                   |  yes  | yes   |   yes    |
+    ///  sf::Cursor::SizeHorizontal         |  yes  | yes   |   yes    |
+    ///  sf::Cursor::SizeVertical           |  yes  | yes   |   yes    |
+    ///  sf::Cursor::SizeTopLeftBottomRight |  no   | yes*  |   yes    |
+    ///  sf::Cursor::SizeBottomLeftTopRight |  no   | yes*  |   yes    |
+    ///  sf::Cursor::SizeLeft               |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeRight              |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeTop                |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeBottom             |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeTopLeft            |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeTopRight           |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomLeft         |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeBottomRight        |  yes  | yes** |   yes**  |
+    ///  sf::Cursor::SizeAll                |  yes  | no    |   yes    |
+    ///  sf::Cursor::Cross                  |  yes  | yes   |   yes    |
+    ///  sf::Cursor::Help                   |  yes  | yes*  |   yes    |
+    ///  sf::Cursor::NotAllowed             |  yes  | yes   |   yes    |
     ///
     ///  * These cursor types are undocumented so may not
     ///    be available on all versions, but have been tested on 10.13

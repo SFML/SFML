@@ -39,7 +39,7 @@
 #include <SFML/Window/Unix/CursorImpl.hpp>
 #endif
 #elif defined(SFML_SYSTEM_MACOS)
-#include <SFML/Window/OSX/CursorImpl.hpp>
+#include <SFML/Window/macOS/CursorImpl.hpp>
 #elif defined(SFML_SYSTEM_IOS)
 #include <SFML/Window/iOS/CursorImpl.hpp>
 #elif defined(SFML_SYSTEM_ANDROID)

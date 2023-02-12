@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,34 +23,33 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#import <SFML/Window/macOS/SFApplicationDelegate.h>
 
-#include <SFML/Window/Sensor.hpp>
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#if defined(SFML_SYSTEM_WINDOWS)
+////////////////////////////////////////////////////////////
+@implementation SFApplicationDelegate
 
-#include <SFML/Window/Win32/SensorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
-    defined(SFML_SYSTEM_NETBSD)
+////////////////////////////////////////////////////////////
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
+{
+    (void)sender;
+    // Generate close event for each SFML window
+    [NSApp makeWindowsPerform:@selector(sfClose) inOrder:NO];
+    return NSTerminateCancel;
+}
 
-#include <SFML/Window/Unix/SensorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_MACOS)
+////////////////////////////////////////////////////////////
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
+{
+    (void)theApplication;
+    return YES;
+}
 
-#include <SFML/Window/macOS/SensorImpl.hpp>
 
-#elif defined(SFML_SYSTEM_IOS)
-
-#include <SFML/Window/iOS/SensorImpl.hpp>
-
-#elif defined(SFML_SYSTEM_ANDROID)
-
-#include <SFML/Window/Android/SensorImpl.hpp>
-
-#endif
+@end

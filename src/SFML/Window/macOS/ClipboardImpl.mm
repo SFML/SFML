@@ -22,26 +22,48 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-
-#if defined(SFML_SYSTEM_WINDOWS)
-#include <SFML/Window/Win32/ClipboardImpl.hpp>
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
-    defined(SFML_SYSTEM_NETBSD)
-#if defined(SFML_USE_DRM)
-#include <SFML/Window/DRM/ClipboardImpl.hpp>
-#else
-#include <SFML/Window/Unix/ClipboardImpl.hpp>
-#endif
-#elif defined(SFML_SYSTEM_MACOS)
+#include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/ClipboardImpl.hpp>
-#elif defined(SFML_SYSTEM_IOS)
-#include <SFML/Window/iOS/ClipboardImpl.hpp>
-#elif defined(SFML_SYSTEM_ANDROID)
-#include <SFML/Window/Android/ClipboardImpl.hpp>
-#endif
+
+#include <SFML/System/String.hpp>
+
+#import <AppKit/AppKit.h>
+
+namespace sf::priv
+{
+
+////////////////////////////////////////////////////////////
+String ClipboardImpl::getString()
+{
+    const AutoreleasePool pool;
+    NSPasteboard* const   pboard = [NSPasteboard generalPasteboard];
+    NSString* const       data   = [pboard stringForType:NSPasteboardTypeString];
+
+    const char*      utf8   = [data cStringUsingEncoding:NSUTF8StringEncoding];
+    const NSUInteger length = [data lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    return String::fromUtf8(utf8, utf8 + length);
+}
+
+
+////////////////////////////////////////////////////////////
+void ClipboardImpl::setString(const String& text)
+{
+    const AutoreleasePool           pool;
+    std::basic_string<std::uint8_t> utf8 = text.toUtf8();
+    NSString* const                 data = [[NSString alloc]
+        initWithBytes:utf8.data()
+               length:utf8.length()
+             encoding:NSUTF8StringEncoding];
+
+    NSPasteboard* const pboard = [NSPasteboard generalPasteboard];
+    [pboard declareTypes:@[NSPasteboardTypeString] owner:nil];
+    [pboard setString:data forType:NSPasteboardTypeString];
+
+    [data release];
+}
+
+} // namespace sf::priv

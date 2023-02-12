@@ -50,8 +50,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     # use the OpenGL ES implementation on iOS
     set(OPENGL_ES 1)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    set(SFML_OS_MACOSX 1)
-    # don't use the OpenGL ES implementation on Mac OS X
+    set(SFML_OS_MACOS 1)
+    # don't use the OpenGL ES implementation on macOS
     set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
     set(SFML_OS_ANDROID 1)

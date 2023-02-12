@@ -86,7 +86,7 @@ using ContextType = sf::priv::GlxContext;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-#include <SFML/Window/OSX/SFContext.hpp>
+#include <SFML/Window/macOS/SFContext.hpp>
 using ContextType = sf::priv::SFContext;
 
 #elif defined(SFML_SYSTEM_IOS)

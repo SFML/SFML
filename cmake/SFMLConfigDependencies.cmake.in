@@ -16,7 +16,7 @@ if(SFML_STATIC_LIBRARIES)
     elseif(${CMAKE_SYSTEM_NAME} MATCHES "iOS")
         set(FIND_SFML_OS_IOS 1)
     elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        set(FIND_SFML_OS_MACOSX 1)
+        set(FIND_SFML_OS_MACOS 1)
     endif()
 
     # start with an empty list

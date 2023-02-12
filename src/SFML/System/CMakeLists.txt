@@ -81,7 +81,7 @@ if(SFML_OS_ANDROID)
 endif()
 
 # setup dependencies
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOS)
     target_link_libraries(sfml-system PRIVATE pthread)
 endif()
 

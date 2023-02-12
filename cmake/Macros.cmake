@@ -28,7 +28,7 @@ function(sfml_set_stdlib target)
         endif()
     endif()
 
-    if(SFML_OS_MACOSX)
+    if(SFML_OS_MACOS)
         if(${CMAKE_GENERATOR} MATCHES "Xcode")
             sfml_set_xcode_property(${target} CLANG_CXX_LIBRARY "libc++")
         elseif(NOT SFML_COMPILER_CLANG)
@@ -193,7 +193,7 @@ macro(sfml_add_library module)
     endif()
 
     # build frameworks or dylibs
-    if((SFML_OS_MACOSX OR SFML_OS_IOS) AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
+    if((SFML_OS_MACOS OR SFML_OS_IOS) AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES

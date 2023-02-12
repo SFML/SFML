@@ -129,7 +129,7 @@ FAQ
 
     Short answer: Don't do that!
 
-    We strongly recommend you to use either dylibs or frameworks on Mac OS X. Please refer to Apple
+    We strongly recommend you to use either dylibs or frameworks on macOS. Please refer to Apple
     documentation for information about static vs shared libraries debate.
 
     If you really need/want to use static libraries proceed as follow. First, set your project to
@@ -146,5 +146,3 @@ FAQ
     project build settings to match the settings used to compile SFML; more
     specifically the Compiler for C/C++/Objective-C, the C++ language Dialect
     and the C++ Standard Library.
-
-

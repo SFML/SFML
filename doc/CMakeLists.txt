@@ -1,6 +1,6 @@
 
 # find doxygen
-if(SFML_OS_MACOSX)
+if(SFML_OS_MACOS)
     # Add some path to search doxygen in more directories.
     set(ADDITIONAL_PATHS
         /Developer/Applications/Doxygen.app/Contents/Resources
