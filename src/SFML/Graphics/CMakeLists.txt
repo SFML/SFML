@@ -98,18 +98,6 @@ target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/e
 # glad sources
 target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
-# let CMake know about our additional graphics libraries paths
-if(SFML_OS_WINDOWS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
-elseif(SFML_OS_MACOS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
-    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks")
-elseif(SFML_OS_IOS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
-elseif(SFML_OS_ANDROID)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/freetype2")
-endif()
-
 # find external libraries
 if(SFML_OS_ANDROID)
     target_link_libraries(sfml-graphics PRIVATE z)
@@ -117,8 +105,29 @@ elseif(SFML_OS_IOS)
     target_link_libraries(sfml-graphics PRIVATE z bz2)
 endif()
 
-find_package(Freetype REQUIRED)
-target_link_libraries(sfml-graphics PRIVATE Freetype::Freetype)
+if(SFML_USE_SYSTEM_DEPS)
+    find_package(Freetype REQUIRED)
+    target_link_libraries(sfml-graphics PRIVATE Freetype::Freetype)
+else()
+    set(SFML_BUILD_TYPE ${BUILD_SHARED_LIBS})
+    set(BUILD_SHARED_LIBS OFF)
+
+    include(FetchContent)
+    FetchContent_Declare(Freetype
+        GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
+        GIT_TAG VER-2-13-0
+        GIT_SHALLOW ON)
+    FetchContent_GetProperties(Freetype)
+    if(NOT Freetype_POPULATED)
+        FetchContent_Populate(Freetype)
+        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+    set_property(TARGET freetype-interface PROPERTY POSITION_INDEPENDENT_CODE ON)
+    target_link_libraries(sfml-graphics PRIVATE freetype-interface)
+
+    set(BUILD_SHARED_LIBS ${SFML_BUILD_TYPE})
+    unset(SFML_BUILD_TYPE)
+endif()
 
 # on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features
 # that aren't supported by native CPU instructions (64-bit atomic operations on 32-bit architecture)
