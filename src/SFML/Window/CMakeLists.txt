@@ -166,58 +166,58 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         )
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
-elseif(SFML_OS_MACOSX)
+elseif(SFML_OS_MACOS)
     enable_language(OBJC OBJCXX)
     set(PLATFORM_SRC
-        ${SRCROOT}/OSX/cpp_objc_conversion.h
-        ${SRCROOT}/OSX/cpp_objc_conversion.mm
-        ${SRCROOT}/OSX/cg_sf_conversion.hpp
-        ${SRCROOT}/OSX/cg_sf_conversion.mm
-        ${SRCROOT}/OSX/CursorImpl.hpp
-        ${SRCROOT}/OSX/CursorImpl.mm
-        ${SRCROOT}/OSX/ClipboardImpl.hpp
-        ${SRCROOT}/OSX/ClipboardImpl.mm
-        ${SRCROOT}/OSX/InputImpl.mm
-        ${SRCROOT}/OSX/InputImpl.hpp
-        ${SRCROOT}/OSX/HIDInputManager.hpp
-        ${SRCROOT}/OSX/HIDInputManager.mm
-        ${SRCROOT}/OSX/HIDJoystickManager.hpp
-        ${SRCROOT}/OSX/HIDJoystickManager.cpp
-        ${SRCROOT}/OSX/JoystickImpl.cpp
-        ${SRCROOT}/OSX/JoystickImpl.hpp
-        ${SRCROOT}/OSX/NSImage+raw.h
-        ${SRCROOT}/OSX/NSImage+raw.mm
-        ${SRCROOT}/OSX/Scaling.h
-        ${SRCROOT}/OSX/SensorImpl.cpp
-        ${SRCROOT}/OSX/SensorImpl.hpp
-        ${SRCROOT}/OSX/SFApplication.h
-        ${SRCROOT}/OSX/SFApplication.m
-        ${SRCROOT}/OSX/SFApplicationDelegate.h
-        ${SRCROOT}/OSX/SFApplicationDelegate.m
-        ${SRCROOT}/OSX/SFContext.hpp
-        ${SRCROOT}/OSX/SFContext.mm
-        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.h
-        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.mm
-        ${SRCROOT}/OSX/SFOpenGLView.h
-        ${SRCROOT}/OSX/SFOpenGLView.mm
-        ${SRCROOT}/OSX/SFOpenGLView+keyboard.mm
-        ${SRCROOT}/OSX/SFOpenGLView+keyboard_priv.h
-        ${SRCROOT}/OSX/SFOpenGLView+mouse.mm
-        ${SRCROOT}/OSX/SFOpenGLView+mouse_priv.h
-        ${SRCROOT}/OSX/SFSilentResponder.h
-        ${SRCROOT}/OSX/SFSilentResponder.m
-        ${SRCROOT}/OSX/SFWindow.h
-        ${SRCROOT}/OSX/SFWindow.m
-        ${SRCROOT}/OSX/SFWindowController.h
-        ${SRCROOT}/OSX/SFWindowController.mm
-        ${SRCROOT}/OSX/SFViewController.h
-        ${SRCROOT}/OSX/SFViewController.mm
-        ${SRCROOT}/OSX/VideoModeImpl.cpp
-        ${SRCROOT}/OSX/WindowImplCocoa.hpp
-        ${SRCROOT}/OSX/WindowImplCocoa.mm
-        ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
-        ${SRCROOT}/OSX/AutoreleasePoolWrapper.hpp
-        ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
+        ${SRCROOT}/macOS/cpp_objc_conversion.h
+        ${SRCROOT}/macOS/cpp_objc_conversion.mm
+        ${SRCROOT}/macOS/cg_sf_conversion.hpp
+        ${SRCROOT}/macOS/cg_sf_conversion.mm
+        ${SRCROOT}/macOS/CursorImpl.hpp
+        ${SRCROOT}/macOS/CursorImpl.mm
+        ${SRCROOT}/macOS/ClipboardImpl.hpp
+        ${SRCROOT}/macOS/ClipboardImpl.mm
+        ${SRCROOT}/macOS/InputImpl.mm
+        ${SRCROOT}/macOS/InputImpl.hpp
+        ${SRCROOT}/macOS/HIDInputManager.hpp
+        ${SRCROOT}/macOS/HIDInputManager.mm
+        ${SRCROOT}/macOS/HIDJoystickManager.hpp
+        ${SRCROOT}/macOS/HIDJoystickManager.cpp
+        ${SRCROOT}/macOS/JoystickImpl.cpp
+        ${SRCROOT}/macOS/JoystickImpl.hpp
+        ${SRCROOT}/macOS/NSImage+raw.h
+        ${SRCROOT}/macOS/NSImage+raw.mm
+        ${SRCROOT}/macOS/Scaling.h
+        ${SRCROOT}/macOS/SensorImpl.cpp
+        ${SRCROOT}/macOS/SensorImpl.hpp
+        ${SRCROOT}/macOS/SFApplication.h
+        ${SRCROOT}/macOS/SFApplication.m
+        ${SRCROOT}/macOS/SFApplicationDelegate.h
+        ${SRCROOT}/macOS/SFApplicationDelegate.m
+        ${SRCROOT}/macOS/SFContext.hpp
+        ${SRCROOT}/macOS/SFContext.mm
+        ${SRCROOT}/macOS/SFKeyboardModifiersHelper.h
+        ${SRCROOT}/macOS/SFKeyboardModifiersHelper.mm
+        ${SRCROOT}/macOS/SFOpenGLView.h
+        ${SRCROOT}/macOS/SFOpenGLView.mm
+        ${SRCROOT}/macOS/SFOpenGLView+keyboard.mm
+        ${SRCROOT}/macOS/SFOpenGLView+keyboard_priv.h
+        ${SRCROOT}/macOS/SFOpenGLView+mouse.mm
+        ${SRCROOT}/macOS/SFOpenGLView+mouse_priv.h
+        ${SRCROOT}/macOS/SFSilentResponder.h
+        ${SRCROOT}/macOS/SFSilentResponder.m
+        ${SRCROOT}/macOS/SFWindow.h
+        ${SRCROOT}/macOS/SFWindow.m
+        ${SRCROOT}/macOS/SFWindowController.h
+        ${SRCROOT}/macOS/SFWindowController.mm
+        ${SRCROOT}/macOS/SFViewController.h
+        ${SRCROOT}/macOS/SFViewController.mm
+        ${SRCROOT}/macOS/VideoModeImpl.cpp
+        ${SRCROOT}/macOS/WindowImplCocoa.hpp
+        ${SRCROOT}/macOS/WindowImplCocoa.mm
+        ${SRCROOT}/macOS/WindowImplDelegateProtocol.h
+        ${SRCROOT}/macOS/AutoreleasePoolWrapper.hpp
+        ${SRCROOT}/macOS/AutoreleasePoolWrapper.mm
     )
     source_group("mac" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_IOS)
@@ -294,7 +294,7 @@ target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/ext
 
 # When static linking on macOS, we need to add this flag for objective C to work
 # https://developer.apple.com/library/archive/qa/qa1490/_index.html
-if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
+if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOS)
     target_link_libraries(sfml-window PRIVATE -ObjC)
 endif()
 
@@ -335,7 +335,7 @@ elseif(SFML_OS_WINDOWS)
     target_link_libraries(sfml-window PRIVATE winmm gdi32)
 elseif(SFML_OS_FREEBSD)
     target_link_libraries(sfml-window PRIVATE usbhid)
-elseif(SFML_OS_MACOSX)
+elseif(SFML_OS_MACOS)
     target_link_libraries(sfml-window PRIVATE "-framework Foundation" "-framework AppKit" "-framework IOKit" "-framework Carbon")
 elseif(SFML_OS_IOS)
     target_link_libraries(sfml-window PUBLIC "-framework Foundation" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore" "-framework CoreMotion")

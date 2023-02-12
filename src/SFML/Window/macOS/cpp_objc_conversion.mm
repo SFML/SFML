@@ -23,51 +23,38 @@
 //
 ////////////////////////////////////////////////////////////
 
-#import "NSString+stdstring.h"
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#import <SFML/Window/macOS/cpp_objc_conversion.h>
 
 #include <SFML/System/Utf.hpp>
 
-@implementation NSString (NSString_stdstring)
+#import <Foundation/Foundation.h>
 
-+ (id)stringWithstdstring:(const std::string&)string
+////////////////////////////////////////////////////////////
+NSString* stringToNSString(const std::string& string)
 {
     std::string utf8;
     utf8.reserve(string.size() + 1);
-
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
+    NSString* const str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
 
-    NSString* str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
     return str;
 }
 
-+ (id)stringWithstdwstring:(const std::wstring&)string
+////////////////////////////////////////////////////////////
+NSString* sfStringToNSString(const sf::String& string)
 {
-    const void* data = static_cast<const void*>(string.data());
-    unsigned    size = static_cast<unsigned>(string.size() * sizeof(wchar_t));
+    const auto  length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
+    const void* data   = reinterpret_cast<const void*>(string.getData());
 
-    NSString* str = [[[NSString alloc] initWithBytes:data length:size
-                                            encoding:NSUTF32LittleEndianStringEncoding] autorelease];
-    return str;
-}
-
-- (std::string)tostdstring
-{
-    // Not sure about the encoding to use. Using [self UTF8String] doesn't
-    // work for characters like é or à.
-    const char* cstr = [self cStringUsingEncoding:NSISOLatin1StringEncoding];
-
-    if (cstr != nullptr)
-        return std::string(cstr);
+    NSStringEncoding encoding;
+    if (NSHostByteOrder() == NS_LittleEndian)
+        encoding = NSUTF32LittleEndianStringEncoding;
     else
-        return "";
-}
+        encoding = NSUTF32BigEndianStringEncoding;
 
-- (std::wstring)tostdwstring
-{
-    // According to Wikipedia, macOS is Little Endian on x86 and x86-64
-    // https://en.wikipedia.org/wiki/Endianness
-    NSData* asData = [self dataUsingEncoding:NSUTF32LittleEndianStringEncoding];
-    return std::wstring(static_cast<const wchar_t*>([asData bytes]), [asData length] / sizeof(wchar_t));
+    NSString* const str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
+    return [str autorelease];
 }
-
-@end

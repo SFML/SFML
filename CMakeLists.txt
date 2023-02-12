@@ -58,7 +58,7 @@ if(SFML_BUILD_WINDOW)
 endif()
 
 # macOS specific options
-if(SFML_OS_MACOSX OR SFML_OS_IOS)
+if(SFML_OS_MACOS OR SFML_OS_IOS)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
@@ -115,7 +115,7 @@ if(SFML_OS_WINDOWS OR SFML_OS_IOS)
     set(DEFAULT_INSTALL_MISC_DIR .)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     set(DEFAULT_INSTALL_MISC_DIR share/SFML)
-elseif(SFML_OS_MACOSX)
+elseif(SFML_OS_MACOS)
     set(DEFAULT_INSTALL_MISC_DIR /usr/local/share/SFML)
 elseif(SFML_OS_ANDROID)
     set(DEFAULT_INSTALL_MISC_DIR ${CMAKE_ANDROID_NDK}/sources/third_party/sfml)
@@ -186,8 +186,8 @@ if(SFML_OS_WINDOWS)
     include(cmake/Mesa3D.cmake)
 endif()
 
-# setup Mac OS X stuff
-if(SFML_OS_MACOSX)
+# setup macOS stuff
+if(SFML_OS_MACOS)
     # SFML_BUILD_FRAMEWORKS needs two things:
     # first, it's available only for release
     #    (because cmake currently doesn't allow specifying a custom framework name so XXX-d is not possible)
@@ -249,8 +249,8 @@ if(SFML_ENABLE_PCH AND BUILD_SHARED_LIBS)
     message(FATAL_ERROR "Precompiled headers are currently not supported for shared library builds")
 endif()
 
-if(SFML_ENABLE_PCH AND SFML_OS_MACOSX)
-    message(FATAL_ERROR "Precompiled headers are currently not supported in MacOS builds")
+if(SFML_ENABLE_PCH AND SFML_OS_MACOS)
+    message(FATAL_ERROR "Precompiled headers are currently not supported in macOS builds")
 endif()
 
 # setup the install rules
@@ -389,36 +389,36 @@ if(SFML_OS_WINDOWS)
         endif()
     endif()
 
-elseif(SFML_OS_MACOSX)
+elseif(SFML_OS_MACOS)
     # install extlibs dependencies only when used
     if(SFML_BUILD_GRAPHICS)
-        if(FREETYPE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/freetype.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(FREETYPE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/freetype.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endif()
 
     if(SFML_BUILD_AUDIO)
-        if(FLAC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/FLAC.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(FLAC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/FLAC.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(OGG_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/ogg.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(OGG_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/ogg.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBIS_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbis.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(VORBIS_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbis.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBISENC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisenc.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(VORBISENC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbisenc.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(VORBISFILE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/vorbisfile.framework")
-            install(DIRECTORY extlibs/libs-osx/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        if(VORBISFILE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbisfile.framework")
+            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
 
-        if(OPENAL_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks/OpenAL.framework")
+        if(OPENAL_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/OpenAL.framework")
             install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endif()

@@ -69,7 +69,7 @@ using VulkanImplType = sf::priv::VulkanImplX11;
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-#include <SFML/Window/OSX/WindowImplCocoa.hpp>
+#include <SFML/Window/macOS/WindowImplCocoa.hpp>
 using WindowImplType = sf::priv::WindowImplCocoa;
 
 #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE

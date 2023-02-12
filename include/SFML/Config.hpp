@@ -58,7 +58,7 @@
 
 #elif TARGET_OS_MAC
 
-// MacOS
+// macOS
 #define SFML_SYSTEM_MACOS
 
 #else
@@ -139,7 +139,7 @@
 
 #endif
 
-#else // Linux, FreeBSD, Mac OS X
+#else // Linux, FreeBSD, macOS
 
 #define SFML_API_EXPORT __attribute__((__visibility__("default")))
 #define SFML_API_IMPORT __attribute__((__visibility__("default")))

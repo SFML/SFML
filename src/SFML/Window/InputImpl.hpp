@@ -39,7 +39,7 @@
 #include <SFML/Window/Unix/InputImpl.hpp>
 #endif
 #elif defined(SFML_SYSTEM_MACOS)
-#include <SFML/Window/OSX/InputImpl.hpp>
+#include <SFML/Window/macOS/InputImpl.hpp>
 #elif defined(SFML_SYSTEM_IOS)
 #include <SFML/Window/iOS/InputImpl.hpp>
 #elif defined(SFML_SYSTEM_ANDROID)
