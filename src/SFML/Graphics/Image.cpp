@@ -227,7 +227,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
                 // Interpolate RGBA components using the alpha values of the destination and source pixels
                 std::uint8_t srcAlpha = src[3];
                 std::uint8_t dstAlpha = dst[3];
-                std::uint8_t outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
+                auto         outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
 
                 dst[3] = outAlpha;
 

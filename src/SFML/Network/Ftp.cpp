@@ -555,8 +555,8 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             }
 
             // Reconstruct connection port and address
-            unsigned short port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
-            IpAddress      address(data[0], data[1], data[2], data[3]);
+            auto      port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
+            IpAddress address(data[0], data[1], data[2], data[3]);
 
             // Connect the data channel to the server
             if (m_dataSocket.connect(address, port) == Socket::Status::Done)

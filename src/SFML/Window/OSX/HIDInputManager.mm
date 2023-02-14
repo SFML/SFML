@@ -58,7 +58,7 @@ long HIDInputManager::getLocationID(IOHIDDeviceRef device)
     if (!typeRef || (CFGetTypeID(typeRef) != CFNumberGetTypeID()))
         return 0;
 
-    CFNumberRef locRef = static_cast<CFNumberRef>(typeRef);
+    const auto* locRef = static_cast<CFNumberRef>(typeRef);
 
     if (!CFNumberGetValue(locRef, kCFNumberLongType, &loc))
         return 0;
@@ -753,7 +753,7 @@ void HIDInputManager::initializeKeyboard()
         return;
     }
 
-    NSSet* keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
+    auto* keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
     for (id keyboard in keyboards)
         loadKeyboard(static_cast<IOHIDDeviceRef>(keyboard));
 
@@ -774,10 +774,10 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
         return;
     }
 
-    NSArray* keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
+    auto* keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
     for (id key in keys)
     {
-        IOHIDElementRef elem = static_cast<IOHIDElementRef>(key);
+        auto* elem = static_cast<IOHIDElementRef>(key);
         if (IOHIDElementGetUsagePage(elem) == kHIDPage_KeyboardOrKeypad)
             loadKey(elem);
     }
@@ -809,8 +809,8 @@ void HIDInputManager::buildMappings()
         key = Keyboard::Unknown;
 
     // Get the current keyboard layout
-    TISInputSourceRef tis = TISCopyCurrentKeyboardLayoutInputSource();
-    CFDataRef layoutData  = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
+    TISInputSourceRef tis  = TISCopyCurrentKeyboardLayoutInputSource();
+    const auto* layoutData = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
 
     if (layoutData == nullptr)
     {
@@ -819,14 +819,14 @@ void HIDInputManager::buildMappings()
         return;
     }
 
-    UCKeyboardLayout* layout = reinterpret_cast<UCKeyboardLayout*>(const_cast<std::uint8_t*>(CFDataGetBytePtr(layoutData)));
+    auto* layout = reinterpret_cast<UCKeyboardLayout*>(const_cast<std::uint8_t*>(CFDataGetBytePtr(layoutData)));
 
     // For each scancode having a IOHIDElement, we translate the corresponding
     // virtual code to a localized Key.
     for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
-        Keyboard::Scancode scan        = static_cast<Keyboard::Scancode>(i);
-        std::uint8_t       virtualCode = scanToVirtualCode(scan);
+        auto         scan        = static_cast<Keyboard::Scancode>(i);
+        std::uint8_t virtualCode = scanToVirtualCode(scan);
 
         if (virtualCode == unknownVirtualCode)
             continue;
@@ -912,7 +912,7 @@ void HIDInputManager::keyboardChanged(CFNotificationCenterRef /* center */,
                                       const void* /* object */,
                                       CFDictionaryRef /* userInfo */)
 {
-    HIDInputManager* manager = static_cast<HIDInputManager*>(observer);
+    auto* manager = static_cast<HIDInputManager*>(observer);
     manager->buildMappings();
 }
 

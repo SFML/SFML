@@ -134,8 +134,8 @@ void cleanup()
 
 void drmFbDestroyCallback(gbm_bo* bo, void* data)
 {
-    int    drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
-    DrmFb* fb    = static_cast<DrmFb*>(data);
+    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
+    auto* fb    = static_cast<DrmFb*>(data);
 
     if (fb->fbId)
         drmModeRmFB(drmFd, fb->fbId);
@@ -145,8 +145,8 @@ void drmFbDestroyCallback(gbm_bo* bo, void* data)
 
 DrmFb* drmFbGetFromBo(gbm_bo& bo)
 {
-    int    drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
-    DrmFb* fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
+    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
+    auto* fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
     if (fb)
         return fb;
 

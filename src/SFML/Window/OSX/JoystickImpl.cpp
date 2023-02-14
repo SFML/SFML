@@ -58,7 +58,7 @@ std::string getDeviceString(IOHIDDeviceRef ref, CFStringRef prop, unsigned int i
     CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
     if (typeRef && (CFGetTypeID(typeRef) == CFStringGetTypeID()))
     {
-        CFStringRef str = static_cast<CFStringRef>(typeRef);
+        const auto* str = static_cast<CFStringRef>(typeRef);
         return stringFromCFString(str);
     }
 
@@ -153,8 +153,7 @@ bool JoystickImpl::isConnected(unsigned int index)
 
                     for (CFIndex didx(0); !state && didx < size; ++didx)
                     {
-                        IOHIDDeviceRef d = static_cast<IOHIDDeviceRef>(
-                            const_cast<void*>(array[static_cast<std::size_t>(didx)]));
+                        auto* d = static_cast<IOHIDDeviceRef>(const_cast<void*>(array[static_cast<std::size_t>(didx)]));
                         Location dloc = HIDInputManager::getLocationID(d);
 
                         bool foundJ = false;
@@ -205,7 +204,7 @@ bool JoystickImpl::open(unsigned int index)
     IOHIDDeviceRef self = nil;
     for (CFIndex i(0); self == nil && i < joysticksCount; ++i)
     {
-        IOHIDDeviceRef d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
+        auto* d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
         if (deviceLoc == HIDInputManager::getLocationID(d))
             self = d;
     }
@@ -233,7 +232,7 @@ bool JoystickImpl::open(unsigned int index)
     CFIndex elementsCount = CFArrayGetCount(elements);
     for (int i = 0; i < elementsCount; ++i)
     {
-        IOHIDElementRef element = static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements, i)));
+        auto* element = static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements, i)));
         switch (IOHIDElementGetUsagePage(element))
         {
             case kHIDPage_GenericDesktop:
@@ -424,7 +423,7 @@ JoystickState JoystickImpl::update()
     bool found = false;
     for (CFIndex i(0); !found && i < joysticksCount; ++i)
     {
-        IOHIDDeviceRef d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
+        auto* d = static_cast<IOHIDDeviceRef>(const_cast<void*>(devicesArray[static_cast<std::size_t>(i)]));
         if (selfLoc == HIDInputManager::getLocationID(d))
             found = true;
     }
@@ -475,12 +474,12 @@ JoystickState JoystickImpl::update()
         // This method might not be very accurate (the "0 position" can be
         // slightly shift with some device) but we don't care because most
         // of devices are so sensitive that this is not relevant.
-        double physicalMax   = static_cast<double>(IOHIDElementGetPhysicalMax(iohidElementRef));
-        double physicalMin   = static_cast<double>(IOHIDElementGetPhysicalMin(iohidElementRef));
+        auto   physicalMax   = static_cast<double>(IOHIDElementGetPhysicalMax(iohidElementRef));
+        auto   physicalMin   = static_cast<double>(IOHIDElementGetPhysicalMin(iohidElementRef));
         double scaledMin     = -100;
         double scaledMax     = 100;
         double physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
-        float  scaledValue   = static_cast<float>(
+        auto   scaledValue   = static_cast<float>(
             (((physicalValue - physicalMin) * (scaledMax - scaledMin)) / (physicalMax - physicalMin)) + scaledMin);
         state.axes[axis] = scaledValue;
     }
