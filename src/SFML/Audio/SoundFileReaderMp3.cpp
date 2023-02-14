@@ -56,14 +56,14 @@ namespace
 {
 std::size_t readCallback(void* ptr, std::size_t size, void* data)
 {
-    sf::InputStream* stream = static_cast<sf::InputStream*>(data);
+    auto* stream = static_cast<sf::InputStream*>(data);
     return static_cast<std::size_t>(stream->read(ptr, static_cast<std::int64_t>(size)));
 }
 
 int seekCallback(std::uint64_t offset, void* data)
 {
-    sf::InputStream* stream   = static_cast<sf::InputStream*>(data);
-    std::int64_t     position = stream->seek(static_cast<std::int64_t>(offset));
+    auto*        stream   = static_cast<sf::InputStream*>(data);
+    std::int64_t position = stream->seek(static_cast<std::int64_t>(offset));
     return position < 0 ? -1 : 0;
 }
 

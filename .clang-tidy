@@ -19,7 +19,6 @@ Checks: >
   -modernize-macro-to-enum,
   -modernize-pass-by-value,
   -modernize-return-braced-init-list,
-  -modernize-use-auto,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -readability-braces-around-statements,

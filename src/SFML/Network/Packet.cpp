@@ -434,7 +434,7 @@ Packet& Packet::operator<<(std::uint16_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::int32_t data)
 {
-    std::int32_t toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
+    auto toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }

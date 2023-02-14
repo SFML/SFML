@@ -543,9 +543,9 @@ void InputImpl::ensureMappings()
     // Phase 2: Translate scancode to virtual code to key names
     for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
-        Keyboard::Scancode scan       = static_cast<Keyboard::Scancode>(i);
-        UINT               virtualKey = sfScanToVirtualKey(scan);
-        Keyboard::Key      key        = virtualKeyToSfKey(virtualKey);
+        auto          scan       = static_cast<Keyboard::Scancode>(i);
+        UINT          virtualKey = sfScanToVirtualKey(scan);
+        Keyboard::Key key        = virtualKeyToSfKey(virtualKey);
         if (key != Keyboard::Unknown && m_keyToScancodeMapping[key] == Keyboard::Scan::Unknown)
             m_keyToScancodeMapping[key] = scan;
         m_scancodeToKeyMapping[static_cast<std::size_t>(scan)] = key;
