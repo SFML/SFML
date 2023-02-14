@@ -27,8 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <functional>
+#include <numeric>
 
 
 namespace sf
@@ -83,6 +85,14 @@ bool VideoMode::isValid() const
     const std::vector<VideoMode>& modes = getFullscreenModes();
 
     return std::find(modes.begin(), modes.end(), *this) != modes.end();
+}
+
+////////////////////////////////////////////////////////////
+Vector2u VideoMode::getAspectRatio() const;
+{
+    const unsigned int divisor = std::gcd(this->width, this->height);
+
+    return Vector2u(this->width / divisor, this->height /divisor);
 }
 
 
