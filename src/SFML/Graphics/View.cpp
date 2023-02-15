@@ -157,17 +157,17 @@ const Transform& View::getTransform() const
     if (!m_transformUpdated)
     {
         // Rotation components
-        float angle  = m_rotation.asRadians();
-        float cosine = std::cos(angle);
-        float sine   = std::sin(angle);
-        float tx     = -m_center.x * cosine - m_center.y * sine + m_center.x;
-        float ty     = m_center.x * sine - m_center.y * cosine + m_center.y;
+        const float angle  = m_rotation.asRadians();
+        const float cosine = std::cos(angle);
+        const float sine   = std::sin(angle);
+        const float tx     = -m_center.x * cosine - m_center.y * sine + m_center.x;
+        const float ty     = m_center.x * sine - m_center.y * cosine + m_center.y;
 
         // Projection components
-        float a = 2.f / m_size.x;
-        float b = -2.f / m_size.y;
-        float c = -a * m_center.x;
-        float d = -b * m_center.y;
+        const float a = 2.f / m_size.x;
+        const float b = -2.f / m_size.y;
+        const float c = -a * m_center.x;
+        const float d = -b * m_center.y;
 
         // Rebuild the projection matrix
         // clang-format off

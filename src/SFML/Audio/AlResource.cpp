@@ -51,7 +51,7 @@ namespace sf
 AlResource::AlResource()
 {
     // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // If this is the very first resource, trigger the global device initialization
     if (count == 0)
@@ -66,7 +66,7 @@ AlResource::AlResource()
 AlResource::~AlResource()
 {
     // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // Decrement the resources counter
     --count;

@@ -334,7 +334,7 @@ void loadExtensions()
 // Helper to parse OpenGL version strings
 bool parseVersionString(const char* version, const char* prefix, unsigned int& major, unsigned int& minor)
 {
-    std::size_t prefixLength = std::strlen(prefix);
+    const std::size_t prefixLength = std::strlen(prefix);
 
     if ((std::strlen(version) >= (prefixLength + 3)) && (std::strncmp(version, prefix, prefixLength) == 0) &&
         std::isdigit(version[prefixLength]) && (version[prefixLength + 1] == '.') &&
@@ -363,7 +363,7 @@ void GlContext::initResource()
     using GlContextImpl::sharedContext;
 
     // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // If this is the very first resource, trigger the global context initialization
     if (resourceCount == 0)
@@ -400,7 +400,7 @@ void GlContext::cleanupResource()
     using GlContextImpl::sharedContext;
 
     // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // Decrement the resources counter
     --resourceCount;
@@ -481,7 +481,7 @@ std::unique_ptr<GlContext> GlContext::create()
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != nullptr);
 
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     std::unique_ptr<GlContext> context;
 
@@ -514,7 +514,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != nullptr);
 
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
@@ -524,7 +524,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
-        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+        const ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
         sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->initialize(sharedSettings);
@@ -565,7 +565,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     assert(sharedContext != nullptr);
 
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // If resourceCount is 1 we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
@@ -575,7 +575,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         !(sharedContext->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
-        ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+        const ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
 
         sharedContext = std::make_unique<ContextType>(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->initialize(sharedSettings);
@@ -616,7 +616,7 @@ bool GlContext::isExtensionAvailable(const char* name)
 ////////////////////////////////////////////////////////////
 GlFunctionPointer GlContext::getFunction(const char* name)
 {
-    std::lock_guard lock(GlContextImpl::mutex);
+    const std::lock_guard lock(GlContextImpl::mutex);
 
     return ContextType::getFunction(name);
 }
@@ -670,7 +670,7 @@ bool GlContext::setActive(bool active)
     {
         if (m_id != currentContext.id)
         {
-            std::lock_guard lock(mutex);
+            const std::lock_guard lock(mutex);
 
             // Activate the context
             if (makeCurrent(true))
@@ -695,7 +695,7 @@ bool GlContext::setActive(bool active)
     {
         if (m_id == currentContext.id)
         {
-            std::lock_guard lock(mutex);
+            const std::lock_guard lock(mutex);
 
             // Deactivate the context
             if (makeCurrent(false))
@@ -947,8 +947,8 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
-    int version          = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
-    int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
+    const int version          = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
+    const int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
 
     if ((m_settings.attributeFlags != requestedSettings.attributeFlags) || (version < requestedVersion) ||
         (m_settings.stencilBits < requestedSettings.stencilBits) ||

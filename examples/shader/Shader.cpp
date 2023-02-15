@@ -139,11 +139,11 @@ public:
         m_points.setPrimitiveType(sf::PrimitiveType::Points);
         for (int i = 0; i < 40000; ++i)
         {
-            auto x = xDistribution(rng);
-            auto y = yDistribution(rng);
-            auto r = static_cast<std::uint8_t>(colorDistribution(rng));
-            auto g = static_cast<std::uint8_t>(colorDistribution(rng));
-            auto b = static_cast<std::uint8_t>(colorDistribution(rng));
+            const auto x = xDistribution(rng);
+            const auto y = yDistribution(rng);
+            const auto r = static_cast<std::uint8_t>(colorDistribution(rng));
+            const auto g = static_cast<std::uint8_t>(colorDistribution(rng));
+            const auto b = static_cast<std::uint8_t>(colorDistribution(rng));
             m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
         }
 
@@ -153,7 +153,7 @@ public:
 
     void onUpdate(float time, float x, float y) override
     {
-        float radius = 200 + std::cos(time) * 150;
+        const float radius = 200 + std::cos(time) * 150;
         m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
         m_shader.setUniform("storm_inner_radius", radius / 3);
         m_shader.setUniform("storm_total_radius", radius);
@@ -205,7 +205,7 @@ public:
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity(m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96}));
+            const sf::Sprite entity(m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96}));
             m_entities.push_back(entity);
         }
 
@@ -308,7 +308,7 @@ public:
         m_transform.rotate(sf::degrees(x * 360.f));
 
         // Adjust billboard size to scale between 25 and 75
-        float size = 25 + std::abs(y) * 50;
+        const float size = 25 + std::abs(y) * 50;
 
         // Update the shader parameter
         m_shader.setUniform("size", sf::Vector2f(size, size));
@@ -387,7 +387,7 @@ int main()
     instructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop
-    sf::Clock clock;
+    const sf::Clock clock;
     while (window.isOpen())
     {
         // Process events

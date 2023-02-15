@@ -38,7 +38,7 @@ NSString* stringToNSString(const std::string& string)
     std::string utf8;
     utf8.reserve(string.size() + 1);
     sf::Utf8::fromAnsi(string.begin(), string.end(), std::back_inserter(utf8));
-    NSString* str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
+    NSString* const str = [NSString stringWithCString:utf8.c_str() encoding:NSUTF8StringEncoding];
 
     return str;
 }
@@ -46,7 +46,7 @@ NSString* stringToNSString(const std::string& string)
 ////////////////////////////////////////////////////////////
 NSString* sfStringToNSString(const sf::String& string)
 {
-    auto        length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
+    const auto  length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
     const void* data   = reinterpret_cast<const void*>(string.getData());
 
     NSStringEncoding encoding;
@@ -55,6 +55,6 @@ NSString* sfStringToNSString(const sf::String& string)
     else
         encoding = NSUTF32BigEndianStringEncoding;
 
-    NSString* str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
+    NSString* const str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
     return [str autorelease];
 }

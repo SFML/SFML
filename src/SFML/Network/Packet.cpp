@@ -65,7 +65,7 @@ void Packet::append(const void* data, std::size_t sizeInBytes)
 {
     if (data && (sizeInBytes > 0))
     {
-        std::size_t start = m_data.size();
+        const std::size_t start = m_data.size();
         m_data.resize(start + sizeInBytes);
         std::memcpy(&m_data[start], data, sizeInBytes);
     }
@@ -510,7 +510,7 @@ Packet& Packet::operator<<(double data)
 Packet& Packet::operator<<(const char* data)
 {
     // First insert string length
-    auto length = static_cast<std::uint32_t>(std::strlen(data));
+    const auto length = static_cast<std::uint32_t>(std::strlen(data));
     *this << length;
 
     // Then insert characters
@@ -524,7 +524,7 @@ Packet& Packet::operator<<(const char* data)
 Packet& Packet::operator<<(const std::string& data)
 {
     // First insert string length
-    auto length = static_cast<std::uint32_t>(data.size());
+    const auto length = static_cast<std::uint32_t>(data.size());
     *this << length;
 
     // Then insert characters
@@ -539,7 +539,7 @@ Packet& Packet::operator<<(const std::string& data)
 Packet& Packet::operator<<(const wchar_t* data)
 {
     // First insert string length
-    auto length = static_cast<std::uint32_t>(std::wcslen(data));
+    const auto length = static_cast<std::uint32_t>(std::wcslen(data));
     *this << length;
 
     // Then insert characters
@@ -554,13 +554,13 @@ Packet& Packet::operator<<(const wchar_t* data)
 Packet& Packet::operator<<(const std::wstring& data)
 {
     // First insert string length
-    auto length = static_cast<std::uint32_t>(data.size());
+    const auto length = static_cast<std::uint32_t>(data.size());
     *this << length;
 
     // Then insert characters
     if (length > 0)
     {
-        for (wchar_t c : data)
+        for (const wchar_t c : data)
             *this << static_cast<std::uint32_t>(c);
     }
 
@@ -572,13 +572,13 @@ Packet& Packet::operator<<(const std::wstring& data)
 Packet& Packet::operator<<(const String& data)
 {
     // First insert the string length
-    auto length = static_cast<std::uint32_t>(data.getSize());
+    const auto length = static_cast<std::uint32_t>(data.getSize());
     *this << length;
 
     // Then insert characters
     if (length > 0)
     {
-        for (unsigned int datum : data)
+        for (const unsigned int datum : data)
             *this << datum;
     }
 

@@ -113,9 +113,9 @@ Ftp::DirectoryResponse::DirectoryResponse(const Ftp::Response& response) : Ftp::
     if (isOk())
     {
         // Extract the directory from the server response
-        std::string::size_type begin = getMessage().find('"', 0);
-        std::string::size_type end   = getMessage().find('"', begin + 1);
-        m_directory                  = getMessage().substr(begin + 1, end - begin - 1);
+        const std::string::size_type begin = getMessage().find('"', 0);
+        const std::string::size_type end   = getMessage().find('"', begin + 1);
+        m_directory                        = getMessage().substr(begin + 1, end - begin - 1);
     }
 }
 
@@ -330,8 +330,8 @@ Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remot
         return Response(Response::Status::InvalidFile);
 
     // Extract the filename from the file path
-    std::string            filename = localFile;
-    std::string::size_type pos      = filename.find_last_of("/\\");
+    std::string                  filename = localFile;
+    const std::string::size_type pos      = filename.find_last_of("/\\");
     if (pos != std::string::npos)
         filename = filename.substr(pos + 1);
 
@@ -537,7 +537,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
     if (response.isOk())
     {
         // Extract the connection address and port from the response
-        std::string::size_type begin = response.getMessage().find_first_of("0123456789");
+        const std::string::size_type begin = response.getMessage().find_first_of("0123456789");
         if (begin != std::string::npos)
         {
             std::uint8_t data[6] = {0, 0, 0, 0, 0, 0};
@@ -558,8 +558,8 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             }
 
             // Reconstruct connection port and address
-            auto      port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
-            IpAddress address(data[0], data[1], data[2], data[3]);
+            const auto      port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
+            const IpAddress address(data[0], data[1], data[2], data[3]);
 
             // Connect the data channel to the server
             if (m_dataSocket.connect(address, port) == Socket::Status::Done)

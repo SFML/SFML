@@ -122,7 +122,7 @@ int main()
     sprite1.setPosition(sprite1.getOrigin());
 
     // Create a clock for measuring elapsed time
-    sf::Clock clock;
+    const sf::Clock clock;
 
     // Loop until a WM_QUIT message is received
     MSG message;
@@ -137,7 +137,7 @@ int main()
         }
         else
         {
-            float time = clock.getElapsedTime().asSeconds();
+            const float time = clock.getElapsedTime().asSeconds();
 
             // Clear views
             sfmlView1.clear();

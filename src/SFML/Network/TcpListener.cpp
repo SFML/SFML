@@ -116,7 +116,7 @@ Socket::Status TcpListener::accept(TcpSocket& socket)
     // Accept a new connection
     sockaddr_in                  address;
     priv::SocketImpl::AddrLength length = sizeof(address);
-    SocketHandle                 remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
+    const SocketHandle           remote = ::accept(getHandle(), reinterpret_cast<sockaddr*>(&address), &length);
 
     // Check for errors
     if (remote == priv::SocketImpl::invalidSocket())

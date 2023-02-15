@@ -286,8 +286,8 @@ bool ImageLoader::saveImageToMemory(const std::string&               format,
     {
         // Choose function based on format
 
-        std::string    specified     = toLower(format);
-        const Vector2i convertedSize = Vector2i(size);
+        const std::string specified     = toLower(format);
+        const Vector2i    convertedSize = Vector2i(size);
 
         if (specified == "bmp")
         {

@@ -489,7 +489,7 @@ WORD sfScanToWinScanExtended(Keyboard::Scancode code)
 
 UINT sfScanToVirtualKey(Keyboard::Scancode code)
 {
-    WORD winScancode = sfScanToWinScan(code);
+    const WORD winScancode = sfScanToWinScan(code);
 
     // Manually map non-extended key codes
     // clang-format off
@@ -544,9 +544,9 @@ void InputImpl::ensureMappings()
     // Phase 2: Translate scancode to virtual code to key names
     for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
-        auto          scan       = static_cast<Keyboard::Scancode>(i);
-        UINT          virtualKey = sfScanToVirtualKey(scan);
-        Keyboard::Key key        = virtualKeyToSfKey(virtualKey);
+        const auto          scan       = static_cast<Keyboard::Scancode>(i);
+        const UINT          virtualKey = sfScanToVirtualKey(scan);
+        const Keyboard::Key key        = virtualKeyToSfKey(virtualKey);
         if (key != Keyboard::Unknown && m_keyToScancodeMapping[key] == Keyboard::Scan::Unknown)
             m_keyToScancodeMapping[key] = scan;
         m_scancodeToKeyMapping[static_cast<std::size_t>(scan)] = key;
@@ -558,14 +558,14 @@ void InputImpl::ensureMappings()
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    int virtualKey = sfKeyToVirtualKey(key);
+    const int virtualKey = sfKeyToVirtualKey(key);
     return (GetAsyncKeyState(virtualKey) & 0x8000) != 0;
 }
 
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Scancode code)
 {
-    UINT virtualKey = sfScanToVirtualKey(code);
+    const UINT virtualKey = sfScanToVirtualKey(code);
     return (GetAsyncKeyState(static_cast<int>(virtualKey)) & KF_UP) != 0;
 }
 
@@ -594,10 +594,10 @@ Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 String InputImpl::getDescription(Keyboard::Scancode code)
 {
-    WORD      winCode = sfScanToWinScanExtended(code);
-    const int bufSize = 1024;
-    WCHAR     name[bufSize];
-    int       result = GetKeyNameText(winCode << 16, name, bufSize);
+    const WORD winCode = sfScanToWinScanExtended(code);
+    const int  bufSize = 1024;
+    WCHAR      name[bufSize];
+    const int  result = GetKeyNameText(winCode << 16, name, bufSize);
     if (result > 0)
     {
         return name;

@@ -109,7 +109,7 @@ FloatRect VertexArray::getBounds() const
 
         for (std::size_t i = 1; i < m_vertices.size(); ++i)
         {
-            Vector2f position = m_vertices[i].position;
+            const Vector2f position = m_vertices[i].position;
 
             // Update left and right
             if (position.x < left)

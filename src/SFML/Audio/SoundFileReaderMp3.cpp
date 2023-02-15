@@ -69,8 +69,8 @@ std::size_t readCallback(void* ptr, std::size_t size, void* data)
 
 int seekCallback(std::uint64_t offset, void* data)
 {
-    auto*        stream   = static_cast<sf::InputStream*>(data);
-    std::int64_t position = stream->seek(static_cast<std::int64_t>(offset));
+    auto*              stream   = static_cast<sf::InputStream*>(data);
+    const std::int64_t position = stream->seek(static_cast<std::int64_t>(offset));
     return position < 0 ? -1 : 0;
 }
 

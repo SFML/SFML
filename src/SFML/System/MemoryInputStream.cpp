@@ -51,8 +51,8 @@ std::int64_t MemoryInputStream::read(void* data, std::int64_t size)
     if (!m_data)
         return -1;
 
-    std::int64_t endPosition = m_offset + size;
-    std::int64_t count       = endPosition <= m_size ? size : m_size - m_offset;
+    const std::int64_t endPosition = m_offset + size;
+    const std::int64_t count       = endPosition <= m_size ? size : m_size - m_offset;
 
     if (count > 0)
     {

@@ -132,7 +132,7 @@ std::string getErrorString(DWORD error)
                       nullptr) == 0)
         return "Unknown error.";
 
-    sf::String message = buffer;
+    const sf::String message = buffer;
     LocalFree(buffer);
     return message.toAnsiString();
 }
@@ -299,7 +299,7 @@ bool JoystickImpl::open(unsigned int index)
     m_index = JOYSTICKID1 + index;
 
     // Store the joystick capabilities
-    bool success = joyGetDevCaps(m_index, &m_caps, sizeof(m_caps)) == JOYERR_NOERROR;
+    const bool success = joyGetDevCaps(m_index, &m_caps, sizeof(m_caps)) == JOYERR_NOERROR;
 
     if (success)
     {
@@ -395,7 +395,7 @@ JoystickState JoystickImpl::update()
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            float angle                = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
+            const float angle          = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
             state.axes[Joystick::PovX] = std::sin(angle) * 100;
             state.axes[Joystick::PovY] = std::cos(angle) * 100;
         }
@@ -430,11 +430,11 @@ void JoystickImpl::initializeDInput()
         if (directInput8Create)
         {
             // Try to acquire a DirectInput 8.x interface
-            HRESULT result = directInput8Create(GetModuleHandleW(nullptr),
-                                                0x0800,
-                                                guids::IID_IDirectInput8W,
-                                                reinterpret_cast<void**>(&directInput),
-                                                nullptr);
+            const HRESULT result = directInput8Create(GetModuleHandleW(nullptr),
+                                                      0x0800,
+                                                      guids::IID_IDirectInput8W,
+                                                      reinterpret_cast<void**>(&directInput),
+                                                      nullptr);
 
             if (FAILED(result))
             {
@@ -490,10 +490,10 @@ void JoystickImpl::updateConnectionsDInput()
         record.plugged = false;
 
     // Enumerate devices
-    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL,
-                                              &JoystickImpl::deviceEnumerationCallback,
-                                              nullptr,
-                                              DIEDFL_ATTACHEDONLY);
+    const HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL,
+                                                    &JoystickImpl::deviceEnumerationCallback,
+                                                    nullptr,
+                                                    DIEDFL_ATTACHEDONLY);
 
     // Remove devices that were not connected during the enumeration
     for (auto i = joystickList.begin(); i != joystickList.end();)
@@ -730,7 +730,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Set device's axis mode to absolute if the device reports having at least one axis
-            for (int axis : m_axes)
+            for (const int axis : m_axes)
             {
                 if (axis != -1)
                 {
@@ -867,7 +867,7 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     // Count how many buttons have valid offsets
     caps.buttonCount = 0;
 
-    for (int button : m_buttons)
+    for (const int button : m_buttons)
     {
         if (button != -1)
             ++caps.buttonCount;
@@ -931,11 +931,11 @@ JoystickState JoystickImpl::updateDInputBuffered()
             {
                 if ((j == Joystick::PovX) || (j == Joystick::PovY))
                 {
-                    unsigned short value = LOWORD(events[i].dwData);
+                    const unsigned short value = LOWORD(events[i].dwData);
 
                     if (value != 0xFFFF)
                     {
-                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+                        const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
                         m_state.axes[Joystick::PovX] = std::sin(angle) * 100.f;
                         m_state.axes[Joystick::PovY] = std::cos(angle) * 100.f;
@@ -1020,12 +1020,12 @@ JoystickState JoystickImpl::updateDInputPolled()
             {
                 if ((i == Joystick::PovX) || (i == Joystick::PovY))
                 {
-                    unsigned short value = LOWORD(
+                    const unsigned short value = LOWORD(
                         *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[i]));
 
                     if (value != 0xFFFF)
                     {
-                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+                        const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
                         state.axes[Joystick::PovX] = std::sin(angle) * 100.f;
                         state.axes[Joystick::PovY] = std::cos(angle) * 100.f;
@@ -1055,7 +1055,7 @@ JoystickState JoystickImpl::updateDInputPolled()
         {
             if (m_buttons[i] != -1)
             {
-                BYTE value = *reinterpret_cast<const BYTE*>(reinterpret_cast<const char*>(&joystate) + m_buttons[i]);
+                const BYTE value = *reinterpret_cast<const BYTE*>(reinterpret_cast<const char*>(&joystate) + m_buttons[i]);
 
                 state.buttons[i] = ((value & 0x80) != 0);
             }
@@ -1085,7 +1085,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
         }
     }
 
-    JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
+    const JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
@@ -1131,7 +1131,7 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
         propertyRange.lMin              = -32768;
         propertyRange.lMax              = 32767;
 
-        HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
+        const HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
 
         if (result != DI_OK)
             err() << "Failed to set DirectInput device axis property range: " << result << std::endl;

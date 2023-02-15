@@ -73,7 +73,7 @@ SocketSelector::~SocketSelector() = default;
 ////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -115,7 +115,7 @@ void SocketSelector::add(Socket& socket)
 ////////////////////////////////////////////////////////////
 void SocketSelector::remove(Socket& socket)
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -163,7 +163,7 @@ bool SocketSelector::wait(Time timeout)
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
     // The first parameter is ignored on Windows
-    int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Time::Zero ? &time : nullptr);
+    const int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Time::Zero ? &time : nullptr);
 
     return count > 0;
 }
@@ -172,7 +172,7 @@ bool SocketSelector::wait(Time timeout)
 ////////////////////////////////////////////////////////////
 bool SocketSelector::isReady(Socket& socket) const
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 

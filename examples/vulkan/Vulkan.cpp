@@ -46,10 +46,10 @@ void matrixMultiply(Matrix& result, const Matrix& left, const Matrix& right)
 // Rotate a matrix around the x-axis
 void matrixRotateX(Matrix& result, sf::Angle angle)
 {
-    float rad = angle.asRadians();
+    const float rad = angle.asRadians();
 
     // clang-format off
-    Matrix matrix = {
+    const Matrix matrix = {
         {1.f,   0.f,           0.f,           0.f},
         {0.f,   std::cos(rad), std::sin(rad), 0.f},
         {0.f,  -std::sin(rad), std::cos(rad), 0.f},
@@ -63,10 +63,10 @@ void matrixRotateX(Matrix& result, sf::Angle angle)
 // Rotate a matrix around the y-axis
 void matrixRotateY(Matrix& result, sf::Angle angle)
 {
-    float rad = angle.asRadians();
+    const float rad = angle.asRadians();
 
     // clang-format off
-    Matrix matrix = {
+    const Matrix matrix = {
         { std::cos(rad), 0.f, std::sin(rad), 0.f},
         { 0.f,           1.f, 0.f,           0.f},
         {-std::sin(rad), 0.f, std::cos(rad), 0.f},
@@ -80,10 +80,10 @@ void matrixRotateY(Matrix& result, sf::Angle angle)
 // Rotate a matrix around the z-axis
 void matrixRotateZ(Matrix& result, sf::Angle angle)
 {
-    float rad = angle.asRadians();
+    const float rad = angle.asRadians();
 
     // clang-format off
-    Matrix matrix = {
+    const Matrix matrix = {
         { std::cos(rad), std::sin(rad), 0.f, 0.f},
         {-std::sin(rad), std::cos(rad), 0.f, 0.f},
         { 0.f,           0.f,           1.f, 0.f},
@@ -711,7 +711,7 @@ public:
             return;
         }
 
-        float queuePriority = 1.0f;
+        const float queuePriority = 1.0f;
 
         VkDeviceQueueCreateInfo deviceQueueCreateInfo = VkDeviceQueueCreateInfo();
         deviceQueueCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -774,7 +774,7 @@ public:
         }
         else if (!surfaceFormats.empty())
         {
-            for (VkSurfaceFormatKHR& surfaceFormat : surfaceFormats)
+            for (const VkSurfaceFormatKHR& surfaceFormat : surfaceFormats)
             {
                 if ((surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM) &&
                     (surfaceFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR))
@@ -815,7 +815,7 @@ public:
         // Prefer mailbox over FIFO if it is available
         VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-        for (VkPresentModeKHR& i : presentModes)
+        for (const VkPresentModeKHR& i : presentModes)
         {
             if (i == VK_PRESENT_MODE_MAILBOX_KHR)
             {
@@ -840,7 +840,7 @@ public:
                                             surfaceCapabilities.minImageExtent.height,
                                             surfaceCapabilities.maxImageExtent.height);
 
-        auto imageCount = std::clamp(2u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+        const auto imageCount = std::clamp(2u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
         VkSwapchainCreateInfoKHR swapchainCreateInfo = VkSwapchainCreateInfoKHR();
         swapchainCreateInfo.sType                    = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -1809,7 +1809,7 @@ public:
         }
 
         // Create a staging buffer to transfer the data with
-        VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;
+        const VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;
 
         VkBuffer       stagingBuffer       = {};
         VkDeviceMemory stagingBufferMemory = {};
@@ -2305,7 +2305,7 @@ public:
             vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
             // Bind our vertex buffer
-            VkDeviceSize offset = 0;
+            const VkDeviceSize offset = 0;
 
             vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, &vertexBuffer, &offset);
 
@@ -2403,10 +2403,10 @@ public:
         matrixRotateZ(model, sf::degrees(elapsed * 109.0f));
 
         // Translate the model based on the mouse position
-        sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
-        sf::Vector2f windowSize    = sf::Vector2f(window.getSize());
-        float        x             = std::clamp(mousePosition.x * 2.f / windowSize.x - 1.f, -1.0f, 1.0f) * 2.0f;
-        float        y             = std::clamp(-mousePosition.y * 2.f / windowSize.y + 1.f, -1.0f, 1.0f) * 1.5f;
+        const sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
+        const sf::Vector2f windowSize    = sf::Vector2f(window.getSize());
+        const float        x             = std::clamp(mousePosition.x * 2.f / windowSize.x - 1.f, -1.0f, 1.0f) * 2.0f;
+        const float        y             = std::clamp(-mousePosition.y * 2.f / windowSize.y + 1.f, -1.0f, 1.0f) * 1.5f;
 
         model[3][0] -= x;
         model[3][2] += y;
@@ -2458,12 +2458,12 @@ public:
 
         {
             // Get the next image in the swapchain
-            VkResult result = vkAcquireNextImageKHR(device,
-                                                    swapchain,
-                                                    std::numeric_limits<std::uint64_t>::max(),
-                                                    imageAvailableSemaphores[currentFrame],
-                                                    VK_NULL_HANDLE,
-                                                    &imageIndex);
+            const VkResult result = vkAcquireNextImageKHR(device,
+                                                          swapchain,
+                                                          std::numeric_limits<std::uint64_t>::max(),
+                                                          imageAvailableSemaphores[currentFrame],
+                                                          VK_NULL_HANDLE,
+                                                          &imageIndex);
 
             // Check if we need to re-create the swapchain (e.g. if the window was resized)
             if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -2482,7 +2482,7 @@ public:
         }
 
         // Wait for the swapchain image to be available in the color attachment stage before submitting the queue
-        VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        const VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
         // Signal the render finished semaphore once the queue has been processed
         VkSubmitInfo submitInfo         = VkSubmitInfo();
@@ -2514,7 +2514,7 @@ public:
 
         {
             // Queue presentation
-            VkResult result = vkQueuePresentKHR(queue, &presentInfo);
+            const VkResult result = vkQueuePresentKHR(queue, &presentInfo);
 
             // Check if we need to re-create the swapchain (e.g. if the window was resized)
             if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR) || swapchainOutOfDate)
@@ -2535,7 +2535,7 @@ public:
 
     void run()
     {
-        sf::Clock clock;
+        const sf::Clock clock;
 
         // Start game loop
         while (window.isOpen())

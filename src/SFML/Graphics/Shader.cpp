@@ -74,7 +74,7 @@ GLint checkMaxTextureUnits()
 // Retrieve the maximum number of texture units available
 std::size_t getMaxTextureUnits()
 {
-    static GLint maxUnits = checkMaxTextureUnits();
+    static const GLint maxUnits = checkMaxTextureUnits();
     return static_cast<std::size_t>(maxUnits);
 }
 
@@ -85,7 +85,7 @@ bool getFileContents(const std::filesystem::path& filename, std::vector<char>& b
     if (file)
     {
         file.seekg(0, std::ios_base::end);
-        std::ifstream::pos_type size = file.tellg();
+        const std::ifstream::pos_type size = file.tellg();
         if (size > 0)
         {
             file.seekg(0, std::ios_base::beg);
@@ -104,8 +104,8 @@ bool getFileContents(const std::filesystem::path& filename, std::vector<char>& b
 // Read the contents of a stream into an array of char
 bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
 {
-    bool         success = true;
-    std::int64_t size    = stream.getSize();
+    bool               success = true;
+    const std::int64_t size    = stream.getSize();
     if (size > 0)
     {
         buffer.resize(static_cast<std::size_t>(size));
@@ -116,8 +116,8 @@ bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
             return false;
         }
 
-        std::int64_t read = stream.read(buffer.data(), size);
-        success           = (read == size);
+        const std::int64_t read = stream.read(buffer.data(), size);
+        success                 = (read == size);
     }
     buffer.push_back('\0');
     return success;
@@ -240,7 +240,7 @@ Shader::Shader() = default;
 ////////////////////////////////////////////////////////////
 Shader::~Shader()
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Destroy effect program
     if (m_shaderProgram)
@@ -267,7 +267,7 @@ Shader& Shader::operator=(Shader&& right) noexcept
     // Explicit scope for RAII
     {
         // Destroy effect program
-        TransientContextLock lock;
+        const TransientContextLock lock;
         if (m_shaderProgram)
             glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
     }
@@ -469,7 +469,7 @@ bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& geomet
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, float x)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform1f(binder.location, x));
 }
@@ -478,7 +478,7 @@ void Shader::setUniform(const std::string& name, float x)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Vec2& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform2f(binder.location, v.x, v.y));
 }
@@ -487,7 +487,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Vec2& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Vec3& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform3f(binder.location, v.x, v.y, v.z));
 }
@@ -496,7 +496,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Vec3& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Vec4& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform4f(binder.location, v.x, v.y, v.z, v.w));
 }
@@ -505,7 +505,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Vec4& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, int x)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform1i(binder.location, x));
 }
@@ -514,7 +514,7 @@ void Shader::setUniform(const std::string& name, int x)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Ivec2& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform2i(binder.location, v.x, v.y));
 }
@@ -523,7 +523,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Ivec2& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Ivec3& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform3i(binder.location, v.x, v.y, v.z));
 }
@@ -532,7 +532,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Ivec3& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Ivec4& v)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform4i(binder.location, v.x, v.y, v.z, v.w));
 }
@@ -569,7 +569,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Bvec4& v)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array));
 }
@@ -578,7 +578,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array));
 }
@@ -589,14 +589,14 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
 {
     if (m_shaderProgram)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Find the location of the variable in the shader
-        int location = getUniformLocation(name);
+        const int location = getUniformLocation(name);
         if (location != -1)
         {
             // Store the location -> texture mapping
-            auto it = m_textures.find(location);
+            const auto it = m_textures.find(location);
             if (it == m_textures.end())
             {
                 // New entry, make sure there are enough texture units
@@ -624,7 +624,7 @@ void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
     if (m_shaderProgram)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Find the location of the variable in the shader
         m_currentTexture = getUniformLocation(name);
@@ -635,7 +635,7 @@ void Shader::setUniform(const std::string& name, CurrentTextureType)
 ////////////////////////////////////////////////////////////
 void Shader::setUniformArray(const std::string& name, const float* scalarArray, std::size_t length)
 {
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform1fv(binder.location, static_cast<GLsizei>(length), scalarArray));
 }
@@ -646,7 +646,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec2* vectorAr
 {
     std::vector<float> contiguous = flatten(vectorArray, length);
 
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform2fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
 }
@@ -657,7 +657,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec3* vectorAr
 {
     std::vector<float> contiguous = flatten(vectorArray, length);
 
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform3fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
 }
@@ -668,7 +668,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorAr
 {
     std::vector<float> contiguous = flatten(vectorArray, length);
 
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniform4fv(binder.location, static_cast<GLsizei>(length), contiguous.data()));
 }
@@ -683,7 +683,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixAr
     for (std::size_t i = 0; i < length; ++i)
         priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
 
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
 }
@@ -698,7 +698,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixAr
     for (std::size_t i = 0; i < length; ++i)
         priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
 
-    UniformBinder binder(*this, name);
+    const UniformBinder binder(*this, name);
     if (binder.location != -1)
         glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
 }
@@ -714,7 +714,7 @@ unsigned int Shader::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 void Shader::bind(const Shader* shader)
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that we can use shaders
     if (!isAvailable())
@@ -747,7 +747,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    std::lock_guard lock(isAvailableMutex);
+    const std::lock_guard lock(isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;
@@ -756,7 +756,7 @@ bool Shader::isAvailable()
     {
         checked = true;
 
-        TransientContextLock contextLock;
+        const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
@@ -772,7 +772,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    std::lock_guard lock(isAvailableMutex);
+    const std::lock_guard lock(isAvailableMutex);
 
     static bool checked   = false;
     static bool available = false;
@@ -781,7 +781,7 @@ bool Shader::isGeometryAvailable()
     {
         checked = true;
 
-        TransientContextLock contextLock;
+        const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
@@ -796,7 +796,7 @@ bool Shader::isGeometryAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCode, const char* fragmentShaderCode)
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // First make sure that we can use shaders
     if (!isAvailable())
@@ -861,7 +861,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     if (geometryShaderCode)
     {
         // Create and compile the shader
-        GLEXT_GLhandle geometryShader = GLEXT_glCreateShaderObject(GLEXT_GL_GEOMETRY_SHADER);
+        const GLEXT_GLhandle geometryShader = GLEXT_glCreateShaderObject(GLEXT_GL_GEOMETRY_SHADER);
         glCheck(GLEXT_glShaderSource(geometryShader, 1, &geometryShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(geometryShader));
 
@@ -941,7 +941,7 @@ void Shader::bindTextures() const
     auto it = m_textures.begin();
     for (std::size_t i = 0; i < m_textures.size(); ++i)
     {
-        auto index = static_cast<GLsizei>(i + 1);
+        const auto index = static_cast<GLsizei>(i + 1);
         glCheck(GLEXT_glUniform1i(it->first, index));
         glCheck(GLEXT_glActiveTexture(GLEXT_GL_TEXTURE0 + static_cast<GLenum>(index)));
         Texture::bind(it->second);
@@ -957,7 +957,7 @@ void Shader::bindTextures() const
 int Shader::getUniformLocation(const std::string& name)
 {
     // Check the cache
-    if (auto it = m_uniforms.find(name); it != m_uniforms.end())
+    if (const auto it = m_uniforms.find(name); it != m_uniforms.end())
     {
         // Already in cache, return it
         return it->second;
@@ -965,7 +965,7 @@ int Shader::getUniformLocation(const std::string& name)
     else
     {
         // Not in cache, request the location from OpenGL
-        int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
+        const int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
         m_uniforms.emplace(name, location);
 
         if (location == -1)

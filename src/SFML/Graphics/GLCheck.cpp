@@ -39,7 +39,7 @@ namespace sf::priv
 void glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
 {
     // Get the last error
-    GLenum errorCode = glGetError();
+    const GLenum errorCode = glGetError();
 
     if (errorCode != GL_NO_ERROR)
     {

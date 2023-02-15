@@ -132,15 +132,15 @@ const Transform& Transformable::getTransform() const
     // Recompute the combined transform if needed
     if (m_transformNeedUpdate)
     {
-        float angle  = -m_rotation.asRadians();
-        float cosine = std::cos(angle);
-        float sine   = std::sin(angle);
-        float sxc    = m_scale.x * cosine;
-        float syc    = m_scale.y * cosine;
-        float sxs    = m_scale.x * sine;
-        float sys    = m_scale.y * sine;
-        float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
-        float ty     = m_origin.x * sxs - m_origin.y * syc + m_position.y;
+        const float angle  = -m_rotation.asRadians();
+        const float cosine = std::cos(angle);
+        const float sine   = std::sin(angle);
+        const float sxc    = m_scale.x * cosine;
+        const float syc    = m_scale.y * cosine;
+        const float sxs    = m_scale.x * sine;
+        const float sys    = m_scale.y * sine;
+        const float tx     = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
+        const float ty     = m_origin.x * sxs - m_origin.y * syc + m_position.y;
 
         // clang-format off
         m_transform = Transform( sxc, sys, tx,

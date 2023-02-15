@@ -38,7 +38,7 @@ namespace
 sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
 {
     sf::Vector2f normal = (p2 - p1).perpendicular();
-    float        length = normal.length();
+    const float  length = normal.length();
     if (length != 0.f)
         normal /= length;
     return normal;
@@ -152,7 +152,7 @@ Shape::Shape() = default;
 void Shape::update()
 {
     // Get the total number of points of the shape
-    std::size_t count = getPointCount();
+    const std::size_t count = getPointCount();
     if (count < 3)
     {
         m_vertices.resize(0);
@@ -217,13 +217,16 @@ void Shape::updateFillColors()
 ////////////////////////////////////////////////////////////
 void Shape::updateTexCoords()
 {
-    FloatRect convertedTextureRect(m_textureRect);
+    const FloatRect convertedTextureRect(m_textureRect);
 
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        float xratio = m_insideBounds.width > 0 ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width : 0;
-        float yratio = m_insideBounds.height > 0 ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height
-                                                 : 0;
+        const float xratio        = m_insideBounds.width > 0
+                                        ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width
+                                        : 0;
+        const float yratio        = m_insideBounds.height > 0
+                                        ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height
+                                        : 0;
         m_vertices[i].texCoords.x = convertedTextureRect.left + convertedTextureRect.width * xratio;
         m_vertices[i].texCoords.y = convertedTextureRect.top + convertedTextureRect.height * yratio;
     }
@@ -241,17 +244,17 @@ void Shape::updateOutline()
         return;
     }
 
-    std::size_t count = m_vertices.getVertexCount() - 2;
+    const std::size_t count = m_vertices.getVertexCount() - 2;
     m_outlineVertices.resize((count + 1) * 2);
 
     for (std::size_t i = 0; i < count; ++i)
     {
-        std::size_t index = i + 1;
+        const std::size_t index = i + 1;
 
         // Get the two segments shared by the current point
-        Vector2f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
-        Vector2f p1 = m_vertices[index].position;
-        Vector2f p2 = m_vertices[index + 1].position;
+        const Vector2f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
+        const Vector2f p1 = m_vertices[index].position;
+        const Vector2f p2 = m_vertices[index + 1].position;
 
         // Compute their normal
         Vector2f n1 = computeNormal(p0, p1);
@@ -265,8 +268,8 @@ void Shape::updateOutline()
             n2 = -n2;
 
         // Combine them to get the extrusion direction
-        float    factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
-        Vector2f normal = (n1 + n2) / factor;
+        const float    factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
+        const Vector2f normal = (n1 + n2) / factor;
 
         // Update the outline points
         m_outlineVertices[i * 2 + 0].position = p1;

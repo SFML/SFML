@@ -144,7 +144,7 @@ bool Http::Request::hasField(const std::string& field) const
 ////////////////////////////////////////////////////////////
 const std::string& Http::Response::getField(const std::string& field) const
 {
-    if (auto it = m_fields.find(toLower(field)); it != m_fields.end())
+    if (const auto it = m_fields.find(toLower(field)); it != m_fields.end())
     {
         return it->second;
     }
@@ -244,8 +244,8 @@ void Http::Response::parse(const std::string& data)
             in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             // Copy the actual content data
-            std::istreambuf_iterator<char> it(in);
-            std::istreambuf_iterator<char> itEnd;
+            std::istreambuf_iterator<char>       it(in);
+            const std::istreambuf_iterator<char> itEnd;
             for (std::size_t i = 0; ((i < length) && (it != itEnd)); ++i)
             {
                 m_body.push_back(*it);
@@ -268,12 +268,12 @@ void Http::Response::parseFields(std::istream& in)
     std::string line;
     while (std::getline(in, line) && (line.size() > 2))
     {
-        std::string::size_type pos = line.find(": ");
+        const std::string::size_type pos = line.find(": ");
         if (pos != std::string::npos)
         {
             // Extract the field name and its value
-            std::string field = line.substr(0, pos);
-            std::string value = line.substr(pos + 2);
+            const std::string field = line.substr(0, pos);
+            std::string       value = line.substr(pos + 2);
 
             // Remove any trailing \r
             if (!value.empty() && (*value.rbegin() == '\r'))
@@ -368,7 +368,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
         // Convert the request to string and send it through the connected socket
-        std::string requestStr = toSend.prepare();
+        const std::string requestStr = toSend.prepare();
 
         if (!requestStr.empty())
         {

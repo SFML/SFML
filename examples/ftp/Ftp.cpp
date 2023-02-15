@@ -36,8 +36,8 @@ int main()
     } while (!address.has_value());
 
     // Connect to the server
-    sf::Ftp           server;
-    sf::Ftp::Response connectResponse = server.connect(address.value());
+    sf::Ftp                 server;
+    const sf::Ftp::Response connectResponse = server.connect(address.value());
     std::cout << connectResponse << std::endl;
     if (!connectResponse.isOk())
         return EXIT_FAILURE;
@@ -51,7 +51,7 @@ int main()
     std::cin >> password;
 
     // Login to the server
-    sf::Ftp::Response loginResponse = server.login(user, password);
+    const sf::Ftp::Response loginResponse = server.login(user, password);
     std::cout << loginResponse << std::endl;
     if (!loginResponse.isOk())
         return EXIT_FAILURE;
@@ -93,7 +93,7 @@ int main()
             case 1:
             {
                 // Print the current server directory
-                sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
+                const sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
                 std::cout << response << '\n' << "Current directory is " << response.getDirectory() << std::endl;
                 break;
             }
@@ -101,7 +101,7 @@ int main()
             case 2:
             {
                 // Print the contents of the current server directory
-                sf::Ftp::ListingResponse response = server.getDirectoryListing();
+                const sf::Ftp::ListingResponse response = server.getDirectoryListing();
                 std::cout << response << '\n';
                 for (const std::string& name : response.getListing())
                     std::cout << name << '\n';

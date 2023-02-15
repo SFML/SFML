@@ -227,9 +227,9 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
                 std::uint8_t*       dst = dstPixels + j * 4;
 
                 // Interpolate RGBA components using the alpha values of the destination and source pixels
-                std::uint8_t srcAlpha = src[3];
-                std::uint8_t dstAlpha = dst[3];
-                auto         outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
+                const std::uint8_t srcAlpha = src[3];
+                const std::uint8_t dstAlpha = dst[3];
+                const auto outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
 
                 dst[3] = outAlpha;
 
@@ -299,7 +299,7 @@ void Image::flipHorizontally()
 {
     if (!m_pixels.empty())
     {
-        std::size_t rowSize = m_size.x * 4;
+        const std::size_t rowSize = m_size.x * 4;
 
         for (std::size_t y = 0; y < m_size.y; ++y)
         {
@@ -324,7 +324,7 @@ void Image::flipVertically()
 {
     if (!m_pixels.empty())
     {
-        auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x * 4);
+        const auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x * 4);
 
         auto top    = m_pixels.begin();
         auto bottom = m_pixels.end() - rowSize;
