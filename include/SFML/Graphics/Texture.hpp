@@ -33,6 +33,7 @@
 #include <SFML/Window/GlResource.hpp>
 
 #include <filesystem>
+#include <optional>
 
 
 namespace sf
@@ -100,8 +101,7 @@ public:
     ///
     /// This function is a shortcut for the following code:
     /// \code
-    /// sf::Image image;
-    /// image.loadFromFile(filename);
+    /// const std:optional<sf::Image> image = sf::Image::loadFromFile(data, size);
     /// texture.loadFromImage(image, area);
     /// \endcode
     ///
@@ -131,8 +131,7 @@ public:
     ///
     /// This function is a shortcut for the following code:
     /// \code
-    /// sf::Image image;
-    /// image.loadFromMemory(data, size);
+    /// const std:optional<sf::Image> image = sf::Image::loadFromMemory(data, size);
     /// texture.loadFromImage(image, area);
     /// \endcode
     ///
@@ -163,8 +162,7 @@ public:
     ///
     /// This function is a shortcut for the following code:
     /// \code
-    /// sf::Image image;
-    /// image.loadFromStream(stream);
+    /// const std:optional<sf::Image> image = sf::Image::loadFromStream(stream);
     /// texture.loadFromImage(image, area);
     /// \endcode
     ///
@@ -234,7 +232,7 @@ public:
     /// \see loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    Image copyToImage() const;
+    std::optional<Image> copyToImage() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole texture from an array of pixels
