@@ -34,6 +34,33 @@ TEST_CASE("[Window] sf::VideoMode")
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 24);
         }
+
+        SUBCASE("Aspect ratios")
+        {
+            SUBCASE("4:3")
+            {
+                sf::Vector2u aspectRatio(4, 3);
+                CHECK(sf::VideoMode({640, 480}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({768, 576}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({800, 600}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1024, 768}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1152, 864}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1400, 1050}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1600, 1200}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({2048, 1536}).getAspectRatio() == aspectRatio);
+            }
+
+            SUBCASE("16:9")
+            {
+                sf::Vector2u aspectRatio(16, 9);
+                CHECK(sf::VideoMode({1024, 576}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1280, 720}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1366, 768}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1600, 900}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({1920, 1080}).getAspectRatio() == aspectRatio);
+                CHECK(sf::VideoMode({2560, 1440}).getAspectRatio() == aspectRatio);
+            }
+        }
     }
 
     SUBCASE("Operators")
