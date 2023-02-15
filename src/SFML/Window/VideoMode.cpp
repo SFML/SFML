@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
-
 #include <algorithm>
 #include <functional>
+#include <numeric>
 
 
 namespace sf
@@ -76,6 +76,11 @@ bool VideoMode::isValid() const
     return std::find(modes.begin(), modes.end(), *this) != modes.end();
 }
 
+////////////////////////////////////////////////////////////
+Vector2u VideoMode::getAspectRatio() const
+{
+    return size / std::gcd(size.x, size.y);
+}
 
 ////////////////////////////////////////////////////////////
 bool operator==(const VideoMode& left, const VideoMode& right)
