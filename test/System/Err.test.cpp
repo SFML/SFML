@@ -21,7 +21,7 @@ TEST_CASE("[System] sf::err")
         auto* const defaultStreamBuffer = sf::err().rdbuf();
         CHECK(defaultStreamBuffer != nullptr);
 
-        std::stringstream stream;
+        const std::stringstream stream;
         sf::err().rdbuf(stream.rdbuf());
         sf::err() << "Something went wrong!\n";
         CHECK(stream.str() == "Something went wrong!\n");

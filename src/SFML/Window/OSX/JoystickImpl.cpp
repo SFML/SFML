@@ -46,9 +46,9 @@ bool joystickButtonSortPredicate(IOHIDElementRef b1, IOHIDElementRef b2)
 // Convert a CFStringRef to std::string
 std::string stringFromCFString(CFStringRef cfString)
 {
-    CFIndex           length = CFStringGetLength(cfString);
+    const CFIndex     length = CFStringGetLength(cfString);
     std::vector<char> str(static_cast<std::size_t>(length));
-    CFIndex           maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+    const CFIndex     maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
     CFStringGetCString(cfString, str.data(), maxSize, kCFStringEncodingUTF8);
     return str.data();
 }
@@ -110,8 +110,8 @@ void JoystickImpl::cleanup()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::isConnected(unsigned int index)
 {
-    AutoreleasePool pool;
-    bool            state = false; // Is the index-th joystick connected?
+    const AutoreleasePool pool;
+    bool                  state = false; // Is the index-th joystick connected?
 
     // First, let's check if the device was previously detected:
     if (m_locationIDs[index] != 0)
@@ -134,7 +134,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         }
 
 
-        unsigned int connectedCount = HIDJoystickManager::getInstance().getJoystickCount();
+        const unsigned int connectedCount = HIDJoystickManager::getInstance().getJoystickCount();
 
         if (connectedCount > openedCount)
         {
@@ -143,7 +143,7 @@ bool JoystickImpl::isConnected(unsigned int index)
 
             if (devices != nullptr)
             {
-                CFIndex size = CFSetGetCount(devices);
+                const CFIndex size = CFSetGetCount(devices);
                 if (size > 0)
                 {
                     std::vector<CFTypeRef> array(static_cast<std::size_t>(size)); // array of IOHIDDeviceRef
@@ -155,7 +155,7 @@ bool JoystickImpl::isConnected(unsigned int index)
                     for (CFIndex didx(0); !state && didx < size; ++didx)
                     {
                         auto* d = static_cast<IOHIDDeviceRef>(const_cast<void*>(array[static_cast<std::size_t>(didx)]));
-                        Location dloc = HIDInputManager::getLocationID(d);
+                        const Location dloc = HIDInputManager::getLocationID(d);
 
                         bool foundJ = false;
                         for (unsigned int j(0); !foundJ && j < Joystick::Count; ++j)
@@ -186,10 +186,10 @@ bool JoystickImpl::isConnected(unsigned int index)
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
-    AutoreleasePool pool;
-    m_index            = index;
-    m_hat              = nullptr;
-    Location deviceLoc = m_locationIDs[index]; // The device we need to load
+    const AutoreleasePool pool;
+    m_index                  = index;
+    m_hat                    = nullptr;
+    const Location deviceLoc = m_locationIDs[index]; // The device we need to load
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
@@ -197,7 +197,7 @@ bool JoystickImpl::open(unsigned int index)
         return false;
 
     // Get a usable copy of the joysticks devices.
-    CFIndex                joysticksCount = CFSetGetCount(devices);
+    const CFIndex          joysticksCount = CFSetGetCount(devices);
     std::vector<CFTypeRef> devicesArray(static_cast<std::size_t>(joysticksCount));
     CFSetGetValues(devices, devicesArray.data());
 
@@ -230,7 +230,7 @@ bool JoystickImpl::open(unsigned int index)
     }
 
     // Go through all connected elements.
-    CFIndex elementsCount = CFArrayGetCount(elements);
+    const CFIndex elementsCount = CFArrayGetCount(elements);
     for (int i = 0; i < elementsCount; ++i)
     {
         auto* element = static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements, i)));
@@ -270,8 +270,8 @@ bool JoystickImpl::open(unsigned int index)
                         // We assume this model here as well. Hence, with 4 switches and intermediate
                         // positions we have 8 values (0-7) plus the "null" state (8).
                         {
-                            CFIndex min = IOHIDElementGetLogicalMin(element);
-                            CFIndex max = IOHIDElementGetLogicalMax(element);
+                            const CFIndex min = IOHIDElementGetLogicalMin(element);
+                            const CFIndex max = IOHIDElementGetLogicalMax(element);
 
                             if (min != 0 || max != 7)
                             {
@@ -346,7 +346,7 @@ bool JoystickImpl::open(unsigned int index)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::close()
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
 
     for (IOHIDElementRef iohidElementRef : m_buttons)
         CFRelease(iohidElementRef);
@@ -371,8 +371,8 @@ void JoystickImpl::close()
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
 {
-    AutoreleasePool pool;
-    JoystickCaps    caps;
+    const AutoreleasePool pool;
+    JoystickCaps          caps;
 
     // Buttons:
     caps.buttonCount = static_cast<unsigned int>(m_buttons.size());
@@ -391,7 +391,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 ////////////////////////////////////////////////////////////
 Joystick::Identification JoystickImpl::getIdentification() const
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     return m_identification;
 }
 
@@ -399,7 +399,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
-    AutoreleasePool                pool;
+    const AutoreleasePool          pool;
     static constexpr JoystickState disconnectedState; // return this if joystick was disconnected
     JoystickState                  state;             // otherwise return that
     state.connected = true;
@@ -408,7 +408,7 @@ JoystickState JoystickImpl::update()
     //       by the joystick manager. So we don't release buttons nor axes here.
 
     // First, let's determine if the joystick is still connected
-    Location selfLoc = m_locationIDs[m_index];
+    const Location selfLoc = m_locationIDs[m_index];
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
@@ -416,7 +416,7 @@ JoystickState JoystickImpl::update()
         return disconnectedState;
 
     // Get a usable copy of the joysticks devices.
-    CFIndex                joysticksCount = CFSetGetCount(devices);
+    const CFIndex          joysticksCount = CFSetGetCount(devices);
     std::vector<CFTypeRef> devicesArray(static_cast<std::size_t>(joysticksCount));
     CFSetGetValues(devices, devicesArray.data());
 
@@ -475,12 +475,12 @@ JoystickState JoystickImpl::update()
         // This method might not be very accurate (the "0 position" can be
         // slightly shift with some device) but we don't care because most
         // of devices are so sensitive that this is not relevant.
-        auto   physicalMax   = static_cast<double>(IOHIDElementGetPhysicalMax(iohidElementRef));
-        auto   physicalMin   = static_cast<double>(IOHIDElementGetPhysicalMin(iohidElementRef));
-        double scaledMin     = -100;
-        double scaledMax     = 100;
-        double physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
-        auto   scaledValue   = static_cast<float>(
+        const auto   physicalMax   = static_cast<double>(IOHIDElementGetPhysicalMax(iohidElementRef));
+        const auto   physicalMin   = static_cast<double>(IOHIDElementGetPhysicalMin(iohidElementRef));
+        const double scaledMin     = -100;
+        const double scaledMax     = 100;
+        const double physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
+        const auto   scaledValue   = static_cast<float>(
             (((physicalValue - physicalMin) * (scaledMax - scaledMin)) / (physicalMax - physicalMin)) + scaledMin);
         state.axes[axis] = scaledValue;
     }
@@ -502,7 +502,7 @@ JoystickState JoystickImpl::update()
             return disconnectedState;
         }
 
-        CFIndex raw = IOHIDValueGetIntegerValue(value);
+        const CFIndex raw = IOHIDValueGetIntegerValue(value);
 
         // Load PovX
         switch (raw)

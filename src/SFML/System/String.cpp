@@ -70,7 +70,7 @@ String::String(const char* ansiString, const std::locale& locale)
 {
     if (ansiString)
     {
-        std::size_t length = strlen(ansiString);
+        const std::size_t length = strlen(ansiString);
         if (length > 0)
         {
             m_string.reserve(length + 1);
@@ -93,7 +93,7 @@ String::String(const wchar_t* wideString)
 {
     if (wideString)
     {
-        std::size_t length = std::wcslen(wideString);
+        const std::size_t length = std::wcslen(wideString);
         if (length > 0)
         {
             m_string.reserve(length + 1);
@@ -276,9 +276,9 @@ void String::replace(std::size_t position, std::size_t length, const String& rep
 ////////////////////////////////////////////////////////////
 void String::replace(const String& searchFor, const String& replaceWith)
 {
-    std::size_t step = replaceWith.getSize();
-    std::size_t len  = searchFor.getSize();
-    std::size_t pos  = find(searchFor);
+    const std::size_t step = replaceWith.getSize();
+    const std::size_t len  = searchFor.getSize();
+    std::size_t       pos  = find(searchFor);
 
     // Replace each occurrence of search
     while (pos != InvalidPos)

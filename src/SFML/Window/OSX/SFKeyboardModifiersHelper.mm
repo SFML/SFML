@@ -133,7 +133,7 @@ void initialiseKeyboardHelper()
     if (isStateInitialized)
         return;
 
-    NSUInteger modifiers = [[NSApp currentEvent] modifierFlags];
+    const NSUInteger modifiers = [[NSApp currentEvent] modifierFlags];
 
     // Load current keyboard state
     state.leftShiftWasDown      = isKeyMaskActive(modifiers, NSLeftShiftKeyMask);
@@ -245,10 +245,10 @@ void processOneModifier(NSUInteger                 modifiers,
                         sf::priv::WindowImplCocoa& requester)
 {
     // Setup a potential event key.
-    sf::Event::KeyEvent event = keyEventWithModifiers(modifiers, key, code);
+    const sf::Event::KeyEvent event = keyEventWithModifiers(modifiers, key, code);
 
     // State
-    BOOL isDown = isKeyMaskActive(modifiers, mask);
+    const BOOL isDown = isKeyMaskActive(modifiers, mask);
 
     // Check for key pressed event
     if (isDown && !wasDown)

@@ -83,7 +83,7 @@ TEST_CASE("[System] sf::FileInputStream")
     {
         const std::string fileContents = "hello world";
 
-        TemporaryFile       tmpFile(fileContents);
+        const TemporaryFile tmpFile(fileContents);
         sf::FileInputStream fis;
 
         REQUIRE(fis.open(tmpFile.getPath()));

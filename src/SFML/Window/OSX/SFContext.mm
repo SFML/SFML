@@ -43,7 +43,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Create the context
     createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings(0, 0, 0));
 }
@@ -52,7 +52,7 @@ SFContext::SFContext(SFContext* shared)
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Create the context.
     createContext(shared, bitsPerPixel, settings);
 
@@ -65,7 +65,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const W
 ////////////////////////////////////////////////////////////
 SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Ensure the process is setup in order to create a valid window.
     WindowImplCocoa::setUpProcess();
 
@@ -88,7 +88,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const V
 ////////////////////////////////////////////////////////////
 SFContext::~SFContext()
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Notify unshared OpenGL resources of context destruction
     cleanupUnsharedResources();
 
@@ -107,8 +107,8 @@ SFContext::~SFContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer SFContext::getFunction(const char* name)
 {
-    AutoreleasePool pool;
-    static void*    image = nullptr;
+    const AutoreleasePool pool;
+    static void*          image = nullptr;
 
     if (!image)
         image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
@@ -120,7 +120,7 @@ GlFunctionPointer SFContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 bool SFContext::makeCurrent(bool current)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     if (current)
     {
         [m_context makeCurrentContext];
@@ -137,7 +137,7 @@ bool SFContext::makeCurrent(bool current)
 ////////////////////////////////////////////////////////////
 void SFContext::display()
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     [m_context flushBuffer];
 }
 
@@ -145,8 +145,8 @@ void SFContext::display()
 ////////////////////////////////////////////////////////////
 void SFContext::setVerticalSyncEnabled(bool enabled)
 {
-    AutoreleasePool pool;
-    GLint           swapInterval = enabled ? 1 : 0;
+    const AutoreleasePool pool;
+    const GLint           swapInterval = enabled ? 1 : 0;
 
     [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
@@ -155,7 +155,7 @@ void SFContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Save the settings. (OpenGL version is updated elsewhere.)
     m_settings = settings;
 
@@ -215,7 +215,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
 
     // 1.x/2.x are mapped to 2.1 since Apple only support that legacy version.
     // >=3.0 are mapped to a 3.2 core profile.
-    bool legacy = m_settings.majorVersion < 3;
+    const bool legacy = m_settings.majorVersion < 3;
 
     if (legacy)
     {
@@ -250,7 +250,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
     m_settings.sRgbCapable = true;
 
     // Create the pixel format.
-    NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs.data()];
+    NSOpenGLPixelFormat* const pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs.data()];
 
     if (pixFmt == nil)
     {
@@ -259,7 +259,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
     }
 
     // Use the shared context if one is given.
-    NSOpenGLContext* sharedContext = shared != nullptr ? shared->m_context : nil;
+    NSOpenGLContext* const sharedContext = shared != nullptr ? shared->m_context : nil;
 
     if (sharedContext != nil)
     {

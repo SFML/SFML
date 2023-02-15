@@ -57,7 +57,7 @@ CursorImpl::CursorImpl() = default;
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     [m_cursor release];
 }
 
@@ -65,16 +65,16 @@ CursorImpl::~CursorImpl()
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     if (m_cursor)
     {
         [m_cursor release];
         m_cursor = nil;
     }
 
-    NSSize   nssize    = NSMakeSize(size.x, size.y);
-    NSImage* image     = [NSImage imageWithRawData:pixels andSize:nssize];
-    NSPoint  nshotspot = NSMakePoint(hotspot.x, hotspot.y);
+    const NSSize   nssize    = NSMakeSize(size.x, size.y);
+    NSImage* const image     = [NSImage imageWithRawData:pixels andSize:nssize];
+    const NSPoint  nshotspot = NSMakePoint(hotspot.x, hotspot.y);
 
     m_cursor = [[NSCursor alloc] initWithImage:image hotSpot:nshotspot];
 
@@ -84,8 +84,8 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
-    AutoreleasePool pool;
-    NSCursor*       newCursor = nil;
+    const AutoreleasePool pool;
+    NSCursor*             newCursor = nil;
 
     // clang-format off
     switch (type)

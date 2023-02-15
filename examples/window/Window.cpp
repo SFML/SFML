@@ -68,7 +68,7 @@ int main()
     // Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
+    const GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
 #ifdef SFML_OPENGL_ES
     glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
 #else
@@ -135,7 +135,7 @@ int main()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // Create a clock for measuring the time elapsed
-    sf::Clock clock;
+    const sf::Clock clock;
 
     // Start the game loop
     while (window.isOpen())
@@ -157,7 +157,7 @@ int main()
                 glViewport(0, 0, static_cast<GLsizei>(event.size.width), static_cast<GLsizei>(event.size.height));
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                GLfloat newRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
+                const GLfloat newRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
 #ifdef SFML_OPENGL_ES
                 glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
 #else

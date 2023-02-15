@@ -145,7 +145,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
         // ----- We're using a timeout: we'll need a few tricks to make it work -----
 
         // Save the previous blocking state
-        bool blocking = isBlocking();
+        const bool blocking = isBlocking();
 
         // Switch to non-blocking to enable our connection timeout
         if (blocking)
@@ -257,7 +257,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
         // Check for errors
         if (result < 0)
         {
-            Status status = priv::SocketImpl::getErrorStatus();
+            const Status status = priv::SocketImpl::getErrorStatus();
 
             if ((status == Status::NotReady) && sent)
                 return Status::Partial;
@@ -286,7 +286,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
-    int sizeReceived = static_cast<int>(
+    const int sizeReceived = static_cast<int>(
         recv(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
 #pragma GCC diagnostic pop
 
@@ -345,10 +345,10 @@ Socket::Status TcpSocket::send(Packet& packet)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
-    std::size_t sent;
-    Status      status = send(m_blockToSendBuffer.data() + packet.m_sendPos,
-                         static_cast<priv::SocketImpl::Size>(m_blockToSendBuffer.size() - packet.m_sendPos),
-                         sent);
+    std::size_t  sent;
+    const Status status = send(m_blockToSendBuffer.data() + packet.m_sendPos,
+                               static_cast<priv::SocketImpl::Size>(m_blockToSendBuffer.size() - packet.m_sendPos),
+                               sent);
 #pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
 
@@ -381,8 +381,8 @@ Socket::Status TcpSocket::receive(Packet& packet)
         // (even a 4 byte variable may be received in more than one call)
         while (m_pendingPacket.SizeReceived < sizeof(m_pendingPacket.Size))
         {
-            char*  data   = reinterpret_cast<char*>(&m_pendingPacket.Size) + m_pendingPacket.SizeReceived;
-            Status status = receive(data, sizeof(m_pendingPacket.Size) - m_pendingPacket.SizeReceived, received);
+            char*        data   = reinterpret_cast<char*>(&m_pendingPacket.Size) + m_pendingPacket.SizeReceived;
+            const Status status = receive(data, sizeof(m_pendingPacket.Size) - m_pendingPacket.SizeReceived, received);
             m_pendingPacket.SizeReceived += received;
 
             if (status != Status::Done)
@@ -403,8 +403,8 @@ Socket::Status TcpSocket::receive(Packet& packet)
     while (m_pendingPacket.Data.size() < packetSize)
     {
         // Receive a chunk of data
-        std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
-        Status      status    = receive(buffer, sizeToGet, received);
+        const std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
+        const Status      status    = receive(buffer, sizeToGet, received);
         if (status != Status::Done)
             return status;
 

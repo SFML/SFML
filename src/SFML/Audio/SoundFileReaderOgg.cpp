@@ -105,7 +105,7 @@ SoundFileReaderOgg::~SoundFileReaderOgg()
 bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
 {
     // Open the Vorbis stream
-    int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, callbacks);
+    const int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, callbacks);
     if (status < 0)
     {
         err() << "Failed to open Vorbis file for reading" << std::endl;
@@ -143,11 +143,11 @@ std::uint64_t SoundFileReaderOgg::read(std::int16_t* samples, std::uint64_t maxC
     std::uint64_t count = 0;
     while (count < maxCount)
     {
-        int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
-        long bytesRead   = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
+        const int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
+        const long bytesRead   = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, 0, 2, 1, nullptr);
         if (bytesRead > 0)
         {
-            long samplesRead = bytesRead / static_cast<long>(sizeof(std::int16_t));
+            const long samplesRead = bytesRead / static_cast<long>(sizeof(std::int16_t));
             count += static_cast<std::uint64_t>(samplesRead);
             samples += samplesRead;
         }

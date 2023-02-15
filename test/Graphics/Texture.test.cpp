@@ -18,7 +18,7 @@ TEST_CASE("[Graphics] sf::Texture" * doctest::skip(skipDisplayTests))
 {
     SUBCASE("Construction")
     {
-        sf::Texture texture;
+        const sf::Texture texture;
         CHECK(texture.getSize() == sf::Vector2u());
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
@@ -204,8 +204,8 @@ TEST_CASE("[Graphics] sf::Texture" * doctest::skip(skipDisplayTests))
         CHECK_FALSE(texture2.isSmooth());
         CHECK(texture2.isRepeated());
 
-        sf::Image image1 = texture1.copyToImage();
-        sf::Image image2 = texture2.copyToImage();
+        const sf::Image image1 = texture1.copyToImage();
+        const sf::Image image2 = texture2.copyToImage();
         REQUIRE(image1.getSize() == sf::Vector2u(2, 1));
         REQUIRE(image2.getSize() == sf::Vector2u(1, 1));
         CHECK(image1.getPixel(sf::Vector2u(1, 0)) == sf::Color::Green);

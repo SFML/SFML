@@ -163,9 +163,9 @@ m_cursorGrabbed(m_fullscreen)
         registerWindowClass();
 
     // Compute position and size
-    HDC screenDC         = GetDC(nullptr);
-    int left             = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
-    int top              = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
+    HDC       screenDC   = GetDC(nullptr);
+    const int left       = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
+    const int top        = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
     auto [width, height] = Vector2i(mode.size);
     ReleaseDC(nullptr, screenDC);
 
@@ -333,8 +333,8 @@ void WindowImplWin32::setSize(const Vector2u& size)
     // so we have to compute it
     RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
     AdjustWindowRect(&rectangle, static_cast<DWORD>(GetWindowLongPtr(m_handle, GWL_STYLE)), false);
-    int width  = rectangle.right - rectangle.left;
-    int height = rectangle.bottom - rectangle.top;
+    const int width  = rectangle.right - rectangle.left;
+    const int height = rectangle.bottom - rectangle.top;
 
     SetWindowPos(m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
@@ -1044,8 +1044,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE:
         {
             // Extract the mouse local coordinates
-            int x = static_cast<std::int16_t>(LOWORD(lParam));
-            int y = static_cast<std::int16_t>(HIWORD(lParam));
+            const int x = static_cast<std::int16_t>(LOWORD(lParam));
+            const int y = static_cast<std::int16_t>(HIWORD(lParam));
 
             // Get the client area of the window
             RECT area;
@@ -1135,8 +1135,8 @@ Keyboard::Key WindowImplWin32::virtualKeyCodeToSF(WPARAM key, LPARAM flags)
         // Check the scancode to distinguish between left and right shift
         case VK_SHIFT:
         {
-            static UINT lShift = MapVirtualKeyW(VK_LSHIFT, MAPVK_VK_TO_VSC);
-            UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
+            static const UINT lShift = MapVirtualKeyW(VK_LSHIFT, MAPVK_VK_TO_VSC);
+            const UINT scancode = static_cast<UINT>((flags & (0xFF << 16)) >> 16);
             return scancode == lShift ? Keyboard::LShift : Keyboard::RShift;
         }
 

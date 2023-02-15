@@ -59,7 +59,7 @@ std::recursive_mutex mutex;
 // tracking the currently active RenderTarget within a given context
 std::uint64_t getUniqueId()
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     static std::uint64_t id = 1; // start at 1, zero is "no RenderTarget"
 
@@ -74,7 +74,7 @@ ContextRenderTargetMap contextRenderTargetMap;
 // Check if a RenderTarget with the given ID is active in the current context
 bool isActive(std::uint64_t id)
 {
-    auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
+    const auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
 
     return (it != contextRenderTargetMap.end()) && (it->second == id);
 }
@@ -213,10 +213,10 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point) const
 Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
-    Vector2f  normalized;
-    FloatRect viewport = FloatRect(getViewport(view));
-    normalized.x       = -1.f + 2.f * (static_cast<float>(point.x) - viewport.left) / viewport.width;
-    normalized.y       = 1.f - 2.f * (static_cast<float>(point.y) - viewport.top) / viewport.height;
+    Vector2f        normalized;
+    const FloatRect viewport = FloatRect(getViewport(view));
+    normalized.x             = -1.f + 2.f * (static_cast<float>(point.x) - viewport.left) / viewport.width;
+    normalized.y             = 1.f - 2.f * (static_cast<float>(point.y) - viewport.top) / viewport.height;
 
     // Then transform by the inverse of the view matrix
     return view.getInverseTransform().transformPoint(normalized);
@@ -234,13 +234,13 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
 Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
 {
     // First, transform the point by the view matrix
-    Vector2f normalized = view.getTransform().transformPoint(point);
+    const Vector2f normalized = view.getTransform().transformPoint(point);
 
     // Then convert to viewport coordinates
-    Vector2i  pixel;
-    FloatRect viewport = FloatRect(getViewport(view));
-    pixel.x            = static_cast<int>((normalized.x + 1.f) / 2.f * viewport.width + viewport.left);
-    pixel.y            = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+    Vector2i        pixel;
+    const FloatRect viewport = FloatRect(getViewport(view));
+    pixel.x                  = static_cast<int>((normalized.x + 1.f) / 2.f * viewport.width + viewport.left);
+    pixel.y                  = static_cast<int>((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
 
     return pixel;
 }
@@ -263,7 +263,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, Primiti
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
-        bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
+        const bool useVertexCache = (vertexCount <= StatesCache::VertexCacheSize);
 
         if (useVertexCache)
         {
@@ -280,7 +280,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, Primiti
         setupDraw(useVertexCache, states);
 
         // Check if texture coordinates array is needed, and update client state accordingly
-        bool enableTexCoordsArray = (states.texture || states.shader);
+        const bool enableTexCoordsArray = (states.texture || states.shader);
         if (!m_cache.enable || (enableTexCoordsArray != m_cache.texCoordsArrayEnabled))
         {
             if (enableTexCoordsArray)
@@ -392,12 +392,12 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        std::lock_guard lock(RenderTargetImpl::mutex);
+        const std::lock_guard lock(RenderTargetImpl::mutex);
 
-        std::uint64_t contextId = Context::getActiveContextId();
+        const std::uint64_t contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::contextRenderTargetMap;
-        auto it = contextRenderTargetMap.find(contextId);
+        const auto it = contextRenderTargetMap.find(contextId);
 
         if (active)
         {
@@ -435,7 +435,7 @@ void RenderTarget::pushGLStates()
     {
 #ifdef SFML_DEBUG
         // make sure that the user didn't leave an unchecked OpenGL error
-        GLenum error = glGetError();
+        const GLenum error = glGetError();
         if (error != GL_NO_ERROR)
         {
             err() << "OpenGL error (" << error << ") detected in user code, "
@@ -482,8 +482,8 @@ void RenderTarget::popGLStates()
 void RenderTarget::resetGLStates()
 {
     // Check here to make sure a context change does not happen after activate(true)
-    bool shaderAvailable       = Shader::isAvailable();
-    bool vertexBufferAvailable = VertexBuffer::isAvailable();
+    const bool shaderAvailable       = Shader::isAvailable();
+    const bool vertexBufferAvailable = VertexBuffer::isAvailable();
 
 // Workaround for states not being properly reset on
 // macOS unless a context switch really takes place
@@ -561,8 +561,8 @@ void RenderTarget::initialize()
 void RenderTarget::applyCurrentView()
 {
     // Set the viewport
-    IntRect viewport = getViewport(m_view);
-    int     top      = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
+    const IntRect viewport = getViewport(m_view);
+    const int     top      = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
     glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
 
     // Set the projection matrix
@@ -706,7 +706,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     }
     else
     {
-        std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
+        const std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
         if (textureId != m_cache.lastTextureId)
             applyTexture(states.texture);
     }
@@ -722,7 +722,7 @@ void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, s
 {
     // Find the OpenGL primitive type
     static constexpr GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
-    GLenum                  mode = modes[static_cast<std::size_t>(type)];
+    const GLenum            mode = modes[static_cast<std::size_t>(type)];
 
     // Draw the primitives
     glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertexCount)));

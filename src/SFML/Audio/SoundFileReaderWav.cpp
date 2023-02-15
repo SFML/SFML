@@ -152,7 +152,7 @@ std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxC
     assert(m_stream);
 
     std::uint64_t count    = 0;
-    auto          startPos = static_cast<std::uint64_t>(m_stream->tell());
+    const auto    startPos = static_cast<std::uint64_t>(m_stream->tell());
 
     // Tracking of m_dataEnd is important to prevent sf::Music from reading
     // data until EOF, as WAV files may have metadata at the end.
@@ -238,7 +238,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
         std::uint32_t subChunkSize = 0;
         if (!decode(*m_stream, subChunkSize))
             return false;
-        std::int64_t subChunkStart = m_stream->tell();
+        const std::int64_t subChunkStart = m_stream->tell();
         if (subChunkStart == -1)
             return false;
 

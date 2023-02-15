@@ -65,13 +65,13 @@ std::recursive_mutex mutex;
 // might trigger deletion of its contained stale FBOs
 void destroyStaleFBOs()
 {
-    std::uint64_t contextId = sf::Context::getActiveContextId();
+    const std::uint64_t contextId = sf::Context::getActiveContextId();
 
     for (auto it = staleFrameBuffers.begin(); it != staleFrameBuffers.end();)
     {
         if (it->first == contextId)
         {
-            auto frameBuffer = static_cast<GLuint>(it->second);
+            const auto frameBuffer = static_cast<GLuint>(it->second);
             glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
             staleFrameBuffers.erase(it++);
@@ -86,9 +86,9 @@ void destroyStaleFBOs()
 // Callback that is called every time a context is destroyed
 void contextDestroyCallback(void* /*arg*/)
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
-    std::uint64_t contextId = sf::Context::getActiveContextId();
+    const std::uint64_t contextId = sf::Context::getActiveContextId();
 
     // Destroy active frame buffer objects
     for (auto* frameBuffer : frameBuffers)
@@ -97,7 +97,7 @@ void contextDestroyCallback(void* /*arg*/)
         {
             if (it->first == contextId)
             {
-                GLuint frameBufferId = it->second;
+                const GLuint frameBufferId = it->second;
                 glCheck(GLEXT_glDeleteFramebuffers(1, &frameBufferId));
 
                 // Erase the entry from the RenderTextureImplFBO's map
@@ -119,7 +119,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::RenderTextureImplFBO()
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // Register the context destruction callback
     registerContextDestroyCallback(contextDestroyCallback, nullptr);
@@ -133,9 +133,9 @@ RenderTextureImplFBO::RenderTextureImplFBO()
 ////////////////////////////////////////////////////////////
 RenderTextureImplFBO::~RenderTextureImplFBO()
 {
-    TransientContextLock contextLock;
+    const TransientContextLock contextLock;
 
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     // Remove the frame buffer mapping from the set of all active mappings
     frameBuffers.erase(&m_frameBuffers);
@@ -144,14 +144,14 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
     // Destroy the color buffer
     if (m_colorBuffer)
     {
-        GLuint colorBuffer = m_colorBuffer;
+        const GLuint colorBuffer = m_colorBuffer;
         glCheck(GLEXT_glDeleteRenderbuffers(1, &colorBuffer));
     }
 
     // Destroy the depth/stencil buffer
     if (m_depthStencilBuffer)
     {
-        GLuint depthStencilBuffer = m_depthStencilBuffer;
+        const GLuint depthStencilBuffer = m_depthStencilBuffer;
         glCheck(GLEXT_glDeleteRenderbuffers(1, &depthStencilBuffer));
     }
 
@@ -170,7 +170,7 @@ RenderTextureImplFBO::~RenderTextureImplFBO()
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplFBO::isAvailable()
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
@@ -182,7 +182,7 @@ bool RenderTextureImplFBO::isAvailable()
 ////////////////////////////////////////////////////////////
 unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     GLint samples = 0;
 
@@ -210,7 +210,7 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
     m_size = size;
 
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
@@ -468,7 +468,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
     }
 
     {
-        std::lock_guard lock(mutex);
+        const std::lock_guard lock(mutex);
 
         // Insert the FBO into our map
         m_frameBuffers.emplace(Context::getActiveContextId(), frameBuffer);
@@ -525,7 +525,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
         }
 
         {
-            std::lock_guard lock(mutex);
+            const std::lock_guard lock(mutex);
 
             // Insert the FBO into our map
             m_multisampleFrameBuffers.emplace(Context::getActiveContextId(), multisampleFrameBuffer);
@@ -576,7 +576,7 @@ bool RenderTextureImplFBO::activate(bool active)
     // If none is found, there is no FBO corresponding to the
     // currently active context so we will have to create a new FBO
     {
-        std::lock_guard lock(mutex);
+        const std::lock_guard lock(mutex);
 
         std::unordered_map<std::uint64_t, unsigned int>::iterator it;
 
@@ -628,12 +628,12 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
     // are already available within the current context
     if (m_multisample && m_size.x && m_size.y && activate(true))
     {
-        std::uint64_t contextId = Context::getActiveContextId();
+        const std::uint64_t contextId = Context::getActiveContextId();
 
-        std::lock_guard lock(mutex);
+        const std::lock_guard lock(mutex);
 
-        auto frameBufferIt = m_frameBuffers.find(contextId);
-        auto multisampleIt = m_multisampleFrameBuffers.find(contextId);
+        const auto frameBufferIt = m_frameBuffers.find(contextId);
+        const auto multisampleIt = m_multisampleFrameBuffers.find(contextId);
 
         if ((frameBufferIt != m_frameBuffers.end()) && (multisampleIt != m_multisampleFrameBuffers.end()))
         {

@@ -33,10 +33,10 @@ int main()
     std::mt19937       rng(rd());
 
     // Define some constants
-    const float  gameWidth  = 800;
-    const float  gameHeight = 600;
-    sf::Vector2f paddleSize(25, 100);
-    float        ballRadius = 10.f;
+    const float        gameWidth  = 800;
+    const float        gameHeight = 600;
+    const sf::Vector2f paddleSize(25, 100);
+    const float        ballRadius = 10.f;
 
     // Create the window of the application
     sf::RenderWindow window(sf::VideoMode({static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight)}, 32),
@@ -157,7 +157,7 @@ int main()
 
         if (isPlaying)
         {
-            float deltaTime = clock.restart().asSeconds();
+            const float deltaTime = clock.restart().asSeconds();
 
             // Move the player's paddle
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
@@ -172,8 +172,8 @@ int main()
 
             if (sf::Touch::isDown(0))
             {
-                sf::Vector2i pos       = sf::Touch::getPosition(0);
-                sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
+                const sf::Vector2i pos       = sf::Touch::getPosition(0);
+                const sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
                 leftPaddle.setPosition({leftPaddle.getPosition().x, mappedPos.y});
             }
 

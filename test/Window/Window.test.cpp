@@ -19,7 +19,10 @@ TEST_CASE("[Window] sf::Window" * doctest::skip(skipDisplayTests))
 {
     SUBCASE("Construction")
     {
-        sf::Window window(sf::VideoMode(sf::Vector2u(256, 256), 32), "Window Title", sf::Style::Default, sf::ContextSettings());
+        const sf::Window window(sf::VideoMode(sf::Vector2u(256, 256), 32),
+                                "Window Title",
+                                sf::Style::Default,
+                                sf::ContextSettings());
         CHECK(window.getSize() == sf::Vector2u(256, 256));
     }
 }

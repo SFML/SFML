@@ -71,7 +71,7 @@ void SocketImpl::close(SocketHandle sock)
 ////////////////////////////////////////////////////////////
 void SocketImpl::setBlocking(SocketHandle sock, bool block)
 {
-    int status = fcntl(sock, F_GETFL);
+    const int status = fcntl(sock, F_GETFL);
     if (block)
     {
         if (fcntl(sock, F_SETFL, status & ~O_NONBLOCK) == -1)

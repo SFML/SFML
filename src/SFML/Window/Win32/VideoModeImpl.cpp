@@ -46,7 +46,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     for (int count = 0; EnumDisplaySettings(nullptr, static_cast<DWORD>(count), &win32Mode); ++count)
     {
         // Convert to sf::VideoMode
-        VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
+        const VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())

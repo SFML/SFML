@@ -68,7 +68,7 @@ In Utf<8>::decode(In begin, In end, std::uint32_t& output, std::uint32_t replace
     // clang-format on
 
     // decode the character
-    int trailingBytes = trailing[static_cast<std::uint8_t>(*begin)];
+    const int trailingBytes = trailing[static_cast<std::uint8_t>(*begin)];
     if (trailingBytes < std::distance(begin, end))
     {
         output = 0;
@@ -177,8 +177,8 @@ Out Utf<8>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
     while (begin < end)
     {
-        std::uint32_t codepoint = Utf<32>::decodeAnsi(*begin++, locale);
-        output                  = encode(codepoint, output);
+        const std::uint32_t codepoint = Utf<32>::decodeAnsi(*begin++, locale);
+        output                        = encode(codepoint, output);
     }
 
     return output;
@@ -301,14 +301,14 @@ Out Utf<8>::toUtf32(In begin, In end, Out output)
 template <typename In>
 In Utf<16>::decode(In begin, In end, std::uint32_t& output, std::uint32_t replacement)
 {
-    std::uint16_t first = *begin++;
+    const std::uint16_t first = *begin++;
 
     // If it's a surrogate pair, first convert to a single UTF-32 character
     if ((first >= 0xD800) && (first <= 0xDBFF))
     {
         if (begin < end)
         {
-            std::uint32_t second = *begin++;
+            const std::uint32_t second = *begin++;
             if ((second >= 0xDC00) && (second <= 0xDFFF))
             {
                 // The second element is valid: convert the two elements to a UTF-32 character

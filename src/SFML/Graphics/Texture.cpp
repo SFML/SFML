@@ -96,9 +96,9 @@ Texture::~Texture()
     // Destroy the OpenGL texture
     if (m_texture)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
-        GLuint texture = m_texture;
+        const GLuint texture = m_texture;
         glCheck(glDeleteTextures(1, &texture));
     }
 }
@@ -128,9 +128,9 @@ Texture& Texture::operator=(Texture&& right) noexcept
     // Destroy the OpenGL texture
     if (m_texture)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
-        GLuint texture = m_texture;
+        const GLuint texture = m_texture;
         glCheck(glDeleteTextures(1, &texture));
     }
 
@@ -157,16 +157,16 @@ bool Texture::create(const Vector2u& size)
         return false;
     }
 
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
 
     // Compute the internal texture dimensions depending on NPOT textures support
-    Vector2u actualSize(getValidSize(size.x), getValidSize(size.y));
+    const Vector2u actualSize(getValidSize(size.x), getValidSize(size.y));
 
     // Check the maximum texture size
-    unsigned int maxSize = getMaximumSize();
+    const unsigned int maxSize = getMaximumSize();
     if ((actualSize.x > maxSize) || (actualSize.y > maxSize))
     {
         err() << "Failed to create texture, its internal size is too high "
@@ -190,10 +190,10 @@ bool Texture::create(const Vector2u& size)
     }
 
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
-    static bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_GL_VERSION_1_2 ||
-                                   Context::isExtensionAvailable("GL_EXT_texture_edge_clamp");
+    static const bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_GL_VERSION_1_2 ||
+                                         Context::isExtensionAvailable("GL_EXT_texture_edge_clamp");
 
     if (!m_isRepeated && !textureEdgeClamp)
     {
@@ -209,7 +209,7 @@ bool Texture::create(const Vector2u& size)
         }
     }
 
-    static bool textureSrgb = GLEXT_texture_sRGB;
+    static const bool textureSrgb = GLEXT_texture_sRGB;
 
     if (m_sRgb && !textureSrgb)
     {
@@ -321,10 +321,10 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
         // Create the texture and upload the pixels
         if (create(Vector2u(rectangle.getSize())))
         {
-            TransientContextLock lock;
+            const TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
-            priv::TextureSaver save;
+            const priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
             const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
@@ -366,10 +366,10 @@ Image Texture::copyToImage() const
     if (!m_texture)
         return Image();
 
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
     // Create an array of pixels
     std::vector<std::uint8_t> pixels(m_size.x * m_size.y * 4);
@@ -414,7 +414,7 @@ Image Texture::copyToImage() const
         const std::uint8_t* src = allPixels.data();
         std::uint8_t* dst = pixels.data();
         int srcPitch = static_cast<int>(m_actualSize.x * 4);
-        unsigned int dstPitch = m_size.x * 4;
+        const unsigned int dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
@@ -457,10 +457,10 @@ void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vec
 
     if (pixels && m_texture)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Make sure that the current texture binding will be preserved
-        priv::TextureSaver save;
+        const priv::TextureSaver save;
 
         // Copy pixels from the given array to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
@@ -505,7 +505,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
 #ifndef SFML_OPENGL_ES
 
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
@@ -513,7 +513,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
 
     if (GLEXT_framebuffer_object && GLEXT_framebuffer_blit)
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Save the current bindings so we can restore them after we are done
         GLint readFramebuffer = 0;
@@ -582,7 +582,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
         glCheck(GLEXT_glDeleteFramebuffers(1, &destFrameBuffer));
 
         // Make sure that the current texture binding will be preserved
-        priv::TextureSaver save;
+        const priv::TextureSaver save;
 
         // Set the parameters of this texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
@@ -634,10 +634,10 @@ void Texture::update(const Window& window, const Vector2u& dest)
 
     if (m_texture && window.setActive(true))
     {
-        TransientContextLock lock;
+        const TransientContextLock lock;
 
         // Make sure that the current texture binding will be preserved
-        priv::TextureSaver save;
+        const priv::TextureSaver save;
 
         // Copy pixels from the back-buffer to the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
@@ -670,10 +670,10 @@ void Texture::setSmooth(bool smooth)
 
         if (m_texture)
         {
-            TransientContextLock lock;
+            const TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
-            priv::TextureSaver save;
+            const priv::TextureSaver save;
 
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -723,12 +723,12 @@ void Texture::setRepeated(bool repeated)
 
         if (m_texture)
         {
-            TransientContextLock lock;
+            const TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
-            priv::TextureSaver save;
+            const priv::TextureSaver save;
 
-            static bool textureEdgeClamp = GLEXT_texture_edge_clamp;
+            static const bool textureEdgeClamp = GLEXT_texture_edge_clamp;
 
             if (!m_isRepeated && !textureEdgeClamp)
             {
@@ -771,7 +771,7 @@ bool Texture::generateMipmap()
     if (!m_texture)
         return false;
 
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
@@ -780,7 +780,7 @@ bool Texture::generateMipmap()
         return false;
 
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     glCheck(GLEXT_glGenerateMipmap(GL_TEXTURE_2D));
@@ -800,10 +800,10 @@ void Texture::invalidateMipmap()
     if (!m_hasMipmap)
         return;
 
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -815,7 +815,7 @@ void Texture::invalidateMipmap()
 ////////////////////////////////////////////////////////////
 void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
-    TransientContextLock lock;
+    const TransientContextLock lock;
 
     if (texture && texture->m_texture)
     {
@@ -875,7 +875,7 @@ unsigned int Texture::getMaximumSize()
 {
     static const unsigned int size = []()
     {
-        TransientContextLock transientLock;
+        const TransientContextLock transientLock;
 
         GLint value = 0;
 

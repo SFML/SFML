@@ -52,7 +52,7 @@ namespace sf::priv
 void alCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
 {
     // Get the last error
-    ALenum errorCode = alGetError();
+    const ALenum errorCode = alGetError();
 
     if (errorCode != AL_NO_ERROR)
     {

@@ -47,8 +47,8 @@ void addLine(sf::VertexArray& vertices,
              float            thickness,
              float            outlineThickness = 0)
 {
-    float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
-    float bottom = top + std::floor(thickness + 0.5f);
+    const float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
+    const float bottom = top + std::floor(thickness + 0.5f);
 
     vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
     vertices.append(
@@ -64,17 +64,17 @@ void addLine(sf::VertexArray& vertices,
 // Add a glyph quad to the vertex array
 void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear)
 {
-    float padding = 1.0;
+    const float padding = 1.0;
 
-    float left   = glyph.bounds.left - padding;
-    float top    = glyph.bounds.top - padding;
-    float right  = glyph.bounds.left + glyph.bounds.width + padding;
-    float bottom = glyph.bounds.top + glyph.bounds.height + padding;
+    const float left   = glyph.bounds.left - padding;
+    const float top    = glyph.bounds.top - padding;
+    const float right  = glyph.bounds.left + glyph.bounds.width + padding;
+    const float bottom = glyph.bounds.top + glyph.bounds.height + padding;
 
-    float u1 = static_cast<float>(glyph.textureRect.left) - padding;
-    float v1 = static_cast<float>(glyph.textureRect.top) - padding;
-    float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
-    float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
+    const float u1 = static_cast<float>(glyph.textureRect.left) - padding;
+    const float v1 = static_cast<float>(glyph.textureRect.top) - padding;
+    const float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
+    const float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
 
     vertices.append(
         sf::Vertex(sf::Vector2f(position.x + left - italicShear * top, position.y + top), color, sf::Vector2f(u1, v1)));
@@ -304,18 +304,18 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         index = m_string.getSize();
 
     // Precompute the variables needed by the algorithm
-    bool  isBold          = m_style & Bold;
-    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    const bool  isBold          = m_style & Bold;
+    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
     whitespaceWidth += letterSpacing;
-    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
     Vector2f      position;
     std::uint32_t prevChar = 0;
     for (std::size_t i = 0; i < index; ++i)
     {
-        std::uint32_t curChar = m_string[i];
+        const std::uint32_t curChar = m_string[i];
 
         // Apply the kerning offset
         position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
@@ -404,26 +404,26 @@ void Text::ensureGeometryUpdate() const
         return;
 
     // Compute values related to the text style
-    bool  isBold             = m_style & Bold;
-    bool  isUnderlined       = m_style & Underlined;
-    bool  isStrikeThrough    = m_style & StrikeThrough;
-    float italicShear        = (m_style & Italic) ? sf::degrees(12).asRadians() : 0.f;
-    float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
-    float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
+    const bool  isBold             = m_style & Bold;
+    const bool  isUnderlined       = m_style & Underlined;
+    const bool  isStrikeThrough    = m_style & StrikeThrough;
+    const float italicShear        = (m_style & Italic) ? sf::degrees(12).asRadians() : 0.f;
+    const float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
+    const float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
 
     // Compute the location of the strike through dynamically
     // We use the center point of the lowercase 'x' glyph as the reference
     // We reuse the underline thickness as the thickness of the strike through as well
-    FloatRect xBounds             = m_font->getGlyph(U'x', m_characterSize, isBold).bounds;
-    float     strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
+    const FloatRect xBounds             = m_font->getGlyph(U'x', m_characterSize, isBold).bounds;
+    const float     strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
 
     // Precompute the variables needed by the algorithm
-    float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
     whitespaceWidth += letterSpacing;
-    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
-    float x           = 0.f;
-    auto  y           = static_cast<float>(m_characterSize);
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    float       x           = 0.f;
+    auto        y           = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
     auto          minX     = static_cast<float>(m_characterSize);
@@ -433,7 +433,7 @@ void Text::ensureGeometryUpdate() const
     std::uint32_t prevChar = 0;
     for (std::size_t i = 0; i < m_string.getSize(); ++i)
     {
-        std::uint32_t curChar = m_string[i];
+        const std::uint32_t curChar = m_string[i];
 
         // Skip the \r char to avoid weird graphical issues
         if (curChar == U'\r')
@@ -507,10 +507,10 @@ void Text::ensureGeometryUpdate() const
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
 
         // Update the current bounds
-        float left   = glyph.bounds.left;
-        float top    = glyph.bounds.top;
-        float right  = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top + glyph.bounds.height;
+        const float left   = glyph.bounds.left;
+        const float top    = glyph.bounds.top;
+        const float right  = glyph.bounds.left + glyph.bounds.width;
+        const float bottom = glyph.bounds.top + glyph.bounds.height;
 
         minX = std::min(minX, x + left - italicShear * bottom);
         maxX = std::max(maxX, x + right - italicShear * top);
@@ -524,7 +524,7 @@ void Text::ensureGeometryUpdate() const
     // If we're using outline, update the current bounds
     if (m_outlineThickness != 0)
     {
-        float outline = std::abs(std::ceil(m_outlineThickness));
+        const float outline = std::abs(std::ceil(m_outlineThickness));
         minX -= outline;
         maxX += outline;
         minY -= outline;

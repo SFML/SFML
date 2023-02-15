@@ -168,8 +168,8 @@ TEST_CASE("[Graphics] sf::Image")
 
         SUBCASE("Copy (Empty image)")
         {
-            sf::Image image1;
-            sf::Image image2;
+            const sf::Image image1;
+            sf::Image       image2;
 
             image2.create(sf::Vector2u(10, 10), sf::Color::Red);
             CHECK(!image2.copy(image1, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(9, 9))));

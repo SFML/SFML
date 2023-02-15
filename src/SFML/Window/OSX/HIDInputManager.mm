@@ -689,7 +689,7 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
         default:
         {
             // Phase 2: Try to convert the key to unicode
-            UniChar unicode = toUnicode(localize(code));
+            const UniChar unicode = toUnicode(localize(code));
             if (unicode != 0x00)
                 return String(static_cast<char32_t>(unicode));
         }
@@ -705,8 +705,8 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
 HIDInputManager::HIDInputManager()
 {
     // Create an HID Manager reference
-    m_manager           = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
-    IOReturn openStatus = IOHIDManagerOpen(m_manager, kIOHIDOptionsTypeNone);
+    m_manager                 = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+    const IOReturn openStatus = IOHIDManagerOpen(m_manager, kIOHIDOptionsTypeNone);
 
     if (openStatus != kIOReturnSuccess)
     {
@@ -754,7 +754,7 @@ void HIDInputManager::initializeKeyboard()
         return;
     }
 
-    auto* keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
+    auto* const keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
     for (id keyboard in keyboards)
         loadKeyboard(static_cast<IOHIDDeviceRef>(keyboard));
 
@@ -775,7 +775,7 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
         return;
     }
 
-    auto* keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
+    auto* const keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
     for (id key in keys)
     {
         auto* elem = static_cast<IOHIDElementRef>(key);
@@ -790,8 +790,8 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 ////////////////////////////////////////////////////////////
 void HIDInputManager::loadKey(IOHIDElementRef key)
 {
-    std::uint32_t      usage = IOHIDElementGetUsage(key);
-    Keyboard::Scancode code  = usageToScancode(usage);
+    const std::uint32_t      usage = IOHIDElementGetUsage(key);
+    const Keyboard::Scancode code  = usageToScancode(usage);
     if (code != Keyboard::Scan::Unknown)
     {
         CFRetain(key);
@@ -826,8 +826,8 @@ void HIDInputManager::buildMappings()
     // virtual code to a localized Key.
     for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
     {
-        auto         scan        = static_cast<Keyboard::Scancode>(i);
-        std::uint8_t virtualCode = scanToVirtualCode(scan);
+        const auto         scan        = static_cast<Keyboard::Scancode>(i);
+        const std::uint8_t virtualCode = scanToVirtualCode(scan);
 
         if (virtualCode == unknownVirtualCode)
             continue;
@@ -871,16 +871,16 @@ void HIDInputManager::buildMappings()
             std::uint32_t const modifiers    = 0x100; // no modifiers
 
             // Use current layout for translation
-            OSStatus error = UCKeyTranslate(layout,
-                                            virtualCode,
-                                            kUCKeyActionDown,
-                                            modifiers,
-                                            LMGetKbdType(),
-                                            kUCKeyTranslateNoDeadKeysMask,
-                                            &deadKeyState,
-                                            maxLength,
-                                            &length,
-                                            string);
+            const OSStatus error = UCKeyTranslate(layout,
+                                                  virtualCode,
+                                                  kUCKeyActionDown,
+                                                  modifiers,
+                                                  LMGetKbdType(),
+                                                  kUCKeyTranslateNoDeadKeysMask,
+                                                  &deadKeyState,
+                                                  maxLength,
+                                                  &length,
+                                                  string);
 
             if (error != noErr)
             {

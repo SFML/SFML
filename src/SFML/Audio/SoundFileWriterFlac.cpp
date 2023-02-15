@@ -96,7 +96,7 @@ void SoundFileWriterFlac::write(const std::int16_t* samples, std::uint64_t count
     while (count > 0)
     {
         // Make sure that we don't process too many samples at once
-        unsigned int frames = std::min(static_cast<unsigned int>(count / m_channelCount), 10000u);
+        const unsigned int frames = std::min(static_cast<unsigned int>(count / m_channelCount), 10000u);
 
         // Convert the samples to 32-bits
         m_samples32.assign(samples, samples + frames * m_channelCount);

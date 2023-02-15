@@ -24,7 +24,6 @@ Checks: >
   -clang-analyzer-optin.osx.*,
   -clang-analyzer-osx.*,
   -clang-analyzer-unix.Malloc,
-  -misc-const-correctness,
   -misc-misplaced-const,
   -misc-no-recursion,
   -misc-non-private-member-variables-in-classes,

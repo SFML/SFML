@@ -124,7 +124,7 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
     // UDP connection will not send anything to the network, so this function won't cause any overhead.
 
     // Create the socket
-    SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
+    const SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
     if (sock == priv::SocketImpl::invalidSocket())
         return std::nullopt;
 
@@ -161,9 +161,9 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     // and parse the result to extract our IP address
     // (not very hard: the web page contains only our IP address).
 
-    Http           server("www.sfml-dev.org");
-    Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
-    Http::Response page = server.sendRequest(request, timeout);
+    Http                 server("www.sfml-dev.org");
+    const Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
+    const Http::Response page = server.sendRequest(request, timeout);
     if (page.getStatus() == Http::Response::Status::Ok)
         return IpAddress::resolve(page.getBody());
 

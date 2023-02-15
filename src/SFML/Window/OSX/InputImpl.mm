@@ -55,7 +55,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
 {
-    id nsHandle = static_cast<id>(window.getSystemHandle());
+    const id nsHandle = static_cast<id>(window.getSystemHandle());
 
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;
@@ -70,7 +70,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
         {
             if ([view isKindOfClass:[NSView class]])
             {
-                NSArray* subviews = [view subviews];
+                NSArray* const subviews = [view subviews];
                 for (NSView* subview in subviews)
                 {
                     if ([subview isKindOfClass:[SFOpenGLView class]])
@@ -91,7 +91,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
     else if ([nsHandle isKindOfClass:[NSView class]])
     {
         // If system handle is a view then from a subview of kind SFOpenGLView.
-        NSArray* subviews = [nsHandle subviews];
+        NSArray* const subviews = [nsHandle subviews];
         for (NSView* subview in subviews)
         {
             if ([subview isKindOfClass:[SFOpenGLView class]])
@@ -120,7 +120,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     return HIDInputManager::getInstance().isKeyPressed(key);
 }
 
@@ -163,9 +163,9 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    AutoreleasePool pool;
-    NSUInteger      state = [NSEvent pressedMouseButtons];
-    NSUInteger      flag  = 1 << button;
+    const AutoreleasePool pool;
+    const NSUInteger      state = [NSEvent pressedMouseButtons];
+    const NSUInteger      flag  = 1 << button;
     return (state & flag) != 0;
 }
 
@@ -173,12 +173,12 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Reverse Y axis to match SFML coord.
     NSPoint pos = [NSEvent mouseLocation];
     pos.y       = sf::VideoMode::getDesktopMode().size.y - pos.y;
 
-    int scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
+    const int scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
     return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y)) * scale;
 }
 
@@ -186,17 +186,17 @@ Vector2i InputImpl::getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
-    AutoreleasePool pool;
-    SFOpenGLView*   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
+    const AutoreleasePool pool;
+    SFOpenGLView* const   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
 
     // No view ?
     if (view == nil)
         return Vector2i();
 
     // Use -cursorPositionFromEvent: with nil.
-    NSPoint pos = [view cursorPositionFromEvent:nil];
+    const NSPoint pos = [view cursorPositionFromEvent:nil];
 
-    int scale = static_cast<int>([view displayScaleFactor]);
+    const int scale = static_cast<int>([view displayScaleFactor]);
     return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y)) * scale;
 }
 
@@ -204,10 +204,10 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position)
 {
-    AutoreleasePool pool;
+    const AutoreleasePool pool;
     // Here we don't need to reverse the coordinates.
-    int     scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
-    CGPoint pos   = CGPointMake(position.x / scale, position.y / scale);
+    const int     scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
+    const CGPoint pos   = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
     CGEventRef event = CGEventCreateMouseEvent(nullptr,
@@ -223,17 +223,17 @@ void InputImpl::setMousePosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
-    AutoreleasePool pool;
-    SFOpenGLView*   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
+    const AutoreleasePool pool;
+    SFOpenGLView* const   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
 
     // No view ?
     if (view == nil)
         return;
 
     // Let SFOpenGLView compute the position in global coordinate
-    int     scale = static_cast<int>([view displayScaleFactor]);
-    NSPoint p     = NSMakePoint(position.x / scale, position.y / scale);
-    p             = [view computeGlobalPositionOfRelativePoint:p];
+    const int scale = static_cast<int>([view displayScaleFactor]);
+    NSPoint   p     = NSMakePoint(position.x / scale, position.y / scale);
+    p               = [view computeGlobalPositionOfRelativePoint:p];
     setMousePosition(sf::Vector2i(static_cast<int>(p.x), static_cast<int>(p.y)) * scale);
 }
 

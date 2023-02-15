@@ -113,8 +113,8 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    auto width  = static_cast<float>(std::abs(m_textureRect.width));
-    auto height = static_cast<float>(std::abs(m_textureRect.height));
+    const auto width  = static_cast<float>(std::abs(m_textureRect.width));
+    const auto height = static_cast<float>(std::abs(m_textureRect.height));
 
     return FloatRect({0.f, 0.f}, {width, height});
 }
@@ -143,7 +143,7 @@ void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 ////////////////////////////////////////////////////////////
 void Sprite::updatePositions()
 {
-    FloatRect bounds = getLocalBounds();
+    const FloatRect bounds = getLocalBounds();
 
     m_vertices[0].position = Vector2f(0, 0);
     m_vertices[1].position = Vector2f(0, bounds.height);
@@ -155,12 +155,12 @@ void Sprite::updatePositions()
 ////////////////////////////////////////////////////////////
 void Sprite::updateTexCoords()
 {
-    FloatRect convertedTextureRect(m_textureRect);
+    const FloatRect convertedTextureRect(m_textureRect);
 
-    float left   = convertedTextureRect.left;
-    float right  = left + convertedTextureRect.width;
-    float top    = convertedTextureRect.top;
-    float bottom = top + convertedTextureRect.height;
+    const float left   = convertedTextureRect.left;
+    const float right  = left + convertedTextureRect.width;
+    const float top    = convertedTextureRect.top;
+    const float bottom = top + convertedTextureRect.height;
 
     m_vertices[0].texCoords = Vector2f(left, top);
     m_vertices[1].texCoords = Vector2f(left, bottom);

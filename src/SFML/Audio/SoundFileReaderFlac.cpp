@@ -41,7 +41,7 @@ FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte 
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    std::int64_t count = data->stream->read(buffer, static_cast<std::int64_t>(*bytes));
+    const std::int64_t count = data->stream->read(buffer, static_cast<std::int64_t>(*bytes));
     if (count > 0)
     {
         *bytes = static_cast<std::size_t>(count);
@@ -61,7 +61,7 @@ FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    std::int64_t position = data->stream->seek(static_cast<std::int64_t>(absoluteByteOffset));
+    const std::int64_t position = data->stream->seek(static_cast<std::int64_t>(absoluteByteOffset));
     if (position >= 0)
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
     else
@@ -72,7 +72,7 @@ FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint6
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    std::int64_t position = data->stream->tell();
+    const std::int64_t position = data->stream->tell();
     if (position >= 0)
     {
         *absoluteByteOffset = static_cast<FLAC__uint64>(position);
@@ -88,7 +88,7 @@ FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__u
 {
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
-    std::int64_t count = data->stream->getSize();
+    const std::int64_t count = data->stream->getSize();
     if (count >= 0)
     {
         *streamLength = static_cast<FLAC__uint64>(count);
@@ -115,7 +115,7 @@ FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*,
     auto* data = static_cast<sf::priv::SoundFileReaderFlac::ClientData*>(clientData);
 
     // Reserve memory if we're going to use the leftovers buffer
-    unsigned int frameSamples = frame->header.blocksize * frame->header.channels;
+    const unsigned int frameSamples = frame->header.blocksize * frame->header.channels;
     if (data->remaining < frameSamples)
         data->leftovers.reserve(static_cast<std::size_t>(frameSamples - data->remaining));
 
@@ -208,7 +208,7 @@ bool SoundFileReaderFlac::check(InputStream& stream)
                                      &data);
 
     // Read the header
-    bool valid = FLAC__stream_decoder_process_until_end_of_metadata(decoder) != 0;
+    const bool valid = FLAC__stream_decoder_process_until_end_of_metadata(decoder) != 0;
 
     // Destroy the decoder
     FLAC__stream_decoder_finish(decoder);
@@ -303,7 +303,7 @@ std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t max
     assert(m_decoder);
 
     // If there are leftovers from previous call, use it first
-    std::size_t left = m_clientData.leftovers.size();
+    const std::size_t left = m_clientData.leftovers.size();
     if (left > 0)
     {
         if (left > maxCount)

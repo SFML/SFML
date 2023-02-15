@@ -53,9 +53,9 @@ constexpr Transform Transform::getInverse() const
 {
     // clang-format off
     // Compute the determinant
-    float det = m_matrix[0] * (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) -
-                m_matrix[1] * (m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) +
-                m_matrix[3] * (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]);
+    const float det = m_matrix[0] * (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) -
+                      m_matrix[1] * (m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) +
+                      m_matrix[3] * (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]);
     // clang-format on
 
     // Compute the inverse if the determinant is not zero
@@ -145,9 +145,9 @@ constexpr Transform& Transform::combine(const Transform& transform)
 constexpr Transform& Transform::translate(const Vector2f& offset)
 {
     // clang-format off
-    Transform translation(1, 0, offset.x,
-                          0, 1, offset.y,
-                          0, 0, 1);
+    const Transform translation(1, 0, offset.x,
+                                0, 1, offset.y,
+                                0, 0, 1);
     // clang-format on
 
     return combine(translation);
@@ -158,9 +158,9 @@ constexpr Transform& Transform::translate(const Vector2f& offset)
 constexpr Transform& Transform::scale(const Vector2f& factors)
 {
     // clang-format off
-    Transform scaling(factors.x, 0,         0,
-                      0,         factors.y, 0,
-                      0,         0,         1);
+    const Transform scaling(factors.x, 0,         0,
+                            0,         factors.y, 0,
+                            0,         0,         1);
     // clang-format on
 
     return combine(scaling);
@@ -171,9 +171,9 @@ constexpr Transform& Transform::scale(const Vector2f& factors)
 constexpr Transform& Transform::scale(const Vector2f& factors, const Vector2f& center)
 {
     // clang-format off
-    Transform scaling(factors.x, 0,         center.x * (1 - factors.x),
-                      0,         factors.y, center.y * (1 - factors.y),
-                      0,         0,         1);
+    const Transform scaling(factors.x, 0,         center.x * (1 - factors.x),
+                            0,         factors.y, center.y * (1 - factors.y),
+                            0,         0,         1);
     // clang-format on
 
     return combine(scaling);

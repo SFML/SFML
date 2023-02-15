@@ -86,7 +86,7 @@ bool RenderTextureImplDefault::isSrgb() const
 void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const priv::TextureSaver save;
 
     // Copy the rendered pixels to the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, textureId));

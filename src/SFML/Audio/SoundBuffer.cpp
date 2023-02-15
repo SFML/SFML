@@ -223,9 +223,9 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 bool SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
-    std::uint64_t sampleCount  = file.getSampleCount();
-    unsigned int  channelCount = file.getChannelCount();
-    unsigned int  sampleRate   = file.getSampleRate();
+    const std::uint64_t sampleCount  = file.getSampleCount();
+    const unsigned int  channelCount = file.getChannelCount();
+    const unsigned int  sampleRate   = file.getSampleRate();
 
     // Read the samples from the provided file
     m_samples.resize(static_cast<std::size_t>(sampleCount));
@@ -249,7 +249,7 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         return false;
 
     // Find the good format according to the number of channels
-    ALenum format = priv::AudioDevice::getFormatFromChannelCount(channelCount);
+    const ALenum format = priv::AudioDevice::getFormatFromChannelCount(channelCount);
 
     // Check if the format is valid
     if (format == 0)
@@ -259,14 +259,14 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
     }
 
     // First make a copy of the list of sounds so we can reattach later
-    SoundList sounds(m_sounds);
+    const SoundList sounds(m_sounds);
 
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
     for (Sound* soundPtr : sounds)
         soundPtr->resetBuffer();
 
     // Fill the buffer
-    auto size = static_cast<ALsizei>(m_samples.size() * sizeof(std::int16_t));
+    const auto size = static_cast<ALsizei>(m_samples.size() * sizeof(std::int16_t));
     alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
 
     // Compute the duration

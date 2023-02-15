@@ -69,7 +69,7 @@ void SoundStream::initialize(unsigned int channelCount, unsigned int sampleRate)
     m_samplesProcessed = 0;
 
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
         m_isStreaming = false;
     }
 
@@ -101,7 +101,7 @@ void SoundStream::play()
     Status threadStartState = Stopped;
 
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
 
         isStreaming      = m_isStreaming;
         threadStartState = m_threadStartState;
@@ -111,7 +111,7 @@ void SoundStream::play()
     if (isStreaming && (threadStartState == Paused))
     {
         // If the sound is paused, resume it
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
         m_threadStartState = Playing;
         alCheck(alSourcePlay(m_source));
         return;
@@ -138,7 +138,7 @@ void SoundStream::pause()
 {
     // Handle pause() being called before the thread has started
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
 
         if (!m_isStreaming)
             return;
@@ -183,7 +183,7 @@ SoundStream::Status SoundStream::getStatus() const
     // To compensate for the lag between play() and alSourceplay()
     if (status == Stopped)
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
 
         if (m_isStreaming)
             status = m_threadStartState;
@@ -197,7 +197,7 @@ SoundStream::Status SoundStream::getStatus() const
 void SoundStream::setPlayingOffset(Time timeOffset)
 {
     // Get old playing status
-    Status oldStatus = getStatus();
+    const Status oldStatus = getStatus();
 
     // Stop the stream
     stop();
@@ -267,7 +267,7 @@ void SoundStream::streamData()
     bool requestStop = false;
 
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
 
         // Check if the thread was launched Stopped
         if (m_threadStartState == Stopped)
@@ -289,7 +289,7 @@ void SoundStream::streamData()
     alCheck(alSourcePlay(m_source));
 
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
 
         // Check if the thread was launched Paused
         if (m_threadStartState == Paused)
@@ -299,7 +299,7 @@ void SoundStream::streamData()
     for (;;)
     {
         {
-            std::lock_guard lock(m_threadMutex);
+            const std::lock_guard lock(m_threadMutex);
             if (!m_isStreaming)
                 break;
         }
@@ -315,7 +315,7 @@ void SoundStream::streamData()
             else
             {
                 // End streaming
-                std::lock_guard lock(m_threadMutex);
+                const std::lock_guard lock(m_threadMutex);
                 m_isStreaming = false;
             }
         }
@@ -360,7 +360,7 @@ void SoundStream::streamData()
                           << "and initialize() has been called correctly" << std::endl;
 
                     // Abort streaming (exit main loop)
-                    std::lock_guard lock(m_threadMutex);
+                    const std::lock_guard lock(m_threadMutex);
                     m_isStreaming = false;
                     requestStop   = true;
                     break;
@@ -383,7 +383,7 @@ void SoundStream::streamData()
         if (alGetLastError() != AL_NO_ERROR)
         {
             // Abort streaming (exit main loop)
-            std::lock_guard lock(m_threadMutex);
+            const std::lock_guard lock(m_threadMutex);
             m_isStreaming = false;
             break;
         }
@@ -449,10 +449,10 @@ bool SoundStream::fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop)
     // Fill the buffer if some data was returned
     if (data.samples && data.sampleCount)
     {
-        unsigned int buffer = m_buffers[bufferNum];
+        const unsigned int buffer = m_buffers[bufferNum];
 
         // Fill the buffer
-        auto size = static_cast<ALsizei>(data.sampleCount * sizeof(std::int16_t));
+        const auto size = static_cast<ALsizei>(data.sampleCount * sizeof(std::int16_t));
         alCheck(alBufferData(buffer, m_format, data.samples, size, static_cast<ALsizei>(m_sampleRate)));
 
         // Push it into the sound queue
@@ -503,7 +503,7 @@ void SoundStream::clearQueue()
 void SoundStream::launchStreamingThread(Status threadStartState)
 {
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
         m_isStreaming      = true;
         m_threadStartState = threadStartState;
     }
@@ -518,7 +518,7 @@ void SoundStream::awaitStreamingThread()
 {
     // Request the thread to join
     {
-        std::lock_guard lock(m_threadMutex);
+        const std::lock_guard lock(m_threadMutex);
         m_isStreaming = false;
     }
 

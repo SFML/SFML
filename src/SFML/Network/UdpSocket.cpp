@@ -117,7 +117,7 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Send the data (unlike TCP, all the data is always sent in one call)
-    int sent = static_cast<int>(
+    const int sent = static_cast<int>(
         sendto(getHandle(),
                static_cast<const char*>(data),
                static_cast<priv::SocketImpl::Size>(size),
@@ -160,7 +160,7 @@ Socket::Status UdpSocket::receive(void*                     data,
 #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
     priv::SocketImpl::AddrLength addressSize  = sizeof(address);
-    int                          sizeReceived = static_cast<int>(
+    const int                    sizeReceived = static_cast<int>(
         recvfrom(getHandle(),
                  static_cast<char*>(data),
                  static_cast<priv::SocketImpl::Size>(size),
@@ -208,8 +208,8 @@ Socket::Status UdpSocket::receive(Packet& packet, std::optional<IpAddress>& remo
     // See the detailed comment in send(Packet) above.
 
     // Receive the datagram
-    std::size_t received = 0;
-    Status      status   = receive(m_buffer.data(), m_buffer.size(), received, remoteAddress, remotePort);
+    std::size_t  received = 0;
+    const Status status   = receive(m_buffer.data(), m_buffer.size(), received, remoteAddress, remotePort);
 
     // If we received valid data, we can copy it to the user packet
     packet.clear();

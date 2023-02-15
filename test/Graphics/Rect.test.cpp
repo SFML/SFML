@@ -18,7 +18,7 @@ TEST_CASE("[Graphics] sf::Rect")
     {
         SUBCASE("Default constructor")
         {
-            sf::IntRect rectangle;
+            const sf::IntRect rectangle;
             CHECK(rectangle.left == 0);
             CHECK(rectangle.top == 0);
             CHECK(rectangle.width == 0);
@@ -27,7 +27,7 @@ TEST_CASE("[Graphics] sf::Rect")
 
         SUBCASE("(left, top, width, height) constructor")
         {
-            sf::IntRect rectangle({1, 2}, {3, 4});
+            const sf::IntRect rectangle({1, 2}, {3, 4});
             CHECK(rectangle.left == 1);
             CHECK(rectangle.top == 2);
             CHECK(rectangle.width == 3);
@@ -36,9 +36,9 @@ TEST_CASE("[Graphics] sf::Rect")
 
         SUBCASE("(Vector2, Vector2) constructor")
         {
-            sf::Vector2i position(1, 2);
-            sf::Vector2i dimension(3, 4);
-            sf::IntRect  rectangle(position, dimension);
+            const sf::Vector2i position(1, 2);
+            const sf::Vector2i dimension(3, 4);
+            const sf::IntRect  rectangle(position, dimension);
 
             CHECK(rectangle.left == 1);
             CHECK(rectangle.top == 2);
@@ -48,8 +48,8 @@ TEST_CASE("[Graphics] sf::Rect")
 
         SUBCASE("Conversion constructor")
         {
-            sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
-            sf::IntRect   rectangle(sourceRectangle);
+            const sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
+            const sf::IntRect   rectangle(sourceRectangle);
 
             CHECK(rectangle.left == static_cast<int>(sourceRectangle.left));
             CHECK(rectangle.top == static_cast<int>(sourceRectangle.top));
@@ -60,7 +60,7 @@ TEST_CASE("[Graphics] sf::Rect")
 
     SUBCASE("contains(Vector2)")
     {
-        sf::IntRect rectangle({0, 0}, {10, 10});
+        const sf::IntRect rectangle({0, 0}, {10, 10});
 
         CHECK(rectangle.contains(sf::Vector2i(0, 0)) == true);
         CHECK(rectangle.contains(sf::Vector2i(9, 0)) == true);
