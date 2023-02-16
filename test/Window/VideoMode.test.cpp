@@ -37,6 +37,13 @@ TEST_CASE("[Window] sf::VideoMode")
 
         SUBCASE("Aspect ratios")
         {
+            SUBCASE("Edge cases")
+            {
+                CHECK(sf::VideoMode().getAspectRatio() == sf::Vector2u(0, 0));
+                CHECK(sf::VideoMode({0, 1}).getAspectRatio() == sf::Vector2u(0, 1));
+                CHECK(sf::VideoMode({1, 0}).getAspectRatio() == sf::Vector2u(1, 0));
+            }
+
             SUBCASE("4:3")
             {
                 sf::Vector2u aspectRatio(4, 3);

@@ -79,7 +79,7 @@ bool VideoMode::isValid() const
 ////////////////////////////////////////////////////////////
 Vector2u VideoMode::getAspectRatio() const
 {
-    return size / std::gcd(size.x, size.y);
+    return size == Vector2u(0, 0)  ? size : (size / std::gcd(size.x, size.y));
 }
 
 ////////////////////////////////////////////////////////////
