@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -62,6 +63,13 @@ RenderWindow::~RenderWindow() = default;
 Vector2u RenderWindow::getSize() const
 {
     return Window::getSize();
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderWindow::setIcon(const Image& icon)
+{
+    setIcon(icon.getSize(), icon.getPixelsPtr());
 }
 
 
