@@ -46,7 +46,7 @@ public:
     /// \brief Default constructor
     ///
     /// Creates an empty rectangle (it is equivalent to calling
-    /// Rect(0, 0, 0, 0)).
+    /// Rect({0, 0}, {0, 0})).
     ///
     ////////////////////////////////////////////////////////////
     constexpr Rect();
@@ -191,7 +191,7 @@ using FloatRect = Rect<float>;
 /// \li The left and top edges are included in the rectangle's area
 /// \li The right (left + width) and bottom (top + height) edges are excluded from the rectangle's area
 ///
-/// This means that sf::IntRect(0, 0, 1, 1) and sf::IntRect(1, 1, 1, 1)
+/// This means that sf::IntRect({0, 0}, {1, 1}) and sf::IntRect({1, 1}, {1, 1})
 /// don't intersect.
 ///
 /// sf::Rect is a template and may be used with any numeric type, but
