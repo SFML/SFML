@@ -38,6 +38,3 @@ build/
 .cache/
 .vscode/
 .idea/
-/.vs
-/out/install
-/CMakeSettings.json
