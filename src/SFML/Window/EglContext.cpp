@@ -153,8 +153,22 @@ m_config  (NULL)
     // Get the initialized EGL display
     m_display = EglContextImpl::getInitializedDisplay();
 
+#ifndef SFML_SYSTEM_ANDROID
+
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, bitsPerPixel, settings);
+
+#else
+
+    // On Android, make sure that antialiasing level isn't above 4,
+    // otherwise surface creation will fail
+    ContextSettings Asettings = settings;
+    if (Asettings.antialiasingLevel > 4)
+        Asettings.antialiasingLevel = 4;
+    m_config = getBestConfig(m_display, bitsPerPixel, Asettings);
+
+#endif
+
     updateSettings();
 
     // Create EGL context

@@ -293,6 +293,8 @@ namespace
             }
         }
 
+#ifndef SFML_SYSTEM_ANDROID
+
         // Helper to parse OpenGL version strings
         bool parseVersionString(const char* version, const char* prefix, unsigned int &major, unsigned int &minor)
         {
@@ -312,6 +314,9 @@ namespace
 
             return false;
         }
+
+#endif
+
     }
 }
 
@@ -756,10 +761,6 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     // Activate the context
     setActive(true);
 
-    // Retrieve the context version number
-    int majorVersion = 0;
-    int minorVersion = 0;
-
     // Try the new way first
     glGetIntegervFuncType glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(getFunction("glGetIntegerv"));
     glGetErrorFuncType glGetErrorFunc = reinterpret_cast<glGetErrorFuncType>(getFunction("glGetError"));
@@ -772,6 +773,11 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         err() << "Could not load necessary function to initialize OpenGL context" << std::endl;
         return;
     }
+#ifndef SFML_SYSTEM_ANDROID
+
+    // Retrieve the context version number
+    int majorVersion = 0;
+    int minorVersion = 0;
 
     glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
     glGetIntegervFunc(GL_MINOR_VERSION, &minorVersion);
@@ -812,6 +818,14 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
             err() << "Unable to retrieve OpenGL version string, defaulting to 1.1" << std::endl;
         }
     }
+
+#else
+
+    // Android contexts are always defaulting to 1.1 since SFML is still using GLES 1
+    m_settings.majorVersion = 1;
+    m_settings.minorVersion = 1;
+
+#endif
 
     // 3.0 contexts only deprecate features, but do not remove them yet
     // 3.1 contexts remove features if ARB_compatibility is not present
