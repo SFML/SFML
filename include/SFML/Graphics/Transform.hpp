@@ -382,7 +382,7 @@ constexpr Vector2f operator*(const Transform& left, const Vector2f& right);
 ///
 /// // use the result to transform stuff...
 /// sf::Vector2f point = transform.transformPoint(10, 20);
-/// sf::FloatRect rect = transform.transformRect(sf::FloatRect(0, 0, 10, 100));
+/// sf::FloatRect rect = transform.transformRect(sf::FloatRect({0, 0}, {10, 100}));
 /// \endcode
 ///
 /// \see sf::Transformable, sf::RenderStates
