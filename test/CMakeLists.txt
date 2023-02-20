@@ -138,43 +138,6 @@ if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
         VERBATIM)
 endif()
 
-# Automatically run the tests at the end of the build
-add_custom_target(runtests ALL
-                  DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio
-)
-
-if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS)
-    # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
-    find_program(OpenCppCoverage_BINARY "OpenCppCoverage.exe")
-
-    if(OpenCppCoverage_BINARY)
-        execute_process(COMMAND "${OpenCppCoverage_BINARY}" --help ERROR_VARIABLE OpenCppCoverage_HELP_OUTPUT OUTPUT_QUIET)
-
-        if(OpenCppCoverage_HELP_OUTPUT MATCHES "OpenCppCoverage Version: ([.0-9]+)")
-            set(OpenCppCoverage_VERSION "${CMAKE_MATCH_1}")
-        endif()
-    endif()
-
-    include(FindPackageHandleStandardArgs)
-
-    find_package_handle_standard_args(OpenCppCoverage
-        REQUIRED_VARS OpenCppCoverage_BINARY
-        VERSION_VAR OpenCppCoverage_VERSION
-    )
-endif()
-
-if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
-    # Use OpenCppCoverage
-    message(STATUS "Using OpenCppCoverage to generate coverage report")
-
-    string(REPLACE "/" "\\" COVERAGE_EXCLUDE "${CMAKE_CTEST_COMMAND}")
-    string(REPLACE "/" "\\" COVERAGE_SRC "${PROJECT_SOURCE_DIR}/src")
-    string(REPLACE "/" "\\" COVERAGE_INCLUDE "${PROJECT_SOURCE_DIR}/include")
-
-    set(COVERAGE_PREFIX ${OpenCppCoverage_BINARY} ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" --)
-endif()
-
-add_custom_command(TARGET runtests
-                   COMMENT "Run tests"
-                   POST_BUILD COMMAND ${COVERAGE_PREFIX} ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
-                   VERBATIM)
+# Convenience for building and running tests
+add_custom_target(runtests DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio)
+add_custom_command(TARGET runtests POST_BUILD COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG> VERBATIM)
