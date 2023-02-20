@@ -78,12 +78,6 @@ macro(sfml_add_library module)
     # enable C++17 support
     target_compile_features(${target} PUBLIC cxx_std_17)
 
-    # Add required flags for GCC if coverage reporting is enabled
-    if(SFML_ENABLE_COVERAGE AND (SFML_COMPILER_GCC OR SFML_COMPILER_CLANG))
-        target_compile_options(${target} PUBLIC $<$<CONFIG:DEBUG>:-O0> $<$<CONFIG:DEBUG>:-g> $<$<CONFIG:DEBUG>:-fprofile-arcs> $<$<CONFIG:DEBUG>:-ftest-coverage>)
-        target_link_options(${target} PUBLIC $<$<CONFIG:DEBUG>:--coverage>)
-    endif()
-
     set_target_warnings(${target})
     set_public_symbols_hidden(${target})
 
@@ -359,14 +353,6 @@ function(sfml_add_test target SOURCES DEPENDS)
 
     set_target_warnings(${target})
     set_public_symbols_hidden(${target})
-
-    # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
-    # to make sure the linker doesn't discard unused code sections before coverage can be measured
-    if(SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC AND NOT BUILD_SHARED_LIBS)
-        foreach(DEPENDENCY ${DEPENDS})
-            target_link_options(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:${DEPENDENCY}>>)
-        endforeach()
-    endif()
 
     # Add the test
     doctest_discover_tests(${target})

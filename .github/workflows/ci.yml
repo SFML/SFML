@@ -188,7 +188,7 @@ jobs:
 
     - name: Configure CMake
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=Debug -DSFML_BUILD_TEST_SUITE=TRUE -DSFML_ENABLE_COVERAGE=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}}
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=TRUE -DSFML_BUILD_TEST_SUITE=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}}
 
     - name: Build
       shell: bash
