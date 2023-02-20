@@ -773,6 +773,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         err() << "Could not load necessary function to initialize OpenGL context" << std::endl;
         return;
     }
+
 #ifndef SFML_SYSTEM_ANDROID
 
     // Retrieve the context version number
