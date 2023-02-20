@@ -29,7 +29,7 @@
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
 
 #include <map>
-#include <string>
+#include <string_view>
 #define VK_USE_PLATFORM_WIN32_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
