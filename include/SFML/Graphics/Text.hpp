@@ -35,7 +35,6 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/String.hpp>
 
-#include <string>
 #include <vector>
 
 

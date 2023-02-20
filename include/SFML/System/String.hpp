@@ -31,7 +31,6 @@
 
 #include <SFML/System/Utf.hpp>
 
-#include <iterator>
 #include <locale>
 #include <string>
 

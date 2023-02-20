@@ -36,7 +36,6 @@
 #include <cstdio>
 #include <filesystem>
 #include <memory>
-#include <string>
 
 #ifdef SFML_SYSTEM_ANDROID
 namespace sf::priv

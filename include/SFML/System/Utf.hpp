@@ -30,9 +30,7 @@
 #include <SFML/Config.hpp>
 
 #include <cstdlib>
-#include <iterator>
 #include <locale>
-#include <string>
 
 
 namespace sf
