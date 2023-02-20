@@ -162,10 +162,10 @@ m_config  (NULL)
 
     // On Android, make sure that antialiasing level isn't above 4,
     // otherwise surface creation will fail
-    ContextSettings Asettings = settings;
-    if (Asettings.antialiasingLevel > 4)
-        Asettings.antialiasingLevel = 4;
-    m_config = getBestConfig(m_display, bitsPerPixel, Asettings);
+    ContextSettings androidSettings = settings;
+    if (androidSettings.antialiasingLevel > 4)
+        androidSettings.antialiasingLevel = 4;
+    m_config = getBestConfig(m_display, bitsPerPixel, androidSettings);
 
 #endif
 
