@@ -128,7 +128,7 @@ jobs:
 
     - name: Configure CMake
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+      run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
 
     - name: Build
       shell: bash
@@ -206,8 +206,8 @@ jobs:
       if: matrix.platform.name != 'Android'
       shell: bash
       run: |
-        cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
-        cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.suffix}}
+        cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+        cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
   format:
     name: Formatting
@@ -272,7 +272,7 @@ jobs:
 
     - name: Configure
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_UNITY_BUILD=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
+      run: cmake --preset dev -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
 
     - name: Analyze Code
       shell: bash
