@@ -157,10 +157,14 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows,   os: windows-2022, prefix: 'OpenCppCoverage.exe --export_type cobertura:$GITHUB_WORKSPACE/build/coverage.out --cover_children --sources $GITHUB_WORKSPACE\\src --sources $GITHUB_WORKSPACE\\include --' }
-        - { name: Linux,     os: ubuntu-22.04, flags: -DCMAKE_CXX_FLAGS=--coverage -DSFML_RUN_DISPLAY_TESTS=ON, prefix: xvfb-run -a }
-        - { name: Linux DRM, os: ubuntu-22.04, flags: -DCMAKE_CXX_FLAGS=--coverage -DSFML_USE_DRM=TRUE }
-        - { name: macOS,     os: macos-12,     flags: -DCMAKE_CXX_FLAGS=--coverage}
+        - { name: Windows VS2019 x86,     os: windows-2019, flags: -A Win32 }
+        - { name: Windows VS2019 x64,     os: windows-2019, flags: -A x64 }
+        - { name: Windows VS2022 x86,     os: windows-2022, flags: -A Win32 }
+        - { name: Windows VS2022 x64,     os: windows-2022, flags: -A x64 }
+        - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -T ClangCL }
+        - { name: Linux GCC,            os: ubuntu-22.04, prefix: xvfb-run -a, flags: -DCMAKE_CXX_FLAGS=--coverage -DSFML_RUN_DISPLAY_TESTS=ON -GNinja }
+        - { name: Linux Clang,          os: ubuntu-22.04, prefix: xvfb-run -a, flags: -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_DISPLAY_TESTS=ON -GNinja }
+        - { name: MacOS,                os: macos-12, flags: -DCMAKE_CXX_FLAGS=--coverage -GNinja }
 
     steps:
     - name: Checkout Code
@@ -170,11 +174,11 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev gcovr
+        sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev gcovr ninja-build
 
     - name: Install macOS Tools
       if: runner.os == 'macOS'
-      run: brew install gcovr
+      run: brew install gcovr ninja
 
     - name: Install OpenCppCoverage
       uses: nick-fields/retry@v2
@@ -195,6 +199,12 @@ jobs:
       run: cmake --build $GITHUB_WORKSPACE/build --config Debug
 
     - name: Test
+      if: runner.os == 'Windows'
+      shell: bash
+      run: OpenCppCoverage.exe --export_type cobertura:$GITHUB_WORKSPACE/build/coverage.out --cover_children --sources $GITHUB_WORKSPACE\\src --sources $GITHUB_WORKSPACE\\include -- ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure --config Debug
+
+    - name: Test
+      if: runner.os != 'Windows'
       shell: bash
       run: ${{matrix.platform.prefix}} ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure --config Debug
 
