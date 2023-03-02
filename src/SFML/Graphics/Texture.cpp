@@ -282,8 +282,7 @@ bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 bool Texture::loadFromImage(const Image& image, const IntRect& area)
 {
     // Retrieve the image size
-    int width  = static_cast<int>(image.getSize().x);
-    int height = static_cast<int>(image.getSize().y);
+    const auto [width, height] = Vector2i(image.getSize());
 
     // Load the entire image if the source area is either empty or contains the whole image
     if (area.width == 0 || (area.height == 0) ||
