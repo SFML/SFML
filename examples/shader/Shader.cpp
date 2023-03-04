@@ -279,8 +279,9 @@ public:
         {
             // Spread the coordinates from -480 to +480
             // So they'll always fill the viewport at 800x600
-            m_pointCloud[i].position.x = static_cast<float>(rand() % 960) - 480.f;
-            m_pointCloud[i].position.y = static_cast<float>(rand() % 960) - 480.f;
+            std::uniform_real_distribution<float> positionDistribution(-480, 480);
+            m_pointCloud[i].position.x = positionDistribution(rng);
+            m_pointCloud[i].position.y = positionDistribution(rng);
         }
 
         // Load the texture

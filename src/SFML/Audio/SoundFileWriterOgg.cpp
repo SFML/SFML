@@ -32,8 +32,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cctype>
-#include <cstdlib>
 #include <ostream>
+#include <random>
 
 
 namespace sf::priv
@@ -63,7 +63,8 @@ bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned in
     m_channelCount = channelCount;
 
     // Initialize the ogg/vorbis stream
-    ogg_stream_init(&m_ogg, std::rand());
+    static std::mt19937 rng(std::random_device{}());
+    ogg_stream_init(&m_ogg, std::uniform_int_distribution(0, std::numeric_limits<int>::max())(rng));
     vorbis_info_init(&m_vorbis);
 
     // Setup the encoder: VBR, automatic bitrate management
