@@ -518,7 +518,7 @@ public:
     /// \param right Instance to swap with
     ///
     ////////////////////////////////////////////////////////////
-    void swap(Texture& right);
+    void swap(Texture& right) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the texture.
@@ -620,6 +620,15 @@ private:
     bool          m_hasMipmap{};     //!< Has the mipmap been generated?
     std::uint64_t m_cacheId;         //!< Unique number that identifies the texture to the render target's cache
 };
+
+////////////////////////////////////////////////////////////
+/// \brief Swap the contents of one texture with those of another
+///
+/// \param left First instance to swap
+/// \param right Second instance to swap
+///
+////////////////////////////////////////////////////////////
+void swap(Texture& left, Texture& right) noexcept;
 
 } // namespace sf
 

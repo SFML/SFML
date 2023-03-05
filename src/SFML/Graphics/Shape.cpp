@@ -49,10 +49,6 @@ sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Shape::~Shape() = default;
-
-
-////////////////////////////////////////////////////////////
 void Shape::setTexture(const Texture* texture, bool resetRect)
 {
     if (texture)
