@@ -224,7 +224,7 @@ public:
     /// \param right Instance to swap with
     ///
     ////////////////////////////////////////////////////////////
-    void swap(VertexBuffer& right);
+    void swap(VertexBuffer& right) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the vertex buffer.
@@ -337,6 +337,15 @@ private:
     PrimitiveType m_primitiveType{PrimitiveType::Points}; //!< Type of primitives to draw
     Usage         m_usage{Stream};                        //!< How this vertex buffer is to be used
 };
+
+////////////////////////////////////////////////////////////
+/// \brief Swap the contents of one vertex buffer with those of another
+///
+/// \param left First instance to swap
+/// \param right Second instance to swap
+///
+////////////////////////////////////////////////////////////
+void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 
 } // namespace sf
 

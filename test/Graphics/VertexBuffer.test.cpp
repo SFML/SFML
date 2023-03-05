@@ -15,6 +15,7 @@ static_assert(std::is_move_constructible_v<sf::VertexBuffer>);
 static_assert(!std::is_nothrow_move_constructible_v<sf::VertexBuffer>);
 static_assert(std::is_move_assignable_v<sf::VertexBuffer>);
 static_assert(!std::is_nothrow_move_assignable_v<sf::VertexBuffer>);
+static_assert(std::is_nothrow_swappable_v<sf::VertexBuffer>);
 
 // Skip these tests because they produce flakey failures in CI when using xvfb-run
 TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
@@ -148,7 +149,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
         sf::VertexBuffer vertexBuffer2(sf::PrimitiveType::TriangleStrip, sf::VertexBuffer::Stream);
         CHECK(vertexBuffer2.create(60));
 
-        vertexBuffer1.swap(vertexBuffer2);
+        std::swap(vertexBuffer1, vertexBuffer2);
 
         CHECK(vertexBuffer1.getVertexCount() == 60);
         CHECK(vertexBuffer1.getNativeHandle() != 0);

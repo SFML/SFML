@@ -33,7 +33,6 @@
 
 #include <cstddef>
 #include <cstring>
-#include <mutex>
 #include <ostream>
 #include <utility>
 
@@ -42,8 +41,6 @@ namespace
 // A nested named namespace is used here to allow unity builds of SFML.
 namespace VertexBufferImpl
 {
-std::recursive_mutex isAvailableMutex;
-
 GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
 {
     switch (usage)
@@ -274,7 +271,7 @@ VertexBuffer& VertexBuffer::operator=(const VertexBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
-void VertexBuffer::swap(VertexBuffer& right)
+void VertexBuffer::swap(VertexBuffer& right) noexcept
 {
     std::swap(m_size, right.m_size);
     std::swap(m_buffer, right.m_buffer);
@@ -333,22 +330,15 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    std::lock_guard lock(VertexBufferImpl::isAvailableMutex);
-
-    static bool checked   = false;
-    static bool available = false;
-
-    if (!checked)
+    static const bool available = []() -> bool
     {
-        checked = true;
-
         TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = GLEXT_vertex_buffer_object;
-    }
+        return GLEXT_vertex_buffer_object;
+    }();
 
     return available;
 }
@@ -359,6 +349,13 @@ void VertexBuffer::draw(RenderTarget& target, const RenderStates& states) const
 {
     if (m_buffer && m_size)
         target.draw(*this, 0, m_size, states);
+}
+
+
+////////////////////////////////////////////////////////////
+void swap(VertexBuffer& left, VertexBuffer& right) noexcept
+{
+    left.swap(right);
 }
 
 } // namespace sf

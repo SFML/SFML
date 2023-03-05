@@ -33,10 +33,10 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/Window.hpp>
 
+#include <atomic>
 #include <cassert>
 #include <climits>
 #include <cstring>
-#include <mutex>
 #include <ostream>
 
 
@@ -45,18 +45,13 @@ namespace
 // A nested named namespace is used here to allow unity builds of SFML.
 namespace TextureImpl
 {
-std::recursive_mutex idMutex;
-std::recursive_mutex maximumSizeMutex;
-
 // Thread-safe unique identifier generator,
 // is used for states cache (see RenderTarget)
-std::uint64_t getUniqueId()
+std::uint64_t getUniqueId() noexcept
 {
-    std::lock_guard lock(idMutex);
+    static std::atomic<std::uint64_t> id(1); // start at 1, zero is "no texture"
 
-    static std::uint64_t id = 1; // start at 1, zero is "no texture"
-
-    return id++;
+    return id.fetch_add(1);
 }
 } // namespace TextureImpl
 } // namespace
@@ -832,21 +827,18 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    std::lock_guard lock(TextureImpl::maximumSizeMutex);
-
-    static bool  checked = false;
-    static GLint size    = 0;
-
-    if (!checked)
+    static const unsigned int size = []()
     {
-        checked = true;
-
         TransientContextLock transientLock;
 
-        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
-    }
+        GLint value = 0;
 
-    return static_cast<unsigned int>(size);
+        glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value));
+
+        return static_cast<unsigned int>(value);
+    }();
+
+    return size;
 }
 
 
@@ -862,7 +854,7 @@ Texture& Texture::operator=(const Texture& right)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::swap(Texture& right)
+void Texture::swap(Texture& right) noexcept
 {
     std::swap(m_size, right.m_size);
     std::swap(m_actualSize, right.m_actualSize);
@@ -903,6 +895,13 @@ unsigned int Texture::getValidSize(unsigned int size)
 
         return powerOfTwo;
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void swap(Texture& left, Texture& right) noexcept
+{
+    left.swap(right);
 }
 
 } // namespace sf

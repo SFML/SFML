@@ -47,12 +47,6 @@ class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Virtual destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Shape() override;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
     ///
     /// The \a texture argument refers to a texture that must
