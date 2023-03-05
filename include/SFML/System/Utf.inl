@@ -69,7 +69,7 @@ In Utf<8>::decode(In begin, In end, std::uint32_t& output, std::uint32_t replace
 
     // decode the character
     int trailingBytes = trailing[static_cast<std::uint8_t>(*begin)];
-    if (begin + trailingBytes < end)
+    if (trailingBytes < std::distance(begin, end))
     {
         output = 0;
 

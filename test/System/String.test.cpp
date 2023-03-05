@@ -230,18 +230,30 @@ TEST_CASE("[System] sf::String")
 
     SUBCASE("fromUtf8()")
     {
-        constexpr std::array<std::uint8_t, 4> characters{'w', 'x', 'y', 'z'};
-        const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
-        CHECK(std::string(string) == "wxyz"s);
-        CHECK(std::wstring(string) == L"wxyz"s);
-        CHECK(string.toAnsiString() == "wxyz"s);
-        CHECK(string.toWideString() == L"wxyz"s);
-        CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'w', 'x', 'y', 'z'});
-        CHECK(string.toUtf16() == u"wxyz"s);
-        CHECK(string.toUtf32() == U"wxyz"s);
-        CHECK(string.getSize() == 4);
-        CHECK(!string.isEmpty());
-        CHECK(string.getData() != nullptr);
+        SUBCASE("Nominal")
+        {
+            constexpr std::array<std::uint8_t, 4> characters{'w', 'x', 'y', 'z'};
+            const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
+            CHECK(std::string(string) == "wxyz"s);
+            CHECK(std::wstring(string) == L"wxyz"s);
+            CHECK(string.toAnsiString() == "wxyz"s);
+            CHECK(string.toWideString() == L"wxyz"s);
+            CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'w', 'x', 'y', 'z'});
+            CHECK(string.toUtf16() == u"wxyz"s);
+            CHECK(string.toUtf32() == U"wxyz"s);
+            CHECK(string.getSize() == 4);
+            CHECK(!string.isEmpty());
+            CHECK(string.getData() != nullptr);
+        }
+
+        SUBCASE("Insufficient input")
+        {
+            constexpr std::array<std::uint8_t, 1> characters{251};
+            const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
+            constexpr char32_t                    defaultReplacementCharacter = 0;
+            CHECK(string.getSize() == 1);
+            CHECK(string[0] == defaultReplacementCharacter);
+        }
     }
 
     SUBCASE("fromUtf16()")
