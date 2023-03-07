@@ -114,8 +114,6 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
         default:              return false;
     }
     // clang-format on
-
-    return false;
 }
 
 
