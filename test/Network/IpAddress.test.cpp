@@ -20,10 +20,10 @@ TEST_CASE("[Network] sf::IpAddress")
     {
         SUBCASE("static 'create' function")
         {
-            const auto ipAddress = sf::IpAddress::resolve("192.168.0.1"sv);
+            const auto ipAddress = sf::IpAddress::resolve("203.0.113.2"sv);
             REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() == "192.168.0.1"s);
-            CHECK(ipAddress->toInteger() == 0xC0A80001);
+            CHECK(ipAddress->toString() == "203.0.113.2"s);
+            CHECK(ipAddress->toInteger() == 0xCB007102);
             CHECK(*ipAddress != sf::IpAddress::Any);
             CHECK(*ipAddress != sf::IpAddress::Broadcast);
             CHECK(*ipAddress != sf::IpAddress::LocalHost);
@@ -52,16 +52,16 @@ TEST_CASE("[Network] sf::IpAddress")
 
         SUBCASE("Byte constructor")
         {
-            const sf::IpAddress ipAddress(142, 250, 69, 238);
-            CHECK(ipAddress.toString() == "142.250.69.238"s);
-            CHECK(ipAddress.toInteger() == 0x8EFA45EE);
+            const sf::IpAddress ipAddress(198, 51, 100, 234);
+            CHECK(ipAddress.toString() == "198.51.100.234"s);
+            CHECK(ipAddress.toInteger() == 0xC63364EA);
         }
 
         SUBCASE("std::uint32_t constructor")
         {
-            const sf::IpAddress ipAddress(0xDEADBEEF);
-            CHECK(ipAddress.toString() == "222.173.190.239"s);
-            CHECK(ipAddress.toInteger() == 0xDEADBEEF);
+            const sf::IpAddress ipAddress(0xCB00719A);
+            CHECK(ipAddress.toString() == "203.0.113.154"s);
+            CHECK(ipAddress.toInteger() == 0xCB00719A);
         }
     }
 
@@ -102,14 +102,14 @@ TEST_CASE("[Network] sf::IpAddress")
     {
         SUBCASE("operator==")
         {
-            CHECK(sf::IpAddress(0x42, 0x69, 0x96, 0x24) == sf::IpAddress(0x42699624));
-            CHECK(sf::IpAddress(0xABCDEF01) == sf::IpAddress(171, 205, 239, 1));
+            CHECK(sf::IpAddress(0xC6, 0x33, 0x64, 0x7B) == sf::IpAddress(0xC633647B));
+            CHECK(sf::IpAddress(0xCB0071D2) == sf::IpAddress(203, 0, 113, 210));
         }
 
         SUBCASE("operator!=")
         {
             CHECK(sf::IpAddress(0x12344321) != sf::IpAddress(1234));
-            CHECK(sf::IpAddress(192, 168, 1, 10) != sf::IpAddress(192, 168, 1, 11));
+            CHECK(sf::IpAddress(198, 51, 100, 1) != sf::IpAddress(198, 51, 100, 11));
         }
 
         SUBCASE("operator<")
@@ -141,8 +141,8 @@ TEST_CASE("[Network] sf::IpAddress")
             CHECK(sf::IpAddress(0, 0, 1, 0) <= sf::IpAddress(0, 0, 0, 1));
             CHECK(sf::IpAddress(0, 0, 0, 1) <= sf::IpAddress(1, 0, 0, 1));
 
-            CHECK(sf::IpAddress(0x42, 0x69, 0x96, 0x24) <= sf::IpAddress(0x42699624));
-            CHECK(sf::IpAddress(0xABCDEF01) <= sf::IpAddress(171, 205, 239, 1));
+            CHECK(sf::IpAddress(0xC6, 0x33, 0x64, 0x7B) <= sf::IpAddress(0xC633647B));
+            CHECK(sf::IpAddress(0xCB0071D2) <= sf::IpAddress(203, 0, 113, 210));
         }
 
         SUBCASE("operator>=")
@@ -154,22 +154,22 @@ TEST_CASE("[Network] sf::IpAddress")
             CHECK(sf::IpAddress(0, 0, 0, 1) >= sf::IpAddress(0, 0, 1, 0));
             CHECK(sf::IpAddress(1, 0, 0, 1) >= sf::IpAddress(0, 0, 0, 1));
 
-            CHECK(sf::IpAddress(0x42, 0x69, 0x96, 0x24) >= sf::IpAddress(0x42699624));
-            CHECK(sf::IpAddress(0xABCDEF01) >= sf::IpAddress(171, 205, 239, 1));
+            CHECK(sf::IpAddress(0xC6, 0x33, 0x64, 0x7B) >= sf::IpAddress(0xC633647B));
+            CHECK(sf::IpAddress(0xCB0071D2) >= sf::IpAddress(203, 0, 113, 210));
         }
 
         SUBCASE("operator>>")
         {
             std::optional<sf::IpAddress> ipAddress;
-            std::istringstream("4.4.4.4") >> ipAddress;
+            std::istringstream("198.51.100.4") >> ipAddress;
             REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() == "4.4.4.4"s);
-            CHECK(ipAddress->toInteger() == 0x04040404);
+            CHECK(ipAddress->toString() == "198.51.100.4"s);
+            CHECK(ipAddress->toInteger() == 0xC6336404);
 
-            std::istringstream("92.100.0.72") >> ipAddress;
+            std::istringstream("203.0.113.72") >> ipAddress;
             REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() == "92.100.0.72"s);
-            CHECK(ipAddress->toInteger() == 0x5C640048);
+            CHECK(ipAddress->toString() == "203.0.113.72"s);
+            CHECK(ipAddress->toInteger() == 0xCB007148);
 
             std::istringstream("") >> ipAddress;
             CHECK(!ipAddress.has_value());
@@ -178,8 +178,8 @@ TEST_CASE("[Network] sf::IpAddress")
         SUBCASE("operator<<")
         {
             std::ostringstream out;
-            out << sf::IpAddress(10, 9, 8, 7);
-            CHECK(out.str() == "10.9.8.7"s);
+            out << sf::IpAddress(192, 0, 2, 10);
+            CHECK(out.str() == "192.0.2.10"s);
         }
     }
 }
