@@ -12,15 +12,7 @@ endmacro()
 
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
-
-if(NOT CMAKE_OSX_SYSROOT)
-    # query the path to the default SDK, will fail on non-macOS, but it's okay.
-    execute_process(COMMAND xcodebuild -sdk macosx -version Path
-                    COMMAND head -n 1
-                    COMMAND tr -d '\n'
-                    OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
-                    ERROR_QUIET)
-endif()
+sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 13.0")
 
 # project name
 project(SFML VERSION 3.0.0)
@@ -43,14 +35,10 @@ include(cmake/Config.cmake)
 include(GNUInstallDirs)
 
 # add an option for choosing the build type (shared or static)
-if(NOT (SFML_OS_IOS OR SFML_OS_ANDROID))
+if(NOT SFML_OS_ANDROID)
     sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 else()
-    if(SFML_OS_IOS)
-        set(BUILD_SHARED_LIBS FALSE)
-    elseif(SFML_OS_ANDROID)
-        set(BUILD_SHARED_LIBS TRUE)
-    endif()
+    set(BUILD_SHARED_LIBS TRUE)
 endif()
 
 # add options to select which modules to build
@@ -70,20 +58,16 @@ if(SFML_BUILD_WINDOW)
 endif()
 
 # macOS specific options
-if(SFML_OS_MACOSX)
+if(SFML_OS_MACOSX OR SFML_OS_IOS)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
 
+    if (SFML_OS_IOS AND NOT SFML_BUILD_FRAMEWORKS AND BUILD_SHARED_LIBS)
+        message(FATAL_ERROR "Naked dynamic libs not supported for iOS, build static or frameworks instead")
+    endif()
+
     # add an option to automatically install Xcode templates
     sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
-endif()
-
-# iOS specific options
-if(SFML_OS_IOS)
-    # At the moment the minimal deployement target version is 10.2 only because the externals for iOS were built with that requirement.
-    sfml_set_option(SFML_IOS_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 10.2.")
-
-    sfml_set_option(SFML_CODE_SIGN_IDENTITY "iPhone Developer" STRING "The code signing identity to use when building for a real device")
 endif()
 
 # Android options
@@ -282,6 +266,10 @@ else()
     # find only "root" headers
     file(GLOB SFML_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/SFML/*")
 
+    # Because we use generator expressions in the post build scripts we need to
+    # suppress the generation of "EFFECTIVE_PLATFORM_NAME" as it will fail
+    set_property(GLOBAL PROPERTY XCODE_EMIT_EFFECTIVE_PLATFORM_NAME OFF)
+
     # in fact we have to fool cmake to copy all the headers in subdirectories
     # to do that we have to add the "root" headers to the PUBLIC_HEADER
     # then we can run a post script to copy the remaining headers
@@ -447,9 +435,6 @@ elseif(SFML_OS_MACOSX)
     endif()
 
 elseif(SFML_OS_IOS)
-
-    # fix CMake install rules broken for iOS (see http://public.kitware.com/Bug/view.php?id=12506)
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/lib/\$ENV{CONFIGURATION}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
     if(NOT SFML_USE_SYSTEM_DEPS)
         # since the iOS libraries are built as static, we must install the SFML dependencies
