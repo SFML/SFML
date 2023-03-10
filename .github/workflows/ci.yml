@@ -47,6 +47,12 @@ jobs:
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: Unity, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+        - platform: { name: Windows VS2022, os: windows-2022 }
+          config: { name: OpenGL ES, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DSFML_OPENGL_ES=ON }
+          type: { name: Release }
+        - platform: { name: Windows VS2022, os: windows-2022 }
+          config: { name: OpenGL ES, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DSFML_OPENGL_ES=ON }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
         - platform: { name: MacOS, os: macos-11 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: Android, os: ubuntu-latest }
