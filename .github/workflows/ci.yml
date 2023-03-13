@@ -26,7 +26,6 @@ jobs:
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
-        - { name: Framework, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_BUILD_FRAMEWORKS=ON}
         type:
         - { name: Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
@@ -36,18 +35,6 @@ jobs:
           config: { name: Shared }
         - platform: { name: iOS Xcode }
           config: { name: Shared }
-        - platform: { os: windows-2019 }
-          config: { name: Framework }
-        - platform: { os: windows-2022 }
-          config: { name: Framework }
-        - platform: { os: ubuntu-latest }
-          config: { name: Framework }
-        - platform: { os: macOS }
-          config: { name: Framework }
-          type: { name: Release }
-        - platform: { os: macOS Xcode }
-          config: { name: Framework }
-          type: { name: Release }
 
         include:
         - platform: { name: Windows VS2022, os: windows-2022 }
@@ -56,6 +43,10 @@ jobs:
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+        - platform: { name: MacOS, os: macos-11 }
+           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
+        - platform: { name: MacOS, os: macos-11 }
+           config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
         - platform: { name: Android, os: ubuntu-latest }
           config: { name: x86, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
         - platform: { name: Android, os: ubuntu-latest }
