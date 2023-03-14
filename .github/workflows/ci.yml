@@ -92,7 +92,17 @@ jobs:
 
     - name: Build
       shell: bash
-      run: ${{matrix.platform.prefix}} cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+
+    - name: Test
+      if: runner.os == 'Windows'
+      shell: bash
+      run: cmake --build $GITHUB_WORKSPACE/build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+    - name: Test
+      if: runner.os != 'Windows'
+      shell: bash
+      run: ${{matrix.platform.prefix}} ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
     - name: Generate Coverage Report
       if: matrix.type.name == 'Debug' && runner.os != 'Windows' # Coverage is already generated on Windows when running tests.
