@@ -33,6 +33,7 @@
 
 #include <locale>
 #include <string>
+#include <string_view>
 
 
 namespace sf
@@ -117,6 +118,7 @@ public:
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
+    String(std::string_view ansiString, const std::locale& locale = std::locale());
     String(const std::string& ansiString, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
@@ -133,6 +135,7 @@ public:
     /// \param wideString Wide string to convert
     ///
     ////////////////////////////////////////////////////////////
+    String(std::wstring_view wideString);
     String(const std::wstring& wideString);
 
     ////////////////////////////////////////////////////////////
@@ -149,6 +152,7 @@ public:
     /// \param utf32String UTF-32 string to assign
     ///
     ////////////////////////////////////////////////////////////
+    String(std::basic_string_view<std::uint32_t> utf32String);
     String(const std::basic_string<std::uint32_t>& utf32String);
 
     ////////////////////////////////////////////////////////////
