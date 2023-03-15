@@ -131,7 +131,8 @@ String::String(std::basic_string_view<std::uint32_t> utf32String) : m_string(utf
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::basic_string<std::uint32_t>& utf32String) : String(std::basic_string_view<std::uint32_t>(utf32String))
+String::String(const std::basic_string<std::uint32_t>& utf32String) :
+String(std::basic_string_view<std::uint32_t>(utf32String))
 {
 }
 

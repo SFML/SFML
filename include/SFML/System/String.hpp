@@ -109,17 +109,17 @@ public:
     String(const char* ansiString, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from an ANSI string and a locale
+    /// \brief Construct from an ANSI string_view and a locale
     ///
     /// The source string_view is converted to UTF-32 according
     /// to the given locale.
     ///
-    /// \param ansiString ANSI string to convert
+    /// \param ansiString ANSI string_view to convert
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
     String(std::string_view ansiString, const std::locale& locale = std::locale());
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an ANSI string and a locale
     ///
@@ -143,11 +143,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a wide string_view
     ///
-    /// \param wideString Wide string to convert
+    /// \param wideString Wide string_view to convert
     ///
     ////////////////////////////////////////////////////////////
     String(std::wstring_view wideString);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a wide string
     ///
@@ -167,11 +167,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an UTF-32 string_view
     ///
-    /// \param utf32String UTF-32 string to assign
+    /// \param utf32String UTF-32 string_view to assign
     ///
     ////////////////////////////////////////////////////////////
     String(std::basic_string_view<std::uint32_t> utf32String);
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an UTF-32 string
     ///
