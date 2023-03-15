@@ -221,9 +221,6 @@ struct TransientContext
     {
         if (useSharedContext)
             sharedContext->setActive(false);
-
-        sharedContextLock.reset();
-        context.reset();
     }
 
     ////////////////////////////////////////////////////////////
