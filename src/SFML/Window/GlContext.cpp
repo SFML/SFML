@@ -203,7 +203,7 @@ struct TransientContext
     {
         if (resourceCount == 0)
         {
-            context = std::make_unique<sf::Context>();
+            context.emplace();
         }
         else if (!currentContext)
         {
@@ -239,14 +239,14 @@ struct TransientContext
     // Member data
     ////////////////////////////////////////////////////////////
     unsigned int                                         referenceCount{};
-    std::unique_ptr<sf::Context>                         context;
+    std::optional<sf::Context>                           context;
     std::optional<std::lock_guard<std::recursive_mutex>> sharedContextLock;
     bool                                                 useSharedContext{};
 };
 
 // This per-thread variable tracks if and how a transient
 // context is currently being used on the current thread
-thread_local std::unique_ptr<TransientContext> transientContext;
+thread_local std::optional<TransientContext> transientContext;
 
 // Supported OpenGL extensions
 std::vector<std::string> extensions;
@@ -408,8 +408,8 @@ void GlContext::acquireTransientContext()
 
     // If this is the first TransientContextLock on this thread
     // construct the state object
-    if (!transientContext)
-        transientContext = std::make_unique<TransientContext>();
+    if (!transientContext.has_value())
+        transientContext.emplace();
 
     // Increase the reference count
     ++transientContext->referenceCount;
@@ -426,7 +426,7 @@ void GlContext::releaseTransientContext()
     std::lock_guard lock(mutex);
 
     // Make sure a matching acquireTransientContext() was called
-    assert(transientContext);
+    assert(transientContext.has_value());
 
     // Decrease the reference count
     --transientContext->referenceCount;
