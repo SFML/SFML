@@ -177,6 +177,7 @@ unsigned int resourceCount = 0;
 
 // This per-thread variable holds the current context for each thread
 thread_local sf::priv::GlContext* currentContext(nullptr);
+thread_local unsigned int         currentContextTransientCount(0);
 
 // The hidden, inactive context that will be shared with all other contexts
 std::unique_ptr<ContextType> sharedContext;
@@ -201,14 +202,27 @@ struct TransientContext
     ////////////////////////////////////////////////////////////
     TransientContext()
     {
+        // TransientContext should never be created if there is
+        // already a context active on the current thread
+        assert(!currentContext);
+
+        std::unique_lock lock(mutex);
+
         if (resourceCount == 0)
         {
+            // No GlResources, no shared context yet
+            assert(!sharedContext);
+
+            // Create a Context object for temporary use
             context.emplace();
         }
-        else if (!currentContext)
+        else
         {
-            sharedContextLock.emplace(mutex);
-            useSharedContext = true;
+            // GlResources exist, currentContext not yet set
+            assert(sharedContext);
+
+            // Lock the shared context for temporary use
+            sharedContextLock = std::move(lock);
             sharedContext->setActive(true);
         }
     }
@@ -219,7 +233,7 @@ struct TransientContext
     ////////////////////////////////////////////////////////////
     ~TransientContext()
     {
-        if (useSharedContext)
+        if (sharedContextLock)
             sharedContext->setActive(false);
     }
 
@@ -238,10 +252,8 @@ struct TransientContext
     ///////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int                                         referenceCount{};
-    std::optional<sf::Context>                           context;
-    std::optional<std::lock_guard<std::recursive_mutex>> sharedContextLock;
-    bool                                                 useSharedContext{};
+    std::optional<sf::Context>             context;
+    std::unique_lock<std::recursive_mutex> sharedContextLock;
 };
 
 // This per-thread variable tracks if and how a transient
@@ -328,7 +340,6 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void GlContext::initResource()
 {
-    using GlContextImpl::currentContext;
     using GlContextImpl::loadExtensions;
     using GlContextImpl::mutex;
     using GlContextImpl::resourceCount;
@@ -399,44 +410,50 @@ void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, 
 ////////////////////////////////////////////////////////////
 void GlContext::acquireTransientContext()
 {
-    using GlContextImpl::mutex;
+    using GlContextImpl::currentContext;
+    using GlContextImpl::currentContextTransientCount;
     using GlContextImpl::TransientContext;
     using GlContextImpl::transientContext;
 
-    // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    // Fast path if we already have a context active on this thread
+    if (currentContext)
+    {
+        ++currentContextTransientCount;
+        return;
+    }
 
-    // If this is the first TransientContextLock on this thread
-    // construct the state object
-    if (!transientContext.has_value())
-        transientContext.emplace();
+    // If we don't already have a context active on this thread the count should be 0
+    assert(!currentContextTransientCount);
 
-    // Increase the reference count
-    ++transientContext->referenceCount;
+    // If currentContext is not set, this must be the first
+    // TransientContextLock on this thread, construct the state object
+    transientContext.emplace();
+
+    // Make sure a context is active at this point
+    assert(currentContext);
 }
 
 
 ////////////////////////////////////////////////////////////
 void GlContext::releaseTransientContext()
 {
-    using GlContextImpl::mutex;
+    using GlContextImpl::currentContext;
+    using GlContextImpl::currentContextTransientCount;
     using GlContextImpl::transientContext;
 
-    // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    // Make sure a context was left active after acquireTransientContext() was called
+    assert(currentContext);
 
-    // Make sure a matching acquireTransientContext() was called
-    assert(transientContext.has_value());
-
-    // Decrease the reference count
-    --transientContext->referenceCount;
-
-    // If this is the last TransientContextLock that is released
-    // destroy the state object
-    if (transientContext->referenceCount == 0)
+    // Fast path if we already had a context active on this thread before acquireTransientContext() was called
+    if (currentContextTransientCount)
     {
-        transientContext.reset();
+        --currentContextTransientCount;
+        return;
     }
+
+    // If currentContext is set and currentContextTransientCount is 0,
+    // this is the last TransientContextLock that is released, destroy the state object
+    transientContext.reset();
 }
 
 
