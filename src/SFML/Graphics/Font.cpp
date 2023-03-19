@@ -834,12 +834,12 @@ Font::Page::Page(bool smooth)
 {
     // Make sure that the texture is initialized by default
     sf::Image image;
-    image.create({128, 128}, Color(255, 255, 255, 0));
+    image.create({128, 128}, Color::Transparent);
 
     // Reserve a 2x2 white square for texturing underlines
     for (unsigned int x = 0; x < 2; ++x)
         for (unsigned int y = 0; y < 2; ++y)
-            image.setPixel({x, y}, Color(255, 255, 255, 255));
+            image.setPixel({x, y}, Color::White);
 
     // Create the texture
     if (!texture.loadFromImage(image))
