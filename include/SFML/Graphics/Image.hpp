@@ -55,7 +55,7 @@ public:
     /// \param color Fill color
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const Color& color = Color(0, 0, 0));
+    void create(const Vector2u& size, const Color& color = Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the image from an array of pixels

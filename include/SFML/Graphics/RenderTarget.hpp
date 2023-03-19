@@ -80,7 +80,7 @@ public:
     /// \param color Fill color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void clear(const Color& color = Color(0, 0, 0, 255));
+    void clear(const Color& color = Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view

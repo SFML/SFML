@@ -36,7 +36,7 @@ TEST_CASE("[Graphics] sf::Image")
             {
                 for (std::uint32_t j = 0; j < 10; ++j)
                 {
-                    CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color(0, 0, 0));
+                    CHECK(image.getPixel(sf::Vector2u(i, j)) == sf::Color::Black);
                 }
             }
         }
@@ -133,7 +133,7 @@ TEST_CASE("[Graphics] sf::Image")
                     if (i <= 4 && j <= 4)
                         CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color::Blue);
                     else
-                        CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color(0, 0, 0));
+                        CHECK(image2.getPixel(sf::Vector2u(i, j)) == sf::Color::Black);
                 }
             }
         }
