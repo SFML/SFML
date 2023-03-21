@@ -122,8 +122,21 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     void* handle = dlopen(libraryPath, RTLD_NOW | RTLD_GLOBAL);
     if (!handle)
     {
-        LOGE("dlopen(\"%s\"): %s", libraryPath, dlerror());
-        exit(1);
+        // When android:extractNativeLibs is set to false (which is the default when using AGP >= 3.6 and minSdkVersion >= 23),
+        // the above dlopen call may fail to find the library. This is because native libraries would be stored uncompressed
+        // in the APK and they would no longer be extracted to the system directory that was passed to dlopen.
+        // Applications are supposed to load the native library directory from the APK in this case. We can simply pass
+        // the library filename, without path, to dlopen to achieve this.
+        jstring     javaLibraryFilename = static_cast<jstring>(ObjectName);
+        const char* libraryFilename     = lJNIEnv->GetStringUTFChars(javaLibraryFilename, NULL);
+        handle                          = dlopen(libraryFilename, RTLD_NOW | RTLD_GLOBAL);
+        if (!handle)
+        {
+            LOGE("dlopen(\"%s\"): %s", libraryPath, dlerror());
+            exit(1);
+        }
+
+        lJNIEnv->ReleaseStringUTFChars(javaLibraryFilename, libraryFilename);
     }
 
     // Release the Java string
