@@ -132,7 +132,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     return handle;
 }
 
-void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
+JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
 {
     // Before we can load a library, we need to find out its location. As
     // we're powerless here in C/C++, we need the JNI interface to communicate
