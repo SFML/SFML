@@ -178,18 +178,18 @@ unsigned int resourceCount = 0;
 // This per-thread variable holds the current context for each thread
 thread_local sf::priv::GlContext* currentContext(nullptr);
 
-// The hidden, inactive context that will be shared with all other contexts
-std::unique_ptr<ContextType> sharedContext;
-
-// Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
-std::uint64_t id = 1; // start at 1, zero is "no context"
-
 // Set containing callback functions to be called whenever a
 // context is going to be destroyed
 // Unshareable OpenGL resources rely on this to clean up properly
 // whenever a context containing them is destroyed
 using ContextDestroyCallbacks = std::unordered_map<sf::ContextDestroyCallback, void*>;
 ContextDestroyCallbacks contextDestroyCallbacks;
+
+// The hidden, inactive context that will be shared with all other contexts
+std::unique_ptr<ContextType> sharedContext;
+
+// Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
+std::uint64_t id = 1; // start at 1, zero is "no context"
 
 // This structure contains all the state necessary to
 // track TransientContext usage
