@@ -10,7 +10,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     endif()
 
     # cmake by default will only search inside the iOS SDK for packages/libraries, so we need to tell it to look elsewhere
-    if (IOS)
+    if(IOS)
         set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
         set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
     endif()
