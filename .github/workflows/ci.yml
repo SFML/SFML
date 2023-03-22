@@ -160,7 +160,7 @@ jobs:
           ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
 
     - name: Test Install Interface
-      if: matrix.platform.name != 'Android' && matrix.config.name != 'iOS'
+      if: matrix.platform.name != 'Android'
       shell: bash
       run: |
         cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
