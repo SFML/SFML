@@ -13,7 +13,8 @@ static_assert(std::is_copy_assignable_v<sf::Transform>);
 static_assert(std::is_nothrow_move_constructible_v<sf::Transform>);
 static_assert(std::is_nothrow_move_assignable_v<sf::Transform>);
 
-// Use StringMaker to avoid opening namespace std
+// Specialize StringMaker for std::vector<float>
+// https://github.com/doctest/doctest/blob/master/doc/markdown/stringification.md#docteststringmakert-specialisation
 namespace doctest
 {
 template <>
