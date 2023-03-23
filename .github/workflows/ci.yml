@@ -74,7 +74,9 @@ jobs:
 
     - name: Install macOS Tools
       if: runner.os == 'macOS'
-      run: brew install gcovr ninja
+      run: |
+        brew update
+        brew install gcovr ninja
 
     - name: Install OpenCppCoverage and add to PATH
       uses: nick-fields/retry@v2
@@ -208,6 +210,7 @@ jobs:
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
       run: |
+        brew update
         brew install llvm
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
