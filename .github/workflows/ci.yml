@@ -135,7 +135,9 @@ jobs:
         retry_wait_seconds: 60
         warning_on_retry: false
         shell: bash
-        command: ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out -C ${{ github.sha }} -s ./build -e CODECOV_TOKEN,GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
+        command: |
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then COMMIT_OVERRIDE="-C ${{ github.event.pull_request.head.sha }}"; fi
+          ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e CODECOV_TOKEN,GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
 
     - name: Test Install Interface
       if: matrix.platform.name != 'Android' && matrix.config.name != 'iOS'
