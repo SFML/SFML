@@ -20,4 +20,3 @@ endif()
 
 add_executable(test-sfml-install Install.cpp)
 target_link_libraries(test-sfml-install PRIVATE SFML::Graphics SFML::Network SFML::Audio)
-message(STATUS ${CMAKE_OSX_SYSROOT})
