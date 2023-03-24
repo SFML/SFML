@@ -6,8 +6,6 @@ jobs:
   build:
     name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
     runs-on: ${{ matrix.platform.os }}
-    env:
-      HAVE_CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN != '' }}
 
     strategy:
       fail-fast: false
@@ -111,7 +109,7 @@ jobs:
       run: gcovr -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
 
     - name: Download Codecov Uploader
-      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && env.HAVE_CODECOV_TOKEN == 'true' # Disable upload in forks and when Codecov token isn't available
+      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
       shell: bash
       run: |
         platform=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
@@ -125,9 +123,7 @@ jobs:
         echo "CODECOV_BINARY=$CODECOV_BINARY" >> $GITHUB_ENV
 
     - name: Upload Coverage Report to Codecov
-      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && env.HAVE_CODECOV_TOKEN == 'true' # Disable upload in forks and when Codecov token isn't available
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
       uses: nick-fields/retry@v2
       with:
         timeout_seconds: 30
@@ -137,7 +133,7 @@ jobs:
         shell: bash
         command: |
           if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then COMMIT_OVERRIDE="-C ${{ github.event.pull_request.head.sha }}"; fi
-          ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e CODECOV_TOKEN,GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
+          ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
 
     - name: Test Install Interface
       if: matrix.platform.name != 'Android' && matrix.config.name != 'iOS'
