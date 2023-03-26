@@ -181,6 +181,7 @@ private:
     HDC         m_deviceContext{}; //!< Device context associated to the context
     HGLRC       m_context{};       //!< OpenGL context
     bool        m_ownsWindow{};    //!< Do we own the target window?
+    bool        m_isGeneric{};     //!< Is this context provided by the generic GDI implementation?
 };
 
 } // namespace sf::priv

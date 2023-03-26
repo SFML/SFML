@@ -945,29 +945,6 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
-
-    auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
-
-    if (!glGetStringFunc)
-    {
-        err() << "Could not load glGetString function" << std::endl;
-
-        return;
-    }
-
-    // Detect any known non-accelerated implementations and warn
-    const char* vendorName   = reinterpret_cast<const char*>(glGetStringFunc(GL_VENDOR));
-    const char* rendererName = reinterpret_cast<const char*>(glGetStringFunc(GL_RENDERER));
-
-    if (vendorName && rendererName)
-    {
-        if (std::string_view(vendorName) == "Microsoft Corporation" && std::string_view(rendererName) == "GDI Generic")
-        {
-            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << '\n'
-                  << "The current OpenGL implementation is not hardware-accelerated" << std::endl;
-        }
-    }
-
     int version          = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
     int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
 
