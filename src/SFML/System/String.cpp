@@ -57,7 +57,7 @@ String::String(wchar_t wideChar)
 
 
 ////////////////////////////////////////////////////////////
-String::String(std::uint32_t utf32Char)
+String::String(char32_t utf32Char)
 {
     m_string += utf32Char;
 }
@@ -110,7 +110,7 @@ String::String(const std::wstring& wideString)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::uint32_t* utf32String)
+String::String(const char32_t* utf32String)
 {
     if (utf32String)
         m_string = utf32String;
@@ -118,7 +118,7 @@ String::String(const std::uint32_t* utf32String)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::basic_string<std::uint32_t>& utf32String) : m_string(utf32String)
+String::String(const std::u32string& utf32String) : m_string(utf32String)
 {
 }
 
@@ -180,10 +180,10 @@ std::basic_string<std::uint8_t> String::toUtf8() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<std::uint16_t> String::toUtf16() const
+std::u16string String::toUtf16() const
 {
     // Prepare the output string
-    std::basic_string<std::uint16_t> output;
+    std::u16string output;
     output.reserve(m_string.length());
 
     // Convert
@@ -194,7 +194,7 @@ std::basic_string<std::uint16_t> String::toUtf16() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<std::uint32_t> String::toUtf32() const
+std::u32string String::toUtf32() const
 {
     return m_string;
 }
@@ -209,14 +209,14 @@ String& String::operator+=(const String& right)
 
 
 ////////////////////////////////////////////////////////////
-std::uint32_t String::operator[](std::size_t index) const
+char32_t String::operator[](std::size_t index) const
 {
     return m_string[index];
 }
 
 
 ////////////////////////////////////////////////////////////
-std::uint32_t& String::operator[](std::size_t index)
+char32_t& String::operator[](std::size_t index)
 {
     return m_string[index];
 }
@@ -295,7 +295,7 @@ String String::substring(std::size_t position, std::size_t length) const
 
 
 ////////////////////////////////////////////////////////////
-const std::uint32_t* String::getData() const
+const char32_t* String::getData() const
 {
     return m_string.c_str();
 }
