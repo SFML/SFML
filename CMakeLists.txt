@@ -180,6 +180,10 @@ if(SFML_OS_WINDOWS)
     if(BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
         message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
     endif()
+
+    sfml_set_option(SFML_USE_MESA3D FALSE BOOL "TRUE to use the Mesa 3D graphics library for rendering, FALSE to use the system provided library for rendering")
+
+    include(cmake/Mesa3D.cmake)
 endif()
 
 # setup Mac OS X stuff

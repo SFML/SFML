@@ -331,6 +331,9 @@ macro(sfml_add_example target)
         sfml_set_common_ios_properties(${target})
     endif()
 
+    if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
+        add_dependencies(${target} "install-mesa3d")
+    endif()
 endmacro()
 
 # add a new target which is a SFML test
@@ -366,6 +369,10 @@ function(sfml_add_test target SOURCES DEPENDS)
         foreach(DEPENDENCY ${DEPENDS})
             target_link_options(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:${DEPENDENCY}>>)
         endforeach()
+    endif()
+
+    if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
+        add_dependencies(${target} "install-mesa3d")
     endif()
 
     # Add the test
