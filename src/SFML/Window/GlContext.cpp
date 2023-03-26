@@ -32,6 +32,7 @@
 #include <glad/gl.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cctype>
 #include <cstdlib>
@@ -175,15 +176,23 @@ std::recursive_mutex mutex;
 // OpenGL resources counter
 unsigned int resourceCount = 0;
 
-// This per-thread variable holds the current context for each thread
-thread_local sf::priv::GlContext* currentContext(nullptr);
-thread_local unsigned int         currentContextTransientCount(0);
+// This structure contains all the state necessary to
+// track current context information for each thread
+struct CurrentContext
+{
+    std::uint64_t        id{};
+    sf::priv::GlContext* ptr{};
+    unsigned int         transientCount{};
+};
+
+// This per-thread variable holds the current context information for each thread
+thread_local CurrentContext currentContext;
 
 // The hidden, inactive context that will be shared with all other contexts
 std::unique_ptr<ContextType> sharedContext;
 
 // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
-std::uint64_t id = 1; // start at 1, zero is "no context"
+std::atomic<std::uint64_t> nextContextId(1); // start at 1, zero is "no context"
 
 // Set containing callback functions to be called whenever a
 // context is going to be destroyed
@@ -204,7 +213,7 @@ struct TransientContext
     {
         // TransientContext should never be created if there is
         // already a context active on the current thread
-        assert(!currentContext);
+        assert(!currentContext.id);
 
         std::unique_lock lock(mutex);
 
@@ -218,7 +227,7 @@ struct TransientContext
         }
         else
         {
-            // GlResources exist, currentContext not yet set
+            // GlResources exist, currentContextId not yet set
             assert(sharedContext);
 
             // Lock the shared context for temporary use
@@ -411,26 +420,25 @@ void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, 
 void GlContext::acquireTransientContext()
 {
     using GlContextImpl::currentContext;
-    using GlContextImpl::currentContextTransientCount;
     using GlContextImpl::TransientContext;
     using GlContextImpl::transientContext;
 
     // Fast path if we already have a context active on this thread
-    if (currentContext)
+    if (currentContext.id)
     {
-        ++currentContextTransientCount;
+        ++currentContext.transientCount;
         return;
     }
 
     // If we don't already have a context active on this thread the count should be 0
-    assert(!currentContextTransientCount);
+    assert(!currentContext.transientCount);
 
-    // If currentContext is not set, this must be the first
+    // If currentContextId is not set, this must be the first
     // TransientContextLock on this thread, construct the state object
     transientContext.emplace();
 
     // Make sure a context is active at this point
-    assert(currentContext);
+    assert(currentContext.id);
 }
 
 
@@ -438,20 +446,19 @@ void GlContext::acquireTransientContext()
 void GlContext::releaseTransientContext()
 {
     using GlContextImpl::currentContext;
-    using GlContextImpl::currentContextTransientCount;
     using GlContextImpl::transientContext;
 
     // Make sure a context was left active after acquireTransientContext() was called
-    assert(currentContext);
+    assert(currentContext.id);
 
     // Fast path if we already had a context active on this thread before acquireTransientContext() was called
-    if (currentContextTransientCount)
+    if (currentContext.transientCount)
     {
-        --currentContextTransientCount;
+        --currentContext.transientCount;
         return;
     }
 
-    // If currentContext is set and currentContextTransientCount is 0,
+    // If currentContextId is set and currentContextTransientCount is 0,
     // this is the last TransientContextLock that is released, destroy the state object
     transientContext.reset();
 }
@@ -611,7 +618,8 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 const GlContext* GlContext::getActiveContext()
 {
     using GlContextImpl::currentContext;
-    return currentContext;
+
+    return currentContext.ptr;
 }
 
 
@@ -619,7 +627,8 @@ const GlContext* GlContext::getActiveContext()
 std::uint64_t GlContext::getActiveContextId()
 {
     using GlContextImpl::currentContext;
-    return currentContext ? currentContext->m_id : 0;
+
+    return currentContext.id;
 }
 
 
@@ -627,13 +636,11 @@ std::uint64_t GlContext::getActiveContextId()
 GlContext::~GlContext()
 {
     using GlContextImpl::currentContext;
-    using GlContextImpl::sharedContext;
 
-    // Deactivate the context before killing it, unless we're inside Cleanup()
-    if (sharedContext)
+    if (m_id == currentContext.id)
     {
-        if (this == currentContext)
-            currentContext = nullptr;
+        currentContext.id  = 0;
+        currentContext.ptr = nullptr;
     }
 }
 
@@ -650,11 +657,10 @@ bool GlContext::setActive(bool active)
 {
     using GlContextImpl::currentContext;
     using GlContextImpl::mutex;
-    using GlContextImpl::sharedContext;
 
     if (active)
     {
-        if (this != currentContext)
+        if (m_id != currentContext.id)
         {
             std::lock_guard lock(mutex);
 
@@ -662,7 +668,8 @@ bool GlContext::setActive(bool active)
             if (makeCurrent(true))
             {
                 // Set it as the new current context for this thread
-                currentContext = this;
+                currentContext.id  = m_id;
+                currentContext.ptr = this;
                 return true;
             }
             else
@@ -678,14 +685,15 @@ bool GlContext::setActive(bool active)
     }
     else
     {
-        if (this == currentContext)
+        if (m_id == currentContext.id)
         {
             std::lock_guard lock(mutex);
 
             // Deactivate the context
             if (makeCurrent(false))
             {
-                currentContext = nullptr;
+                currentContext.id  = 0;
+                currentContext.ptr = nullptr;
                 return true;
             }
             else
@@ -703,7 +711,7 @@ bool GlContext::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-GlContext::GlContext() : m_id(GlContextImpl::id++)
+GlContext::GlContext() : m_id(GlContextImpl::nextContextId.fetch_add(1))
 {
     // Nothing to do
 }
@@ -754,10 +762,10 @@ void GlContext::cleanupUnsharedResources()
     using GlContextImpl::currentContext;
 
     // Save the current context so we can restore it later
-    GlContext* contextToRestore = currentContext;
+    GlContext* contextToRestore = currentContext.ptr;
 
     // If this context is already active there is no need to save it
-    if (contextToRestore == this)
+    if (m_id == currentContext.id)
         contextToRestore = nullptr;
 
     // Make this context active so resources can be freed
