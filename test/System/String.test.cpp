@@ -28,6 +28,14 @@ auto select(const std::basic_string<T>& string16, const std::basic_string<T>& st
     else
         return string32;
 }
+
+template <typename CharT>
+auto toHex(const CharT character)
+{
+    std::ostringstream stream;
+    stream << "[\\x" << std::uppercase << std::hex << static_cast<std::uint32_t>(character) << ']';
+    return stream.str();
+}
 } // namespace
 
 // Specialize StringMaker for alternative std::basic_string<T> specializations
@@ -38,13 +46,6 @@ namespace doctest
 template <typename CharT>
 struct StringMaker<std::basic_string<CharT>>
 {
-    static std::string toHex(const CharT character)
-    {
-        std::ostringstream stream;
-        stream << "[\\x" << std::uppercase << std::hex << static_cast<std::uint32_t>(character) << ']';
-        return stream.str();
-    }
-
     static String convert(const std::basic_string<CharT>& string)
     {
         doctest::String output;
@@ -56,6 +57,15 @@ struct StringMaker<std::basic_string<CharT>>
                 output += toHex(character).c_str();
         }
         return output;
+    }
+};
+
+template <>
+struct StringMaker<char32_t>
+{
+    static String convert(const char32_t character)
+    {
+        return toHex(character).c_str();
     }
 };
 } // namespace doctest
@@ -74,8 +84,8 @@ TEST_CASE("[System] sf::String")
             CHECK(string.toAnsiString() == ""s);
             CHECK(string.toWideString() == L""s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>());
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>());
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>());
+            CHECK(string.toUtf16() == u""s);
+            CHECK(string.toUtf32() == U""s);
             CHECK(string.getSize() == 0);
             CHECK(string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -83,14 +93,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("ANSI character constructor")
         {
-            const sf::String string('a');
+            const sf::String string = 'a';
             CHECK(std::string(string) == "a"s);
             CHECK(std::wstring(string) == L"a"s);
             CHECK(string.toAnsiString() == "a"s);
             CHECK(string.toWideString() == L"a"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'a'});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'a'});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'a'});
+            CHECK(string.toUtf16() == u"a"s);
+            CHECK(string.toUtf32() == U"a"s);
             CHECK(string.getSize() == 1);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -98,14 +108,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("ANSI C string constructor")
         {
-            const sf::String string("def");
+            const sf::String string = "def";
             CHECK(std::string(string) == "def"s);
             CHECK(std::wstring(string) == L"def"s);
             CHECK(string.toAnsiString() == "def"s);
             CHECK(string.toWideString() == L"def"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'d', 'e', 'f'});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'d', 'e', 'f'});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'d', 'e', 'f'});
+            CHECK(string.toUtf16() == u"def"s);
+            CHECK(string.toUtf32() == U"def"s);
             CHECK(string.getSize() == 3);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -113,14 +123,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("ANSI string constructor")
         {
-            const sf::String string("ghi"s);
+            const sf::String string = "ghi"s;
             CHECK(std::string(string) == "ghi"s);
             CHECK(std::wstring(string) == L"ghi"s);
             CHECK(string.toAnsiString() == "ghi"s);
             CHECK(string.toWideString() == L"ghi"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'g', 'h', 'i'});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'g', 'h', 'i'});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'g', 'h', 'i'});
+            CHECK(string.toUtf16() == u"ghi"s);
+            CHECK(string.toUtf32() == U"ghi"s);
             CHECK(string.getSize() == 3);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -128,14 +138,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("Wide character constructor")
         {
-            const sf::String string(L'\xFA');
+            const sf::String string = L'\xFA';
             CHECK(std::string(string) == select("\xFA"s, "\0"s));
             CHECK(std::wstring(string) == L"\xFA"s);
             CHECK(string.toAnsiString() == select("\xFA"s, "\0"s));
             CHECK(string.toWideString() == L"\xFA"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{0xC3, 0xBA});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{0xFA});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{0xFA});
+            CHECK(string.toUtf16() == u"\xFA"s);
+            CHECK(string.toUtf32() == U"\xFA"s);
             CHECK(string.getSize() == 1);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -143,14 +153,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("Wide C string constructor")
         {
-            const sf::String string(L"j\xFAl");
+            const sf::String string = L"j\xFAl";
             CHECK(std::string(string) == select("j\xFAl"s, "j\0l"s));
             CHECK(std::wstring(string) == L"j\xFAl"s);
             CHECK(string.toAnsiString() == select("j\xFAl"s, "j\0l"s));
             CHECK(string.toWideString() == L"j\xFAl"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'j', 0xC3, 0xBA, 'l'});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'j', 0xFA, 'l'});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'j', 0xFA, 'l'});
+            CHECK(string.toUtf16() == u"j\xFAl"s);
+            CHECK(string.toUtf32() == U"j\xFAl"s);
             CHECK(string.getSize() == 3);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -158,14 +168,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("Wide string constructor")
         {
-            const sf::String string(L"mno\xFA"s);
+            const sf::String string = L"mno\xFA"s;
             CHECK(std::string(string) == select("mno\xFA"s, "mno\0"s));
             CHECK(std::wstring(string) == L"mno\xFA"s);
             CHECK(string.toAnsiString() == select("mno\xFA"s, "mno\0"s));
             CHECK(string.toWideString() == L"mno\xFA"s);
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'m', 'n', 'o', 0xC3, 0XBA});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'m', 'n', 'o', 0xFA});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'m', 'n', 'o', 0xFA});
+            CHECK(string.toUtf16() == u"mno\xFA"s);
+            CHECK(string.toUtf32() == U"mno\xFA"s);
             CHECK(string.getSize() == 4);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -173,14 +183,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("UTF-32 character constructor")
         {
-            const sf::String string(U'\U0010AFAF');
+            const sf::String string = U'\U0010AFAF';
             CHECK(std::string(string) == "\0"s);
             CHECK(std::wstring(string) == select(L""s, L"\U0010AFAF"s));
             CHECK(string.toAnsiString() == "\0"s);
             CHECK(string.toWideString() == select(L""s, L"\U0010AFAF"s));
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{0xF4, 0x8A, 0xBE, 0xAF});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{0xDBEB, 0xDFAF});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{0x10AFAF});
+            CHECK(string.toUtf16() == u"\U0010AFAF"s);
+            CHECK(string.toUtf32() == U"\U0010AFAF"s);
             CHECK(string.getSize() == 1);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -188,14 +198,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("UTF-32 C string constructor")
         {
-            const sf::String string(reinterpret_cast<const std::uint32_t*>(U"\U0010ABCDrs"));
+            const sf::String string = U"\U0010ABCDrs";
             CHECK(std::string(string) == "\0rs"s);
             CHECK(std::wstring(string) == select(L"rs"s, L"\U0010ABCDrs"s));
             CHECK(string.toAnsiString() == "\0rs"s);
             CHECK(string.toWideString() == select(L"rs"s, L"\U0010ABCDrs"s));
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{0xF4, 0x8A, 0xAF, 0x8D, 'r', 's'});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{0xDBEA, 0xDFCD, 'r', 's'});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{0x10ABCD, 'r', 's'});
+            CHECK(string.toUtf16() == u"\U0010ABCDrs"s);
+            CHECK(string.toUtf32() == U"\U0010ABCDrs"s);
             CHECK(string.getSize() == 3);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -203,14 +213,14 @@ TEST_CASE("[System] sf::String")
 
         SUBCASE("UTF-32 string constructor")
         {
-            const sf::String string(std::basic_string<std::uint32_t>{'t', 'u', 'v', 0x104321});
+            const sf::String string = U"tuv\U00104321"s;
             CHECK(std::string(string) == "tuv\0"s);
             CHECK(std::wstring(string) == select(L"tuv"s, L"tuv\U00104321"s));
             CHECK(string.toAnsiString() == "tuv\0"s);
             CHECK(string.toWideString() == select(L"tuv"s, L"tuv\U00104321"s));
             CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'t', 'u', 'v', 0xF4, 0x84, 0x8C, 0xA1});
-            CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'t', 'u', 'v', 0xDBD0, 0xDF21});
-            CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'t', 'u', 'v', 0x104321});
+            CHECK(string.toUtf16() == u"tuv\U00104321"s);
+            CHECK(string.toUtf32() == U"tuv\U00104321"s);
             CHECK(string.getSize() == 4);
             CHECK(!string.isEmpty());
             CHECK(string.getData() != nullptr);
@@ -226,8 +236,8 @@ TEST_CASE("[System] sf::String")
         CHECK(string.toAnsiString() == "wxyz"s);
         CHECK(string.toWideString() == L"wxyz"s);
         CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'w', 'x', 'y', 'z'});
-        CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'w', 'x', 'y', 'z'});
-        CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'w', 'x', 'y', 'z'});
+        CHECK(string.toUtf16() == u"wxyz"s);
+        CHECK(string.toUtf32() == U"wxyz"s);
         CHECK(string.getSize() == 4);
         CHECK(!string.isEmpty());
         CHECK(string.getData() != nullptr);
@@ -242,8 +252,8 @@ TEST_CASE("[System] sf::String")
         CHECK(string.toAnsiString() == select("\xF1xyz"s, "\0xyz"s));
         CHECK(string.toWideString() == L"\xF1xyz"s);
         CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{0xC3, 0xB1, 'x', 'y', 'z'});
-        CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{0xF1, 'x', 'y', 'z'});
-        CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{0xF1, 'x', 'y', 'z'});
+        CHECK(string.toUtf16() == u"\xF1xyz"s);
+        CHECK(string.toUtf32() == U"\xF1xyz"s);
         CHECK(string.getSize() == 4);
         CHECK(!string.isEmpty());
         CHECK(string.getData() != nullptr);
@@ -258,8 +268,8 @@ TEST_CASE("[System] sf::String")
         CHECK(string.toAnsiString() == "w\0yz"s);
         CHECK(string.toWideString() == select(L"wyz"s, L"w\U00104321yz"s));
         CHECK(string.toUtf8() == std::basic_string<std::uint8_t>{'w', 0xF4, 0x84, 0x8C, 0xA1, 'y', 'z'});
-        CHECK(string.toUtf16() == std::basic_string<std::uint16_t>{'w', 0xDBD0, 0xDF21, 'y', 'z'});
-        CHECK(string.toUtf32() == std::basic_string<std::uint32_t>{'w', 0x104321, 'y', 'z'});
+        CHECK(string.toUtf16() == u"w\U00104321yz"s);
+        CHECK(string.toUtf32() == U"w\U00104321yz"s);
         CHECK(string.getSize() == 4);
         CHECK(!string.isEmpty());
         CHECK(string.getData() != nullptr);
