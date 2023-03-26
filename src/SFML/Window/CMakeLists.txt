@@ -346,3 +346,14 @@ elseif(SFML_OS_IOS)
 elseif(SFML_OS_ANDROID)
     target_link_libraries(sfml-window PRIVATE android)
 endif()
+
+# on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features
+# that aren't supported by native CPU instructions (64-bit atomic operations on 32-bit architecture)
+if(SFML_COMPILER_GCC)
+    include(CheckCXXSourceCompiles)
+    check_cxx_source_compiles("#include <atomic>
+        int main(){std::atomic_ullong x(1); return x.fetch_add(1);}" ATOMIC_TEST)
+    if(NOT ATOMIC_TEST)
+        target_link_libraries(sfml-window PRIVATE atomic)
+    endif()
+endif()
