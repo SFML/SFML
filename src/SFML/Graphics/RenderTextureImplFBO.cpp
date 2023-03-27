@@ -262,6 +262,8 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                     GLEXT_GL_DEPTH24_STENCIL8,
                                                     static_cast<GLsizei>(size.x),
                                                     static_cast<GLsizei>(size.y)));
+                
+                m_stencil = true;
 
 #else
 
@@ -271,7 +273,7 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
 
 #endif // SFML_OPENGL_ES
 
-                m_stencil = true;
+
             }
             else if (settings.depthBits)
             {
@@ -354,6 +356,8 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));
             }
+            
+            m_multisample = true;
 
 #else
 
@@ -362,7 +366,7 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
 
 #endif // SFML_OPENGL_ES
 
-            m_multisample = true;
+
         }
     }
 
