@@ -268,6 +268,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
                 }
                 glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
                 glCheck(GLEXT_glRenderbufferStorage(GLEXT_GL_RENDERBUFFER, GLEXT_GL_DEPTH24_STENCIL8, static_cast<GLsizei>(width), static_cast<GLsizei>(height)));
+                m_stencil = true;
 
 #else
 
@@ -275,8 +276,6 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
                 return false;
 
 #endif // SFML_OPENGL_ES
-
-                m_stencil = true;
 
             }
             else if (settings.depthBits)
@@ -339,6 +338,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
                 glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
                 glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER, static_cast<GLsizei>(settings.antialiasingLevel), GLEXT_GL_DEPTH_COMPONENT, static_cast<GLsizei>(width), static_cast<GLsizei>(height)));
             }
+            m_multisample = true;
 
 #else
 
@@ -346,8 +346,6 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
             return false;
 
 #endif // SFML_OPENGL_ES
-
-            m_multisample = true;
 
         }
     }
