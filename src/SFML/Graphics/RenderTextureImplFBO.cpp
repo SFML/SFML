@@ -272,6 +272,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
 
 #else
 
+                (void)m_stencil;
                 err() << "Impossible to create render texture (failed to create the attached depth/stencil buffer)" << std::endl;
                 return false;
 
