@@ -56,7 +56,7 @@ public:
     ////////////////////////////////////////////////////////////
     // NOLINTBEGIN(readability-identifier-naming)
     /// Represents an invalid position in the string
-    static constexpr std::size_t InvalidPos{std::basic_string<std::uint32_t>::npos};
+    static const std::size_t InvalidPos{std::basic_string<std::uint32_t>::npos};
     // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
