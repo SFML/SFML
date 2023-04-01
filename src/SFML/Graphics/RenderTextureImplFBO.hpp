@@ -137,8 +137,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::unordered_map<std::uint64_t, unsigned int> m_frameBuffers; //!< OpenGL frame buffer objects per context
-    std::unordered_map<std::uint64_t, unsigned int> m_multisampleFrameBuffers; //!< Optional per-context OpenGL frame buffer objects with multisample attachments
+    struct FrameBufferObject;
+
+    using FrameBufferObjectMap = std::unordered_map<std::uint64_t, std::weak_ptr<FrameBufferObject>>;
+
+    FrameBufferObjectMap m_frameBuffers; //!< OpenGL frame buffer objects per context
+    FrameBufferObjectMap m_multisampleFrameBuffers; //!< Optional per-context OpenGL frame buffer objects with multisample attachments
     unsigned int             m_depthStencilBuffer{}; //!< Optional depth/stencil buffer attached to the frame buffer
     unsigned int             m_colorBuffer{};        //!< Optional multisample color buffer attached to the frame buffer
     Vector2u                 m_size;                 //!< Width and height of the attachments

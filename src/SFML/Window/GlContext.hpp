@@ -50,38 +50,32 @@ class GlContext
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Perform resource initialization
+    /// \brief Get a shared_ptr to the shared context
     ///
-    /// This function is called every time an OpenGL resource is
-    /// created. When the first resource is initialized, it makes
-    /// sure that everything is ready for contexts to work properly.
+    /// \return shared_ptr to the shared context
     ///
     ////////////////////////////////////////////////////////////
-    static void initResource();
+    static std::shared_ptr<void> getSharedContext();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Perform resource cleanup
-    ///
-    /// This function is called every time an OpenGL resource is
-    /// destroyed. When the last resource is destroyed, it makes
-    /// sure that everything that was created by initResource()
-    /// is properly released.
-    ///
-    ////////////////////////////////////////////////////////////
-    static void cleanupResource();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Register a function to be called when a context is destroyed
+    /// \brief Register an OpenGL object to be destroyed when its containing context is destroyed
     ///
     /// This is used for internal purposes in order to properly
     /// clean up OpenGL resources that cannot be shared bwteen
     /// contexts.
     ///
-    /// \param callback Function to be called when a context is destroyed
-    /// \param arg      Argument to pass when calling the function
+    /// \param object Object to be destroyed when its containing context is destroyed
     ///
     ////////////////////////////////////////////////////////////
-    static void registerContextDestroyCallback(ContextDestroyCallback callback, void* arg);
+    static void registerUnsharedGlObject(std::shared_ptr<void> object);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Unregister an OpenGL object from its containing context
+    ///
+    /// \param object Object to be unregister
+    ///
+    ////////////////////////////////////////////////////////////
+    static void unregisterUnsharedGlObject(std::shared_ptr<void> object);
 
     ////////////////////////////////////////////////////////////
     /// \brief Acquires a context for short-term use on the current thread
@@ -300,6 +294,10 @@ protected:
     ContextSettings m_settings; //!< Creation settings of the context
 
 private:
+    struct TransientContext;
+    struct SharedContext;
+    struct Impl;
+
     ////////////////////////////////////////////////////////////
     /// \brief Perform various initializations after the context construction
     /// \param requestedSettings Requested settings during context creation
@@ -317,7 +315,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const std::uint64_t m_id; //!< Unique number that identifies the context
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf::priv
