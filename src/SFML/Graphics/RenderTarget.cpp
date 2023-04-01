@@ -54,30 +54,35 @@ namespace
 namespace RenderTargetImpl
 {
 // Mutex to protect ID generation and our context-RenderTarget-map
-std::recursive_mutex mutex;
+std::recursive_mutex& getMutex()
+{
+    static std::recursive_mutex mutex;
+    return mutex;
+}
 
 // Unique identifier, used for identifying RenderTargets when
 // tracking the currently active RenderTarget within a given context
 std::uint64_t getUniqueId()
 {
-    const std::lock_guard lock(mutex);
-
-    static std::uint64_t id = 1; // start at 1, zero is "no RenderTarget"
-
+    const std::lock_guard lock(getMutex());
+    static std::uint64_t  id = 1; // start at 1, zero is "no RenderTarget"
     return id++;
 }
 
 // Map to help us detect whether a different RenderTarget
 // has been activated within a single context
 using ContextRenderTargetMap = std::unordered_map<std::uint64_t, std::uint64_t>;
-ContextRenderTargetMap contextRenderTargetMap;
+ContextRenderTargetMap& getContextRenderTargetMap()
+{
+    static ContextRenderTargetMap contextRenderTargetMap;
+    return contextRenderTargetMap;
+}
 
 // Check if a RenderTarget with the given ID is active in the current context
 bool isActive(std::uint64_t id)
 {
-    const auto it = contextRenderTargetMap.find(sf::Context::getActiveContextId());
-
-    return (it != contextRenderTargetMap.end()) && (it->second == id);
+    const auto it = getContextRenderTargetMap().find(sf::Context::getActiveContextId());
+    return (it != getContextRenderTargetMap().end()) && (it->second == id);
 }
 
 // Convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
@@ -393,12 +398,13 @@ bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
     {
-        const std::lock_guard lock(RenderTargetImpl::mutex);
+        const std::lock_guard lock(RenderTargetImpl::getMutex());
 
         const std::uint64_t contextId = Context::getActiveContextId();
 
-        using RenderTargetImpl::contextRenderTargetMap;
-        const auto it = contextRenderTargetMap.find(contextId);
+        using RenderTargetImpl::getContextRenderTargetMap;
+        auto& contextRenderTargetMap = getContextRenderTargetMap();
+        auto  it                     = contextRenderTargetMap.find(contextId);
 
         if (active)
         {

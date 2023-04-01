@@ -32,23 +32,22 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-GlResource::GlResource()
+GlResource::GlResource() : m_sharedContext(priv::GlContext::getSharedContext())
 {
-    priv::GlContext::initResource();
 }
 
 
 ////////////////////////////////////////////////////////////
-GlResource::~GlResource()
+void GlResource::registerUnsharedGlObject(std::shared_ptr<void> object)
 {
-    priv::GlContext::cleanupResource();
+    priv::GlContext::registerUnsharedGlObject(std::move(object));
 }
 
 
 ////////////////////////////////////////////////////////////
-void GlResource::registerContextDestroyCallback(ContextDestroyCallback callback, void* arg)
+void GlResource::unregisterUnsharedGlObject(std::shared_ptr<void> object)
 {
-    priv::GlContext::registerContextDestroyCallback(callback, arg);
+    priv::GlContext::unregisterUnsharedGlObject(std::move(object));
 }
 
 

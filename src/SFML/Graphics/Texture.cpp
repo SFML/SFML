@@ -71,6 +71,7 @@ Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
+GlResource(copy),
 m_isSmooth(copy.m_isSmooth),
 m_sRgb(copy.m_sRgb),
 m_isRepeated(copy.m_isRepeated),

@@ -40,7 +40,6 @@
 
 #include <fstream>
 #include <iomanip>
-#include <mutex>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -61,20 +60,17 @@
 
 namespace
 {
-std::recursive_mutex isAvailableMutex;
-
-GLint checkMaxTextureUnits()
-{
-    GLint maxUnits = 0;
-    glCheck(glGetIntegerv(GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxUnits));
-
-    return maxUnits;
-}
-
 // Retrieve the maximum number of texture units available
 std::size_t getMaxTextureUnits()
 {
-    static const GLint maxUnits = checkMaxTextureUnits();
+    static const GLint maxUnits = []()
+    {
+        GLint value = 0;
+        glCheck(glGetIntegerv(GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value));
+
+        return value;
+    }();
+
     return static_cast<std::size_t>(maxUnits);
 }
 
@@ -747,23 +743,16 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    const std::lock_guard lock(isAvailableMutex);
-
-    static bool checked   = false;
-    static bool available = false;
-
-    if (!checked)
+    static const bool available = []()
     {
-        checked = true;
-
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = GLEXT_multitexture && GLEXT_shading_language_100 && GLEXT_shader_objects && GLEXT_vertex_shader &&
-                    GLEXT_fragment_shader;
-    }
+        return GLEXT_multitexture && GLEXT_shading_language_100 && GLEXT_shader_objects && GLEXT_vertex_shader &&
+               GLEXT_fragment_shader;
+    }();
 
     return available;
 }
@@ -772,22 +761,15 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    const std::lock_guard lock(isAvailableMutex);
-
-    static bool checked   = false;
-    static bool available = false;
-
-    if (!checked)
+    static const bool available = []()
     {
-        checked = true;
-
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        available = isAvailable() && (GLEXT_geometry_shader4 || GLEXT_GL_VERSION_3_2);
-    }
+        return isAvailable() && (GLEXT_geometry_shader4 || GLEXT_GL_VERSION_3_2);
+    }();
 
     return available;
 }
