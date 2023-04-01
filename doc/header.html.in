@@ -7,18 +7,8 @@
         <link rel="stylesheet" type="text/css" href="doxygen.css" title="default" media="screen,print" />
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="dynsections.js"></script>
-        <link href="search/search.css" rel="stylesheet" type="text/css"/>
-        <style>
-            /* Override search/search.css rules to adjust seach box placement */
-            #MSearchBox {
-                position: relative;
-                display: block;
-            }
-            .right #MSearchClose {
-                margin: 0;
-                right: auto;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="search/search.css" />
+        <link rel="stylesheet" type="text/css" href="searchOverrides.css" />
         <script type="text/javascript" src="search/searchdata.js"></script>
         <script type="text/javascript" src="search/search.js"></script>
         <script type="text/javascript">

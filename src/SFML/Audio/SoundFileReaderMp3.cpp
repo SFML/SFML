@@ -34,12 +34,17 @@
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4242 4244 4267 4456 4706)
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
 #endif
 
 #include <minimp3_ex.h>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
+#else
+#pragma GCC diagnostic pop
 #endif
 
 #undef NOMINMAX
