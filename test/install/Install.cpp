@@ -13,7 +13,7 @@ int main()
 
     // Graphics
     [[maybe_unused]] sf::Color        color;
-    [[maybe_unused]] sf::Font         font;
+    [[maybe_unused]] sf::IntRect      rect;
     [[maybe_unused]] sf::RenderWindow renderWindow;
     [[maybe_unused]] sf::Sprite       sprite;
     [[maybe_unused]] sf::Vertex       vertex;

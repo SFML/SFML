@@ -34,6 +34,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -65,14 +66,6 @@ public:
     {
         std::string family; //!< The font family
     };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor defines an empty font
-    ///
-    ////////////////////////////////////////////////////////////
-    Font();
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -122,7 +115,7 @@ public:
     /// \see loadFromMemory, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<Font> loadFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the font from a file in memory
@@ -143,7 +136,7 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<Font> loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the font from a custom stream
@@ -165,7 +158,7 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<Font> loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the font information
@@ -328,6 +321,14 @@ public:
     Font& operator=(const Font& right);
 
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// This constructor defines an empty font
+    ///
+    ////////////////////////////////////////////////////////////
+    Font();
+
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
     ///

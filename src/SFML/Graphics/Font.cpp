@@ -148,13 +148,10 @@ Font& Font::operator=(Font&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromFile(const std::filesystem::path& filename)
+std::optional<Font> Font::loadFromFile(const std::filesystem::path& filename)
 {
 #ifndef SFML_SYSTEM_ANDROID
-
-    // Cleanup the previous resources
-    cleanup();
-
+    Font result;
     auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
@@ -164,7 +161,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     if (FT_Init_FreeType(&library) != 0)
     {
         err() << "Failed to load font (failed to initialize FreeType)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->library.reset(library);
 
@@ -173,7 +170,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     if (FT_New_Face(library, filename.string().c_str(), 0, &face) != 0)
     {
         err() << "Failed to load font (failed to create the font face)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->face.reset(face);
 
@@ -182,7 +179,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     if (FT_Stroker_New(library, &stroker) != 0)
     {
         err() << "Failed to load font (failed to create the stroker)\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->stroker.reset(stroker);
 
@@ -191,32 +188,31 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     {
         err() << "Failed to load font (failed to set the Unicode character set)\n"
               << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    result.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    result.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return {result};
 
 #else
 
-    m_stream = std::make_unique<priv::ResourceStream>(filename);
-    return loadFromStream(*m_stream);
+    Font result;
+    result.m_stream = std::make_unique<priv::ResourceStream>(filename);
+    return loadFromStream(*result.m_stream);
 
 #endif
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
+std::optional<Font> Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    // Cleanup the previous resources
-    cleanup();
-
+    Font result;
     auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
@@ -226,7 +222,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_Init_FreeType(&library) != 0)
     {
         err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->library.reset(library);
 
@@ -235,7 +231,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(data), static_cast<FT_Long>(sizeInBytes), 0, &face) != 0)
     {
         err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->face.reset(face);
 
@@ -244,7 +240,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_Stroker_New(library, &stroker) != 0)
     {
         err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->stroker.reset(stroker);
 
@@ -252,25 +248,23 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    result.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    result.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return {result};
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Font::loadFromStream(InputStream& stream)
+std::optional<Font> Font::loadFromStream(InputStream& stream)
 {
-    // Cleanup the previous resources
-    cleanup();
-
+    Font result;
     auto fontHandles = std::make_unique<FontHandles>();
 
     // Initialize FreeType
@@ -280,7 +274,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Init_FreeType(&library) != 0)
     {
         err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->library.reset(library);
 
@@ -288,7 +282,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (stream.seek(0) == -1)
     {
         err() << "Failed to seek font stream" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
@@ -311,7 +305,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Open_Face(library, &args, 0, &face) != 0)
     {
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->face.reset(face);
 
@@ -320,7 +314,7 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Stroker_New(library, &stroker) != 0)
     {
         err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
-        return false;
+        return std::nullopt;
     }
     fontHandles->stroker.reset(stroker);
 
@@ -328,16 +322,16 @@ bool Font::loadFromStream(InputStream& stream)
     if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
     {
         err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Store the loaded font handles
-    m_fontHandles = std::move(fontHandles);
+    result.m_fontHandles = std::move(fontHandles);
 
     // Store the font information
-    m_info.family = face->family_name ? face->family_name : std::string();
+    result.m_info.family = face->family_name ? face->family_name : std::string();
 
-    return true;
+    return {result};
 }
 
 
