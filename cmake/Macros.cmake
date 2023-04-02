@@ -372,48 +372,6 @@ function(sfml_add_test target SOURCES DEPENDS)
     doctest_discover_tests(${target})
 endfunction()
 
-# Create an interface library for an external dependency. This virtual target can provide
-# link specifications and include directories to be used by dependees.
-# The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
-# Usage: sfml_add_external(target_name
-#                          [INCLUDE "extlibs/include"]
-#                          [LINK "extlibs/libfoo/libfoo.a"])
-function(sfml_add_external)
-    list(GET ARGN 0 target)
-    list(REMOVE_AT ARGN 0)
-
-    if(TARGET ${target})
-        message(FATAL_ERROR "Target '${target}' is already defined")
-    endif()
-
-    cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
-    if(THIS_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "Unknown arguments when calling sfml_add_external: ${THIS_UNPARSED_ARGUMENTS}")
-    endif()
-
-    add_library(${target} INTERFACE)
-
-    if(THIS_INCLUDE)
-        foreach(include_dir IN LISTS THIS_INCLUDE)
-            if(NOT include_dir)
-                message(FATAL_ERROR "No path given for include dir ${THIS_INCLUDE}")
-            endif()
-            target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${include_dir}>")
-        endforeach()
-    endif()
-
-    if(THIS_LINK)
-        foreach(link_item IN LISTS THIS_LINK)
-            if(NOT link_item)
-                message(FATAL_ERROR "Missing item in ${THIS_LINK}")
-            endif()
-            target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${link_item}>")
-        endforeach()
-    endif()
-
-    install(TARGETS ${target} EXPORT SFMLConfigExport)
-endfunction()
-
 # Find the requested package and make an INTERFACE library from it
 # The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
 # Usage: sfml_find_package(wanted_target_name
@@ -433,24 +391,17 @@ function(sfml_find_package)
     endif()
 
     find_package(${target} REQUIRED)
+    add_library(${target} INTERFACE)
 
-    # Make sure to interpret the items in INCLUDE and LINK parameters. sfml_add_external()
-    # does not interpret given items in order to also accept parameters that must not be interpreted
-    set(LINK_LIST "")
-    if(THIS_LINK)
-        foreach(link_item IN LISTS THIS_LINK)
-            list(APPEND LINK_LIST "${${link_item}}")
-        endforeach()
-    endif()
+    foreach(include_dir IN LISTS THIS_INCLUDE)
+        target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${${include_dir}}>")
+    endforeach()
 
-    set(INCLUDE_LIST "")
-    if(THIS_INCLUDE)
-        foreach(include_dir IN LISTS THIS_INCLUDE)
-            list(APPEND INCLUDE_LIST "${${include_dir}}")
-        endforeach()
-    endif()
+    foreach(link_item IN LISTS THIS_LINK)
+        target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${${link_item}}>")
+    endforeach()
 
-    sfml_add_external(${target} INCLUDE ${INCLUDE_LIST} LINK ${LINK_LIST})
+    install(TARGETS ${target} EXPORT SFMLConfigExport)
 endfunction()
 
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered against
