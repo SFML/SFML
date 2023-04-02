@@ -72,13 +72,12 @@ sfml_find_package(OpenAL OPENAL_INCLUDE_DIR OPENAL_LIBRARY)
 sfml_find_package(VORBIS VORBIS_INCLUDE_DIRS VORBIS_LIBRARIES)
 sfml_find_package(FLAC FLAC_INCLUDE_DIR FLAC_LIBRARY)
 
-# avoids warnings in vorbisfile.h
-target_compile_definitions(VORBIS INTERFACE "OV_EXCLUDE_STATIC_CALLBACKS")
-target_compile_definitions(FLAC INTERFACE "FLAC__NO_DLL")
-
 # define the sfml-audio target
 sfml_add_library(Audio
                  SOURCES ${SRC} ${CODECS_SRC})
+
+# avoids warnings in vorbisfile.h
+target_compile_definitions(sfml-audio PRIVATE OV_EXCLUDE_STATIC_CALLBACKS FLAC__NO_DLL)
 
 # setup dependencies
 target_link_libraries(sfml-audio
