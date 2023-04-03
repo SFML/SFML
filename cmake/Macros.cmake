@@ -193,7 +193,7 @@ macro(sfml_add_library module)
     endif()
 
     # build frameworks or dylibs
-    if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
+    if((SFML_OS_MACOSX OR SFML_OS_IOS) AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
@@ -432,11 +432,7 @@ function(sfml_find_package)
         message(FATAL_ERROR "Unknown arguments when calling sfml_find_package: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
-    if(SFML_OS_IOS)
-        find_host_package(${target} REQUIRED)
-    else()
-        find_package(${target} REQUIRED)
-    endif()
+    find_package(${target} REQUIRED)
 
     # Make sure to interpret the items in INCLUDE and LINK parameters. sfml_add_external()
     # does not interpret given items in order to also accept parameters that must not be interpreted

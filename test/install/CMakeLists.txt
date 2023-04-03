@@ -8,6 +8,13 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if(NOT BUILD_SHARED_LIBS)
         set(SFML_STATIC_LIBRARIES TRUE)
     endif()
+
+    # cmake by default will only search inside the iOS SDK for packages/libraries, so we need to tell it to look elsewhere
+    if(IOS)
+        set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+        set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+    endif()
+
     find_package(SFML 3.0.0 EXACT CONFIG REQUIRED COMPONENTS Graphics Network Audio)
 endif()
 

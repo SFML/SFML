@@ -21,12 +21,20 @@ jobs:
         - { name: Linux Clang,          os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_DISPLAY_TESTS=ON -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: MacOS,                os: macos-11, flags: -GNinja }
         - { name: MacOS Xcode,          os: macos-11, flags: -GXcode }
+        - { name: iOS,                  os: macos-11, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: iOS Xcode,            os: macos-11, suffix: -- CODE_SIGNING_ALLOWED=NO, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode }
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
         type:
         - { name: Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+
+        exclude:
+        - platform: { name: iOS }
+          config: { name: Shared }
+        - platform: { name: iOS Xcode }
+          config: { name: Shared }
 
         include:
         - platform: { name: Windows VS2022, os: windows-2022 }
@@ -37,8 +45,6 @@ jobs:
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
         - platform: { name: MacOS, os: macos-11 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
-        - platform: { name: MacOS, os: macos-11 }
-          config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
         - platform: { name: Android, os: ubuntu-latest }
           config: { name: x86, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
         - platform: { name: Android, os: ubuntu-latest }
@@ -94,7 +100,7 @@ jobs:
 
     - name: Build
       shell: bash
-      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install ${{matrix.platform.suffix}}
 
     - name: Test
       uses: nick-fields/retry@v2
@@ -154,11 +160,11 @@ jobs:
           ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
 
     - name: Test Install Interface
-      if: matrix.platform.name != 'Android' && matrix.config.name != 'iOS'
+      if: matrix.platform.name != 'Android'
       shell: bash
       run: |
         cmake -S $GITHUB_WORKSPACE/test/install -B $GITHUB_WORKSPACE/test/install/build -DSFML_ROOT=$GITHUB_WORKSPACE/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
-        cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+        cmake --build $GITHUB_WORKSPACE/test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.suffix}}
 
   format:
     name: Formatting with clang-format-${{ matrix.version }}
