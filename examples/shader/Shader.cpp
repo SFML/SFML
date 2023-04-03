@@ -31,7 +31,7 @@ public:
         // Load the texture and initialize the sprite
         if (!m_texture.loadFromFile("resources/background.jpg"))
             return false;
-        m_sprite.setTexture(m_texture);
+        m_sprite.emplace(m_texture);
 
         // Load the shader
         if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
@@ -50,13 +50,13 @@ public:
     {
         sf::RenderStates statesCopy(states);
         statesCopy.shader = &m_shader;
-        target.draw(m_sprite, statesCopy);
+        target.draw(*m_sprite, statesCopy);
     }
 
 private:
-    sf::Texture m_texture;
-    sf::Sprite  m_sprite;
-    sf::Shader  m_shader;
+    sf::Texture               m_texture;
+    std::optional<sf::Sprite> m_sprite;
+    sf::Shader                m_shader;
 };
 
 
@@ -199,8 +199,8 @@ public:
         m_entityTexture.setSmooth(true);
 
         // Initialize the background sprite
-        m_backgroundSprite.setTexture(m_backgroundTexture);
-        m_backgroundSprite.setPosition({135.f, 100.f});
+        m_backgroundSprite.emplace(m_backgroundTexture);
+        m_backgroundSprite->setPosition({135.f, 100.f});
 
         // Load the moving entities
         for (int i = 0; i < 6; ++i)
@@ -234,7 +234,7 @@ public:
 
         // Render the updated scene to the off-screen surface
         m_surface.clear(sf::Color::White);
-        m_surface.draw(m_backgroundSprite);
+        m_surface.draw(*m_backgroundSprite);
         for (const sf::Sprite& entity : m_entities)
             m_surface.draw(entity);
         m_surface.display();
@@ -248,12 +248,12 @@ public:
     }
 
 private:
-    sf::RenderTexture       m_surface;
-    sf::Texture             m_backgroundTexture;
-    sf::Texture             m_entityTexture;
-    sf::Sprite              m_backgroundSprite;
-    std::vector<sf::Sprite> m_entities;
-    sf::Shader              m_shader;
+    sf::RenderTexture         m_surface;
+    sf::Texture               m_backgroundTexture;
+    sf::Texture               m_entityTexture;
+    std::optional<sf::Sprite> m_backgroundSprite;
+    std::vector<sf::Sprite>   m_entities;
+    sf::Shader                m_shader;
 };
 
 

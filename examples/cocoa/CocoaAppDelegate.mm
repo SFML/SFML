@@ -37,7 +37,7 @@
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), text(font), background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), text(font), sprite(logo), background(sf::Color::Blue)
     {
         std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath + "/logo.png"))
@@ -45,7 +45,6 @@ struct SFMLmainWindow
 
         logo.setSmooth(true);
 
-        sprite.setTexture(logo, true);
         sf::FloatRect rect = sprite.getLocalBounds();
         sf::Vector2f  size(rect.width, rect.height);
         sprite.setOrigin(size / 2.f);

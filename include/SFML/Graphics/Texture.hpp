@@ -693,8 +693,7 @@ void swap(Texture& left, Texture& right) noexcept;
 ///     return -1;
 ///
 /// // Assign it to a sprite
-/// sf::Sprite sprite;
-/// sprite.setTexture(texture);
+/// sf::Sprite sprite(texture);
 ///
 /// // Draw the textured sprite
 /// window.draw(sprite);
