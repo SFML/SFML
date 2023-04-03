@@ -54,8 +54,7 @@ int main()
     sf::Texture sfmlLogoTexture;
     if (!sfmlLogoTexture.loadFromFile(resourcesDir() / "sfml_logo.png"))
         return EXIT_FAILURE;
-    sf::Sprite sfmlLogo;
-    sfmlLogo.setTexture(sfmlLogoTexture);
+    sf::Sprite sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 
     // Create the left paddle

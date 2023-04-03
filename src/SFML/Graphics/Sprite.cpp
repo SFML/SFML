@@ -29,15 +29,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <cassert>
 #include <cstdlib>
 
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-Sprite::Sprite() = default;
-
-
 ////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture)
 {
@@ -133,14 +130,13 @@ FloatRect Sprite::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 {
-    if (m_texture)
-    {
-        RenderStates statesCopy(states);
+    assert(m_texture);
 
-        statesCopy.transform *= getTransform();
-        statesCopy.texture = m_texture;
-        target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
-    }
+    RenderStates statesCopy(states);
+
+    statesCopy.transform *= getTransform();
+    statesCopy.texture = m_texture;
+    target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
 }
 
 

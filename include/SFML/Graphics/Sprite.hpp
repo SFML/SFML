@@ -48,14 +48,6 @@ class SFML_GRAPHICS_API Sprite : public Drawable, public Transformable
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Creates an empty sprite with no source texture.
-    ///
-    ////////////////////////////////////////////////////////////
-    Sprite();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct the sprite from a source texture
     ///
     /// \param texture Source texture
@@ -277,8 +269,7 @@ private:
 /// texture.loadFromFile("texture.png");
 ///
 /// // Create a sprite
-/// sf::Sprite sprite;
-/// sprite.setTexture(texture);
+/// sf::Sprite sprite(texture);
 /// sprite.setTextureRect(sf::IntRect({10, 10}, {50, 30}));
 /// sprite.setColor(sf::Color(255, 255, 255, 200));
 /// sprite.setPosition(100, 25);

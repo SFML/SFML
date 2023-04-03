@@ -244,7 +244,12 @@ private:
 /// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML OpenGL");
 ///
 /// // Create a sprite and a text to display
-/// sf::Sprite sprite;
+/// sf::Texture texture;
+/// if (!texture.loadFromFile("circle.png"))
+/// {
+///     // error...
+/// }
+/// sf::Sprite sprite(texture);
 /// sf::Font font;
 /// if (!font.loadFromFile("arial.ttf"))
 /// {

@@ -14,11 +14,11 @@ int main()
     [[maybe_unused]] sf::Sound               sound;
 
     // Graphics
-    [[maybe_unused]] sf::Color        color;
-    [[maybe_unused]] sf::Font         font;
-    [[maybe_unused]] sf::RenderWindow renderWindow;
-    [[maybe_unused]] sf::Sprite       sprite;
-    [[maybe_unused]] sf::Vertex       vertex;
+    [[maybe_unused]] sf::Color          color;
+    [[maybe_unused]] sf::Font           font;
+    [[maybe_unused]] sf::RenderWindow   renderWindow;
+    [[maybe_unused]] sf::RectangleShape rectangleShape;
+    [[maybe_unused]] sf::Vertex         vertex;
 
     // Network
     [[maybe_unused]] sf::Ftp       ftp;
