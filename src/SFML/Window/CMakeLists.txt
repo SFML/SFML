@@ -85,9 +85,6 @@ if(SFML_OS_WINDOWS)
         )
     endif()
     source_group("windows" FILES ${PLATFORM_SRC})
-
-    # make sure that we use the Unicode version of the Win API functions
-    add_definitions(-DUNICODE -D_UNICODE)
 elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     if(SFML_USE_DRM)
         add_definitions(-DSFML_USE_DRM)
