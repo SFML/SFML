@@ -45,7 +45,7 @@ public:
     /// Creates a Vector3(0, 0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr Vector3();
+    SFML_API_EXPORT constexpr Vector3();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
@@ -55,7 +55,7 @@ public:
     /// \param z Z coordinate
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr Vector3(T x, T y, T z);
+    SFML_API_EXPORT constexpr Vector3(T x, T y, T z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -69,7 +69,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    SFML_SYSTEM_API constexpr explicit Vector3(const Vector3<U>& vector);
+    SFML_API_EXPORT constexpr explicit Vector3(const Vector3<U>& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
@@ -85,7 +85,7 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr T lengthSq() const;
+    SFML_API_EXPORT constexpr T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
@@ -99,13 +99,13 @@ public:
     /// \brief Dot product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr T dot(const Vector3& rhs) const;
+    SFML_API_EXPORT constexpr T dot(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Cross product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr Vector3 cross(const Vector3& rhs) const;
+    SFML_API_EXPORT constexpr Vector3 cross(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise multiplication of \c *this and \c rhs.
@@ -116,7 +116,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr Vector3 cwiseMul(const Vector3& rhs) const;
+    SFML_API_EXPORT constexpr Vector3 cwiseMul(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -128,7 +128,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
+    SFML_API_EXPORT constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
