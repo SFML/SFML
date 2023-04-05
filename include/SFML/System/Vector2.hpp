@@ -48,7 +48,7 @@ public:
     /// Creates a Vector2(0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2();
+    SFML_SYSTEM_API constexpr Vector2();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from cartesian coordinates
@@ -57,7 +57,7 @@ public:
     /// \param y Y coordinate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2(T x, T y);
+    SFML_SYSTEM_API constexpr Vector2(T x, T y);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from another type of vector
@@ -71,7 +71,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Vector2(const Vector2<U>& vector);
+    SFML_SYSTEM_API constexpr explicit Vector2(const Vector2<U>& vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from polar coordinates <i><b>(floating-point)</b></i>
@@ -103,7 +103,7 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T lengthSq() const;
+    SFML_SYSTEM_API constexpr T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
@@ -165,13 +165,13 @@ public:
     /// this amounts to a clockwise rotation.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 perpendicular() const;
+    SFML_SYSTEM_API constexpr Vector2 perpendicular() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Dot product of two 2D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T dot(const Vector2& rhs) const;
+    SFML_SYSTEM_API constexpr T dot(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Z component of the cross product of two 2D vectors.
@@ -180,7 +180,7 @@ public:
     /// and returns the result's Z component (X and Y components are always zero).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T cross(const Vector2& rhs) const;
+    SFML_SYSTEM_API constexpr T cross(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise multiplication of \c *this and \c rhs.
@@ -191,7 +191,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 cwiseMul(const Vector2& rhs) const;
+    SFML_SYSTEM_API constexpr Vector2 cwiseMul(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -203,7 +203,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
+    SFML_SYSTEM_API constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
 
 
     ////////////////////////////////////////////////////////////
@@ -398,8 +398,24 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right);
 
-#include <SFML/System/Vector2.inl>
+} // namespace sf
 
+
+////////////////////////////////////////////////////////////
+// Explicit instantiation declarations
+////////////////////////////////////////////////////////////
+
+extern template class sf::Vector2<float>;
+extern template class sf::Vector2<double>;
+extern template class sf::Vector2<long double>;
+extern template class sf::Vector2<bool>;
+extern template class sf::Vector2<int>;
+extern template class sf::Vector2<unsigned int>;
+
+
+namespace sf
+{
+#include <SFML/System/Vector2.inl>
 } // namespace sf
 
 

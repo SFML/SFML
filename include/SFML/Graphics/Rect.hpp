@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 #include <optional>
@@ -49,7 +51,7 @@ public:
     /// Rect({0, 0}, {0, 0})).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect();
+    SFML_GRAPHICS_API constexpr Rect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
@@ -61,7 +63,7 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
+    SFML_GRAPHICS_API constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
@@ -75,7 +77,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Rect(const Rect<U>& rectangle);
+    SFML_GRAPHICS_API constexpr explicit Rect(const Rect<U>& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -90,7 +92,7 @@ public:
     /// \see findIntersection
     ///
     ////////////////////////////////////////////////////////////
-    constexpr bool contains(const Vector2<T>& point) const;
+    SFML_GRAPHICS_API constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -102,7 +104,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
+    SFML_GRAPHICS_API constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the rectangle's top-left corner
@@ -112,7 +114,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getPosition() const;
+    SFML_GRAPHICS_API constexpr Vector2<T> getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -122,7 +124,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getSize() const;
+    SFML_GRAPHICS_API constexpr Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -163,12 +165,27 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right);
 
-#include <SFML/Graphics/Rect.inl>
-
 // Create type aliases for the most common types
 using IntRect   = Rect<int>;
 using FloatRect = Rect<float>;
 
+} // namespace sf
+
+
+////////////////////////////////////////////////////////////
+// Explicit instantiation declarations
+////////////////////////////////////////////////////////////
+
+extern template class sf::Rect<float>;
+extern template class sf::Rect<double>;
+extern template class sf::Rect<long double>;
+extern template class sf::Rect<int>;
+extern template class sf::Rect<unsigned int>;
+
+
+namespace sf
+{
+#include <SFML/Graphics/Rect.inl>
 } // namespace sf
 
 

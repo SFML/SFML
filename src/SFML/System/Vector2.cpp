@@ -115,9 +115,30 @@ T Vector2<T>::length() const
 
 
 ////////////////////////////////////////////////////////////
-// Explicit template instantiations
+// Explicit instantiation definitions
 ////////////////////////////////////////////////////////////
 
 template class sf::Vector2<float>;
 template class sf::Vector2<double>;
 template class sf::Vector2<long double>;
+
+#define SFML_INSTANTIATE_VECTOR2_BASIC_MEMBER_FUNCTIONS(type)                \
+    template /*                   */ sf::Vector2<type>::Vector2();           \
+    template /*                   */ sf::Vector2<type>::Vector2(type, type); \
+    template const sf::Vector2<type> sf::Vector2<type>::UnitX;               \
+    template const sf::Vector2<type> sf::Vector2<type>::UnitY;
+
+#define SFML_INSTANTIATE_VECTOR2_INTEGRAL_MEMBER_FUNCTIONS(type)                      \
+    template type              sf::Vector2<type>::lengthSq() const;                   \
+    template sf::Vector2<type> sf::Vector2<type>::perpendicular() const;              \
+    template type              sf::Vector2<type>::dot(const Vector2& rhs) const;      \
+    template type              sf::Vector2<type>::cross(const Vector2& rhs) const;    \
+    template sf::Vector2<type> sf::Vector2<type>::cwiseMul(const Vector2& rhs) const; \
+    template sf::Vector2<type> sf::Vector2<type>::cwiseDiv(const Vector2& rhs) const;
+
+SFML_INSTANTIATE_VECTOR2_BASIC_MEMBER_FUNCTIONS(bool)
+SFML_INSTANTIATE_VECTOR2_BASIC_MEMBER_FUNCTIONS(int)
+SFML_INSTANTIATE_VECTOR2_BASIC_MEMBER_FUNCTIONS(unsigned int)
+
+SFML_INSTANTIATE_VECTOR2_INTEGRAL_MEMBER_FUNCTIONS(int)
+SFML_INSTANTIATE_VECTOR2_INTEGRAL_MEMBER_FUNCTIONS(unsigned int)
