@@ -237,7 +237,7 @@ using Vector2f = Vector2<float>;
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator-(const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -253,7 +253,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right);
+SFML_API_EXPORT constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -269,7 +269,7 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right);
+SFML_API_EXPORT constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -282,7 +282,7 @@ constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator+(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator+(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -295,7 +295,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator-(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -308,7 +308,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& left, T right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator*(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -321,7 +321,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator*(T left, const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator*(T left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -337,7 +337,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
+SFML_API_EXPORT constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -350,7 +350,7 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& left, T right);
+[[nodiscard]] SFML_API_EXPORT constexpr Vector2<T> operator/(const Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -366,7 +366,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
+SFML_API_EXPORT constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -381,7 +381,7 @@ constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator==(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr bool operator==(const Vector2<T>& left, const Vector2<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -396,7 +396,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] SFML_API_EXPORT constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right);
 
 } // namespace sf
 
@@ -411,6 +411,27 @@ extern template class sf::Vector2<long double>;
 extern template class sf::Vector2<bool>;
 extern template class sf::Vector2<int>;
 extern template class sf::Vector2<unsigned int>;
+
+#define SFML_DECLARE_VECTOR2_FUNCTIONS(type)                                                               \
+    extern template sf::Vector2<type>  sf::operator-(const sf::Vector2<type>&);                            \
+    extern template sf::Vector2<type>& sf::operator+=(sf::Vector2<type>&, const sf::Vector2<type>&);       \
+    extern template sf::Vector2<type>& sf::operator-=(sf::Vector2<type>&, const sf::Vector2<type>&);       \
+    extern template sf::Vector2<type>  sf::operator+(const sf::Vector2<type>&, const sf::Vector2<type>&);  \
+    extern template sf::Vector2<type>  sf::operator-(const sf::Vector2<type>&, const sf::Vector2<type>&);  \
+    extern template sf::Vector2<type>  sf::operator*(const sf::Vector2<type>&, type);                      \
+    extern template sf::Vector2<type>  sf::operator*(type, const sf::Vector2<type>&);                      \
+    extern template sf::Vector2<type>& sf::operator*=(sf::Vector2<type>&, type);                           \
+    extern template sf::Vector2<type>  sf::operator/(const sf::Vector2<type>&, type);                      \
+    extern template sf::Vector2<type>& sf::operator/=(sf::Vector2<type>&, type);                           \
+    extern template bool               sf::operator==(const sf::Vector2<type>&, const sf::Vector2<type>&); \
+    extern template bool               sf::operator!=(const sf::Vector2<type>&, const sf::Vector2<type>&);
+
+SFML_DECLARE_VECTOR2_FUNCTIONS(float)
+SFML_DECLARE_VECTOR2_FUNCTIONS(double)
+SFML_DECLARE_VECTOR2_FUNCTIONS(long double)
+SFML_DECLARE_VECTOR2_FUNCTIONS(bool)
+SFML_DECLARE_VECTOR2_FUNCTIONS(int)
+SFML_DECLARE_VECTOR2_FUNCTIONS(unsigned int)
 
 
 namespace sf
