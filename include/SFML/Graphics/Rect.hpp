@@ -51,7 +51,7 @@ public:
     /// Rect({0, 0}, {0, 0})).
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr Rect();
+    SFML_API_EXPORT constexpr Rect();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
@@ -63,7 +63,7 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
+    SFML_API_EXPORT constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
@@ -77,7 +77,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    SFML_GRAPHICS_API constexpr explicit Rect(const Rect<U>& rectangle);
+    SFML_API_EXPORT constexpr explicit Rect(const Rect<U>& rectangle);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
@@ -92,7 +92,7 @@ public:
     /// \see findIntersection
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr bool contains(const Vector2<T>& point) const;
+    SFML_API_EXPORT constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -104,7 +104,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
+    SFML_API_EXPORT constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the rectangle's top-left corner
@@ -114,7 +114,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr Vector2<T> getPosition() const;
+    SFML_API_EXPORT constexpr Vector2<T> getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -124,7 +124,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API constexpr Vector2<T> getSize() const;
+    SFML_API_EXPORT constexpr Vector2<T> getSize() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
