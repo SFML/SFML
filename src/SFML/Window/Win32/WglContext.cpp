@@ -86,7 +86,7 @@ void ensureExtensionsInit(HDC deviceContext)
 
         // We don't check the return value since the extension
         // flags are cleared even if loading fails
-        gladLoadWGL(deviceContext, getOpenGl32Function);
+        gladLoadWGL(deviceContext, sf::priv::WglContext::getFunction);
     }
 }
 } // namespace WglContextImpl
@@ -200,22 +200,22 @@ GlFunctionPointer WglContext::getFunction(const char* name)
 {
     assert(WglContextImpl::currentContext != nullptr);
 
-    auto address = reinterpret_cast<GlFunctionPointer>(wglGetProcAddress(reinterpret_cast<LPCSTR>(name)));
-
-    if (address)
+    // If we are using the generic GDI implementation, skip to loading directly from OpenGL32.dll since it doesn't support extensions
+    if (!WglContextImpl::currentContext->m_isGeneric)
     {
-        // Test whether the returned value is a valid error code
-        auto errorCode = reinterpret_cast<ptrdiff_t>(address);
+        auto address = reinterpret_cast<GlFunctionPointer>(wglGetProcAddress(reinterpret_cast<LPCSTR>(name)));
 
-        if ((errorCode != -1) && (errorCode != 1) && (errorCode != 2) && (errorCode != 3))
-            return address;
+        if (address)
+        {
+            // Test whether the returned value is a valid error code
+            auto errorCode = reinterpret_cast<ptrdiff_t>(address);
+
+            if ((errorCode != -1) && (errorCode != 1) && (errorCode != 2) && (errorCode != 3))
+                return address;
+        }
     }
 
-    // If we are using the generic GDI implementation, try loading directly from OpenGL32.dll as well
-    if (WglContextImpl::currentContext->m_isGeneric)
-        return WglContextImpl::getOpenGl32Function(name);
-
-    return nullptr;
+    return WglContextImpl::getOpenGl32Function(name);
 }
 
 
