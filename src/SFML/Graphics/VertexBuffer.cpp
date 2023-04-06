@@ -70,13 +70,13 @@ VertexBuffer::VertexBuffer(PrimitiveType type) : m_primitiveType(type)
 
 
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(VertexBuffer::Usage usage) : m_usage(usage)
+VertexBuffer::VertexBuffer(Usage usage) : m_usage(usage)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer(PrimitiveType type, VertexBuffer::Usage usage) : m_primitiveType(type), m_usage(usage)
+VertexBuffer::VertexBuffer(PrimitiveType type, Usage usage) : m_primitiveType(type), m_usage(usage)
 {
 }
 
@@ -314,7 +314,7 @@ PrimitiveType VertexBuffer::getPrimitiveType() const
 
 
 ////////////////////////////////////////////////////////////
-void VertexBuffer::setUsage(VertexBuffer::Usage usage)
+void VertexBuffer::setUsage(Usage usage)
 {
     m_usage = usage;
 }
