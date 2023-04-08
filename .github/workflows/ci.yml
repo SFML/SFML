@@ -114,6 +114,7 @@ jobs:
         warning_on_retry: false
         shell: bash
         command: |
+          set -e
           if [ "${{ runner.os }}" == "Windows" ]; then
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
             find $GITHUB_WORKSPACE/build/bin -name test-sfml-window.exe -exec {} --test-case="[Window] sf::Context" --subcase="Version String" \; | grep OpenGL
