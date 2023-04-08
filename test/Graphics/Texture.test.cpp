@@ -61,7 +61,7 @@ TEST_CASE("[Graphics] sf::Texture" * doctest::skip(skipDisplayTests))
 
         SUBCASE("Construction")
         {
-            const sf::Texture textureCopy(texture);
+            const sf::Texture textureCopy(texture); // NOLINT(performance-unnecessary-copy-initialization)
             REQUIRE(textureCopy.getSize() == sf::Vector2u(1, 2));
             CHECK(textureCopy.copyToImage().getPixel(sf::Vector2u(0, 1)) == sf::Color::Red);
         }
