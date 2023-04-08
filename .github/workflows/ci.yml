@@ -133,7 +133,7 @@ jobs:
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
             find $GITHUB_WORKSPACE/build/bin -name test-sfml-window -exec {} --test-case="[Window] sf::Context" --subcase="Version String" \; | grep OpenGL
             # Run the tests
-            ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+            ctest --test-dir $GITHUB_WORKSPACE/build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
             # Run gcovr to extract coverage information from the test run
             if [ "${{ matrix.type.name }}" == "Debug" ]; then
               gcovr -r $GITHUB_WORKSPACE -x $GITHUB_WORKSPACE/build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
