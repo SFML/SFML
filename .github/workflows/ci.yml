@@ -25,7 +25,7 @@ jobs:
         - { name: MacOS,                os: macos-11, flags: -GNinja }
         - { name: MacOS Xcode,          os: macos-11, flags: -GXcode }
         - { name: iOS,                  os: macos-11, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
-        - { name: iOS Xcode,            os: macos-11, suffix: -- CODE_SIGNING_ALLOWED=NO, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode }
+        - { name: iOS Xcode,            os: macos-11, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
@@ -103,7 +103,7 @@ jobs:
 
     - name: Build
       shell: bash
-      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install ${{matrix.platform.suffix}}
+      run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
 
     - name: Test
       uses: nick-fields/retry@v2
