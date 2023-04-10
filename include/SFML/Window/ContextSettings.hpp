@@ -26,6 +26,7 @@
 #define SFML_CONTEXTSETTINGS_HPP
 
 #include <SFML/Config.hpp>
+#include <tuple>
 
 namespace sf
 {
@@ -69,6 +70,11 @@ struct ContextSettings
     sRgbCapable      (sRgb)
     {
     }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Comparison operator. Used in the WGL pixel format cache.
+    ////////////////////////////////////////////////////////////
+    auto operator<(const ContextSettings& rhs) const { return std::tie(depthBits, stencilBits, antialiasingLevel, majorVersion, minorVersion, attributeFlags, sRgbCapable) < std::tie(rhs.depthBits, rhs.stencilBits, rhs.antialiasingLevel, rhs.majorVersion, rhs.minorVersion, rhs.attributeFlags, rhs.sRgbCapable); }
 
     ////////////////////////////////////////////////////////////
     // Member data

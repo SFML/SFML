@@ -31,6 +31,7 @@
 #include <mutex>
 #include <sstream>
 #include <vector>
+#include <map>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -284,6 +285,15 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
             0,                      0
         };
 
+        // Determining this is very expensive. Programs that create multiple OpenGL contexts don't need to do it every time.
+        // For example, creating 64 threads on a 2990WX takes upwards of 20 seconds. With the cache - it's under 1 second.
+        static std::map<std::tuple<int, ContextSettings>, int> formatCache;
+        const auto it = formatCache.find(std::make_tuple(bitsPerPixel, settings));
+        if (it != formatCache.end())
+        {
+            return it->second;
+        }
+
         // Let's check how many formats are supporting our requirements
         int  formats[512];
         UINT nbFormats = 0; // We must initialize to 0 otherwise broken drivers might fill with garbage in the following call
@@ -376,6 +386,11 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
                 }
             }
         }
+
+        formatCache.try_emplace(
+            std::make_tuple(bitsPerPixel, settings),
+            bestFormat
+        );
     }
 
     // ChoosePixelFormat doesn't support pbuffers
