@@ -3,6 +3,7 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 
 env:
+  DISPLAY: ":99" # Display number to use for the X server
   GALLIUM_DRIVER: llvmpipe # Use Mesa 3D software OpenGL renderer
 
 jobs:
@@ -104,6 +105,20 @@ jobs:
     - name: Build
       shell: bash
       run: cmake --build $GITHUB_WORKSPACE/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      
+    - name: Prepare Test
+      shell: bash
+      run: |
+        set -e
+        # Start up Xvfb and fluxbox to host display tests
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          Xvfb $DISPLAY -screen 0 1920x1080x24 &
+          sleep 5
+          fluxbox > /dev/null 2>&1 &
+          sleep 5
+        fi
+        # Make sure the build/bin directory exists so that the find command does not fail if no executables are built
+        mkdir -p $GITHUB_WORKSPACE/build/bin
 
     - name: Test
       uses: nick-fields/retry@v2
@@ -122,14 +137,6 @@ jobs:
             cmake --build $GITHUB_WORKSPACE/build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
             # Coverage is already generated on Windows when running tests.
           else
-            # Start up Xvfb and fluxbox to host display tests on DISPLAY :99
-            if [ "${{ runner.os }}" == "Linux" ]; then
-              export DISPLAY=":99"
-              Xvfb $DISPLAY -screen 0 1920x1080x24 &
-              sleep 5
-              fluxbox > /dev/null 2>&1 &
-              sleep 5
-            fi
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
             find $GITHUB_WORKSPACE/build/bin -name test-sfml-window -exec {} --test-case="[Window] sf::Context" --subcase="Version String" \; | grep OpenGL
             # Run the tests
