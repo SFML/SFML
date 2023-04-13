@@ -5,12 +5,7 @@
 
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
-
-#include <iomanip>
-#include <limits>
-#include <ostream>
+#include <iosfwd>
 
 // String conversions for doctest framework
 namespace sf
@@ -19,22 +14,23 @@ class Angle;
 class String;
 class Time;
 
+template <typename>
+class Vector2;
+
+template <typename>
+class Vector3;
+
+void setStreamPrecision(std::ostream& os, int maxDigits10);
+
 std::ostream& operator<<(std::ostream& os, const Angle& angle);
 std::ostream& operator<<(std::ostream& os, const String& string);
 std::ostream& operator<<(std::ostream& os, Time time);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Vector2<T>& vector)
-{
-    os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
-    return os << "(" << vector.x << ", " << vector.y << ")";
-}
+std::ostream& operator<<(std::ostream& os, const Vector2<T>& vector);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Vector3<T>& vector)
-{
-    return os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
-}
+std::ostream& operator<<(std::ostream& os, const Vector3<T>& vector);
 } // namespace sf
 
 ////////////////////////////////////////////////////////////
@@ -48,16 +44,14 @@ struct Approx
     explicit Approx(const T& t) : value(t)
     {
     }
+
     const T& value;
 };
 
 bool operator==(const float& lhs, const Approx<float>& rhs);
-bool operator==(const sf::Vector2f& lhs, const Approx<sf::Vector2f>& rhs);
-bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs);
+bool operator==(const sf::Vector2<float>& lhs, const Approx<sf::Vector2<float>>& rhs);
+bool operator==(const sf::Vector3<float>& lhs, const Approx<sf::Vector3<float>>& rhs);
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Approx<T>& approx)
-{
-    return os << approx.value;
-}
+std::ostream& operator<<(std::ostream& os, const Approx<T>& approx);
