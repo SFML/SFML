@@ -63,6 +63,14 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Creates an empty text.
+    ///
+    ////////////////////////////////////////////////////////////
+    Text();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct the text from a string, font and size
     ///
     /// Note that if the used font is a bitmap font, it is not
@@ -77,13 +85,13 @@ public:
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Text(const Font& font, const String& string = "", unsigned int characterSize = 30);
+    Text(const String& string, const Font& font, unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disallow construction from a temporary font
     ///
     ////////////////////////////////////////////////////////////
-    Text(Font&& font, const String& string = "", unsigned int characterSize = 30) = delete;
+    Text(const String& string, Font&& font, unsigned int characterSize = 30) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -491,7 +499,7 @@ private:
 /// font.loadFromFile("arial.ttf");
 ///
 /// // Create a text
-/// sf::Text text(font, "hello");
+/// sf::Text text("hello", font);
 /// text.setCharacterSize(30);
 /// text.setStyle(sf::Text::Bold);
 /// text.setFillColor(sf::Color::Red);

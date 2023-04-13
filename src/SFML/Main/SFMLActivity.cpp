@@ -67,7 +67,7 @@ const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     if (valueString == nullptr)
     {
         LOGE("No meta-data 'sfml.app.lib_name' found in AndroidManifest.xml file");
-        std::exit(1);
+        exit(1);
     }
 
     // Convert the application name to a C++ string and return it
@@ -77,7 +77,7 @@ const char* getLibraryName(JNIEnv* lJNIEnv, jobject& objectActivityInfo)
     if (applicationNameLength >= 256)
     {
         LOGE("The value of 'sfml.app.lib_name' must not be longer than 255 characters.");
-        std::exit(1);
+        exit(1);
     }
 
     strncpy(name, applicationName, static_cast<std::size_t>(applicationNameLength));
@@ -123,7 +123,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     if (!handle)
     {
         LOGE("dlopen(\"%s\"): %s", libraryPath, dlerror());
-        std::exit(1);
+        exit(1);
     }
 
     // Release the Java string
@@ -132,7 +132,7 @@ void* loadLibrary(const char* libraryName, JNIEnv* lJNIEnv, jobject& ObjectActiv
     return handle;
 }
 
-JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
+void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
 {
     // Before we can load a library, we need to find out its location. As
     // we're powerless here in C/C++, we need the JNI interface to communicate
@@ -217,7 +217,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     if (!ANativeActivity_onCreate)
     {
         LOGE("sfml-activity: Undefined symbol ANativeActivity_onCreate");
-        std::exit(1);
+        exit(1);
     }
 
     ANativeActivity_onCreate(activity, savedState, savedStateSize);

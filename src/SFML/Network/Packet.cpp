@@ -381,7 +381,7 @@ Packet& Packet::operator>>(String& data)
         {
             std::uint32_t character = 0;
             *this >> character;
-            data += static_cast<char32_t>(character);
+            data += character;
         }
     }
 

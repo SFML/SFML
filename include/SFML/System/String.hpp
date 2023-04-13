@@ -49,15 +49,15 @@ public:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    using Iterator      = std::u32string::iterator;       //!< Iterator type
-    using ConstIterator = std::u32string::const_iterator; //!< Read-only iterator type
+    using Iterator      = std::basic_string<std::uint32_t>::iterator;       //!< Iterator type
+    using ConstIterator = std::basic_string<std::uint32_t>::const_iterator; //!< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
     // NOLINTBEGIN(readability-identifier-naming)
     /// Represents an invalid position in the string
-    static const std::size_t InvalidPos{std::u32string::npos};
+    static constexpr std::size_t InvalidPos{std::basic_string<std::uint32_t>::npos};
     // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
     /// \param utf32Char UTF-32 character to convert
     ///
     ////////////////////////////////////////////////////////////
-    String(char32_t utf32Char);
+    String(std::uint32_t utf32Char);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a null-terminated C-style ANSI string and a locale
@@ -109,12 +109,12 @@ public:
     String(const char* ansiString, const std::locale& locale = std::locale());
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from an ANSI string and a locale
+    /// \brief Construct from an ANSI string_view and a locale
     ///
     /// The source string_view is converted to UTF-32 according
     /// to the given locale.
     ///
-    /// \param ansiString ANSI string to convert
+    /// \param ansiString ANSI string_view to convert
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a wide string_view
     ///
-    /// \param wideString Wide string to convert
+    /// \param wideString Wide string_view to convert
     ///
     ////////////////////////////////////////////////////////////
     String(std::wstring_view wideString);
@@ -162,15 +162,15 @@ public:
     /// \param utf32String UTF-32 string to assign
     ///
     ////////////////////////////////////////////////////////////
-    String(const char32_t* utf32String);
+    String(const std::uint32_t* utf32String);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an UTF-32 string_view
     ///
-    /// \param utf32String UTF-32 string to assign
+    /// \param utf32String UTF-32 string_view to assign
     ///
     ////////////////////////////////////////////////////////////
-    String(std::u32string_view utf32String);
+    String(std::basic_string_view<std::uint32_t> utf32String);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an UTF-32 string
@@ -178,7 +178,27 @@ public:
     /// \param utf32String UTF-32 string to assign
     ///
     ////////////////////////////////////////////////////////////
-    String(const std::u32string& utf32String);
+    String(const std::basic_string<std::uint32_t>& utf32String);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Copy constructor
+    ///
+    /// \param copy Instance to copy
+    ///
+    ////////////////////////////////////////////////////////////
+    String(const String& copy);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    String(String&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    String& operator=(String&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new sf::String from a UTF-8 encoded string
@@ -212,8 +232,8 @@ public:
     /// \brief Create a new sf::String from a UTF-32 encoded string
     ///
     /// This function is provided for consistency, it is equivalent to
-    /// using the constructors that takes a const char32_t* or
-    /// a std::u32string.
+    /// using the constructors that takes a const std::uint32_t* or
+    /// a std::basic_string<std::uint32_t>.
     ///
     /// \param begin Forward iterator to the beginning of the UTF-32 sequence
     /// \param end   Forward iterator to the end of the UTF-32 sequence
@@ -306,7 +326,7 @@ public:
     /// \see toUtf8, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::u16string toUtf16() const;
+    std::basic_string<std::uint16_t> toUtf16() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-32 string
@@ -319,7 +339,17 @@ public:
     /// \see toUtf8, toUtf16
     ///
     ////////////////////////////////////////////////////////////
-    std::u32string toUtf32() const;
+    std::basic_string<std::uint32_t> toUtf32() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    String& operator=(const String& right);
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of += operator to append an UTF-32 string
@@ -342,7 +372,7 @@ public:
     /// \return Character at position \a index
     ///
     ////////////////////////////////////////////////////////////
-    char32_t operator[](std::size_t index) const;
+    std::uint32_t operator[](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of [] operator to access a character by its position
@@ -355,7 +385,7 @@ public:
     /// \return Reference to the character at position \a index
     ///
     ////////////////////////////////////////////////////////////
-    char32_t& operator[](std::size_t index);
+    std::uint32_t& operator[](std::size_t index);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the string
@@ -479,7 +509,7 @@ public:
     /// \return Read-only pointer to the array of characters
     ///
     ////////////////////////////////////////////////////////////
-    const char32_t* getData() const;
+    const std::uint32_t* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
@@ -536,7 +566,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::u32string m_string; //!< Internal string of UTF-32 characters
+    std::basic_string<std::uint32_t> m_string; //!< Internal string of UTF-32 characters
 };
 
 ////////////////////////////////////////////////////////////

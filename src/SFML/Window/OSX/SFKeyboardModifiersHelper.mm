@@ -70,12 +70,9 @@ struct ModifiersState
 // Global Variables
 ////////////////////////////////////////////////////////////
 
-namespace
-{
 /// Share 'modifiers' state with all windows to correctly fire pressed/released events
-ModifiersState state;
-BOOL           isStateInitialized = NO;
-}
+static ModifiersState state;
+static BOOL           isStateInitialized = NO;
 
 
 ////////////////////////////////////////////////////////////

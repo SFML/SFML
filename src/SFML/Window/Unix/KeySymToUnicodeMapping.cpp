@@ -30,7 +30,7 @@
 namespace sf::priv
 {
 
-char32_t keysymToUnicode(KeySym keysym)
+std::uint32_t keysymToUnicode(KeySym keysym)
 {
     // clang-format off
     switch (keysym)

@@ -190,8 +190,9 @@ const View& RenderTarget::getDefaultView() const
 ////////////////////////////////////////////////////////////
 IntRect RenderTarget::getViewport(const View& view) const
 {
-    const auto [width, height] = Vector2f(getSize());
-    const FloatRect& viewport  = view.getViewport();
+    float            width    = static_cast<float>(getSize().x);
+    float            height   = static_cast<float>(getSize().y);
+    const FloatRect& viewport = view.getViewport();
 
     return IntRect({static_cast<int>(0.5f + width * viewport.left), static_cast<int>(0.5f + height * viewport.top)},
                    {static_cast<int>(0.5f + width * viewport.width), static_cast<int>(0.5f + height * viewport.height)});

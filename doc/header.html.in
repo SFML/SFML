@@ -4,11 +4,22 @@
         <title>SFML - Simple and Fast Multimedia Library</title>
         <meta http-equiv="Content-Type" content="text/html;"/>
         <meta charset="utf-8"/>
+        <!--<link rel='stylesheet' type='text/css' href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>-->
         <link rel="stylesheet" type="text/css" href="doxygen.css" title="default" media="screen,print" />
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="dynsections.js"></script>
-        <link rel="stylesheet" type="text/css" href="search/search.css" />
-        <link rel="stylesheet" type="text/css" href="searchOverrides.css" />
+        <link href="search/search.css" rel="stylesheet" type="text/css"/>
+        <style>
+            /* Override search/search.css rules to adjust seach box placement */
+            #MSearchBox {
+                position: relative;
+                display: block;
+            }
+            .right #MSearchClose {
+                margin: 0;
+                right: auto;
+            }
+        </style>
         <script type="text/javascript" src="search/searchdata.js"></script>
         <script type="text/javascript" src="search/search.js"></script>
         <script type="text/javascript">

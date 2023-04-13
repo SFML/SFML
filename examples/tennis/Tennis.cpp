@@ -87,7 +87,8 @@ int main()
         return EXIT_FAILURE;
 
     // Initialize the pause message
-    sf::Text pauseMessage(font);
+    sf::Text pauseMessage;
+    pauseMessage.setFont(font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);

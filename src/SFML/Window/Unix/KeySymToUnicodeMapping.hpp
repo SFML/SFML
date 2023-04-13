@@ -49,6 +49,6 @@ namespace sf::priv
 /// \return corresponding UTF-32
 ///
 ////////////////////////////////////////////////////////////
-char32_t keysymToUnicode(KeySym keysym);
+std::uint32_t keysymToUnicode(KeySym keysym);
 
 } // namespace sf::priv
