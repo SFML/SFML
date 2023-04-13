@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include <SFML/Graphics/Rect.hpp>
-
 #include <WindowUtil.hpp>
-#include <iomanip>
+#include <iosfwd>
 #include <limits>
 
 namespace sf
@@ -17,19 +15,15 @@ struct BlendMode;
 class Color;
 class Transform;
 
+template <typename>
+class Rect;
+
 std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode);
 std::ostream& operator<<(std::ostream& os, const Color& color);
 std::ostream& operator<<(std::ostream& os, const Transform& transform);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Rect<T>& rect)
-{
-    const auto flags = os.flags();
-    os << std::fixed << std::setprecision(std::numeric_limits<T>::max_digits10);
-    os << "(left=" << rect.left << ", top=" << rect.top << ", width=" << rect.width << ", height=" << rect.height << ")";
-    os.flags(flags);
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, const Rect<T>& rect);
 } // namespace sf
 
 bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs);

@@ -1,8 +1,10 @@
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <SystemUtil.hpp>
 #include <ostream>
 
 namespace sf
@@ -28,6 +30,19 @@ std::ostream& operator<<(std::ostream& os, const Transform& transform)
     os << matrix[3] << ", " << matrix[7] << ", " << matrix[15];
     return os;
 }
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Rect<T>& rect)
+{
+    const auto flags = os.flags();
+    setStreamPrecision(os, std::numeric_limits<T>::max_digits10);
+    os << "(left=" << rect.left << ", top=" << rect.top << ", width=" << rect.width << ", height=" << rect.height << ")";
+    os.flags(flags);
+    return os;
+}
+
+template std::ostream& operator<<(std::ostream&, const Rect<int>&);
+template std::ostream& operator<<(std::ostream&, const Rect<float>&);
 } // namespace sf
 
 bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
@@ -41,4 +56,10 @@ bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
            lhs.getMatrix()[3] == Approx(rhs.value.getMatrix()[3]) &&
            lhs.getMatrix()[7] == Approx(rhs.value.getMatrix()[7]) &&
            lhs.getMatrix()[15] == Approx(rhs.value.getMatrix()[15]);
+}
+
+template <>
+std::ostream& operator<<(std::ostream& os, const Approx<sf::Transform>& approx)
+{
+    return os << approx.value;
 }
