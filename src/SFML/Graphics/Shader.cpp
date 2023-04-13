@@ -79,7 +79,7 @@ std::size_t getMaxTextureUnits()
 // Read the contents of a file into an array of char
 bool getFileContents(const std::filesystem::path& filename, std::vector<char>& buffer)
 {
-    std::ifstream file(filename.c_str(), std::ios_base::binary);
+    std::ifstream file(filename, std::ios_base::binary);
     if (file)
     {
         file.seekg(0, std::ios_base::end);

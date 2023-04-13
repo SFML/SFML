@@ -8,8 +8,8 @@
 
 static_assert(!std::is_copy_constructible_v<sf::Cursor>);
 static_assert(!std::is_copy_assignable_v<sf::Cursor>);
-static_assert(!std::is_nothrow_move_constructible_v<sf::Cursor>);
-static_assert(!std::is_nothrow_move_assignable_v<sf::Cursor>);
+static_assert(std::is_nothrow_move_constructible_v<sf::Cursor>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Cursor>);
 
 // Skip these tests because they fail when using DRM which hasn't implemented sf::Cursor
 TEST_CASE("[Window] sf::Cursor" * doctest::skip(true))

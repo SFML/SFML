@@ -94,11 +94,7 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Text::Text() = default;
-
-
-////////////////////////////////////////////////////////////
-Text::Text(const String& string, const Font& font, unsigned int characterSize) :
+Text::Text(const Font& font, const String& string, unsigned int characterSize) :
 m_string(string),
 m_font(&font),
 m_characterSize(characterSize)
@@ -301,10 +297,6 @@ float Text::getOutlineThickness() const
 ////////////////////////////////////////////////////////////
 Vector2f Text::findCharacterPos(std::size_t index) const
 {
-    // Make sure that we have a valid font
-    if (!m_font)
-        return Vector2f();
-
     // Adjust the index if it's out of range
     if (index > m_string.getSize())
         index = m_string.getSize();
@@ -372,30 +364,24 @@ FloatRect Text::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Text::draw(RenderTarget& target, const RenderStates& states) const
 {
-    if (m_font)
-    {
-        ensureGeometryUpdate();
+    ensureGeometryUpdate();
 
-        RenderStates statesCopy(states);
+    RenderStates statesCopy(states);
 
-        statesCopy.transform *= getTransform();
-        statesCopy.texture = &m_font->getTexture(m_characterSize);
+    statesCopy.transform *= getTransform();
+    statesCopy.texture = &m_font->getTexture(m_characterSize);
 
-        // Only draw the outline if there is something to draw
-        if (m_outlineThickness != 0)
-            target.draw(m_outlineVertices, statesCopy);
+    // Only draw the outline if there is something to draw
+    if (m_outlineThickness != 0)
+        target.draw(m_outlineVertices, statesCopy);
 
-        target.draw(m_vertices, statesCopy);
-    }
+    target.draw(m_vertices, statesCopy);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Text::ensureGeometryUpdate() const
 {
-    if (!m_font)
-        return;
-
     // Do nothing, if geometry has not changed and the font texture has not changed
     if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).m_cacheId == m_fontTextureId)
         return;

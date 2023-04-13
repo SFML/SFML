@@ -263,15 +263,17 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                     static_cast<GLsizei>(size.x),
                                                     static_cast<GLsizei>(size.y)));
 
+                m_stencil = true;
+
 #else
+
+                m_stencil = false;
 
                 err() << "Impossible to create render texture (failed to create the attached depth/stencil buffer)"
                       << std::endl;
                 return false;
 
 #endif // SFML_OPENGL_ES
-
-                m_stencil = true;
             }
             else if (settings.depthBits)
             {
@@ -355,14 +357,16 @@ bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, 
                                                                static_cast<GLsizei>(size.y)));
             }
 
+            m_multisample = true;
+
 #else
+
+            m_multisample = false;
 
             err() << "Impossible to create render texture (failed to create the multisample render buffers)" << std::endl;
             return false;
 
 #endif // SFML_OPENGL_ES
-
-            m_multisample = true;
         }
     }
 

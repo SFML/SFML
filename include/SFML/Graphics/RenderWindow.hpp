@@ -244,7 +244,12 @@ private:
 ///
 /// // Create a sprite and a text to display
 /// sf::Sprite sprite;
-/// sf::Text text;
+/// sf::Font font;
+/// if (!font.loadFromFile("arial.ttf"))
+/// {
+///     // error...
+/// }
+/// sf::Text text(font);
 /// ...
 ///
 /// // Perform OpenGL initializations

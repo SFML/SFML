@@ -14,7 +14,9 @@ static_assert(!std::is_copy_assignable_v<sf::FileInputStream>);
 static_assert(std::is_nothrow_move_constructible_v<sf::FileInputStream>);
 static_assert(std::is_nothrow_move_assignable_v<sf::FileInputStream>);
 
-static std::string getTemporaryFilePath()
+namespace
+{
+std::string getTemporaryFilePath()
 {
     static int counter = 0;
 
@@ -63,6 +65,7 @@ public:
         return m_path;
     }
 };
+} // namespace
 
 TEST_CASE("[System] sf::FileInputStream")
 {

@@ -32,9 +32,10 @@
 
 #ifdef SFML_SYSTEM_WINDOWS
 
-#define UNICODE  1
-#define _UNICODE 1
 #include <SFML/System/Win32/WindowsHeader.hpp>
+
+#include <dinput.h>
+#include <mmsystem.h>
 
 #endif // SFML_SYSTEM_WINDOWS
 
@@ -48,11 +49,14 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <iostream>
+#include <locale>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <unordered_map>

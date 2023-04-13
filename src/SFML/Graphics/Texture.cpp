@@ -38,6 +38,7 @@
 #include <climits>
 #include <cstring>
 #include <ostream>
+#include <utility>
 
 
 namespace
@@ -97,6 +98,49 @@ Texture::~Texture()
         GLuint texture = m_texture;
         glCheck(glDeleteTextures(1, &texture));
     }
+}
+
+////////////////////////////////////////////////////////////
+Texture::Texture(Texture&& right) noexcept :
+m_size(std::exchange(right.m_size, {})),
+m_actualSize(std::exchange(right.m_actualSize, {})),
+m_texture(std::exchange(right.m_texture, 0)),
+m_isSmooth(std::exchange(right.m_isSmooth, false)),
+m_sRgb(std::exchange(right.m_sRgb, false)),
+m_isRepeated(std::exchange(right.m_isRepeated, false)),
+m_fboAttachment(std::exchange(right.m_fboAttachment, false)),
+m_cacheId(std::exchange(right.m_cacheId, 0))
+{
+}
+
+////////////////////////////////////////////////////////////
+Texture& Texture::operator=(Texture&& right) noexcept
+{
+    // Catch self-moving.
+    if (&right == this)
+    {
+        return *this;
+    }
+
+    // Destroy the OpenGL texture
+    if (m_texture)
+    {
+        TransientContextLock lock;
+
+        GLuint texture = m_texture;
+        glCheck(glDeleteTextures(1, &texture));
+    }
+
+    // Move old to new.
+    m_size          = std::exchange(right.m_size, {});
+    m_actualSize    = std::exchange(right.m_actualSize, {});
+    m_texture       = std::exchange(right.m_texture, 0);
+    m_isSmooth      = std::exchange(right.m_isSmooth, false);
+    m_sRgb          = std::exchange(right.m_sRgb, false);
+    m_isRepeated    = std::exchange(right.m_isRepeated, false);
+    m_fboAttachment = std::exchange(right.m_fboAttachment, false);
+    m_cacheId       = std::exchange(right.m_cacheId, 0);
+    return *this;
 }
 
 
@@ -238,8 +282,7 @@ bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 bool Texture::loadFromImage(const Image& image, const IntRect& area)
 {
     // Retrieve the image size
-    int width  = static_cast<int>(image.getSize().x);
-    int height = static_cast<int>(image.getSize().y);
+    const auto [width, height] = Vector2i(image.getSize());
 
     // Load the entire image if the source area is either empty or contains the whole image
     if (area.width == 0 || (area.height == 0) ||

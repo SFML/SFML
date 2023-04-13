@@ -43,9 +43,10 @@ configure_file(${DOXYGEN_INPUT_DIR}/doc/header.html.in ${DOXYGEN_OUTPUT_DIR}/hea
 
 # copy the files needed by the documentation
 configure_file(${DOXYGEN_INPUT_DIR}/doc/doxygen.css ${DOXYGEN_OUTPUT_DIR}/html/doxygen.css COPYONLY)
+configure_file(${DOXYGEN_INPUT_DIR}/doc/searchOverrides.css ${DOXYGEN_OUTPUT_DIR}/html/searchOverrides.css COPYONLY)
 
 # target setup
-add_custom_target(doc ALL
+add_custom_target(doc
                   COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIGURED_INPUT}
                   COMMAND ${CMAKE_COMMAND} -E echo "Done."

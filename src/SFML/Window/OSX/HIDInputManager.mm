@@ -690,7 +690,7 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
             // Phase 2: Try to convert the key to unicode
             UniChar unicode = toUnicode(localize(code));
             if (unicode != 0x00)
-                return String(static_cast<std::uint32_t>(unicode));
+                return String(static_cast<char32_t>(unicode));
         }
 
         // Phase 3: Return final fallback

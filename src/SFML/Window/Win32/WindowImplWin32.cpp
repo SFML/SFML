@@ -162,11 +162,10 @@ m_cursorGrabbed(m_fullscreen)
         registerWindowClass();
 
     // Compute position and size
-    HDC screenDC = GetDC(nullptr);
-    int left     = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
-    int top      = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
-    int width    = static_cast<int>(mode.size.x);
-    int height   = static_cast<int>(mode.size.y);
+    HDC screenDC         = GetDC(nullptr);
+    int left             = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
+    int top              = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
+    auto [width, height] = Vector2i(mode.size);
     ReleaseDC(nullptr, screenDC);
 
     // Choose the window style according to the Style parameter
