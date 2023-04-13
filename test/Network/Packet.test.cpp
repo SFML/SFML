@@ -15,7 +15,7 @@ static_assert(std::is_nothrow_move_assignable_v<sf::Packet>);
     do                                                       \
     {                                                        \
         sf::Packet packet;                                   \
-        packet << expected;                                  \
+        packet << (expected);                                \
         CHECK(packet.getReadPosition() == 0);                \
         CHECK(packet.getData() != nullptr);                  \
         CHECK(packet.getDataSize() == sizeof(expected));     \
@@ -29,7 +29,7 @@ static_assert(std::is_nothrow_move_assignable_v<sf::Packet>);
         CHECK(packet.getDataSize() == sizeof(expected));     \
         CHECK(packet.endOfPacket());                         \
         CHECK(static_cast<bool>(packet));                    \
-        CHECK(expected == received);                         \
+        CHECK((expected) == received);                       \
     } while (false)
 
 TEST_CASE("[Network] sf::Packet")

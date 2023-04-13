@@ -480,14 +480,12 @@ private:
 /// }
 ///
 /// // Create a text which uses our font
-/// sf::Text text1;
-/// text1.setFont(font);
+/// sf::Text text1(font);
 /// text1.setCharacterSize(30);
 /// text1.setStyle(sf::Text::Regular);
 ///
 /// // Create another text using the same font, but with different parameters
-/// sf::Text text2;
-/// text2.setFont(font);
+/// sf::Text text2(font);
 /// text2.setCharacterSize(50);
 /// text2.setStyle(sf::Text::Italic);
 /// \endcode

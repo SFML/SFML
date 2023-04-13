@@ -95,20 +95,18 @@ int main()
         return EXIT_FAILURE;
 
     // Create all of our graphics resources
-    sf::Text         hudText;
-    sf::Text         statusText;
+    sf::Text         hudText(font);
+    sf::Text         statusText(font);
     sf::Shader       terrainShader;
     sf::RenderStates terrainStates(&terrainShader);
     sf::VertexBuffer terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Static);
 
     // Set up our text drawables
-    statusText.setFont(font);
     statusText.setCharacterSize(28);
     statusText.setFillColor(sf::Color::White);
     statusText.setOutlineColor(sf::Color::Black);
     statusText.setOutlineThickness(2.0f);
 
-    hudText.setFont(font);
     hudText.setCharacterSize(14);
     hudText.setFillColor(sf::Color::White);
     hudText.setOutlineColor(sf::Color::Black);

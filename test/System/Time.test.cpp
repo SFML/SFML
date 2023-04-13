@@ -12,7 +12,8 @@ static_assert(std::is_nothrow_move_assignable_v<sf::Time>);
 
 using namespace std::chrono_literals;
 
-// Use StringMaker to avoid opening namespace std
+// Specialize StringMaker for std::chrono::duration specializations
+// https://github.com/doctest/doctest/blob/master/doc/markdown/stringification.md#docteststringmakert-specialisation
 namespace doctest
 {
 template <typename Rep, typename Period>

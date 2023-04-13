@@ -32,6 +32,7 @@
 #include <glad/gl.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cctype>
 #include <cstdlib>
@@ -175,14 +176,23 @@ std::recursive_mutex mutex;
 // OpenGL resources counter
 unsigned int resourceCount = 0;
 
-// This per-thread variable holds the current context for each thread
-thread_local sf::priv::GlContext* currentContext(nullptr);
+// This structure contains all the state necessary to
+// track current context information for each thread
+struct CurrentContext
+{
+    std::uint64_t        id{};
+    sf::priv::GlContext* ptr{};
+    unsigned int         transientCount{};
+};
+
+// This per-thread variable holds the current context information for each thread
+thread_local CurrentContext currentContext;
 
 // The hidden, inactive context that will be shared with all other contexts
 std::unique_ptr<ContextType> sharedContext;
 
 // Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
-std::uint64_t id = 1; // start at 1, zero is "no context"
+std::atomic<std::uint64_t> nextContextId(1); // start at 1, zero is "no context"
 
 // Set containing callback functions to be called whenever a
 // context is going to be destroyed
@@ -201,14 +211,27 @@ struct TransientContext
     ////////////////////////////////////////////////////////////
     TransientContext()
     {
+        // TransientContext should never be created if there is
+        // already a context active on the current thread
+        assert(!currentContext.id);
+
+        std::unique_lock lock(mutex);
+
         if (resourceCount == 0)
         {
+            // No GlResources, no shared context yet
+            assert(!sharedContext);
+
+            // Create a Context object for temporary use
             context.emplace();
         }
-        else if (!currentContext)
+        else
         {
-            sharedContextLock.emplace(mutex);
-            useSharedContext = true;
+            // GlResources exist, currentContextId not yet set
+            assert(sharedContext);
+
+            // Lock the shared context for temporary use
+            sharedContextLock = std::move(lock);
             sharedContext->setActive(true);
         }
     }
@@ -219,7 +242,7 @@ struct TransientContext
     ////////////////////////////////////////////////////////////
     ~TransientContext()
     {
-        if (useSharedContext)
+        if (sharedContextLock)
             sharedContext->setActive(false);
     }
 
@@ -238,10 +261,8 @@ struct TransientContext
     ///////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int                                         referenceCount{};
-    std::optional<sf::Context>                           context;
-    std::optional<std::lock_guard<std::recursive_mutex>> sharedContextLock;
-    bool                                                 useSharedContext{};
+    std::optional<sf::Context>             context;
+    std::unique_lock<std::recursive_mutex> sharedContextLock;
 };
 
 // This per-thread variable tracks if and how a transient
@@ -254,8 +275,6 @@ std::vector<std::string> extensions;
 // Load our extensions vector with the supported extensions
 void loadExtensions()
 {
-    extensions.clear();
-
     auto glGetErrorFunc    = reinterpret_cast<glGetErrorFuncType>(sf::priv::GlContext::getFunction("glGetError"));
     auto glGetIntegervFunc = reinterpret_cast<glGetIntegervFuncType>(sf::priv::GlContext::getFunction("glGetIntegerv"));
     auto glGetStringFunc   = reinterpret_cast<glGetStringFuncType>(sf::priv::GlContext::getFunction("glGetString"));
@@ -269,21 +288,25 @@ void loadExtensions()
 
     auto glGetStringiFunc = reinterpret_cast<glGetStringiFuncType>(sf::priv::GlContext::getFunction("glGetStringi"));
 
-    if (glGetErrorFunc() == GL_INVALID_ENUM || !glGetStringiFunc)
+    if (glGetErrorFunc() == GL_INVALID_ENUM || !majorVersion || !glGetStringiFunc)
     {
         // Try to load the < 3.0 way
         const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS));
-        assert(extensionString);
 
-        do
+        if (extensionString)
         {
-            const char* extension = extensionString;
+            extensions.clear();
 
-            while (*extensionString && (*extensionString != ' '))
-                ++extensionString;
+            do
+            {
+                const char* extension = extensionString;
 
-            extensions.emplace_back(extension, extensionString);
-        } while (*extensionString++);
+                while (*extensionString && (*extensionString != ' '))
+                    ++extensionString;
+
+                extensions.emplace_back(extension, extensionString);
+            } while (*extensionString++);
+        }
     }
     else
     {
@@ -293,10 +316,14 @@ void loadExtensions()
 
         if (numExtensions)
         {
+            extensions.clear();
+
             for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
             {
                 const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
-                extensions.emplace_back(extensionString);
+
+                if (extensionString)
+                    extensions.emplace_back(extensionString);
             }
         }
     }
@@ -328,7 +355,6 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void GlContext::initResource()
 {
-    using GlContextImpl::currentContext;
     using GlContextImpl::loadExtensions;
     using GlContextImpl::mutex;
     using GlContextImpl::resourceCount;
@@ -399,44 +425,48 @@ void GlContext::registerContextDestroyCallback(ContextDestroyCallback callback, 
 ////////////////////////////////////////////////////////////
 void GlContext::acquireTransientContext()
 {
-    using GlContextImpl::mutex;
+    using GlContextImpl::currentContext;
     using GlContextImpl::TransientContext;
     using GlContextImpl::transientContext;
 
-    // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    // Fast path if we already have a context active on this thread
+    if (currentContext.id)
+    {
+        ++currentContext.transientCount;
+        return;
+    }
 
-    // If this is the first TransientContextLock on this thread
-    // construct the state object
-    if (!transientContext.has_value())
-        transientContext.emplace();
+    // If we don't already have a context active on this thread the count should be 0
+    assert(!currentContext.transientCount);
 
-    // Increase the reference count
-    ++transientContext->referenceCount;
+    // If currentContextId is not set, this must be the first
+    // TransientContextLock on this thread, construct the state object
+    transientContext.emplace();
+
+    // Make sure a context is active at this point
+    assert(currentContext.id);
 }
 
 
 ////////////////////////////////////////////////////////////
 void GlContext::releaseTransientContext()
 {
-    using GlContextImpl::mutex;
+    using GlContextImpl::currentContext;
     using GlContextImpl::transientContext;
 
-    // Protect from concurrent access
-    std::lock_guard lock(mutex);
+    // Make sure a context was left active after acquireTransientContext() was called
+    assert(currentContext.id);
 
-    // Make sure a matching acquireTransientContext() was called
-    assert(transientContext.has_value());
-
-    // Decrease the reference count
-    --transientContext->referenceCount;
-
-    // If this is the last TransientContextLock that is released
-    // destroy the state object
-    if (transientContext->referenceCount == 0)
+    // Fast path if we already had a context active on this thread before acquireTransientContext() was called
+    if (currentContext.transientCount)
     {
-        transientContext.reset();
+        --currentContext.transientCount;
+        return;
     }
+
+    // If currentContextId is set and currentContextTransientCount is 0,
+    // this is the last TransientContextLock that is released, destroy the state object
+    transientContext.reset();
 }
 
 
@@ -594,7 +624,8 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 const GlContext* GlContext::getActiveContext()
 {
     using GlContextImpl::currentContext;
-    return currentContext;
+
+    return currentContext.ptr;
 }
 
 
@@ -602,7 +633,8 @@ const GlContext* GlContext::getActiveContext()
 std::uint64_t GlContext::getActiveContextId()
 {
     using GlContextImpl::currentContext;
-    return currentContext ? currentContext->m_id : 0;
+
+    return currentContext.id;
 }
 
 
@@ -610,13 +642,11 @@ std::uint64_t GlContext::getActiveContextId()
 GlContext::~GlContext()
 {
     using GlContextImpl::currentContext;
-    using GlContextImpl::sharedContext;
 
-    // Deactivate the context before killing it, unless we're inside Cleanup()
-    if (sharedContext)
+    if (m_id == currentContext.id)
     {
-        if (this == currentContext)
-            currentContext = nullptr;
+        currentContext.id  = 0;
+        currentContext.ptr = nullptr;
     }
 }
 
@@ -633,11 +663,10 @@ bool GlContext::setActive(bool active)
 {
     using GlContextImpl::currentContext;
     using GlContextImpl::mutex;
-    using GlContextImpl::sharedContext;
 
     if (active)
     {
-        if (this != currentContext)
+        if (m_id != currentContext.id)
         {
             std::lock_guard lock(mutex);
 
@@ -645,7 +674,8 @@ bool GlContext::setActive(bool active)
             if (makeCurrent(true))
             {
                 // Set it as the new current context for this thread
-                currentContext = this;
+                currentContext.id  = m_id;
+                currentContext.ptr = this;
                 return true;
             }
             else
@@ -661,14 +691,15 @@ bool GlContext::setActive(bool active)
     }
     else
     {
-        if (this == currentContext)
+        if (m_id == currentContext.id)
         {
             std::lock_guard lock(mutex);
 
             // Deactivate the context
             if (makeCurrent(false))
             {
-                currentContext = nullptr;
+                currentContext.id  = 0;
+                currentContext.ptr = nullptr;
                 return true;
             }
             else
@@ -686,7 +717,7 @@ bool GlContext::setActive(bool active)
 
 
 ////////////////////////////////////////////////////////////
-GlContext::GlContext() : m_id(GlContextImpl::id++)
+GlContext::GlContext() : m_id(GlContextImpl::nextContextId.fetch_add(1))
 {
     // Nothing to do
 }
@@ -737,10 +768,10 @@ void GlContext::cleanupUnsharedResources()
     using GlContextImpl::currentContext;
 
     // Save the current context so we can restore it later
-    GlContext* contextToRestore = currentContext;
+    GlContext* contextToRestore = currentContext.ptr;
 
     // If this context is already active there is no need to save it
-    if (contextToRestore == this)
+    if (m_id == currentContext.id)
         contextToRestore = nullptr;
 
     // Make this context active so resources can be freed
@@ -782,7 +813,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
     glGetIntegervFunc(GL_MINOR_VERSION, &minorVersion);
 
-    if (glGetErrorFunc() != GL_INVALID_ENUM)
+    if ((glGetErrorFunc() != GL_INVALID_ENUM) && (majorVersion != 0))
     {
         m_settings.majorVersion = static_cast<unsigned int>(majorVersion);
         m_settings.minorVersion = static_cast<unsigned int>(minorVersion);
@@ -914,29 +945,6 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
-
-    auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(getFunction("glGetString"));
-
-    if (!glGetStringFunc)
-    {
-        err() << "Could not load glGetString function" << std::endl;
-
-        return;
-    }
-
-    // Detect any known non-accelerated implementations and warn
-    const char* vendorName   = reinterpret_cast<const char*>(glGetStringFunc(GL_VENDOR));
-    const char* rendererName = reinterpret_cast<const char*>(glGetStringFunc(GL_RENDERER));
-
-    if (vendorName && rendererName)
-    {
-        if (std::string_view(vendorName) == "Microsoft Corporation" && std::string_view(rendererName) == "GDI Generic")
-        {
-            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << '\n'
-                  << "The current OpenGL implementation is not hardware-accelerated" << std::endl;
-        }
-    }
-
     int version          = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
     int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
 

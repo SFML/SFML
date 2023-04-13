@@ -69,7 +69,7 @@ TEST_CASE("[Graphics] sf::VertexBuffer" * doctest::skip(true))
 
         SUBCASE("Construction")
         {
-            const sf::VertexBuffer vertexBufferCopy(vertexBuffer);
+            const sf::VertexBuffer vertexBufferCopy(vertexBuffer); // NOLINT(performance-unnecessary-copy-initialization)
             CHECK(vertexBufferCopy.getVertexCount() == 0);
             CHECK(vertexBufferCopy.getNativeHandle() == 0);
             CHECK(vertexBufferCopy.getPrimitiveType() == sf::PrimitiveType::LineStrip);

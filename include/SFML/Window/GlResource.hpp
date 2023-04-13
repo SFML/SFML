@@ -32,9 +32,6 @@
 
 namespace sf
 {
-
-class Context;
-
 using ContextDestroyCallback = void (*)(void*);
 
 ////////////////////////////////////////////////////////////
