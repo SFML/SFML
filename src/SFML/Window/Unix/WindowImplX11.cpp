@@ -385,6 +385,8 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_minimumSize    (0, 0),
+m_maximumSize    (0xFFFFFFFF,0xFFFFFFFF),
 m_useSizeHints   (false),
 m_fullscreen     (false),
 m_cursorGrabbed  (false),
@@ -436,6 +438,8 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_previousSize   (-1, -1),
+m_minimumSize    (0, 0),
+m_maximumSize    (0xFFFFFFFF,0xFFFFFFFF),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
 m_cursorGrabbed  (m_fullscreen),
@@ -860,6 +864,8 @@ Vector2u WindowImplX11::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setSize(const Vector2u& size)
 {
+    assert(size < m_minimumSize);
+    assert(size > m_maximumSize);
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if (m_useSizeHints)
     {
@@ -875,6 +881,55 @@ void WindowImplX11::setSize(const Vector2u& size)
     XFlush(m_display);
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMinimumSize(const Vector2u &minimumSize)
+{
+    assert(m_maximumSize < minimumSize);
+    m_minimumSize = minimumSize;
+
+    // Not sure what to do when resizing is disabled.
+    // Ignore setMinimumSize is what I would recommend
+    if (m_useSizeHints)
+    {
+        assert(false);
+    }
+    else
+    {
+        XSizeHints* sizeHints = XAllocSizeHints();
+        sizeHints->flags = PMinSize | PMaxSize;
+        sizeHints->min_width = static_cast<int>(minimumSize.x);
+        sizeHints->min_height = static_cast<int>(minimumSize.y);
+        sizeHints->max_width = static_cast<int>(m_maximumSize.x);
+        sizeHints->max_height = static_cast<int>(m_maximumSize.y);
+        XSetWMNormalHints(m_display, m_window, sizeHints);
+        XFree(sizeHints);
+    }
+}
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMaximumSize(const Vector2u &maximumSize)
+{
+    assert(maximumSize < m_minimumSize);
+    m_maximumSize = maximumSize;
+
+    // Not sure what to do when resizing is disabled.
+    // Ignore setMinimumSize is what I would recommend
+    if (m_useSizeHints)
+    {
+        assert(false);
+    }
+    else
+    {
+        XSizeHints* sizeHints = XAllocSizeHints();
+        sizeHints->flags = PMaxSize | PMinSize;
+        sizeHints->max_width = static_cast<int>(maximumSize.x);
+        sizeHints->max_height = static_cast<int>(maximumSize.y);
+        sizeHints->min_width = static_cast<int>(m_minimumSize.x);
+        sizeHints->min_height = static_cast<int>(m_minimumSize.y);
+        XSetWMNormalHints(m_display, m_window, sizeHints);
+        XFree(sizeHints);
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setTitle(const String& title)

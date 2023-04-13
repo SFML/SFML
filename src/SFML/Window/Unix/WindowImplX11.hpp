@@ -115,6 +115,22 @@ public:
     virtual void setSize(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Sets a minimum window rendering region size
+    ///
+    /// \param minimumSize New minimum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMinimumSize(const Vector2u& minimumSize);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sets a maximum window rendering region size
+    ///
+    /// \param maximumSize New maximum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMaximumSize(const Vector2u& maximumSize);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
     ///
     /// \param title New title
@@ -312,6 +328,8 @@ private:
     ::Cursor   m_lastCursor;     ///< Last cursor used -- this data is not owned by the window and is required to be always valid
     bool       m_keyRepeat;      ///< Is the KeyRepeat feature enabled?
     Vector2i   m_previousSize;   ///< Previous size of the window, to find if a ConfigureNotify event is a resize event (could be a move event only)
+    Vector2u   m_minimumSize;    ///< Minimum size the rendering region of the window can be
+    Vector2u   m_maximumSize;    ///< Maximum size the rendering region of the window can be
     bool       m_useSizeHints;   ///< Is the size of the window fixed with size hints?
     bool       m_fullscreen;     ///< Is the window in fullscreen?
     bool       m_cursorGrabbed;  ///< Is the mouse cursor trapped?

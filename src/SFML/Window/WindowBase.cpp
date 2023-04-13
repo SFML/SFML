@@ -225,6 +225,23 @@ void WindowBase::setSize(const Vector2u& size)
     }
 }
 
+////////////////////////////////////////////////////////////
+void WindowBase::setMinimumSize(const Vector2u &minimumSize)
+{
+    if (m_impl)
+    {
+        m_impl->setMinimumSize(minimumSize);
+    }
+}
+
+////////////////////////////////////////////////////////////
+void WindowBase::setMaximumSize(const Vector2u &maximumSize)
+{
+    if (m_impl)
+    {
+        m_impl->setMaximumSize(maximumSize);
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowBase::setTitle(const String& title)

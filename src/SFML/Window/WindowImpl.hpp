@@ -155,6 +155,22 @@ public:
     virtual void setSize(const Vector2u& size) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Sets a minimum window rendering region size
+    ///
+    /// \param minimumSize New minimum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMinimumSize(const Vector2u& minimumSize) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sets a maximum window rendering region size
+    ///
+    /// \param maximumSize New maximum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMaximumSize(const Vector2u& maximumSize) = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
     ///
     /// \param title New title
