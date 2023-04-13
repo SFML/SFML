@@ -138,7 +138,8 @@ jobs:
           set -e
           if [ "${{ runner.os }}" == "Windows" ]; then
             # Make use of a test to print OpenGL vendor/renderer/version info to the console
-            find $GITHUB_WORKSPACE/build/bin -name test-sfml-window.exe -exec sh -c "{} --test-case=\"[Window] sf::Context\" --subcase=\"Version String\" | grep OpenGL" \;
+            # We have to convert the backslashes in $GITHUB_WORKSPACE to (forward) slashes so bash doesn't try to escape them in the sh command
+            find $(echo $GITHUB_WORKSPACE | sed 's/\\\\/\\//g')/build/bin -name test-sfml-window.exe -exec sh -c "{} --test-case=\"[Window] sf::Context\" --subcase=\"Version String\" | grep OpenGL" \;
             # Run the tests
             cmake --build $GITHUB_WORKSPACE/build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
             # Coverage is already generated on Windows when running tests.
