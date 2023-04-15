@@ -149,7 +149,7 @@ public:
     /// \param utf32String UTF-32 string to assign
     ///
     ////////////////////////////////////////////////////////////
-    String(const std::u32string& utf32String);
+    String(std::u32string utf32String);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new sf::String from a UTF-8 encoded string

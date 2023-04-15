@@ -36,6 +36,7 @@
 #include <iterator>
 #include <ostream>
 #include <sstream>
+#include <utility>
 
 
 namespace sf
@@ -78,7 +79,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response::Response(Status code, const std::string& message) : m_status(code), m_message(message)
+Ftp::Response::Response(Status code, std::string message) : m_status(code), m_message(std::move(message))
 {
 }
 
