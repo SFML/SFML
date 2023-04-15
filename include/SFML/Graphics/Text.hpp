@@ -77,13 +77,13 @@ public:
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Text(const Font& font, const String& string = "", unsigned int characterSize = 30);
+    Text(const Font& font, String string = "", unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disallow construction from a temporary font
     ///
     ////////////////////////////////////////////////////////////
-    Text(Font&& font, const String& string = "", unsigned int characterSize = 30) = delete;
+    Text(Font&& font, String string = "", unsigned int characterSize = 30) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor

@@ -30,6 +30,7 @@
 
 #include <cstring>
 #include <iterator>
+#include <utility>
 
 
 namespace sf
@@ -118,7 +119,7 @@ String::String(const char32_t* utf32String)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::u32string& utf32String) : m_string(utf32String)
+String::String(std::u32string utf32String) : m_string(std::move(utf32String))
 {
 }
 
