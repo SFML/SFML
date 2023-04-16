@@ -12,7 +12,6 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-exception-escape,
   -bugprone-implicit-widening-of-multiplication-result,
-  -bugprone-incorrect-roundings,
   -bugprone-integer-division,
   -bugprone-misplaced-widening-cast,
   -bugprone-narrowing-conversions,
