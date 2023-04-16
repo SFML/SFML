@@ -130,7 +130,7 @@ set(NETWORK_SRC
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
 set(AUDIO_SRC
-    Audio/AlResource.test.cpp
+    Audio/AudioResource.test.cpp
     Audio/InputSoundFile.test.cpp
     Audio/Music.test.cpp
     Audio/OutputSoundFile.test.cpp
@@ -145,14 +145,6 @@ set(AUDIO_SRC
     Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
-
-if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
-    add_custom_command(
-        TARGET test-sfml-audio
-        COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:test-sfml-audio>
-        VERBATIM)
-endif()
 
 if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC

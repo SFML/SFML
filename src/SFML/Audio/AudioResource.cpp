@@ -25,55 +25,38 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/AlResource.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/AudioResource.hpp>
 
 #include <memory>
 #include <mutex>
 
 
-namespace
-{
-// OpenAL resources counter and its mutex
-unsigned int         count = 0;
-std::recursive_mutex mutex;
-
-// The audio device is instantiated on demand rather than at global startup,
-// which solves a lot of weird crashes and errors.
-// It is destroyed when it is no longer needed.
-std::unique_ptr<sf::priv::AudioDevice> globalDevice;
-} // namespace
-
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-AlResource::AlResource()
+AudioResource::AudioResource() :
+m_device(
+    []()
+    {
+        // Ensure we only ever create a single instance of an
+        // AudioDevice that is shared between all AudioResources
+        static std::mutex                           mutex;
+        static std::weak_ptr<sf::priv::AudioDevice> weakAudioDevice;
+
+        const std::lock_guard lock(mutex);
+
+        auto audioDevice = weakAudioDevice.lock();
+
+        if (audioDevice == nullptr)
+        {
+            audioDevice     = std::make_shared<priv::AudioDevice>();
+            weakAudioDevice = audioDevice;
+        }
+
+        return audioDevice;
+    }())
 {
-    // Protect from concurrent access
-    const std::lock_guard lock(mutex);
-
-    // If this is the very first resource, trigger the global device initialization
-    if (count == 0)
-        globalDevice = std::make_unique<priv::AudioDevice>();
-
-    // Increment the resources counter
-    ++count;
-}
-
-
-////////////////////////////////////////////////////////////
-AlResource::~AlResource()
-{
-    // Protect from concurrent access
-    const std::lock_guard lock(mutex);
-
-    // Decrement the resources counter
-    --count;
-
-    // If there's no more resource alive, we can destroy the device
-    if (count == 0)
-        globalDevice.reset();
 }
 
 } // namespace sf
