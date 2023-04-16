@@ -22,58 +22,47 @@
 //
 ////////////////////////////////////////////////////////////
 
+#pragma once
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/OutputSoundFile.hpp>
-#include <SFML/Audio/SoundFileFactory.hpp>
-#include <SFML/Audio/SoundFileWriter.hpp>
+#include <SFML/Audio/Export.hpp>
+
+#include <memory>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile() = default;
-
-
+/// \brief Base class for classes that require an audio device
+///
 ////////////////////////////////////////////////////////////
-bool OutputSoundFile::openFromFile(const std::filesystem::path&     filename,
-                                   unsigned int                     sampleRate,
-                                   unsigned int                     channelCount,
-                                   const std::vector<SoundChannel>& channelMap)
+class SFML_AUDIO_API AudioResource
 {
-    // If the file is already open, first close it
-    close();
+protected:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    AudioResource();
 
-    // Find a suitable writer for the file type
-    m_writer = SoundFileFactory::createWriterFromFilename(filename);
-    if (!m_writer)
-        return false;
-
-    // Pass the stream to the reader
-    if (!m_writer->open(filename, sampleRate, channelCount, channelMap))
-    {
-        close();
-        return false;
-    }
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void OutputSoundFile::write(const std::int16_t* samples, std::uint64_t count)
-{
-    if (m_writer && samples && count)
-        m_writer->write(samples, count);
-}
-
-
-////////////////////////////////////////////////////////////
-void OutputSoundFile::close()
-{
-    // Destroy the reader
-    m_writer.reset();
-}
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const std::shared_ptr<void> m_device; //!< Sound device
+};
 
 } // namespace sf
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::AlResource
+/// \ingroup audio
+///
+/// This class is for internal use only, it must be the base
+/// of every class that requires a valid audio device in
+/// order to work.
+///
+////////////////////////////////////////////////////////////

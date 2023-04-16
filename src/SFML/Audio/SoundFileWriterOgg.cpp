@@ -59,8 +59,81 @@ SoundFileWriterOgg::~SoundFileWriterOgg()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
+bool SoundFileWriterOgg::open(const std::filesystem::path&     filename,
+                              unsigned int                     sampleRate,
+                              unsigned int                     channelCount,
+                              const std::vector<SoundChannel>& channelMap)
 {
+    std::vector<SoundChannel> targetChannelMap;
+
+    // For Vorbis channel mapping refer to: https://xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-810004.3.9
+    switch (channelCount)
+    {
+        case 0:
+            err() << "No channels to write to Vorbis file" << std::endl;
+            return false;
+        case 1:
+            targetChannelMap = {SoundChannel::Mono};
+            break;
+        case 2:
+            targetChannelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight};
+            break;
+        case 3:
+            targetChannelMap = {SoundChannel::FrontLeft, SoundChannel::FrontCenter, SoundChannel::FrontRight};
+            break;
+        case 4:
+            targetChannelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight, SoundChannel::BackLeft, SoundChannel::BackRight};
+            break;
+        case 5:
+            targetChannelMap = {SoundChannel::FrontLeft,
+                                SoundChannel::FrontCenter,
+                                SoundChannel::FrontRight,
+                                SoundChannel::BackLeft,
+                                SoundChannel::BackRight};
+            break;
+        case 6:
+            targetChannelMap = {SoundChannel::FrontLeft,
+                                SoundChannel::FrontCenter,
+                                SoundChannel::FrontRight,
+                                SoundChannel::BackLeft,
+                                SoundChannel::BackRight,
+                                SoundChannel::LowFrequencyEffects};
+            break;
+        case 7:
+            targetChannelMap = {SoundChannel::FrontLeft,
+                                SoundChannel::FrontCenter,
+                                SoundChannel::FrontRight,
+                                SoundChannel::SideLeft,
+                                SoundChannel::SideRight,
+                                SoundChannel::BackCenter,
+                                SoundChannel::LowFrequencyEffects};
+            break;
+        case 8:
+            targetChannelMap = {SoundChannel::FrontLeft,
+                                SoundChannel::FrontCenter,
+                                SoundChannel::FrontRight,
+                                SoundChannel::SideLeft,
+                                SoundChannel::SideRight,
+                                SoundChannel::BackLeft,
+                                SoundChannel::BackRight,
+                                SoundChannel::LowFrequencyEffects};
+            break;
+        default:
+            err() << "Vorbis files with more than 8 channels not supported" << std::endl;
+            return false;
+    }
+
+    // Check if the channel map contains channels that we cannot remap to a mapping supported by FLAC
+    if (!std::is_permutation(channelMap.begin(), channelMap.end(), targetChannelMap.begin()))
+    {
+        err() << "Provided channel map cannot be reordered to a channel map supported by Vorbis" << std::endl;
+        return false;
+    }
+
+    // Build the remap table
+    for (auto i = 0u; i < channelCount; ++i)
+        m_remapTable[i] = std::find(channelMap.begin(), channelMap.end(), targetChannelMap[i]) - channelMap.begin();
+
     // Save the channel count
     m_channelCount = channelCount;
 
@@ -140,10 +213,14 @@ void SoundFileWriterOgg::write(const std::int16_t* samples, std::uint64_t count)
         float** buffer = vorbis_analysis_buffer(&m_state, bufferSize);
         assert(buffer);
 
-        // Write the samples to the buffer, converted to float
+        // Write the samples to the buffer, converted to float and remapped to target channels
         for (int i = 0; i < std::min(frameCount, bufferSize); ++i)
+        {
             for (unsigned int j = 0; j < m_channelCount; ++j)
-                buffer[j][i] = *samples++ / 32767.0f;
+                buffer[j][i] = samples[m_remapTable[j]] / 32767.0f;
+
+            samples += m_channelCount;
+        }
 
         // Tell the library how many samples we've written
         vorbis_analysis_wrote(&m_state, std::min(frameCount, bufferSize));

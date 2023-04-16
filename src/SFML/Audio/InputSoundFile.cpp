@@ -97,6 +97,7 @@ bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
     m_sampleCount  = info.sampleCount;
     m_channelCount = info.channelCount;
     m_sampleRate   = info.sampleRate;
+    m_channelMap   = info.channelMap;
 
     return true;
 }
@@ -132,6 +133,7 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     m_sampleCount  = info.sampleCount;
     m_channelCount = info.channelCount;
     m_sampleRate   = info.sampleRate;
+    m_channelMap   = info.channelMap;
 
     return true;
 }
@@ -168,6 +170,7 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     m_sampleCount  = info.sampleCount;
     m_channelCount = info.channelCount;
     m_sampleRate   = info.sampleRate;
+    m_channelMap   = info.channelMap;
 
     return true;
 }
@@ -191,6 +194,13 @@ unsigned int InputSoundFile::getChannelCount() const
 unsigned int InputSoundFile::getSampleRate() const
 {
     return m_sampleRate;
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<SoundChannel> InputSoundFile::getChannelMap() const
+{
+    return m_channelMap;
 }
 
 
@@ -270,6 +280,7 @@ void InputSoundFile::close()
     m_sampleCount  = 0;
     m_channelCount = 0;
     m_sampleRate   = 0;
+    m_channelMap.clear();
 }
 
 } // namespace sf

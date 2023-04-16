@@ -22,45 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/Export.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/AudioResource.hpp>
+
+#include <memory>
+#include <mutex>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Base class for classes that require an OpenAL context
-///
-////////////////////////////////////////////////////////////
-class SFML_AUDIO_API AlResource
-{
-protected:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    AlResource();
+AudioResource::AudioResource() :
+m_device(
+    []()
+    {
+        // Ensure we only ever create a single instance of an
+        // AudioDevice that is shared between all AudioResources
+        static std::mutex                           mutex;
+        static std::weak_ptr<sf::priv::AudioDevice> weakAudioDevice;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~AlResource();
-};
+        std::lock_guard lock(mutex);
+
+        auto audioDevice = weakAudioDevice.lock();
+
+        if (audioDevice == nullptr)
+        {
+            audioDevice     = std::make_shared<priv::AudioDevice>();
+            weakAudioDevice = audioDevice;
+        }
+
+        return audioDevice;
+    }())
+{
+}
 
 } // namespace sf
-
-
-////////////////////////////////////////////////////////////
-/// \class sf::AlResource
-/// \ingroup audio
-///
-/// This class is for internal use only, it must be the base
-/// of every class that requires a valid OpenAL context in
-/// order to work.
-///
-////////////////////////////////////////////////////////////

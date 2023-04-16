@@ -12,7 +12,6 @@ LOCAL_SHARED_LIBRARIES += sfml-graphics-d
 LOCAL_SHARED_LIBRARIES += sfml-audio-d
 LOCAL_SHARED_LIBRARIES += sfml-network-d
 LOCAL_SHARED_LIBRARIES += sfml-activity-d
-LOCAL_SHARED_LIBRARIES += openal
 LOCAL_WHOLE_STATIC_LIBRARIES := sfml-main-d
 
 include $(BUILD_SHARED_LIBRARY)

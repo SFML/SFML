@@ -25,8 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/ALCheck.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/OutputSoundFile.hpp>
 #include <SFML/Audio/Sound.hpp>
@@ -37,30 +35,48 @@
 
 #include <memory>
 #include <ostream>
+#include <string>
+#include <unordered_set>
+#include <vector>
 
-#if defined(__APPLE__)
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer()
+struct SoundBuffer::Impl
 {
-    // Create the buffer
-    alCheck(alGenBuffers(1, &m_buffer));
+    ////////////////////////////////////////////////////////////
+    // Types
+    ////////////////////////////////////////////////////////////
+    using SoundList = std::unordered_set<Sound*>; //!< Set of unique sound instances
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    std::vector<std::int16_t> m_samples;                        //!< Samples buffer
+    unsigned int              m_channelCount{1};                //!< Number of channels of the sound
+    unsigned int              m_sampleRate{44100};              //!< Number of samples per second
+    std::vector<SoundChannel> m_channelMap{SoundChannel::Mono}; //!< The map of position in sample frame to sound channel
+    Time                      m_duration;                       //!< Sound duration
+    mutable SoundList         m_sounds;                         //!< List of sounds that are using this buffer
+};
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer() : m_impl(std::make_unique<Impl>())
+{
 }
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(const SoundBuffer& copy) : m_samples(copy.m_samples), m_duration(copy.m_duration)
-// don't copy the attached sounds
+SoundBuffer::SoundBuffer(const SoundBuffer& copy) : SoundBuffer()
 {
-    // Create the buffer
-    alCheck(alGenBuffers(1, &m_buffer));
+    // don't copy the attached sounds
+    m_impl->m_samples  = copy.m_impl->m_samples;
+    m_impl->m_duration = copy.m_impl->m_duration;
 
     // Update the internal buffer with the new samples
-    if (!update(copy.getChannelCount(), copy.getSampleRate()))
+    if (!update(copy.getChannelCount(), copy.getSampleRate(), copy.getChannelMap()))
         err() << "Failed to update copy-constructed sound buffer" << std::endl;
 }
 
@@ -71,16 +87,12 @@ SoundBuffer::~SoundBuffer()
     // To prevent the iterator from becoming invalid, move the entire buffer to another
     // container. Otherwise calling resetBuffer would result in detachSound being
     // called which removes the sound from the internal list.
-    SoundList sounds;
-    sounds.swap(m_sounds);
+    Impl::SoundList sounds;
+    sounds.swap(m_impl->m_sounds);
 
-    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    // Detach the buffer from the sounds that use it
     for (Sound* soundPtr : sounds)
         soundPtr->resetBuffer();
-
-    // Destroy the buffer
-    if (m_buffer)
-        alCheck(alDeleteBuffers(1, &m_buffer));
 }
 
 
@@ -118,18 +130,19 @@ bool SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const std::int16_t* samples,
-                                  std::uint64_t       sampleCount,
-                                  unsigned int        channelCount,
-                                  unsigned int        sampleRate)
+bool SoundBuffer::loadFromSamples(const std::int16_t*              samples,
+                                  std::uint64_t                    sampleCount,
+                                  unsigned int                     channelCount,
+                                  unsigned int                     sampleRate,
+                                  const std::vector<SoundChannel>& channelMap)
 {
-    if (samples && sampleCount && channelCount && sampleRate)
+    if (samples && sampleCount && channelCount && sampleRate && !channelMap.empty())
     {
         // Copy the new audio samples
-        m_samples.assign(samples, samples + sampleCount);
+        m_impl->m_samples.assign(samples, samples + sampleCount);
 
         // Update the internal buffer with the new samples
-        return update(channelCount, sampleRate);
+        return update(channelCount, sampleRate, channelMap);
     }
     else
     {
@@ -150,10 +163,10 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 {
     // Create the sound file in write mode
     OutputSoundFile file;
-    if (file.openFromFile(filename, getSampleRate(), getChannelCount()))
+    if (file.openFromFile(filename, getSampleRate(), getChannelCount(), getChannelMap()))
     {
         // Write the samples to the opened file
-        file.write(m_samples.data(), m_samples.size());
+        file.write(m_impl->m_samples.data(), m_impl->m_samples.size());
 
         return true;
     }
@@ -167,41 +180,42 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 ////////////////////////////////////////////////////////////
 const std::int16_t* SoundBuffer::getSamples() const
 {
-    return m_samples.empty() ? nullptr : m_samples.data();
+    return m_impl->m_samples.empty() ? nullptr : m_impl->m_samples.data();
 }
 
 
 ////////////////////////////////////////////////////////////
 std::uint64_t SoundBuffer::getSampleCount() const
 {
-    return m_samples.size();
+    return m_impl->m_samples.size();
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::getSampleRate() const
 {
-    ALint sampleRate;
-    alCheck(alGetBufferi(m_buffer, AL_FREQUENCY, &sampleRate));
-
-    return static_cast<unsigned int>(sampleRate);
+    return m_impl->m_sampleRate;
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundBuffer::getChannelCount() const
 {
-    ALint channelCount;
-    alCheck(alGetBufferi(m_buffer, AL_CHANNELS, &channelCount));
+    return m_impl->m_channelCount;
+}
 
-    return static_cast<unsigned int>(channelCount);
+
+////////////////////////////////////////////////////////////
+std::vector<SoundChannel> SoundBuffer::getChannelMap() const
+{
+    return m_impl->m_channelMap;
 }
 
 
 ////////////////////////////////////////////////////////////
 Time SoundBuffer::getDuration() const
 {
-    return m_duration;
+    return m_impl->m_duration;
 }
 
 
@@ -210,10 +224,12 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 {
     SoundBuffer temp(right);
 
-    std::swap(m_samples, temp.m_samples);
-    std::swap(m_buffer, temp.m_buffer);
-    std::swap(m_duration, temp.m_duration);
-    std::swap(m_sounds, temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
+    std::swap(m_impl->m_samples, temp.m_impl->m_samples);
+    std::swap(m_impl->m_channelCount, temp.m_impl->m_channelCount);
+    std::swap(m_impl->m_sampleRate, temp.m_impl->m_sampleRate);
+    std::swap(m_impl->m_channelMap, temp.m_impl->m_channelMap);
+    std::swap(m_impl->m_duration, temp.m_impl->m_duration);
+    std::swap(m_impl->m_sounds, temp.m_impl->m_sounds); // swap sounds too, so that they are detached when temp is destroyed
 
     return *this;
 }
@@ -223,16 +239,14 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 bool SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
-    const std::uint64_t sampleCount  = file.getSampleCount();
-    const unsigned int  channelCount = file.getChannelCount();
-    const unsigned int  sampleRate   = file.getSampleRate();
+    std::uint64_t sampleCount = file.getSampleCount();
 
     // Read the samples from the provided file
-    m_samples.resize(static_cast<std::size_t>(sampleCount));
-    if (file.read(m_samples.data(), sampleCount) == sampleCount)
+    m_impl->m_samples.resize(static_cast<std::size_t>(sampleCount));
+    if (file.read(m_impl->m_samples.data(), sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
-        return update(channelCount, sampleRate);
+        return update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap());
     }
     else
     {
@@ -242,36 +256,26 @@ bool SoundBuffer::initialize(InputSoundFile& file)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
+bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate, const std::vector<SoundChannel>& channelMap)
 {
     // Check parameters
-    if (!channelCount || !sampleRate || m_samples.empty())
+    if (!channelCount || !sampleRate || (channelMap.size() != channelCount))
         return false;
 
-    // Find the good format according to the number of channels
-    const ALenum format = priv::AudioDevice::getFormatFromChannelCount(channelCount);
-
-    // Check if the format is valid
-    if (format == 0)
-    {
-        err() << "Failed to load sound buffer (unsupported number of channels: " << channelCount << ")" << std::endl;
-        return false;
-    }
+    m_impl->m_channelCount = channelCount;
+    m_impl->m_sampleRate   = sampleRate;
+    m_impl->m_channelMap   = channelMap;
 
     // First make a copy of the list of sounds so we can reattach later
-    const SoundList sounds(m_sounds);
+    Impl::SoundList sounds(m_impl->m_sounds);
 
-    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
+    // Detach the buffer from the sounds that use it
     for (Sound* soundPtr : sounds)
         soundPtr->resetBuffer();
 
-    // Fill the buffer
-    const auto size = static_cast<ALsizei>(m_samples.size() * sizeof(std::int16_t));
-    alCheck(alBufferData(m_buffer, format, m_samples.data(), size, static_cast<ALsizei>(sampleRate)));
-
     // Compute the duration
-    m_duration = seconds(
-        static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
+    m_impl->m_duration = seconds(
+        static_cast<float>(m_impl->m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
 
     // Now reattach the buffer to the sounds that use it
     for (Sound* soundPtr : sounds)
@@ -284,14 +288,14 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
 ////////////////////////////////////////////////////////////
 void SoundBuffer::attachSound(Sound* sound) const
 {
-    m_sounds.insert(sound);
+    m_impl->m_sounds.insert(sound);
 }
 
 
 ////////////////////////////////////////////////////////////
 void SoundBuffer::detachSound(Sound* sound) const
 {
-    m_sounds.erase(sound);
+    m_impl->m_sounds.erase(sound);
 }
 
 } // namespace sf

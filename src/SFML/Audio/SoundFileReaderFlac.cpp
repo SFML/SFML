@@ -172,6 +172,69 @@ void streamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta
         data->info.sampleCount  = meta->data.stream_info.total_samples * meta->data.stream_info.channels;
         data->info.sampleRate   = meta->data.stream_info.sample_rate;
         data->info.channelCount = meta->data.stream_info.channels;
+
+        // For FLAC channel mapping refer to: https://xiph.org/flac/format.html#frame_header
+        switch (data->info.channelCount)
+        {
+            case 0:
+                sf::err() << "No channels in FLAC file" << std::endl;
+                break;
+            case 1:
+                data->info.channelMap = {sf::SoundChannel::Mono};
+                break;
+            case 2:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft, sf::SoundChannel::FrontRight};
+                break;
+            case 3:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::FrontCenter};
+                break;
+            case 4:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::BackLeft,
+                                         sf::SoundChannel::BackRight};
+                break;
+            case 5:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::FrontCenter,
+                                         sf::SoundChannel::BackLeft,
+                                         sf::SoundChannel::BackRight};
+                break;
+            case 6:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::FrontCenter,
+                                         sf::SoundChannel::LowFrequencyEffects,
+                                         sf::SoundChannel::BackLeft,
+                                         sf::SoundChannel::BackRight};
+                break;
+            case 7:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::FrontCenter,
+                                         sf::SoundChannel::LowFrequencyEffects,
+                                         sf::SoundChannel::BackCenter,
+                                         sf::SoundChannel::SideLeft,
+                                         sf::SoundChannel::SideRight};
+                break;
+            case 8:
+                data->info.channelMap = {sf::SoundChannel::FrontLeft,
+                                         sf::SoundChannel::FrontRight,
+                                         sf::SoundChannel::FrontCenter,
+                                         sf::SoundChannel::LowFrequencyEffects,
+                                         sf::SoundChannel::BackLeft,
+                                         sf::SoundChannel::BackRight,
+                                         sf::SoundChannel::SideLeft,
+                                         sf::SoundChannel::SideRight};
+                break;
+            default:
+                sf::err() << "FLAC files with more than 8 channels not supported" << std::endl;
+                assert(false);
+                break;
+        }
     }
 }
 

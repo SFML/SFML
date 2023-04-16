@@ -29,12 +29,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
-#include <SFML/Audio/AlResource.hpp>
+#include <SFML/Audio/SoundChannel.hpp>
 
 #include <SFML/System/Time.hpp>
 
+#include <memory>
 #include <string>
-#include <thread>
 #include <vector>
 
 
@@ -44,7 +44,7 @@ namespace sf
 /// \brief Abstract base class for capturing sound data
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API SoundRecorder : AlResource
+class SFML_AUDIO_API SoundRecorder
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -174,6 +174,17 @@ public:
     unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the map of position in sample frame to sound channel
+    ///
+    /// This is used to map a sample in the sample stream to a
+    /// position during spatialisation.
+    ///
+    /// \return Map of position in sample frame to sound channel
+    ///
+    ////////////////////////////////////////////////////////////
+    std::vector<SoundChannel> getChannelMap() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture
     ///
     /// This function should always be called before using
@@ -194,24 +205,6 @@ protected:
     ///
     ////////////////////////////////////////////////////////////
     SoundRecorder();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the processing interval
-    ///
-    /// The processing interval controls the period
-    /// between calls to the onProcessSamples function. You may
-    /// want to use a small interval if you want to process the
-    /// recorded data in real time, for example.
-    ///
-    /// Note: this is only a hint, the actual period may vary.
-    /// So don't rely on this parameter to implement precise timing.
-    ///
-    /// The default processing interval is 100 ms.
-    ///
-    /// \param interval Processing interval
-    ///
-    ////////////////////////////////////////////////////////////
-    void setProcessingInterval(Time interval);
 
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
@@ -255,60 +248,10 @@ protected:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Function called as the entry point of the thread
-    ///
-    /// This function starts the recording loop, and returns
-    /// only when the capture is stopped.
-    ///
-    ////////////////////////////////////////////////////////////
-    void record();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the new available audio samples and process them
-    ///
-    /// This function is called continuously during the
-    /// capture loop. It retrieves the captured samples and
-    /// forwards them to the derived class.
-    ///
-    ////////////////////////////////////////////////////////////
-    void processCapturedSamples();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Clean up the recorder's internal resources
-    ///
-    /// This function is called when the capture stops.
-    ///
-    ////////////////////////////////////////////////////////////
-    void cleanup();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Launch a new capture thread running 'record'
-    ///
-    /// This function is called when the capture is started or
-    /// when the device is changed.
-    ///
-    ////////////////////////////////////////////////////////////
-    void launchCapturingThread();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Stop capturing and wait for 'm_thread' to join
-    ///
-    /// This function is called when the capture is stopped or
-    /// when the device is changed.
-    ///
-    ////////////////////////////////////////////////////////////
-    void awaitCapturingThread();
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::thread               m_thread;                   //!< Thread running the background recording task
-    std::vector<std::int16_t> m_samples;                  //!< Buffer to store captured samples
-    unsigned int              m_sampleRate{};             //!< Sample rate
-    Time         m_processingInterval{milliseconds(100)}; //!< Time period between calls to onProcessSamples
-    bool         m_isCapturing{};                         //!< Capturing state
-    std::string  m_deviceName{getDefaultDevice()};        //!< Name of the audio capture device
-    unsigned int m_channelCount{1};                       //!< Number of recording channels
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf

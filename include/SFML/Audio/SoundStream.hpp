@@ -29,12 +29,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/SoundChannel.hpp>
 #include <SFML/Audio/SoundSource.hpp>
 
 #include <SFML/System/Time.hpp>
 
-#include <mutex>
-#include <thread>
+#include <memory>
+#include <vector>
 
 #include <cstdlib>
 
@@ -123,6 +124,17 @@ public:
     unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the map of position in sample frame to sound channel
+    ///
+    /// This is used to map a sample in the sample stream to a
+    /// position during spatialisation.
+    ///
+    /// \return Map of position in sample frame to sound channel
+    ///
+    ////////////////////////////////////////////////////////////
+    std::vector<SoundChannel> getChannelMap() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the stream (stopped, paused, playing)
     ///
     /// \return Current status
@@ -206,9 +218,10 @@ protected:
     ///
     /// \param channelCount Number of channels of the stream
     /// \param sampleRate   Sample rate, in samples per second
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
     ////////////////////////////////////////////////////////////
-    void initialize(unsigned int channelCount, unsigned int sampleRate);
+    void initialize(unsigned int channelCount, unsigned int sampleRate, const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Request a new chunk of audio samples from the stream source
@@ -252,103 +265,20 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual std::int64_t onLoop();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the processing interval
-    ///
-    /// The processing interval controls the period at which the
-    /// audio buffers are filled by calls to onGetData. A smaller
-    /// interval may be useful for low-latency streams. Note that
-    /// the given period is only a hint and the actual period may
-    /// vary. The default processing interval is 10 ms.
-    ///
-    /// \param interval Processing interval
-    ///
-    ////////////////////////////////////////////////////////////
-    void setProcessingInterval(Time interval);
-
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Function called as the entry point of the thread
+    /// \brief Get the sound object
     ///
-    /// This function starts the streaming loop, and returns
-    /// only when the sound is stopped.
-    ///
-    ////////////////////////////////////////////////////////////
-    void streamData();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Fill a new buffer with audio samples, and append
-    ///        it to the playing queue
-    ///
-    /// This function is called as soon as a buffer has been fully
-    /// consumed; it fills it again and inserts it back into the
-    /// playing queue.
-    ///
-    /// \param bufferNum Number of the buffer to fill (in [0, BufferCount])
-    /// \param immediateLoop Treat empty buffers as spent, and act on loops immediately
-    ///
-    /// \return True if the stream source has requested to stop, false otherwise
+    /// \return The sound object
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool fillAndPushBuffer(unsigned int bufferNum, bool immediateLoop = false);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Fill the audio buffers and put them all into the playing queue
-    ///
-    /// This function is called when playing starts and the
-    /// playing queue is empty.
-    ///
-    /// \return True if the derived class has requested to stop, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool fillQueue();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Clear all the audio buffers and empty the playing queue
-    ///
-    /// This function is called when the stream is stopped.
-    ///
-    ////////////////////////////////////////////////////////////
-    void clearQueue();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Launch a new stream thread running 'streamData'
-    ///
-    /// This function is called when the stream is played or
-    /// when the playing offset is changed.
-    ///
-    ////////////////////////////////////////////////////////////
-    void launchStreamingThread(Status threadStartState);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Stop streaming and wait for 'm_thread' to join
-    ///
-    /// This function is called when the playback is stopped or
-    /// when the sound stream is destroyed.
-    ///
-    ////////////////////////////////////////////////////////////
-    void awaitStreamingThread();
-
-    // NOLINTBEGIN(readability-identifier-naming)
-    static constexpr unsigned int BufferCount{3};   //!< Number of audio buffers used by the streaming loop
-    static constexpr unsigned int BufferRetries{2}; //!< Number of retries (excluding initial try) for onGetData()
-    // NOLINTEND(readability-identifier-naming)
+    void* getSound() const override;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::thread                  m_thread;                    //!< Thread running the background tasks
-    mutable std::recursive_mutex m_threadMutex;               //!< Thread mutex
-    Status                       m_threadStartState{Stopped}; //!< State the thread starts in (Playing, Paused, Stopped)
-    bool                         m_isStreaming{};             //!< Streaming state (true = playing, false = stopped)
-    unsigned int                 m_buffers[BufferCount]{};    //!< Sound buffers used to store temporary audio data
-    unsigned int                 m_channelCount{};            //!< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int                 m_sampleRate{};              //!< Frequency (samples / second)
-    std::int32_t                 m_format{};                  //!< Format of the internal sound buffers
-    bool                         m_loop{};                    //!< Loop flag (true to loop, false to play once)
-    std::uint64_t                m_samplesProcessed{}; //!< Number of samples processed since beginning of the stream
-    std::int64_t                 m_bufferSeeks[BufferCount]{}; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
-    Time m_processingInterval{milliseconds(10)}; //!< Interval for checking and filling the internal sound buffers.
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf

@@ -4,10 +4,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
 # all source files
 set(SRC
-    ${SRCROOT}/ALCheck.cpp
-    ${SRCROOT}/ALCheck.hpp
-    ${SRCROOT}/AlResource.cpp
-    ${INCROOT}/AlResource.hpp
+    ${SRCROOT}/AudioResource.cpp
+    ${INCROOT}/AudioResource.hpp
     ${SRCROOT}/AudioDevice.cpp
     ${SRCROOT}/AudioDevice.hpp
     ${INCROOT}/Export.hpp
@@ -21,6 +19,7 @@ set(SRC
     ${INCROOT}/SoundBuffer.hpp
     ${SRCROOT}/SoundBufferRecorder.cpp
     ${INCROOT}/SoundBufferRecorder.hpp
+    ${INCROOT}/SoundChannel.hpp
     ${SRCROOT}/InputSoundFile.cpp
     ${INCROOT}/InputSoundFile.hpp
     ${SRCROOT}/OutputSoundFile.cpp
@@ -57,18 +56,14 @@ set(CODECS_SRC
 )
 source_group("codecs" FILES ${CODECS_SRC})
 
-# let CMake know about our additional audio libraries paths (on Windows and OSX)
-if(SFML_OS_WINDOWS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
-elseif(SFML_OS_MACOSX)
+# let CMake know about our additional audio libraries paths (on Android and OSX)
+if(SFML_OS_MACOSX)
     list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-osx/Frameworks")
 elseif(SFML_OS_ANDROID)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
     list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/android")
 endif()
 
 # find external libraries
-sfml_find_package(OpenAL INCLUDE "OPENAL_INCLUDE_DIR" LINK "OPENAL_LIBRARY")
 sfml_find_package(VORBIS INCLUDE "VORBIS_INCLUDE_DIRS" LINK "VORBIS_LIBRARIES")
 sfml_find_package(FLAC INCLUDE "FLAC_INCLUDE_DIR" LINK "FLAC_LIBRARY")
 
@@ -83,7 +78,10 @@ sfml_add_library(Audio
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
-                      PRIVATE OpenAL VORBIS FLAC)
+                      PRIVATE VORBIS FLAC)
+
+# miniaudio sources
+target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/miniaudio")
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")

@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector3.hpp>
 
 
@@ -39,6 +40,24 @@
 ////////////////////////////////////////////////////////////
 namespace sf::Listener
 {
+////////////////////////////////////////////////////////////
+/// \brief Structure defining the properties of a directional cone
+///
+/// Sounds will play at gain 1 when they are positioned
+/// within the inner angle of the cone. Sounds will play
+/// at outerGain when they are positioned outside the
+/// outer angle of the cone. The gain declines linearly
+/// from 1 to outerGain as the sound moves from the inner
+/// angle to the outer angle.
+///
+////////////////////////////////////////////////////////////
+struct Cone
+{
+    Angle innerAngle; //!< Inner angle, default is 360 degrees
+    Angle outerAngle; //!< Outer angle, default is 360 degrees
+    float outerGain;  //!< Outer gain, default is 1
+};
+
 ////////////////////////////////////////////////////////////
 /// \brief Change the global volume of all the sounds and musics
 ///
@@ -111,6 +130,51 @@ SFML_AUDIO_API void setDirection(const Vector3f& direction);
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API Vector3f getDirection();
+
+////////////////////////////////////////////////////////////
+/// \brief Set the velocity of the listener in the scene
+///
+/// The default listener's velocity is (0, 0, -1).
+///
+/// \param velocity New listener's velocity
+///
+/// \see getVelocity, getDirection, setUpVector, setPosition
+///
+////////////////////////////////////////////////////////////
+SFML_AUDIO_API void setVelocity(const Vector3f& velocity);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the current forward vector of the listener in the scene
+///
+/// \return Listener's velocity
+///
+/// \see setVelocity
+///
+////////////////////////////////////////////////////////////
+SFML_AUDIO_API Vector3f getVelocity();
+
+////////////////////////////////////////////////////////////
+/// \brief Set the cone properties of the listener in the audio scene
+///
+/// The cone defines how directional attenuation is applied.
+/// The default cone of a sound is {2 * PI, 2 * PI, 1}.
+///
+/// \param cone Cone properties of the listener in the scene
+///
+/// \see getCone
+///
+////////////////////////////////////////////////////////////
+SFML_AUDIO_API void setCone(const Listener::Cone& cone);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the cone properties of the listener in the audio scene
+///
+/// \return Cone properties of the listener
+///
+/// \see setCone
+///
+////////////////////////////////////////////////////////////
+SFML_AUDIO_API Listener::Cone getCone();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the upward vector of the listener in the scene

@@ -118,6 +118,64 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
     info.sampleRate         = static_cast<unsigned int>(vorbisInfo->rate);
     info.sampleCount        = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
 
+    // For Vorbis channel mapping refer to: https://xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-810004.3.9
+    switch (info.channelCount)
+    {
+        case 0:
+            err() << "No channels in Vorbis file" << std::endl;
+            break;
+        case 1:
+            info.channelMap = {SoundChannel::Mono};
+            break;
+        case 2:
+            info.channelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight};
+            break;
+        case 3:
+            info.channelMap = {SoundChannel::FrontLeft, SoundChannel::FrontCenter, SoundChannel::FrontRight};
+            break;
+        case 4:
+            info.channelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight, SoundChannel::BackLeft, SoundChannel::BackRight};
+            break;
+        case 5:
+            info.channelMap = {SoundChannel::FrontLeft,
+                               SoundChannel::FrontCenter,
+                               SoundChannel::FrontRight,
+                               SoundChannel::BackLeft,
+                               SoundChannel::BackRight};
+            break;
+        case 6:
+            info.channelMap = {SoundChannel::FrontLeft,
+                               SoundChannel::FrontCenter,
+                               SoundChannel::FrontRight,
+                               SoundChannel::BackLeft,
+                               SoundChannel::BackRight,
+                               SoundChannel::LowFrequencyEffects};
+            break;
+        case 7:
+            info.channelMap = {SoundChannel::FrontLeft,
+                               SoundChannel::FrontCenter,
+                               SoundChannel::FrontRight,
+                               SoundChannel::SideLeft,
+                               SoundChannel::SideRight,
+                               SoundChannel::BackCenter,
+                               SoundChannel::LowFrequencyEffects};
+            break;
+        case 8:
+            info.channelMap = {SoundChannel::FrontLeft,
+                               SoundChannel::FrontCenter,
+                               SoundChannel::FrontRight,
+                               SoundChannel::SideLeft,
+                               SoundChannel::SideRight,
+                               SoundChannel::BackLeft,
+                               SoundChannel::BackRight,
+                               SoundChannel::LowFrequencyEffects};
+            break;
+        default:
+            err() << "Vorbis files with more than 8 channels not supported" << std::endl;
+            assert(false);
+            break;
+    }
+
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
 

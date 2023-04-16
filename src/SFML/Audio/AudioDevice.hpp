@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Listener.hpp>
 #include <SFML/System/Vector3.hpp>
 
-#include <string>
+#include <memory>
 
 
 namespace sf::priv
@@ -56,28 +57,16 @@ public:
     ~AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if an OpenAL extension is supported
+    /// \brief Get the audio engine
     ///
-    /// This functions automatically finds whether it
-    /// is an AL or ALC extension, and calls the corresponding
-    /// function.
+    /// There should only be a single instance of AudioDevice.
+    /// As long as an AudioResource exists, this function should
+    /// always return a valid pointer to the audio engine.
     ///
-    /// \param extension Name of the extension to test
-    ///
-    /// \return True if the extension is supported, false if not
+    /// \return The audio engine
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionSupported(const std::string& extension);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenAL format that matches the given number of channels
-    ///
-    /// \param channelCount Number of channels
-    ///
-    /// \return Corresponding format
-    ///
-    ////////////////////////////////////////////////////////////
-    static int getFormatFromChannelCount(unsigned int channelCount);
+    static void* getEngine();
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the global volume of all the sounds and musics
@@ -153,6 +142,51 @@ public:
     static Vector3f getDirection();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the velocity of the listener in the scene
+    ///
+    /// The default listener's velocity is (0, 0, -1).
+    ///
+    /// \param velocity New listener's velocity
+    ///
+    /// \see getVelocity, getDirection, setUpVector, setPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVelocity(const Vector3f& velocity);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current forward vector of the listener in the scene
+    ///
+    /// \return Listener's velocity
+    ///
+    /// \see setVelocity
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector3f getVelocity();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the cone properties of the listener in the audio scene
+    ///
+    /// The cone defines how directional attenuation is applied.
+    /// The default cone of a sound is {2 * PI, 2 * PI, 1}.
+    ///
+    /// \param cone Cone properties of the listener in the scene
+    ///
+    /// \see getCone
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setCone(const Listener::Cone& cone);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the cone properties of the listener in the audio scene
+    ///
+    /// \return Cone properties of the listener
+    ///
+    /// \see setCone
+    ///
+    ////////////////////////////////////////////////////////////
+    static Listener::Cone getCone();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the upward vector of the listener in the scene
     ///
     /// The up vector is the vector that points upward from the
@@ -178,6 +212,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static Vector3f getUpVector();
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf::priv

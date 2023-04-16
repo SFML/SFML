@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/SoundChannel.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 
 #include <filesystem>
@@ -58,11 +59,15 @@ public:
     /// \param filename     Path of the sound file to write
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels in the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path&     filename,
+                                    unsigned int                     sampleRate,
+                                    unsigned int                     channelCount,
+                                    const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file

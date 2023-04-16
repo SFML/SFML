@@ -33,6 +33,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 #include <cstddef>
 
@@ -123,6 +124,19 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     unsigned int getSampleRate() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the map of position in sample frame to sound channel
+    ///
+    /// This is used to map a sample in the sample stream to a
+    /// position during spatialisation.
+    ///
+    /// \return Map of position in sample frame to sound channel
+    ///
+    /// \see getSampleRate, getChannelCount, getDuration
+    ///
+    ////////////////////////////////////////////////////////////
+    std::vector<SoundChannel> getChannelMap() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the sound file
@@ -228,6 +242,7 @@ private:
     std::uint64_t                               m_sampleCount{};          //!< Total number of samples in the file
     unsigned int                                m_channelCount{};         //!< Number of channels of the sound
     unsigned int                                m_sampleRate{};           //!< Number of samples per second
+    std::vector<SoundChannel>                   m_channelMap;             //!< The map of position in sample frame to sound channel
 };
 
 } // namespace sf

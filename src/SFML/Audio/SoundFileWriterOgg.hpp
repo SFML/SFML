@@ -72,11 +72,15 @@ public:
     /// \param filename     Path of the file to open
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount) override;
+    [[nodiscard]] bool open(const std::filesystem::path&     filename,
+                            unsigned int                     sampleRate,
+                            unsigned int                     channelCount,
+                            const std::vector<SoundChannel>& channelMap) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -103,11 +107,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount{}; // channel count of the sound being written
-    std::ofstream    m_file;           // output file
-    ogg_stream_state m_ogg{};          // ogg stream
-    vorbis_info      m_vorbis{};       // vorbis handle
-    vorbis_dsp_state m_state{};        // current encoding state
+    unsigned int     m_channelCount{};  //!< Channel count of the sound being written
+    std::size_t      m_remapTable[8]{}; //!< Table we use to remap source to target channel order
+    std::ofstream    m_file;            //!< Output file
+    ogg_stream_state m_ogg{};           //!< OGG stream
+    vorbis_info      m_vorbis{};        //!< Vorbis handle
+    vorbis_dsp_state m_state{};         //!< Current encoding state
 };
 
 } // namespace sf::priv

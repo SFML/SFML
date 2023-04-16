@@ -307,6 +307,61 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                 if (!decode(*m_stream, channelMask))
                     return false;
 
+                // For WAVE channel mapping refer to: https://learn.microsoft.com/en-us/previous-versions/windows/hardware/design/dn653308(v=vs.85)#default-channel-ordering
+                static constexpr auto SPEAKER_FRONT_LEFT            = 0x1u;
+                static constexpr auto SPEAKER_FRONT_RIGHT           = 0x2u;
+                static constexpr auto SPEAKER_FRONT_CENTER          = 0x4u;
+                static constexpr auto SPEAKER_LOW_FREQUENCY         = 0x8u;
+                static constexpr auto SPEAKER_BACK_LEFT             = 0x10u;
+                static constexpr auto SPEAKER_BACK_RIGHT            = 0x20u;
+                static constexpr auto SPEAKER_FRONT_LEFT_OF_CENTER  = 0x40u;
+                static constexpr auto SPEAKER_FRONT_RIGHT_OF_CENTER = 0x80u;
+                static constexpr auto SPEAKER_BACK_CENTER           = 0x100u;
+                static constexpr auto SPEAKER_SIDE_LEFT             = 0x200u;
+                static constexpr auto SPEAKER_SIDE_RIGHT            = 0x400u;
+                static constexpr auto SPEAKER_TOP_CENTER            = 0x800u;
+                static constexpr auto SPEAKER_TOP_FRONT_LEFT        = 0x1000u;
+                static constexpr auto SPEAKER_TOP_FRONT_CENTER      = 0x2000u;
+                static constexpr auto SPEAKER_TOP_FRONT_RIGHT       = 0x4000u;
+                static constexpr auto SPEAKER_TOP_BACK_LEFT         = 0x8000u;
+                static constexpr auto SPEAKER_TOP_BACK_CENTER       = 0x10000u;
+                static constexpr auto SPEAKER_TOP_BACK_RIGHT        = 0x20000u;
+
+                info.channelMap.clear();
+
+                auto checkChannel = [&](auto bit, auto soundChannel)
+                {
+                    if ((channelMask & bit) != 0)
+                        info.channelMap.push_back(soundChannel);
+                };
+
+                checkChannel(SPEAKER_FRONT_LEFT, SoundChannel::FrontLeft);
+                checkChannel(SPEAKER_FRONT_RIGHT, SoundChannel::FrontRight);
+                checkChannel(SPEAKER_FRONT_CENTER, SoundChannel::FrontCenter);
+                checkChannel(SPEAKER_LOW_FREQUENCY, SoundChannel::LowFrequencyEffects);
+                checkChannel(SPEAKER_BACK_LEFT, SoundChannel::BackLeft);
+                checkChannel(SPEAKER_BACK_RIGHT, SoundChannel::BackRight);
+                checkChannel(SPEAKER_FRONT_LEFT_OF_CENTER, SoundChannel::FrontLeftOfCenter);
+                checkChannel(SPEAKER_FRONT_RIGHT_OF_CENTER, SoundChannel::FrontRightOfCenter);
+                checkChannel(SPEAKER_BACK_CENTER, SoundChannel::BackCenter);
+                checkChannel(SPEAKER_SIDE_LEFT, SoundChannel::SideLeft);
+                checkChannel(SPEAKER_SIDE_RIGHT, SoundChannel::SideRight);
+                checkChannel(SPEAKER_TOP_CENTER, SoundChannel::TopCenter);
+                checkChannel(SPEAKER_TOP_FRONT_LEFT, SoundChannel::TopFrontLeft);
+                checkChannel(SPEAKER_TOP_FRONT_CENTER, SoundChannel::TopFrontCenter);
+                checkChannel(SPEAKER_TOP_FRONT_RIGHT, SoundChannel::TopFrontRight);
+                checkChannel(SPEAKER_TOP_BACK_LEFT, SoundChannel::TopBackLeft);
+                checkChannel(SPEAKER_TOP_BACK_CENTER, SoundChannel::TopBackCenter);
+                checkChannel(SPEAKER_TOP_BACK_RIGHT, SoundChannel::TopBackRight);
+
+                assert(info.channelCount == info.channelMap.size());
+
+                if (info.channelCount != info.channelMap.size())
+                {
+                    err() << "WAV sound file channel count does not match number of set bits in channel mask" << std::endl;
+                    return false;
+                }
+
                 // Subformat
                 char subformat[16];
                 if (static_cast<std::size_t>(m_stream->read(subformat, static_cast<std::int64_t>(sizeof(subformat)))) !=
@@ -326,6 +381,34 @@ bool SoundFileReaderWav::parseHeader(Info& info)
                              "sample container size ("
                           << bitsPerSample << " bits) differ" << std::endl;
                     return false;
+                }
+            }
+            else
+            {
+                // If we don't have a waveFormatExtensible header, fill the channel map based on a best guess for mono/stereo
+                info.channelMap.clear();
+
+                if (info.channelCount == 0)
+                {
+                    err() << "WAV sound file channel count 0" << std::endl;
+                    return false;
+                }
+                else if (info.channelCount == 1)
+                {
+                    info.channelMap.push_back(SoundChannel::Mono);
+                }
+                else if (info.channelCount == 2)
+                {
+                    info.channelMap.push_back(SoundChannel::FrontLeft);
+                    info.channelMap.push_back(SoundChannel::FrontRight);
+                }
+                else
+                {
+                    info.channelMap.push_back(SoundChannel::FrontLeft);
+                    info.channelMap.push_back(SoundChannel::FrontRight);
+
+                    for (auto i = 2u; i < info.channelCount; ++i)
+                        info.channelMap.push_back(SoundChannel::Unspecified);
                 }
             }
 

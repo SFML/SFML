@@ -193,7 +193,6 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
 #undef _SFML_S
 #undef _SFML_QS
 #endif
-    loadLibrary("openal", lJNIEnv, ObjectActivityInfo);
 
 #if !defined(SFML_DEBUG)
     loadLibrary("sfml-system", lJNIEnv, ObjectActivityInfo);

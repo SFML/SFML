@@ -70,11 +70,15 @@ public:
     /// \param filename     Path of the file to open
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount) override;
+    [[nodiscard]] bool open(const std::filesystem::path&     filename,
+                            unsigned int                     sampleRate,
+                            unsigned int                     channelCount,
+                            const std::vector<SoundChannel>& channelMap) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -91,11 +95,12 @@ private:
     ///
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
+    /// \param channelMask  Channel mask bits if we are writing extensible header
     ///
     /// \return True on success, false on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool writeHeader(unsigned int sampleRate, unsigned int channelCount);
+    [[nodiscard]] bool writeHeader(unsigned int sampleRate, unsigned int channelCount, unsigned int channelMask);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the file
@@ -106,7 +111,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::ofstream m_file; //!< File stream to write to
+    std::ofstream m_file;             //!< File stream to write to
+    unsigned int  m_channelCount{};   //!< Channel count of the sound being written
+    std::size_t   m_remapTable[18]{}; //!< Table we use to remap source to target channel order
 };
 
 } // namespace sf::priv

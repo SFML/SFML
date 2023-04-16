@@ -29,11 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
-#include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 
 #include <filesystem>
-#include <vector>
 
 
 namespace sf
@@ -61,6 +59,12 @@ public:
 
     // Define the relevant Span types
     using TimeSpan = Span<Time>;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Music();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -244,10 +248,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile            m_file;     //!< The streamed music file
-    std::vector<std::int16_t> m_samples;  //!< Temporary buffer of samples
-    std::recursive_mutex      m_mutex;    //!< Mutex protecting the data
-    Span<std::uint64_t>       m_loopSpan; //!< Loop Range Specifier
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf
