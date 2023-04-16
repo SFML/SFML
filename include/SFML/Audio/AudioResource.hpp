@@ -22,75 +22,47 @@
 //
 ////////////////////////////////////////////////////////////
 
+#pragma once
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundFileFactory.hpp> // NOLINT(misc-header-include-cycle)
+#include <SFML/Audio/Export.hpp>
 
 #include <memory>
 
+
 namespace sf
 {
-namespace priv
-{
-template <typename T>
-std::unique_ptr<SoundFileReader> createReader()
-{
-    return std::make_unique<T>();
-}
-template <typename T>
-std::unique_ptr<SoundFileWriter> createWriter()
-{
-    return std::make_unique<T>();
-}
-} // namespace priv
-
-
 ////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::registerReader()
-{
-    getReaderFactoryMap()[&priv::createReader<T>] = &T::check;
-}
-
-
+/// \brief Base class for classes that require an audio device
+///
 ////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::unregisterReader()
+class SFML_AUDIO_API AudioResource
 {
-    getReaderFactoryMap().erase(&priv::createReader<T>);
-}
+protected:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    AudioResource();
 
-
-////////////////////////////////////////////////////////////
-template <typename T>
-bool SoundFileFactory::isReaderRegistered()
-{
-    return getReaderFactoryMap().count(&priv::createReader<T>) == 1;
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::registerWriter()
-{
-    getWriterFactoryMap()[&priv::createWriter<T>] = &T::check;
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::unregisterWriter()
-{
-    getWriterFactoryMap().erase(&priv::createWriter<T>);
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-bool SoundFileFactory::isWriterRegistered()
-{
-    return getWriterFactoryMap().count(&priv::createWriter<T>) == 1;
-}
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const std::shared_ptr<void> m_device; //!< Sound device
+};
 
 } // namespace sf
+
+
+////////////////////////////////////////////////////////////
+/// \class sf::AlResource
+/// \ingroup audio
+///
+/// This class is for internal use only, it must be the base
+/// of every class that requires a valid audio device in
+/// order to work.
+///
+////////////////////////////////////////////////////////////

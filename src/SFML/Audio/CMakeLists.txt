@@ -3,15 +3,16 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
 # all source files
 set(SRC
-    ${SRCROOT}/ALCheck.cpp
-    ${SRCROOT}/ALCheck.hpp
-    ${SRCROOT}/AlResource.cpp
-    ${INCROOT}/AlResource.hpp
+    ${SRCROOT}/AudioResource.cpp
+    ${INCROOT}/AudioResource.hpp
     ${SRCROOT}/AudioDevice.cpp
     ${SRCROOT}/AudioDevice.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Listener.cpp
     ${INCROOT}/Listener.hpp
+    ${SRCROOT}/Miniaudio.cpp
+    ${SRCROOT}/MiniaudioUtils.hpp
+    ${SRCROOT}/MiniaudioUtils.cpp
     ${SRCROOT}/Music.cpp
     ${INCROOT}/Music.hpp
     ${SRCROOT}/Sound.cpp
@@ -20,6 +21,7 @@ set(SRC
     ${INCROOT}/SoundBuffer.hpp
     ${SRCROOT}/SoundBufferRecorder.cpp
     ${INCROOT}/SoundBufferRecorder.hpp
+    ${INCROOT}/SoundChannel.hpp
     ${SRCROOT}/InputSoundFile.cpp
     ${INCROOT}/InputSoundFile.hpp
     ${SRCROOT}/OutputSoundFile.cpp
@@ -56,18 +58,21 @@ set(CODECS_SRC
 )
 source_group("codecs" FILES ${CODECS_SRC})
 
-# let CMake know about our additional audio libraries paths (on Windows and macOS)
-if(SFML_OS_WINDOWS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
-elseif(SFML_OS_MACOS)
+# Ensure certain files are compiled as Objective-C++
+# See: https://miniaud.io/docs/manual/index.html#Building
+if(SFML_OS_IOS)
+    enable_language(OBJCXX)
+    set_source_files_properties(${SRCROOT}/Miniaudio.cpp PROPERTIES LANGUAGE OBJCXX)
+endif()
+
+# let CMake know about our additional audio libraries paths (on Android and macOS)
+if(SFML_OS_MACOS)
     list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks")
 elseif(SFML_OS_ANDROID)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/AL")
     list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/android")
 endif()
 
 # find external libraries
-find_package(OpenAL REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(FLAC REQUIRED)
 
@@ -78,17 +83,29 @@ sfml_add_library(Audio
 # avoids warnings in vorbisfile.h
 target_compile_definitions(sfml-audio PRIVATE OV_EXCLUDE_STATIC_CALLBACKS FLAC__NO_DLL)
 
+# disable miniaudio features we do not use
+target_compile_definitions(sfml-audio PRIVATE MA_NO_DECODING MA_NO_ENCODING MA_NO_RESOURCE_MANAGER MA_NO_GENERATION)
+
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
-                      PRIVATE OpenAL::OpenAL Vorbis::vorbis FLAC::FLAC)
-if(NOT SFML_OS_IOS)
+                      PRIVATE Vorbis::vorbis FLAC::FLAC)
+if(SFML_OS_IOS)
+    target_link_libraries(sfml-audio PRIVATE "-framework Foundation" "-framework CoreFoundation" "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation")
+else()
     target_link_libraries(sfml-audio PRIVATE Vorbis::vorbisfile Vorbis::vorbisenc)
 endif()
+
+# miniaudio sources
+target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/miniaudio")
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")
 
 if(SFML_OS_ANDROID)
     target_link_libraries(sfml-audio PRIVATE android OpenSLES)
+endif()
+
+if(SFML_OS_LINUX)
+    target_link_libraries(sfml-audio PRIVATE dl)
 endif()
