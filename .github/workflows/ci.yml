@@ -36,10 +36,10 @@ jobs:
         - { name: Windows VS2022 Unity,           os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_UNITY_BUILD=ON -GNinja }
         - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=clang++ -GNinja }
         - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -GNinja }
-        - { name: Linux GCC,                      os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
-        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
-        - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
-        - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
+        - { name: Linux GCC,                      os: ubuntu-22.04, flags: -GNinja }
+        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: macOS x64,                      os: macos-12, flags: -GNinja }
         - { name: macOS x64 Xcode,                os: macos-12, flags: -GXcode }
         - { name: macOS arm64,                    os: macos-14, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
@@ -56,9 +56,9 @@ jobs:
         - platform: { name: Windows VS2022 x64, os: windows-2022 }
           config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=TRUE -GNinja -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: Linux Clang, os: ubuntu-22.04 }
-          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
+          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
         - platform: { name: Windows MinGW, os: windows-2022 }
@@ -134,6 +134,10 @@ jobs:
         CLANG_VERSION=$(clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/\1/p')
         echo "CLANG_VERSION=$CLANG_VERSION" >> $GITHUB_ENV
         sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
+
+    - name: Remove ALSA Library
+      if: runner.os == 'Linux' && matrix.platform.name != 'Android'
+      run: sudo apt-get remove -y libasound2
 
     # LIBCXX_SHARED_SO is the path used by CMake to copy the necessary runtime library to the AVD
     # We find it by searching ANDROID_NDK_ROOT for file paths ending with matrix.config.libcxx
@@ -386,9 +390,9 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux,               os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
-        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
-        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
+        - { name: Linux,               os: ubuntu-22.04, flags: }
+        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
 
     steps:
     - name: Checkout Code
@@ -402,7 +406,7 @@ jobs:
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox && sudo apt-get remove -y libasound2
 
     - name: Configure
       run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
