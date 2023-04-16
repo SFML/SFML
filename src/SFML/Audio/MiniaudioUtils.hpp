@@ -22,75 +22,57 @@
 //
 ////////////////////////////////////////////////////////////
 
+#pragma once
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundFileFactory.hpp> // NOLINT(misc-header-include-cycle)
+#include <SFML/Audio/SoundChannel.hpp>
 
-#include <memory>
+#include <miniaudio.h>
+
+#include <functional>
+
+
+////////////////////////////////////////////////////////////
+// Forward declarations
+////////////////////////////////////////////////////////////
 
 namespace sf
 {
-namespace priv
-{
-template <typename T>
-std::unique_ptr<SoundFileReader> createReader()
-{
-    return std::make_unique<T>();
-}
-template <typename T>
-std::unique_ptr<SoundFileWriter> createWriter()
-{
-    return std::make_unique<T>();
-}
-} // namespace priv
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::registerReader()
-{
-    getReaderFactoryMap()[&priv::createReader<T>] = &T::check;
+class Time;
 }
 
 
 ////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::unregisterReader()
-{
-    getReaderFactoryMap().erase(&priv::createReader<T>);
-}
-
-
+// Declaration of 'MiniaudioUtils'
 ////////////////////////////////////////////////////////////
-template <typename T>
-bool SoundFileFactory::isReaderRegistered()
+
+namespace sf::priv
 {
-    return getReaderFactoryMap().count(&priv::createReader<T>) == 1;
-}
-
-
 ////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::registerWriter()
+class MiniaudioUtils
 {
-    getWriterFactoryMap()[&priv::createWriter<T>] = &T::check;
-}
+private:
+    struct SavedSettings;
 
+    [[nodiscard]] static SavedSettings saveSettings(const ma_sound& sound);
+    static void                        applySettings(ma_sound& sound, const SavedSettings& savedSettings);
 
-////////////////////////////////////////////////////////////
-template <typename T>
-void SoundFileFactory::unregisterWriter()
-{
-    getWriterFactoryMap().erase(&priv::createWriter<T>);
-}
+    static void initializeSoundWithDefaultSettings(ma_sound& sound);
+    static void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable);
 
+public:
+    [[nodiscard]] static ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
+    [[nodiscard]] static Time       getPlayingOffset(ma_sound& sound);
+    [[nodiscard]] static ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
 
-////////////////////////////////////////////////////////////
-template <typename T>
-bool SoundFileFactory::isWriterRegistered()
-{
-    return getWriterFactoryMap().count(&priv::createWriter<T>) == 1;
-}
+    static void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
 
-} // namespace sf
+    static void initializeSound(const ma_data_source_vtable& vtable,
+                                ma_data_source_base&         dataSourceBase,
+                                ma_sound&                    sound,
+                                const std::function<void()>& initializeFn);
+};
+
+} // namespace sf::priv
