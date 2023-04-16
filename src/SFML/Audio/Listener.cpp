@@ -74,6 +74,34 @@ Vector3f Listener::getDirection()
 
 
 ////////////////////////////////////////////////////////////
+void Listener::setVelocity(const Vector3f& velocity)
+{
+    priv::AudioDevice::setVelocity(velocity);
+}
+
+
+////////////////////////////////////////////////////////////
+Vector3f Listener::getVelocity()
+{
+    return priv::AudioDevice::getVelocity();
+}
+
+
+////////////////////////////////////////////////////////////
+void Listener::setCone(const Listener::Cone& cone)
+{
+    priv::AudioDevice::setCone(cone);
+}
+
+
+////////////////////////////////////////////////////////////
+Listener::Cone Listener::getCone()
+{
+    return priv::AudioDevice::getCone();
+}
+
+
+////////////////////////////////////////////////////////////
 void Listener::setUpVector(const Vector3f& upVector)
 {
     priv::AudioDevice::setUpVector(upVector);

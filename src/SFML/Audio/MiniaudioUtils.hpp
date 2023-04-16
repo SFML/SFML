@@ -22,62 +22,36 @@
 //
 ////////////////////////////////////////////////////////////
 
+#pragma once
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBufferRecorder.hpp>
+#include <SFML/Audio/SoundChannel.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <miniaudio.h>
 
-#include <algorithm>
-#include <iterator>
-#include <ostream>
+#include <functional>
 
+
+////////////////////////////////////////////////////////////
+// Forward declarations
+////////////////////////////////////////////////////////////
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-SoundBufferRecorder::~SoundBufferRecorder()
-{
-    // Make sure to stop the recording thread
-    stop();
+class Time;
 }
 
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onStart()
+namespace sf::priv::MiniaudioUtils
 {
-    m_samples.clear();
-    m_buffer = SoundBuffer();
+[[nodiscard]] ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
+[[nodiscard]] Time       getPlayingOffset(ma_sound& sound);
+[[nodiscard]] ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
 
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const std::int16_t* samples, std::size_t sampleCount)
-{
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundBufferRecorder::onStop()
-{
-    if (m_samples.empty())
-        return;
-
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate(), getChannelMap()))
-        err() << "Failed to stop capturing audio data" << std::endl;
-}
-
-
-////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::getBuffer() const
-{
-    return m_buffer;
-}
-
-} // namespace sf
+void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
+void initializeSound(const ma_data_source_vtable& vtable,
+                     ma_data_source_base&         dataSourceBase,
+                     ma_sound&                    sound,
+                     const std::function<void()>& initializeFn);
+} // namespace sf::priv::MiniaudioUtils

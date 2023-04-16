@@ -31,6 +31,9 @@
 
 #include <SFML/Audio/SoundSource.hpp>
 
+#include <memory>
+
+#include <cstdlib>
 
 namespace sf
 {
@@ -218,18 +221,18 @@ private:
     void detachBuffer();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Re-attach sound to its internal buffer
+    /// \brief Get the sound object
     ///
-    /// This allows the sound buffer to attach back the sounds
-    /// that use it after the sound buffer has been updated.
+    /// \return The sound object
     ///
     ////////////////////////////////////////////////////////////
-    void reattachBuffer();
+    void* getSound() const override;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const SoundBuffer* m_buffer{}; //!< Sound buffer bound to the source
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf

@@ -229,8 +229,8 @@ require () # $1 is a SFML module like 'system' or 'audio'
         # copy extra dependencies
         if [ "$1" = "audio" ]
         then
-            # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL" frameworks too
-            for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" "OpenAL"
+            # copy "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile" frameworks too
+            for f in "FLAC" "ogg" "vorbis" "vorbisenc" "vorbisfile"
             do
                 copy "$SFML_DEPENDENCIES_INSTALL_PREFIX/$f.framework" "$dest/$f.framework"
             done
