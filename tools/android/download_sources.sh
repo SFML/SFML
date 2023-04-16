@@ -39,11 +39,3 @@ if [ ! -d "$PWD/tmp/$FREETYPE" ]
 then
     tar -C build -xf src/$FREETYPE.tar.gz
 fi
-
-wget -nc -P src https://github.com/AerialX/openal-soft-android/archive/master.tar.gz
-if [ ! -d "$PWD/tmp/openal-soft-android-master" ]
-then
-    tar -C build -xf src/master.tar.gz
-fi
-
-patch build/openal-soft-android-master/CMakeLists.txt patches/remove-so-version-suffix.diff

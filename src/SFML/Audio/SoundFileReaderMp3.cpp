@@ -52,10 +52,13 @@
 
 #include <SFML/Audio/SoundFileReaderMp3.hpp>
 
+#include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 
 #include <algorithm>
+#include <ostream>
 
+#include <cassert>
 #include <cstdint>
 #include <cstring>
 
@@ -134,6 +137,24 @@ std::optional<SoundFileReader::Info> SoundFileReaderMp3::open(InputStream& strea
     info.channelCount = static_cast<unsigned int>(m_decoder.info.channels);
     info.sampleRate   = static_cast<unsigned int>(m_decoder.info.hz);
     info.sampleCount  = m_decoder.samples;
+
+    // MP3 only supports mono/stereo channels
+    switch (info.channelCount)
+    {
+        case 0:
+            sf::err() << "No channels in MP3 file" << std::endl;
+            break;
+        case 1:
+            info.channelMap = {sf::SoundChannel::Mono};
+            break;
+        case 2:
+            info.channelMap = {sf::SoundChannel::SideLeft, sf::SoundChannel::SideRight};
+            break;
+        default:
+            sf::err() << "MP3 files with more than 2 channels not supported" << std::endl;
+            assert(false);
+            break;
+    }
 
     m_numSamples = info.sampleCount;
     return info;

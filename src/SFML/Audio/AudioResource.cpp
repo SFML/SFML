@@ -25,59 +25,38 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBufferRecorder.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/AudioResource.hpp>
 
-#include <SFML/System/Err.hpp>
-
-#include <algorithm>
-#include <iterator>
-#include <ostream>
+#include <memory>
+#include <mutex>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBufferRecorder::~SoundBufferRecorder()
+AudioResource::AudioResource() :
+m_device(
+    []()
+    {
+        // Ensure we only ever create a single instance of an
+        // AudioDevice that is shared between all AudioResources
+        static std::mutex                           mutex;
+        static std::weak_ptr<sf::priv::AudioDevice> weakAudioDevice;
+
+        const std::lock_guard lock(mutex);
+
+        auto audioDevice = weakAudioDevice.lock();
+
+        if (audioDevice == nullptr)
+        {
+            audioDevice     = std::make_shared<priv::AudioDevice>();
+            weakAudioDevice = audioDevice;
+        }
+
+        return audioDevice;
+    }())
 {
-    // Make sure to stop the recording thread
-    stop();
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onStart()
-{
-    m_samples.clear();
-    m_buffer = SoundBuffer();
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const std::int16_t* samples, std::size_t sampleCount)
-{
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundBufferRecorder::onStop()
-{
-    if (m_samples.empty())
-        return;
-
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate(), getChannelMap()))
-        err() << "Failed to stop capturing audio data" << std::endl;
-}
-
-
-////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::getBuffer() const
-{
-    return m_buffer;
 }
 
 } // namespace sf

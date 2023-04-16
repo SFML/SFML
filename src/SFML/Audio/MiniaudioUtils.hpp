@@ -27,40 +27,51 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/Export.hpp>
+#include <SFML/Audio/SoundChannel.hpp>
 
+#include <miniaudio.h>
+
+#include <functional>
+
+
+////////////////////////////////////////////////////////////
+// Forward declarations
+////////////////////////////////////////////////////////////
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-/// \brief Base class for classes that require an OpenAL context
-///
-////////////////////////////////////////////////////////////
-class SFML_AUDIO_API AlResource
-{
-protected:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    AlResource();
+class Time;
+}
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~AlResource();
+
+////////////////////////////////////////////////////////////
+// Declaration of 'MiniaudioUtils'
+////////////////////////////////////////////////////////////
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+class MiniaudioUtils
+{
+private:
+    struct SavedSettings;
+
+    [[nodiscard]] static SavedSettings saveSettings(const ma_sound& sound);
+    static void                        applySettings(ma_sound& sound, const SavedSettings& savedSettings);
+
+    static void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable);
+
+public:
+    [[nodiscard]] static ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
+    [[nodiscard]] static Time       getPlayingOffset(ma_sound& sound);
+    [[nodiscard]] static ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
+
+    static void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
+
+    static void initializeSound(const ma_data_source_vtable& vtable,
+                                ma_data_source_base&         dataSourceBase,
+                                ma_sound&                    sound,
+                                const std::function<void()>& initializeFn);
 };
 
-} // namespace sf
-
-
-////////////////////////////////////////////////////////////
-/// \class sf::AlResource
-/// \ingroup audio
-///
-/// This class is for internal use only, it must be the base
-/// of every class that requires a valid OpenAL context in
-/// order to work.
-///
-////////////////////////////////////////////////////////////
+} // namespace sf::priv
