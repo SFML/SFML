@@ -37,6 +37,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <mutex>
 #include <ostream>
@@ -193,8 +194,8 @@ IntRect RenderTarget::getViewport(const View& view) const
     const auto [width, height] = Vector2f(getSize());
     const FloatRect& viewport  = view.getViewport();
 
-    return IntRect({static_cast<int>(0.5f + width * viewport.left), static_cast<int>(0.5f + height * viewport.top)},
-                   {static_cast<int>(0.5f + width * viewport.width), static_cast<int>(0.5f + height * viewport.height)});
+    return IntRect(Rect<long>({std::lround(width * viewport.left), std::lround(height * viewport.top)},
+                              {std::lround(width * viewport.width), std::lround(height * viewport.height)}));
 }
 
 
