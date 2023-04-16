@@ -36,13 +36,13 @@ jobs:
         - { name: Windows VS2022 Unity,           os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_UNITY_BUILD=ON -GNinja }
         - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=clang++ -GNinja }
         - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -GNinja }
-        - { name: Linux GCC,                      os: ubuntu-22.04, flags: -GNinja }
-        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
-        - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
-        - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: Linux GCC,                      os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
+        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
+        - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -GNinja }
         - { name: macOS x64,                      os: macos-12, flags: -GNinja }
         - { name: macOS x64 Xcode,                os: macos-12, flags: -GXcode }
-        - { name: macOS arm64,                    os: macos-14, flags: -GNinja }
+        - { name: macOS arm64,                    os: macos-14, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
         - { name: iOS,                            os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
         - { name: iOS Xcode,                      os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
         config:
@@ -56,9 +56,9 @@ jobs:
         - platform: { name: Windows VS2022 x64, os: windows-2022 }
           config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=TRUE -GNinja -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
         - platform: { name: Linux Clang, os: ubuntu-22.04 }
-          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
         - platform: { name: Windows MinGW, os: windows-2022 }
@@ -70,7 +70,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-latest }
           config:
             name: x86 (API 21)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86
             api: 21
             libcxx: i686-linux-android/libc++_shared.so
@@ -80,7 +80,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-latest }
           config:
             name: x86_64 (API 24)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86_64
             api: 24
             libcxx: x86_64-linux-android/libc++_shared.so
@@ -98,7 +98,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-latest }
           config:
             name: arm64-v8a (API 33)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: arm64-v8a
             api: 33
             libcxx: aarch64-linux-android/libc++_shared.so
@@ -386,9 +386,9 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux,               os: ubuntu-22.04 }
-        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
-        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
+        - { name: Linux,               os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
+        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
 
     steps:
     - name: Checkout Code
