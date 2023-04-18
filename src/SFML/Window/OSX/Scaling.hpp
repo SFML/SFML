@@ -26,33 +26,74 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <SFML/Window/OSX/WindowImplDelegateProtocol.hpp>
+
+#import <AppKit/AppKit.h>
+
+namespace sf::priv
+{
 
 ////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-@class SFOpenGLView;
-
-////////////////////////////////////////////////////////////
-/// \brief Implementation of WindowImplDelegateProtocol for view management
+/// \brief Get the scale factor of the main screen
 ///
 ////////////////////////////////////////////////////////////
-
-@interface SFViewController : NSObject<WindowImplDelegateProtocol>
+inline CGFloat getDefaultScaleFactor()
 {
-    NSView*                    m_view;      ///< Underlying Cocoa view
-    SFOpenGLView*              m_oglView;   ///< OpenGL view
-    sf::priv::WindowImplCocoa* m_requester; ///< View's requester
+    return [[NSScreen mainScreen] backingScaleFactor];
 }
 
 ////////////////////////////////////////////////////////////
-/// \brief Initialize the view controller
+/// \brief Scale SFML coordinates to backing coordinates
 ///
-/// \param view view to be controlled
-///
-/// \return an initialized view controller
+/// \param in SFML coordinates to be converted
+/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
 ///
 ////////////////////////////////////////////////////////////
-- (id)initWithView:(NSView*)view;
+template <class T>
+void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    in /= static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
+}
 
-@end
+template <class T>
+void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.size.x, delegate);
+    scaleIn(in.size.y, delegate);
+}
+
+template <class T>
+void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.x, delegate);
+    scaleIn(in.y, delegate);
+}
+
+////////////////////////////////////////////////////////////
+/// \brief Scale backing coordinates to SFML coordinates
+///
+/// \param out backing coordinates to be converted
+/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
+///
+////////////////////////////////////////////////////////////
+template <class T>
+void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    out = out * static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
+}
+
+template <class T>
+void scaleOutWidthHeight(T& width, T& height, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(width, delegate);
+    scaleOut(height, delegate);
+}
+
+template <class T>
+void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(out.x, delegate);
+    scaleOut(out.y, delegate);
+}
+
+} // namespace sf::priv

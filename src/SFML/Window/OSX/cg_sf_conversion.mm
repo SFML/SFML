@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/Scaling.h>
+#import <SFML/Window/OSX/Scaling.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 
 #include <SFML/System/Err.hpp>

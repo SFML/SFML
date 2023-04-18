@@ -26,8 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
-#import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFOpenGLView+mouse_priv.hpp>
+#import <SFML/Window/OSX/SFOpenGLView.hpp>
 #import <SFML/Window/OSX/SFSilentResponder.h>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 

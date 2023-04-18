@@ -26,74 +26,44 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#include <SFML/Window/Mouse.hpp>
+#import <SFML/Window/OSX/SFOpenGLView.hpp>
 
 #import <AppKit/AppKit.h>
 
-namespace sf::priv
-{
 
 ////////////////////////////////////////////////////////////
-/// \brief Get the scale factor of the main screen
+/// Here are defined a few private messages for keyboard
+/// handling in SFOpenGLView.
 ///
 ////////////////////////////////////////////////////////////
-inline CGFloat getDefaultScaleFactor()
-{
-    return [[NSScreen mainScreen] backingScaleFactor];
-}
+
+
+@interface SFOpenGLView (keyboard_priv)
 
 ////////////////////////////////////////////////////////////
-/// \brief Scale SFML coordinates to backing coordinates
+/// \brief Convert a key down/up NSEvent into an SFML key event
 ///
-/// \param in SFML coordinates to be converted
-/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
+/// The conversion is based on localizedKeys and nonLocalizedKeys functions.
 ///
-////////////////////////////////////////////////////////////
-template <class T>
-void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    in /= static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
-}
-
-template <class T>
-void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleIn(in.size.x, delegate);
-    scaleIn(in.size.y, delegate);
-}
-
-template <class T>
-void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleIn(in.x, delegate);
-    scaleIn(in.y, delegate);
-}
-
-////////////////////////////////////////////////////////////
-/// \brief Scale backing coordinates to SFML coordinates
+/// \param event a key event
 ///
-/// \param out backing coordinates to be converted
-/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
+/// \return sf::Keyboard::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
-template <class T>
-void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
-{
-    out = out * static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
-}
++ (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
 
-template <class T>
-void scaleOutWidthHeight(T& width, T& height, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleOut(width, delegate);
-    scaleOut(height, delegate);
-}
+////////////////////////////////////////////////////////////
+/// \brief Check if the event represent some Unicode text
+///
+/// The event is assumed to be a key down event.
+/// False is returned if the event is either escape or a non text Unicode.
+///
+/// \param event a key down event
+///
+/// \return true if event represents a Unicode character, false otherwise
+///
+////////////////////////////////////////////////////////////
++ (BOOL)isValidTextUnicode:(NSEvent*)event;
 
-template <class T>
-void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleOut(out.x, delegate);
-    scaleOut(out.y, delegate);
-}
-
-} // namespace sf::priv
+@end

@@ -29,12 +29,12 @@
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
-#import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
-#import <SFML/Window/OSX/SFViewController.h>
-#import <SFML/Window/OSX/SFWindowController.h>
-#import <SFML/Window/OSX/Scaling.h>
+#import <SFML/Window/OSX/SFKeyboardModifiersHelper.hpp>
+#import <SFML/Window/OSX/SFViewController.hpp>
+#import <SFML/Window/OSX/SFWindowController.hpp>
+#import <SFML/Window/OSX/Scaling.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
-#import <SFML/Window/OSX/cpp_objc_conversion.h>
+#import <SFML/Window/OSX/cpp_objc_conversion.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>

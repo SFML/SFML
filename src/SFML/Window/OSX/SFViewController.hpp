@@ -26,44 +26,32 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Mouse.hpp>
-#import <SFML/Window/OSX/SFOpenGLView.h>
-
-#import <AppKit/AppKit.h>
-
+#import <SFML/Window/OSX/WindowImplDelegateProtocol.hpp>
 
 ////////////////////////////////////////////////////////////
-/// Here are defined a few private messages for keyboard
-/// handling in SFOpenGLView.
+/// Predefine some classes
+////////////////////////////////////////////////////////////
+@class SFOpenGLView;
+
+////////////////////////////////////////////////////////////
+/// \brief Implementation of WindowImplDelegateProtocol for view management
 ///
 ////////////////////////////////////////////////////////////
 
-
-@interface SFOpenGLView (keyboard_priv)
-
-////////////////////////////////////////////////////////////
-/// \brief Convert a key down/up NSEvent into an SFML key event
-///
-/// The conversion is based on localizedKeys and nonLocalizedKeys functions.
-///
-/// \param event a key event
-///
-/// \return sf::Keyboard::Unknown as Code if the key is unknown
-///
-////////////////////////////////////////////////////////////
-+ (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
+@interface SFViewController : NSObject <WindowImplDelegateProtocol> {
+    NSView*                    m_view;      ///< Underlying Cocoa view
+    SFOpenGLView*              m_oglView;   ///< OpenGL view
+    sf::priv::WindowImplCocoa* m_requester; ///< View's requester
+}
 
 ////////////////////////////////////////////////////////////
-/// \brief Check if the event represent some Unicode text
+/// \brief Initialize the view controller
 ///
-/// The event is assumed to be a key down event.
-/// False is returned if the event is either escape or a non text Unicode.
+/// \param view view to be controlled
 ///
-/// \param event a key down event
-///
-/// \return true if event represents a Unicode character, false otherwise
+/// \return an initialized view controller
 ///
 ////////////////////////////////////////////////////////////
-+ (BOOL)isValidTextUnicode:(NSEvent*)event;
+- (id)initWithView:(NSView*)view;
 
 @end

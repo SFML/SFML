@@ -29,7 +29,7 @@
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/InputImpl.hpp>
-#import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFOpenGLView.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 

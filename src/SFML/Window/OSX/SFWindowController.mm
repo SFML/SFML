@@ -26,12 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/NSImage+raw.h>
+#import <SFML/Window/OSX/NSImage+raw.hpp>
 #import <SFML/Window/OSX/SFApplication.h>
-#import <SFML/Window/OSX/SFOpenGLView.h>
+#import <SFML/Window/OSX/SFOpenGLView.hpp>
 #import <SFML/Window/OSX/SFWindow.h>
-#import <SFML/Window/OSX/SFWindowController.h>
-#import <SFML/Window/OSX/Scaling.h>
+#import <SFML/Window/OSX/SFWindowController.hpp>
+#import <SFML/Window/OSX/Scaling.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>

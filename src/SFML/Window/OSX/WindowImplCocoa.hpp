@@ -39,7 +39,7 @@
 ////////////////////////////////////////////////////////////
 #ifdef __OBJC__
 
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <SFML/Window/OSX/WindowImplDelegateProtocol.hpp>
 using WindowImplDelegateRef = id<WindowImplDelegateProtocol, NSObject>;
 
 @class NSOpenGLContext;

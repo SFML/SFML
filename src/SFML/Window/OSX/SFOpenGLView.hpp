@@ -68,8 +68,7 @@ class WindowImplCocoa;
 /// the cursor (that was disconnected from the system).
 ///
 ////////////////////////////////////////////////////////////
-@interface SFOpenGLView : NSOpenGLView
-{
+@interface SFOpenGLView : NSOpenGLView {
     sf::priv::WindowImplCocoa* m_requester;     ///< View's requester
     BOOL                       m_useKeyRepeat;  ///< Key repeat setting
     BOOL                       m_mouseIsIn;     ///< Mouse positional state

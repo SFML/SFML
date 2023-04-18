@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
-#import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
-#import <SFML/Window/OSX/SFOpenGLView+keyboard_priv.h>
+#import <SFML/Window/OSX/SFKeyboardModifiersHelper.hpp>
+#import <SFML/Window/OSX/SFOpenGLView+keyboard_priv.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

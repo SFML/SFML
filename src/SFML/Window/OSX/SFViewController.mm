@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/OSX/SFApplication.h>
-#import <SFML/Window/OSX/SFOpenGLView.h>
-#import <SFML/Window/OSX/SFViewController.h>
+#import <SFML/Window/OSX/SFOpenGLView.hpp>
+#import <SFML/Window/OSX/SFViewController.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 
 #include <SFML/System/Err.hpp>

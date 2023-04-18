@@ -168,7 +168,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
 elseif(SFML_OS_MACOSX)
     enable_language(OBJC OBJCXX)
     set(PLATFORM_SRC
-        ${SRCROOT}/OSX/cpp_objc_conversion.h
+        ${SRCROOT}/OSX/cpp_objc_conversion.hpp
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
         ${SRCROOT}/OSX/cg_sf_conversion.hpp
         ${SRCROOT}/OSX/cg_sf_conversion.mm
@@ -184,9 +184,9 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/HIDJoystickManager.cpp
         ${SRCROOT}/OSX/JoystickImpl.cpp
         ${SRCROOT}/OSX/JoystickImpl.hpp
-        ${SRCROOT}/OSX/NSImage+raw.h
+        ${SRCROOT}/OSX/NSImage+raw.hpp
         ${SRCROOT}/OSX/NSImage+raw.mm
-        ${SRCROOT}/OSX/Scaling.h
+        ${SRCROOT}/OSX/Scaling.hpp
         ${SRCROOT}/OSX/SensorImpl.cpp
         ${SRCROOT}/OSX/SensorImpl.hpp
         ${SRCROOT}/OSX/SFApplication.h
@@ -195,26 +195,26 @@ elseif(SFML_OS_MACOSX)
         ${SRCROOT}/OSX/SFApplicationDelegate.m
         ${SRCROOT}/OSX/SFContext.hpp
         ${SRCROOT}/OSX/SFContext.mm
-        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.h
+        ${SRCROOT}/OSX/SFKeyboardModifiersHelper.hpp
         ${SRCROOT}/OSX/SFKeyboardModifiersHelper.mm
-        ${SRCROOT}/OSX/SFOpenGLView.h
+        ${SRCROOT}/OSX/SFOpenGLView.hpp
         ${SRCROOT}/OSX/SFOpenGLView.mm
         ${SRCROOT}/OSX/SFOpenGLView+keyboard.mm
-        ${SRCROOT}/OSX/SFOpenGLView+keyboard_priv.h
+        ${SRCROOT}/OSX/SFOpenGLView+keyboard_priv.hpp
         ${SRCROOT}/OSX/SFOpenGLView+mouse.mm
-        ${SRCROOT}/OSX/SFOpenGLView+mouse_priv.h
+        ${SRCROOT}/OSX/SFOpenGLView+mouse_priv.hpp
         ${SRCROOT}/OSX/SFSilentResponder.h
         ${SRCROOT}/OSX/SFSilentResponder.m
         ${SRCROOT}/OSX/SFWindow.h
         ${SRCROOT}/OSX/SFWindow.m
-        ${SRCROOT}/OSX/SFWindowController.h
+        ${SRCROOT}/OSX/SFWindowController.hpp
         ${SRCROOT}/OSX/SFWindowController.mm
-        ${SRCROOT}/OSX/SFViewController.h
+        ${SRCROOT}/OSX/SFViewController.hpp
         ${SRCROOT}/OSX/SFViewController.mm
         ${SRCROOT}/OSX/VideoModeImpl.cpp
         ${SRCROOT}/OSX/WindowImplCocoa.hpp
         ${SRCROOT}/OSX/WindowImplCocoa.mm
-        ${SRCROOT}/OSX/WindowImplDelegateProtocol.h
+        ${SRCROOT}/OSX/WindowImplDelegateProtocol.hpp
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.hpp
         ${SRCROOT}/OSX/AutoreleasePoolWrapper.mm
     )

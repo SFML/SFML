@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/CursorImpl.hpp>
-#import <SFML/Window/OSX/NSImage+raw.h>
+#import <SFML/Window/OSX/NSImage+raw.hpp>
 
 #import <AppKit/AppKit.h>
 

@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <SFML/Window/OSX/WindowImplDelegateProtocol.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 ////////////////////////////////////////////////////////////
@@ -53,8 +53,7 @@ class WindowImplCocoa;
 /// style is restored.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFWindowController : NSResponder<WindowImplDelegateProtocol, NSWindowDelegate>
-{
+@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate> {
     NSWindow*                  m_window;        ///< Underlying Cocoa window to be controlled
     SFOpenGLView*              m_oglView;       ///< OpenGL view for rendering
     sf::priv::WindowImplCocoa* m_requester;     ///< Requester
