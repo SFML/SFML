@@ -44,6 +44,11 @@ class Time;
 /// one provides more accurate sleeping time thanks to some
 /// platform-specific tweaks.
 ///
+/// sf::sleep only guarantees millisecond precision. Sleeping
+/// for a duration less than 1 millisecond is prone to result
+/// in the actual sleep duration being less than what is
+/// requested.
+///
 /// \param duration Time to sleep
 ///
 ////////////////////////////////////////////////////////////
