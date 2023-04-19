@@ -21,7 +21,7 @@ TEST_CASE("[Window] sf::Cursor" * doctest::skip(true))
 
     SUBCASE("Move Construction")
     {
-        sf::Cursor cursor;
+        sf::Cursor       cursor;
         const sf::Cursor movedCursor(std::move(cursor));
     }
 

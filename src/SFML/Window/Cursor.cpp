@@ -45,11 +45,11 @@ Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////
-Cursor::Cursor(Cursor&&) noexcept  = default;
+Cursor::Cursor(Cursor&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-Cursor& Cursor::operator=(Cursor&&) noexcept  = default;
+Cursor& Cursor::operator=(Cursor&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
