@@ -36,6 +36,7 @@ set(SYSTEM_SRC
     System/Err.test.cpp
     System/FileInputStream.test.cpp
     System/MemoryInputStream.test.cpp
+    System/Sleep.test.cpp
     System/String.test.cpp
     System/Time.test.cpp
     System/Vector2.test.cpp
