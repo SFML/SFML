@@ -19,6 +19,19 @@ TEST_CASE("[Window] sf::Cursor" * doctest::skip(true))
         const sf::Cursor cursor;
     }
 
+    SUBCASE("Move Construction")
+    {
+        sf::Cursor cursor;
+        const sf::Cursor moved_cursor(std::move(cursor));
+    }
+
+    SUBCASE("Move assigment operator")
+    {
+        sf::Cursor cursor;
+        sf::Cursor moved_cursor;
+        moved_cursor = std::move(cursor);
+    }
+
     SUBCASE("loadFromPixels()")
     {
         sf::Cursor                  cursor;
