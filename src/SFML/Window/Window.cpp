@@ -62,6 +62,17 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
+Window::Window(Window&& other) noexcept
+{
+    *this = std::move(other);
+}
+
+
+////////////////////////////////////////////////////////////
+Window& Window::operator=(Window&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, std::uint32_t style)
 {
     Window::create(mode, title, style, ContextSettings());

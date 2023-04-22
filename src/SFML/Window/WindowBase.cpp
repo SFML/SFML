@@ -71,6 +71,14 @@ WindowBase::~WindowBase()
 
 
 ////////////////////////////////////////////////////////////
+WindowBase::WindowBase(WindowBase&& other) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+WindowBase& WindowBase::operator=(WindowBase&& other) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style)
 {
     // Destroy the previous window implementation

@@ -12,8 +12,8 @@
 
 static_assert(!std::is_copy_constructible_v<sf::WindowBase>);
 static_assert(!std::is_copy_assignable_v<sf::WindowBase>);
-static_assert(!std::is_nothrow_move_constructible_v<sf::WindowBase>);
-static_assert(!std::is_nothrow_move_assignable_v<sf::WindowBase>);
+static_assert(std::is_nothrow_move_constructible_v<sf::WindowBase>);
+static_assert(std::is_nothrow_move_assignable_v<sf::WindowBase>);
 
 TEST_CASE("[Window] sf::WindowBase" * doctest::skip(skipDisplayTests))
 {
@@ -27,6 +27,27 @@ TEST_CASE("[Window] sf::WindowBase" * doctest::skip(skipDisplayTests))
             CHECK(windowBase.getSize() == sf::Vector2u());
             CHECK(!windowBase.hasFocus());
             CHECK(windowBase.getSystemHandle() == sf::WindowHandle());
+        }
+
+        SUBCASE("Move semantics")
+        {
+            SUBCASE("Construction")
+            {
+                sf::WindowBase       movedWindowBase;
+                const sf::WindowBase windowBase(std::move(movedWindowBase));
+                CHECK(windowBase.getSystemHandle() == sf::WindowHandle());
+                CHECK(windowBase.getSize() == sf::Vector2u());
+            }
+
+            SUBCASE("Assignment")
+            {
+                sf::WindowBase windowBase;
+                {
+                    sf::WindowBase movedWindowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
+                    windowBase = std::move(movedWindowBase);
+                }
+                CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
+            }
         }
 
         SUBCASE("Mode and title constructor")
