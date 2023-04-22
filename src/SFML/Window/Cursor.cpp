@@ -45,6 +45,14 @@ Cursor::~Cursor() = default;
 
 
 ////////////////////////////////////////////////////////////
+Cursor::Cursor(Cursor&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+Cursor& Cursor::operator=(Cursor&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 bool Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
