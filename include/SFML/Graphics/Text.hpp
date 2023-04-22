@@ -381,6 +381,23 @@ public:
     Vector2f findCharacterPos(std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Finds out of bounds characters for a given rect
+    ///
+    /// Iterates through every character in the string and tests
+    /// that they will fit within \a bounds. Each character is
+    /// fully transformed for this test, so translation,
+    /// rotation, scale and origin are considered.
+    ///
+    /// \param bounds rect that all drawn characters will be
+    /// tested against
+    ///
+    /// \return Index to first out of bounds character or
+    /// std::nullopt if all characters are in bounds.
+    ///
+    ////////////////////////////////////////////////////////////
+    std::optional<std::size_t> findOutOfBoundsCharacter(const sf::FloatRect& bounds) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
     ///
     /// The returned rectangle is in local coordinates, which means
