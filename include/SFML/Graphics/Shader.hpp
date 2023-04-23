@@ -33,6 +33,7 @@
 
 #include <SFML/Window/GlResource.hpp>
 
+#include <SFML/System/UniqueResource.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 
@@ -85,45 +86,6 @@ public:
     ////////////////////////////////////////////////////////////
     // NOLINTNEXTLINE(readability-identifier-naming)
     static CurrentTextureType CurrentTexture;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor creates an invalid shader.
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Shader();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader(const Shader&) = delete;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader& operator=(const Shader&) = delete;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader(Shader&& source) noexcept;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    Shader& operator=(Shader&& right) noexcept;
-
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -701,11 +663,15 @@ private:
     ////////////////////////////////////////////////////////////
     using TextureTable = std::unordered_map<int, const Texture*>;
     using UniformTable = std::unordered_map<std::string, int>;
+    struct SFML_GRAPHICS_API ShaderProgramDeleter
+    {
+        void operator()(unsigned int shaderProgram) const;
+    };
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram{};    //!< OpenGL identifier for the program
+    UniqueResource<unsigned int, ShaderProgramDeleter> m_shaderProgram{{}}; //!< OpenGL identifier for the program
     int          m_currentTexture{-1}; //!< Location of the current texture in the shader
     TextureTable m_textures;           //!< Texture variables in the shader, mapped to their location
     UniformTable m_uniforms;           //!< Parameters location cache

@@ -185,7 +185,8 @@ struct Shader::UniformBinder
     /// \brief Constructor: set up state before uniform is set
     ///
     ////////////////////////////////////////////////////////////
-    UniformBinder(Shader& shader, const std::string& name) : currentProgram(castToGlHandle(shader.m_shaderProgram))
+    UniformBinder(Shader& shader, const std::string& name) :
+    currentProgram(castToGlHandle(shader.m_shaderProgram.get()))
     {
         if (currentProgram)
         {
@@ -230,51 +231,15 @@ struct Shader::UniformBinder
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader() = default;
-
-
-////////////////////////////////////////////////////////////
-Shader::~Shader()
+void Shader::ShaderProgramDeleter::operator()(unsigned int shaderProgram) const
 {
     const TransientContextLock lock;
 
     // Destroy effect program
-    if (m_shaderProgram)
-        glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
+    if (shaderProgram)
+        glCheck(GLEXT_glDeleteObject(castToGlHandle(shaderProgram)));
 }
 
-////////////////////////////////////////////////////////////
-Shader::Shader(Shader&& source) noexcept :
-m_shaderProgram(std::exchange(source.m_shaderProgram, 0U)),
-m_currentTexture(std::exchange(source.m_currentTexture, -1)),
-m_textures(std::move(source.m_textures)),
-m_uniforms(std::move(source.m_uniforms))
-{
-}
-
-////////////////////////////////////////////////////////////
-Shader& Shader::operator=(Shader&& right) noexcept
-{
-    // Make sure we aren't moving ourselves.
-    if (&right == this)
-    {
-        return *this;
-    }
-    // Explicit scope for RAII
-    {
-        // Destroy effect program
-        const TransientContextLock lock;
-        if (m_shaderProgram)
-            glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
-    }
-
-    // Move the contents of right.
-    m_shaderProgram  = std::exchange(right.m_shaderProgram, 0U);
-    m_currentTexture = std::exchange(right.m_currentTexture, -1);
-    m_textures       = std::move(right.m_textures);
-    m_uniforms       = std::move(right.m_uniforms);
-    return *this;
-}
 
 ////////////////////////////////////////////////////////////
 bool Shader::loadFromFile(const std::filesystem::path& filename, Type type)
@@ -583,7 +548,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Texture& texture)
 {
-    if (m_shaderProgram)
+    if (m_shaderProgram.get())
     {
         const TransientContextLock lock;
 
@@ -618,7 +583,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
-    if (m_shaderProgram)
+    if (m_shaderProgram.get())
     {
         const TransientContextLock lock;
 
@@ -703,7 +668,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixAr
 ////////////////////////////////////////////////////////////
 unsigned int Shader::getNativeHandle() const
 {
-    return m_shaderProgram;
+    return m_shaderProgram.get();
 }
 
 
@@ -720,10 +685,10 @@ void Shader::bind(const Shader* shader)
         return;
     }
 
-    if (shader && shader->m_shaderProgram)
+    if (shader && shader->m_shaderProgram.get())
     {
         // Enable the program
-        glCheck(GLEXT_glUseProgramObject(castToGlHandle(shader->m_shaderProgram)));
+        glCheck(GLEXT_glUseProgramObject(castToGlHandle(shader->m_shaderProgram.get())));
 
         // Bind the textures
         shader->bindTextures();
@@ -797,11 +762,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     }
 
     // Destroy the shader if it was already created
-    if (m_shaderProgram)
-    {
-        glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
-        m_shaderProgram = 0;
-    }
+    m_shaderProgram.reset();
 
     // Reset the internal state
     m_currentTexture = -1;
@@ -907,7 +868,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         return false;
     }
 
-    m_shaderProgram = castFromGlHandle(shaderProgram);
+    m_shaderProgram.reset(castFromGlHandle(shaderProgram));
 
     // Force an OpenGL flush, so that the shader will appear updated
     // in all contexts immediately (solves problems in multi-threaded apps)
@@ -947,7 +908,7 @@ int Shader::getUniformLocation(const std::string& name)
     else
     {
         // Not in cache, request the location from OpenGL
-        const int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
+        const int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram.get()), name.c_str());
         m_uniforms.emplace(name, location);
 
         if (location == -1)
@@ -970,11 +931,9 @@ Shader::CurrentTextureType Shader::CurrentTexture;
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader() = default;
-
-
-////////////////////////////////////////////////////////////
-Shader::~Shader() = default;
+void Shader::ShaderProgramDeleter::operator()(unsigned int) const
+{
+}
 
 
 ////////////////////////////////////////////////////////////
