@@ -18,7 +18,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-int main(int argc, char const** argv)
+int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
@@ -29,7 +29,7 @@ int main(int argc, char const** argv)
     {
         return EXIT_FAILURE;
     }
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    window.setIcon(icon);
 
     // Load a sprite to display
     sf::Texture texture;
