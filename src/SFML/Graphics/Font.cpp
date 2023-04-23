@@ -99,7 +99,7 @@ struct Font::FontHandles
     {
         // All the function below are safe to call with null pointer arguments.
         // The documentation of FreeType isn't clear on the matter, but the
-        // implementation does explictly check for null.
+        // implementation does explicitly check for null.
 
         FT_Stroker_Done(stroker);
         FT_Done_Face(face);
