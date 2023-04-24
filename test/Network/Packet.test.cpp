@@ -11,25 +11,26 @@ static_assert(std::is_copy_assignable_v<sf::Packet>);
 static_assert(std::is_nothrow_move_constructible_v<sf::Packet>);
 static_assert(std::is_nothrow_move_assignable_v<sf::Packet>);
 
-#define CHECK_PACKET_STREAM_OPERATORS(expected)              \
-    do                                                       \
-    {                                                        \
-        sf::Packet packet;                                   \
-        packet << (expected);                                \
-        CHECK(packet.getReadPosition() == 0);                \
-        CHECK(packet.getData() != nullptr);                  \
-        CHECK(packet.getDataSize() == sizeof(expected));     \
-        CHECK(!packet.endOfPacket());                        \
-        CHECK(static_cast<bool>(packet));                    \
-                                                             \
-        decltype(expected) received;                         \
-        packet >> received;                                  \
-        CHECK(packet.getReadPosition() == sizeof(expected)); \
-        CHECK(packet.getData() != nullptr);                  \
-        CHECK(packet.getDataSize() == sizeof(expected));     \
-        CHECK(packet.endOfPacket());                         \
-        CHECK(static_cast<bool>(packet));                    \
-        CHECK((expected) == received);                       \
+#define CHECK_PACKET_STREAM_OPERATORS(expected)                              \
+    do                                                                       \
+    {                                                                        \
+        sf::Packet packet;                                                   \
+        auto       typeExpected = static_cast<decltype(expected)>(expected); \
+        packet << typeExpected;                                              \
+        CHECK(packet.getReadPosition() == 0);                                \
+        CHECK(packet.getData() != nullptr);                                  \
+        CHECK(packet.getDataSize() == sizeof(typeExpected));                 \
+        CHECK(!packet.endOfPacket());                                        \
+        CHECK(static_cast<bool>(packet));                                    \
+                                                                             \
+        decltype(expected) received;                                         \
+        packet >> received;                                                  \
+        CHECK(packet.getReadPosition() == sizeof(typeExpected));             \
+        CHECK(packet.getData() != nullptr);                                  \
+        CHECK(packet.getDataSize() == sizeof(typeExpected));                 \
+        CHECK(packet.endOfPacket());                                         \
+        CHECK(static_cast<bool>(packet));                                    \
+        CHECK(typeExpected == received);                                     \
     } while (false)
 
 TEST_CASE("[Network] sf::Packet")
@@ -96,6 +97,22 @@ TEST_CASE("[Network] sf::Packet")
             CHECK_PACKET_STREAM_OPERATORS(std::int64_t(1));
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::min());
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::max());
+        }
+
+        SUBCASE("float")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(0.f);
+            CHECK_PACKET_STREAM_OPERATORS(1.f);
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<float>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<float>::max());
+        }
+
+        SUBCASE("double")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(0.0);
+            CHECK_PACKET_STREAM_OPERATORS(1.0);
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<double>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<double>::max());
         }
     }
 }

@@ -119,7 +119,7 @@ private:
                 break;
 
             // Extract the message ID
-            std::uint8_t id;
+            std::uint8_t id = 0;
             packet >> id;
 
             if (id == serverAudioData)
