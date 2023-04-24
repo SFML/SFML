@@ -93,6 +93,18 @@ public:
     ////////////////////////////////////////////////////////////
     Vector2f getPoint(std::size_t index) const override;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the geometric center of the rectangle
+    ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
+    ///
+    /// \return The geometric center of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2f getGeometricCenter() const override;
+
 private:
     ////////////////////////////////////////////////////////////
     // Member data

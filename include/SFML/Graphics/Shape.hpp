@@ -209,6 +209,18 @@ public:
     virtual Vector2f getPoint(std::size_t index) const = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the geometric center of the shape
+    ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
+    ///
+    /// \return The geometric center of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual Vector2f getGeometricCenter() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the local bounding rectangle of the entity
     ///
     /// The returned rectangle is in local coordinates, which means

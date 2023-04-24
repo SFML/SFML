@@ -78,4 +78,11 @@ Vector2f RectangleShape::getPoint(std::size_t index) const
     }
 }
 
+
+////////////////////////////////////////////////////////////
+Vector2f RectangleShape::getGeometricCenter() const
+{
+    return m_size / 2.f;
+}
+
 } // namespace sf

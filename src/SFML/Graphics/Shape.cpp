@@ -29,8 +29,7 @@
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include <cmath>
-
+#include <algorithm>
 
 namespace
 {
@@ -127,6 +126,56 @@ void Shape::setOutlineThickness(float thickness)
 float Shape::getOutlineThickness() const
 {
     return m_outlineThickness;
+}
+
+
+////////////////////////////////////////////////////////////
+Vector2f Shape::getGeometricCenter() const
+{
+    const auto count = getPointCount();
+
+    switch (count)
+    {
+        case 0:
+            assert(false);
+            return Vector2f{};
+        case 1:
+            return getPoint(0);
+        case 2:
+            return (getPoint(0) + getPoint(1)) / 2.f;
+        default: // more than two points
+            Vector2f centroid;
+            float    twiceArea = 0;
+
+            auto previousPoint = getPoint(count - 1);
+            for (std::size_t i = 0; i < count; ++i)
+            {
+                const auto  currentPoint = getPoint(i);
+                const float product      = previousPoint.cross(currentPoint);
+                twiceArea += product;
+                centroid += (currentPoint + previousPoint) * product;
+
+                previousPoint = currentPoint;
+            }
+
+            if (twiceArea != 0.f)
+            {
+                return centroid / 3.f / twiceArea;
+            }
+
+            // Fallback for no area - find the center of the bounding box
+            auto minPoint = getPoint(0);
+            auto maxPoint = minPoint;
+            for (std::size_t i = 1; i < count; ++i)
+            {
+                const auto currentPoint = getPoint(i);
+                minPoint.x              = std::min(minPoint.x, currentPoint.x);
+                maxPoint.x              = std::max(maxPoint.x, currentPoint.x);
+                minPoint.y              = std::min(minPoint.y, currentPoint.y);
+                maxPoint.y              = std::max(maxPoint.y, currentPoint.y);
+            }
+            return (maxPoint + minPoint) / 2.f;
+    }
 }
 
 
