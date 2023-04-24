@@ -31,9 +31,10 @@
 
 #include <SFML/Audio/SoundFileReader.hpp>
 
-#include <cstddef>
 #include <filesystem>
 #include <memory>
+
+#include <cstddef>
 
 
 namespace sf

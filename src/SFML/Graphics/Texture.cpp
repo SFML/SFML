@@ -29,16 +29,19 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/Window.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <atomic>
+#include <ostream>
+#include <utility>
+
 #include <cassert>
 #include <climits>
 #include <cstring>
-#include <ostream>
-#include <utility>
 
 
 namespace

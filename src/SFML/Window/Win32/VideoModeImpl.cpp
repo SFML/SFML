@@ -25,8 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 #include <algorithm>
 

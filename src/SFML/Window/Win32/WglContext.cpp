@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <mutex>
 #include <ostream>

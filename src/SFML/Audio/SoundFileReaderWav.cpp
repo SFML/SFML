@@ -26,14 +26,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReaderWav.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 
 #include <algorithm>
+#include <ostream>
+
 #include <cassert>
 #include <cctype>
 #include <cstring>
-#include <ostream>
 
 
 namespace

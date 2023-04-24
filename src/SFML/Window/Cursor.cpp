@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
+
+#include <SFML/System/Vector2.hpp>
 
 #include <memory>
 

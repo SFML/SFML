@@ -3,12 +3,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
 
-#include <cstring>
 #include <iostream>
 #include <iterator>
 #include <mutex>
+
+#include <cstring>
 
 
 const std::uint8_t serverAudioData   = 1;

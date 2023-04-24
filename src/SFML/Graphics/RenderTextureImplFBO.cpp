@@ -28,9 +28,11 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <mutex>
 #include <ostream>

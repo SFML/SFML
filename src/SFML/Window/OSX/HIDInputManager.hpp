@@ -31,10 +31,11 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include <Carbon/Carbon.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDManager.h>
 #include <vector>
+
+#include <Carbon/Carbon.h>
 
 namespace sf::priv
 {

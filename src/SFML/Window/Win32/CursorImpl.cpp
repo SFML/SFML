@@ -25,12 +25,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Win32/CursorImpl.hpp>
 
-#include <cstring>
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+
 #include <ostream>
+
+#include <cstring>
 
 
 namespace sf::priv

@@ -26,11 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFViewController.h>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <ostream>
 

@@ -27,8 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+
+#include <SFML/System/String.hpp>
 
 #include <X11/Xlib.h>
 

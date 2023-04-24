@@ -26,12 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 
+#include <ostream>
+
 #include <cassert>
 #include <cctype>
-#include <ostream>
 
 
 namespace

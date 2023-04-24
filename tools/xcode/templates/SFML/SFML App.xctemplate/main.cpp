@@ -14,8 +14,9 @@
 // function `resourcePath()` from ResourcePath.hpp
 //
 
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
 
 // Here is a small helper for you! Have a look.
 #include "ResourcePath.hpp"

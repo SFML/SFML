@@ -27,13 +27,15 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
+
 #include <SFML/System/Err.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
-#include <cstring>
 #include <ostream>
+
+#include <cstring>
 
 
 namespace sf

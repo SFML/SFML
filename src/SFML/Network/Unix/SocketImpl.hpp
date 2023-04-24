@@ -30,13 +30,14 @@
 #include <SFML/Network/Socket.hpp>
 
 #include <arpa/inet.h>
-#include <cstdint>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <cstdint>
 
 
 namespace sf::priv

@@ -25,11 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 
-#include <cerrno>
-#include <cstring>
+#include <SFML/System/Err.hpp>
+
 #include <fcntl.h>
 #include <libudev.h>
 #include <linux/joystick.h>
@@ -38,6 +37,9 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+
+#include <cerrno>
+#include <cstring>
 
 namespace
 {

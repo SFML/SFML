@@ -26,13 +26,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp>
 #include <SFML/Window/OSX/InputImpl.hpp>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #import <AppKit/AppKit.h>
 #include <ostream>

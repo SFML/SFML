@@ -30,11 +30,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDKeys.h>
 #include <unordered_map>
 #include <vector>
+
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace sf::priv
 {

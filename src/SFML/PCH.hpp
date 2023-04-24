@@ -45,12 +45,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <chrono>
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
 #include <filesystem>
 #include <iostream>
 #include <locale>
@@ -61,3 +56,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <cassert>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>

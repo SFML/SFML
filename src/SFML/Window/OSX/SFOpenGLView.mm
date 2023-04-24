@@ -26,11 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #import <SFML/Window/OSX/SFOpenGLView+mouse_priv.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFSilentResponder.h>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 

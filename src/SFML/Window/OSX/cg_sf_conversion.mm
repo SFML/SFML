@@ -26,9 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #import <SFML/Window/OSX/Scaling.h>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 

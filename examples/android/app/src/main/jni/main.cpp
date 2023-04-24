@@ -1,8 +1,12 @@
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
-#include <SFML/System.hpp>
+
 #include <SFML/Window.hpp>
+
+#include <SFML/System.hpp>
 
 // Do we want to showcase direct JNI/NDK interaction?
 // Undefine this to get real cross-platform code.

@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+
+#include <SFML/System/Vector2.hpp>
 
 
 namespace sf::priv

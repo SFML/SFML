@@ -26,16 +26,17 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/String.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Utf.hpp>
 
 #include <X11/Xlibint.h>
 #undef min // Defined by `Xlibint.h`, conflicts with standard headers
@@ -48,8 +49,6 @@
 
 #include <algorithm>
 #include <bitset>
-#include <cassert>
-#include <cstring>
 #include <fcntl.h>
 #include <filesystem>
 #include <libgen.h>
@@ -60,6 +59,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+
+#include <cassert>
+#include <cstring>
 
 #ifdef SFML_OPENGL_ES
 #include <SFML/Window/EglContext.hpp>

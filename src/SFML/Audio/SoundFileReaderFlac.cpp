@@ -26,11 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReaderFlac.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 
-#include <cassert>
 #include <ostream>
+
+#include <cassert>
 
 
 namespace

@@ -25,8 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Win32/VulkanImplWin32.hpp>
+
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 #include <map>
 #include <string_view>

@@ -5,8 +5,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
-#include <cstdlib>
 #include <iostream>
+
+#include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>

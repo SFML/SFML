@@ -29,12 +29,14 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
+
 #include <SFML/System/Err.hpp>
+
+#include <ostream>
+#include <utility>
 
 #include <cstddef>
 #include <cstring>
-#include <ostream>
-#include <utility>
 
 namespace
 {

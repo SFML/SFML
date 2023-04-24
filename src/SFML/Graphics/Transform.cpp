@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Transform.hpp>
+
 #include <SFML/System/Angle.hpp>
 
 #include <cmath>

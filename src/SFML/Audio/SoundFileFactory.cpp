@@ -33,6 +33,7 @@
 #include <SFML/Audio/SoundFileWriterFlac.hpp>
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/Audio/SoundFileWriterWav.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>

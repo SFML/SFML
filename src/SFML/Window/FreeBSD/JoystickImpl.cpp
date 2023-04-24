@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 
-#include <cstring>
 #include <dirent.h>
 #include <fcntl.h>
 #include <string>
@@ -36,6 +35,8 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <utility>
+
+#include <cstring>
 
 ////////////////////////////////////////////////////////////
 /// \brief This file implements FreeBSD driver joystick
