@@ -22,6 +22,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPointCount() == 30);
         for (std::size_t i = 0; i < circle.getPointCount(); ++i)
             CHECK(circle.getPoint(i) == sf::Vector2f(0, 0));
+        CHECK(circle.getGeometricCenter() == sf::Vector2f(0, 0));
     }
 
     SECTION("Radius constructor")
@@ -59,6 +60,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(27) == Approx(sf::Vector2f(6.183218002f, 2.864748001f)));
         CHECK(circle.getPoint(28) == Approx(sf::Vector2f(8.898950577f, 1.296818733f)));
         CHECK(circle.getPoint(29) == Approx(sf::Vector2f(11.881320953f, 0.327786446f)));
+        CHECK(circle.getGeometricCenter() == sf::Vector2f(15.f, 15.f));
     }
 
     SECTION("Radius and point count constructor")
@@ -74,6 +76,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(5) == Approx(sf::Vector2f(1.464466095f, 8.535533905f)));
         CHECK(circle.getPoint(6) == Approx(sf::Vector2f(0.000000000f, 4.999999523f)));
         CHECK(circle.getPoint(7) == Approx(sf::Vector2f(1.464465857f, 1.464466572f)));
+        CHECK(circle.getGeometricCenter() == sf::Vector2f(5.f, 5.f));
     }
 
     SECTION("Set radius")
@@ -88,6 +91,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(3) == Approx(sf::Vector2f(10.000000000f, 20.000000000f)));
         CHECK(circle.getPoint(4) == Approx(sf::Vector2f(1.339746475f, 15.000000000f)));
         CHECK(circle.getPoint(5) == Approx(sf::Vector2f(1.339745522f, 5.000000000f)));
+        CHECK(circle.getGeometricCenter() == sf::Vector2f(10.f, 10.f));
     }
 
     SECTION("Set point count")
@@ -100,6 +104,7 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(circle.getPoint(1) == Approx(sf::Vector2f(8.000000000f, 4.000000000f)));
         CHECK(circle.getPoint(2) == Approx(sf::Vector2f(3.999999762f, 8.000000000f)));
         CHECK(circle.getPoint(3) == Approx(sf::Vector2f(0.000000000f, 3.999999762f)));
+        CHECK(circle.getGeometricCenter() == sf::Vector2f(4.f, 4.f));
     }
 
     SECTION("Equilateral triangle")
@@ -110,5 +115,19 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(triangle.getPoint(0) == Approx(sf::Vector2f(1.999999881f, 0.000000000f)));
         CHECK(triangle.getPoint(1) == Approx(sf::Vector2f(3.732050896f, 3.000000000f)));
         CHECK(triangle.getPoint(2) == Approx(sf::Vector2f(0.267949224f, 3.000000000f)));
+        CHECK(triangle.getGeometricCenter() == sf::Vector2f(2.f, 2.f));
+    }
+
+    SECTION("Geometric center")
+    {
+        SECTION("2 points")
+        {
+            CHECK(sf::CircleShape(2.f, 2).getGeometricCenter() == sf::Vector2f(2.f, 2.f));
+        }
+
+        SECTION("3 points")
+        {
+            CHECK(sf::CircleShape(4.f, 3).getGeometricCenter() == sf::Vector2f(4.f, 4.f));
+        }
     }
 }
