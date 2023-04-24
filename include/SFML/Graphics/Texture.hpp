@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
+
 #include <SFML/Window/GlResource.hpp>
 
 #include <filesystem>

@@ -26,14 +26,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 
 #include <algorithm>
-#include <cassert>
-#include <cctype>
 #include <ostream>
 #include <random>
+
+#include <cassert>
+#include <cctype>
 
 
 namespace sf::priv

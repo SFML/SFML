@@ -13,8 +13,9 @@
 #endif
 
 #include <array>
-#include <cstdlib>
 #include <iostream>
+
+#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application

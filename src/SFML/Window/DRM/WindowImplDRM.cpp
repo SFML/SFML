@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+
+#include <SFML/System/Err.hpp>
 
 
 namespace sf::priv

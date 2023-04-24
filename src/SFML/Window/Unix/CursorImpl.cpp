@@ -32,9 +32,10 @@
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 
+#include <vector>
+
 #include <cassert>
 #include <cstdlib>
-#include <vector>
 
 namespace sf::priv
 {

@@ -25,21 +25,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeySymToKeyMapping.hpp>
 #include <SFML/Window/Unix/KeySymToUnicodeMapping.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 
+#include <SFML/System/String.hpp>
+#include <SFML/System/Utf.hpp>
+
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#include <cstring>
 #include <string>
 #include <unordered_map>
 #include <utility>
+
+#include <cstring>
 
 namespace
 {

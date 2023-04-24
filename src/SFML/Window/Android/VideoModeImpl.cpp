@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/Window/VideoModeImpl.hpp>
 
 #include <mutex>
 

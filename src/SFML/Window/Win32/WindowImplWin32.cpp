@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+
+#include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
+#include <SFML/System/Utf.hpp>
 
 #include <cstring>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64

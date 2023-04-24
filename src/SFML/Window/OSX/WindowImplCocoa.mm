@@ -26,8 +26,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/String.hpp>
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFApplicationDelegate.h>
@@ -37,6 +35,9 @@
 #import <SFML/Window/OSX/Scaling.h>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+
+#include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 
 #include <ostream>
 

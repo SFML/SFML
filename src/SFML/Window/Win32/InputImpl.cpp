@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Win32/InputImpl.hpp>
 #include <SFML/Window/Window.hpp>
+
+#include <SFML/System/String.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 namespace sf::priv
 {

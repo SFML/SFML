@@ -25,14 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <algorithm>
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <fcntl.h>
 #include <linux/input.h>
 #include <mutex>
@@ -42,6 +39,11 @@
 #include <termios.h>
 #include <unistd.h>
 #include <vector>
+
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 
 namespace

@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/ALCheck.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <ostream>

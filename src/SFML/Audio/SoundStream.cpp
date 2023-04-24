@@ -28,12 +28,14 @@
 #include <SFML/Audio/ALCheck.hpp>
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/SoundStream.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 
-#include <cassert>
 #include <mutex>
 #include <ostream>
+
+#include <cassert>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4355) // 'this' used in base member initializer list

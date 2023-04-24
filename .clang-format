@@ -96,15 +96,27 @@ MaxEmptyLinesToKeep: 2
 IncludeBlocks: Regroup
 IncludeCategories:
   - Priority: 1
-    Regex: '^<SFML\/Config.hpp>$'
+    Regex: '^\"(.+)\"$'
   - Priority: 2
-    Regex: '^<SFML\/(.+)\/Export.hpp>$'
+    Regex: '^<SFML\/Config.hpp>$'
   - Priority: 3
-    Regex: '^<SFML\/'
+    Regex: '^<SFML\/(.+)\/Export.hpp>$'
   - Priority: 4
-    Regex: '^<(glad|gl|X11|jni|android|stb_|GLES2|vorbis|doctest)'
+    Regex: '^<SFML\/Graphics'
   - Priority: 5
-    Regex: '^<(.+)>$'
+    Regex: '^<SFML\/Audio'
+  - Priority: 6
+    Regex: '^<SFML\/Network'
+  - Priority: 7
+    Regex: '^<SFML\/Window'
+  - Priority: 8
+    Regex: '^<SFML\/System'
+  - Priority: 9
+    Regex: '^<(glad|gl|X11|jni|android|stb_|GLES2|vorbis|doctest)'
+  - Priority: 10
+    Regex: '^<([^c](.+)|coroutine|charconv|chrono|complex|concepts|condition_variable)>$'
+  - Priority: 11
+    Regex: '^<c(.+)>$'
 SortIncludes: true
 SortUsingDeclarations: true
 

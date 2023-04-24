@@ -25,11 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/iOS/InputImpl.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
+
+#include <SFML/System/Err.hpp>
 
 
 namespace sf::priv

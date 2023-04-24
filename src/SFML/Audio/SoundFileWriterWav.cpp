@@ -26,11 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterWav.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 
-#include <cassert>
 #include <ostream>
+
+#include <cassert>
 
 
 namespace

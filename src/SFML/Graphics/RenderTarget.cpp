@@ -32,16 +32,19 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <SFML/Window/Context.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <algorithm>
-#include <cassert>
-#include <cmath>
 #include <iostream>
 #include <mutex>
 #include <ostream>
 #include <unordered_map>
+
+#include <cassert>
+#include <cmath>
 
 
 namespace

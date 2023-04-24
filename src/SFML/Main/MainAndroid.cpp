@@ -46,10 +46,11 @@
 #include <android/native_activity.h>
 #include <android/window.h>
 
-#include <cassert>
-#include <cstring>
 #include <mutex>
 #include <thread>
+
+#include <cassert>
+#include <cstring>
 
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>

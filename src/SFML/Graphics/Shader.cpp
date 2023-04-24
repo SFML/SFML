@@ -31,10 +31,12 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transform.hpp>
+
+#include <SFML/Window/Context.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
-#include <SFML/Window/Context.hpp>
 
 #include <fstream>
 #include <iomanip>

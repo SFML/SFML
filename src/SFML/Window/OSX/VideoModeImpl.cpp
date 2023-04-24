@@ -26,9 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <algorithm>
 #include <ostream>

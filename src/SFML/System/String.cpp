@@ -28,9 +28,10 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 
-#include <cstring>
 #include <iterator>
 #include <utility>
+
+#include <cstring>
 
 
 namespace sf

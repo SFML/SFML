@@ -1,12 +1,14 @@
 #include <SFML/Graphics/Transform.hpp>
+
 #include <SFML/System/Angle.hpp>
 
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
-#include <cassert>
 #include <type_traits>
 #include <vector>
+
+#include <cassert>
 
 static_assert(std::is_copy_constructible_v<sf::Transform>);
 static_assert(std::is_copy_assignable_v<sf::Transform>);

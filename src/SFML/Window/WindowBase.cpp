@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <ostream>
 

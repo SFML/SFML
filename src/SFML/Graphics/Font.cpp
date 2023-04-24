@@ -41,11 +41,12 @@
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include FT_STROKER_H
+#include <ostream>
+#include <type_traits>
+
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <ostream>
-#include <type_traits>
 
 
 namespace

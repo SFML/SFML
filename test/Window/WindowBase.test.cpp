@@ -1,9 +1,10 @@
 #include <SFML/Window/WindowBase.hpp>
 
 // Other 1st party headers
-#include <SFML/System/String.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+
+#include <SFML/System/String.hpp>
 
 #include <doctest/doctest.h>
 

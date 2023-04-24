@@ -29,8 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#include <cstdlib>
 #include <locale>
+
+#include <cstdlib>
 
 
 namespace sf

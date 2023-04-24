@@ -25,18 +25,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlContext.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <glad/gl.h>
 
 #include <algorithm>
 #include <atomic>
-#include <cassert>
-#include <cctype>
-#include <cstdlib>
-#include <cstring>
 #include <iomanip>
 #include <memory>
 #include <mutex>
@@ -46,6 +43,11 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include <cassert>
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
 
 
 #if defined(SFML_SYSTEM_WINDOWS)

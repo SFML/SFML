@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Utf.hpp>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+
+#include <SFML/System/Utf.hpp>
 
 #import <Foundation/Foundation.h>
 

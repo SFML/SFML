@@ -4,10 +4,11 @@
 
 #include <GraphicsUtil.hpp>
 #include <array>
-#include <cassert>
 #include <iomanip>
 #include <sstream>
 #include <type_traits>
+
+#include <cassert>
 
 static_assert(std::is_copy_constructible_v<sf::String>);
 static_assert(std::is_copy_assignable_v<sf::String>);

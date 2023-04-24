@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
+
+#include <SFML/System/String.hpp>
 
 
 namespace sf

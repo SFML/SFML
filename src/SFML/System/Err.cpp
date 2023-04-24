@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 
-#include <cstdio>
 #include <iostream>
 #include <streambuf>
+
+#include <cstdio>
 
 
 namespace

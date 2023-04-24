@@ -26,18 +26,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Sleep.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Sleep.hpp>
+
 #include <fcntl.h>
 #include <poll.h>
 #include <unistd.h>
 #include <xf86drm.h>
+
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.

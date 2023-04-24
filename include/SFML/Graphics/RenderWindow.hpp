@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+
 #include <SFML/Window/Window.hpp>
 
 
