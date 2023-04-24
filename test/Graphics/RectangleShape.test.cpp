@@ -40,4 +40,10 @@ TEST_CASE("[Graphics] sf::RectangleShape")
         rectangle.setSize({5, 4});
         CHECK(rectangle.getSize() == sf::Vector2f(5, 4));
     }
+
+    SUBCASE("Geometrical center")
+    {
+        sf::RectangleShape rectangle({20, 10});
+        CHECK(rectangle.getGeometricCenter() == sf::Vector2f(10, 5));
+    }
 }

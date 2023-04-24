@@ -39,6 +39,11 @@ public:
         }
     }
 
+    sf::Vector2f getGeometricCenter() const override
+    {
+        return (getPoint(0) + getPoint(1) + getPoint(2)) / 3.f;
+    }
+
 private:
     sf::Vector2f m_size;
 };
@@ -85,13 +90,14 @@ TEST_CASE("[Graphics] sf::Shape")
         CHECK(triangleShape.getOutlineThickness() == 3.14f);
     }
 
-    SUBCASE("Virtual functions: getPoint, getPointCount")
+    SUBCASE("Virtual functions: getPoint, getPointCount, getGeometricCenter")
     {
         const TriangleShape triangleShape({2, 2});
         CHECK(triangleShape.getPointCount() == 3);
         CHECK(triangleShape.getPoint(0) == sf::Vector2f(1, 0));
         CHECK(triangleShape.getPoint(1) == sf::Vector2f(0, 2));
         CHECK(triangleShape.getPoint(2) == sf::Vector2f(2, 2));
+        CHECK(triangleShape.getGeometricCenter() == sf::Vector2f(1.f, 4.f / 3.f));
     }
 
     SUBCASE("Get bounds")

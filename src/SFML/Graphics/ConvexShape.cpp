@@ -66,4 +66,44 @@ Vector2f ConvexShape::getPoint(std::size_t index) const
     return m_points[index];
 }
 
+////////////////////////////////////////////////////////////
+Vector2f ConvexShape::getGeometricCenter() const
+{
+    if (m_points.size() > 2)
+    {
+        const auto& off  = m_points.front();
+        const auto  off2 = 2.f * off;
+        Vector2f    xy{};
+        float       twicearea = 0.f;
+
+        float f;
+
+        for (std::size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
+        {
+            const auto& p1 = m_points[i];
+            const auto& p2 = m_points[j];
+
+            f = (p1.x - off.x) * (p2.y - off.y) - (p2.x - off.x) * (p1.y - off.y);
+            twicearea += f;
+            xy += ((p1 + p2) - off2) * f;
+        }
+
+        f = twicearea * 3.f;
+
+        return xy / f + off;
+    }
+
+    if (m_points.size() == 2) // a line
+    {
+        return (m_points[0] + m_points[1]) / 2.f;
+    }
+
+    if (!m_points.empty()) // a single point
+    {
+        return m_points.front();
+    }
+
+    return Vector2f{}; // empty or exception or UB or optional?
+}
+
 } // namespace sf

@@ -108,4 +108,12 @@ TEST_CASE("[Graphics] sf::CircleShape")
         CHECK(triangle.getPoint(1) == Approx(sf::Vector2f(3.732050896f, 3.000000000f)));
         CHECK(triangle.getPoint(2) == Approx(sf::Vector2f(0.267949224f, 3.000000000f)));
     }
+
+    SUBCASE("Geometrical center")
+    {
+        const sf::CircleShape circle1(2.f);
+        CHECK(circle1.getGeometricCenter() == sf::Vector2f(2.f, 2.f));
+        const sf::CircleShape circle2(4.f, 3);
+        CHECK(circle2.getGeometricCenter() == sf::Vector2f(4.f, 4.f));
+    }
 }
