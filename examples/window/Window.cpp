@@ -1,9 +1,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window.hpp>
+#include <SFML/Window/Context.hpp>
+#include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Window.hpp>
+#include <SFML/Window/WindowStyle.hpp>
 
-#include <cstdlib>
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <gl.h>

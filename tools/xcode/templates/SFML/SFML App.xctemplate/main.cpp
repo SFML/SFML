@@ -14,9 +14,16 @@
 // function `resourcePath()` from ResourcePath.hpp
 //
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
 
-#include <SFML/Audio.hpp>
+#include <SFML/Audio/Music.hpp>
+
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 // Here is a small helper for you! Have a look.
 #include "ResourcePath.hpp"

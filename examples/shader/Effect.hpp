@@ -3,13 +3,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 #include <string>
 #include <utility>
 
 #include <cassert>
-
 
 ////////////////////////////////////////////////////////////
 // Base class for effects

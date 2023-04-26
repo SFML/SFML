@@ -2,9 +2,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio.hpp>
+#include <SFML/Audio/SoundStream.hpp>
 
-#include <SFML/Network.hpp>
+#include <SFML/Network/Packet.hpp>
+#include <SFML/Network/Socket.hpp>
+#include <SFML/Network/TcpListener.hpp>
+#include <SFML/Network/TcpSocket.hpp>
+
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
 
 #include <iostream>
 #include <iterator>
