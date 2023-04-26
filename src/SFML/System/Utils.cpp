@@ -22,31 +22,31 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
+#include <SFML/System/Utils.hpp>
 
-#include <filesystem>
-#include <string>
+#include <sstream>
+
+#include <cctype>
 
 
 namespace sf
 {
-[[nodiscard]] SFML_SYSTEM_API std::string toLower(std::string str);
-[[nodiscard]] SFML_SYSTEM_API std::string formatDebugPathInfo(const std::filesystem::path& path);
-
-// Convert byte sequence into integer
-// toInteger<int>(0x12, 0x34, 0x56) == 0x563412
-template <typename IntegerType, typename... Bytes>
-[[nodiscard]] constexpr IntegerType toInteger(Bytes... byte)
+std::string toLower(std::string str)
 {
-    static_assert(sizeof(IntegerType) >= sizeof...(Bytes), "IntegerType not large enough to contain bytes");
-
-    IntegerType integer = 0;
-    std::size_t index   = 0;
-    return ((integer |= static_cast<IntegerType>(static_cast<IntegerType>(byte) << 8 * index++)), ...);
+    for (char& c : str)
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    return str;
 }
+
+std::string formatDebugPathInfo(const std::filesystem::path& path)
+{
+    std::ostringstream oss;
+    oss << "    Provided path: " << path << '\n' //
+        << "    Absolute path: " << std::filesystem::absolute(path);
+    return oss.str();
+}
+
 } // namespace sf
