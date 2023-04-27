@@ -457,18 +457,9 @@
         // Add titlebar height.
         height += static_cast<unsigned int>([self titlebarHeight]);
 
-        // Corner case: don't set the window height bigger than the screen height
-        // or the view will be resized _later_ without generating a resize event.
-        NSRect  screenFrame      = [[NSScreen mainScreen] visibleFrame];
-        CGFloat maxVisibleHeight = screenFrame.size.height;
-        if (height > maxVisibleHeight)
-        {
-            height = static_cast<unsigned int>(maxVisibleHeight);
-
-            // The size is not the requested one, we fire an event
-            if (m_requester != nil)
-                m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
-        }
+        // Send resize event if size has changed
+        if (sf::Vector2u(width, height) != m_requester->getSize())
+            m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
 
         NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, width, height);
 
