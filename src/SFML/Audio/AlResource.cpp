@@ -63,6 +63,13 @@ AlResource::AlResource()
 
 
 ////////////////////////////////////////////////////////////
+ AlResource::AlResource(AlResource&&) noexcept : AlResource()
+{
+
+}
+
+
+////////////////////////////////////////////////////////////
 AlResource::~AlResource()
 {
     // Protect from concurrent access
