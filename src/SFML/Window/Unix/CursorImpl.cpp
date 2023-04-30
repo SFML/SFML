@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/CursorImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 
 #include <X11/Xcursor/Xcursor.h>
 #include <X11/Xutil.h>
@@ -39,6 +40,15 @@
 
 namespace sf::priv
 {
+template <>
+struct XDeleter<XcursorImage>
+{
+    void operator()(XcursorImage* cursorImage) const
+    {
+        XcursorImageDestroy(cursorImage);
+    }
+};
+
 
 ////////////////////////////////////////////////////////////
 CursorImpl::CursorImpl() : m_display(openDisplay())
@@ -71,9 +81,9 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
 bool CursorImpl::loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     // Create cursor image, convert from RGBA to ARGB.
-    XcursorImage* cursorImage = XcursorImageCreate(static_cast<int>(size.x), static_cast<int>(size.y));
-    cursorImage->xhot         = hotspot.x;
-    cursorImage->yhot         = hotspot.y;
+    auto cursorImage  = X11Ptr<XcursorImage>(XcursorImageCreate(static_cast<int>(size.x), static_cast<int>(size.y)));
+    cursorImage->xhot = hotspot.x;
+    cursorImage->yhot = hotspot.y;
 
     const std::size_t numPixels = static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y);
     for (std::size_t pixelIndex = 0; pixelIndex < numPixels; ++pixelIndex)
@@ -84,10 +94,7 @@ bool CursorImpl::loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, V
     }
 
     // Create the cursor.
-    m_cursor = XcursorImageLoadCursor(m_display, cursorImage);
-
-    // Free the resources
-    XcursorImageDestroy(cursorImage);
+    m_cursor = XcursorImageLoadCursor(m_display, cursorImage.get());
 
     // We assume everything went fine...
     return true;

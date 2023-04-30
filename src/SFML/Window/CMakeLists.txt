@@ -123,6 +123,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp
             ${SRCROOT}/Unix/Display.hpp
+            ${SRCROOT}/Unix/Utils.hpp
             ${SRCROOT}/Unix/VideoModeImpl.cpp
             ${SRCROOT}/Unix/VulkanImplX11.cpp
             ${SRCROOT}/Unix/VulkanImplX11.hpp

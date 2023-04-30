@@ -39,6 +39,8 @@
 #include <SFML/System/Android/Activity.hpp>
 #endif
 #if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
+#include <SFML/Window/Unix/Utils.hpp>
+
 #include <X11/Xlib.h>
 #endif
 
@@ -424,10 +426,8 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     vTemplate.visualid = static_cast<VisualID>(nativeVisualId);
 
     // Get X11 visuals compatible with this EGL config
-    XVisualInfo *availableVisuals, bestVisual;
-    int          visualCount = 0;
-
-    availableVisuals = XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount);
+    int  visualCount      = 0;
+    auto availableVisuals = X11Ptr<XVisualInfo[]> XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount));
 
     if (visualCount == 0)
     {
@@ -438,10 +438,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
     }
 
     // Pick up the best one
-    bestVisual = availableVisuals[0];
-    XFree(availableVisuals);
-
-    return bestVisual;
+    return availableVisuals[0];
 }
 #endif
 
