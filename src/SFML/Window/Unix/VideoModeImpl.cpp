@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -39,6 +40,17 @@
 
 namespace sf::priv
 {
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRRScreenConfiguration>
+{
+    void operator()(XRRScreenConfiguration* config) const
+    {
+        XRRFreeScreenConfigInfo(config);
+    }
+};
+
+
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
@@ -56,21 +68,21 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         if (XQueryExtension(display, "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
+            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display, RootWindow(display, screen)));
             if (config)
             {
                 // Get the available screen sizes
                 int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                XRRScreenSize* sizes = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     // Get the list of supported depths
                     int  nbDepths = 0;
-                    int* depths   = XListDepths(display, screen, &nbDepths);
+                    auto depths   = X11Ptr<int[]>(XListDepths(display, screen, &nbDepths));
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
-                        for (int i = 0; i < nbDepths; ++i)
+                        for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
                         {
                             for (int j = 0; j < nbSizes; ++j)
                             {
@@ -80,7 +92,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                                                static_cast<unsigned int>(depths[i]));
 
                                 Rotation currentRotation;
-                                XRRConfigRotations(config, &currentRotation);
+                                XRRConfigRotations(config.get(), &currentRotation);
 
                                 if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
                                     std::swap(mode.size.x, mode.size.y);
@@ -90,14 +102,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                                     modes.push_back(mode);
                             }
                         }
-
-                        // Free the array of depths
-                        XFree(depths);
                     }
                 }
-
-                // Free the configuration instance
-                XRRFreeScreenConfigInfo(config);
             }
             else
             {
@@ -142,16 +148,16 @@ VideoMode VideoModeImpl::getDesktopMode()
         if (XQueryExtension(display, "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
+            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display, RootWindow(display, screen)));
             if (config)
             {
                 // Get the current video mode
                 Rotation  currentRotation;
-                const int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+                const int currentMode = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
 
                 // Get the available screen sizes
                 int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                XRRScreenSize* sizes = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
@@ -159,14 +165,11 @@ VideoMode VideoModeImpl::getDesktopMode()
                                             static_cast<unsigned int>(DefaultDepth(display, screen)));
 
                     Rotation modeRotation;
-                    XRRConfigRotations(config, &modeRotation);
+                    XRRConfigRotations(config.get(), &modeRotation);
 
                     if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
                         std::swap(desktopMode.size.x, desktopMode.size.y);
                 }
-
-                // Free the configuration instance
-                XRRFreeScreenConfigInfo(config);
             }
             else
             {

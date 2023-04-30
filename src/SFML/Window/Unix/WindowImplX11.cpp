@@ -30,6 +30,7 @@
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -375,6 +376,50 @@ bool isWMAbsolutePositionGood()
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XImage>
+{
+    void operator()(XImage* image) const
+    {
+        XDestroyImage(image);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRRScreenResources>
+{
+    void operator()(XRRScreenResources* res) const
+    {
+        XRRFreeScreenResources(res);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRROutputInfo>
+{
+    void operator()(XRROutputInfo* outputInfo) const
+    {
+        XRRFreeOutputInfo(outputInfo);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRRCrtcInfo>
+{
+    void operator()(XRRCrtcInfo* crtcInfo) const
+    {
+        XRRFreeCrtcInfo(crtcInfo);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 {
     using namespace WindowsImplX11Impl;
@@ -486,11 +531,10 @@ m_cursorGrabbed(m_fullscreen)
     setProtocols();
 
     // Set the WM initial state to the normal state
-    XWMHints* xHints      = XAllocWMHints();
-    xHints->flags         = StateHint;
-    xHints->initial_state = NormalState;
-    XSetWMHints(m_display, m_window, xHints);
-    XFree(xHints);
+    XWMHints xHints{};
+    xHints.flags         = StateHint;
+    xHints.initial_state = NormalState;
+    XSetWMHints(m_display, m_window, &xHints);
 
     // If not in fullscreen, set the window's style (tell the window manager to
     // change our window's decorations and functions according to the requested style)
@@ -565,19 +609,18 @@ m_cursorGrabbed(m_fullscreen)
     // This is a hack to force some windows managers to disable resizing
     if (!(style & Style::Resize))
     {
-        m_useSizeHints        = true;
-        XSizeHints* sizeHints = XAllocSizeHints();
-        sizeHints->flags      = PMinSize | PMaxSize | USPosition;
-        sizeHints->min_width = sizeHints->max_width = static_cast<int>(width);
-        sizeHints->min_height = sizeHints->max_height = static_cast<int>(height);
-        sizeHints->x                                  = windowPosition.x;
-        sizeHints->y                                  = windowPosition.y;
-        XSetWMNormalHints(m_display, m_window, sizeHints);
-        XFree(sizeHints);
+        m_useSizeHints = true;
+        XSizeHints sizeHints{};
+        sizeHints.flags     = PMinSize | PMaxSize | USPosition;
+        sizeHints.min_width = sizeHints.max_width = static_cast<int>(width);
+        sizeHints.min_height = sizeHints.max_height = static_cast<int>(height);
+        sizeHints.x                                 = windowPosition.x;
+        sizeHints.y                                 = windowPosition.y;
+        XSetWMNormalHints(m_display, m_window, &sizeHints);
     }
 
     // Set the window's WM class (this can be used by window managers)
-    XClassHint* hint = XAllocClassHint();
+    XClassHint hint{};
 
     // The instance name should be something unique to this invocation
     // of the application but is rarely if ever used these days.
@@ -585,7 +628,7 @@ m_cursorGrabbed(m_fullscreen)
     std::string       executableName = findExecutableName().string();
     std::vector<char> windowInstance(executableName.size() + 1, 0);
     std::copy(executableName.begin(), executableName.end(), windowInstance.begin());
-    hint->res_name = windowInstance.data();
+    hint.res_name = windowInstance.data();
 
     // The class name identifies a class of windows that
     // "are of the same type". We simply use the initial window name as
@@ -593,11 +636,9 @@ m_cursorGrabbed(m_fullscreen)
     std::string       ansiTitle = title.toAnsiString();
     std::vector<char> windowClass(ansiTitle.size() + 1, 0);
     std::copy(ansiTitle.begin(), ansiTitle.end(), windowClass.begin());
-    hint->res_class = windowClass.data();
+    hint.res_class = windowClass.data();
 
-    XSetClassHint(m_display, m_window, hint);
-
-    XFree(hint);
+    XSetClassHint(m_display, m_window, &hint);
 
     // Set the window's name
     setTitle(title);
@@ -610,12 +651,11 @@ m_cursorGrabbed(m_fullscreen)
     {
         // Disable hint for min and max size,
         // otherwise some windows managers will not remove window decorations
-        XSizeHints* sizeHints = XAllocSizeHints();
-        long        flags     = 0;
-        XGetWMNormalHints(m_display, m_window, sizeHints, &flags);
-        sizeHints->flags &= ~(PMinSize | PMaxSize);
-        XSetWMNormalHints(m_display, m_window, sizeHints);
-        XFree(sizeHints);
+        XSizeHints sizeHints{};
+        long       flags = 0;
+        XGetWMNormalHints(m_display, m_window, &sizeHints, &flags);
+        sizeHints.flags &= ~(PMinSize | PMaxSize);
+        XSetWMNormalHints(m_display, m_window, &sizeHints);
 
         setVideoMode(mode);
         switchToFullscreen();
@@ -841,12 +881,11 @@ void WindowImplX11::setSize(const Vector2u& size)
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if (m_useSizeHints)
     {
-        XSizeHints* sizeHints = XAllocSizeHints();
-        sizeHints->flags      = PMinSize | PMaxSize;
-        sizeHints->min_width = sizeHints->max_width = static_cast<int>(size.x);
-        sizeHints->min_height = sizeHints->max_height = static_cast<int>(size.y);
-        XSetWMNormalHints(m_display, m_window, sizeHints);
-        XFree(sizeHints);
+        XSizeHints sizeHints{};
+        sizeHints.flags     = PMinSize | PMaxSize;
+        sizeHints.min_width = sizeHints.max_width = static_cast<int>(size.x);
+        sizeHints.min_height = sizeHints.max_height = static_cast<int>(size.y);
+        XSetWMNormalHints(m_display, m_window, &sizeHints);
     }
 
     XResizeWindow(m_display, m_window, size.x, size.y);
@@ -925,7 +964,7 @@ void WindowImplX11::setTitle(const String& title)
 void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
-    // Note: this memory will be freed by XDestroyImage
+    // Note: this memory will be freed by X11Ptr<XImage> deleter
     auto* iconPixels = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4));
     for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
@@ -939,16 +978,8 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     // Create the icon pixmap
     Visual* defVisual = DefaultVisual(m_display, m_screen);
     auto    defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
-    XImage* iconImage = XCreateImage(m_display,
-                                     defVisual,
-                                     defDepth,
-                                     ZPixmap,
-                                     0,
-                                     reinterpret_cast<char*>(iconPixels),
-                                     size.x,
-                                     size.y,
-                                     32,
-                                     0);
+    auto    iconImage = X11Ptr<XImage>(
+        XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0));
     if (!iconImage)
     {
         err() << "Failed to set the window's icon" << std::endl;
@@ -964,9 +995,8 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     m_iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), size.x, size.y, defDepth);
     XGCValues values;
     GC        iconGC = XCreateGC(m_display, m_iconPixmap, 0, &values);
-    XPutImage(m_display, m_iconPixmap, iconGC, iconImage, 0, 0, 0, 0, size.x, size.y);
+    XPutImage(m_display, m_iconPixmap, iconGC, iconImage.get(), 0, 0, 0, 0, size.x, size.y);
     XFreeGC(m_display, iconGC);
-    XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
     const std::size_t         pitch = (size.x + 7) / 8;
@@ -995,12 +1025,11 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
                                                    1);
 
     // Send our new icon to the window through the WMHints
-    XWMHints* hints    = XAllocWMHints();
-    hints->flags       = IconPixmapHint | IconMaskHint;
-    hints->icon_pixmap = m_iconPixmap;
-    hints->icon_mask   = m_iconMaskPixmap;
-    XSetWMHints(m_display, m_window, hints);
-    XFree(hints);
+    XWMHints hints{};
+    hints.flags       = IconPixmapHint | IconMaskHint;
+    hints.icon_pixmap = m_iconPixmap;
+    hints.icon_mask   = m_iconMaskPixmap;
+    XSetWMHints(m_display, m_window, &hints);
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
@@ -1170,14 +1199,13 @@ void WindowImplX11::requestFocus()
     {
         // Otherwise: display urgency hint (flashing application logo)
         // Ensure WM hints exist, allocate if necessary
-        XWMHints* hints = XGetWMHints(m_display, m_window);
+        auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display, m_window));
         if (hints == nullptr)
-            hints = XAllocWMHints();
+            hints.reset(XAllocWMHints());
 
         // Add urgency (notification) flag to hints
         hints->flags |= XUrgencyHint;
-        XSetWMHints(m_display, m_window, hints);
-        XFree(hints);
+        XSetWMHints(m_display, m_window, hints.get());
     }
 }
 
@@ -1265,35 +1293,27 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     ::Window rootWindow = RootWindow(m_display, m_screen);
 
     // Get the screen resources
-    XRRScreenResources* res = XRRGetScreenResources(m_display, rootWindow);
+    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for fullscreen mode, switching to window mode" << std::endl;
         return;
     }
 
-    RROutput output = getOutputPrimary(rootWindow, res, xRandRMajor, xRandRMinor);
+    RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    XRROutputInfo* outputInfo = XRRGetOutputInfo(m_display, res, output);
+    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display, res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
-        XRRFreeScreenResources(res);
-
-        // If outputInfo->connection == RR_Disconnected, free output info
-        if (outputInfo)
-            XRRFreeOutputInfo(outputInfo);
-
         err() << "Failed to get output info for fullscreen mode, switching to window mode" << std::endl;
         return;
     }
 
     // Retrieve current RRMode, screen position and rotation
-    XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, outputInfo->crtc);
+    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
-        XRRFreeScreenResources(res);
-        XRRFreeOutputInfo(outputInfo);
         err() << "Failed to get crtc info for fullscreen mode, switching to window mode" << std::endl;
         return;
     }
@@ -1317,8 +1337,6 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 
     if (!modeFound)
     {
-        XRRFreeScreenResources(res);
-        XRRFreeOutputInfo(outputInfo);
         err() << "Failed to find a matching RRMode for fullscreen mode, switching to window mode" << std::endl;
         return;
     }
@@ -1328,14 +1346,19 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     m_oldRRCrtc    = outputInfo->crtc;
 
     // Switch to fullscreen mode
-    XRRSetCrtcConfig(m_display, res, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, xRandMode, crtcInfo->rotation, &output, 1);
+    XRRSetCrtcConfig(m_display,
+                     res.get(),
+                     outputInfo->crtc,
+                     CurrentTime,
+                     crtcInfo->x,
+                     crtcInfo->y,
+                     xRandMode,
+                     crtcInfo->rotation,
+                     &output,
+                     1);
 
     // Set "this" as the current fullscreen window
     fullscreenWindow = this;
-
-    XRRFreeScreenResources(res);
-    XRRFreeOutputInfo(outputInfo);
-    XRRFreeCrtcInfo(crtcInfo);
 }
 
 
@@ -1352,7 +1375,7 @@ void WindowImplX11::resetVideoMode()
         int xRandRMinor;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
-            XRRScreenResources* res = XRRGetScreenResources(m_display, DefaultRootWindow(m_display));
+            auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, DefaultRootWindow(m_display)));
             if (!res)
             {
                 err() << "Failed to get the current screen resources to reset the video mode" << std::endl;
@@ -1360,10 +1383,9 @@ void WindowImplX11::resetVideoMode()
             }
 
             // Retrieve current screen position and rotation
-            XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, m_oldRRCrtc);
+            auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), m_oldRRCrtc));
             if (!crtcInfo)
             {
-                XRRFreeScreenResources(res);
                 err() << "Failed to get crtc info to reset the video mode" << std::endl;
                 return;
             }
@@ -1385,7 +1407,7 @@ void WindowImplX11::resetVideoMode()
             }
 
             XRRSetCrtcConfig(m_display,
-                             res,
+                             res.get(),
                              m_oldRRCrtc,
                              CurrentTime,
                              crtcInfo->x,
@@ -1394,9 +1416,6 @@ void WindowImplX11::resetVideoMode()
                              crtcInfo->rotation,
                              &output,
                              1);
-
-            XRRFreeCrtcInfo(crtcInfo);
-            XRRFreeScreenResources(res);
         }
 
         // Reset the fullscreen window
@@ -1695,13 +1714,12 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            XWMHints* hints = XGetWMHints(m_display, m_window);
+            auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display, m_window));
             if (hints != nullptr)
             {
                 // Remove urgency (notification) flag from hints
                 hints->flags &= ~XUrgencyHint;
-                XSetWMHints(m_display, m_window, hints);
-                XFree(hints);
+                XSetWMHints(m_display, m_window, hints.get());
             }
 
             break;
@@ -2117,7 +2135,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     ::Window rootWindow = RootWindow(m_display, m_screen);
 
     // Get the screen resources
-    XRRScreenResources* res = XRRGetScreenResources(m_display, rootWindow);
+    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for primary monitor position" << std::endl;
@@ -2130,38 +2148,26 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     if (!checkXRandR(xRandRMajor, xRandRMinor))
         xRandRMajor = xRandRMinor = 0;
 
-    const RROutput output = getOutputPrimary(rootWindow, res, xRandRMajor, xRandRMinor);
+    const RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    XRROutputInfo* outputInfo = XRRGetOutputInfo(m_display, res, output);
+    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display, res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
-        XRRFreeScreenResources(res);
-
-        // If outputInfo->connection == RR_Disconnected, free output info
-        if (outputInfo)
-            XRRFreeOutputInfo(outputInfo);
-
         err() << "Failed to get output info for primary monitor position" << std::endl;
         return monitorPosition;
     }
 
     // Retrieve current RRMode, screen position and rotation
-    XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, outputInfo->crtc);
+    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
-        XRRFreeScreenResources(res);
-        XRRFreeOutputInfo(outputInfo);
         err() << "Failed to get crtc info for primary monitor position" << std::endl;
         return monitorPosition;
     }
 
     monitorPosition.x = crtcInfo->x;
     monitorPosition.y = crtcInfo->y;
-
-    XRRFreeCrtcInfo(crtcInfo);
-    XRRFreeOutputInfo(outputInfo);
-    XRRFreeScreenResources(res);
 
     return monitorPosition;
 }
