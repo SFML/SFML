@@ -27,13 +27,15 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/ImageLoader.hpp>
+
 #include <SFML/System/Err.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <algorithm>
-#include <cstring>
 #include <ostream>
+
+#include <cstring>
 
 
 namespace sf
@@ -138,9 +140,9 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
 }
 
 ////////////////////////////////////////////////////////////
-bool Image::saveToMemory(std::vector<std::uint8_t>& output, const std::string& format) const
+bool Image::saveToMemory(std::vector<std::uint8_t>& output, std::string_view format) const
 {
-    return priv::ImageLoader::getInstance().saveImageToMemory(format, output, m_pixels, m_size);
+    return priv::ImageLoader::getInstance().saveImageToMemory(std::string(format), output, m_pixels, m_size);
 }
 
 
@@ -227,7 +229,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
                 // Interpolate RGBA components using the alpha values of the destination and source pixels
                 std::uint8_t srcAlpha = src[3];
                 std::uint8_t dstAlpha = dst[3];
-                std::uint8_t outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
+                auto         outAlpha = static_cast<std::uint8_t>(srcAlpha + dstAlpha - srcAlpha * dstAlpha / 255);
 
                 dst[3] = outAlpha;
 

@@ -1,19 +1,22 @@
 #include <SFML/Graphics/Transform.hpp>
+
 #include <SFML/System/Angle.hpp>
 
 #include <doctest/doctest.h>
 
 #include <GraphicsUtil.hpp>
-#include <cassert>
 #include <type_traits>
 #include <vector>
+
+#include <cassert>
 
 static_assert(std::is_copy_constructible_v<sf::Transform>);
 static_assert(std::is_copy_assignable_v<sf::Transform>);
 static_assert(std::is_nothrow_move_constructible_v<sf::Transform>);
 static_assert(std::is_nothrow_move_assignable_v<sf::Transform>);
 
-// Use StringMaker to avoid opening namespace std
+// Specialize StringMaker for std::vector<float>
+// https://github.com/doctest/doctest/blob/master/doc/markdown/stringification.md#docteststringmakert-specialisation
 namespace doctest
 {
 template <>

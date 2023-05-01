@@ -29,11 +29,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/GlResource.hpp>
 
-#include <cstdint>
+#include <SFML/System/Vector2.hpp>
+
 #include <memory>
+
+#include <cstdint>
 
 
 namespace sf

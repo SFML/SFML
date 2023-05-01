@@ -33,10 +33,10 @@
 
 #include <SFML/System/InputStream.hpp>
 
-#include <cstdio>
 #include <filesystem>
 #include <memory>
-#include <string>
+
+#include <cstdio>
 
 #ifdef SFML_SYSTEM_ANDROID
 namespace sf::priv

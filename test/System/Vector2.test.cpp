@@ -3,8 +3,9 @@
 #include <doctest/doctest.h>
 
 #include <SystemUtil.hpp>
-#include <cmath>
 #include <type_traits>
+
+#include <cmath>
 
 using namespace sf::Literals;
 

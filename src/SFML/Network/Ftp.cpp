@@ -27,15 +27,18 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Ftp.hpp>
 #include <SFML/Network/IpAddress.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
-#include <cctype>
-#include <cstdio>
 #include <fstream>
 #include <iterator>
 #include <ostream>
 #include <sstream>
+#include <utility>
+
+#include <cctype>
+#include <cstdio>
 
 
 namespace sf
@@ -78,7 +81,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response::Response(Status code, const std::string& message) : m_status(code), m_message(message)
+Ftp::Response::Response(Status code, std::string message) : m_status(code), m_message(std::move(message))
 {
 }
 
@@ -310,7 +313,7 @@ Ftp::Response Ftp::download(const std::filesystem::path& remoteFile, const std::
 
             // If the download was unsuccessful, delete the partial file
             if (!response.isOk())
-                std::remove(filepath.string().c_str());
+                std::filesystem::remove(filepath);
         }
     }
 
@@ -322,7 +325,7 @@ Ftp::Response Ftp::download(const std::filesystem::path& remoteFile, const std::
 Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remotePath, TransferMode mode, bool append)
 {
     // Get the contents of the file to send
-    std::ifstream file(localFile.c_str(), std::ios_base::binary);
+    std::ifstream file(localFile, std::ios_base::binary);
     if (!file)
         return Response(Response::Status::InvalidFile);
 
@@ -555,8 +558,8 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             }
 
             // Reconstruct connection port and address
-            unsigned short port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
-            IpAddress      address(data[0], data[1], data[2], data[3]);
+            auto      port = static_cast<std::uint16_t>(data[4] * 256 + data[5]);
+            IpAddress address(data[0], data[1], data[2], data[3]);
 
             // Connect the data channel to the server
             if (m_dataSocket.connect(address, port) == Socket::Status::Done)

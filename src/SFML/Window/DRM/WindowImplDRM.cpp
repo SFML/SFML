@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2020 Andrew Mickelson
+// Copyright (C) 2023 Andrew Mickelson
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+
+#include <SFML/System/Err.hpp>
 
 
 namespace sf::priv

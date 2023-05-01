@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/DRM/ClipboardImpl.hpp>
 
+#include <SFML/System/String.hpp>
 
 namespace sf::priv
 {

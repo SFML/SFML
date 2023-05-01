@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLCheck.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <ostream>
@@ -35,7 +36,7 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
+void glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
 {
     // Get the last error
     GLenum errorCode = glGetError();

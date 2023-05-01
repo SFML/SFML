@@ -15,10 +15,11 @@
 // - Click OK.
 //
 
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-int main(int argc, char const** argv)
+#include <SFML/Audio.hpp>
+
+int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
@@ -29,7 +30,7 @@ int main(int argc, char const** argv)
     {
         return EXIT_FAILURE;
     }
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    window.setIcon(icon);
 
     // Load a sprite to display
     sf::Texture texture;
@@ -45,7 +46,7 @@ int main(int argc, char const** argv)
     {
         return EXIT_FAILURE;
     }
-    sf::Text text("Hello SFML", font, 50);
+    sf::Text text(font, "Hello SFML", 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play

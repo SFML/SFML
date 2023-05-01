@@ -26,11 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterWav.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 
-#include <cassert>
 #include <ostream>
+
+#include <cassert>
 
 
 namespace
@@ -86,7 +88,7 @@ SoundFileWriterWav::~SoundFileWriterWav()
 bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // Open the file
-    m_file.open(filename.c_str(), std::ios::binary);
+    m_file.open(filename, std::ios::binary);
     if (!m_file)
     {
         err() << "Failed to open WAV sound file for writing\n" << formatDebugPathInfo(filename) << std::endl;

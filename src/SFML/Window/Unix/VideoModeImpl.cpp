@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>

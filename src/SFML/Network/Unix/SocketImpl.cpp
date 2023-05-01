@@ -26,12 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Unix/SocketImpl.hpp>
+
 #include <SFML/System/Err.hpp>
+
+#include <fcntl.h>
+#include <ostream>
 
 #include <cerrno>
 #include <cstring>
-#include <fcntl.h>
-#include <ostream>
 
 
 namespace sf::priv

@@ -33,8 +33,9 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 
-#include <cstdint>
 #include <memory>
+
+#include <cstdint>
 
 
 namespace sf::priv

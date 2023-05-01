@@ -29,9 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
-#include <cstddef>
 #include <string>
 #include <vector>
+
+#include <cstddef>
 
 
 namespace sf

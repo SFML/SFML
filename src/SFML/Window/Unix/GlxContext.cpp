@@ -26,10 +26,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <mutex>
 #include <ostream>

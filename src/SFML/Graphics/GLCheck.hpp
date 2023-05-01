@@ -32,6 +32,7 @@
 #include <SFML/Graphics/GLExtensions.hpp>
 
 #include <filesystem>
+#include <string_view>
 
 
 namespace sf::priv
@@ -65,6 +66,6 @@ namespace sf::priv
 /// \param expression The evaluated expression as a string
 ///
 ////////////////////////////////////////////////////////////
-void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
+void glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
 } // namespace sf::priv

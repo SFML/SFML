@@ -31,6 +31,7 @@
 
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/TcpSocket.hpp>
+
 #include <SFML/System/Time.hpp>
 
 #include <map>
@@ -99,7 +100,7 @@ public:
         /// \brief Set the request method
         ///
         /// See the Method enumeration for a complete list of all
-        /// the availale methods.
+        /// the available methods.
         /// The method is Http::Request::Method::Get by default.
         ///
         /// \param method Method to use for the request

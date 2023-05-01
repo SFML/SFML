@@ -31,10 +31,10 @@
 
 #include <SFML/Audio/SoundFileReader.hpp>
 
-#include <cstddef>
 #include <filesystem>
 #include <memory>
-#include <string>
+
+#include <cstddef>
 
 
 namespace sf

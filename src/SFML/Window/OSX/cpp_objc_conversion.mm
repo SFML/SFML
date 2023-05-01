@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Utf.hpp>
 #import <SFML/Window/OSX/cpp_objc_conversion.h>
+
+#include <SFML/System/Utf.hpp>
 
 #import <Foundation/Foundation.h>
 
@@ -45,8 +46,8 @@ NSString* stringToNSString(const std::string& string)
 ////////////////////////////////////////////////////////////
 NSString* sfStringToNSString(const sf::String& string)
 {
-    std::uint32_t length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
-    const void*   data   = reinterpret_cast<const void*>(string.getData());
+    auto        length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
+    const void* data   = reinterpret_cast<const void*>(string.getData());
 
     NSStringEncoding encoding;
     if (NSHostByteOrder() == NS_LittleEndian)

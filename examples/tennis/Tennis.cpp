@@ -2,8 +2,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
 
 #include <random>
 
@@ -87,8 +88,7 @@ int main()
         return EXIT_FAILURE;
 
     // Initialize the pause message
-    sf::Text pauseMessage;
-    pauseMessage.setFont(font);
+    sf::Text pauseMessage(font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);

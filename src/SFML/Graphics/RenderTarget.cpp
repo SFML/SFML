@@ -32,15 +32,19 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
-#include <SFML/System/Err.hpp>
+
 #include <SFML/Window/Context.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <algorithm>
-#include <cassert>
 #include <iostream>
 #include <mutex>
 #include <ostream>
 #include <unordered_map>
+
+#include <cassert>
+#include <cmath>
 
 
 namespace
@@ -190,12 +194,11 @@ const View& RenderTarget::getDefaultView() const
 ////////////////////////////////////////////////////////////
 IntRect RenderTarget::getViewport(const View& view) const
 {
-    float            width    = static_cast<float>(getSize().x);
-    float            height   = static_cast<float>(getSize().y);
-    const FloatRect& viewport = view.getViewport();
+    const auto [width, height] = Vector2f(getSize());
+    const FloatRect& viewport  = view.getViewport();
 
-    return IntRect({static_cast<int>(0.5f + width * viewport.left), static_cast<int>(0.5f + height * viewport.top)},
-                   {static_cast<int>(0.5f + width * viewport.width), static_cast<int>(0.5f + height * viewport.height)});
+    return IntRect(Rect<long>({std::lround(width * viewport.left), std::lround(height * viewport.top)},
+                              {std::lround(width * viewport.width), std::lround(height * viewport.height)}));
 }
 
 

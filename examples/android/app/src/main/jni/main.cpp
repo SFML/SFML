@@ -1,8 +1,12 @@
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
-#include <SFML/System.hpp>
+
 #include <SFML/Window.hpp>
+
+#include <SFML/System.hpp>
 
 // Do we want to showcase direct JNI/NDK interaction?
 // Undefine this to get real cross-platform code.
@@ -94,7 +98,7 @@ int main(int argc, char* argv[])
     if (!font.loadFromFile("tuffy.ttf"))
         return EXIT_FAILURE;
 
-    sf::Text text("Tap anywhere to move the logo.", font, 64);
+    sf::Text text(font, "Tap anywhere to move the logo.", 64);
     text.setFillColor(sf::Color::Black);
     text.setPosition({10, 10});
 

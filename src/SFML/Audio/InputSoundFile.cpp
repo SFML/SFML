@@ -28,6 +28,7 @@
 #include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileReader.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/InputStream.hpp>

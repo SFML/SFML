@@ -29,10 +29,11 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 
-#include <cstring>
 #include <istream>
 #include <ostream>
 #include <utility>
+
+#include <cstring>
 
 
 namespace sf

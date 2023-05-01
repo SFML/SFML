@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/Window/VideoModeImpl.hpp>
 
 #include <mutex>
 
@@ -37,13 +38,10 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
-    VideoMode desktop = getDesktopMode();
+    const VideoMode desktop = getDesktopMode();
 
     // Return both portrait and landscape resolutions
-    std::vector<VideoMode> modes;
-    modes.push_back(desktop);
-    modes.emplace_back(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel);
-    return modes;
+    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
 }
 
 

@@ -126,6 +126,17 @@ endif()
 sfml_find_package(Freetype INCLUDE "FREETYPE_INCLUDE_DIRS" LINK "FREETYPE_LIBRARY")
 target_link_libraries(sfml-graphics PRIVATE Freetype)
 
+# on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features
+# that aren't supported by native CPU instructions (64-bit atomic operations on 32-bit architecture)
+if(SFML_COMPILER_GCC)
+    include(CheckCXXSourceCompiles)
+    check_cxx_source_compiles("#include <atomic>
+        int main(){std::atomic_ullong x(1); return x.fetch_add(1);}" ATOMIC_TEST)
+    if(NOT ATOMIC_TEST)
+        target_link_libraries(sfml-graphics PRIVATE atomic)
+    endif()
+endif()
+
 # add preprocessor symbols
 target_compile_definitions(sfml-graphics PRIVATE "STBI_FAILURE_USERMSG")
 

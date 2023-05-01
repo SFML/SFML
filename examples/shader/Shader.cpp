@@ -2,10 +2,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "Effect.hpp"
+
 #include <array>
 #include <random>
-
-#include "Effect.hpp"
 
 
 namespace
@@ -66,7 +66,7 @@ private:
 class WaveBlur : public Effect
 {
 public:
-    WaveBlur() : Effect("Wave + Blur")
+    WaveBlur() : Effect("Wave + Blur"), m_text(getFont())
     {
     }
 
@@ -92,7 +92,6 @@ public:
             "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
             "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
             "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
-        m_text.setFont(getFont());
         m_text.setCharacterSize(22);
         m_text.setPosition({30.f, 20.f});
 
@@ -279,8 +278,9 @@ public:
         {
             // Spread the coordinates from -480 to +480
             // So they'll always fill the viewport at 800x600
-            m_pointCloud[i].position.x = static_cast<float>(rand() % 960) - 480.f;
-            m_pointCloud[i].position.y = static_cast<float>(rand() % 960) - 480.f;
+            std::uniform_real_distribution<float> positionDistribution(-480, 480);
+            m_pointCloud[i].position.x = positionDistribution(rng);
+            m_pointCloud[i].position.y = positionDistribution(rng);
         }
 
         // Load the texture
@@ -377,12 +377,12 @@ int main()
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
-    sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
+    sf::Text description(font, "Current effect: " + effects[current]->getName(), 20);
     description.setPosition({10.f, 530.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
-    sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
+    sf::Text instructions(font, "Press left and right arrows to change the current shader", 20);
     instructions.setPosition({280.f, 555.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
 
@@ -431,8 +431,7 @@ int main()
         }
 
         // Update the current example
-        float x = static_cast<float>(sf::Mouse::getPosition(window).x) / static_cast<float>(window.getSize().x);
-        float y = static_cast<float>(sf::Mouse::getPosition(window).y) / static_cast<float>(window.getSize().y);
+        const auto [x, y] = sf::Vector2f(sf::Mouse::getPosition(window)).cwiseDiv(sf::Vector2f(window.getSize()));
         effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
 
         // Clear the window

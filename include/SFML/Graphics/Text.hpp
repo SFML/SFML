@@ -33,9 +33,9 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+
 #include <SFML/System/String.hpp>
 
-#include <string>
 #include <vector>
 
 
@@ -64,14 +64,6 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Creates an empty text.
-    ///
-    ////////////////////////////////////////////////////////////
-    Text();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct the text from a string, font and size
     ///
     /// Note that if the used font is a bitmap font, it is not
@@ -86,13 +78,13 @@ public:
     /// \param characterSize  Base size of characters, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Text(const String& string, const Font& font, unsigned int characterSize = 30);
+    Text(const Font& font, String string = "", unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disallow construction from a temporary font
     ///
     ////////////////////////////////////////////////////////////
-    Text(const String& string, Font&& font, unsigned int characterSize = 30) = delete;
+    Text(Font&& font, String string = "", unsigned int characterSize = 30) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -500,7 +492,7 @@ private:
 /// font.loadFromFile("arial.ttf");
 ///
 /// // Create a text
-/// sf::Text text("hello", font);
+/// sf::Text text(font, "hello");
 /// text.setCharacterSize(30);
 /// text.setStyle(sf::Text::Bold);
 /// text.setFillColor(sf::Color::Red);

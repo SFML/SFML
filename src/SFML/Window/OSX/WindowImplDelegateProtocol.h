@@ -31,6 +31,7 @@
 #include <SFML/Window/WindowHandle.hpp>
 
 #import <AppKit/AppKit.h>
+
 #include <cstdint>
 
 #pragma GCC diagnostic push

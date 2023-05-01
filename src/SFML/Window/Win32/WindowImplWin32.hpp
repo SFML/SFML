@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
 
 namespace sf

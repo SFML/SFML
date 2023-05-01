@@ -29,8 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
-#include <cstdint>
 #include <vector>
+
+#include <cstdint>
 
 
 using VkInstance = struct VkInstance_T*;

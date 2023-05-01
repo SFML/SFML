@@ -7,15 +7,17 @@
 
 // Include graphics because we use sf::Image for loading images
 #include <SFML/Graphics.hpp>
+
 #include <SFML/Window.hpp>
 
 #include <algorithm>
 #include <array>
-#include <cmath>
-#include <cstring>
 #include <iostream>
 #include <limits>
 #include <vector>
+
+#include <cmath>
+#include <cstring>
 
 
 ////////////////////////////////////////////////////////////

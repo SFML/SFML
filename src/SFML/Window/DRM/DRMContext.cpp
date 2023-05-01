@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2020 Andrew Mickelson
+// Copyright (C) 2023 Andrew Mickelson
 //               2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -26,18 +26,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Sleep.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Sleep.hpp>
+
 #include <fcntl.h>
 #include <poll.h>
 #include <unistd.h>
 #include <xf86drm.h>
+
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -112,7 +114,8 @@ void cleanup()
     drmModeFreeEncoder(drmNode.savedEncoder);
     drmModeFreeCrtc(drmNode.originalCrtc);
 
-    eglTerminate(display);
+    if (display != EGL_NO_DISPLAY)
+        eglTerminate(display);
     display = EGL_NO_DISPLAY;
 
     gbm_device_destroy(gbmDevice);
@@ -133,8 +136,8 @@ void cleanup()
 
 void drmFbDestroyCallback(gbm_bo* bo, void* data)
 {
-    int    drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
-    DrmFb* fb    = static_cast<DrmFb*>(data);
+    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
+    auto* fb    = static_cast<DrmFb*>(data);
 
     if (fb->fbId)
         drmModeRmFB(drmFd, fb->fbId);
@@ -144,8 +147,8 @@ void drmFbDestroyCallback(gbm_bo* bo, void* data)
 
 DrmFb* drmFbGetFromBo(gbm_bo& bo)
 {
-    int    drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
-    DrmFb* fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
+    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
+    auto* fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
     if (fb)
         return fb;
 

@@ -30,9 +30,11 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
+
+#include <SFML/Window/GlResource.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
-#include <SFML/Window/GlResource.hpp>
 
 #include <filesystem>
 #include <string>

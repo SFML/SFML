@@ -25,21 +25,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/String.hpp>
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeySymToKeyMapping.hpp>
 #include <SFML/Window/Unix/KeySymToUnicodeMapping.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 
+#include <SFML/System/String.hpp>
+#include <SFML/System/Utf.hpp>
+
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#include <cstring>
 #include <string>
 #include <unordered_map>
 #include <utility>
+
+#include <cstring>
 
 namespace
 {
@@ -484,9 +486,8 @@ void ensureMapping()
         std::memcpy(name, descriptor->names->keys[keycode].name, XkbKeyNameLength);
         name[XkbKeyNameLength] = '\0';
 
-        std::unordered_map<std::string, sf::Keyboard::Scancode>::iterator mappedScancode = nameScancodeMap.find(
-            std::string(name));
-        scancode = sf::Keyboard::Scan::Unknown;
+        auto mappedScancode = nameScancodeMap.find(std::string(name));
+        scancode            = sf::Keyboard::Scan::Unknown;
 
         if (mappedScancode != nameScancodeMap.end())
             scancode = mappedScancode->second;
@@ -672,8 +673,8 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
     if (checkInput)
     {
-        KeySym        keysym  = scancodeToKeySym(code);
-        std::uint32_t unicode = keysymToUnicode(keysym);
+        KeySym   keysym  = scancodeToKeySym(code);
+        char32_t unicode = keysymToUnicode(keysym);
 
         if (unicode != 0)
             return String(unicode);

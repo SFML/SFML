@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Android/InputImpl.hpp>
+
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Err.hpp>
-#include <SFML/Window/Android/InputImpl.hpp>
 
 #include <jni.h>
 

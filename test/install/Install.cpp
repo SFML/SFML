@@ -1,5 +1,7 @@
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
 
 // Instantiate some types from each module to test for linker issues. This program is not meant be ran.

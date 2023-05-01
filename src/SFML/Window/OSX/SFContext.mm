@@ -26,10 +26,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/OSX/SFContext.hpp>
 #include <SFML/Window/OSX/WindowImplCocoa.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <dlfcn.h>
 #include <ostream>

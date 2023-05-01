@@ -25,16 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <X11/keysym.h>
 
-#include <cassert>
-#include <cstdlib>
 #include <mutex>
 #include <ostream>
 #include <unordered_map>
+
+#include <cassert>
+#include <cstdlib>
 
 
 namespace

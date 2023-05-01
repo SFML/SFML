@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/EGLCheck.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <glad/egl.h>
 
@@ -38,7 +39,7 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void eglCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
+void eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
 {
     // Obtain information about the success or failure of the most recent EGL
     // function called in the current thread

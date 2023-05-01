@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Angle.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
+
+#include <SFML/System/Angle.hpp>
 
 
 namespace

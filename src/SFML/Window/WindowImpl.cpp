@@ -25,17 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/JoystickManager.hpp>
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
+
 #include <algorithm>
-#include <cmath>
 #include <memory>
+
+#include <cmath>
 
 #if defined(SFML_SYSTEM_WINDOWS)
 

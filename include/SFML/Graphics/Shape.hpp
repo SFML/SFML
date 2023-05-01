@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 
@@ -46,12 +47,6 @@ class Texture;
 class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Virtual destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Shape() override;
-
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
     ///

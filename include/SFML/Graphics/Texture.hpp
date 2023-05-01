@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
+
 #include <SFML/Window/GlResource.hpp>
 
 #include <filesystem>
@@ -70,6 +71,12 @@ public:
     Texture();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~Texture();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
     /// \param copy instance to copy
@@ -78,10 +85,22 @@ public:
     Texture(const Texture& copy);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
+    /// \brief Copy assignment operator
     ///
     ////////////////////////////////////////////////////////////
-    ~Texture();
+    Texture& operator=(const Texture&);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture(Texture&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment operator
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture& operator=(Texture&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the texture
@@ -503,22 +522,12 @@ public:
     [[nodiscard]] bool generateMipmap();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of assignment operator
-    ///
-    /// \param right Instance to assign
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    Texture& operator=(const Texture& right);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Swap the contents of this texture with those of another
     ///
     /// \param right Instance to swap with
     ///
     ////////////////////////////////////////////////////////////
-    void swap(Texture& right);
+    void swap(Texture& right) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the underlying OpenGL handle of the texture.
@@ -620,6 +629,15 @@ private:
     bool          m_hasMipmap{};     //!< Has the mipmap been generated?
     std::uint64_t m_cacheId;         //!< Unique number that identifies the texture to the render target's cache
 };
+
+////////////////////////////////////////////////////////////
+/// \brief Swap the contents of one texture with those of another
+///
+/// \param left First instance to swap
+/// \param right Second instance to swap
+///
+////////////////////////////////////////////////////////////
+void swap(Texture& left, Texture& right) noexcept;
 
 } // namespace sf
 

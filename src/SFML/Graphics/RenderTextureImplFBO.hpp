@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTextureImpl.hpp>
+
 #include <SFML/Window/GlResource.hpp>
 
 #include <memory>

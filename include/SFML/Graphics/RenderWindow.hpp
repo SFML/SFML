@@ -30,11 +30,14 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+
 #include <SFML/Window/Window.hpp>
 
 
 namespace sf
 {
+class Image;
+
 ////////////////////////////////////////////////////////////
 /// \brief Window that can serve as a target for 2D drawing
 ///
@@ -112,6 +115,18 @@ public:
     ////////////////////////////////////////////////////////////
     Vector2u getSize() const override;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Change the window's icon
+    ///
+    /// The OS default icon is used by default.
+    ///
+    /// \param icon Image to use as the icon. The image is copied,
+    ///             so you need not keep the source alive after
+    ///             calling this function.
+    ///
+    ////////////////////////////////////////////////////////////
+    void setIcon(const Image& icon);
+    using Window::setIcon;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the window will use sRGB encoding when drawing on it
@@ -230,7 +245,12 @@ private:
 ///
 /// // Create a sprite and a text to display
 /// sf::Sprite sprite;
-/// sf::Text text;
+/// sf::Font font;
+/// if (!font.loadFromFile("arial.ttf"))
+/// {
+///     // error...
+/// }
+/// sf::Text text(font);
 /// ...
 ///
 /// // Perform OpenGL initializations

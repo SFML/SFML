@@ -26,7 +26,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #import <SFML/Window/OSX/NSImage+raw.h>
 #import <SFML/Window/OSX/SFApplication.h>
 #import <SFML/Window/OSX/SFOpenGLView.h>
@@ -37,6 +36,8 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <ApplicationServices/ApplicationServices.h>
 #import <OpenGL/OpenGL.h>
@@ -456,18 +457,9 @@
         // Add titlebar height.
         height += static_cast<unsigned int>([self titlebarHeight]);
 
-        // Corner case: don't set the window height bigger than the screen height
-        // or the view will be resized _later_ without generating a resize event.
-        NSRect  screenFrame      = [[NSScreen mainScreen] visibleFrame];
-        CGFloat maxVisibleHeight = screenFrame.size.height;
-        if (height > maxVisibleHeight)
-        {
-            height = static_cast<unsigned int>(maxVisibleHeight);
-
-            // The size is not the requested one, we fire an event
-            if (m_requester != nil)
-                m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
-        }
+        // Send resize event if size has changed
+        if (sf::Vector2u(width, height) != m_requester->getSize())
+            m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
 
         NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, width, height);
 
@@ -606,9 +598,9 @@
 ////////////////////////////////////////////////////////
 - (float)screenHeight
 {
-    NSDictionary*     deviceDescription = [[m_window screen] deviceDescription];
-    NSNumber*         screenNumber      = [deviceDescription valueForKey:@"NSScreenNumber"];
-    CGDirectDisplayID screenID          = static_cast<CGDirectDisplayID>([screenNumber intValue]);
+    NSDictionary* deviceDescription = [[m_window screen] deviceDescription];
+    NSNumber*     screenNumber      = [deviceDescription valueForKey:@"NSScreenNumber"];
+    auto          screenID          = static_cast<CGDirectDisplayID>([screenNumber intValue]);
     return static_cast<float>(CGDisplayPixelsHigh(screenID));
 }
 

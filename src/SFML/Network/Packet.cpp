@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
+
 #include <SFML/System/String.hpp>
 
 #include <cstring>
@@ -381,7 +382,7 @@ Packet& Packet::operator>>(String& data)
         {
             std::uint32_t character = 0;
             *this >> character;
-            data += character;
+            data += static_cast<char32_t>(character);
         }
     }
 
@@ -434,7 +435,7 @@ Packet& Packet::operator<<(std::uint16_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::int32_t data)
 {
-    std::int32_t toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
+    auto toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }

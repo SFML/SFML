@@ -25,15 +25,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/JoystickImpl.hpp>
+
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
-#include <SFML/Window/JoystickImpl.hpp>
 
 #include <algorithm>
-#include <cmath>
-#include <cstring>
 #include <iomanip>
 #include <ostream>
 #include <regstr.h>
@@ -41,6 +40,9 @@
 #include <string>
 #include <tchar.h>
 #include <vector>
+
+#include <cmath>
+#include <cstring>
 
 
 ////////////////////////////////////////////////////////////

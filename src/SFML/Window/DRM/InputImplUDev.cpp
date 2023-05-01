@@ -25,14 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/InputImplUDev.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <algorithm>
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <fcntl.h>
 #include <linux/input.h>
 #include <mutex>
@@ -42,6 +39,11 @@
 #include <termios.h>
 #include <unistd.h>
 #include <vector>
+
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 
 namespace
@@ -93,10 +95,10 @@ void uninitFileDescriptors()
 }
 
 #define BITS_PER_LONG        (sizeof(unsigned long) * 8)
-#define NBITS(x)             (((x - 1) / BITS_PER_LONG) + 1)
-#define OFF(x)               (x % BITS_PER_LONG)
-#define LONG(x)              (x / BITS_PER_LONG)
-#define TEST_BIT(bit, array) ((array[LONG(bit)] >> OFF(bit)) & 1)
+#define NBITS(x)             ((((x)-1) / BITS_PER_LONG) + 1)
+#define OFF(x)               ((x) % BITS_PER_LONG)
+#define LONG(x)              ((x) / BITS_PER_LONG)
+#define TEST_BIT(bit, array) (((array)[LONG(bit)] >> OFF(bit)) & 1)
 
 // Only keep fileDescriptors that we think are a keyboard, mouse or touchpad/touchscreen
 // Joysticks are handled in /src/SFML/Window/Unix/JoystickImpl.cpp

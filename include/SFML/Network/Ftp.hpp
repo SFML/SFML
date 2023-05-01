@@ -30,6 +30,7 @@
 #include <SFML/Network/Export.hpp>
 
 #include <SFML/Network/TcpSocket.hpp>
+
 #include <SFML/System/Time.hpp>
 
 #include <filesystem>
@@ -142,7 +143,7 @@ public:
         /// \param message Response message
         ///
         ////////////////////////////////////////////////////////////
-        explicit Response(Status code = Status::InvalidResponse, const std::string& message = "");
+        explicit Response(Status code = Status::InvalidResponse, std::string message = "");
 
         ////////////////////////////////////////////////////////////
         /// \brief Check if the status code means a success

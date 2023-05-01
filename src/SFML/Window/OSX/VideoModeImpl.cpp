@@ -26,9 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <algorithm>
 #include <ostream>
@@ -56,7 +57,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
     for (CFIndex i = 0; i < modesCount; ++i)
     {
-        CGDisplayModeRef cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes, i)));
+        auto* cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes, i)));
 
         VideoMode mode = convertCGModeToSFMode(cgmode);
 

@@ -9,7 +9,8 @@ static_assert(!std::is_constructible_v<sf::Shape>);
 static_assert(!std::is_copy_constructible_v<sf::Shape>);
 static_assert(std::is_copy_assignable_v<sf::Shape>);
 static_assert(!std::is_move_constructible_v<sf::Shape>);
-static_assert(std::is_move_assignable_v<sf::Shape>);
+static_assert(std::is_nothrow_move_assignable_v<sf::Shape>);
+static_assert(std::has_virtual_destructor_v<sf::Shape>);
 
 class TriangleShape : public sf::Shape
 {

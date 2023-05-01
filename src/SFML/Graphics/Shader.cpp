@@ -31,10 +31,12 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transform.hpp>
+
+#include <SFML/Window/Context.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
-#include <SFML/Window/Context.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -79,7 +81,7 @@ std::size_t getMaxTextureUnits()
 // Read the contents of a file into an array of char
 bool getFileContents(const std::filesystem::path& filename, std::vector<char>& buffer)
 {
-    std::ifstream file(filename.c_str(), std::ios_base::binary);
+    std::ifstream file(filename, std::ios_base::binary);
     if (file)
     {
         file.seekg(0, std::ios_base::end);

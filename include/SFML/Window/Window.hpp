@@ -27,11 +27,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/WindowBase.hpp>
+
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 
 #include <memory>
 

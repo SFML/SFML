@@ -9,9 +9,10 @@
 #include <gl.h>
 
 #include <array>
+#include <iostream>
+
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Initialize OpenGL states into the specified view

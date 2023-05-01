@@ -5,8 +5,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
-#include <cassert>
 #include <string>
+#include <utility>
+
+#include <cassert>
 
 
 ////////////////////////////////////////////////////////////
@@ -46,7 +48,7 @@ public:
         }
         else
         {
-            sf::Text error("Shader not\nsupported", getFont());
+            sf::Text error(getFont(), "Shader not\nsupported");
             error.setPosition({320.f, 200.f});
             error.setCharacterSize(36);
             target.draw(error, states);
@@ -54,7 +56,7 @@ public:
     }
 
 protected:
-    Effect(const std::string& name) : m_name(name)
+    Effect(std::string name) : m_name(std::move(name))
     {
     }
 
