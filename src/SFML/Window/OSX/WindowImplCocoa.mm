@@ -39,6 +39,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
+#include <limits>
 #include <ostream>
 
 namespace sf::priv
@@ -434,6 +435,27 @@ void WindowImplCocoa::setSize(const Vector2u& size)
     sf::Vector2u backingSize = size;
     scaleInXY(backingSize, m_delegate);
     [m_delegate resizeTo:backingSize.x by:backingSize.y];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setMinimumSize(const std::optional<Vector2u>& minimumSize)
+{
+    WindowImpl::setMinimumSize(minimumSize);
+    const AutoreleasePool pool;
+    const NSSize          size = minimumSize ? NSMakeSize(minimumSize->x, minimumSize->y) : NSMakeSize(0, 0);
+    [m_delegate setMinimumSize:size];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setMaximumSize(const std::optional<Vector2u>& maximumSize)
+{
+    WindowImpl::setMaximumSize(maximumSize);
+    const AutoreleasePool pool;
+    const NSSize          size = maximumSize ? NSMakeSize(maximumSize->x, maximumSize->y)
+                                             : NSMakeSize(std::numeric_limits<CGFloat>::max(), std::numeric_limits<CGFloat>::max());
+    [m_delegate setMaximumSize:size];
 }
 
 

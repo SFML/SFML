@@ -31,7 +31,11 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
+#include <limits>
 #include <ostream>
+
+#include <cassert>
 
 
 namespace
@@ -207,14 +211,63 @@ void WindowBase::setSize(const Vector2u& size)
 {
     if (m_impl)
     {
-        m_impl->setSize(size);
+        // Constrain requested size within minimum and maximum bounds
+        const auto minimumSize = m_impl->getMinimumSize().value_or(Vector2u());
+        const auto maximumSize = m_impl->getMaximumSize().value_or(
+            Vector2u(std::numeric_limits<unsigned int>::max(), std::numeric_limits<unsigned int>::max()));
+        const auto width  = std::clamp(size.x, minimumSize.x, maximumSize.x);
+        const auto height = std::clamp(size.y, minimumSize.y, maximumSize.y);
+
+        // Do nothing if requested size matches current size
+        const Vector2u clampedSize(width, height);
+        if (clampedSize == m_size)
+            return;
+
+        m_impl->setSize(clampedSize);
 
         // Cache the new size
-        m_size.x = size.x;
-        m_size.y = size.y;
+        m_size = clampedSize;
 
         // Notify the derived class
         onResize();
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::setMinimumSize(const std::optional<Vector2u>& minimumSize)
+{
+    if (m_impl)
+    {
+        [[maybe_unused]] const auto validateMinimumSize = [this, minimumSize]()
+        {
+            if (!minimumSize.has_value() || !m_impl->getMaximumSize().has_value())
+                return true;
+            return minimumSize->x <= m_impl->getMaximumSize()->x && minimumSize->y <= m_impl->getMaximumSize()->y;
+        };
+        assert(validateMinimumSize() && "Minimum size cannot be bigger than the maximum size along either axis");
+
+        m_impl->setMinimumSize(minimumSize);
+        setSize(getSize());
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::setMaximumSize(const std::optional<Vector2u>& maximumSize)
+{
+    if (m_impl)
+    {
+        [[maybe_unused]] const auto validateMaxiumSize = [this, maximumSize]()
+        {
+            if (!maximumSize.has_value() || !m_impl->getMinimumSize().has_value())
+                return true;
+            return maximumSize->x >= m_impl->getMinimumSize()->x && maximumSize->y >= m_impl->getMinimumSize()->y;
+        };
+        assert(validateMaxiumSize() && "Maximum size cannot be smaller than the minimum size along either axis");
+
+        m_impl->setMaximumSize(maximumSize);
+        setSize(getSize());
     }
 }
 

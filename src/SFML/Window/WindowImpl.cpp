@@ -136,9 +136,37 @@ WindowImpl::~WindowImpl() = default;
 
 
 ////////////////////////////////////////////////////////////
+std::optional<Vector2u> WindowImpl::getMinimumSize() const
+{
+    return m_minimumSize;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Vector2u> WindowImpl::getMaximumSize() const
+{
+    return m_maximumSize;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImpl::setJoystickThreshold(float threshold)
 {
     m_joystickThreshold = threshold;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::setMinimumSize(const std::optional<Vector2u>& minimumSize)
+{
+    m_minimumSize = minimumSize;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
+{
+    m_maximumSize = maximumSize;
 }
 
 

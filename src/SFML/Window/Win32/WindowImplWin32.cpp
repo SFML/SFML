@@ -329,13 +329,7 @@ Vector2u WindowImplWin32::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setSize(const Vector2u& size)
 {
-    // SetWindowPos wants the total size of the window (including title bar and borders),
-    // so we have to compute it
-    RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
-    AdjustWindowRect(&rectangle, static_cast<DWORD>(GetWindowLongPtr(m_handle, GWL_STYLE)), false);
-    const int width  = rectangle.right - rectangle.left;
-    const int height = rectangle.bottom - rectangle.top;
-
+    const auto [width, height] = contentSizeToWindowSize(size);
     SetWindowPos(m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
@@ -560,6 +554,20 @@ void WindowImplWin32::grabCursor(bool grabbed)
     }
 }
 
+
+////////////////////////////////////////////////////////////
+Vector2i WindowImplWin32::contentSizeToWindowSize(const Vector2u& size)
+{
+    // SetWindowPos wants the total size of the window (including title bar and borders) so we have to compute it
+    RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
+    AdjustWindowRect(&rectangle, static_cast<DWORD>(GetWindowLongPtr(m_handle, GWL_STYLE)), false);
+    const auto width  = rectangle.right - rectangle.left;
+    const auto height = rectangle.bottom - rectangle.top;
+
+    return {width, height};
+}
+
+
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode WindowImplWin32::toScancode(WPARAM wParam, LPARAM lParam)
 {
@@ -780,14 +788,28 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // The system request the min/max window size and position
+        // Fix violations of minimum or maximum size
         case WM_GETMINMAXINFO:
         {
             // We override the returned information to remove the default limit
             // (the OS doesn't allow windows bigger than the desktop by default)
-            auto* info             = reinterpret_cast<MINMAXINFO*>(lParam);
-            info->ptMaxTrackSize.x = 50000;
-            info->ptMaxTrackSize.y = 50000;
+
+            const auto maximumSize = contentSizeToWindowSize(getMaximumSize().value_or(Vector2u(50'000, 50'000)));
+
+            MINMAXINFO& minMaxInfo      = *reinterpret_cast<PMINMAXINFO>(lParam);
+            minMaxInfo.ptMaxTrackSize.x = maximumSize.x;
+            minMaxInfo.ptMaxTrackSize.y = maximumSize.y;
+            if (getMaximumSize().has_value())
+            {
+                minMaxInfo.ptMaxSize.x = maximumSize.x;
+                minMaxInfo.ptMaxSize.y = maximumSize.y;
+            }
+            if (getMinimumSize().has_value())
+            {
+                const auto minimumSize      = contentSizeToWindowSize(getMinimumSize().value());
+                minMaxInfo.ptMinTrackSize.x = minimumSize.x;
+                minMaxInfo.ptMinTrackSize.y = minimumSize.y;
+            }
             break;
         }
 
@@ -1119,6 +1141,36 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                 if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
                     JoystickImpl::updateConnections();
             }
+
+            break;
+        }
+
+        // Work around Windows 10 bug
+        // When a maximum size is specified and the window is snapped to the edge of the display the window size is subtly too big
+        case WM_WINDOWPOSCHANGED:
+        {
+            WINDOWPOS& pos = *reinterpret_cast<PWINDOWPOS>(lParam);
+            if (pos.flags & SWP_NOSIZE)
+                break;
+
+            if (!getMaximumSize().has_value())
+                break;
+            const auto maximumSize = contentSizeToWindowSize(getMaximumSize().value());
+
+            bool shouldResize = false;
+            if (pos.cx > maximumSize.x)
+            {
+                pos.cx       = maximumSize.x;
+                shouldResize = true;
+            }
+            if (pos.cy > maximumSize.y)
+            {
+                pos.cy       = maximumSize.y;
+                shouldResize = true;
+            }
+
+            if (shouldResize)
+                SetWindowPos(m_handle, pos.hwndInsertAfter, pos.x, pos.y, pos.cx, pos.cy, 0);
 
             break;
         }

@@ -89,7 +89,7 @@ TEST_CASE("[Window] sf::WindowBase" * doctest::skip(skipDisplayTests))
         CHECK(!windowBase.waitEvent(event));
     }
 
-    SUBCASE("Get/set position")
+    SUBCASE("Set/get position")
     {
         sf::WindowBase windowBase;
         windowBase.setPosition({12, 34});
@@ -111,5 +111,37 @@ TEST_CASE("[Window] sf::WindowBase" * doctest::skip(skipDisplayTests))
             windowBase.setSize({128, 256});
             CHECK(windowBase.getSize() == sf::Vector2u(128, 256));
         }
+
+        SUBCASE("Minimum size")
+        {
+            sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
+            windowBase.setMinimumSize(sf::Vector2u(128, 256));
+            windowBase.setSize({100, 100});
+            CHECK(windowBase.getSize() == sf::Vector2u(128, 256));
+        }
+
+        SUBCASE("Maximum size")
+        {
+            sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
+            windowBase.setMaximumSize(sf::Vector2u(128, 256));
+            windowBase.setSize({400, 400});
+            CHECK(windowBase.getSize() == sf::Vector2u(128, 256));
+        }
+    }
+
+    SUBCASE("setMinimumSize()")
+    {
+        sf::WindowBase windowBase(sf::VideoMode({100, 100}), "WindowBase Tests", sf::Style::Default ^ sf::Style::Resize);
+        windowBase.setMinimumSize(sf::Vector2u(200, 300));
+        CHECK(windowBase.getSize() == sf::Vector2u(200, 300));
+        windowBase.setMaximumSize(sf::Vector2u(200, 300));
+    }
+
+    SUBCASE("setMinimumSize()")
+    {
+        sf::WindowBase windowBase(sf::VideoMode({400, 400}), "WindowBase Tests", sf::Style::Default ^ sf::Style::Resize);
+        windowBase.setMaximumSize(sf::Vector2u(200, 300));
+        CHECK(windowBase.getSize() == sf::Vector2u(200, 300));
+        windowBase.setMinimumSize(sf::Vector2u(200, 300));
     }
 }

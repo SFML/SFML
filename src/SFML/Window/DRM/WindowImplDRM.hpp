@@ -105,6 +105,26 @@ public:
     void setSize(const Vector2u& size) override;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the minimum window rendering region size
+    ///
+    /// Pass std::nullopt to unset the minimum size
+    ///
+    /// \param minimumSize New minimum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMinimumSize(const std::optional<Vector2u>& minimumSize) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the maximum window rendering region size
+    ///
+    /// Pass std::nullopt to unset the maximum size
+    ///
+    /// \param maximumSize New maximum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMaximumSize(const std::optional<Vector2u>& maximumSize) override;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
     ///
     /// \param title New title

@@ -844,6 +844,22 @@ void WindowImplX11::setSize(const Vector2u& size)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setMinimumSize(const std::optional<Vector2u>& minimumSize)
+{
+    WindowImpl::setMinimumSize(minimumSize);
+    setWindowSizeConstraints();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMaximumSize(const std::optional<Vector2u>& maximumSize)
+{
+    WindowImpl::setMaximumSize(maximumSize);
+    setWindowSizeConstraints();
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::setTitle(const String& title)
 {
     // Bare X11 has no Unicode window title support.
@@ -2137,6 +2153,30 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     XRRFreeScreenResources(res);
 
     return monitorPosition;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setWindowSizeConstraints() const
+{
+    // Do nothing if resizing is disabled
+    if (m_useSizeHints)
+        return;
+
+    XSizeHints sizeHints{};
+    if (const auto minimumSize = getMinimumSize())
+    {
+        sizeHints.flags |= PMinSize;
+        sizeHints.min_width  = static_cast<int>(minimumSize->x);
+        sizeHints.min_height = static_cast<int>(minimumSize->y);
+    }
+    if (const auto maximumSize = getMaximumSize())
+    {
+        sizeHints.flags |= PMaxSize;
+        sizeHints.max_width  = static_cast<int>(maximumSize->x);
+        sizeHints.max_height = static_cast<int>(maximumSize->y);
+    }
+    XSetWMNormalHints(m_display, m_window, &sizeHints);
 }
 
 } // namespace sf::priv

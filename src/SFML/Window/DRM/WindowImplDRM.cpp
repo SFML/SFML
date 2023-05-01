@@ -92,6 +92,18 @@ void WindowImplDRM::setSize(const Vector2u& /*size*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplDRM::setMinimumSize(const std::optional<Vector2u>& /* minimumSize */)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplDRM::setMaximumSize(const std::optional<Vector2u>& /* maximumSize */)
+{
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplDRM::setTitle(const String& /*title*/)
 {
 }

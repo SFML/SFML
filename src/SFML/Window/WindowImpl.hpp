@@ -40,6 +40,7 @@
 #include <SFML/Window/WindowHandle.hpp>
 
 #include <memory>
+#include <optional>
 #include <queue>
 #include <set>
 
@@ -143,6 +144,22 @@ public:
     virtual Vector2i getPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the minimum window rendering region size
+    ///
+    /// \return Minimum size
+    ///
+    ////////////////////////////////////////////////////////////
+    std::optional<Vector2u> getMinimumSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the maximum window rendering region size
+    ///
+    /// \return Maximum size
+    ///
+    ////////////////////////////////////////////////////////////
+    std::optional<Vector2u> getMaximumSize() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
     ///
     /// \param position New position of the window, in pixels
@@ -165,6 +182,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void setSize(const Vector2u& size) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the minimum window rendering region size
+    ///
+    /// Pass std::nullopt to unset the minimum size
+    ///
+    /// \param minimumSize New minimum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMinimumSize(const std::optional<Vector2u>& minimumSize);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the maximum window rendering region size
+    ///
+    /// Pass std::nullopt to unset the maximum size
+    ///
+    /// \param maximumSize New maximum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMaximumSize(const std::optional<Vector2u>& maximumSize);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -298,6 +335,8 @@ private:
     Vector3f                            m_sensorValue[Sensor::Count]; //!< Previous value of the sensors
     float m_joystickThreshold{0.1f}; //!< Joystick threshold (minimum motion for "move" event to be generated)
     float m_previousAxes[Joystick::Count][Joystick::AxisCount]; //!< Position of each axis last time a move event triggered, in range [-100, 100]
+    std::optional<Vector2u> m_minimumSize; //!< Minimum window size
+    std::optional<Vector2u> m_maximumSize; //!< Maximum window size
 };
 
 } // namespace priv
