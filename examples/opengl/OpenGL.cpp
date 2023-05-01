@@ -50,6 +50,8 @@ int main()
         // Create the main window
         sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML graphics with OpenGL", sf::Style::Default, contextSettings);
         window.setVerticalSyncEnabled(true);
+        window.setMinimumSize(sf::Vector2u(400, 300));
+        window.setMaximumSize(sf::Vector2u(1200, 900));
 
         // Create a sprite for the background
         sf::Texture backgroundTexture;

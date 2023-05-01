@@ -243,6 +243,16 @@ private:
     void grabCursor(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Convert content size to window size including window chrome
+    ///
+    /// \param size Size to convert
+    ///
+    /// \return Converted size including window chrome
+    ///
+    ////////////////////////////////////////////////////////////
+    Vector2i contentSizeToWindowSize(const Vector2u& size);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code
     ///
     /// \param key   Virtual key code to convert

@@ -472,6 +472,20 @@
 
 
 ////////////////////////////////////////////////////////
+- (void)setMinimumSize:(NSSize)size
+{
+    [m_window setContentMinSize:size];
+}
+
+
+////////////////////////////////////////////////////////
+- (void)setMaximumSize:(NSSize)size
+{
+    [m_window setContentMaxSize:size];
+}
+
+
+////////////////////////////////////////////////////////
 - (void)changeTitle:(NSString*)title
 {
     [m_window setTitle:title];
