@@ -235,8 +235,8 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 
         if (event.type == Event::GainedFocus)
         {
-            WindowImplAndroid::singleInstance->m_size.x = static_cast<unsigned int>(ANativeWindow_getWidth(states.window));
-            WindowImplAndroid::singleInstance->m_size.y = static_cast<unsigned int>(ANativeWindow_getHeight(states.window));
+            WindowImplAndroid::singleInstance->m_size = Vector2u(
+                Vector2i(ANativeWindow_getWidth(states.window), ANativeWindow_getHeight(states.window)));
             WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
             WindowImplAndroid::singleInstance->m_hasFocus           = true;
         }

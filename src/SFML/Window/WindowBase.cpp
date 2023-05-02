@@ -386,8 +386,7 @@ bool WindowBase::filterEvent(const Event& event)
     if (event.type == Event::Resized)
     {
         // Cache the new size
-        m_size.x = event.size.width;
-        m_size.y = event.size.height;
+        m_size = {event.size.width, event.size.height};
 
         // Notify the derived class
         onResize();
