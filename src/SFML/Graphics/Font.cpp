@@ -396,8 +396,7 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
         const auto secondLsbDelta = static_cast<float>(getGlyph(second, characterSize, bold).lsbDelta);
 
         // Get the kerning vector if present
-        FT_Vector kerning;
-        kerning.x = kerning.y = 0;
+        FT_Vector kerning{0, 0};
         if (FT_HAS_KERNING(face))
             FT_Get_Kerning(face, index1, index2, FT_KERNING_UNFITTED, &kerning);
 

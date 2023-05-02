@@ -122,8 +122,7 @@ void Image::create(const Vector2u& size, const Color& color)
         std::vector<std::uint8_t>().swap(m_pixels);
 
         // Assign the new size
-        m_size.x = 0;
-        m_size.y = 0;
+        m_size = {};
     }
 }
 
@@ -148,8 +147,7 @@ void Image::create(const Vector2u& size, const std::uint8_t* pixels)
         std::vector<std::uint8_t>().swap(m_pixels);
 
         // Assign the new size
-        m_size.x = 0;
-        m_size.y = 0;
+        m_size = {};
     }
 }
 
