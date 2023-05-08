@@ -29,10 +29,11 @@
 #include <jni.h>
 
 #include <dlfcn.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
 #include <string>
+
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
 
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_INFO, "sfml-activity", __VA_ARGS__))
 
