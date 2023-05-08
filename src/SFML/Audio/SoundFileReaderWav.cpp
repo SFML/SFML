@@ -120,10 +120,6 @@ bool SoundFileReaderWav::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderWav::SoundFileReaderWav() = default;
-
-
-////////////////////////////////////////////////////////////
 bool SoundFileReaderWav::open(InputStream& stream, Info& info)
 {
     m_stream = &stream;

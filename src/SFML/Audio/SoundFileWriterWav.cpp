@@ -75,10 +75,6 @@ bool SoundFileWriterWav::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterWav::SoundFileWriterWav() = default;
-
-
-////////////////////////////////////////////////////////////
 SoundFileWriterWav::~SoundFileWriterWav()
 {
     close();
