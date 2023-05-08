@@ -219,10 +219,6 @@ bool SoundFileReaderFlac::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderFlac::SoundFileReaderFlac() = default;
-
-
-////////////////////////////////////////////////////////////
 SoundFileReaderFlac::~SoundFileReaderFlac()
 {
     close();

@@ -88,13 +88,6 @@ bool SoundFileReaderOgg::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderOgg::SoundFileReaderOgg()
-{
-    m_vorbis.datasource = nullptr;
-}
-
-
-////////////////////////////////////////////////////////////
 SoundFileReaderOgg::~SoundFileReaderOgg()
 {
     close();

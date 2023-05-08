@@ -47,12 +47,6 @@ class SFML_SYSTEM_API MemoryInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    MemoryInputStream();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Open the stream from its data
     ///
     /// \param data        Pointer to the data in memory

@@ -47,10 +47,6 @@ bool SoundFileWriterFlac::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterFlac::SoundFileWriterFlac() = default;
-
-
-////////////////////////////////////////////////////////////
 SoundFileWriterFlac::~SoundFileWriterFlac()
 {
     close();

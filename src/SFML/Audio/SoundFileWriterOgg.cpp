@@ -48,10 +48,6 @@ bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterOgg::SoundFileWriterOgg() = default;
-
-
-////////////////////////////////////////////////////////////
 SoundFileWriterOgg::~SoundFileWriterOgg()
 {
     close();
