@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -491,12 +491,7 @@ set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\
 include(CPack)
 
 # configure extras by default when building SFML directly, otherwise hide them
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    set(SFML_CONFIGURE_EXTRAS_DEFAULT TRUE)
-else()
-    set(SFML_CONFIGURE_EXTRAS_DEFAULT FALSE)
-endif()
-sfml_set_option(SFML_CONFIGURE_EXTRAS ${SFML_CONFIGURE_EXTRAS_DEFAULT} BOOL "TRUE to configure extras, FALSE to ignore them")
+sfml_set_option(SFML_CONFIGURE_EXTRAS ${PROJECT_IS_TOP_LEVEL} BOOL "TRUE to configure extras, FALSE to ignore them")
 
 if(NOT SFML_CONFIGURE_EXTRAS)
     return()
