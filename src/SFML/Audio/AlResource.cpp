@@ -63,7 +63,7 @@ AlResource::AlResource()
 
 
 ////////////////////////////////////////////////////////////
- AlResource::AlResource(AlResource&&) noexcept : AlResource()
+AlResource::AlResource(AlResource&&) noexcept : AlResource()
 {
 
 }
