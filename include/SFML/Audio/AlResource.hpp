@@ -43,7 +43,7 @@ protected:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    AlResource();
+    explicit AlResource();
 
 
 public:
