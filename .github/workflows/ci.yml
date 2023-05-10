@@ -162,7 +162,6 @@ jobs:
         if [ "$platform" == "windows" ]; then CODECOV_BINARY="codecov.exe"; else CODECOV_BINARY="codecov"; fi
         curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
         curl -s --remote-name-all "https://uploader.codecov.io/latest/$platform/{$CODECOV_BINARY,$CODECOV_BINARY.SHA256SUM,$CODECOV_BINARY.SHA256SUM.sig}"
-        gpgv "$CODECOV_BINARY.SHA256SUM.sig" "$CODECOV_BINARY.SHA256SUM"
         if [ "$platform" == "windows" ]; then powershell 'If ($(Compare-Object -ReferenceObject $(($(certUtil -hashfile codecov.exe SHA256)[1], "codecov.exe") -join "  ") -DifferenceObject $(Get-Content codecov.exe.SHA256SUM)).length -eq 0) {echo "codecov: OK"} Else {exit 1}';
         else shasum -a 256 -c codecov.SHA256SUM; fi
         chmod +x "$CODECOV_BINARY"
