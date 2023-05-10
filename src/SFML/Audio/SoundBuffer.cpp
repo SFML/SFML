@@ -53,6 +53,7 @@ SoundBuffer::SoundBuffer()
 
 
 ////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(readability-redundant-member-init)
 SoundBuffer::SoundBuffer(const SoundBuffer& copy) : AlResource(), m_samples(copy.m_samples), m_duration(copy.m_duration)
 // don't copy the attached sounds
 {
