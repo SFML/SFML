@@ -77,7 +77,7 @@ m_sRgb(copy.m_sRgb),
 m_isRepeated(copy.m_isRepeated),
 m_cacheId(TextureImpl::getUniqueId())
 {
-    if (copy.m_texture)
+    if (copy.m_texture.get())
     {
         if (create(copy.getSize()))
         {
@@ -92,60 +92,20 @@ m_cacheId(TextureImpl::getUniqueId())
 
 
 ////////////////////////////////////////////////////////////
-Texture::~Texture()
+Texture& Texture::operator=(const Texture& right)
 {
-    // Destroy the OpenGL texture
-    if (m_texture)
-    {
-        const TransientContextLock lock;
-
-        const GLuint texture = m_texture;
-        glCheck(glDeleteTextures(1, &texture));
-    }
-}
-
-////////////////////////////////////////////////////////////
-Texture::Texture(Texture&& right) noexcept :
-m_size(std::exchange(right.m_size, {})),
-m_actualSize(std::exchange(right.m_actualSize, {})),
-m_texture(std::exchange(right.m_texture, 0)),
-m_isSmooth(std::exchange(right.m_isSmooth, false)),
-m_sRgb(std::exchange(right.m_sRgb, false)),
-m_isRepeated(std::exchange(right.m_isRepeated, false)),
-m_fboAttachment(std::exchange(right.m_fboAttachment, false)),
-m_cacheId(std::exchange(right.m_cacheId, 0))
-{
-}
-
-////////////////////////////////////////////////////////////
-Texture& Texture::operator=(Texture&& right) noexcept
-{
-    // Catch self-moving.
-    if (&right == this)
-    {
-        return *this;
-    }
-
-    // Destroy the OpenGL texture
-    if (m_texture)
-    {
-        const TransientContextLock lock;
-
-        const GLuint texture = m_texture;
-        glCheck(glDeleteTextures(1, &texture));
-    }
-
-    // Move old to new.
-    m_size          = std::exchange(right.m_size, {});
-    m_actualSize    = std::exchange(right.m_actualSize, {});
-    m_texture       = std::exchange(right.m_texture, 0);
-    m_isSmooth      = std::exchange(right.m_isSmooth, false);
-    m_sRgb          = std::exchange(right.m_sRgb, false);
-    m_isRepeated    = std::exchange(right.m_isRepeated, false);
-    m_fboAttachment = std::exchange(right.m_fboAttachment, false);
-    m_cacheId       = std::exchange(right.m_cacheId, 0);
+    Texture temp(right);
+    swap(temp);
     return *this;
 }
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(Texture&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+Texture& Texture::operator=(Texture&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -183,11 +143,11 @@ bool Texture::create(const Vector2u& size)
     m_fboAttachment = false;
 
     // Create the OpenGL texture if it doesn't exist yet
-    if (!m_texture)
+    if (!m_texture.get())
     {
         GLuint texture;
         glCheck(glGenTextures(1, &texture));
-        m_texture = texture;
+        m_texture.reset(texture);
     }
 
     // Make sure that the current texture binding will be preserved
@@ -232,7 +192,7 @@ bool Texture::create(const Vector2u& size)
     }
 
     // Initialize the texture
-    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
     glCheck(glTexImage2D(GL_TEXTURE_2D,
                          0,
                          (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
@@ -329,7 +289,7 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
 
             // Copy the pixels to the texture, row by row
             const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
             for (int i = 0; i < rectangle.height; ++i)
             {
                 glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
@@ -364,7 +324,7 @@ Vector2u Texture::getSize() const
 Image Texture::copyToImage() const
 {
     // Easy case: empty texture
-    if (!m_texture)
+    if (!m_texture.get())
         return Image();
 
     const TransientContextLock lock;
@@ -387,7 +347,8 @@ Image Texture::copyToImage() const
         glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, &previousFrameBuffer));
 
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
-        glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+        glCheck(
+            GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture.get(), 0));
         glCheck(glReadPixels(0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data()));
         glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
@@ -399,7 +360,7 @@ Image Texture::copyToImage() const
     if ((m_size == m_actualSize) && !m_pixelsFlipped)
     {
         // Texture is not padded nor flipped, we can use a direct copy
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data()));
     }
     else
@@ -408,7 +369,7 @@ Image Texture::copyToImage() const
 
         // All the pixels will first be copied to a temporary array
         std::vector<std::uint8_t> allPixels(m_actualSize.x * m_actualSize.y * 4);
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
         // Then we copy the useful pixels from the temporary array to the final one
@@ -456,7 +417,7 @@ void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vec
     assert(dest.x + size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (pixels && m_texture)
+    if (pixels && m_texture.get())
     {
         const TransientContextLock lock;
 
@@ -464,7 +425,7 @@ void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vec
         const priv::TextureSaver save;
 
         // Copy pixels from the given array to the texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
         glCheck(glTexSubImage2D(GL_TEXTURE_2D,
                                 0,
                                 static_cast<GLint>(dest.x),
@@ -500,7 +461,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
     assert(dest.x + texture.m_size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + texture.m_size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (!m_texture || !texture.m_texture)
+    if (!m_texture.get() || !texture.m_texture.get())
         return;
 
 #ifndef SFML_OPENGL_ES
@@ -540,13 +501,13 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
         glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_READ_FRAMEBUFFER,
                                              GLEXT_GL_COLOR_ATTACHMENT0,
                                              GL_TEXTURE_2D,
-                                             texture.m_texture,
+                                             texture.m_texture.get(),
                                              0));
 
         // Link the destination texture to the destination frame buffer
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_DRAW_FRAMEBUFFER, destFrameBuffer));
         glCheck(
-            GLEXT_glFramebufferTexture2D(GLEXT_GL_DRAW_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+            GLEXT_glFramebufferTexture2D(GLEXT_GL_DRAW_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture.get(), 0));
 
         // A final check, just to be sure...
         GLenum sourceStatus;
@@ -586,7 +547,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
         const priv::TextureSaver save;
 
         // Set the parameters of this texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap     = false;
         m_pixelsFlipped = false;
@@ -633,7 +594,7 @@ void Texture::update(const Window& window, const Vector2u& dest)
     assert(dest.x + window.getSize().x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + window.getSize().y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (m_texture && window.setActive(true))
+    if (m_texture.get() && window.setActive(true))
     {
         const TransientContextLock lock;
 
@@ -641,7 +602,7 @@ void Texture::update(const Window& window, const Vector2u& dest)
         const priv::TextureSaver save;
 
         // Copy pixels from the back-buffer to the texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
         glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D,
                                     0,
                                     static_cast<GLint>(dest.x),
@@ -669,14 +630,14 @@ void Texture::setSmooth(bool smooth)
     {
         m_isSmooth = smooth;
 
-        if (m_texture)
+        if (m_texture.get())
         {
             const TransientContextLock lock;
 
             // Make sure that the current texture binding will be preserved
             const priv::TextureSaver save;
 
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
 
             if (m_hasMipmap)
@@ -722,7 +683,7 @@ void Texture::setRepeated(bool repeated)
     {
         m_isRepeated = repeated;
 
-        if (m_texture)
+        if (m_texture.get())
         {
             const TransientContextLock lock;
 
@@ -745,7 +706,7 @@ void Texture::setRepeated(bool repeated)
                 }
             }
 
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
             glCheck(
                 glTexParameteri(GL_TEXTURE_2D,
                                 GL_TEXTURE_WRAP_S,
@@ -769,7 +730,7 @@ bool Texture::isRepeated() const
 ////////////////////////////////////////////////////////////
 bool Texture::generateMipmap()
 {
-    if (!m_texture)
+    if (!m_texture.get())
         return false;
 
     const TransientContextLock lock;
@@ -783,7 +744,7 @@ bool Texture::generateMipmap()
     // Make sure that the current texture binding will be preserved
     const priv::TextureSaver save;
 
-    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
     glCheck(GLEXT_glGenerateMipmap(GL_TEXTURE_2D));
     glCheck(glTexParameteri(GL_TEXTURE_2D,
                             GL_TEXTURE_MIN_FILTER,
@@ -806,7 +767,7 @@ void Texture::invalidateMipmap()
     // Make sure that the current texture binding will be preserved
     const priv::TextureSaver save;
 
-    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.get()));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
 
     m_hasMipmap = false;
@@ -818,10 +779,10 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
     const TransientContextLock lock;
 
-    if (texture && texture->m_texture)
+    if (texture && texture->m_texture.get())
     {
         // Bind the texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture.get()));
 
         // Check if we need to define a special texture matrix
         if ((coordinateType == Pixels) || texture->m_pixelsFlipped)
@@ -893,17 +854,6 @@ unsigned int Texture::getMaximumSize()
 
 
 ////////////////////////////////////////////////////////////
-Texture& Texture::operator=(const Texture& right)
-{
-    Texture temp(right);
-
-    swap(temp);
-
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
 void Texture::swap(Texture& right) noexcept
 {
     std::swap(m_size, right.m_size);
@@ -924,7 +874,7 @@ void Texture::swap(Texture& right) noexcept
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getNativeHandle() const
 {
-    return m_texture;
+    return m_texture.get();
 }
 
 
@@ -944,6 +894,18 @@ unsigned int Texture::getValidSize(unsigned int size)
             powerOfTwo *= 2;
 
         return powerOfTwo;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Texture::TextureDeleter::operator()(unsigned int texture) const
+{
+    // Destroy the OpenGL texture
+    if (texture)
+    {
+        const TransientContextLock lock;
+        glCheck(glDeleteTextures(1, &texture));
     }
 }
 
