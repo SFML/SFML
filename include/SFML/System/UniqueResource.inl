@@ -25,11 +25,6 @@
 
 ////////////////////////////////////////////////////////////
 template <typename Handle, typename Deleter>
-UniqueResource<Handle, Deleter>::UniqueResource() = default;
-
-
-////////////////////////////////////////////////////////////
-template <typename Handle, typename Deleter>
 UniqueResource<Handle, Deleter>::UniqueResource(Handle handle) : m_handle(handle)
 {
 }
@@ -70,17 +65,7 @@ UniqueResource<Handle, Deleter>& UniqueResource<Handle, Deleter>::operator=(Uniq
 template <typename Handle, typename Deleter>
 void UniqueResource<Handle, Deleter>::release()
 {
-    m_handle.reset();
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename Handle, typename Deleter>
-void UniqueResource<Handle, Deleter>::reset()
-{
-    if (m_handle.has_value())
-        m_deleter(*m_handle);
-    m_handle.reset();
+    m_handle = {};
 }
 
 
@@ -88,7 +73,8 @@ void UniqueResource<Handle, Deleter>::reset()
 template <typename Handle, typename Deleter>
 void UniqueResource<Handle, Deleter>::reset(Handle handle)
 {
-    reset();
+    if (m_handle)
+        m_deleter(m_handle);
     m_handle = handle;
 }
 
@@ -97,6 +83,13 @@ void UniqueResource<Handle, Deleter>::reset(Handle handle)
 template <typename Handle, typename Deleter>
 Handle UniqueResource<Handle, Deleter>::get() const
 {
-    assert(m_handle);
-    return *m_handle;
+    return m_handle;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename Handle, typename Deleter>
+UniqueResource<Handle, Deleter>::operator bool() const
+{
+    return m_handle;
 }

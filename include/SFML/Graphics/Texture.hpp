@@ -624,7 +624,7 @@ private:
     ////////////////////////////////////////////////////////////
     Vector2u m_size;       //!< Public texture size
     Vector2u m_actualSize; //!< Actual texture size (can be greater than public size because of padding)
-    UniqueResource<unsigned int, TextureDeleter> m_texture{{}};  //!< Internal texture identifier
+    UniqueResource<unsigned int, TextureDeleter> m_texture;      //!< Internal texture identifier
     bool                                         m_isSmooth{};   //!< Status of the smooth filter
     bool                                         m_sRgb{};       //!< Should the texture source be converted from sRGB?
     bool                                         m_isRepeated{}; //!< Is the texture in repeat mode?

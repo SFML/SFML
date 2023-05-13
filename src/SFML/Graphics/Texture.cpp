@@ -77,7 +77,7 @@ m_sRgb(copy.m_sRgb),
 m_isRepeated(copy.m_isRepeated),
 m_cacheId(TextureImpl::getUniqueId())
 {
-    if (copy.m_texture.get())
+    if (copy.m_texture)
     {
         if (create(copy.getSize()))
         {
@@ -143,7 +143,7 @@ bool Texture::create(const Vector2u& size)
     m_fboAttachment = false;
 
     // Create the OpenGL texture if it doesn't exist yet
-    if (!m_texture.get())
+    if (!m_texture)
     {
         GLuint texture;
         glCheck(glGenTextures(1, &texture));
@@ -324,7 +324,7 @@ Vector2u Texture::getSize() const
 Image Texture::copyToImage() const
 {
     // Easy case: empty texture
-    if (!m_texture.get())
+    if (!m_texture)
         return Image();
 
     const TransientContextLock lock;
@@ -417,7 +417,7 @@ void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vec
     assert(dest.x + size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (pixels && m_texture.get())
+    if (pixels && m_texture)
     {
         const TransientContextLock lock;
 
@@ -461,7 +461,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
     assert(dest.x + texture.m_size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + texture.m_size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (!m_texture.get() || !texture.m_texture.get())
+    if (!m_texture || !texture.m_texture)
         return;
 
 #ifndef SFML_OPENGL_ES
@@ -594,7 +594,7 @@ void Texture::update(const Window& window, const Vector2u& dest)
     assert(dest.x + window.getSize().x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + window.getSize().y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (m_texture.get() && window.setActive(true))
+    if (m_texture && window.setActive(true))
     {
         const TransientContextLock lock;
 
@@ -630,7 +630,7 @@ void Texture::setSmooth(bool smooth)
     {
         m_isSmooth = smooth;
 
-        if (m_texture.get())
+        if (m_texture)
         {
             const TransientContextLock lock;
 
@@ -683,7 +683,7 @@ void Texture::setRepeated(bool repeated)
     {
         m_isRepeated = repeated;
 
-        if (m_texture.get())
+        if (m_texture)
         {
             const TransientContextLock lock;
 
@@ -730,7 +730,7 @@ bool Texture::isRepeated() const
 ////////////////////////////////////////////////////////////
 bool Texture::generateMipmap()
 {
-    if (!m_texture.get())
+    if (!m_texture)
         return false;
 
     const TransientContextLock lock;
@@ -779,7 +779,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 {
     const TransientContextLock lock;
 
-    if (texture && texture->m_texture.get())
+    if (texture && texture->m_texture)
     {
         // Bind the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture.get()));
@@ -902,11 +902,8 @@ unsigned int Texture::getValidSize(unsigned int size)
 void Texture::TextureDeleter::operator()(unsigned int texture) const
 {
     // Destroy the OpenGL texture
-    if (texture)
-    {
-        const TransientContextLock lock;
-        glCheck(glDeleteTextures(1, &texture));
-    }
+    const TransientContextLock lock;
+    glCheck(glDeleteTextures(1, &texture));
 }
 
 

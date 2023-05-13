@@ -27,17 +27,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <optional>
 #include <type_traits>
 #include <utility>
-
-#include <cassert>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Class template for storing non-copyable resource handles
+/// \brief Class template for storing noncopyable resource handles
 ///
 ////////////////////////////////////////////////////////////
 template <typename Handle, typename Deleter>
@@ -51,18 +48,12 @@ class UniqueResource
 
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    UniqueResource();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct from handle
     ///
-    /// \param handle Handle to the resource to store
+    /// \param handle Handle to the resource
     ///
     ////////////////////////////////////////////////////////////
-    UniqueResource(Handle handle);
+    explicit UniqueResource(Handle handle = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Delete the resource
@@ -101,17 +92,10 @@ public:
     void release();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Dispose of the resource by calling the deleter
+    /// \brief Delete the resource and assign new handle
     ///
     ////////////////////////////////////////////////////////////
-    void reset();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Dispose of the resource by calling the deleter
-    /// then assign to the resource
-    ///
-    ////////////////////////////////////////////////////////////
-    void reset(Handle handle);
+    void reset(Handle handle = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Access the underlying handle
@@ -119,9 +103,17 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Handle get() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Determine if resource has non-null handle
+    ///
+    /// \return True if handle is non-null
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] operator bool() const;
+
 private:
-    std::optional<Handle> m_handle;    //!< Handle to the managed resource
-    Deleter               m_deleter{}; //!< Functor to clean up resource
+    Handle  m_handle{};  //!< Handle to the managed resource
+    Deleter m_deleter{}; //!< Functor to clean up resource
 };
 
 #include <SFML/System/UniqueResource.inl>
@@ -136,6 +128,13 @@ private:
 /// This class provides a wrapper around a handle to a resource
 /// with a custom deleter that cleans up that resource at the
 /// end of its lifetime.
+///
+/// Like std::unique_ptr, sf::UniqueResource uses the default
+/// constructed state of the handle to represent the "null" state
+/// of the resource. Default construction of a unique resource
+/// or moving out of a unique resource entails the handle being
+/// reset to its default constructed state which typically means
+/// a value of 0.
 ///
 /// Usage example:
 /// \code

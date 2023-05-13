@@ -233,11 +233,9 @@ struct Shader::UniformBinder
 ////////////////////////////////////////////////////////////
 void Shader::ShaderProgramDeleter::operator()(unsigned int shaderProgram) const
 {
-    const TransientContextLock lock;
-
     // Destroy effect program
-    if (shaderProgram)
-        glCheck(GLEXT_glDeleteObject(castToGlHandle(shaderProgram)));
+    const TransientContextLock lock;
+    glCheck(GLEXT_glDeleteObject(castToGlHandle(shaderProgram)));
 }
 
 
@@ -548,7 +546,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Texture& texture)
 {
-    if (m_shaderProgram.get())
+    if (m_shaderProgram)
     {
         const TransientContextLock lock;
 
@@ -583,7 +581,7 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
-    if (m_shaderProgram.get())
+    if (m_shaderProgram)
     {
         const TransientContextLock lock;
 
@@ -685,7 +683,7 @@ void Shader::bind(const Shader* shader)
         return;
     }
 
-    if (shader && shader->m_shaderProgram.get())
+    if (shader && shader->m_shaderProgram)
     {
         // Enable the program
         glCheck(GLEXT_glUseProgramObject(castToGlHandle(shader->m_shaderProgram.get())));

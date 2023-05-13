@@ -89,7 +89,7 @@ GlResource(copy),
 m_primitiveType(copy.m_primitiveType),
 m_usage(copy.m_usage)
 {
-    if (copy.m_buffer.get() && copy.m_size)
+    if (copy.m_buffer && copy.m_size)
     {
         if (!create(copy.m_size))
         {
@@ -111,14 +111,14 @@ bool VertexBuffer::create(std::size_t vertexCount)
 
     const TransientContextLock contextLock;
 
-    if (!m_buffer.get())
+    if (!m_buffer)
     {
         auto buffer = m_buffer.get();
         glCheck(GLEXT_glGenBuffers(1, &buffer));
         m_buffer.reset(buffer);
     }
 
-    if (!m_buffer.get())
+    if (!m_buffer)
     {
         err() << "Could not create vertex buffer, generation failed" << std::endl;
         return false;
@@ -155,7 +155,7 @@ bool VertexBuffer::update(const Vertex* vertices)
 bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsigned int offset)
 {
     // Sanity checks
-    if (!m_buffer.get())
+    if (!m_buffer)
         return false;
 
     if (!vertices)
@@ -199,7 +199,7 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
 
 #else
 
-    if (!m_buffer.get() || !vertexBuffer.m_buffer.get())
+    if (!m_buffer || !vertexBuffer.m_buffer)
         return false;
 
     const TransientContextLock contextLock;
@@ -344,7 +344,7 @@ bool VertexBuffer::isAvailable()
 ////////////////////////////////////////////////////////////
 void VertexBuffer::draw(RenderTarget& target, const RenderStates& states) const
 {
-    if (m_buffer.get() && m_size)
+    if (m_buffer && m_size)
         target.draw(*this, 0, m_size, states);
 }
 
@@ -359,11 +359,8 @@ void swap(VertexBuffer& left, VertexBuffer& right) noexcept
 ////////////////////////////////////////////////////////////
 void VertexBuffer::BufferDeleter::operator()(unsigned int buffer) const
 {
-    if (buffer)
-    {
-        const TransientContextLock contextLock;
-        glCheck(GLEXT_glDeleteBuffers(1, &buffer));
-    }
+    const TransientContextLock contextLock;
+    glCheck(GLEXT_glDeleteBuffers(1, &buffer));
 }
 
 } // namespace sf

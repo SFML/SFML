@@ -2,16 +2,15 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <SystemUtil.hpp>
 #include <type_traits>
 
 namespace
 {
 struct Deleter
 {
-    static inline std::size_t count{0};
+    static inline auto count{0};
 
-    void operator()(int)
+    void operator()(int) const
     {
         ++count;
     }
@@ -35,6 +34,8 @@ TEST_CASE("[System] sf::UniqueResource")
             const auto deleteCount = Deleter::count;
             {
                 const sf::UniqueResource<int, Deleter> uniqueResource;
+                CHECK(!uniqueResource);
+                CHECK(uniqueResource.get() == 0);
             }
             CHECK(Deleter::count == deleteCount);
         }
@@ -44,6 +45,7 @@ TEST_CASE("[System] sf::UniqueResource")
             const auto deleteCount = Deleter::count;
             {
                 const sf::UniqueResource<int, Deleter> uniqueResource(42);
+                CHECK(!!uniqueResource);
                 CHECK(uniqueResource.get() == 42);
             }
             CHECK(Deleter::count == deleteCount + 1);
@@ -58,6 +60,8 @@ TEST_CASE("[System] sf::UniqueResource")
             {
                 sf::UniqueResource<int, Deleter>       movedUniqueResource(42);
                 const sf::UniqueResource<int, Deleter> uniqueResource(std::move(movedUniqueResource));
+                CHECK(!!uniqueResource);
+                CHECK(uniqueResource.get() == 42);
                 CHECK(Deleter::count == deleteCount);
             }
             CHECK(Deleter::count == deleteCount + 1);
@@ -67,12 +71,13 @@ TEST_CASE("[System] sf::UniqueResource")
         {
             const auto deleteCount = Deleter::count;
             {
-                sf::UniqueResource<int, Deleter> movedUniqueResource(42);
-                sf::UniqueResource<int, Deleter> uniqueResource;
-                uniqueResource = std::move(movedUniqueResource);
-                CHECK(Deleter::count == deleteCount);
+                sf::UniqueResource<int, Deleter> uniqueResource(123);
+                uniqueResource = sf::UniqueResource<int, Deleter>(42);
+                CHECK(!!uniqueResource);
+                CHECK(uniqueResource.get() == 42);
+                CHECK(Deleter::count == deleteCount + 1);
             }
-            CHECK(Deleter::count == deleteCount + 1);
+            CHECK(Deleter::count == deleteCount + 2);
         }
     }
 
@@ -82,6 +87,8 @@ TEST_CASE("[System] sf::UniqueResource")
         {
             sf::UniqueResource<int, Deleter> uniqueResource(42);
             uniqueResource.release();
+            CHECK(!uniqueResource);
+            CHECK(uniqueResource.get() == 0);
             CHECK(Deleter::count == deleteCount);
         }
         CHECK(Deleter::count == deleteCount);
@@ -93,6 +100,8 @@ TEST_CASE("[System] sf::UniqueResource")
         {
             sf::UniqueResource<int, Deleter> uniqueResource(42);
             uniqueResource.reset();
+            CHECK(!uniqueResource);
+            CHECK(uniqueResource.get() == 0);
             CHECK(Deleter::count == deleteCount + 1);
         }
         CHECK(Deleter::count == deleteCount + 1);
@@ -104,6 +113,8 @@ TEST_CASE("[System] sf::UniqueResource")
         {
             sf::UniqueResource<int, Deleter> uniqueResource(42);
             uniqueResource.reset(123);
+            CHECK(!!uniqueResource);
+            CHECK(uniqueResource.get() == 123);
             CHECK(Deleter::count == deleteCount + 1);
         }
         CHECK(Deleter::count == deleteCount + 2);
