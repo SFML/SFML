@@ -196,7 +196,7 @@ TEST_CASE("[Graphics] sf::Texture" * doctest::skip(skipDisplayTests))
         texture2.setSmooth(true);
         texture2.setRepeated(false);
 
-        std::swap(texture1, texture2);
+        sf::swap(texture1, texture2);
         CHECK_FALSE(texture1.isSrgb());
         CHECK(texture1.isSmooth());
         CHECK_FALSE(texture1.isRepeated());

@@ -637,7 +637,7 @@ private:
 /// \param right Second instance to swap
 ///
 ////////////////////////////////////////////////////////////
-void swap(Texture& left, Texture& right) noexcept;
+SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 
 } // namespace sf
 

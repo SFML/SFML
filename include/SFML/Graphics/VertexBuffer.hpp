@@ -346,7 +346,7 @@ private:
 /// \param right Second instance to swap
 ///
 ////////////////////////////////////////////////////////////
-void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
+SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 
 } // namespace sf
 
