@@ -36,21 +36,11 @@ namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-ResourceStream::ResourceStream(const std::filesystem::path& filename) : m_file(nullptr)
+ResourceStream::ResourceStream(const std::filesystem::path& filename)
 {
     ActivityStates& states = getActivity();
     std::lock_guard lock(states.mutex);
-    m_file = AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
-}
-
-
-////////////////////////////////////////////////////////////
-ResourceStream::~ResourceStream()
-{
-    if (m_file)
-    {
-        AAsset_close(m_file);
-    }
+    m_file.reset(AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN));
 }
 
 
@@ -59,7 +49,7 @@ std::int64_t ResourceStream::read(void* data, std::int64_t size)
 {
     if (m_file)
     {
-        return AAsset_read(m_file, data, static_cast<std::size_t>(size));
+        return AAsset_read(m_file.get(), data, static_cast<std::size_t>(size));
     }
     else
     {
@@ -73,7 +63,7 @@ std::int64_t ResourceStream::seek(std::int64_t position)
 {
     if (m_file)
     {
-        return AAsset_seek(m_file, static_cast<off_t>(position), SEEK_SET);
+        return AAsset_seek(m_file.get(), static_cast<off_t>(position), SEEK_SET);
     }
     else
     {
@@ -87,7 +77,7 @@ std::int64_t ResourceStream::tell()
 {
     if (m_file)
     {
-        return getSize() - AAsset_getRemainingLength(m_file);
+        return getSize() - AAsset_getRemainingLength(m_file.get());
     }
     else
     {
@@ -101,7 +91,7 @@ std::int64_t ResourceStream::getSize()
 {
     if (m_file)
     {
-        return AAsset_getLength(m_file);
+        return AAsset_getLength(m_file.get());
     }
     else
     {
@@ -109,5 +99,11 @@ std::int64_t ResourceStream::getSize()
     }
 }
 
+
+////////////////////////////////////////////////////////////
+void ResourceStream::AAssetDeleter::operator()(AAsset* file)
+{
+    AAsset_close(file);
+}
 
 } // namespace sf::priv
