@@ -31,6 +31,7 @@
 
 #include <locale>
 
+#include <cstdint>
 #include <cstdlib>
 
 

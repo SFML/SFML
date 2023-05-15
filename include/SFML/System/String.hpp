@@ -34,6 +34,8 @@
 #include <locale>
 #include <string>
 
+#include <cstdint>
+
 
 namespace sf
 {
