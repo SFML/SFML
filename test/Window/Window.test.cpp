@@ -27,5 +27,6 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                                 sf::Style::Default,
                                 sf::ContextSettings());
         CHECK(window.getSize() == sf::Vector2u(256, 256));
+        CHECK(window.getFrameTime() == sf::Time::Zero);
     }
 }

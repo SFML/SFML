@@ -198,6 +198,20 @@ public:
     const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the duration of the previous frame
+    ///
+    /// Before the first call to display() this will return a
+    /// zero-length duration. After the first call to display()
+    /// it returns the duration since constructing the window.
+    /// After that, it returns the duration between the previous
+    /// two display() calls.
+    ///
+    /// \return Duration of previous frame
+    ///
+    ////////////////////////////////////////////////////////////
+    Time getFrameTime() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
     ///
     /// Activating vertical synchronization will limit the number
@@ -284,6 +298,7 @@ private:
     std::unique_ptr<priv::GlContext> m_context;        //!< Platform-specific implementation of the OpenGL context
     Clock                            m_clock;          //!< Clock for measuring the elapsed time between frames
     Time                             m_frameTimeLimit; //!< Current framerate limit
+    Time                             m_frameTime;      //!< Current frame time
 };
 
 } // namespace sf

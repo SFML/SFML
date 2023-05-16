@@ -174,7 +174,6 @@ int main()
     std::size_t currentSetting = 0;
 
     std::ostringstream osstr;
-    sf::Clock          clock;
 
     while (window.isOpen())
     {
@@ -247,7 +246,7 @@ int main()
 
             // Update and draw the HUD text
             osstr.str("");
-            osstr << "Frame:  " << clock.restart().asMilliseconds() << "ms\n"
+            osstr << "Frame:  " << window.getFrameTime().asMilliseconds() << "ms\n"
                   << "perlinOctaves:  " << perlinOctaves << "\n\n"
                   << "Use the arrow keys to change the values.\nUse the return key to regenerate the terrain.\n\n";
 

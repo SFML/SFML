@@ -165,6 +165,13 @@ const ContextSettings& Window::getSettings() const
 
 
 ////////////////////////////////////////////////////////////
+Time Window::getFrameTime() const
+{
+    return m_frameTime;
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::setVerticalSyncEnabled(bool enabled)
 {
     if (setActive())
@@ -213,10 +220,10 @@ void Window::display()
 
     // Limit the framerate if needed
     if (m_frameTimeLimit != Time::Zero)
-    {
         sleep(m_frameTimeLimit - m_clock.getElapsedTime());
-        m_clock.restart();
-    }
+
+    // Record the latest frame time
+    m_frameTime = m_clock.restart();
 }
 
 
