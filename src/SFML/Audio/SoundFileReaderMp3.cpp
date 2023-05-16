@@ -55,6 +55,7 @@
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <cstring>
+#include <cstdint>
 
 
 namespace
