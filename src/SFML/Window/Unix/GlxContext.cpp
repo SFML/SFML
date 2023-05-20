@@ -702,7 +702,7 @@ void GlxContext::createContext(GlxContext* shared)
                 if ((m_settings.attributeFlags & ContextSettings::Core) ||
                     (m_settings.attributeFlags & ContextSettings::Debug))
                     err() << "Selecting a profile during context creation is not supported,"
-                          << "disabling comptibility and debug" << std::endl;
+                          << "disabling compatibility and debug" << std::endl;
 
                 m_settings.attributeFlags = ContextSettings::Default;
             }
