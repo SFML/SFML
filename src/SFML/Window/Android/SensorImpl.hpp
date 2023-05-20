@@ -104,7 +104,7 @@ private:
     /// \return The default Android sensor, a null pointer otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static ASensor const* getDefaultSensor(Sensor::Type sensor);
+    static const ASensor* getDefaultSensor(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Process the pending sensor data available and add them to our lists

@@ -864,7 +864,7 @@ void HIDInputManager::buildMappings()
         if (translateToString)
         {
             // Unicode string length is usually less or equal to 4
-            UniCharCount const  maxLength = 4;
+            const UniCharCount  maxLength = 4;
             UniChar             string[maxLength];
             UniCharCount        length       = 0;
             std::uint32_t       deadKeyState = 0;     // unused value
