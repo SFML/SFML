@@ -117,15 +117,15 @@ bool keepFileDescriptor(int fileDesc)
     // This is the keyboard test used by SDL.
     // The first 32 bits are ESC, numbers and Q to D;  If we have any of those,
     // consider it a keyboard device; do not test for KEY_RESERVED, though
-    bool isKeyboard = (bitmaskKey[0] & 0xFFFFFFFE);
+    const bool isKeyboard = (bitmaskKey[0] & 0xFFFFFFFE);
 
-    bool isAbs = TEST_BIT(EV_ABS, bitmaskEv) && TEST_BIT(ABS_X, bitmaskAbs) && TEST_BIT(ABS_Y, bitmaskAbs);
+    const bool isAbs = TEST_BIT(EV_ABS, bitmaskEv) && TEST_BIT(ABS_X, bitmaskAbs) && TEST_BIT(ABS_Y, bitmaskAbs);
 
-    bool isRel = TEST_BIT(EV_REL, bitmaskEv) && TEST_BIT(REL_X, bitmaskRel) && TEST_BIT(REL_Y, bitmaskRel);
+    const bool isRel = TEST_BIT(EV_REL, bitmaskEv) && TEST_BIT(REL_X, bitmaskRel) && TEST_BIT(REL_Y, bitmaskRel);
 
-    bool isMouse = (isAbs || isRel) && TEST_BIT(BTN_MOUSE, bitmaskKey);
+    const bool isMouse = (isAbs || isRel) && TEST_BIT(BTN_MOUSE, bitmaskKey);
 
-    bool isTouch = isAbs && (TEST_BIT(BTN_TOOL_FINGER, bitmaskKey) || TEST_BIT(BTN_TOUCH, bitmaskKey));
+    const bool isTouch = isAbs && (TEST_BIT(BTN_TOOL_FINGER, bitmaskKey) || TEST_BIT(BTN_TOUCH, bitmaskKey));
 
     return isKeyboard || isMouse || isTouch;
 }
@@ -145,7 +145,7 @@ void initFileDescriptors()
         stream << i;
         name += stream.str();
 
-        int tempFD = open(name.c_str(), O_RDONLY | O_NONBLOCK);
+        const int tempFD = open(name.c_str(), O_RDONLY | O_NONBLOCK);
 
         if (tempFD < 0)
         {
@@ -355,7 +355,7 @@ void processSlots()
 
 bool eventProcess(sf::Event& event)
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
 
     // Ensure that we are initialized
     initFileDescriptors();
@@ -383,7 +383,7 @@ bool eventProcess(sf::Event& event)
         {
             if (inputEvent.type == EV_KEY)
             {
-                sf::Mouse::Button mb = toMouseButton(inputEvent.code);
+                const sf::Mouse::Button mb = toMouseButton(inputEvent.code);
                 if (mb != sf::Mouse::ButtonCount)
                 {
                     event.type = inputEvent.value ? sf::Event::MouseButtonPressed : sf::Event::MouseButtonReleased;
@@ -396,7 +396,7 @@ bool eventProcess(sf::Event& event)
                 }
                 else
                 {
-                    sf::Keyboard::Key kb = toKey(inputEvent.code);
+                    const sf::Keyboard::Key kb = toKey(inputEvent.code);
 
                     unsigned int special = 0;
                     if ((kb == sf::Keyboard::Delete) || (kb == sf::Keyboard::Backspace))
@@ -571,7 +571,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 bool InputImpl::isKeyPressed(Keyboard::Key key)
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     if ((key < 0) || (key >= static_cast<int>(keyMap.size())))
         return false;
 
@@ -625,7 +625,7 @@ void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     if ((button < 0) || (button >= static_cast<int>(mouseMap.size())))
         return false;
 
@@ -637,7 +637,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     return mousePos;
 }
 
@@ -652,7 +652,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& /*relativeTo*/)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position)
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     mousePos = position;
 }
 
@@ -696,7 +696,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /*re
 ////////////////////////////////////////////////////////////
 bool InputImpl::checkEvent(sf::Event& event)
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     if (!eventQueue.empty())
     {
         event = eventQueue.front();
@@ -730,7 +730,7 @@ bool InputImpl::checkEvent(sf::Event& event)
 ////////////////////////////////////////////////////////////
 void InputImpl::setTerminalConfig()
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcgetattr(STDIN_FILENO, &newTerminalConfig);               // get current terminal config
@@ -747,7 +747,7 @@ void InputImpl::setTerminalConfig()
 ////////////////////////////////////////////////////////////
 void InputImpl::restoreTerminalConfig()
 {
-    std::lock_guard lock(inputMutex);
+    const std::lock_guard lock(inputMutex);
     initFileDescriptors();
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldTerminalConfig); // restore terminal config

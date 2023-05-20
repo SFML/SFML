@@ -136,8 +136,8 @@ void cleanup()
 
 void drmFbDestroyCallback(gbm_bo* bo, void* data)
 {
-    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
-    auto* fb    = static_cast<DrmFb*>(data);
+    const int drmFd = gbm_device_get_fd(gbm_bo_get_device(bo));
+    auto*     fb    = static_cast<DrmFb*>(data);
 
     if (fb->fbId)
         drmModeRmFB(drmFd, fb->fbId);
@@ -147,8 +147,8 @@ void drmFbDestroyCallback(gbm_bo* bo, void* data)
 
 DrmFb* drmFbGetFromBo(gbm_bo& bo)
 {
-    int   drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
-    auto* fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
+    const int drmFd = gbm_device_get_fd(gbm_bo_get_device(&bo));
+    auto*     fb    = static_cast<DrmFb*>(gbm_bo_get_user_data(&bo));
     if (fb)
         return fb;
 
@@ -549,7 +549,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
     // Create EGL context
     createContext(shared);
 
-    Vector2u size = owner.getSize();
+    const Vector2u size = owner.getSize();
     createSurface(size, bitsPerPixel, true);
 }
 

@@ -57,7 +57,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 Display* openDisplay()
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     if (referenceCount == 0)
     {
@@ -80,7 +80,7 @@ Display* openDisplay()
 ////////////////////////////////////////////////////////////
 void closeDisplay(Display* display)
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     assert(display == sharedDisplay);
 
@@ -92,7 +92,7 @@ void closeDisplay(Display* display)
 ////////////////////////////////////////////////////////////
 XIM openXim()
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     assert(sharedDisplay != nullptr);
 
@@ -103,9 +103,9 @@ XIM openXim()
         // We need the default (environment) locale and X locale for opening
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
-        const char* p;
-        std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
-        std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
+        const char*       p;
+        const std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
+        const std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 
         // Set the locales from environment
         setlocale(LC_ALL, "");
@@ -130,7 +130,7 @@ XIM openXim()
 ////////////////////////////////////////////////////////////
 void closeXim(XIM xim)
 {
-    std::lock_guard lock(mutex);
+    const std::lock_guard lock(mutex);
 
     assert(xim == sharedXIM);
 
@@ -148,7 +148,7 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
 
     Display* display = openDisplay();
 
-    Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
+    const Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
 
     closeDisplay(display);
 

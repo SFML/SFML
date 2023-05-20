@@ -371,18 +371,18 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
             }
 
             // TODO: Replace this with proper acceleration detection
-            bool accelerated = true;
+            const bool accelerated = true;
 
             // Evaluate the visual
-            int color = red + green + blue + alpha;
-            int score = evaluateFormat(bitsPerPixel,
-                                       settings,
-                                       color,
-                                       depth,
-                                       stencil,
-                                       multiSampling ? samples : 0,
-                                       accelerated,
-                                       sRgb == True);
+            const int color = red + green + blue + alpha;
+            const int score = evaluateFormat(bitsPerPixel,
+                                             settings,
+                                             color,
+                                             depth,
+                                             stencil,
+                                             multiSampling ? samples : 0,
+                                             accelerated,
+                                             sRgb == True);
 
             // If it's better than the current best, make it the new best
             if (score < bestScore)
@@ -489,7 +489,7 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
         glXQueryVersion(m_display, &major, &minor);
 
         // Check if glXCreatePbuffer is available (requires GLX 1.3 or greater)
-        bool hasCreatePbuffer = ((major > 1) || (minor >= 3));
+        const bool hasCreatePbuffer = ((major > 1) || (minor >= 3));
 
         if (hasCreatePbuffer)
         {
@@ -539,7 +539,7 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
     }
 
     // If pbuffers are not available we use a hidden window as the off-screen surface to draw to
-    int screen = DefaultScreen(m_display);
+    const int screen = DefaultScreen(m_display);
 
     // Define the window attributes
     XSetWindowAttributes attributes;
@@ -581,7 +581,7 @@ void GlxContext::createSurface(::Window window)
 void GlxContext::createContext(GlxContext* shared)
 {
     // Get a working copy of the context settings
-    ContextSettings settings = m_settings;
+    const ContextSettings settings = m_settings;
 
     XVisualInfo* visualInfo = nullptr;
 
@@ -637,7 +637,7 @@ void GlxContext::createContext(GlxContext* shared)
         err() << "Failed to query GLX version, limited to legacy context creation" << std::endl;
 
     // Check if glXCreateContextAttribsARB is available (requires GLX 1.3 or greater)
-    bool hasCreateContextArb = SF_GLAD_GLX_ARB_create_context && ((major > 1) || (minor >= 3));
+    const bool hasCreateContextArb = SF_GLAD_GLX_ARB_create_context && ((major > 1) || (minor >= 3));
 
     // Create the OpenGL context -- first try using glXCreateContextAttribsARB
     if (hasCreateContextArb)
@@ -687,10 +687,10 @@ void GlxContext::createContext(GlxContext* shared)
             // Check if setting the profile is supported
             if (SF_GLAD_GLX_ARB_create_context_profile)
             {
-                int profile = (m_settings.attributeFlags & ContextSettings::Core)
-                                  ? GLX_CONTEXT_CORE_PROFILE_BIT_ARB
-                                  : GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-                int debug   = (m_settings.attributeFlags & ContextSettings::Debug) ? GLX_CONTEXT_DEBUG_BIT_ARB : 0;
+                const int profile = (m_settings.attributeFlags & ContextSettings::Core)
+                                        ? GLX_CONTEXT_CORE_PROFILE_BIT_ARB
+                                        : GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+                const int debug = (m_settings.attributeFlags & ContextSettings::Debug) ? GLX_CONTEXT_DEBUG_BIT_ARB : 0;
 
                 attributes.push_back(GLX_CONTEXT_PROFILE_MASK_ARB);
                 attributes.push_back(profile);
@@ -713,7 +713,7 @@ void GlxContext::createContext(GlxContext* shared)
 
             // RAII GLX error handler (we simply ignore errors here)
             // On an error, glXCreateContextAttribsARB will return 0 anyway
-            GlxErrorHandler handler(m_display);
+            const GlxErrorHandler handler(m_display);
 
             if (toShare)
             {

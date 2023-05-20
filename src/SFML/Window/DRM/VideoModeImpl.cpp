@@ -38,7 +38,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
-    Drm&                drm  = sf::priv::DRMContext::getDRM();
+    const Drm&          drm  = sf::priv::DRMContext::getDRM();
     drmModeConnectorPtr conn = drm.savedConnector;
 
     if (conn)
@@ -56,7 +56,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    Drm&               drm = sf::priv::DRMContext::getDRM();
+    const Drm&         drm = sf::priv::DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm.mode;
     if (ptr)
         return VideoMode({ptr->hdisplay, ptr->vdisplay});

@@ -203,7 +203,7 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
     surfaceCreateInfo.dpy                        = openDisplay();
     surfaceCreateInfo.window                     = windowHandle;
 
-    bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
+    const bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
 
     closeDisplay(surfaceCreateInfo.dpy);
 

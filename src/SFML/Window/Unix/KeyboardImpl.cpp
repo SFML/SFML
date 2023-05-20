@@ -549,12 +549,12 @@ sf::Keyboard::Scancode keyCodeToScancode(KeyCode code)
 ////////////////////////////////////////////////////////////
 KeyCode keyToKeyCode(sf::Keyboard::Key key)
 {
-    KeySym keysym = sf::priv::keyToKeySym(key);
+    const KeySym keysym = sf::priv::keyToKeySym(key);
 
     if (keysym != NoSymbol)
     {
-        Display* display = sf::priv::openDisplay();
-        KeyCode  keycode = XKeysymToKeycode(display, keysym);
+        Display*      display = sf::priv::openDisplay();
+        const KeyCode keycode = XKeysymToKeycode(display, keysym);
         sf::priv::closeDisplay(display);
 
         if (keycode != nullKeyCode)
@@ -574,8 +574,8 @@ KeySym scancodeToKeySym(sf::Keyboard::Scancode code)
 {
     Display* display = sf::priv::openDisplay();
 
-    KeySym  keysym  = NoSymbol;
-    KeyCode keycode = scancodeToKeyCode(code);
+    KeySym        keysym  = NoSymbol;
+    const KeyCode keycode = scancodeToKeyCode(code);
 
     if (keycode != nullKeyCode) // ensure that this Scancode is mapped to keycode
         keysym = XkbKeycodeToKeysym(display, keycode, 0, 0);
@@ -614,7 +614,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(Keyboard::Key key)
 {
-    KeyCode keycode = keyToKeyCode(key);
+    const KeyCode keycode = keyToKeyCode(key);
     return isKeyPressedImpl(keycode);
 }
 
@@ -622,7 +622,7 @@ bool KeyboardImpl::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool KeyboardImpl::isKeyPressed(Keyboard::Scancode code)
 {
-    KeyCode keycode = scancodeToKeyCode(code);
+    const KeyCode keycode = scancodeToKeyCode(code);
     return isKeyPressedImpl(keycode);
 }
 
@@ -630,7 +630,7 @@ bool KeyboardImpl::isKeyPressed(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode KeyboardImpl::delocalize(Keyboard::Key key)
 {
-    KeyCode keycode = keyToKeyCode(key);
+    const KeyCode keycode = keyToKeyCode(key);
     return keyCodeToScancode(keycode);
 }
 
@@ -638,7 +638,7 @@ Keyboard::Scancode KeyboardImpl::delocalize(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 Keyboard::Key KeyboardImpl::localize(Keyboard::Scancode code)
 {
-    KeySym keysym = scancodeToKeySym(code);
+    const KeySym keysym = scancodeToKeySym(code);
     return keySymToKey(keysym);
 }
 
@@ -673,8 +673,8 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
 
     if (checkInput)
     {
-        KeySym   keysym  = scancodeToKeySym(code);
-        char32_t unicode = keysymToUnicode(keysym);
+        const KeySym   keysym  = scancodeToKeySym(code);
+        const char32_t unicode = keysymToUnicode(keysym);
 
         if (unicode != 0)
             return String(unicode);
@@ -805,8 +805,8 @@ Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
     for (int i = 0; i < 4; ++i)
     {
         // Get the SFML keyboard code from the keysym of the key that has been pressed
-        KeySym        keysym = XLookupKeysym(&event, i);
-        Keyboard::Key key    = keySymToKey(keysym);
+        const KeySym        keysym = XLookupKeysym(&event, i);
+        const Keyboard::Key key    = keySymToKey(keysym);
         if (key != Keyboard::Unknown)
             return key;
     }

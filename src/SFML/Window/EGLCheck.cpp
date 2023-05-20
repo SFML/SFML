@@ -43,7 +43,7 @@ void eglCheckError(const std::filesystem::path& file, unsigned int line, std::st
 {
     // Obtain information about the success or failure of the most recent EGL
     // function called in the current thread
-    EGLint errorCode = eglGetError();
+    const EGLint errorCode = eglGetError();
 
     if (errorCode != EGL_SUCCESS)
     {

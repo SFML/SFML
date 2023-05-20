@@ -108,7 +108,7 @@ std::filesystem::path findExecutableName()
 {
     // We use /proc/self/cmdline to get the command line
     // the user used to invoke this instance of the application
-    int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
+    const int file = ::open("/proc/self/cmdline", O_RDONLY | O_NONBLOCK);
 
     if (file < 0)
         return "sfml";
@@ -148,8 +148,8 @@ bool ewmhSupported()
 
     checked = true;
 
-    Atom netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
-    Atom netSupported         = sf::priv::getAtom("_NET_SUPPORTED", true);
+    const Atom netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
+    const Atom netSupported         = sf::priv::getAtom("_NET_SUPPORTED", true);
 
     if (!netSupportingWmCheck || !netSupported)
         return false;
@@ -186,7 +186,7 @@ bool ewmhSupported()
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-    ::Window rootWindow = *reinterpret_cast<::Window*>(data);
+    const ::Window rootWindow = *reinterpret_cast<::Window*>(data);
 #pragma GCC diagnostic pop
 
     XFree(data);
@@ -221,7 +221,7 @@ bool ewmhSupported()
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-    ::Window childWindow = *reinterpret_cast<::Window*>(data);
+    const ::Window childWindow = *reinterpret_cast<::Window*>(data);
 #pragma GCC diagnostic pop
 
     XFree(data);
@@ -243,7 +243,7 @@ bool ewmhSupported()
 
     // We try to get the name of the window manager
     // for window manager specific workarounds
-    Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
+    const Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
 
     if (!netWmName)
     {
@@ -310,7 +310,7 @@ bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long
     if (!ewmhSupported())
         return false;
 
-    Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
+    const Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
 
     if (frameExtents == None)
         return false;
@@ -322,7 +322,18 @@ bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long
     unsigned long  numBytesLeft;
     unsigned char* data = nullptr;
 
-    int result = XGetWindowProperty(disp, win, frameExtents, 0, 4, False, XA_CARDINAL, &actualType, &actualFormat, &numItems, &numBytesLeft, &data);
+    const int result = XGetWindowProperty(disp,
+                                          win,
+                                          frameExtents,
+                                          0,
+                                          4,
+                                          False,
+                                          XA_CARDINAL,
+                                          &actualType,
+                                          &actualFormat,
+                                          &numItems,
+                                          &numBytesLeft,
+                                          &data);
 
     if ((result == Success) && (actualType == XA_CARDINAL) && (actualFormat == 32) && (numItems == 4) &&
         (numBytesLeft == 0) && (data != nullptr))
@@ -424,8 +435,8 @@ m_cursorGrabbed(m_fullscreen)
         windowPosition = displaySize - Vector2i(mode.size) / 2;
     }
 
-    unsigned int width  = mode.size.x;
-    unsigned int height = mode.size.y;
+    const unsigned int width  = mode.size.x;
+    const unsigned int height = mode.size.y;
 
     Visual* visual = nullptr;
     int     depth  = 0;
@@ -440,7 +451,7 @@ m_cursorGrabbed(m_fullscreen)
     else
     {
         // Choose the visual according to the context settings
-        XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+        const XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
 
         visual = visualInfo.visual;
         depth  = visualInfo.depth;
@@ -485,7 +496,7 @@ m_cursorGrabbed(m_fullscreen)
     // change our window's decorations and functions according to the requested style)
     if (!m_fullscreen)
     {
-        Atom wmHintsAtom = getAtom("_MOTIF_WM_HINTS", false);
+        const Atom wmHintsAtom = getAtom("_MOTIF_WM_HINTS", false);
         if (wmHintsAtom)
         {
             // NOLINTBEGIN(readability-identifier-naming)
@@ -651,7 +662,7 @@ WindowImplX11::~WindowImplX11()
     closeDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
-    std::lock_guard lock(allWindowsMutex);
+    const std::lock_guard lock(allWindowsMutex);
     allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
 }
 
@@ -869,10 +880,10 @@ void WindowImplX11::setTitle(const String& title)
     std::basic_string<std::uint8_t> utf8Title;
     Utf32::toUtf8(title.begin(), title.end(), std::back_inserter(utf8Title));
 
-    Atom useUtf8 = getAtom("UTF8_STRING", false);
+    const Atom useUtf8 = getAtom("UTF8_STRING", false);
 
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
-    Atom wmName = getAtom("_NET_WM_NAME", false);
+    const Atom wmName = getAtom("_NET_WM_NAME", false);
     XChangeProperty(m_display,
                     m_window,
                     wmName,
@@ -883,7 +894,7 @@ void WindowImplX11::setTitle(const String& title)
                     static_cast<int>(utf8Title.size()));
 
     // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
-    Atom wmIconName = getAtom("_NET_WM_ICON_NAME", false);
+    const Atom wmIconName = getAtom("_NET_WM_ICON_NAME", false);
     XChangeProperty(m_display,
                     m_window,
                     wmIconName,
@@ -958,7 +969,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     XDestroyImage(iconImage);
 
     // Create the mask pixmap (must have 1 bit depth)
-    std::size_t               pitch = (size.x + 7) / 8;
+    const std::size_t         pitch = (size.x + 7) / 8;
     std::vector<std::uint8_t> maskPixels(pitch * size.y, 0);
     for (std::size_t j = 0; j < size.y; ++j)
     {
@@ -968,7 +979,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
             {
                 if (i * 8 + k < size.x)
                 {
-                    std::uint8_t opacity = (pixels[(i * 8 + k + j * size.x) * 4 + 3] > 0) ? 1 : 0;
+                    const std::uint8_t opacity = (pixels[(i * 8 + k + j * size.x) * 4 + 3] > 0) ? 1 : 0;
                     maskPixels[i + j * pitch] |= static_cast<std::uint8_t>(opacity << k);
                 }
             }
@@ -1008,7 +1019,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
             (pixels[i * 4 + 2] << 0) | (pixels[i * 4 + 1] << 8) | (pixels[i * 4 + 0] << 16) | (pixels[i * 4 + 3] << 24));
     }
 
-    Atom netWmIcon = getAtom("_NET_WM_ICON");
+    const Atom netWmIcon = getAtom("_NET_WM_ICON");
 
     XChangeProperty(m_display,
                     m_window,
@@ -1085,7 +1096,7 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
         // Try multiple times to grab the cursor
         for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
         {
-            int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+            const int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
 
             if (result == GrabSuccess)
             {
@@ -1127,7 +1138,7 @@ void WindowImplX11::requestFocus()
     bool sfmlWindowFocused = false;
 
     {
-        std::lock_guard lock(allWindowsMutex);
+        const std::lock_guard lock(allWindowsMutex);
         for (sf::priv::WindowImplX11* windowPtr : allWindows)
         {
             if (windowPtr->hasFocus())
@@ -1147,7 +1158,7 @@ void WindowImplX11::requestFocus()
         return; // error getting attribute
     }
 
-    bool windowViewable = (attributes.map_state == IsViewable);
+    const bool windowViewable = (attributes.map_state == IsViewable);
 
     if (sfmlWindowFocused && windowViewable)
     {
@@ -1211,11 +1222,11 @@ void WindowImplX11::grabFocus()
         event.xclient.data.l[1]    = static_cast<long>(m_lastInputTime);
         event.xclient.data.l[2]    = 0; // We don't know the currently active window
 
-        int result = XSendEvent(m_display,
-                                DefaultRootWindow(m_display),
-                                False,
-                                SubstructureNotifyMask | SubstructureRedirectMask,
-                                &event);
+        const int result = XSendEvent(m_display,
+                                      DefaultRootWindow(m_display),
+                                      False,
+                                      SubstructureNotifyMask | SubstructureRedirectMask,
+                                      &event);
 
         XFlush(m_display);
 
@@ -1403,7 +1414,7 @@ void WindowImplX11::switchToFullscreen()
 
     if (ewmhSupported())
     {
-        Atom netWmBypassCompositor = getAtom("_NET_WM_BYPASS_COMPOSITOR");
+        const Atom netWmBypassCompositor = getAtom("_NET_WM_BYPASS_COMPOSITOR");
 
         if (netWmBypassCompositor)
         {
@@ -1419,8 +1430,8 @@ void WindowImplX11::switchToFullscreen()
                             1);
         }
 
-        Atom netWmState           = getAtom("_NET_WM_STATE", true);
-        Atom netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN", true);
+        const Atom netWmState           = getAtom("_NET_WM_STATE", true);
+        const Atom netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN", true);
 
         if (!netWmState || !netWmStateFullscreen)
         {
@@ -1438,11 +1449,11 @@ void WindowImplX11::switchToFullscreen()
         event.xclient.data.l[2]    = 0; // No second property
         event.xclient.data.l[3]    = 1; // Normal window
 
-        int result = XSendEvent(m_display,
-                                DefaultRootWindow(m_display),
-                                False,
-                                SubstructureNotifyMask | SubstructureRedirectMask,
-                                &event);
+        const int result = XSendEvent(m_display,
+                                      DefaultRootWindow(m_display),
+                                      False,
+                                      SubstructureNotifyMask | SubstructureRedirectMask,
+                                      &event);
 
         if (!result)
             err() << "Setting fullscreen failed, could not send \"_NET_WM_STATE\" event" << std::endl;
@@ -1455,8 +1466,8 @@ void WindowImplX11::setProtocols()
 {
     using namespace WindowsImplX11Impl;
 
-    Atom wmProtocols    = getAtom("WM_PROTOCOLS");
-    Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+    const Atom wmProtocols    = getAtom("WM_PROTOCOLS");
+    const Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
 
     if (!wmProtocols)
     {
@@ -1546,8 +1557,8 @@ void WindowImplX11::initialize()
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode"
               << std::endl;
 
-    Atom wmWindowType       = getAtom("_NET_WM_WINDOW_TYPE", false);
-    Atom wmWindowTypeNormal = getAtom("_NET_WM_WINDOW_TYPE_NORMAL", false);
+    const Atom wmWindowType       = getAtom("_NET_WM_WINDOW_TYPE", false);
+    Atom       wmWindowTypeNormal = getAtom("_NET_WM_WINDOW_TYPE_NORMAL", false);
 
     if (wmWindowType && wmWindowTypeNormal)
     {
@@ -1574,7 +1585,7 @@ void WindowImplX11::initialize()
     XFlush(m_display);
 
     // Add this window to the global list of windows (required for focus request)
-    std::lock_guard lock(allWindowsMutex);
+    const std::lock_guard lock(allWindowsMutex);
     allWindows.push_back(this);
 }
 
@@ -1584,7 +1595,7 @@ void WindowImplX11::updateLastInputTime(::Time time)
 {
     if (time && (time != m_lastInputTime))
     {
-        Atom netWmUserTime = getAtom("_NET_WM_USER_TIME", true);
+        const Atom netWmUserTime = getAtom("_NET_WM_USER_TIME", true);
 
         if (netWmUserTime)
         {
@@ -1607,8 +1618,8 @@ void WindowImplX11::updateLastInputTime(::Time time)
 void WindowImplX11::createHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
-    Pixmap cursorPixmap    = XCreatePixmap(m_display, m_window, 1, 1, 1);
-    GC     graphicsContext = XCreateGC(m_display, cursorPixmap, 0, nullptr);
+    const Pixmap cursorPixmap    = XCreatePixmap(m_display, m_window, 1, 1, 1);
+    GC           graphicsContext = XCreateGC(m_display, cursorPixmap, 0, nullptr);
     XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
     XFreeGC(m_display, graphicsContext);
 
@@ -1663,7 +1674,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 // Try multiple times to grab the cursor
                 for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
                 {
-                    int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+                    const int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
 
                     if (result == GrabSuccess)
                     {
@@ -1737,13 +1748,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Input methods might want random ClientMessage events
             if (!XFilterEvent(&windowEvent, None))
             {
-                static Atom wmProtocols = getAtom("WM_PROTOCOLS");
+                static const Atom wmProtocols = getAtom("WM_PROTOCOLS");
 
                 // Handle window manager protocol messages we support
                 if (windowEvent.xclient.message_type == wmProtocols)
                 {
-                    static Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
-                    static Atom netWmPing      = ewmhSupported() ? getAtom("_NET_WM_PING", true) : None;
+                    static const Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+                    static const Atom netWmPing      = ewmhSupported() ? getAtom("_NET_WM_PING", true) : None;
 
                     if ((windowEvent.xclient.format == 32) &&
                         (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
@@ -1814,12 +1825,12 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     Status       status;
                     std::uint8_t keyBuffer[64];
 
-                    int length = Xutf8LookupString(m_inputContext,
-                                                   &windowEvent.xkey,
-                                                   reinterpret_cast<char*>(keyBuffer),
-                                                   sizeof(keyBuffer),
-                                                   nullptr,
-                                                   &status);
+                    const int length = Xutf8LookupString(m_inputContext,
+                                                         &windowEvent.xkey,
+                                                         reinterpret_cast<char*>(keyBuffer),
+                                                         sizeof(keyBuffer),
+                                                         nullptr,
+                                                         &status);
 
                     if (status == XBufferOverflow)
                         err() << "A TextEntered event has more than 64 bytes of UTF-8 input, and "
@@ -1886,7 +1897,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case ButtonPress:
         {
             // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
-            unsigned int button = windowEvent.xbutton.button;
+            const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
                 Event event;
@@ -1916,7 +1927,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse button released
         case ButtonRelease:
         {
-            unsigned int button = windowEvent.xbutton.button;
+            const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
                 Event event;
@@ -2083,7 +2094,7 @@ RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResource
     // if xRandR version >= 1.3 get the primary screen else take the first screen
     if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
     {
-        RROutput output = XRRGetOutputPrimary(m_display, rootWindow);
+        const RROutput output = XRRGetOutputPrimary(m_display, rootWindow);
 
         // Check if returned output is valid, otherwise use the first screen
         if (output == None)
@@ -2119,7 +2130,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     if (!checkXRandR(xRandRMajor, xRandRMinor))
         xRandRMajor = xRandRMinor = 0;
 
-    RROutput output = getOutputPrimary(rootWindow, res, xRandRMajor, xRandRMinor);
+    const RROutput output = getOutputPrimary(rootWindow, res, xRandRMajor, xRandRMinor);
 
     // Get output info from output
     XRROutputInfo* outputInfo = XRRGetOutputInfo(m_display, res, output);
