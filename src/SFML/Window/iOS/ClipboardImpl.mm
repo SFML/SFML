@@ -42,7 +42,7 @@ String ClipboardImpl::getString()
     {
         NSString* data = pboard.string;
 
-        char const* utf8   = [data cStringUsingEncoding:NSUTF8StringEncoding];
+        const char* utf8   = [data cStringUsingEncoding:NSUTF8StringEncoding];
         NSUInteger  length = [data lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
         return String::fromUtf8(utf8, utf8 + length);

@@ -163,6 +163,10 @@ SpacesInSquareBrackets: false
 # Line endings
 UseCRLF: false
 
+# Qualifiers (const, volatile, static, etc)
+QualifierAlignment: Custom
+QualifierOrder: ['static', 'inline', 'constexpr', 'const', 'volatile', 'type']
+
 ---
 Language: ObjC
 IndentWidth: 4

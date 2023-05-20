@@ -137,7 +137,7 @@ void SensorImpl::setEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-ASensor const* SensorImpl::getDefaultSensor(Sensor::Type sensor)
+const ASensor* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 {
     // Find the Android sensor type
     static int types[] = {ASENSOR_TYPE_ACCELEROMETER,
