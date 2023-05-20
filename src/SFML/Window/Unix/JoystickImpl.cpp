@@ -253,7 +253,7 @@ void updatePluggedList(udev_device* udevDevice = nullptr)
 bool hasMonitorEvent()
 {
     // This will not fail since we make sure udevMonitor is valid
-    int monitorFd = udev_monitor_get_fd(udevMonitor);
+    const int monitorFd = udev_monitor_get_fd(udevMonitor);
 
     pollfd fds{monitorFd, POLLIN, 0};
 
@@ -392,17 +392,17 @@ unsigned int getJoystickProductId(unsigned int index)
 // Get the joystick name
 std::string getJoystickName(unsigned int index)
 {
-    std::string devnode = joystickList[index].deviceNode;
+    const std::string devnode = joystickList[index].deviceNode;
 
     // First try using ioctl with JSIOCGNAME
-    int fd = ::open(devnode.c_str(), O_RDONLY | O_NONBLOCK);
+    const int fd = ::open(devnode.c_str(), O_RDONLY | O_NONBLOCK);
 
     if (fd >= 0)
     {
         // Get the name
         char name[128] = {};
 
-        int result = ioctl(fd, JSIOCGNAME(sizeof(name)), name);
+        const int result = ioctl(fd, JSIOCGNAME(sizeof(name)), name);
 
         ::close(fd);
 
@@ -539,7 +539,7 @@ bool JoystickImpl::open(unsigned int index)
 
     if (joystickList[index].plugged)
     {
-        std::string devnode = joystickList[index].deviceNode;
+        const std::string devnode = joystickList[index].deviceNode;
 
         // Open the joystick's file descriptor (read-only and non-blocking)
         m_file = ::open(devnode.c_str(), O_RDONLY | O_NONBLOCK);
@@ -648,7 +648,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
             // An axis was moved
             case JS_EVENT_AXIS:
             {
-                float value = joyState.value * 100.f / 32767.f;
+                const float value = joyState.value * 100.f / 32767.f;
 
                 if (joyState.number < ABS_MAX + 1)
                 {

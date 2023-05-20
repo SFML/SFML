@@ -138,7 +138,7 @@ String ClipboardImpl::getStringImpl()
     // if UTF-8 is not available) and written to our window property
     XConvertSelection(m_display, m_clipboard, (m_utf8String != None) ? m_utf8String : XA_STRING, m_targetProperty, m_window, CurrentTime);
 
-    Clock clock;
+    const Clock clock;
 
     // Wait for a response for up to 1000ms
     while (!m_requestResponded && (clock.getElapsedTime().asMilliseconds() < 1000))
@@ -204,7 +204,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             // Notification that the current selection owner
             // has responded to our request
 
-            XSelectionEvent& selectionEvent = windowEvent.xselection;
+            const XSelectionEvent& selectionEvent = windowEvent.xselection;
 
             m_clipboardContents.clear();
 
@@ -222,18 +222,18 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
             // The selection owner should have wrote the selection
             // data to the specified window property
-            int result = XGetWindowProperty(m_display,
-                                            m_window,
-                                            m_targetProperty,
-                                            0,
-                                            0x7fffffff,
-                                            False,
-                                            AnyPropertyType,
-                                            &type,
-                                            &format,
-                                            &items,
-                                            &remainingBytes,
-                                            &data);
+            const int result = XGetWindowProperty(m_display,
+                                                  m_window,
+                                                  m_targetProperty,
+                                                  0,
+                                                  0x7fffffff,
+                                                  False,
+                                                  AnyPropertyType,
+                                                  &type,
+                                                  &format,
+                                                  &items,
+                                                  &remainingBytes,
+                                                  &data);
 
             if (result == Success)
             {
@@ -267,7 +267,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
         case SelectionRequest:
         {
             // Respond to a request for our clipboard contents
-            XSelectionRequestEvent& selectionRequestEvent = windowEvent.xselectionrequest;
+            const XSelectionRequestEvent& selectionRequestEvent = windowEvent.xselectionrequest;
 
             // Our reply
             XSelectionEvent selectionEvent;
@@ -316,7 +316,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                          ((m_utf8String == None) && (selectionRequestEvent.target == m_text)))
                 {
                     // Respond to a request for conversion to a Latin-1 string
-                    std::string data = m_clipboardContents.toAnsiString();
+                    const std::string data = m_clipboardContents.toAnsiString();
 
                     XChangeProperty(m_display,
                                     selectionRequestEvent.requestor,
@@ -343,7 +343,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                 {
                     // Respond to a request for conversion to a UTF-8 string
                     // or an encoding of our choosing (we always choose UTF-8)
-                    std::basic_string<std::uint8_t> data = m_clipboardContents.toUtf8();
+                    const std::basic_string<std::uint8_t> data = m_clipboardContents.toUtf8();
 
                     XChangeProperty(m_display,
                                     selectionRequestEvent.requestor,

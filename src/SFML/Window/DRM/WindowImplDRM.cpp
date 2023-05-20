@@ -61,7 +61,7 @@ WindowImplDRM::~WindowImplDRM()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplDRM::getSystemHandle() const
 {
-    Drm& drm = sf::priv::DRMContext::getDRM();
+    const Drm& drm = sf::priv::DRMContext::getDRM();
     return static_cast<WindowHandle>(drm.fileDescriptor);
 }
 

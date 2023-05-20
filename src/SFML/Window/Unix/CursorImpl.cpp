@@ -101,8 +101,8 @@ bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u s
     // The bit data is stored packed into bytes. If the number of pixels on each row of the image
     // does not fit exactly into (width/8) bytes, one extra byte is allocated at the end of each
     // row to store the extra pixels.
-    std::size_t               packedWidth = (size.x + 7) / 8;
-    std::size_t               bytes       = packedWidth * size.y;
+    const std::size_t         packedWidth = (size.x + 7) / 8;
+    const std::size_t         bytes       = packedWidth * size.y;
     std::vector<std::uint8_t> mask(bytes, 0); // Defines which pixel is opaque (1) or transparent (0).
     std::vector<std::uint8_t> data(bytes, 0); // Defines which pixel is white (1) or black (0).
 
@@ -110,33 +110,33 @@ bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u s
     {
         for (std::size_t i = 0; i < size.x; ++i)
         {
-            std::size_t pixelIndex = i + j * size.x;
-            std::size_t byteIndex  = i / 8 + j * packedWidth;
-            std::size_t bitIndex   = i % 8;
+            const std::size_t pixelIndex = i + j * size.x;
+            const std::size_t byteIndex  = i / 8 + j * packedWidth;
+            const std::size_t bitIndex   = i % 8;
 
             // Turn on pixel that are not transparent
-            std::uint8_t opacity = pixels[pixelIndex * 4 + 3] > 0 ? 1 : 0;
+            const std::uint8_t opacity = pixels[pixelIndex * 4 + 3] > 0 ? 1 : 0;
             mask[byteIndex] |= static_cast<std::uint8_t>(opacity << bitIndex);
 
             // Choose between black/background & white/foreground color for each pixel,
             // based on the pixel color intensity: on average, if a channel is "active"
             // at 50%, the bit is white.
-            int intensity = (pixels[pixelIndex * 4 + 0] + pixels[pixelIndex * 4 + 1] + pixels[pixelIndex * 4 + 2]) / 3;
-            std::uint8_t bit = intensity > 128 ? 1 : 0;
+            const int intensity = (pixels[pixelIndex * 4 + 0] + pixels[pixelIndex * 4 + 1] + pixels[pixelIndex * 4 + 2]) / 3;
+            const std::uint8_t bit = intensity > 128 ? 1 : 0;
             data[byteIndex] |= static_cast<std::uint8_t>(bit << bitIndex);
         }
     }
 
-    Pixmap maskPixmap = XCreateBitmapFromData(m_display,
-                                              XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(mask.data()),
-                                              size.x,
-                                              size.y);
-    Pixmap dataPixmap = XCreateBitmapFromData(m_display,
-                                              XDefaultRootWindow(m_display),
-                                              reinterpret_cast<char*>(data.data()),
-                                              size.x,
-                                              size.y);
+    const Pixmap maskPixmap = XCreateBitmapFromData(m_display,
+                                                    XDefaultRootWindow(m_display),
+                                                    reinterpret_cast<char*>(mask.data()),
+                                                    size.x,
+                                                    size.y);
+    const Pixmap dataPixmap = XCreateBitmapFromData(m_display,
+                                                    XDefaultRootWindow(m_display),
+                                                    reinterpret_cast<char*>(data.data()),
+                                                    size.x,
+                                                    size.y);
 
     // Define the foreground color as white and the background as black.
     XColor fg;

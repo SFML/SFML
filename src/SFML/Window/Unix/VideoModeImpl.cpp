@@ -49,7 +49,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     if (display)
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display);
 
         // Check if the XRandR extension is present
         int version;
@@ -135,7 +135,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     if (display)
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display);
 
         // Check if the XRandR extension is present
         int version;
@@ -146,8 +146,8 @@ VideoMode VideoModeImpl::getDesktopMode()
             if (config)
             {
                 // Get the current video mode
-                Rotation currentRotation;
-                int      currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+                Rotation  currentRotation;
+                const int currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
 
                 // Get the available screen sizes
                 int            nbSizes;
