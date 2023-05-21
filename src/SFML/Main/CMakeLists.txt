@@ -33,7 +33,7 @@ set_target_properties(sfml-main PROPERTIES
                       RELWITHDEBINFO_POSTFIX "")
 
 # because of a current limitation on Android (which prevents one library
-# from depending on shared libraries), we need a boostrap activity which
+# from depending on shared libraries), we need a bootstrap activity which
 # will load our shared libraries manually
 if(SFML_OS_ANDROID)
     sfml_add_library(Activity SOURCES ${SRCROOT}/SFMLActivity.cpp)

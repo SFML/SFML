@@ -45,7 +45,7 @@
 #endif
 
 #if !defined(GLX_DEBUGGING) && defined(SFML_DEBUG)
-// Enable this to print messages to err() everytime GLX produces errors
+// Enable this to print messages to err() every time GLX produces errors
 //#define GLX_DEBUGGING
 #endif
 

@@ -265,7 +265,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Recompute the internal geometry of the shape
     ///
-    /// This function must be called by the derived class everytime
+    /// This function must be called by the derived class every time
     /// the shape's points change (i.e. the result of either
     /// getPointCount or getPoint is different).
     ///

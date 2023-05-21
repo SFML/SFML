@@ -1288,7 +1288,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
     }
 
-    // Retreive current RRMode, screen position and rotation
+    // Retrieve current RRMode, screen position and rotation
     XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, outputInfo->crtc);
     if (!crtcInfo)
     {
@@ -1359,7 +1359,7 @@ void WindowImplX11::resetVideoMode()
                 return;
             }
 
-            // Retreive current screen position and rotation
+            // Retrieve current screen position and rotation
             XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, m_oldRRCrtc);
             if (!crtcInfo)
             {
@@ -2146,7 +2146,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
         return monitorPosition;
     }
 
-    // Retreive current RRMode, screen position and rotation
+    // Retrieve current RRMode, screen position and rotation
     XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(m_display, res, outputInfo->crtc);
     if (!crtcInfo)
     {

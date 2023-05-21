@@ -71,7 +71,7 @@ void close(FT_Stream)
 {
 }
 
-// Helper to intepret memory as a specific type
+// Helper to interpret memory as a specific type
 template <typename T, typename U>
 inline T reinterpret(const U& input)
 {
@@ -780,7 +780,7 @@ IntRect Font::findGlyphRect(Page& page, const Vector2u& size) const
     // Find the glyph's rectangle on the selected row
     IntRect rect(Rect<unsigned int>({row->width, row->top}, size));
 
-    // Update the row informations
+    // Update the row information
     row->width += size.x;
 
     return rect;

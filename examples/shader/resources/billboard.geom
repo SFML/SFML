@@ -18,7 +18,7 @@ out vec2 tex_coord;
 // Main entry point
 void main()
 {
-    // Caculate the half width/height of the billboards
+    // Calculate the half width/height of the billboards
     vec2 half_size = size / 2.f;
 
     // Scale the size based on resolution (1 would be full width/height)

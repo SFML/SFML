@@ -65,7 +65,7 @@ unsigned short TcpSocket::getLocalPort() const
 {
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
-        // Retrieve informations about the local end of the socket
+        // Retrieve information about the local end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
@@ -84,7 +84,7 @@ std::optional<IpAddress> TcpSocket::getRemoteAddress() const
 {
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
-        // Retrieve informations about the remote end of the socket
+        // Retrieve information about the remote end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
@@ -103,7 +103,7 @@ unsigned short TcpSocket::getRemotePort() const
 {
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
-        // Retrieve informations about the remote end of the socket
+        // Retrieve information about the remote end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)

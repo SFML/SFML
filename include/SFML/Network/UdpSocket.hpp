@@ -213,7 +213,7 @@ private:
 /// it can send to and receive from any host at any time.
 ///
 /// It is a datagram protocol: bounded blocks of data (datagrams)
-/// are transfered over the network rather than a continuous
+/// are transferred over the network rather than a continuous
 /// stream of data (TCP). Therefore, one call to send will always
 /// match one call to receive (if the datagram is not lost),
 /// with the same data that was sent.

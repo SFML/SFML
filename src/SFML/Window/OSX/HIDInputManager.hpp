@@ -277,7 +277,7 @@ private:
     static std::uint8_t scanToVirtualCode(Keyboard::Scancode code);
 
     ////////////////////////////////////////////////////////////
-    /// Fallback convertion for keys which aren't expected to be impacted
+    /// Fallback conversion for keys which aren't expected to be impacted
     /// by the layout. Can return Unknown.
     ///
     ////////////////////////////////////////////////////////////

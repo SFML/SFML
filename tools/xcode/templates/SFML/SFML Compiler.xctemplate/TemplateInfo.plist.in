@@ -73,7 +73,7 @@ subject to the following restrictions:
                 <key>MACOSX_DEPLOYMENT_TARGET</key>
                 <string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
 
-                <!-- SERACH PATHS -->
+                <!-- SEARCH PATHS -->
                 <key>FRAMEWORK_SEARCH_PATHS</key>
                 <string> /Library/Frameworks/ $(inherited) </string>
 

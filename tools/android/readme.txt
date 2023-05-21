@@ -10,7 +10,7 @@ Feel free to improve them or send patches.
 
 HOW-TO-USE:
 -----------
-1) Some of these scripts need an environement variable to work ($NDK) as well
+1) Some of these scripts need an environment variable to work ($NDK) as well
 as the Android CMake toolchain you'll find in cmake/toolchains (android.toolchain.cmake)
 export NDK=/path/to/your/ndk
 export ANDROID_CMAKE_TOOLCHAIN=/path/to/android.toolchain.cmake
