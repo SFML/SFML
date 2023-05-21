@@ -483,8 +483,8 @@ public:
         }
 
         // Retrieve the extensions we need to enable in order to use Vulkan with SFML
-        std::vector<const char*> requiredExtentions = sf::Vulkan::getGraphicsRequiredInstanceExtensions();
-        requiredExtentions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        std::vector<const char*> requiredExtensions = sf::Vulkan::getGraphicsRequiredInstanceExtensions();
+        requiredExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 
         // Register our application information
         VkApplicationInfo applicationInfo  = VkApplicationInfo();
@@ -500,8 +500,8 @@ public:
         instanceCreateInfo.pApplicationInfo        = &applicationInfo;
         instanceCreateInfo.enabledLayerCount       = static_cast<std::uint32_t>(validationLayers.size());
         instanceCreateInfo.ppEnabledLayerNames     = validationLayers.data();
-        instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtentions.size());
-        instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
+        instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtensions.size());
+        instanceCreateInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
         // Try to create a Vulkan instance with debug report enabled
         VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
@@ -509,10 +509,10 @@ public:
         // If an extension is missing, try disabling debug report
         if (result == VK_ERROR_EXTENSION_NOT_PRESENT)
         {
-            requiredExtentions.pop_back();
+            requiredExtensions.pop_back();
 
-            instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtentions.size());
-            instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
+            instanceCreateInfo.enabledExtensionCount   = static_cast<std::uint32_t>(requiredExtensions.size());
+            instanceCreateInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
             result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
         }
@@ -720,7 +720,7 @@ public:
         deviceQueueCreateInfo.pQueuePriorities        = &queuePriority;
 
         // Enable the swapchain extension
-        const char* extentions[1] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+        const char* extensions[1] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
         // Enable anisotropic filtering
         VkPhysicalDeviceFeatures physicalDeviceFeatures = VkPhysicalDeviceFeatures();
@@ -729,7 +729,7 @@ public:
         VkDeviceCreateInfo deviceCreateInfo      = VkDeviceCreateInfo();
         deviceCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
         deviceCreateInfo.enabledExtensionCount   = 1;
-        deviceCreateInfo.ppEnabledExtensionNames = extentions;
+        deviceCreateInfo.ppEnabledExtensionNames = extensions;
         deviceCreateInfo.queueCreateInfoCount    = 1;
         deviceCreateInfo.pQueueCreateInfos       = &deviceQueueCreateInfo;
         deviceCreateInfo.pEnabledFeatures        = &physicalDeviceFeatures;
@@ -1893,7 +1893,7 @@ public:
             return;
         }
 
-        // Submit a barrier to transition the image layout to transfer destionation optimal
+        // Submit a barrier to transition the image layout to transfer destination optimal
         VkImageMemoryBarrier barrier            = VkImageMemoryBarrier();
         barrier.sType                           = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.oldLayout                       = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -2031,7 +2031,7 @@ public:
             return;
         }
 
-        // Submit a barrier to transition the image layout from transfer destionation optimal to shader read-only optimal
+        // Submit a barrier to transition the image layout from transfer destination optimal to shader read-only optimal
         barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         barrier.newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -2227,7 +2227,7 @@ public:
             writeDescriptorSets[1].descriptorCount = 1;
             writeDescriptorSets[1].pImageInfo      = &descriptorImageInfo;
 
-            // Update the desciptor set
+            // Update the descriptor set
             vkUpdateDescriptorSets(device, 2, writeDescriptorSets, 0, nullptr);
         }
     }

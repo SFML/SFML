@@ -50,7 +50,7 @@ unsigned short UdpSocket::getLocalPort() const
 {
     if (getHandle() != priv::SocketImpl::invalidSocket())
     {
-        // Retrieve informations about the local end of the socket
+        // Retrieve information about the local end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
@@ -173,7 +173,7 @@ Socket::Status UdpSocket::receive(void*                     data,
     if (sizeReceived < 0)
         return priv::SocketImpl::getErrorStatus();
 
-    // Fill the sender informations
+    // Fill the sender information
     received      = static_cast<std::size_t>(sizeReceived);
     remoteAddress = IpAddress(ntohl(address.sin_addr.s_addr));
     remotePort    = ntohs(address.sin_port);

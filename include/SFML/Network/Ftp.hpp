@@ -55,7 +55,7 @@ public:
     ////////////////////////////////////////////////////////////
     enum class TransferMode
     {
-        Binary, //!< Binary mode (file is transfered as a sequence of bytes)
+        Binary, //!< Binary mode (file is transferred as a sequence of bytes)
         Ascii,  //!< Text mode using ASCII encoding
         Ebcdic  //!< Text mode using EBCDIC encoding
     };
@@ -538,7 +538,7 @@ private:
     Response getResponse();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Utility class for exchanging datas with the server
+    /// \brief Utility class for exchanging data with the server
     ///        on the data channel
     ///
     ////////////////////////////////////////////////////////////

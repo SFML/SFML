@@ -650,7 +650,7 @@ void DRMContext::display()
 
     m_currentBO = m_nextBO;
 
-    // This call must be preceeded by a single call to eglSwapBuffers()
+    // This call must be preceded by a single call to eglSwapBuffers()
     m_nextBO = gbm_surface_lock_front_buffer(m_gbmSurface);
 
     if (!m_nextBO)

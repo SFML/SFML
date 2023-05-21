@@ -88,7 +88,7 @@ void SocketImpl::setBlocking(SocketHandle sock, bool block)
 ////////////////////////////////////////////////////////////
 Socket::Status SocketImpl::getErrorStatus()
 {
-    // The followings are sometimes equal to EWOULDBLOCK,
+    // The following are sometimes equal to EWOULDBLOCK,
     // so we have to make a special case for them in order
     // to avoid having double values in the switch case
     if ((errno == EAGAIN) || (errno == EINPROGRESS))

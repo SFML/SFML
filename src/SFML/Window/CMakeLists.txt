@@ -300,7 +300,7 @@ endif()
 # Vulkan headers
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
 
-# CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability
+# CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compatibility
 # (unless the OpenGL_GL_PREFERENCE was explicitly set)
 # See CMP0072 for more details (cmake --help-policy CMP0072)
 if(NOT OpenGL_GL_PREFERENCE)

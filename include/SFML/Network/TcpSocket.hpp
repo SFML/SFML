@@ -249,7 +249,7 @@ private:
 /// and without errors (no data corrupted, lost or duplicated).
 ///
 /// When a socket is connected to a remote host, you can
-/// retrieve informations about this host with the
+/// retrieve information about this host with the
 /// getRemoteAddress and getRemotePort functions. You can
 /// also get the local port to which the socket is bound
 /// (which is automatically chosen when the socket is connected),

@@ -387,8 +387,8 @@
         rawPos.x       = std::clamp(rawPos.x, origin.x, origin.x + size.width - 1);
         rawPos.y       = std::clamp(rawPos.y, origin.y + 1, origin.y + size.height);
         // Note: the `-1` and `+1` on the two lines above prevent the user to click
-        // on the left or below the window, repectively, and therefore prevent the
-        // application to lose focus by accident. The sign of this offset is determinded
+        // on the left or below the window, respectively, and therefore prevent the
+        // application to lose focus by accident. The sign of this offset is determined
         // by the direction of the x and y axis.
 
         // Increase X and Y buffer with the distance of the projection

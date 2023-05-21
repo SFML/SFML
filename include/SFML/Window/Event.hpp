@@ -226,7 +226,7 @@ public:
 /// \class sf::Event
 /// \ingroup window
 ///
-/// sf::Event holds all the informations about a system event
+/// sf::Event holds all the information about a system event
 /// that just happened. Events are retrieved using the
 /// sf::Window::pollEvent and sf::Window::waitEvent functions.
 ///

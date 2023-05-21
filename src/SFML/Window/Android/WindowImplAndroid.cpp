@@ -360,7 +360,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* _event, ActivityStates& s
     std::int32_t deviceId   = AInputEvent_getDeviceId(_event);
     std::int32_t edgeFlags  = AMotionEvent_getEdgeFlags(_event);
 
-    // Create the MotionEvent object in Java trough its static constructor obtain()
+    // Create the MotionEvent object in Java through its static constructor obtain()
     jclass    ClassMotionEvent   = lJNIEnv->FindClass("android/view/MotionEvent");
     jmethodID StaticMethodObtain = lJNIEnv->GetStaticMethodID(ClassMotionEvent,
                                                               "obtain",
