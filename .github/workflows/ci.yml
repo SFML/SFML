@@ -238,13 +238,22 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew update
-        brew install llvm || true
+        brew install llvm pyyaml || true
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
+
+    - name: Install PyYAML
+      run: python3 -m pip install pyyaml
 
     - name: Configure
       shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_UNITY_BUILD=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE ${{matrix.platform.flags}}
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_UNITY_BUILD=ON -DSFML_BUILD_EXAMPLES=TRUE -DSFML_BUILD_TEST_SUITE=TRUE -DCLANG_TIDY_EXPORT_FIXES=TRUE ${{matrix.platform.flags}}
 
     - name: Analyze Code
       shell: bash
       run: cmake --build $GITHUB_WORKSPACE/build --target tidy
+
+    - name: Process clang-tidy Warnings
+      if: always()
+      uses: asarium/clang-tidy-action@v1
+      with:
+        fixesFile: clang-tidy-fixes.yaml

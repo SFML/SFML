@@ -28,7 +28,10 @@ if(NOT RUN_CLANG_TIDY)
 endif()
 
 # Run
-execute_process(COMMAND ${Python_EXECUTABLE} ${RUN_CLANG_TIDY} -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -p ${PROJECT_BINARY_DIR} RESULTS_VARIABLE EXIT_CODE)
+if(CLANG_TIDY_EXPORT_FIXES)
+    set(EXPORT_FIXES -export-fixes clang-tidy-fixes.yaml)
+endif()
+execute_process(COMMAND ${Python_EXECUTABLE} ${RUN_CLANG_TIDY} -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -p ${PROJECT_BINARY_DIR} ${EXPORT_FIXES} RESULTS_VARIABLE EXIT_CODE)
 if(NOT EXIT_CODE STREQUAL 0)
     message(FATAL_ERROR "Analysis failed")
 endif()

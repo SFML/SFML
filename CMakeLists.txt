@@ -532,6 +532,10 @@ add_custom_target(format
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} VERBATIM)
 
 sfml_set_option(CLANG_TIDY_EXECUTABLE clang-tidy STRING "Override clang-tidy executable, requires minimum version 14")
+sfml_set_option(CLANG_TIDY_EXPORT_FIXES OFF BOOL "TRUE to export clang-tidy fixes")
 add_custom_target(tidy
-    COMMAND ${CMAKE_COMMAND} -DCLANG_TIDY_EXECUTABLE=${CLANG_TIDY_EXECUTABLE} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR} -P ./cmake/Tidy.cmake
+    COMMAND ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
+                             -DCLANG_TIDY_EXECUTABLE=${CLANG_TIDY_EXECUTABLE}
+                             -DCLANG_TIDY_EXPORT_FIXES=${CLANG_TIDY_EXPORT_FIXES}
+                             -P ./cmake/Tidy.cmake
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} VERBATIM)
