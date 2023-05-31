@@ -40,4 +40,8 @@ if(SFML_BUILD_GRAPHICS)
 endif()
 if(SFML_BUILD_GRAPHICS AND SFML_BUILD_AUDIO)
     add_subdirectory(tennis)
+
+    if(NOT SFML_OS_IOS)
+        add_subdirectory(sound_stage)
+    endif()
 endif()
