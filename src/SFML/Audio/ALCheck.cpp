@@ -43,7 +43,7 @@ namespace
 namespace AlCheckImpl
 {
 thread_local ALenum lastError(AL_NO_ERROR);
-}
+} // namespace AlCheckImpl
 } // namespace
 
 namespace sf::priv
