@@ -61,6 +61,8 @@ public:
     /// \param stream Stream to open
     /// \param info   Structure to fill with the attributes of the loaded sound
     ///
+    /// \return True if the file was successfully opened
+    ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override;
 
