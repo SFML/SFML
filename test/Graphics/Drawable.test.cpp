@@ -42,6 +42,22 @@ TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
         CHECK(drawableTest.callCount() == 0);
     }
 
+    SECTION("Move semantics")
+    {
+        SUBCASE("Move constructor")
+        {
+            sf::Drawable        moveDrawable;
+            const sf::Drawable  drawable(std::move(moveDrawable));
+        }
+
+        SUBCASE("Move assignment")
+        {
+            sf::Drawable        moveDrawable;
+            const sf::Drawable  drawable;
+            moveDrawable = std::move(drawable);
+        }
+    }
+
     SECTION("draw()")
     {
         const DrawableTest drawableTest;
