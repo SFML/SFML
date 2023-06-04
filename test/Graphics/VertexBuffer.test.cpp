@@ -94,8 +94,8 @@ TEST_CASE("[Graphics] sf::VertexBuffer", "[.display]")
     {
         SECTION("Construction")
         {
-            sf::VertexBuffer MoveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
-            const sf::VertexBuffer vertexBuffer(std::move(MoveVertexBuffer));
+            sf::VertexBuffer       moveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
+            const sf::VertexBuffer vertexBuffer(std::move(moveVertexBuffer));
             CHECK(vertexBuffer.getVertexCount() == 0);
             CHECK(vertexBuffer.getNativeHandle() != 0);
             CHECK(vertexBuffer.getPrimitiveType() == sf::PrimitiveType::LineStrip);
@@ -104,9 +104,9 @@ TEST_CASE("[Graphics] sf::VertexBuffer", "[.display]")
 
         SECTION("Assignment")
         {
-            sf::VertexBuffer MoveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
+            sf::VertexBuffer moveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
             sf::VertexBuffer vertexBuffer;
-            vertexBuffer = std::move(MovevertexBuffer);
+            vertexBuffer = std::move(moveVertexBuffer);
             CHECK(vertexBuffer.getVertexCount() == 0);
             CHECK(vertexBuffer.getNativeHandle() != 0);
             CHECK(vertexBuffer.getPrimitiveType() == sf::PrimitiveType::LineStrip);
