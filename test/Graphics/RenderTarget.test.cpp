@@ -1,8 +1,10 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include <catch2/catch_test_macros.hpp>
+
 #include <type_traits>
 
-TEST_CASE("[Graphics] sf::RenderTarget", runDisplayTests())
+TEST_CASE("[Graphics] sf::RenderTarget")
 {
     SECTION("Type traits")
     {
@@ -15,16 +17,16 @@ TEST_CASE("[Graphics] sf::RenderTarget", runDisplayTests())
 
     SECTION("Move semantics")
     {
-        SUBCASE("Move constructor")
+        SECTION("Move constructor")
         {
-            sf::RenderTarget        moveRenderTarget;
-            const sf::RenderTarget  renderTarget(std::move(moveRenderTarget));
+            sf::RenderTarget       moveRenderTarget;
+            const sf::RenderTarget renderTarget(std::move(moveRenderTarget));
         }
 
-        SUBCASE("Move assignment")
+        SECTION("Move assignment")
         {
-            sf::RenderTarget        moveRenderTarget;
-            const sf::RenderTarget  renderTarget;
+            sf::RenderTarget       moveRenderTarget;
+            const sf::RenderTarget renderTarget;
             moveRenderTarget = std::move(renderTarget);
         }
     }

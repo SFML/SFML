@@ -23,7 +23,7 @@ private:
     mutable int m_callCount{};
 };
 
-TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
+TEST_CASE("[Graphics] sf::Drawable")
 {
     SECTION("Type traits")
     {
@@ -44,10 +44,16 @@ TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
 
     SECTION("Move semantics")
     {
-        SUBCASE("Move assignment")
+        SECTION("Construction")
         {
-            sf::Drawable        moveDrawable;
-            const sf::Drawable  drawable;
+            DrawableTest       movedDrawable;
+            const DrawableTest drawable(std::move(movedDrawable));
+        }
+
+        SECTION("Assignment")
+        {
+            DrawableTest       moveDrawable;
+            const DrawableTest drawable;
             moveDrawable = std::move(drawable);
             CHECK(drawable.callCount() == 0);
         }
