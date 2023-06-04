@@ -17,9 +17,9 @@ TEST_CASE("[Graphics] sf::VertexBuffer", "[.display]")
         STATIC_CHECK(std::is_copy_constructible_v<sf::VertexBuffer>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::VertexBuffer>);
         STATIC_CHECK(std::is_move_constructible_v<sf::VertexBuffer>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::VertexBuffer>);
         STATIC_CHECK(std::is_move_assignable_v<sf::VertexBuffer>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::VertexBuffer>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::VertexBuffer>);
         STATIC_CHECK(std::is_nothrow_swappable_v<sf::VertexBuffer>);
     }
 
@@ -87,6 +87,30 @@ TEST_CASE("[Graphics] sf::VertexBuffer", "[.display]")
             CHECK(vertexBufferCopy.getNativeHandle() == 0);
             CHECK(vertexBufferCopy.getPrimitiveType() == sf::PrimitiveType::LineStrip);
             CHECK(vertexBufferCopy.getUsage() == sf::VertexBuffer::Dynamic);
+        }
+    }
+
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            sf::VertexBuffer MoveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
+            const sf::VertexBuffer vertexBuffer(std::move(MoveVertexBuffer));
+            CHECK(vertexBuffer.getVertexCount() == 0);
+            CHECK(vertexBuffer.getNativeHandle() != 0);
+            CHECK(vertexBuffer.getPrimitiveType() == sf::PrimitiveType::LineStrip);
+            CHECK(vertexBuffer.getUsage() == sf::VertexBuffer::Dynamic);
+        }
+
+        SECTION("Assignment")
+        {
+            sf::VertexBuffer MoveVertexBuffer(sf::PrimitiveType::LineStrip, sf::VertexBuffer::Dynamic);
+            sf::VertexBuffer vertexBuffer;
+            vertexBuffer = std::move(MovevertexBuffer);
+            CHECK(vertexBuffer.getVertexCount() == 0);
+            CHECK(vertexBuffer.getNativeHandle() != 0);
+            CHECK(vertexBuffer.getPrimitiveType() == sf::PrimitiveType::LineStrip);
+            CHECK(vertexBuffer.getUsage() == sf::VertexBuffer::Dynamic);
         }
     }
 
