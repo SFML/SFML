@@ -27,10 +27,10 @@ TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
 {
     SECTION("Type traits")
     {
-        STATIC_CHECK(!std::is_constructible_v<sf::Drawable>);
-        STATIC_CHECK(!std::is_copy_constructible_v<sf::Drawable>);
+        STATIC_CHECK(std::is_constructible_v<sf::Drawable>);
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Drawable>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Drawable>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Drawable>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Drawable>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Drawable>);
         STATIC_CHECK(std::is_abstract_v<sf::Drawable>);
         STATIC_CHECK(std::has_virtual_destructor_v<sf::Drawable>);
@@ -44,17 +44,12 @@ TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
 
     SECTION("Move semantics")
     {
-        SUBCASE("Move constructor")
-        {
-            sf::Drawable        moveDrawable;
-            const sf::Drawable  drawable(std::move(moveDrawable));
-        }
-
         SUBCASE("Move assignment")
         {
             sf::Drawable        moveDrawable;
             const sf::Drawable  drawable;
             moveDrawable = std::move(drawable);
+            CHECK(drawable.callCount() == 0);
         }
     }
 
