@@ -1,6 +1,7 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::RenderTexture")
@@ -19,14 +20,14 @@ TEST_CASE("[Graphics] sf::RenderTexture")
         SECTION("Move constructor")
         {
             sf::RenderTexture       moveRenderTexture;
-            const sf::RenderTexture RenderTexture(std::move(moveRenderTexture));
+            const sf::RenderTexture renderTexture(std::move(moveRenderTexture));
         }
 
         SECTION("Move assignment")
         {
-            sf::RenderTexture       moveRenderTexture;
-            const sf::RenderTexture RenderTexture;
-            moveRenderTexture = std::move(RenderTexture);
+            sf::RenderTexture moveRenderTexture;
+            sf::RenderTexture renderTexture;
+            renderTexture = std::move(moveRenderTexture);
         }
     }
 }

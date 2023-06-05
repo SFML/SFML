@@ -27,10 +27,10 @@ TEST_CASE("[Graphics] sf::Drawable")
 {
     SECTION("Type traits")
     {
-        STATIC_CHECK(std::is_constructible_v<sf::Drawable>);
-        STATIC_CHECK(std::is_copy_constructible_v<sf::Drawable>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Drawable>);
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::Drawable>);
+        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Drawable>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Drawable>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Drawable>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Drawable>);
         STATIC_CHECK(std::is_abstract_v<sf::Drawable>);
         STATIC_CHECK(std::has_virtual_destructor_v<sf::Drawable>);
@@ -52,9 +52,9 @@ TEST_CASE("[Graphics] sf::Drawable")
 
         SECTION("Assignment")
         {
-            DrawableTest       moveDrawable;
-            const DrawableTest drawable;
-            moveDrawable = std::move(drawable);
+            DrawableTest moveDrawable;
+            DrawableTest drawable;
+            drawable = std::move(moveDrawable);
             CHECK(drawable.callCount() == 0);
         }
     }
