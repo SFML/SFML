@@ -30,8 +30,6 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 
-#include <iterator>
-#include <limits>
 #include <ostream>
 #include <sstream>
 

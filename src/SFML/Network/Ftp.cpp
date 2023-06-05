@@ -30,15 +30,8 @@
 
 #include <SFML/System/Err.hpp>
 
-#include <algorithm>
 #include <fstream>
-#include <iterator>
-#include <ostream>
 #include <sstream>
-#include <utility>
-
-#include <cctype>
-#include <cstdio>
 
 
 namespace sf
