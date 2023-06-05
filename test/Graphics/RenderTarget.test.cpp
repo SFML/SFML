@@ -7,7 +7,7 @@
 class RenderTargetTest : public sf::RenderTarget
 {
 public:
-    Vector2u getSize() const override
+    sf::Vector2u getSize() const override
     {
         return {0, 0};
     }
