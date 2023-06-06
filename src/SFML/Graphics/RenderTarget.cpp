@@ -154,14 +154,6 @@ std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderTarget::RenderTarget() = default;
-
-
-////////////////////////////////////////////////////////////
-RenderTarget::~RenderTarget() = default;
-
-
-////////////////////////////////////////////////////////////
 void RenderTarget::clear(const Color& color)
 {
     if (RenderTargetImpl::isActive(m_id) || setActive(true))

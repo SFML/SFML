@@ -57,7 +57,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderTarget();
+    virtual ~RenderTarget() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -70,6 +70,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderTarget& operator=(const RenderTarget&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTarget(RenderTarget&&) noexcept = default;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTarget& operator=(RenderTarget&&) noexcept = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the entire target with a single color
@@ -396,7 +408,7 @@ protected:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderTarget();
+    RenderTarget() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Performs the common initialization step after creation
@@ -496,7 +508,7 @@ private:
     ////////////////////////////////////////////////////////////
     View          m_defaultView; //!< Default view
     View          m_view;        //!< Current view
-    StatesCache   m_cache;       //!< Render states cache
+    StatesCache   m_cache{};     //!< Render states cache
     std::uint64_t m_id{};        //!< Unique number that identifies the RenderTarget
 };
 
@@ -524,6 +536,12 @@ private:
 /// and regular SFML drawing commands. When doing so, make sure that
 /// OpenGL states are not messed up by calling the
 /// pushGLStates/popGLStates functions.
+///
+/// While render targets are moveable, it is not valid to move them
+/// between threads. This will cause your program to crash. The
+/// problem boils down to OpenGL being limited with regard to how it
+/// works in multithreaded environments. Please ensure you only move
+/// render targets within the same thread.
 ///
 /// \see sf::RenderWindow, sf::RenderTexture, sf::View
 ///

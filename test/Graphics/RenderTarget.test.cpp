@@ -8,6 +8,10 @@
 
 class RenderTarget : public sf::RenderTarget
 {
+public:
+    RenderTarget() = default;
+
+private:
     sf::Vector2u getSize() const override
     {
         return {640, 480};
@@ -22,7 +26,7 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         STATIC_CHECK(!std::is_copy_constructible_v<sf::RenderTarget>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::RenderTarget>);
         STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::RenderTarget>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::RenderTarget>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::RenderTarget>);
     }
 
     SECTION("Construction")
