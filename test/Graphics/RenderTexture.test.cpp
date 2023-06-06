@@ -2,9 +2,10 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <GraphicsUtil.hpp>
 #include <type_traits>
 
-TEST_CASE("[Graphics] sf::RenderTexture")
+TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 {
     SECTION("Type traits")
     {

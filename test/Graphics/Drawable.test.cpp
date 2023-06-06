@@ -23,7 +23,7 @@ private:
     mutable int m_callCount{};
 };
 
-TEST_CASE("[Graphics] sf::Drawable")
+TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
 {
     SECTION("Type traits")
     {

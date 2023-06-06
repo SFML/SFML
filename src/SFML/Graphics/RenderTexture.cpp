@@ -46,11 +46,11 @@ RenderTexture::~RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTexture::RenderTexture(RenderTexture&& other) noexcept = default;
+RenderTexture::RenderTexture(RenderTexture&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTexture& RenderTexture::operator=(RenderTexture&& other) noexcept = default;
+RenderTexture& RenderTexture::operator=(RenderTexture&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <GraphicsUtil.hpp>
 #include <type_traits>
 
 class RenderTargetTest : public sf::RenderTarget
@@ -23,7 +24,7 @@ public:
     }
 };
 
-TEST_CASE("[Graphics] sf::RenderTarget")
+TEST_CASE("[Graphics] sf::RenderTarget", runDisplayTests())
 {
     SECTION("Type traits")
     {
@@ -36,13 +37,13 @@ TEST_CASE("[Graphics] sf::RenderTarget")
 
     SECTION("Move semantics")
     {
-        SECTION("Move constructor")
+        SECTION("Constructor")
         {
             RenderTargetTest       moveRenderTarget;
             const RenderTargetTest renderTarget(std::move(moveRenderTarget));
         }
 
-        SECTION("Move assignment")
+        SECTION("Assignment")
         {
             RenderTargetTest moveRenderTarget;
             RenderTargetTest renderTarget;
