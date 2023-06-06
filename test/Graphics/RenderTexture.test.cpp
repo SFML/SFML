@@ -11,8 +11,8 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::RenderTexture>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::RenderTexture>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::RenderTexture>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::RenderTexture>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::RenderTexture>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::RenderTexture>);
     }
 
     SECTION("Construction")

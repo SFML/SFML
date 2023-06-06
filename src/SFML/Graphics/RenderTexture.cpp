@@ -46,6 +46,14 @@ RenderTexture::~RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
+RenderTexture::RenderTexture(RenderTexture&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+RenderTexture& RenderTexture::operator=(RenderTexture&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 bool RenderTexture::create(const Vector2u& size, const ContextSettings& settings)
 {
     // Set texture to be in sRGB scale if requested
