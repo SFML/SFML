@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Win32/SocketImpl.hpp>
 
-#include <cstring>
-
 
 namespace sf::priv
 {

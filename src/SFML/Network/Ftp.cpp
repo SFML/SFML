@@ -30,6 +30,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 

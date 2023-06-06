@@ -30,7 +30,6 @@
 #include <SFML/System/Err.hpp>
 
 #include <fcntl.h>
-#include <ostream>
 
 #include <cerrno>
 #include <cstring>
