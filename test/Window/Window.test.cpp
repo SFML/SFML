@@ -16,8 +16,8 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Window>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Window>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Window>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Window>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Window>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Window>);
     }
 
     SECTION("Construction")
@@ -26,6 +26,21 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                                 "Window Title",
                                 sf::Style::Default,
                                 sf::ContextSettings());
+        CHECK(window.getSize() == sf::Vector2u(256, 256));
+    }
+
+    SECTION("Move construction")
+    {
+        sf::Window movedWindow(sf::VideoMode({256, 256}), "Window Title", sf::Style::Default, sf::ContextSettings());
+        const sf::Window window(std::move(movedWindow));
+        CHECK(window.getSize() == sf::Vector2u(256, 256));
+    }
+
+    SECTION("Move assignment")
+    {
+        sf::Window movedWindow(sf::VideoMode({256, 256}), "Window Title", sf::Style::Default, sf::ContextSettings());
+        sf::Window window;
+        window = std::move(movedWindow);
         CHECK(window.getSize() == sf::Vector2u(256, 256));
     }
 }
