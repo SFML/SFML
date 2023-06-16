@@ -34,6 +34,8 @@
 
 #include <ostream>
 
+#include <cassert>
+
 
 namespace sf
 {
@@ -90,6 +92,7 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, co
             if (!mode.isValid())
             {
                 err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
+                assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
                 mode = VideoMode::getFullscreenModes()[0];
             }
 
