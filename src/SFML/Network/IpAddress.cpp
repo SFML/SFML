@@ -69,7 +69,7 @@ m_valid  (false)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(Uint8 byte0, Uint8 byte1, Uint8 byte2, Uint8 byte3) :
-m_address(htonl(static_cast<uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))),
+m_address(htonl(static_cast<Uint32>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))),
 m_valid  (true)
 {
 }
