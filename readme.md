@@ -6,11 +6,10 @@ SFML is a simple, fast, cross-platform and object-oriented multimedia API. It pr
 
 ## State of Development
 
-SFML is currently in an interesting state of development, which can quickly become confusing if you aren't following it closely. As such we want to clarify where to get which version.
+Development is focused on the next major version in the `master` branch. No more features are planned for the 2.x release series.
 
 -   The [`master`](https://github.com/SFML/SFML/tree/master) branch contains work in progress for the next major version SFML 3. As such it's considered unstable, but any testing and feedback is highly appreciated.
--   The [`2.6.x`](https://github.com/SFML/SFML/tree/2.6.x) branch is the nearly complete next minor version SFML 2.6, which should be very stable, even if it hasn't been officially released yet.
--   The [`2.5.1`](https://github.com/SFML/SFML/tree/2.5.1) tag is the last official SFML release, but it lacks a lot of fixes and features that can already be found on the `2.6.x` branch.
+-   The [`2.6.0`](https://github.com/SFML/SFML/tree/2.6.0) tag is the latest official SFML release and will be the last minor release in the 2.x series.
 
 ## Download
 
