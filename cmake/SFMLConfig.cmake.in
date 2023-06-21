@@ -14,7 +14,7 @@
 # example:
 #   find_package(SFML COMPONENTS ...)     # no specific version required
 #   find_package(SFML 3 COMPONENTS ...)   # any 3.x version
-#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater with the same major version
+#   find_package(SFML 2.6 COMPONENTS ...) # version 2.6 or greater with the same major version
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
