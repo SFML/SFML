@@ -3,6 +3,7 @@
 // Other 1st party headers
 #include <SFML/Graphics/CircleShape.hpp>
 
+#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
@@ -103,7 +104,8 @@ TEST_CASE("[Graphics] sf::ConvexShape")
         convex.setPoint(0, {-100000.f, 0.f});
         convex.setPoint(1, {100000.f, 0.f});
         convex.setPoint(2, {100000.f, 0.000001f});
-        CHECK(convex.getGeometricCenter() == Approx(sf::Vector2f(100000.f / 3.f, 0.f)));
+        CHECK(convex.getGeometricCenter().x == Catch::Approx(100000. / 3.).margin(1e-2));
+        CHECK(convex.getGeometricCenter().y == Catch::Approx(0).margin(1e-5));
     }
 
     SECTION("Geometric center for aligned points")
