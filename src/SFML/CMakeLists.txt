@@ -40,7 +40,7 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # define the path of our additional CMake modules
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
 # set the output directory for SFML libraries
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
