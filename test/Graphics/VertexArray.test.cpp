@@ -69,6 +69,12 @@ TEST_CASE("[Graphics] sf::VertexArray")
         CHECK(vertexArray.getVertexCount() == 0);
     }
 
+    SECTION("Reserve array")
+    {
+        sf::VertexArray vertexArray;
+        vertexArray.reserve(3);
+    }
+
     SECTION("Append to array")
     {
         sf::VertexArray  vertexArray;
