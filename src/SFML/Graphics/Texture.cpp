@@ -57,6 +57,28 @@ std::uint64_t getUniqueId() noexcept
 
     return id.fetch_add(1);
 }
+
+// Automatic wrapper for temporarily disabling GL_SCISSOR_TEST
+class ScissorSaver
+{
+public:
+	ScissorSaver() :
+		m_wasEnabled(glIsEnabled(GL_SCISSOR_TEST))
+	{
+		if(m_wasEnabled)
+			glCheck(glDisable(GL_SCISSOR_TEST));
+	}
+
+	~ScissorSaver()
+	{
+		if(m_wasEnabled)
+			glCheck(glEnable(GL_SCISSOR_TEST));
+	}
+
+private:
+	bool m_wasEnabled;
+};
+
 } // namespace TextureImpl
 } // namespace
 
@@ -515,6 +537,7 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
     if (GLEXT_framebuffer_object && GLEXT_framebuffer_blit)
     {
         const TransientContextLock lock;
+        const TextureImpl::ScissorSaver scissorSaver;
 
         // Save the current bindings so we can restore them after we are done
         GLint readFramebuffer = 0;
