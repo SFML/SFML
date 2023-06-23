@@ -70,6 +70,13 @@ void VertexArray::clear()
 
 
 ////////////////////////////////////////////////////////////
+void VertexArray::reserve(std::size_t maxVertexCount)
+{
+    m_vertices.reserve(maxVertexCount);
+}
+
+
+////////////////////////////////////////////////////////////
 void VertexArray::resize(std::size_t vertexCount)
 {
     m_vertices.resize(vertexCount);

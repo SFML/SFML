@@ -115,6 +115,20 @@ public:
     void clear();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Reserve memory space for the vertex array
+    ///
+    /// Allocates enough memory so that at least the given number
+    /// of vertices can be stored, without another memory allocation.
+    /// No vertices are added or removed. This function is solely
+    /// used to reduce the number of memory allocations when
+    /// a high number of vertices is appended.
+    ///
+    /// \param maxVertexCount New capacity of the array (number of vertices)
+    ///
+    ////////////////////////////////////////////////////////////
+    void reserve(std::size_t maxVertexCount);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Resize the vertex array
     ///
     /// If \a vertexCount is greater than the current size, the previous
