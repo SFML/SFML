@@ -38,12 +38,8 @@ namespace sf
 /// \brief Structure describing a glyph
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Glyph
+struct SFML_GRAPHICS_API Glyph
 {
-public:
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
     float     advance{};   //!< Offset to move horizontally to the next character
     int       lsbDelta{};  //!< Left offset after forced autohint. Internally used by getKerning()
     int       rsbDelta{};  //!< Right offset after forced autohint. Internally used by getKerning()
@@ -55,7 +51,7 @@ public:
 
 
 ////////////////////////////////////////////////////////////
-/// \class sf::Glyph
+/// \struct sf::Glyph
 /// \ingroup graphics
 ///
 /// A glyph is the visual representation of a character.
