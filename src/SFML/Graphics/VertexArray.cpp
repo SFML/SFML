@@ -70,9 +70,9 @@ void VertexArray::clear()
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::reserve(std::size_t maxVertexCount)
+void VertexArray::reserve(std::size_t capacity)
 {
-    m_vertices.reserve(maxVertexCount);
+    m_vertices.reserve(capacity);
 }
 
 
