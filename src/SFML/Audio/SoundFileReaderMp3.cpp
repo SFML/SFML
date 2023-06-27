@@ -55,7 +55,7 @@
 #include <SFML/System/Err.hpp>
 #include <algorithm>
 #include <cstring>
-#include <cstdint>
+#include <stdint.h>
 
 
 namespace
@@ -66,7 +66,7 @@ std::size_t readCallback(void* ptr, std::size_t size, void* data)
     return static_cast<std::size_t>(stream->read(ptr, static_cast<sf::Int64>(size)));
 }
 
-int seekCallback(std::uint64_t offset, void* data)
+int seekCallback(uint64_t offset, void* data)
 {
     sf::InputStream* stream = static_cast<sf::InputStream*>(data);
     sf::Int64 position = stream->seek(static_cast<sf::Int64>(offset));
