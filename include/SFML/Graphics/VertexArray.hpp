@@ -123,10 +123,10 @@ public:
     /// used to reduce the number of memory allocations when
     /// a high number of vertices is appended.
     ///
-    /// \param maxVertexCount New capacity of the array (number of vertices)
+    /// \param capacity New capacity of the array (number of vertices)
     ///
     ////////////////////////////////////////////////////////////
-    void reserve(std::size_t maxVertexCount);
+    void reserve(std::size_t capacity);
 
     ////////////////////////////////////////////////////////////
     /// \brief Resize the vertex array
