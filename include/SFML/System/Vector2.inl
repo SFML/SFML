@@ -94,8 +94,8 @@ constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
 template <typename T>
 constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
 {
-    assert(rhs.x != 0);
-    assert(rhs.y != 0);
+    assert(rhs.x != 0 && "Vector2::cwiseDiv() cannot divide by 0");
+    assert(rhs.y != 0 && "Vector2::cwiseDiv() cannot divide by 0");
     return Vector2<T>(x / rhs.x, y / rhs.y);
 }
 
