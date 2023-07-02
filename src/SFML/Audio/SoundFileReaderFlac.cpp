@@ -141,7 +141,7 @@ FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*,
                     sample = static_cast<std::int16_t>(buffer[j][i] >> 16);
                     break;
                 default:
-                    assert(false);
+                    assert(false && "Invalid bits per sample. Must be 8, 16, 24, or 32.");
                     break;
             }
 
@@ -271,7 +271,7 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
 ////////////////////////////////////////////////////////////
 void SoundFileReaderFlac::seek(std::uint64_t sampleOffset)
 {
-    assert(m_decoder);
+    assert(m_decoder && "No decoder available. Call SoundFileReaderFlac::open() to create a new one.");
 
     // Reset the callback data (the "write" callback will be called)
     m_clientData.buffer    = nullptr;
@@ -300,7 +300,7 @@ void SoundFileReaderFlac::seek(std::uint64_t sampleOffset)
 ////////////////////////////////////////////////////////////
 std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    assert(m_decoder);
+    assert(m_decoder && "No decoder available. Call SoundFileReaderFlac::open() to create a new one.");
 
     // If there are leftovers from previous call, use it first
     const std::size_t left = m_clientData.leftovers.size();

@@ -355,7 +355,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         }
     }
 
-    assert(bestScore < 0x7FFFFFFF);
+    assert(bestScore < 0x7FFFFFFF && "Failed to calculate best config");
 
     return bestConfig;
 }

@@ -62,7 +62,7 @@ protected:
 
     static const sf::Font& getFont()
     {
-        assert(s_font != nullptr);
+        assert(s_font != nullptr && "Cannot get font until setFont() is called");
         return *s_font;
     }
 

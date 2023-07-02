@@ -199,7 +199,8 @@ WglContext::~WglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer WglContext::getFunction(const char* name)
 {
-    assert(WglContextImpl::currentContext != nullptr);
+    assert(WglContextImpl::currentContext != nullptr &&
+           "Current WGL context cannot be null. Call WglContext::makeCurrent() to initialize it.");
 
     // If we are using the generic GDI implementation, skip to loading directly from OpenGL32.dll since it doesn't support extensions
     if (!WglContextImpl::currentContext->m_isGeneric)

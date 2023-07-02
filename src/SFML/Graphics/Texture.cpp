@@ -453,8 +453,8 @@ void Texture::update(const std::uint8_t* pixels)
 ////////////////////////////////////////////////////////////
 void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest)
 {
-    assert(dest.x + size.x <= m_size.x);
-    assert(dest.y + size.y <= m_size.y);
+    assert(dest.x + size.x <= m_size.x && "Destination x coordinate is outside of texture");
+    assert(dest.y + size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
     if (pixels && m_texture)
     {
@@ -497,8 +497,8 @@ void Texture::update(const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Texture::update(const Texture& texture, const Vector2u& dest)
 {
-    assert(dest.x + texture.m_size.x <= m_size.x);
-    assert(dest.y + texture.m_size.y <= m_size.y);
+    assert(dest.x + texture.m_size.x <= m_size.x && "Destination x coordinate is outside of texture");
+    assert(dest.y + texture.m_size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
     if (!m_texture || !texture.m_texture)
         return;
@@ -630,8 +630,8 @@ void Texture::update(const Window& window)
 ////////////////////////////////////////////////////////////
 void Texture::update(const Window& window, const Vector2u& dest)
 {
-    assert(dest.x + window.getSize().x <= m_size.x);
-    assert(dest.y + window.getSize().y <= m_size.y);
+    assert(dest.x + window.getSize().x <= m_size.x && "Destination x coordinate is outside of texture");
+    assert(dest.y + window.getSize().y <= m_size.y && "Destination y coordinate is outside of texture");
 
     if (m_texture && window.setActive(true))
     {

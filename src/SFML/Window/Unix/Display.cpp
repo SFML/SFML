@@ -82,7 +82,7 @@ void closeDisplay(Display* display)
 {
     const std::lock_guard lock(mutex);
 
-    assert(display == sharedDisplay);
+    assert(display == sharedDisplay && "Display must match shared display");
 
     --referenceCount;
     if (referenceCount == 0)
@@ -94,7 +94,7 @@ XIM openXim()
 {
     const std::lock_guard lock(mutex);
 
-    assert(sharedDisplay != nullptr);
+    assert(sharedDisplay != nullptr && "Shared display is null. Call priv::openDisplay() to initialize it.");
 
     if (referenceCountXIM == 0)
     {
@@ -132,7 +132,7 @@ void closeXim(XIM xim)
 {
     const std::lock_guard lock(mutex);
 
-    assert(xim == sharedXIM);
+    assert(xim == sharedXIM && "XIM must match shared XIM");
 
     --referenceCountXIM;
 

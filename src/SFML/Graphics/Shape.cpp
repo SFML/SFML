@@ -137,7 +137,7 @@ Vector2f Shape::getGeometricCenter() const
     switch (count)
     {
         case 0:
-            assert(false);
+            assert(false && "Cannot calculate geometric center of shape with no points");
             return Vector2f{};
         case 1:
             return getPoint(0);

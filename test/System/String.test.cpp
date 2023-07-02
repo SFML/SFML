@@ -19,7 +19,7 @@ namespace
 template <typename T>
 auto select(const std::basic_string<T>& string16, const std::basic_string<T>& string32)
 {
-    assert(string16 != string32);
+    assert(string16 != string32 && "Invalid to select between identical inputs");
     if constexpr (sizeof(wchar_t) == 2)
         return string16;
     else
