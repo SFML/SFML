@@ -322,23 +322,15 @@ Ftp::Response Ftp::download(const std::filesystem::path& remoteFile, const std::
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remotePath, TransferMode mode, bool append)
+Ftp::Response Ftp::upload(const std::filesystem::path& localFile,
+                          const std::filesystem::path& remotePath,
+                          TransferMode                 mode,
+                          bool                         append)
 {
     // Get the contents of the file to send
     std::ifstream file(localFile, std::ios_base::binary);
     if (!file)
         return Response(Response::Status::InvalidFile);
-
-    // Extract the filename from the file path
-    std::string                  filename = localFile;
-    const std::string::size_type pos      = filename.find_last_of("/\\");
-    if (pos != std::string::npos)
-        filename = filename.substr(pos + 1);
-
-    // Make sure the destination path ends with a slash
-    std::string path = remotePath;
-    if (!path.empty() && (path[path.size() - 1] != '\\') && (path[path.size() - 1] != '/'))
-        path += "/";
 
     // Open a data channel using the given transfer mode
     DataChannel data(*this);
@@ -346,7 +338,7 @@ Ftp::Response Ftp::upload(const std::string& localFile, const std::string& remot
     if (response.isOk())
     {
         // Tell the server to start the transfer
-        response = sendCommand(append ? "APPE" : "STOR", path + filename);
+        response = sendCommand(append ? "APPE" : "STOR", (remotePath / localFile.filename()).string());
         if (response.isOk())
         {
             // Send the file data

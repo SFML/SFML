@@ -27,6 +27,8 @@
 
 #import "NSString+stdstring.h"
 
+#include <filesystem>
+
 // These define are used for converting the color of the NSPopUpButton
 #define BLUE  @"Blue"
 #define GREEN @"Green"
@@ -39,8 +41,8 @@ struct SFMLmainWindow
 {
     SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), text(font), sprite(logo), background(sf::Color::Blue)
     {
-        std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
-        if (!logo.loadFromFile(resPath + "/logo.png"))
+        std::filesystem::path resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
+        if (!logo.loadFromFile(resPath / "logo.png"))
             NSLog(@"Couldn't load the logo image");
 
         logo.setSmooth(true);
@@ -54,7 +56,7 @@ struct SFMLmainWindow
         unsigned int wh = renderWindow.getSize().y;
         sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
 
-        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
+        if (!font.loadFromFile(resPath / "tuffy.ttf"))
             NSLog(@"Couldn't load the font");
 
         text.setFillColor(sf::Color::White);
