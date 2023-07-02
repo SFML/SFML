@@ -502,10 +502,10 @@ public:
     /// \see download
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response upload(const std::string& localFile,
-                                  const std::string& remotePath,
-                                  TransferMode       mode   = TransferMode::Binary,
-                                  bool               append = false);
+    [[nodiscard]] Response upload(const std::filesystem::path& localFile,
+                                  const std::filesystem::path& remotePath,
+                                  TransferMode                 mode   = TransferMode::Binary,
+                                  bool                         append = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a command to the FTP server

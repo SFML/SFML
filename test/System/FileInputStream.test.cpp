@@ -12,7 +12,7 @@
 
 namespace
 {
-std::string getTemporaryFilePath()
+std::filesystem::path getTemporaryFilePath()
 {
     static int counter = 0;
 
@@ -24,13 +24,13 @@ std::string getTemporaryFilePath()
     result /= std::filesystem::temp_directory_path();
     result /= oss.str();
 
-    return result.string();
+    return result;
 }
 
 class TemporaryFile
 {
 private:
-    std::string m_path;
+    std::filesystem::path m_path;
 
 public:
     // Create a temporary file with a randomly generated path, containing 'contents'.
@@ -56,7 +56,7 @@ public:
     TemporaryFile& operator=(const TemporaryFile&) = delete;
 
     // Return the randomly generated path.
-    const std::string& getPath() const
+    const std::filesystem::path& getPath() const
     {
         return m_path;
     }
