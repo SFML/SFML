@@ -28,7 +28,7 @@ constexpr float pi = 3.141592654f;
 
 constexpr float positiveRemainder(float a, float b)
 {
-    assert(b > 0.0f);
+    assert(b > 0.0f && "Cannot calculate remainder with non-positive divisor");
     const float val = a - static_cast<float>(static_cast<int>(a / b)) * b;
     if (val >= 0.f)
         return val;

@@ -333,7 +333,7 @@ struct GlContext::TransientContext
     {
         // TransientContext should never be created if there is
         // already a context active on the current thread
-        assert(!GlContextImpl::CurrentContext::get().id);
+        assert(!GlContextImpl::CurrentContext::get().id && "Another context is active on the current thread");
 
         // Lock ourselves so we don't create a new object if one doesn't already exist
         sharedContext = SharedContext::getWeakPtr().lock();
@@ -346,7 +346,7 @@ struct GlContext::TransientContext
         else
         {
             // GlResources exist, currentContextId not yet set
-            assert(sharedContext);
+            assert(sharedContext && "Shared context does not exist");
 
             // Lock the shared context for temporary use
             sharedContextLock = std::unique_lock(sharedContext->mutex);
@@ -520,14 +520,14 @@ void GlContext::acquireTransientContext()
     }
 
     // If we don't already have a context active on this thread the count should be 0
-    assert(!currentContext.transientCount);
+    assert(!currentContext.transientCount && "Transient count cannot be non-zero");
 
     // If currentContextId is not set, this must be the first
     // TransientContextLock on this thread, construct the state object
     TransientContext::get().emplace();
 
     // Make sure a context is active at this point
-    assert(currentContext.id);
+    assert(currentContext.id && "Current context ID cannot be zero");
 }
 
 
@@ -537,7 +537,7 @@ void GlContext::releaseTransientContext()
     auto& currentContext = GlContextImpl::CurrentContext::get();
 
     // Make sure a context was left active after acquireTransientContext() was called
-    assert(currentContext.id);
+    assert(currentContext.id && "Current context ID cannot be zero");
 
     // Fast path if we already had a context active on this thread before acquireTransientContext() was called
     if (currentContext.transientCount)

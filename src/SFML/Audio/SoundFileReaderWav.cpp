@@ -141,7 +141,7 @@ bool SoundFileReaderWav::open(InputStream& stream, Info& info)
 ////////////////////////////////////////////////////////////
 void SoundFileReaderWav::seek(std::uint64_t sampleOffset)
 {
-    assert(m_stream);
+    assert(m_stream && "Input stream cannot be null. Call SoundFileReaderWav::open() to initialize it.");
 
     if (m_stream->seek(static_cast<std::int64_t>(m_dataStart + sampleOffset * m_bytesPerSample) == -1))
         err() << "Failed to seek WAV sound stream" << std::endl;
@@ -151,7 +151,7 @@ void SoundFileReaderWav::seek(std::uint64_t sampleOffset)
 ////////////////////////////////////////////////////////////
 std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    assert(m_stream);
+    assert(m_stream && "Input stream cannot be null. Call SoundFileReaderWav::open() to initialize it.");
 
     std::uint64_t count    = 0;
     const auto    startPos = static_cast<std::uint64_t>(m_stream->tell());
@@ -204,7 +204,7 @@ std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxC
 
             default:
             {
-                assert(false);
+                assert(false && "Invalid bytes per sample. Must be 1, 2, 3, or 4.");
                 return 0;
             }
         }
@@ -219,7 +219,7 @@ std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxC
 ////////////////////////////////////////////////////////////
 bool SoundFileReaderWav::parseHeader(Info& info)
 {
-    assert(m_stream);
+    assert(m_stream && "Input stream cannot be null. Call SoundFileReaderWav::open() to initialize it.");
 
     // If we are here, it means that the first part of the header
     // (the format) has already been checked

@@ -508,7 +508,7 @@ void SoundStream::launchStreamingThread(Status threadStartState)
         m_threadStartState = threadStartState;
     }
 
-    assert(!m_thread.joinable());
+    assert(!m_thread.joinable() && "Background thread is still running");
     m_thread = std::thread(&SoundStream::streamData, this);
 }
 

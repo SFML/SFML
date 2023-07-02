@@ -71,7 +71,8 @@ void resetActivity(ActivityStates* initializedStates)
 ActivityStates& getActivity()
 {
     ActivityStates* const states = getActivityStatesPtr();
-    assert(states != nullptr);
+    assert(states != nullptr &&
+           "Cannot dereference null activity states pointer. Call priv::resetActivity() to initialize it.");
     return *states;
 }
 

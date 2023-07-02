@@ -110,7 +110,7 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
 ////////////////////////////////////////////////////////////
 void SoundFileWriterWav::write(const std::int16_t* samples, std::uint64_t count)
 {
-    assert(m_file.good());
+    assert(m_file.good() && "Most recent I/O operation failed");
 
     while (count--)
         encode(m_file, *samples++);
@@ -120,7 +120,7 @@ void SoundFileWriterWav::write(const std::int16_t* samples, std::uint64_t count)
 ////////////////////////////////////////////////////////////
 bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int channelCount)
 {
-    assert(m_file.good());
+    assert(m_file.good() && "Most recent I/O operation failed");
 
     // Write the main chunk ID
     char mainChunkId[4] = {'R', 'I', 'F', 'F'};

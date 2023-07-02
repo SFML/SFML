@@ -37,17 +37,17 @@ public:
     TemporaryFile(const std::string& contents) : m_path(getTemporaryFilePath())
     {
         std::ofstream ofs(m_path);
-        assert(ofs);
+        assert(ofs && "Stream encountered an error");
 
         ofs << contents;
-        assert(ofs);
+        assert(ofs && "Stream encountered an error");
     }
 
     // Close and delete the generated file.
     ~TemporaryFile()
     {
         [[maybe_unused]] const bool removed = std::filesystem::remove(m_path);
-        assert(removed);
+        assert(removed && "m_path failed to be removed from filesystem");
     }
 
     // Prevent copies.

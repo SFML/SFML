@@ -130,7 +130,7 @@ FloatRect Sprite::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 {
-    assert(m_texture);
+    assert(m_texture && "Cannot use null texture. Call Sprite::setTexture() to initialize it.");
 
     RenderStates statesCopy(states);
 

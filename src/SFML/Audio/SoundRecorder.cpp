@@ -332,7 +332,7 @@ void SoundRecorder::launchCapturingThread()
 {
     m_isCapturing = true;
 
-    assert(!m_thread.joinable());
+    assert(!m_thread.joinable() && "Capture thread is already running");
     m_thread = std::thread(&SoundRecorder::record, this);
 }
 
