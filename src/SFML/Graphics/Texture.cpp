@@ -806,6 +806,9 @@ unsigned int Texture::getMaximumSize()
 
         TransientContextLock transientLock;
 
+        // Make sure that extensions are initialized
+        sf::priv::ensureExtensionsInit();
+
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size));
     }
 
