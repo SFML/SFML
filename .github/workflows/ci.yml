@@ -92,7 +92,8 @@ jobs:
     - name: Install macOS Tools
       if: runner.os == 'macOS'
       run: |
-        brew update
+        # Do not run updates until GitHub has fixed all the issues: https://github.com/orgs/Homebrew/discussions/4612
+        # brew update
         brew install gcovr ninja || true
 
     - name: Install OpenCppCoverage and add to PATH
@@ -238,7 +239,8 @@ jobs:
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
       run: |
-        brew update
+        # Do not run updates until GitHub has fixed all the issues: https://github.com/orgs/Homebrew/discussions/4612
+        # brew update
         brew install llvm || true
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
