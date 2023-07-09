@@ -2,6 +2,10 @@ name: CI
 
 on: [push, pull_request, workflow_dispatch]
 
+concurrency:
+  group: environment-${{github.ref}}
+  cancel-in-progress: true
+
 env:
   DISPLAY: ":99" # Display number to use for the X server
   GALLIUM_DRIVER: llvmpipe # Use Mesa 3D software OpenGL renderer
