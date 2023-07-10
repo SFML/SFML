@@ -73,6 +73,8 @@ jobs:
           config: { name: Static DRM, flags: -GNinja -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
         - platform: { name: Linux GCC, os: ubuntu-22.04  }
           config: { name: Shared DRM, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
+        - platform: { name: MacOS , os: macos-12 }
+          config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
