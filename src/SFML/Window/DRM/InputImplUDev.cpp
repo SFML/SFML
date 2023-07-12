@@ -73,19 +73,19 @@ termios newTerminalConfig, oldTerminalConfig; // Terminal configurations
 
 bool altDown()
 {
-    return (keyMap[sf::Keyboard::LAlt] || keyMap[sf::Keyboard::RAlt]);
+    return keyMap[sf::Keyboard::LAlt] || keyMap[sf::Keyboard::RAlt];
 }
 bool controlDown()
 {
-    return (keyMap[sf::Keyboard::LControl] || keyMap[sf::Keyboard::RControl]);
+    return keyMap[sf::Keyboard::LControl] || keyMap[sf::Keyboard::RControl];
 }
 bool shiftDown()
 {
-    return (keyMap[sf::Keyboard::LShift] || keyMap[sf::Keyboard::RShift]);
+    return keyMap[sf::Keyboard::LShift] || keyMap[sf::Keyboard::RShift];
 }
 bool systemDown()
 {
-    return (keyMap[sf::Keyboard::LSystem] || keyMap[sf::Keyboard::RSystem]);
+    return keyMap[sf::Keyboard::LSystem] || keyMap[sf::Keyboard::RSystem];
 }
 
 void uninitFileDescriptors()

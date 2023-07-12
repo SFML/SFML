@@ -238,7 +238,7 @@ bool EglContext::makeCurrent(bool current)
         eglCheck(result = eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     }
 
-    return (result != EGL_FALSE);
+    return result != EGL_FALSE;
 }
 
 

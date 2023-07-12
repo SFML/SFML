@@ -207,8 +207,8 @@ std::vector<sf::Vector2i> touchPositions;
 - (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation
 {
     sf::Vector2u size = self.sfWindow->getSize();
-    return ((!UIDeviceOrientationIsLandscape(orientation) && size.x > size.y) ||
-            (UIDeviceOrientationIsLandscape(orientation) && size.y > size.x));
+    return (!UIDeviceOrientationIsLandscape(orientation) && size.x > size.y) ||
+           (UIDeviceOrientationIsLandscape(orientation) && size.y > size.x);
 }
 
 ////////////////////////////////////////////////////////////

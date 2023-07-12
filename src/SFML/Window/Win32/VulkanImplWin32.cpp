@@ -86,7 +86,7 @@ struct VulkanLibraryWrapper
     {
         entryPoint = reinterpret_cast<T>(reinterpret_cast<void*>(GetProcAddress(library, name)));
 
-        return (entryPoint != nullptr);
+        return entryPoint != nullptr;
     }
 
     HMODULE library{};
@@ -201,7 +201,7 @@ bool VulkanImplWin32::createVulkanSurface(const VkInstance&            instance,
     surfaceCreateInfo.hinstance                   = GetModuleHandleA(nullptr);
     surfaceCreateInfo.hwnd                        = windowHandle;
 
-    return (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
+    return vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS;
 }
 
 } // namespace sf::priv

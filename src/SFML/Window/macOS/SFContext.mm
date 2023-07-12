@@ -113,7 +113,7 @@ GlFunctionPointer SFContext::getFunction(const char* name)
     if (!image)
         image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
 
-    return (image ? reinterpret_cast<GlFunctionPointer>(reinterpret_cast<intptr_t>(dlsym(image, name))) : nil);
+    return image ? reinterpret_cast<GlFunctionPointer>(reinterpret_cast<intptr_t>(dlsym(image, name))) : nil;
 }
 
 
