@@ -420,7 +420,7 @@ Image Texture::copyToImage() const
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
         {
-            src += static_cast<unsigned int>(srcPitch * static_cast<int>((m_size.y - 1)));
+            src += static_cast<unsigned int>(srcPitch * static_cast<int>(m_size.y - 1));
             srcPitch = -srcPitch;
         }
 

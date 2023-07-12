@@ -86,7 +86,7 @@ struct VulkanLibraryWrapper
     {
         entryPoint = reinterpret_cast<T>(dlsym(library, name));
 
-        return (entryPoint != nullptr);
+        return entryPoint != nullptr;
     }
 
     void* library{};

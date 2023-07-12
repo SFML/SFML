@@ -189,11 +189,11 @@ TEST_CASE("[Graphics] sf::Image")
             // Create the composited colour for via the alpha composite over operation
             const auto a = static_cast<std::uint8_t>(source.a + (dest.a * (255 - source.a)) / 255);
             const auto r = static_cast<std::uint8_t>(
-                ((source.r * source.a) + (((dest.r * dest.a) * (255 - source.a))) / 255) / a);
+                ((source.r * source.a) + ((dest.r * dest.a) * (255 - source.a)) / 255) / a);
             const auto g = static_cast<std::uint8_t>(
-                ((source.g * source.a) + (((dest.g * dest.a) * (255 - source.a))) / 255) / a);
+                ((source.g * source.a) + ((dest.g * dest.a) * (255 - source.a)) / 255) / a);
             const auto b = static_cast<std::uint8_t>(
-                ((source.b * source.a) + (((dest.b * dest.a) * (255 - source.a))) / 255) / a);
+                ((source.b * source.a) + ((dest.b * dest.a) * (255 - source.a)) / 255) / a);
             const sf::Color composite(r, g, b, a);
 
             sf::Image image1;

@@ -1229,7 +1229,7 @@ bool WindowImplX11::hasFocus() const
     int      revertToReturn = 0;
     XGetInputFocus(m_display, &focusedWindow, &revertToReturn);
 
-    return (m_window == focusedWindow);
+    return m_window == focusedWindow;
 }
 
 

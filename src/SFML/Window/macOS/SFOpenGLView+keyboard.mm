@@ -200,7 +200,7 @@
     else if ([[event characters] length] > 0)
     {
         unichar code = [[event characters] characterAtIndex:0];
-        return ((code < 0xF700) || (code > 0xF8FF));
+        return (code < 0xF700) || (code > 0xF8FF);
     }
     else
     {
