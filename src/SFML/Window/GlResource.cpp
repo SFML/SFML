@@ -28,6 +28,8 @@
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/GlResource.hpp>
 
+#include <utility>
+
 
 namespace sf
 {
