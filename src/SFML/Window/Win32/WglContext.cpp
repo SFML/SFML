@@ -277,6 +277,36 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPixel, const ContextSettings& settings, bool pbuffer)
 {
+    // Selecting a pixel format can be an expensive process on some implementations
+    // Since the same pixel format should always be selected for a specific combination of inputs
+    // we can cache the result of the lookup instead of having to perform it multiple times for the same inputs
+    struct PixelFormatCacheEntry
+    {
+        unsigned int bitsPerPixel;
+        unsigned int depthBits;
+        unsigned int stencilBits;
+        unsigned int antialiasingLevel;
+        bool         pbuffer;
+        int          bestFormat;
+    };
+
+    static std::mutex                         cacheMutex;
+    static std::vector<PixelFormatCacheEntry> pixelFormatCache;
+
+    // Check if we have already previously found a pixel format for
+    // the current inputs and return it if one has been previously found
+    {
+        const std::lock_guard lock(cacheMutex);
+
+        for (const auto& entry : pixelFormatCache)
+        {
+            if (bitsPerPixel == entry.bitsPerPixel && settings.depthBits == entry.depthBits &&
+                settings.stencilBits == entry.stencilBits && settings.antialiasingLevel == entry.antialiasingLevel &&
+                pbuffer == entry.pbuffer)
+                return entry.bestFormat;
+        }
+    }
+
     WglContextImpl::ensureInit();
 
     // Let's find a suitable pixel format -- first try with wglChoosePixelFormatARB
@@ -393,12 +423,9 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         }
     }
 
-    // ChoosePixelFormat doesn't support pbuffers
-    if (pbuffer)
-        return bestFormat;
-
     // Find a pixel format with ChoosePixelFormat, if wglChoosePixelFormatARB is not supported
-    if (bestFormat == 0)
+    // ChoosePixelFormat doesn't support pbuffers
+    if ((bestFormat == 0) && !pbuffer)
     {
         // Setup a pixel format descriptor from the rendering settings
         PIXELFORMATDESCRIPTOR descriptor;
@@ -415,6 +442,14 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
 
         // Get the pixel format that best matches our requirements
         bestFormat = ChoosePixelFormat(deviceContext, &descriptor);
+    }
+
+    // If we get this far, the format wasn't found in the cache so add it here
+    {
+        const std::lock_guard lock(cacheMutex);
+
+        pixelFormatCache.emplace_back(
+            PixelFormatCacheEntry{bitsPerPixel, settings.depthBits, settings.stencilBits, settings.antialiasingLevel, pbuffer, bestFormat});
     }
 
     return bestFormat;
