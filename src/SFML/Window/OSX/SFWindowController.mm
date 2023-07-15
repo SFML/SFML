@@ -483,6 +483,11 @@
             if (m_requester != 0)
                 m_requester->windowResized(width, height - static_cast<unsigned int>([self titlebarHeight]));
         }
+        else if (width != [self size].width || height != [self size].height + static_cast<CGFloat>([self titlebarHeight]))
+        {
+            if (m_requester != 0)
+                m_requester->windowResized(width, height - static_cast<unsigned int>([self titlebarHeight]));
+        }
 
         NSRect frame = NSMakeRect([m_window frame].origin.x,
                                   [m_window frame].origin.y,
