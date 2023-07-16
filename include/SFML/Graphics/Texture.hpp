@@ -705,7 +705,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 ///
 /// // Create an empty texture
 /// sf::Texture texture;
-/// if (!texture.create(640, 480))
+/// if (!texture.create({640, 480}))
 ///     return -1;
 ///
 /// // Create a sprite that will display the texture
