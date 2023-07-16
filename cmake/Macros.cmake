@@ -429,9 +429,6 @@ function(sfml_export_targets)
     endif()
     set(targets_config_filename "SFML${config_name}Targets.cmake")
 
-    export(EXPORT SFMLConfigExport
-           FILE "${CMAKE_CURRENT_BINARY_DIR}/${targets_config_filename}")
-
     if(SFML_BUILD_FRAMEWORKS)
         set(config_package_location "SFML.framework/Resources/CMake")
     else()
@@ -441,7 +438,6 @@ function(sfml_export_targets)
         INSTALL_DESTINATION "${config_package_location}")
     configure_package_config_file("${CURRENT_DIR}/SFMLConfigDependencies.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigDependencies.cmake"
         INSTALL_DESTINATION "${config_package_location}")
-
 
     install(EXPORT SFMLConfigExport
             FILE ${targets_config_filename}
