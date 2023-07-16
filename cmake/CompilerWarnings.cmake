@@ -4,11 +4,11 @@
 
 # Helper function to enable compiler warnings for a specific target
 function(set_target_warnings target)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+    option(SFML_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
 
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${WARNINGS_AS_ERRORS}>:/WX>
+            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:/WX>
             /W4 # Baseline reasonable warnings
             /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
             /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of data
@@ -40,7 +40,7 @@ function(set_target_warnings target)
 
     if(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${WARNINGS_AS_ERRORS}>:-Werror>
+            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:-Werror>
             -Wall
             -Wextra # reasonable and standard
             -Wshadow # warn the user if a variable declaration shadows one from a parent context
