@@ -14,9 +14,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     {
         STATIC_CHECK(std::is_copy_constructible_v<sf::Texture>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Texture>);
-        STATIC_CHECK(std::is_move_constructible_v<sf::Texture>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Texture>);
-        STATIC_CHECK(std::is_move_assignable_v<sf::Texture>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Texture>);
         STATIC_CHECK(std::is_nothrow_swappable_v<sf::Texture>);
     }
