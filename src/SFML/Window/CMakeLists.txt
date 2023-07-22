@@ -286,7 +286,7 @@ target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/ext
 
 # When static linking on macOS, we need to add this flag for objective C to work
 # https://developer.apple.com/library/archive/qa/qa1490/_index.html
-if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOS)
+if((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOS)
     target_link_libraries(sfml-window PRIVATE -ObjC)
 endif()
 
