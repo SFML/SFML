@@ -13,7 +13,7 @@ endfunction()
 
 # This little macro lets you set any Xcode specific property
 macro(sfml_set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
-    set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
+    set_property(TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
 endmacro()
 
 # set the appropriate standard library on each platform for the given target
