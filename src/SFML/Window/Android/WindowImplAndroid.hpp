@@ -68,7 +68,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~WindowImplAndroid();
+    ~WindowImplAndroid() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -225,9 +225,9 @@ private:
     ////////////////////////////////////////////////////////////
     static int processEvent(int fd, int events, void* data);
 
-    static int processScrollEvent(AInputEvent* _event, ActivityStates& states);
-    static int processKeyEvent(AInputEvent* _event, ActivityStates& states);
-    static int processMotionEvent(AInputEvent* _event, ActivityStates& states);
+    static int processScrollEvent(AInputEvent* inputEvent, ActivityStates& states);
+    static int processKeyEvent(AInputEvent* inputEvent, ActivityStates& states);
+    static int processMotionEvent(AInputEvent* inputEvent, ActivityStates& states);
     static int processPointerEvent(bool isDown, AInputEvent* event, ActivityStates& states);
 
     ////////////////////////////////////////////////////////////

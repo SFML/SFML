@@ -69,7 +69,7 @@ public:
     using period     = duration::period;
     using time_point = std::chrono::time_point<SuspendAwareClock, duration>;
 
-    static constexpr bool is_steady = true;
+    static constexpr bool is_steady = true; // NOLINT(readability-identifier-naming)
 
     static time_point now() noexcept;
 };

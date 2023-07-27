@@ -82,7 +82,7 @@ bool SensorImpl::isAvailable(Sensor::Type sensor)
 {
     const ASensor* available = getDefaultSensor(sensor);
 
-    return available ? true : false;
+    return available != nullptr;
 }
 
 
@@ -117,7 +117,7 @@ void SensorImpl::close()
 
 
 ////////////////////////////////////////////////////////////
-Vector3f SensorImpl::update()
+Vector3f SensorImpl::update() const
 {
     // Update our sensor data list
     ALooper_pollAll(0, nullptr, nullptr, nullptr);

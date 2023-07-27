@@ -54,12 +54,12 @@ namespace sf::priv
 {
 struct ActivityStates
 {
-    ANativeActivity* activity;
-    ANativeWindow*   window;
+    ANativeActivity* activity{};
+    ANativeWindow*   window{};
 
-    ALooper*        looper;
-    AInputQueue*    inputQueue;
-    AConfiguration* config;
+    ALooper*        looper{};
+    AInputQueue*    inputQueue{};
+    AConfiguration* config{};
 
     EGLDisplay  display;
     EglContext* context;

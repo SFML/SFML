@@ -124,11 +124,11 @@ EglContext::EglContext(EglContext* shared)
     m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
     updateSettings();
 
-    // Note: The EGL specs say that attrib_list can be a null pointer when passed to eglCreatePbufferSurface,
+    // Note: The EGL specs say that attribList can be a null pointer when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
-    EGLint attrib_list[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLint attribList[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
 
-    eglCheck(m_surface = eglCreatePbufferSurface(m_display, m_config, attrib_list));
+    eglCheck(m_surface = eglCreatePbufferSurface(m_display, m_config, attribList));
 
     // Create EGL context
     createContext(shared);
