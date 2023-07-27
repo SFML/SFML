@@ -15,14 +15,6 @@ Please describe your pull request.
 
 This PR is related to the issue #
 
-## Tasks
-
-* [ ] Tested on Linux
-* [ ] Tested on Windows
-* [ ] Tested on macOS
-* [ ] Tested on iOS
-* [ ] Tested on Android
-
 ## How to test this PR?
 
 Describe how to best test these changes. Please provide a [minimal, complete and verifiable example](https://stackoverflow.com/help/mcve) if possible, you can use the follow template as a start:
