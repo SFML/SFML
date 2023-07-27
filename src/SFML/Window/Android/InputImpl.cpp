@@ -95,58 +95,58 @@ void InputImpl::setVirtualKeyboardVisible(bool visible)
 
     // Retrieves NativeActivity
     jobject lNativeActivity     = states.activity->clazz;
-    jclass  ClassNativeActivity = lJNIEnv->GetObjectClass(lNativeActivity);
+    jclass  classNativeActivity = lJNIEnv->GetObjectClass(lNativeActivity);
 
     // Retrieves Context.INPUT_METHOD_SERVICE
-    jclass   ClassContext              = lJNIEnv->FindClass("android/content/Context");
-    jfieldID FieldINPUT_METHOD_SERVICE = lJNIEnv->GetStaticFieldID(ClassContext,
-                                                                   "INPUT_METHOD_SERVICE",
-                                                                   "Ljava/lang/String;");
-    jobject  INPUT_METHOD_SERVICE      = lJNIEnv->GetStaticObjectField(ClassContext, FieldINPUT_METHOD_SERVICE);
-    lJNIEnv->DeleteLocalRef(ClassContext);
+    jclass   classContext            = lJNIEnv->FindClass("android/content/Context");
+    jfieldID fieldInputMethodService = lJNIEnv->GetStaticFieldID(classContext,
+                                                                 "INPUT_METHOD_SERVICE",
+                                                                 "Ljava/lang/String;");
+    jobject  inputMethodService      = lJNIEnv->GetStaticObjectField(classContext, fieldInputMethodService);
+    lJNIEnv->DeleteLocalRef(classContext);
 
     // Runs getSystemService(Context.INPUT_METHOD_SERVICE)
-    jclass    ClassInputMethodManager = lJNIEnv->FindClass("android/view/inputmethod/InputMethodManager");
-    jmethodID MethodGetSystemService  = lJNIEnv->GetMethodID(ClassNativeActivity,
+    jclass    classInputMethodManager = lJNIEnv->FindClass("android/view/inputmethod/InputMethodManager");
+    jmethodID methodGetSystemService  = lJNIEnv->GetMethodID(classNativeActivity,
                                                             "getSystemService",
                                                             "(Ljava/lang/String;)Ljava/lang/Object;");
-    jobject lInputMethodManager = lJNIEnv->CallObjectMethod(lNativeActivity, MethodGetSystemService, INPUT_METHOD_SERVICE);
-    lJNIEnv->DeleteLocalRef(INPUT_METHOD_SERVICE);
+    jobject lInputMethodManager = lJNIEnv->CallObjectMethod(lNativeActivity, methodGetSystemService, inputMethodService);
+    lJNIEnv->DeleteLocalRef(inputMethodService);
 
     // Runs getWindow().getDecorView()
-    jmethodID MethodGetWindow    = lJNIEnv->GetMethodID(ClassNativeActivity, "getWindow", "()Landroid/view/Window;");
-    jobject   lWindow            = lJNIEnv->CallObjectMethod(lNativeActivity, MethodGetWindow);
-    jclass    ClassWindow        = lJNIEnv->FindClass("android/view/Window");
-    jmethodID MethodGetDecorView = lJNIEnv->GetMethodID(ClassWindow, "getDecorView", "()Landroid/view/View;");
-    jobject   lDecorView         = lJNIEnv->CallObjectMethod(lWindow, MethodGetDecorView);
+    jmethodID methodGetWindow    = lJNIEnv->GetMethodID(classNativeActivity, "getWindow", "()Landroid/view/Window;");
+    jobject   lWindow            = lJNIEnv->CallObjectMethod(lNativeActivity, methodGetWindow);
+    jclass    classWindow        = lJNIEnv->FindClass("android/view/Window");
+    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
+    jobject   lDecorView         = lJNIEnv->CallObjectMethod(lWindow, methodGetDecorView);
     lJNIEnv->DeleteLocalRef(lWindow);
-    lJNIEnv->DeleteLocalRef(ClassWindow);
+    lJNIEnv->DeleteLocalRef(classWindow);
 
     if (visible)
     {
         // Runs lInputMethodManager.showSoftInput(...)
-        jmethodID MethodShowSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager,
+        jmethodID methodShowSoftInput = lJNIEnv->GetMethodID(classInputMethodManager,
                                                              "showSoftInput",
                                                              "(Landroid/view/View;I)Z");
-        lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodShowSoftInput, lDecorView, lFlags);
+        lJNIEnv->CallBooleanMethod(lInputMethodManager, methodShowSoftInput, lDecorView, lFlags);
     }
     else
     {
         // Runs lWindow.getViewToken()
-        jclass    ClassView            = lJNIEnv->FindClass("android/view/View");
-        jmethodID MethodGetWindowToken = lJNIEnv->GetMethodID(ClassView, "getWindowToken", "()Landroid/os/IBinder;");
-        jobject   lBinder              = lJNIEnv->CallObjectMethod(lDecorView, MethodGetWindowToken);
-        lJNIEnv->DeleteLocalRef(ClassView);
+        jclass    classView            = lJNIEnv->FindClass("android/view/View");
+        jmethodID methodGetWindowToken = lJNIEnv->GetMethodID(classView, "getWindowToken", "()Landroid/os/IBinder;");
+        jobject   lBinder              = lJNIEnv->CallObjectMethod(lDecorView, methodGetWindowToken);
+        lJNIEnv->DeleteLocalRef(classView);
 
         // lInputMethodManager.hideSoftInput(...)
-        jmethodID MethodHideSoftInput = lJNIEnv->GetMethodID(ClassInputMethodManager,
+        jmethodID methodHideSoftInput = lJNIEnv->GetMethodID(classInputMethodManager,
                                                              "hideSoftInputFromWindow",
                                                              "(Landroid/os/IBinder;I)Z");
-        lJNIEnv->CallBooleanMethod(lInputMethodManager, MethodHideSoftInput, lBinder, lFlags);
+        lJNIEnv->CallBooleanMethod(lInputMethodManager, methodHideSoftInput, lBinder, lFlags);
         lJNIEnv->DeleteLocalRef(lBinder);
     }
-    lJNIEnv->DeleteLocalRef(ClassNativeActivity);
-    lJNIEnv->DeleteLocalRef(ClassInputMethodManager);
+    lJNIEnv->DeleteLocalRef(classNativeActivity);
+    lJNIEnv->DeleteLocalRef(classInputMethodManager);
     lJNIEnv->DeleteLocalRef(lDecorView);
 
     // Finished with the JVM

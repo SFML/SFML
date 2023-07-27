@@ -85,7 +85,7 @@ public:
     /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector3f update();
+    [[nodiscard]] Vector3f update() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor

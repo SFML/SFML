@@ -181,29 +181,29 @@ void goToFullscreenMode(ANativeActivity* activity)
     // API Level 14
     if (apiLevel >= 14)
     {
-        jfieldID FieldSYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticFieldID(classView,
-                                                                             "SYSTEM_UI_FLAG_HIDE_NAVIGATION",
-                                                                             "I");
-        jint     SYSTEM_UI_FLAG_LOW_PROFILE = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_LOW_PROFILE);
-        flags |= SYSTEM_UI_FLAG_LOW_PROFILE;
+        jfieldID fieldSystemUiFlagLowProfile = lJNIEnv->GetStaticFieldID(classView,
+                                                                         "SYSTEM_UI_FLAG_HIDE_NAVIGATION",
+                                                                         "I");
+        jint     systemUiFlagLowProfile      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagLowProfile);
+        flags |= systemUiFlagLowProfile;
     }
 
     // API Level 16
     if (apiLevel >= 16)
     {
-        jfieldID FieldSYSTEM_UI_FLAG_FULLSCREEN = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
-        jint     SYSTEM_UI_FLAG_FULLSCREEN      = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_FULLSCREEN);
-        flags |= SYSTEM_UI_FLAG_FULLSCREEN;
+        jfieldID fieldSystemUiFlagFullscreen = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+        jint     systemUiFlagFullscreen      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagFullscreen);
+        flags |= systemUiFlagFullscreen;
     }
 
     // API Level 19
     if (apiLevel >= 19)
     {
-        jfieldID FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticFieldID(classView,
-                                                                                  "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
-                                                                                  "I");
-        jint SYSTEM_UI_FLAG_IMMERSIVE_STICKY = lJNIEnv->GetStaticIntField(classView, FieldSYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        flags |= SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        jfieldID fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
+                                                                              "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
+                                                                              "I");
+        jint     systemUiFlagImmersiveSticky = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);
+        flags |= systemUiFlagImmersiveSticky;
     }
 
     jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
@@ -490,17 +490,10 @@ static void onLowMemory(ANativeActivity* /* activity */)
 JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, std::size_t savedStateSize)
 {
     // Create an activity states (will keep us in the know, about events we care)
-    auto* states = new sf::priv::ActivityStates;
+    auto* states = new sf::priv::ActivityStates();
 
-    // Initialize the states value
-    states->activity   = nullptr;
-    states->window     = nullptr;
-    states->looper     = nullptr;
-    states->inputQueue = nullptr;
-    states->config     = nullptr;
-
-    for (unsigned int i = 0; i < sf::Mouse::ButtonCount; ++i)
-        states->isButtonPressed[i] = false;
+    for (auto& isButtonPressed : states->isButtonPressed)
+        isButtonPressed = false;
 
     gladLoaderLoadEGL(EGL_DEFAULT_DISPLAY);
     states->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
