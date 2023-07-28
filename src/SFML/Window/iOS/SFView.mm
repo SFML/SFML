@@ -192,7 +192,7 @@
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
-        CAEAGLLayer* eaglLayer       = static_cast<CAEAGLLayer*>(self.layer);
+        auto* eaglLayer              = static_cast<CAEAGLLayer*>(self.layer);
         eaglLayer.opaque             = YES;
         eaglLayer.drawableProperties = [NSDictionary
             dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:FALSE],

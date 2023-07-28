@@ -37,13 +37,13 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 String ClipboardImpl::getString()
 {
-    UIPasteboard* pboard = [UIPasteboard generalPasteboard];
+    UIPasteboard* const pboard = [UIPasteboard generalPasteboard];
     if (pboard.hasStrings)
     {
-        NSString* data = pboard.string;
+        const NSString* const data = pboard.string;
 
-        const char* utf8   = [data cStringUsingEncoding:NSUTF8StringEncoding];
-        NSUInteger  length = [data lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        const char*      utf8   = [data cStringUsingEncoding:NSUTF8StringEncoding];
+        const NSUInteger length = [data lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
         return String::fromUtf8(utf8, utf8 + length);
     }
@@ -58,10 +58,13 @@ String ClipboardImpl::getString()
 void ClipboardImpl::setString(const String& text)
 {
     std::basic_string<std::uint8_t> utf8 = text.toUtf8();
-    NSString* data = [[NSString alloc] initWithBytes:utf8.data() length:utf8.length() encoding:NSUTF8StringEncoding];
+    NSString* const                 data = [[NSString alloc]
+        initWithBytes:utf8.data()
+               length:utf8.length()
+             encoding:NSUTF8StringEncoding];
 
-    UIPasteboard* pboard = [UIPasteboard generalPasteboard];
-    pboard.string        = data;
+    UIPasteboard* const pboard = [UIPasteboard generalPasteboard];
+    pboard.string              = data;
 }
 
 } // namespace sf::priv
