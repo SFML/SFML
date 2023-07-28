@@ -132,8 +132,8 @@ void SensorImpl::close()
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    Vector3f         value;
-    CMMotionManager* manager = [SFAppDelegate getInstance].motionManager;
+    Vector3f               value;
+    CMMotionManager* const manager = [SFAppDelegate getInstance].motionManager;
 
     switch (m_sensor)
     {

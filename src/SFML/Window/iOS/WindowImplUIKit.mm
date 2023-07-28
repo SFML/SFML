@@ -61,14 +61,14 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode, const String& /* title */, unsi
         [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 
     // Create the window
-    CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
-    m_window     = [[UIWindow alloc] initWithFrame:frame];
-    m_hasFocus   = true;
+    const CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
+    m_window           = [[UIWindow alloc] initWithFrame:frame];
+    m_hasFocus         = true;
 
     // Assign it to the application delegate
     [SFAppDelegate getInstance].sfWindow = this;
 
-    CGRect viewRect = frame;
+    const CGRect viewRect = frame;
 
     // Create the view
     m_view = [[SFView alloc] initWithFrame:viewRect andContentScaleFactor:(static_cast<double>(m_backingScale))];
@@ -108,7 +108,7 @@ WindowHandle WindowImplUIKit::getSystemHandle() const
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplUIKit::getPosition() const
 {
-    CGPoint origin = m_window.frame.origin;
+    const CGPoint origin = m_window.frame.origin;
     return Vector2i(static_cast<int>(origin.x * static_cast<double>(m_backingScale)),
                     static_cast<int>(origin.y * static_cast<double>(m_backingScale)));
 }
@@ -123,7 +123,7 @@ void WindowImplUIKit::setPosition(const Vector2i& /* position */)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplUIKit::getSize() const
 {
-    CGRect physicalFrame = m_window.frame;
+    const CGRect physicalFrame = m_window.frame;
     return Vector2u(static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)),
                     static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale)));
 }

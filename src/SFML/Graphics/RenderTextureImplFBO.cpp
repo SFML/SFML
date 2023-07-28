@@ -118,7 +118,7 @@ unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
 {
     const TransientContextLock lock;
 
-    GLint samples = 0;
+    GLint samples = 0; // NOLINT(misc-const-correctness)
 
 #ifndef SFML_OPENGL_ES
 
