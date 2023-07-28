@@ -1,5 +1,4 @@
 Checks: >
-  -*,
   bugprone-*,
   clang-analyzer-*,
   cppcoreguidelines-*,
@@ -60,7 +59,6 @@ Checks: >
   -performance-inefficient-string-concatenation,
   -performance-no-int-to-ptr,
   -readability-braces-around-statements,
-  -readability-container-contains,
   -readability-convert-member-functions-to-static,
   -readability-else-after-return,
   -readability-function-cognitive-complexity,
