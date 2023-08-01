@@ -59,6 +59,8 @@ jobs:
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: OpenGL ES, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DSFML_OPENGL_ES=ON }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+        - platform: { name: Windows MinGW, os: windows-2022 }
+          config: { name: Static Standard Libraries, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE }
         - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: Android, os: ubuntu-22.04 }
