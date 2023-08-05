@@ -120,12 +120,11 @@ bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
 }
 
 // Transforms an array of 2D vectors into a contiguous array of scalars
-template <typename T>
-std::vector<T> flatten(const sf::Vector2<T>* vectorArray, std::size_t length)
+std::vector<float> flatten(const sf::Vector2f* vectorArray, std::size_t length)
 {
     const std::size_t vectorSize = 2;
 
-    std::vector<T> contiguous(vectorSize * length);
+    std::vector<float> contiguous(vectorSize * length);
     for (std::size_t i = 0; i < length; ++i)
     {
         contiguous[vectorSize * i]     = vectorArray[i].x;
@@ -136,12 +135,11 @@ std::vector<T> flatten(const sf::Vector2<T>* vectorArray, std::size_t length)
 }
 
 // Transforms an array of 3D vectors into a contiguous array of scalars
-template <typename T>
-std::vector<T> flatten(const sf::Vector3<T>* vectorArray, std::size_t length)
+std::vector<float> flatten(const sf::Vector3f* vectorArray, std::size_t length)
 {
     const std::size_t vectorSize = 3;
 
-    std::vector<T> contiguous(vectorSize * length);
+    std::vector<float> contiguous(vectorSize * length);
     for (std::size_t i = 0; i < length; ++i)
     {
         contiguous[vectorSize * i]     = vectorArray[i].x;
@@ -153,12 +151,11 @@ std::vector<T> flatten(const sf::Vector3<T>* vectorArray, std::size_t length)
 }
 
 // Transforms an array of 4D vectors into a contiguous array of scalars
-template <typename T>
-std::vector<T> flatten(const sf::priv::Vector4<T>* vectorArray, std::size_t length)
+std::vector<float> flatten(const sf::Glsl::Vec4* vectorArray, std::size_t length)
 {
     const std::size_t vectorSize = 4;
 
-    std::vector<T> contiguous(vectorSize * length);
+    std::vector<float> contiguous(vectorSize * length);
     for (std::size_t i = 0; i < length; ++i)
     {
         contiguous[vectorSize * i]     = vectorArray[i].x;
