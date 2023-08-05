@@ -54,6 +54,17 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         }
     }
 
+    SECTION("loadFromFile()")
+    {
+        sf::Texture texture;
+        REQUIRE(texture.loadFromFile("Graphics/sfml-logo-big.png"));
+        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+        CHECK(!texture.isSmooth());
+        CHECK(!texture.isSrgb());
+        CHECK(!texture.isRepeated());
+        CHECK(texture.getNativeHandle() != 0);
+    }
+
     SECTION("Copy semantics")
     {
         constexpr std::uint8_t red[] = {0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF};
