@@ -1,6 +1,6 @@
 #include <SFML/Graphics/VertexBuffer.hpp>
 
-// Other first party headers
+// Other 1st party headers
 #include <SFML/Graphics/Vertex.hpp>
 
 #include <catch2/catch_test_macros.hpp>
