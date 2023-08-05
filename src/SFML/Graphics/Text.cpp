@@ -241,9 +241,9 @@ const String& Text::getString() const
 
 
 ////////////////////////////////////////////////////////////
-const Font* Text::getFont() const
+const Font& Text::getFont() const
 {
-    return m_font;
+    return *m_font;
 }
 
 

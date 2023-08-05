@@ -283,16 +283,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's font
     ///
-    /// If the text has no font attached, a null pointer is returned.
-    /// The returned pointer is const, which means that you
+    /// The returned reference is const, which means that you
     /// cannot modify the font when you get it from this function.
     ///
-    /// \return Pointer to the text's font
+    /// \return Reference to the text's font
     ///
     /// \see setFont
     ///
     ////////////////////////////////////////////////////////////
-    const Font* getFont() const;
+    const Font& getFont() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the character size
