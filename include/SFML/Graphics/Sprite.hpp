@@ -139,16 +139,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the sprite
     ///
-    /// If the sprite has no source texture, a null pointer is returned.
-    /// The returned pointer is const, which means that you can't
+    /// The returned reference is const, which means that you can't
     /// modify the texture when you retrieve it with this function.
     ///
-    /// \return Pointer to the sprite's texture
+    /// \return Reference to the sprite's texture
     ///
     /// \see setTexture
     ///
     ////////////////////////////////////////////////////////////
-    const Texture* getTexture() const;
+    const Texture& getTexture() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sub-rectangle of the texture displayed by the sprite

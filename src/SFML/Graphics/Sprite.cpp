@@ -55,8 +55,8 @@ Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
 ////////////////////////////////////////////////////////////
 void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
-    // Recompute the texture area if requested, or if there was no valid texture & rect before
-    if (resetRect || (!m_texture && (m_textureRect == sf::IntRect())))
+    // Recompute the texture area if requested
+    if (resetRect)
     {
         setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
     }
@@ -90,9 +90,9 @@ void Sprite::setColor(const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-const Texture* Sprite::getTexture() const
+const Texture& Sprite::getTexture() const
 {
-    return m_texture;
+    return *m_texture;
 }
 
 
@@ -130,8 +130,6 @@ FloatRect Sprite::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 {
-    assert(m_texture && "Cannot use null texture. Call Sprite::setTexture() to initialize it.");
-
     RenderStates statesCopy(states);
 
     statesCopy.transform *= getTransform();
