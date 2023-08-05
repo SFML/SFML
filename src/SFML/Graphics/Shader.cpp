@@ -305,7 +305,7 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
     std::vector<char> vertexShader;
     if (!getFileContents(vertexShaderFilename, vertexShader))
     {
-        err() << "Failed to open vertex shader file " << vertexShaderFilename << std::endl;
+        err() << "Failed to open vertex shader file\n" << formatDebugPathInfo(vertexShaderFilename) << std::endl;
         return false;
     }
 
@@ -313,7 +313,7 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
     std::vector<char> fragmentShader;
     if (!getFileContents(fragmentShaderFilename, fragmentShader))
     {
-        err() << "Failed to open fragment shader file " << fragmentShaderFilename << std::endl;
+        err() << "Failed to open fragment shader file\n" << formatDebugPathInfo(fragmentShaderFilename) << std::endl;
         return false;
     }
 
@@ -331,7 +331,7 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
     std::vector<char> vertexShader;
     if (!getFileContents(vertexShaderFilename, vertexShader))
     {
-        err() << "Failed to open vertex shader file " << vertexShaderFilename << std::endl;
+        err() << "Failed to open vertex shader file\n" << formatDebugPathInfo(vertexShaderFilename) << std::endl;
         return false;
     }
 
@@ -339,7 +339,7 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
     std::vector<char> geometryShader;
     if (!getFileContents(geometryShaderFilename, geometryShader))
     {
-        err() << "Failed to open geometry shader file " << geometryShaderFilename << std::endl;
+        err() << "Failed to open geometry shader file\n" << formatDebugPathInfo(geometryShaderFilename) << std::endl;
         return false;
     }
 
@@ -347,7 +347,7 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
     std::vector<char> fragmentShader;
     if (!getFileContents(fragmentShaderFilename, fragmentShader))
     {
-        err() << "Failed to open fragment shader file " << fragmentShaderFilename << std::endl;
+        err() << "Failed to open fragment shader file\n" << formatDebugPathInfo(fragmentShaderFilename) << std::endl;
         return false;
     }
 
