@@ -164,10 +164,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
     ///
-    /// \return Sound buffer attached to the sound (can be a null pointer)
+    /// \return Sound buffer attached to the sound
     ///
     ////////////////////////////////////////////////////////////
-    const SoundBuffer* getBuffer() const;
+    const SoundBuffer& getBuffer() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the sound is in loop mode

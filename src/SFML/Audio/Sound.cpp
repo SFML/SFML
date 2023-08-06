@@ -110,9 +110,9 @@ void Sound::setPlayingOffset(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-const SoundBuffer* Sound::getBuffer() const
+const SoundBuffer& Sound::getBuffer() const
 {
-    return m_buffer;
+    return *m_buffer;
 }
 
 
