@@ -36,21 +36,18 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sound::Sound() = default;
-
-
-////////////////////////////////////////////////////////////
-Sound::Sound(const SoundBuffer& buffer)
+Sound::Sound(const SoundBuffer& buffer) : m_buffer(&buffer)
 {
-    setBuffer(buffer);
+    m_buffer->attachSound(this);
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
 }
 
 
 ////////////////////////////////////////////////////////////
-Sound::Sound(const Sound& copy) : SoundSource(copy)
+Sound::Sound(const Sound& copy) : SoundSource(copy), m_buffer(copy.m_buffer)
 {
-    if (copy.m_buffer)
-        setBuffer(*copy.m_buffer);
+    m_buffer->attachSound(this);
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
     setLoop(copy.getLoop());
 }
 
@@ -59,8 +56,7 @@ Sound::Sound(const Sound& copy) : SoundSource(copy)
 Sound::~Sound()
 {
     stop();
-    if (m_buffer)
-        m_buffer->detachSound(this);
+    m_buffer->detachSound(this);
 }
 
 
@@ -89,11 +85,8 @@ void Sound::stop()
 void Sound::setBuffer(const SoundBuffer& buffer)
 {
     // First detach from the previous buffer
-    if (m_buffer)
-    {
-        stop();
-        m_buffer->detachSound(this);
-    }
+    stop();
+    m_buffer->detachSound(this);
 
     // Assign and use the new buffer
     m_buffer = &buffer;
@@ -164,17 +157,8 @@ Sound& Sound::operator=(const Sound& right)
     // Delegate to base class, which copies all the sound attributes
     SoundSource::operator=(right);
 
-    // Detach the sound instance from the previous buffer (if any)
-    if (m_buffer)
-    {
-        stop();
-        m_buffer->detachSound(this);
-        m_buffer = nullptr;
-    }
-
     // Copy the remaining sound attributes
-    if (right.m_buffer)
-        setBuffer(*right.m_buffer);
+    setBuffer(*right.m_buffer);
     setLoop(right.getLoop());
 
     return *this;
@@ -182,18 +166,20 @@ Sound& Sound::operator=(const Sound& right)
 
 
 ////////////////////////////////////////////////////////////
-void Sound::resetBuffer()
+void Sound::detachBuffer()
 {
     // First stop the sound in case it is playing
     stop();
 
     // Detach the buffer
-    if (m_buffer)
-    {
-        alCheck(alSourcei(m_source, AL_BUFFER, 0));
-        m_buffer->detachSound(this);
-        m_buffer = nullptr;
-    }
+    alCheck(alSourcei(m_source, AL_BUFFER, 0));
+}
+
+
+////////////////////////////////////////////////////////////
+void Sound::reattachBuffer()
+{
+    alCheck(alSourcei(m_source, AL_BUFFER, static_cast<ALint>(m_buffer->m_buffer)));
 }
 
 } // namespace sf

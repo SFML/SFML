@@ -38,6 +38,8 @@
 #include <memory>
 #include <ostream>
 
+#include <cassert>
+
 #if defined(__APPLE__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -68,15 +70,7 @@ SoundBuffer::SoundBuffer(const SoundBuffer& copy) : m_samples(copy.m_samples), m
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
-    // To prevent the iterator from becoming invalid, move the entire buffer to another
-    // container. Otherwise calling resetBuffer would result in detachSound being
-    // called which removes the sound from the internal list.
-    SoundList sounds;
-    sounds.swap(m_sounds);
-
-    // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (Sound* soundPtr : sounds)
-        soundPtr->resetBuffer();
+    assert(m_sounds.empty() && "sf::SoundBuffer must not be destructed while it is used by a sf::Sound");
 
     // Destroy the buffer
     if (m_buffer)
@@ -213,7 +207,13 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
     std::swap(m_samples, temp.m_samples);
     std::swap(m_buffer, temp.m_buffer);
     std::swap(m_duration, temp.m_duration);
-    std::swap(m_sounds, temp.m_sounds); // swap sounds too, so that they are detached when temp is destroyed
+
+    // Reattach sounds that use this buffer so they get bound to the new OpenAL buffer
+    for (Sound* soundPtr : m_sounds)
+    {
+        soundPtr->stop();
+        soundPtr->reattachBuffer();
+    }
 
     return *this;
 }
@@ -258,12 +258,9 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         return false;
     }
 
-    // First make a copy of the list of sounds so we can reattach later
-    const SoundList sounds(m_sounds);
-
     // Detach the buffer from the sounds that use it (to avoid OpenAL errors)
-    for (Sound* soundPtr : sounds)
-        soundPtr->resetBuffer();
+    for (Sound* soundPtr : m_sounds)
+        soundPtr->detachBuffer();
 
     // Fill the buffer
     const auto size = static_cast<ALsizei>(m_samples.size() * sizeof(std::int16_t));
@@ -274,8 +271,8 @@ bool SoundBuffer::update(unsigned int channelCount, unsigned int sampleRate)
         static_cast<float>(m_samples.size()) / static_cast<float>(sampleRate) / static_cast<float>(channelCount));
 
     // Now reattach the buffer to the sounds that use it
-    for (Sound* soundPtr : sounds)
-        soundPtr->setBuffer(*this);
+    for (Sound* soundPtr : m_sounds)
+        soundPtr->reattachBuffer();
 
     return true;
 }

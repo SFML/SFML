@@ -331,16 +331,14 @@ private:
 ///     // error...
 /// }
 ///
-/// // Create a sound source and bind it to the buffer
-/// sf::Sound sound1;
-/// sound1.setBuffer(buffer);
+/// // Create a sound source bound to the buffer
+/// sf::Sound sound1(buffer);
 ///
 /// // Play the sound
 /// sound1.play();
 ///
 /// // Create another sound source bound to the same buffer
-/// sf::Sound sound2;
-/// sound2.setBuffer(buffer);
+/// sf::Sound sound2(buffer);
 ///
 /// // Play it with a higher pitch -- the first sound remains unchanged
 /// sound2.setPitch(2);
