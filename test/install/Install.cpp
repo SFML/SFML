@@ -11,7 +11,6 @@ int main()
     [[maybe_unused]] const sf::InputSoundFile      inputSoundFile;
     [[maybe_unused]] const sf::SoundBufferRecorder soundBufferRecorder;
     [[maybe_unused]] const sf::Music               music;
-    [[maybe_unused]] const sf::Sound               sound;
 
     // Graphics
     [[maybe_unused]] const sf::Color          color;

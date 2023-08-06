@@ -47,12 +47,6 @@ class SFML_AUDIO_API Sound : public SoundSource
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Sound();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Construct the sound with a buffer
     ///
     /// \param buffer Sound buffer containing the audio data to play with the sound
@@ -213,18 +207,27 @@ public:
     ////////////////////////////////////////////////////////////
     Sound& operator=(const Sound& right);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Reset the internal buffer of the sound
-    ///
-    /// This function is for internal use only, you don't have
-    /// to use it. It is called by the sf::SoundBuffer that
-    /// this sound uses, when it is destroyed in order to prevent
-    /// the sound from using a dead buffer.
-    ///
-    ////////////////////////////////////////////////////////////
-    void resetBuffer();
-
 private:
+    friend class SoundBuffer;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Detach sound from its internal buffer
+    ///
+    /// This allows the sound buffer to temporarily detach the
+    /// sounds that use it when the sound buffer gets updated.
+    ///
+    ////////////////////////////////////////////////////////////
+    void detachBuffer();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Re-attach sound to its internal buffer
+    ///
+    /// This allows the sound buffer to attach back the sounds
+    /// that use it after the sound buffer has been updated.
+    ///
+    ////////////////////////////////////////////////////////////
+    void reattachBuffer();
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -252,7 +255,7 @@ private:
 ///
 /// In order to work, a sound must be given a buffer of audio
 /// data to play. Audio data (samples) is stored in sf::SoundBuffer,
-/// and attached to a sound with the setBuffer() function.
+/// and attached to a sound when it is created or with the setBuffer() function.
 /// The buffer object attached to a sound must remain alive
 /// as long as the sound uses it. Note that multiple sounds
 /// can use the same sound buffer at the same time.
@@ -265,8 +268,7 @@ private:
 ///     // Handle error...
 /// }
 ///
-/// sf::Sound sound;
-/// sound.setBuffer(buffer);
+/// sf::Sound sound(buffer);
 /// sound.play();
 /// \endcode
 ///
