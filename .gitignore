@@ -40,3 +40,6 @@ cmake-build-*/
 .vscode/
 .idea/
 .vs/
+
+# User configuration
+CMakeUserPresets.json
