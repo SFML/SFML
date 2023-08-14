@@ -35,10 +35,9 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 
+#include <exception>
 #include <memory>
 #include <ostream>
-
-#include <cassert>
 
 #if defined(__APPLE__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -70,7 +69,12 @@ SoundBuffer::SoundBuffer(const SoundBuffer& copy) : m_samples(copy.m_samples), m
 ////////////////////////////////////////////////////////////
 SoundBuffer::~SoundBuffer()
 {
-    assert(m_sounds.empty() && "sf::SoundBuffer must not be destructed while it is used by a sf::Sound");
+    // Make sure no sound is attached to this buffer
+    if (!m_sounds.empty())
+    {
+        err() << "Failed to destruct sound buffer because it is used by " << m_sounds.size() << " sound(s)" << std::endl;
+        std::terminate();
+    }
 
     // Destroy the buffer
     if (m_buffer)
