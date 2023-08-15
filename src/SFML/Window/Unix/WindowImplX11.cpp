@@ -85,13 +85,25 @@ namespace
 
         static const unsigned int             maxTrialsCount = 5;
 
-        // Filter the events received by windows (only allow those matching a specific window)
+        // Filter the events received by windows (only allow those matching a specific window or those needed for the IM to work)
         Bool checkEvent(::Display*, XEvent* event, XPointer userData)
         {
-            // Just check if the event matches the window
-            // The input method sometimes sends ClientMessages with a different window ID,
-            // our event loop has to process them for the IM to work
-            return (event->xany.window == reinterpret_cast< ::Window >(userData)) || (event->type == ClientMessage);
+            if (event->xany.window == reinterpret_cast<::Window>(userData))
+            {
+                // The event matches the current window so pick it up
+                return true;
+            }
+            if (event->type == ClientMessage)
+            {
+                // The input method sometimes sends ClientMessage with a different window ID.
+                // Our event loop has to process them for the IM to work.
+                // We assume ClientMessage events not having WM_PROTOCOLS message type are such events.
+                // ClientMessage events having WM_PROTOCOLS message type should be handled by their own window,
+                // so we ignore them here. They will eventually be picked up with the first condition.
+                static const Atom wmProtocols = sf::priv::getAtom("WM_PROTOCOLS");
+                return event->xclient.message_type != wmProtocols;
+            }
+            return false;
         }
 
         // Find the name of the current executable
