@@ -16,3 +16,8 @@ find_library(GBM_LIBRARY NAMES gbm)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GBM DEFAULT_MSG GBM_LIBRARY GBM_INCLUDE_DIR)
+
+add_library(GBM::GBM IMPORTED UNKNOWN)
+set_target_properties(GBM::GBM PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES ${GBM_INCLUDE_DIR}
+    IMPORTED_LOCATION ${GBM_LIBRARY})

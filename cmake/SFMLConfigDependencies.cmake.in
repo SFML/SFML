@@ -1,5 +1,7 @@
 # in case of static linking, we must also define the list of all the dependencies of SFML libraries
 if(SFML_STATIC_LIBRARIES)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
     include(CMakeFindDependencyMacro)
 
     # detect the OS
@@ -44,20 +46,21 @@ if(SFML_STATIC_LIBRARIES)
     list(FIND SFML_FIND_COMPONENTS "Window" FIND_SFML_WINDOW_COMPONENT_INDEX)
     if(FIND_SFML_WINDOW_COMPONENT_INDEX GREATER -1)
         if(FIND_SFML_USE_DRM)
-            sfml_bind_dependency(TARGET DRM FRIENDLY_NAME "drm" SEARCH_NAMES "drm")
-            sfml_bind_dependency(TARGET GBM FRIENDLY_NAME "gbm" SEARCH_NAMES "gbm")
+            find_dependency(DRM)
+            find_dependency(GBM)
         elseif(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD)
             find_dependency(X11 REQUIRED COMPONENTS Xrandr Xcursor)
         endif()
 
         if(FIND_SFML_OS_LINUX)
-            sfml_bind_dependency(TARGET UDev FRIENDLY_NAME "UDev" SEARCH_NAMES "udev" "libudev")
+            find_dependency(UDev)
         endif()
 
-        if(FIND_SFML_OS_WINDOWS)
-            set_property(TARGET OpenGL APPEND PROPERTY INTERFACE_LINK_LIBRARIES "OpenGL32")
-        elseif(NOT FIND_SFML_OS_IOS)
-            sfml_bind_dependency(TARGET OpenGL FRIENDLY_NAME "OpenGL" SEARCH_NAMES "OpenGL" "GL")
+        if(NOT FIND_SFML_OS_IOS)
+            if(NOT OpenGL_GL_PREFERENCE)
+                set(OpenGL_GL_PREFERENCE "LEGACY")
+            endif()
+            find_dependency(OpenGL COMPONENTS OpenGL)
         endif()
     endif()
 

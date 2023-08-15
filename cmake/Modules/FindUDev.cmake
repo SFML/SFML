@@ -50,4 +50,12 @@ else()
     endif()
 endif()
 
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(UDev DEFAULT_MSG UDEV_INCLUDE_DIR UDEV_LIBRARIES)
+
 mark_as_advanced(UDEV_INCLUDE_DIR UDEV_LIBRARIES)
+
+add_library(UDev::UDev IMPORTED UNKNOWN)
+set_target_properties(UDev::UDev PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES ${UDEV_INCLUDE_DIR}
+    IMPORTED_LOCATION ${UDEV_LIBRARIES})
