@@ -68,9 +68,9 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
-sfml_find_package(OpenAL INCLUDE "OPENAL_INCLUDE_DIR" LINK "OPENAL_LIBRARY")
-sfml_find_package(VORBIS INCLUDE "VORBIS_INCLUDE_DIRS" LINK "VORBIS_LIBRARIES")
-sfml_find_package(FLAC INCLUDE "FLAC_INCLUDE_DIR" LINK "FLAC_LIBRARY")
+sfml_find_package(OpenAL OPENAL_INCLUDE_DIR OPENAL_LIBRARY)
+sfml_find_package(VORBIS VORBIS_INCLUDE_DIRS VORBIS_LIBRARIES)
+sfml_find_package(FLAC FLAC_INCLUDE_DIR FLAC_LIBRARY)
 
 # avoids warnings in vorbisfile.h
 target_compile_definitions(VORBIS INTERFACE "OV_EXCLUDE_STATIC_CALLBACKS")
