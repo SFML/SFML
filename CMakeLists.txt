@@ -259,6 +259,9 @@ if(NOT SFML_BUILD_FRAMEWORKS)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             COMPONENT devel
             FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl")
+    install(DIRECTORY cmake/Modules/
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SFML
+            COMPONENT devel)
 
     if(SFML_GENERATE_PDB)
         install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/
