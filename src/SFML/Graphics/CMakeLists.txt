@@ -117,7 +117,7 @@ elseif(SFML_OS_IOS)
     target_link_libraries(sfml-graphics PRIVATE z bz2)
 endif()
 
-sfml_find_package(Freetype INCLUDE "FREETYPE_INCLUDE_DIRS" LINK "FREETYPE_LIBRARY")
+sfml_find_package(Freetype FREETYPE_INCLUDE_DIRS FREETYPE_LIBRARY)
 target_link_libraries(sfml-graphics PRIVATE Freetype)
 
 # on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features

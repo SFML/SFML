@@ -381,32 +381,17 @@ endfunction()
 
 # Find the requested package and make an INTERFACE library from it
 # The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
-# Usage: sfml_find_package(wanted_target_name
-#                          [INCLUDE "OPENGL_INCLUDE_DIR"]
-#                          [LINK "OPENGL_gl_LIBRARY"])
-function(sfml_find_package)
-    list(GET ARGN 0 target)
-    list(REMOVE_AT ARGN 0)
-
+# Usage: sfml_find_package(wanted_target_name [OPENGL_INCLUDE_DIR] [OPENGL_gl_LIBRARY])
+function(sfml_find_package target INCLUDE_DIRS LINK_LIBRARIES)
     if(TARGET ${target})
         message(FATAL_ERROR "Target '${target}' is already defined")
-    endif()
-
-    cmake_parse_arguments(THIS "" "" "INCLUDE;LINK" ${ARGN})
-    if(THIS_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "Unknown arguments when calling sfml_find_package: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
 
     find_package(${target} REQUIRED)
     add_library(${target} INTERFACE)
 
-    foreach(include_dir IN LISTS THIS_INCLUDE)
-        target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${${include_dir}}>")
-    endforeach()
-
-    foreach(link_item IN LISTS THIS_LINK)
-        target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${${link_item}}>")
-    endforeach()
+    target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${${INCLUDE_DIRS}}>")
+    target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${${LINK_LIBRARIES}}>")
 
     install(TARGETS ${target} EXPORT SFMLConfigExport)
 endfunction()
