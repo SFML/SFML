@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <ostream>
+#include <utility>
 
 
 namespace sf
@@ -46,6 +47,28 @@ Socket::~Socket()
 {
     // Close the socket before it gets destructed
     close();
+}
+
+
+////////////////////////////////////////////////////////////
+Socket::Socket(Socket&& socket) noexcept :
+m_type(socket.m_type),
+m_socket(std::exchange(socket.m_socket, priv::SocketImpl::invalidSocket())),
+m_isBlocking(socket.m_isBlocking)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Socket& Socket::operator=(Socket&& socket) noexcept
+{
+    if (&socket == this)
+        return *this;
+
+    m_type       = socket.m_type;
+    m_socket     = std::exchange(socket.m_socket, priv::SocketImpl::invalidSocket());
+    m_isBlocking = socket.m_isBlocking;
+    return *this;
 }
 
 
