@@ -23,8 +23,8 @@ TEST_CASE("[Network] sf::Socket")
         STATIC_CHECK(!std::is_constructible_v<sf::Socket>);
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Socket>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Socket>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Socket>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Socket>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Socket>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Socket>);
     }
 
     SECTION("Constants")
@@ -39,6 +39,30 @@ TEST_CASE("[Network] sf::Socket")
         const TestSocket testSocket;
         CHECK(testSocket.isBlocking());
         CHECK(testSocket.getHandle() == invalidHandle);
+    }
+
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            TestSocket movedTestSocket;
+            movedTestSocket.setBlocking(false);
+            movedTestSocket.create();
+            const TestSocket testSocket(std::move(movedTestSocket));
+            CHECK(!testSocket.isBlocking());
+            CHECK(testSocket.getHandle() != invalidHandle);
+        }
+
+        SECTION("Assignment")
+        {
+            TestSocket movedTestSocket;
+            movedTestSocket.setBlocking(false);
+            movedTestSocket.create();
+            TestSocket testSocket;
+            testSocket = std::move(movedTestSocket);
+            CHECK(!testSocket.isBlocking());
+            CHECK(testSocket.getHandle() != invalidHandle);
+        }
     }
 
     SECTION("Set/get blocking")
