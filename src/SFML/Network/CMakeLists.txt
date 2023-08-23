@@ -31,12 +31,10 @@ set(SRC
 if(SFML_OS_WINDOWS)
     list(APPEND SRC
         ${SRCROOT}/Win32/SocketImpl.cpp
-        ${SRCROOT}/Win32/SocketImpl.hpp
     )
 else()
     list(APPEND SRC
         ${SRCROOT}/Unix/SocketImpl.cpp
-        ${SRCROOT}/Unix/SocketImpl.hpp
     )
 endif()
 
