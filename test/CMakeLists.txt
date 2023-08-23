@@ -62,6 +62,7 @@ set(WINDOW_SRC
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
     Window/Cursor.test.cpp
+    Window/Event.test.cpp
     Window/GlResource.test.cpp
     Window/VideoMode.test.cpp
     Window/Window.test.cpp
