@@ -44,7 +44,7 @@ namespace priv
 class GlContext;
 }
 
-class Event;
+struct Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a target for OpenGL rendering

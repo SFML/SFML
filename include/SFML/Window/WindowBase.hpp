@@ -50,7 +50,7 @@ namespace priv
 class WindowImpl;
 }
 
-class Event;
+struct Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a base for other windows
