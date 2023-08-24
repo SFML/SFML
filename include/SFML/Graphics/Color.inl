@@ -146,6 +146,7 @@ constexpr Color& operator*=(Color& left, const Color& right)
 inline constexpr Color Color::Black(0, 0, 0);
 inline constexpr Color Color::White(255, 255, 255);
 inline constexpr Color Color::Red(255, 0, 0);
+inline constexpr Color Color::Orange(255, 128, 0);
 inline constexpr Color Color::Green(0, 255, 0);
 inline constexpr Color Color::Blue(0, 0, 255);
 inline constexpr Color Color::Yellow(255, 255, 0);
