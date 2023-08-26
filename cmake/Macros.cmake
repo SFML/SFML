@@ -379,23 +379,6 @@ function(sfml_add_test target SOURCES DEPENDS)
     catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endfunction()
 
-# Find the requested package and make an INTERFACE library from it
-# The created INTERFACE library is tagged for export to be part of the generated SFMLConfig
-# Usage: sfml_find_package(wanted_target_name [OPENGL_INCLUDE_DIR] [OPENGL_gl_LIBRARY])
-function(sfml_find_package target INCLUDE_DIRS LINK_LIBRARIES)
-    if(TARGET ${target})
-        message(FATAL_ERROR "Target '${target}' is already defined")
-    endif()
-
-    find_package(${target} REQUIRED)
-    add_library(${target} INTERFACE)
-
-    target_include_directories(${target} SYSTEM INTERFACE "$<BUILD_INTERFACE:${${INCLUDE_DIRS}}>")
-    target_link_libraries(${target} INTERFACE "$<BUILD_INTERFACE:${${LINK_LIBRARIES}}>")
-
-    install(TARGETS ${target} EXPORT SFMLConfigExport)
-endfunction()
-
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered against
 # the EXPORT name "SFMLConfigExport" (EXPORT parameter of install(TARGETS))
 function(sfml_export_targets)
