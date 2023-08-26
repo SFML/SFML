@@ -69,7 +69,7 @@ endif()
 
 # find external libraries
 find_package(OpenAL REQUIRED)
-sfml_find_package(VORBIS VORBIS_INCLUDE_DIRS VORBIS_LIBRARIES)
+find_package(Vorbis REQUIRED)
 find_package(FLAC REQUIRED)
 
 # define the sfml-audio target
@@ -82,7 +82,10 @@ target_compile_definitions(sfml-audio PRIVATE OV_EXCLUDE_STATIC_CALLBACKS FLAC__
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
-                      PRIVATE OpenAL::OpenAL VORBIS FLAC::FLAC)
+                      PRIVATE OpenAL::OpenAL Vorbis::vorbis FLAC::FLAC)
+if(NOT SFML_OS_IOS)
+    target_link_libraries(sfml-audio PRIVATE Vorbis::vorbisfile Vorbis::vorbisenc)
+endif()
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")
