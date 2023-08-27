@@ -66,6 +66,28 @@ public:
     SocketSelector(const SocketSelector& copy);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Overload of assignment operator
+    ///
+    /// \param right Instance to assign
+    ///
+    /// \return Reference to self
+    ///
+    ////////////////////////////////////////////////////////////
+    SocketSelector& operator=(const SocketSelector& right);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    SocketSelector(SocketSelector&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    SocketSelector& operator=(SocketSelector&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Add a new socket to the selector
     ///
     /// This function keeps a weak reference to the socket,
@@ -141,16 +163,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     bool isReady(Socket& socket) const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Overload of assignment operator
-    ///
-    /// \param right Instance to assign
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    SocketSelector& operator=(const SocketSelector& right);
 
 private:
     struct SocketSelectorImpl;
