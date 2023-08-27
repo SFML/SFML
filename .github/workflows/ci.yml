@@ -40,12 +40,6 @@ jobs:
         - { name: Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
 
-        exclude:
-        - platform: { name: iOS }
-          config: { name: Shared }
-        - platform: { name: iOS Xcode }
-          config: { name: Shared }
-
         include:
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: Unity, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
