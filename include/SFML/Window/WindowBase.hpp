@@ -424,7 +424,7 @@ public:
     /// \return System handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    WindowHandle getSystemHandle() const;
+    WindowHandle getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a Vulkan rendering surface

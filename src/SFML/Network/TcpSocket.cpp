@@ -63,12 +63,12 @@ TcpSocket::TcpSocket() : Socket(Type::Tcp)
 ////////////////////////////////////////////////////////////
 unsigned short TcpSocket::getLocalPort() const
 {
-    if (getHandle() != priv::SocketImpl::invalidSocket())
+    if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
             return ntohs(address.sin_port);
         }
@@ -82,12 +82,12 @@ unsigned short TcpSocket::getLocalPort() const
 ////////////////////////////////////////////////////////////
 std::optional<IpAddress> TcpSocket::getRemoteAddress() const
 {
-    if (getHandle() != priv::SocketImpl::invalidSocket())
+    if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the remote end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
             return IpAddress(ntohl(address.sin_addr.s_addr));
         }
@@ -101,12 +101,12 @@ std::optional<IpAddress> TcpSocket::getRemoteAddress() const
 ////////////////////////////////////////////////////////////
 unsigned short TcpSocket::getRemotePort() const
 {
-    if (getHandle() != priv::SocketImpl::invalidSocket())
+    if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the remote end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
             return ntohs(address.sin_port);
         }
@@ -134,7 +134,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
         // ----- We're not using a timeout: just try to connect -----
 
         // Connect the socket
-        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+        if (::connect(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
             return priv::SocketImpl::getErrorStatus();
 
         // Connection succeeded
@@ -152,7 +152,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             setBlocking(false);
 
         // Try to connect to the remote address
-        if (::connect(getHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) >= 0)
+        if (::connect(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) >= 0)
         {
             // We got instantly connected! (it may no happen a lot...)
             setBlocking(blocking);
@@ -172,7 +172,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             // Setup the selector
             fd_set selector;
             FD_ZERO(&selector);
-            FD_SET(getHandle(), &selector);
+            FD_SET(getNativeHandle(), &selector);
 
             // Setup the timeout
             timeval time;
@@ -180,7 +180,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
 
             // Wait for something to write on our socket (which means that the connection request has returned)
-            if (select(static_cast<int>(getHandle() + 1), nullptr, &selector, nullptr, &time) > 0)
+            if (select(static_cast<int>(getNativeHandle() + 1), nullptr, &selector, nullptr, &time) > 0)
             {
                 // At this point the connection may have been either accepted or refused.
                 // To know whether it's a success or a failure, we must check the address of the connected peer
@@ -250,8 +250,10 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
         // Send a chunk of data
-        result = static_cast<int>(
-            ::send(getHandle(), static_cast<const char*>(data) + sent, static_cast<priv::SocketImpl::Size>(size - sent), flags));
+        result = static_cast<int>(::send(getNativeHandle(),
+                                         static_cast<const char*>(data) + sent,
+                                         static_cast<priv::SocketImpl::Size>(size - sent),
+                                         flags));
 #pragma GCC diagnostic pop
 
         // Check for errors
@@ -287,7 +289,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
 #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Receive a chunk of bytes
     const int sizeReceived = static_cast<int>(
-        recv(getHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
+        recv(getNativeHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
 #pragma GCC diagnostic pop
 
     // Check the number of bytes received

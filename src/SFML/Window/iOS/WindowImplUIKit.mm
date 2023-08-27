@@ -94,7 +94,7 @@ void WindowImplUIKit::processEvents()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplUIKit::getSystemHandle() const
+WindowHandle WindowImplUIKit::getNativeHandle() const
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"

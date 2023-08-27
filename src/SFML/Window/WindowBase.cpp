@@ -352,9 +352,9 @@ bool WindowBase::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowBase::getSystemHandle() const
+WindowHandle WindowBase::getNativeHandle() const
 {
-    return m_impl ? m_impl->getSystemHandle() : WindowHandle{};
+    return m_impl ? m_impl->getNativeHandle() : WindowHandle{};
 }
 
 

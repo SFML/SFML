@@ -720,7 +720,7 @@ WindowImplX11::~WindowImplX11()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplX11::getSystemHandle() const
+WindowHandle WindowImplX11::getNativeHandle() const
 {
     return m_window;
 }

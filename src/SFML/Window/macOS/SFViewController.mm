@@ -111,7 +111,7 @@
 
 
 ////////////////////////////////////////////////////////
-- (sf::WindowHandle)getSystemHandle
+- (sf::WindowHandle)getNativeHandle
 {
     return m_view;
 }

@@ -48,12 +48,12 @@ UdpSocket::UdpSocket() : Socket(Type::Udp)
 ////////////////////////////////////////////////////////////
 unsigned short UdpSocket::getLocalPort() const
 {
-    if (getHandle() != priv::SocketImpl::invalidSocket())
+    if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
         sockaddr_in                  address;
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
             return ntohs(address.sin_port);
         }
@@ -79,7 +79,7 @@ Socket::Status UdpSocket::bind(unsigned short port, const IpAddress& address)
 
     // Bind the socket
     sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
-    if (::bind(getHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
+    if (::bind(getNativeHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
     {
         err() << "Failed to bind socket to port " << port << std::endl;
         return Status::Error;
@@ -118,7 +118,7 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddre
 #pragma GCC diagnostic ignored "-Wuseless-cast"
     // Send the data (unlike TCP, all the data is always sent in one call)
     const int sent = static_cast<int>(
-        sendto(getHandle(),
+        sendto(getNativeHandle(),
                static_cast<const char*>(data),
                static_cast<priv::SocketImpl::Size>(size),
                0,
@@ -161,7 +161,7 @@ Socket::Status UdpSocket::receive(void*                     data,
     // Receive a chunk of bytes
     priv::SocketImpl::AddrLength addressSize  = sizeof(address);
     const int                    sizeReceived = static_cast<int>(
-        recvfrom(getHandle(),
+        recvfrom(getNativeHandle(),
                  static_cast<char*>(data),
                  static_cast<priv::SocketImpl::Size>(size),
                  0,

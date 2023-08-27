@@ -390,10 +390,10 @@ void WindowImplCocoa::processEvents()
 #pragma mark WindowImplCocoa's private methods
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplCocoa::getSystemHandle() const
+WindowHandle WindowImplCocoa::getNativeHandle() const
 {
     const AutoreleasePool pool;
-    return [m_delegate getSystemHandle];
+    return [m_delegate getNativeHandle];
 }
 
 

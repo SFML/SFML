@@ -336,7 +336,7 @@
 
 
 ////////////////////////////////////////////////////////
-- (sf::WindowHandle)getSystemHandle
+- (sf::WindowHandle)getNativeHandle
 {
     return m_window;
 }

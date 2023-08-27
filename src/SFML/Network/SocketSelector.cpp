@@ -90,7 +90,7 @@ SocketSelector& SocketSelector::operator=(SocketSelector&&) noexcept = default;
 ////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
-    const SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -132,7 +132,7 @@ void SocketSelector::add(Socket& socket)
 ////////////////////////////////////////////////////////////
 void SocketSelector::remove(Socket& socket)
 {
-    const SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -189,7 +189,7 @@ bool SocketSelector::wait(Time timeout)
 ////////////////////////////////////////////////////////////
 bool SocketSelector::isReady(Socket& socket) const
 {
-    const SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 

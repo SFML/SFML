@@ -654,7 +654,7 @@ Vector2i InputImpl::getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
-    WindowHandle handle = relativeTo.getSystemHandle();
+    WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
     {
         POINT point;
@@ -679,7 +679,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 ////////////////////////////////////////////////////////////
 void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
-    WindowHandle handle = relativeTo.getSystemHandle();
+    WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
     {
         POINT point = {position.x, position.y};

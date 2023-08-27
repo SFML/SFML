@@ -179,7 +179,7 @@ std::vector<sf::Vector2i> touchPositions;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
-    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getSystemHandle())) rootViewController];
+    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getNativeHandle())) rootViewController];
 
 #pragma GCC diagnostic pop
 

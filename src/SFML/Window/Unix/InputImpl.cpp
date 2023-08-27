@@ -145,7 +145,7 @@ Vector2i InputImpl::getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 {
-    const WindowHandle handle = relativeTo.getSystemHandle();
+    const WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
     {
         // Open a connection with the X server
@@ -194,7 +194,7 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
     // Open a connection with the X server
     Display* display = openDisplay();
 
-    const WindowHandle handle = relativeTo.getSystemHandle();
+    const WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
     {
         XWarpPointer(display, None, handle, 0, 0, 0, 0, position.x, position.y);
