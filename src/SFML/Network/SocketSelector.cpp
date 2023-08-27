@@ -61,13 +61,30 @@ SocketSelector::SocketSelector() : m_impl(std::make_unique<SocketSelectorImpl>()
 
 
 ////////////////////////////////////////////////////////////
+SocketSelector::~SocketSelector() = default;
+
+
+////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector(const SocketSelector& copy) : m_impl(std::make_unique<SocketSelectorImpl>(*copy.m_impl))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-SocketSelector::~SocketSelector() = default;
+SocketSelector& SocketSelector::operator=(const SocketSelector& right)
+{
+    SocketSelector temp(right);
+    std::swap(m_impl, temp.m_impl);
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+SocketSelector::SocketSelector(SocketSelector&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////]
+SocketSelector& SocketSelector::operator=(SocketSelector&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -187,17 +204,6 @@ bool SocketSelector::isReady(Socket& socket) const
     }
 
     return false;
-}
-
-
-////////////////////////////////////////////////////////////
-SocketSelector& SocketSelector::operator=(const SocketSelector& right)
-{
-    SocketSelector temp(right);
-
-    std::swap(m_impl, temp.m_impl);
-
-    return *this;
 }
 
 } // namespace sf
