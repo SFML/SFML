@@ -91,7 +91,7 @@ bool Socket::isBlocking() const
 
 
 ////////////////////////////////////////////////////////////
-SocketHandle Socket::getHandle() const
+SocketHandle Socket::getNativeHandle() const
 {
     return m_socket;
 }

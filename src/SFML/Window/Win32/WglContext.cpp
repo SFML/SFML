@@ -135,7 +135,7 @@ WglContext::WglContext(WglContext* shared, const ContextSettings& settings, cons
     m_settings = settings;
 
     // Create the rendering surface from the owner window
-    createSurface(owner.getSystemHandle(), bitsPerPixel);
+    createSurface(owner.getNativeHandle(), bitsPerPixel);
 
     // Create the context
     createContext(shared);

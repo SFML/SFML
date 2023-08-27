@@ -87,7 +87,7 @@ WindowImplAndroid::~WindowImplAndroid()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplAndroid::getSystemHandle() const
+WindowHandle WindowImplAndroid::getNativeHandle() const
 {
     ActivityStates& states = getActivity();
     std::lock_guard lock(states.mutex);

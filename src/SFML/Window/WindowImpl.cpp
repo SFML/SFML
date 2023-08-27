@@ -333,7 +333,7 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
 
 #else
 
-    return VulkanImplType::createVulkanSurface(instance, getSystemHandle(), surface, allocator);
+    return VulkanImplType::createVulkanSurface(instance, getNativeHandle(), surface, allocator);
 
 #endif
 }

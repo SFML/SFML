@@ -55,7 +55,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
 {
-    const id nsHandle = static_cast<id>(window.getSystemHandle());
+    const id nsHandle = static_cast<id>(window.getNativeHandle());
 
     // Get our SFOpenGLView from ...
     SFOpenGLView* view = nil;

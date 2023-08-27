@@ -274,7 +274,7 @@ WindowImplWin32::~WindowImplWin32()
 
 
 ////////////////////////////////////////////////////////////
-WindowHandle WindowImplWin32::getSystemHandle() const
+WindowHandle WindowImplWin32::getNativeHandle() const
 {
     return m_handle;
 }

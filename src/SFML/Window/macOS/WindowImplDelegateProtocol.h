@@ -91,7 +91,7 @@ class WindowImplCocoa;
 /// \return Return the main view or window.
 ///
 ////////////////////////////////////////////////////////////
-- (sf::WindowHandle)getSystemHandle;
+- (sf::WindowHandle)getNativeHandle;
 
 ////////////////////////////////////////////////////////////
 /// \brief Determine where the mouse is

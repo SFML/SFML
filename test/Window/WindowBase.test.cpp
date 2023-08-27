@@ -30,7 +30,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             CHECK(windowBase.getPosition() == sf::Vector2i());
             CHECK(windowBase.getSize() == sf::Vector2u());
             CHECK(!windowBase.hasFocus());
-            CHECK(windowBase.getSystemHandle() == sf::WindowHandle());
+            CHECK(windowBase.getNativeHandle() == sf::WindowHandle());
         }
 
         SECTION("Mode and title constructor")
@@ -38,7 +38,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
             CHECK(windowBase.isOpen());
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
-            CHECK(windowBase.getSystemHandle() != sf::WindowHandle());
+            CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
         SECTION("Mode, title, and style constructor")
@@ -46,7 +46,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests", sf::Style::Resize);
             CHECK(windowBase.isOpen());
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
-            CHECK(windowBase.getSystemHandle() != sf::WindowHandle());
+            CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
     }
 
@@ -59,7 +59,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests");
             CHECK(windowBase.isOpen());
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
-            CHECK(windowBase.getSystemHandle() != sf::WindowHandle());
+            CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
         SECTION("Mode, title, and style")
@@ -67,7 +67,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::Style::Resize);
             CHECK(windowBase.isOpen());
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
-            CHECK(windowBase.getSystemHandle() != sf::WindowHandle());
+            CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
     }
 

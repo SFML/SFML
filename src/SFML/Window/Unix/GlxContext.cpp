@@ -138,7 +138,7 @@ GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, cons
     ensureExtensionsInit(m_display, DefaultScreen(m_display));
 
     // Create the rendering surface from the owner window
-    createSurface(owner.getSystemHandle());
+    createSurface(owner.getNativeHandle());
 
     // Create the context
     createContext(shared);

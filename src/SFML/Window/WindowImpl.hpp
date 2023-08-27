@@ -133,7 +133,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getSystemHandle() const = 0;
+    virtual WindowHandle getNativeHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
