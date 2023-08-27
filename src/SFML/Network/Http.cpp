@@ -287,10 +287,6 @@ void Http::Response::parseFields(std::istream& in)
 
 
 ////////////////////////////////////////////////////////////
-Http::Http() = default;
-
-
-////////////////////////////////////////////////////////////
 Http::Http(const std::string& host, unsigned short port)
 {
     setHost(host, port);
