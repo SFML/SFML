@@ -435,7 +435,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _deg(long double angle);
+[[nodiscard]] constexpr Angle operator""_deg(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -446,7 +446,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _deg(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator""_deg(unsigned long long int angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -457,7 +457,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _rad(long double angle);
+[[nodiscard]] constexpr Angle operator""_rad(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
@@ -468,7 +468,7 @@ namespace Literals
 /// \return \a Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _rad(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator""_rad(unsigned long long int angle);
 
 } // namespace Literals
 

@@ -226,28 +226,28 @@ namespace Literals
 {
 
 ////////////////////////////////////////////////////////////
-constexpr Angle operator"" _deg(long double angle)
+constexpr Angle operator""_deg(long double angle)
 {
     return degrees(static_cast<float>(angle));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Angle operator"" _deg(unsigned long long angle)
+constexpr Angle operator""_deg(unsigned long long angle)
 {
     return degrees(static_cast<float>(angle));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Angle operator"" _rad(long double angle)
+constexpr Angle operator""_rad(long double angle)
 {
     return radians(static_cast<float>(angle));
 }
 
 
 ////////////////////////////////////////////////////////////
-constexpr Angle operator"" _rad(unsigned long long angle)
+constexpr Angle operator""_rad(unsigned long long angle)
 {
     return radians(static_cast<float>(angle));
 }
