@@ -351,7 +351,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                                     m_utf8String,
                                     8,
                                     PropModeReplace,
-                                    data.c_str(),
+                                    reinterpret_cast<const unsigned char*>(data.c_str()),
                                     static_cast<int>(data.size()));
 
                     // Notify the requestor that they can read the data from their window property

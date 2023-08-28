@@ -941,7 +941,7 @@ void WindowImplX11::setTitle(const String& title)
                     useUtf8,
                     8,
                     PropModeReplace,
-                    utf8Title.c_str(),
+                    reinterpret_cast<const unsigned char*>(utf8Title.c_str()),
                     static_cast<int>(utf8Title.size()));
 
     // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
@@ -952,7 +952,7 @@ void WindowImplX11::setTitle(const String& title)
                     useUtf8,
                     8,
                     PropModeReplace,
-                    utf8Title.c_str(),
+                    reinterpret_cast<const unsigned char*>(utf8Title.c_str()),
                     static_cast<int>(utf8Title.size()));
 
 // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
