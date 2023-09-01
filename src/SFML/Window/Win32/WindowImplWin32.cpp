@@ -302,7 +302,7 @@ Vector2i WindowImplWin32::getPosition() const
     RECT rect;
     GetWindowRect(m_handle, &rect);
 
-    return Vector2i(rect.left, rect.top);
+    return {rect.left, rect.top};
 }
 
 
@@ -322,7 +322,7 @@ Vector2u WindowImplWin32::getSize() const
     RECT rect;
     GetClientRect(m_handle, &rect);
 
-    return Vector2u(static_cast<unsigned int>(rect.right - rect.left), static_cast<unsigned int>(rect.bottom - rect.top));
+    return Vector2u(Vector2<LONG>(rect.right - rect.left, rect.bottom - rect.top));
 }
 
 

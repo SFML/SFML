@@ -73,21 +73,21 @@ constexpr Time::operator std::chrono::duration<Rep, Period>() const
 ////////////////////////////////////////////////////////////
 constexpr Time seconds(float amount)
 {
-    return Time(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount)));
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time milliseconds(std::int32_t amount)
 {
-    return Time(std::chrono::milliseconds(amount));
+    return std::chrono::milliseconds(amount);
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time microseconds(std::int64_t amount)
 {
-    return Time(std::chrono::microseconds(amount));
+    return std::chrono::microseconds(amount);
 }
 
 

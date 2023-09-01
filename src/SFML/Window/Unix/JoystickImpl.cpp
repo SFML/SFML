@@ -407,7 +407,7 @@ std::string getJoystickName(unsigned int index)
         ::close(fd);
 
         if (result >= 0)
-            return std::string(name);
+            return name;
     }
 
     // Fall back to manual USB chain walk via udev
@@ -421,13 +421,13 @@ std::string getJoystickName(unsigned int index)
             udev_device_unref(udevDevice);
 
             if (product)
-                return std::string(product);
+                return {product};
         }
     }
 
     sf::err() << "Unable to get name for joystick " << devnode << std::endl;
 
-    return std::string("Unknown Joystick");
+    return "Unknown Joystick";
 }
 } // namespace
 

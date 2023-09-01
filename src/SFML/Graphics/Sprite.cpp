@@ -116,7 +116,7 @@ FloatRect Sprite::getLocalBounds() const
     const auto width  = static_cast<float>(std::abs(m_textureRect.width));
     const auto height = static_cast<float>(std::abs(m_textureRect.height));
 
-    return FloatRect({0.f, 0.f}, {width, height});
+    return {{0.f, 0.f}, {width, height}};
 }
 
 

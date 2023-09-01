@@ -818,7 +818,7 @@ Vector2i WindowImplX11::getPosition() const
     // it to, even with decorations and such, which get shifted back.
     // In these rare cases, we can use the absolute value directly.
     if (isWMAbsolutePositionGood())
-        return Vector2i(xAbsRelToRoot, yAbsRelToRoot);
+        return {xAbsRelToRoot, yAbsRelToRoot};
 
     // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
     // with the exact frame size to subtract, so if present, we prefer it and
@@ -830,7 +830,7 @@ Vector2i WindowImplX11::getPosition() const
     {
         // Get final X/Y coordinates: subtract EWMH frame extents from
         // absolute window position.
-        return Vector2i((xAbsRelToRoot - static_cast<int>(xFrameExtent)), (yAbsRelToRoot - static_cast<int>(yFrameExtent)));
+        return {(xAbsRelToRoot - static_cast<int>(xFrameExtent)), (yAbsRelToRoot - static_cast<int>(yFrameExtent))};
     }
 
     // CASE 3: EWMH frame extents were not available, use geometry.
@@ -866,7 +866,7 @@ Vector2i WindowImplX11::getPosition() const
 
     XGetGeometry(m_display, ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
 
-    return Vector2i(xRelToRoot, yRelToRoot);
+    return {xRelToRoot, yRelToRoot};
 }
 
 

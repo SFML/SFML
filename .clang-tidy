@@ -29,7 +29,6 @@ Checks: >
   -misc-non-private-member-variables-in-classes,
   -modernize-avoid-c-arrays,
   -modernize-macro-to-enum,
-  -modernize-return-braced-init-list,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -performance-inefficient-string-concatenation,

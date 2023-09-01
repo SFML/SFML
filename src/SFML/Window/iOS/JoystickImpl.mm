@@ -71,7 +71,7 @@ void JoystickImpl::close()
 JoystickCaps JoystickImpl::getCapabilities() const
 {
     // Not implemented
-    return JoystickCaps();
+    return {};
 }
 
 
@@ -79,7 +79,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 Joystick::Identification JoystickImpl::getIdentification() const
 {
     // Not implemented
-    return Joystick::Identification();
+    return {};
 }
 
 
@@ -87,7 +87,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     // Not implemented
-    return JoystickState();
+    return {};
 }
 
 } // namespace sf::priv

@@ -39,7 +39,7 @@ namespace sf::priv
 String ClipboardImpl::getString()
 {
     sf::err() << "Clipboard API not implemented for Android.\n";
-    return String();
+    return {};
 }
 
 

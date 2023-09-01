@@ -49,7 +49,7 @@ String ClipboardImpl::getString()
     }
     else
     {
-        return String();
+        return {};
     }
 }
 

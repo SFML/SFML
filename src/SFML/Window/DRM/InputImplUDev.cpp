@@ -682,7 +682,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger)
             return slot.pos;
     }
 
-    return Vector2i();
+    return {};
 }
 
 

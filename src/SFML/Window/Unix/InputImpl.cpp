@@ -138,7 +138,7 @@ Vector2i InputImpl::getMousePosition()
     // Close the connection with the X server
     closeDisplay(display);
 
-    return Vector2i(gx, gy);
+    return {gx, gy};
 }
 
 
@@ -165,11 +165,11 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
         // Close the connection with the X server
         closeDisplay(display);
 
-        return Vector2i(x, y);
+        return {x, y};
     }
     else
     {
-        return Vector2i();
+        return {};
     }
 }
 
@@ -218,7 +218,7 @@ bool InputImpl::isTouchDown(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 
@@ -226,7 +226,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 } // namespace sf::priv

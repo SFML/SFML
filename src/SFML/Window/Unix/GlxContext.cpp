@@ -400,7 +400,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
         // Should never happen...
         err() << "No GLX visual found. You should check your graphics driver" << std::endl;
 
-        return XVisualInfo();
+        return {};
     }
 }
 

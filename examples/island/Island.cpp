@@ -341,7 +341,7 @@ float getMoisture(unsigned int x, unsigned int y)
 ////////////////////////////////////////////////////////////
 sf::Color colorFromFloats(float r, float g, float b)
 {
-    return sf::Color(static_cast<std::uint8_t>(r), static_cast<std::uint8_t>(g), static_cast<std::uint8_t>(b));
+    return {static_cast<std::uint8_t>(r), static_cast<std::uint8_t>(g), static_cast<std::uint8_t>(b)};
 }
 
 sf::Color getLowlandsTerrainColor(float moisture)
@@ -451,7 +451,7 @@ sf::Vector2f computeNormal(float left, float right, float bottom, float top)
     crossProduct /= crossProduct.z;
 
     // Return "compressed" normal
-    return sf::Vector2f(crossProduct.x, crossProduct.y);
+    return {crossProduct.x, crossProduct.y};
 }
 
 

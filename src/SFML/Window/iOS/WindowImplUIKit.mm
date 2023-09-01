@@ -109,8 +109,8 @@ WindowHandle WindowImplUIKit::getNativeHandle() const
 Vector2i WindowImplUIKit::getPosition() const
 {
     const CGPoint origin = m_window.frame.origin;
-    return Vector2i(static_cast<int>(origin.x * static_cast<double>(m_backingScale)),
-                    static_cast<int>(origin.y * static_cast<double>(m_backingScale)));
+    return {static_cast<int>(origin.x * static_cast<double>(m_backingScale)),
+            static_cast<int>(origin.y * static_cast<double>(m_backingScale))};
 }
 
 
@@ -124,8 +124,8 @@ void WindowImplUIKit::setPosition(const Vector2i& /* position */)
 Vector2u WindowImplUIKit::getSize() const
 {
     const CGRect physicalFrame = m_window.frame;
-    return Vector2u(static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)),
-                    static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale)));
+    return {static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)),
+            static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale))};
 }
 
 

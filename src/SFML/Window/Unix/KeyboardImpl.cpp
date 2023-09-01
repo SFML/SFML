@@ -677,7 +677,7 @@ String KeyboardImpl::getDescription(Keyboard::Scancode code)
         const char32_t unicode = keysymToUnicode(keysym);
 
         if (unicode != 0)
-            return String(unicode);
+            return {unicode};
     }
 
     // Fallback to our best guess for the keys that are known to be independent of the layout.
