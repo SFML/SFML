@@ -365,7 +365,7 @@ Image Texture::copyToImage() const
 {
     // Easy case: empty texture
     if (!m_texture)
-        return Image();
+        return {};
 
     const TransientContextLock lock;
 

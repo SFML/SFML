@@ -209,7 +209,7 @@ Ftp::Response Ftp::keepAlive()
 ////////////////////////////////////////////////////////////
 Ftp::DirectoryResponse Ftp::getWorkingDirectory()
 {
-    return DirectoryResponse(sendCommand("PWD"));
+    return {sendCommand("PWD")};
 }
 
 
@@ -234,7 +234,7 @@ Ftp::ListingResponse Ftp::getDirectoryListing(const std::string& directory)
         }
     }
 
-    return ListingResponse(response, directoryData.str());
+    return {response, directoryData.str()};
 }
 
 

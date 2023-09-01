@@ -71,7 +71,7 @@ void SensorImpl::close()
 Vector3f SensorImpl::update()
 {
     // To be implemented
-    return Vector3f(0, 0, 0);
+    return {};
 }
 
 

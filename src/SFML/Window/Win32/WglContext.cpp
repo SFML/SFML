@@ -116,7 +116,7 @@ String getErrorString(DWORD errorCode)
 
     std::ostringstream ss;
     ss << "Error " << errorCode;
-    return String(ss.str());
+    return {ss.str()};
 }
 
 

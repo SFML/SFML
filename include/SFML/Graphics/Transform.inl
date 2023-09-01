@@ -63,15 +63,15 @@ constexpr Transform Transform::getInverse() const
     if (det != 0.f)
     {
         // clang-format off
-        return Transform( (m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) / det,
-                         -(m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) / det,
-                          (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]) / det,
-                         -(m_matrix[15] * m_matrix[1] - m_matrix[3] * m_matrix[13]) / det,
-                          (m_matrix[15] * m_matrix[0] - m_matrix[3] * m_matrix[12]) / det,
-                         -(m_matrix[13] * m_matrix[0] - m_matrix[1] * m_matrix[12]) / det,
-                          (m_matrix[7]  * m_matrix[1] - m_matrix[3] * m_matrix[5])  / det,
-                         -(m_matrix[7]  * m_matrix[0] - m_matrix[3] * m_matrix[4])  / det,
-                          (m_matrix[5]  * m_matrix[0] - m_matrix[1] * m_matrix[4])  / det);
+        return {(m_matrix[15] * m_matrix[5] - m_matrix[7] * m_matrix[13]) / det,
+               -(m_matrix[15] * m_matrix[4] - m_matrix[7] * m_matrix[12]) / det,
+                (m_matrix[13] * m_matrix[4] - m_matrix[5] * m_matrix[12]) / det,
+               -(m_matrix[15] * m_matrix[1] - m_matrix[3] * m_matrix[13]) / det,
+                (m_matrix[15] * m_matrix[0] - m_matrix[3] * m_matrix[12]) / det,
+               -(m_matrix[13] * m_matrix[0] - m_matrix[1] * m_matrix[12]) / det,
+                (m_matrix[7]  * m_matrix[1] - m_matrix[3] * m_matrix[5])  / det,
+               -(m_matrix[7]  * m_matrix[0] - m_matrix[3] * m_matrix[4])  / det,
+                (m_matrix[5]  * m_matrix[0] - m_matrix[1] * m_matrix[4])  / det};
         // clang-format on
     }
     else
@@ -84,8 +84,8 @@ constexpr Transform Transform::getInverse() const
 ////////////////////////////////////////////////////////////
 constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
 {
-    return Vector2f(m_matrix[0] * point.x + m_matrix[4] * point.y + m_matrix[12],
-                    m_matrix[1] * point.x + m_matrix[5] * point.y + m_matrix[13]);
+    return {m_matrix[0] * point.x + m_matrix[4] * point.y + m_matrix[12],
+            m_matrix[1] * point.x + m_matrix[5] * point.y + m_matrix[13]};
 }
 
 
@@ -115,7 +115,7 @@ constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
         // clang-format on
     }
 
-    return FloatRect({left, top}, {right - left, bottom - top});
+    return {{left, top}, {right - left, bottom - top}};
 }
 
 

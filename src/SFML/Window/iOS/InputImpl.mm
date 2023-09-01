@@ -84,7 +84,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button /* button */)
 ////////////////////////////////////////////////////////////
 Vector2i InputImpl::getMousePosition()
 {
-    return Vector2i(0, 0);
+    return {};
 }
 
 

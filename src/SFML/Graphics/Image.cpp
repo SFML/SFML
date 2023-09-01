@@ -275,7 +275,7 @@ void Image::setPixel(const Vector2u& coords, const Color& color)
 Color Image::getPixel(const Vector2u& coords) const
 {
     const std::uint8_t* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
-    return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
+    return {pixel[0], pixel[1], pixel[2], pixel[3]};
 }
 
 

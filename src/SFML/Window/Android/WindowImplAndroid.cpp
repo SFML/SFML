@@ -125,7 +125,7 @@ void WindowImplAndroid::processEvents()
 Vector2i WindowImplAndroid::getPosition() const
 {
     // Not applicable
-    return Vector2i(0, 0);
+    return {};
 }
 
 

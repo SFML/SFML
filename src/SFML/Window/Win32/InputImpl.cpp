@@ -647,7 +647,7 @@ Vector2i InputImpl::getMousePosition()
 {
     POINT point;
     GetCursorPos(&point);
-    return Vector2i(point.x, point.y);
+    return {point.x, point.y};
 }
 
 
@@ -660,11 +660,11 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
         POINT point;
         GetCursorPos(&point);
         ScreenToClient(handle, &point);
-        return Vector2i(point.x, point.y);
+        return {point.x, point.y};
     }
     else
     {
-        return Vector2i();
+        return {};
     }
 }
 
@@ -701,7 +701,7 @@ bool InputImpl::isTouchDown(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 
@@ -709,7 +709,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 } // namespace sf::priv

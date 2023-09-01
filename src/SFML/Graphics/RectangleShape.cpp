@@ -68,13 +68,13 @@ Vector2f RectangleShape::getPoint(std::size_t index) const
     {
         default:
         case 0:
-            return Vector2f(0, 0);
+            return {0, 0};
         case 1:
-            return Vector2f(m_size.x, 0);
+            return {m_size.x, 0};
         case 2:
-            return Vector2f(m_size.x, m_size.y);
+            return {m_size.x, m_size.y};
         case 3:
-            return Vector2f(0, m_size.y);
+            return {0, m_size.y};
     }
 }
 

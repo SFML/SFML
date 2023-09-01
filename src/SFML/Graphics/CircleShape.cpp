@@ -79,7 +79,7 @@ Vector2f CircleShape::getPoint(std::size_t index) const
 ////////////////////////////////////////////////////////////
 Vector2f CircleShape::getGeometricCenter() const
 {
-    return Vector2f(m_radius, m_radius);
+    return {m_radius, m_radius};
 }
 
 } // namespace sf

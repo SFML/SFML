@@ -128,12 +128,12 @@ FloatRect VertexArray::getBounds() const
                 bottom = position.y;
         }
 
-        return FloatRect({left, top}, {right - left, bottom - top});
+        return {{left, top}, {right - left, bottom - top}};
     }
     else
     {
         // Array is empty
-        return FloatRect();
+        return {};
     }
 }
 

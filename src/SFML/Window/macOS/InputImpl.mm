@@ -191,7 +191,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 
     // No view ?
     if (view == nil)
-        return Vector2i();
+        return {};
 
     // Use -cursorPositionFromEvent: with nil.
     const NSPoint pos = [view cursorPositionFromEvent:nil];
@@ -250,7 +250,7 @@ bool InputImpl::isTouchDown(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 
@@ -258,7 +258,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
-    return Vector2i();
+    return {};
 }
 
 } // namespace sf::priv

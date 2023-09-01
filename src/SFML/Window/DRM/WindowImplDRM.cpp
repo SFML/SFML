@@ -68,7 +68,7 @@ WindowHandle WindowImplDRM::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplDRM::getPosition() const
 {
-    return Vector2i(0, 0);
+    return {0, 0};
 }
 
 
