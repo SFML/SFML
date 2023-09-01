@@ -170,6 +170,7 @@ Vector2u RenderTexture::getSize() const
 ////////////////////////////////////////////////////////////
 bool RenderTexture::isSrgb() const
 {
+    assert(m_impl && "Must call RenderTexture::create first");
     return m_impl->isSrgb();
 }
 
