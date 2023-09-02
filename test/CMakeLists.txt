@@ -59,6 +59,7 @@ target_compile_definitions(test-sfml-system PRIVATE
 )
 
 set(WINDOW_SRC
+    Window/Clipboard.test.cpp
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
     Window/Cursor.test.cpp
