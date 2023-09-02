@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ConvexShape.hpp>
 
+#include <cassert>
+
 
 namespace sf
 {
@@ -55,6 +57,7 @@ std::size_t ConvexShape::getPointCount() const
 ////////////////////////////////////////////////////////////
 void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
 {
+    assert(index < m_points.size() && "Index is out of bounds");
     m_points[index] = point;
     update();
 }
@@ -63,6 +66,7 @@ void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
 ////////////////////////////////////////////////////////////
 Vector2f ConvexShape::getPoint(std::size_t index) const
 {
+    assert(index < m_points.size() && "Index is out of bounds");
     return m_points[index];
 }
 

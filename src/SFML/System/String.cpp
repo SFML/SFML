@@ -31,6 +31,7 @@
 #include <iterator>
 #include <utility>
 
+#include <cassert>
 #include <cstring>
 
 
@@ -213,6 +214,7 @@ String& String::operator+=(const String& right)
 ////////////////////////////////////////////////////////////
 char32_t String::operator[](std::size_t index) const
 {
+    assert(index < m_string.size() && "Index is out of bounds");
     return m_string[index];
 }
 
@@ -220,6 +222,7 @@ char32_t String::operator[](std::size_t index) const
 ////////////////////////////////////////////////////////////
 char32_t& String::operator[](std::size_t index)
 {
+    assert(index < m_string.size() && "Index is out of bounds");
     return m_string[index];
 }
 
