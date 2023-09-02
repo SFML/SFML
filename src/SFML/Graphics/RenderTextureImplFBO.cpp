@@ -116,17 +116,18 @@ bool RenderTextureImplFBO::isAvailable()
 ////////////////////////////////////////////////////////////
 unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
 {
+#ifdef SFML_OPENGL_ES
+
+    return 0;
+
+#else
+
     const TransientContextLock lock;
-
-    GLint samples = 0; // NOLINT(misc-const-correctness)
-
-#ifndef SFML_OPENGL_ES
-
+    GLint                      samples = 0;
     glCheck(glGetIntegerv(GLEXT_GL_MAX_SAMPLES, &samples));
+    return static_cast<unsigned int>(samples);
 
 #endif
-
-    return static_cast<unsigned int>(samples);
 }
 
 
