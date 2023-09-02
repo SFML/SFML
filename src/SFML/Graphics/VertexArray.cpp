@@ -28,6 +28,8 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <cassert>
+
 
 namespace sf
 {
@@ -51,6 +53,7 @@ std::size_t VertexArray::getVertexCount() const
 ////////////////////////////////////////////////////////////
 Vertex& VertexArray::operator[](std::size_t index)
 {
+    assert(index < m_vertices.size() && "Index is out of bounds");
     return m_vertices[index];
 }
 
@@ -58,6 +61,7 @@ Vertex& VertexArray::operator[](std::size_t index)
 ////////////////////////////////////////////////////////////
 const Vertex& VertexArray::operator[](std::size_t index) const
 {
+    assert(index < m_vertices.size() && "Index is out of bounds");
     return m_vertices[index];
 }
 
