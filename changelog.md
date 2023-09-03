@@ -1,5 +1,36 @@
 # Changelog
 
+## SFML 2.6.1
+
+Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.6.1
+
+### General
+
+-   Stop overwriting CMAKE_MODULE_PATH (#2577)
+-   Loosen restrictions on unknown compilers (#2585)
+-   Fix CI deprecation warnings (#2624)
+-   Fix unused compiler flag error in Clang (#2625)
+-   Disable warnings as errors by default (#2680)
+
+### Window
+
+**Bugfixes**
+
+-   Fix macOS resize event bug (#2618)
+-   Skip ClientMessage events with other window ID unless it is for IM (#2651)
+
+### Graphics
+
+**Bugfixes**
+
+-   Ensure OpenGL extensions are loaded before querying maximum texture size (#2603)
+
+### Audio
+
+**Bugfixes**
+
+-   Remove use of C++11 header (#2591)
+
 ## SFML 2.6.0
 
 Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.6.0
