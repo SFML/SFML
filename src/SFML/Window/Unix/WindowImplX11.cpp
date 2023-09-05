@@ -78,7 +78,7 @@ using ContextType = sf::priv::GlxContext;
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace WindowsImplX11Impl
+namespace WindowImplX11Impl
 {
 sf::priv::WindowImplX11*              fullscreenWindow = nullptr;
 std::vector<sf::priv::WindowImplX11*> allWindows;
@@ -381,7 +381,7 @@ bool isWMAbsolutePositionGood()
                        std::end(wmAbsPosGood),
                        [&](const sf::String& name) { return name == windowManagerName; });
 }
-} // namespace WindowsImplX11Impl
+} // namespace WindowImplX11Impl
 } // namespace
 
 
@@ -434,7 +434,7 @@ struct XDeleter<XRRCrtcInfo>
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Open a connection with the X server
     m_display = openDisplay();
@@ -470,7 +470,7 @@ m_isExternal(false),
 m_fullscreen((style & Style::Fullscreen) != 0),
 m_cursorGrabbed(m_fullscreen)
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Open a connection with the X server
     m_display = openDisplay();
@@ -678,7 +678,7 @@ m_cursorGrabbed(m_fullscreen)
 ////////////////////////////////////////////////////////////
 WindowImplX11::~WindowImplX11()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Cleanup graphical resources
     cleanup();
@@ -729,7 +729,7 @@ WindowHandle WindowImplX11::getNativeHandle() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::processEvents()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     XEvent event;
 
@@ -800,7 +800,7 @@ void WindowImplX11::processEvents()
 ////////////////////////////////////////////////////////////
 Vector2i WindowImplX11::getPosition() const
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Get absolute position of our window relative to root window. This
     // takes into account all information that X11 has, including X11
@@ -1125,7 +1125,7 @@ void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // This has no effect in fullscreen mode
     if (m_fullscreen || (m_cursorGrabbed == grabbed))
@@ -1170,7 +1170,7 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::requestFocus()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Focus is only stolen among SFML windows, not between applications
     // Check the global list of windows to find out whether an SFML window has the focus
@@ -1235,7 +1235,7 @@ bool WindowImplX11::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::grabFocus()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     Atom netActiveWindow = None;
 
@@ -1284,7 +1284,7 @@ void WindowImplX11::grabFocus()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setVideoMode(const VideoMode& mode)
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Skip mode switching if the new mode is equal to the desktop mode
     if (mode == VideoMode::getDesktopMode())
@@ -1376,7 +1376,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::resetVideoMode()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     if (fullscreenWindow == this)
     {
@@ -1438,7 +1438,7 @@ void WindowImplX11::resetVideoMode()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::switchToFullscreen()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     grabFocus();
 
@@ -1494,7 +1494,7 @@ void WindowImplX11::switchToFullscreen()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setProtocols()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     const Atom wmProtocols    = getAtom("WM_PROTOCOLS");
     const Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
@@ -1562,7 +1562,7 @@ void WindowImplX11::setProtocols()
 ////////////////////////////////////////////////////////////
 void WindowImplX11::initialize()
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Create the input context
     m_inputMethod = openXim();
@@ -1678,7 +1678,7 @@ void WindowImplX11::cleanup()
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(XEvent& windowEvent)
 {
-    using namespace WindowsImplX11Impl;
+    using namespace WindowImplX11Impl;
 
     // Convert the X11 event to a sf::Event
     switch (windowEvent.type)
