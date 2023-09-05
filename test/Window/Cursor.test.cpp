@@ -6,8 +6,7 @@
 #include <array>
 #include <type_traits>
 
-// Skip these tests with [.display] because they fail when using DRM which hasn't implemented sf::Cursor
-TEST_CASE("[Window] sf::Cursor", "[.display]")
+TEST_CASE("[Window] sf::Cursor", runDisplayTests())
 {
     SECTION("Type traits")
     {
