@@ -35,9 +35,9 @@ if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
             message(FATAL_ERROR "Failed to download ${MESA3D_URL}")
         endif()
 
-        message(STATUS "Extracting ${MESA3D_ARCH} files from ${MESA3D_ARCHIVE}")
+        message(STATUS "Extracting files from ${MESA3D_ARCHIVE}")
 
-        execute_process(COMMAND "${CMAKE_COMMAND}" -E tar x "${MESA3D_ARCHIVE_PATH}" -- ${MESA3D_ARCH} WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/${MESA3D_ARCHIVE_DIRECTORY}")
+        execute_process(COMMAND "${CMAKE_COMMAND}" -E tar x "${MESA3D_ARCHIVE_PATH}" -- "x86" "x64" WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/${MESA3D_ARCHIVE_DIRECTORY}")
 
         file(REMOVE "${MESA3D_ARCHIVE_PATH}")
     endif()
