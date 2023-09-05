@@ -191,6 +191,14 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(!texture.isRepeated());
     }
 
+    SECTION("generateMipmap()")
+    {
+        sf::Texture texture;
+        CHECK(!texture.generateMipmap());
+        CHECK(texture.create({100, 100}));
+        CHECK(texture.generateMipmap());
+    }
+
     SECTION("swap()")
     {
         constexpr std::uint8_t blue[]  = {0x00, 0x00, 0xFF, 0xFF};
