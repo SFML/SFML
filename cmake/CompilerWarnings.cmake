@@ -4,7 +4,7 @@
 
 # Helper function to enable compiler warnings for a specific target
 function(set_target_warnings target)
-    option(SFML_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+    option(SFML_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
 
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE
