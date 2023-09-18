@@ -122,7 +122,7 @@ public:
     /// \brief Move assignment
     ///
     ////////////////////////////////////////////////////////////
-    WindowBase& operator=(WindowBase&&) noexcept;
+    WindowBase& operator=(WindowBase&& other) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
