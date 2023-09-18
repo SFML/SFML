@@ -96,7 +96,7 @@ public:
     /// \brief Move constructor
     ///
     ////////////////////////////////////////////////////////////
-    WindowBase(WindowBase&&) noexcept;
+    WindowBase(WindowBase&& other) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

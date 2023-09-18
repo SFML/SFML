@@ -58,7 +58,10 @@ Window::Window(WindowHandle handle, const ContextSettings& settings)
 
 
 ////////////////////////////////////////////////////////////
-sf::Window::Window(Window&&) noexcept = default;
+sf::Window::Window(Window&& other) noexcept : WindowBase(std::move(other)), GlResource(std::move(other))
+{
+    other.close();
+}
 
 
 ////////////////////////////////////////////////////////////

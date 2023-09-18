@@ -69,7 +69,14 @@ WindowBase::WindowBase(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(WindowBase&&) noexcept = default;
+WindowBase::WindowBase(WindowBase&& other) noexcept :
+m_impl(std::exchange(other.m_impl, nullptr)),
+m_size(std::exchange(other.m_size, {}))
+{
+    if (&other == getFullscreenWindow())
+        setFullscreenWindow(this);
+    other.close();
+}
 
 
 ////////////////////////////////////////////////////////////
