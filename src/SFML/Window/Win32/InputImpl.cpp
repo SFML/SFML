@@ -154,7 +154,7 @@ int sfKeyToVirtualKey(Keyboard::Key key)
 {
     // clang-format off
     switch (key)
-    {      
+    {
         case Keyboard::A:          return 'A';
         case Keyboard::B:          return 'B';
         case Keyboard::C:          return 'C';
@@ -216,7 +216,7 @@ int sfKeyToVirtualKey(Keyboard::Key key)
         case Keyboard::Enter:      return VK_RETURN;
         case Keyboard::Backspace:  return VK_BACK;
         case Keyboard::Tab:        return VK_TAB;
-        case Keyboard::PageUp:     return VK_PRIOR; 
+        case Keyboard::PageUp:     return VK_PRIOR;
         case Keyboard::PageDown:   return VK_NEXT;
         case Keyboard::End:        return VK_END;
         case Keyboard::Home:       return VK_HOME;
@@ -295,7 +295,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::X: return 0x2D;
         case Keyboard::Scan::Y: return 0x15;
         case Keyboard::Scan::Z: return 0x2C;
-    
+
         case Keyboard::Scan::Num1: return 0x02;
         case Keyboard::Scan::Num2: return 0x03;
         case Keyboard::Scan::Num3: return 0x04;
@@ -306,7 +306,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::Num8: return 0x09;
         case Keyboard::Scan::Num9: return 0x0A;
         case Keyboard::Scan::Num0: return 0x0B;
-    
+
         case Keyboard::Scan::Enter:      return 0x1C;
         case Keyboard::Scan::Escape:     return 0x01;
         case Keyboard::Scan::Backspace:  return 0x0E;
@@ -323,7 +323,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::Comma:      return 0x33;
         case Keyboard::Scan::Period:     return 0x34;
         case Keyboard::Scan::Slash:      return 0x35;
-    
+
         case Keyboard::Scan::F1:  return 0x3B;
         case Keyboard::Scan::F2:  return 0x3C;
         case Keyboard::Scan::F3:  return 0x3D;
@@ -348,7 +348,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::F22: return 0x6D;
         case Keyboard::Scan::F23: return 0x6E;
         case Keyboard::Scan::F24: return 0x76;
-    
+
         case Keyboard::Scan::CapsLock:    return 0x3A;
         case Keyboard::Scan::PrintScreen: return 0xE037;
         case Keyboard::Scan::ScrollLock:  return 0x46;
@@ -372,7 +372,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::NumpadEqual:    return 0x7E;
         case Keyboard::Scan::NumpadEnter:    return 0xE01C;
         case Keyboard::Scan::NumpadDecimal:  return 0x53;
-        
+
         case Keyboard::Scan::Numpad1:        return 0x4F;
         case Keyboard::Scan::Numpad2:        return 0x50;
         case Keyboard::Scan::Numpad3:        return 0x51;
@@ -383,7 +383,7 @@ WORD sfScanToWinScan(Keyboard::Scancode code)
         case Keyboard::Scan::Numpad8:        return 0x48;
         case Keyboard::Scan::Numpad9:        return 0x49;
         case Keyboard::Scan::Numpad0:        return 0x52;
-    
+
         case Keyboard::Scan::NonUsBackslash: return 0x56;
         // No known scancode for Keyboard::Scan::Application
         // No known scancode for Keyboard::Scan::Execute
