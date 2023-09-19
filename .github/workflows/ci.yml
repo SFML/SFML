@@ -127,7 +127,7 @@ jobs:
     - name: Build
       shell: bash
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
-      
+
     - name: Prepare Test
       shell: bash
       run: |
