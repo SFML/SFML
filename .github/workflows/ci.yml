@@ -145,34 +145,23 @@ jobs:
         fi
         # Make sure the build/bin directory exists so that the find command does not fail if no executables are built
         mkdir -p build/bin
+        # Make use of a test to print OpenGL vendor/renderer/version info to the console
+        find build/bin -name test-sfml-window -or -name test-sfml-window.exe -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
 
     - name: Test
-      uses: nick-fields/retry@v2
-      with:
-        max_attempts: 10
-        timeout_minutes: 3
-        retry_wait_seconds: 5
-        warning_on_retry: false
-        shell: bash
-        command: |
-          set -e
-          if [ "${{ runner.os }}" == "Windows" ]; then
-            # Make use of a test to print OpenGL vendor/renderer/version info to the console
-            # We have to convert the backslashes in $GITHUB_WORKSPACE to (forward) slashes so bash doesn't try to escape them in the sh command
-            find $(echo $GITHUB_WORKSPACE | sed 's/\\\\/\\//g')/build/bin -name test-sfml-window.exe -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
-            # Run the tests
-            cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
-            # Coverage is already generated on Windows when running tests.
-          else
-            # Make use of a test to print OpenGL vendor/renderer/version info to the console
-            find build/bin -name test-sfml-window -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
-            # Run the tests
-            ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
-            # Run gcovr to extract coverage information from the test run
-            if [ "${{ matrix.type.name }}" == "Debug" ]; then
-              gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
-            fi
-          fi
+      if: runner.os == 'Windows'
+      shell: bash
+      run: cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+    - name: Test
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
+        # Run gcovr to extract coverage information from the test run
+        if [ "${{ matrix.type.name }}" == "Debug" ]; then
+          gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
+        fi
 
     - name: Download Codecov Uploader
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
