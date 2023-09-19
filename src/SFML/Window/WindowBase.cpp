@@ -70,19 +70,6 @@ WindowBase::WindowBase(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::WindowBase(WindowBase&& other) noexcept :
-m_impl(std::exchange(other.m_impl, nullptr)),
-m_size(std::exchange(other.m_size, {}))
-{
-    // Check fullscreen style and set to new object
-    if (&other == getFullscreenWindow())
-        setFullscreenWindow(this);
-
-    other.close();
-}
-
-
-////////////////////////////////////////////////////////////
 WindowBase::~WindowBase()
 {
     WindowBase::close();
@@ -90,19 +77,32 @@ WindowBase::~WindowBase()
 
 
 ////////////////////////////////////////////////////////////
-WindowBase& WindowBase::operator=(WindowBase&& other) noexcept
+WindowBase::WindowBase(WindowBase&& windowBase) noexcept :
+m_impl(std::exchange(windowBase.m_impl, nullptr)),
+m_size(std::exchange(windowBase.m_size, {}))
 {
-    if (&other != this)
-    {
-        m_impl = std::exchange(other.m_impl, nullptr);
-        m_size = std::exchange(other.m_size, {});
+    // Check fullscreen style and set to new object
+    if (&windowBase == getFullscreenWindow())
+        setFullscreenWindow(this);
 
-        // Check fullscreen style and set to new object
-        if (&other == getFullscreenWindow())
-            setFullscreenWindow(this);
+    windowBase.close();
+}
 
-        other.close();
-    }
+
+////////////////////////////////////////////////////////////
+WindowBase& WindowBase::operator=(WindowBase&& windowBase) noexcept
+{
+    if (&windowBase == this)
+        return *this;
+
+    m_impl = std::exchange(windowBase.m_impl, nullptr);
+    m_size = std::exchange(windowBase.m_size, {});
+
+    // Check fullscreen style and set to new object
+    if (&windowBase == getFullscreenWindow())
+        setFullscreenWindow(this);
+
+    windowBase.close();
     return *this;
 }
 
@@ -277,9 +277,7 @@ void WindowBase::setMinimumSize(const std::optional<Vector2u>& minimumSize)
                 return true;
             return minimumSize->x <= m_impl->getMaximumSize()->x && minimumSize->y <= m_impl->getMaximumSize()->y;
         };
-        assert(validateMinimumSize() &&
-               "Minimum size cannot be bigger than the maximum size along either "
-               "axis");
+        assert(validateMinimumSize() && "Minimum size cannot be bigger than the maximum size along either axis");
 
         m_impl->setMinimumSize(minimumSize);
         setSize(getSize());
@@ -298,9 +296,7 @@ void WindowBase::setMaximumSize(const std::optional<Vector2u>& maximumSize)
                 return true;
             return maximumSize->x >= m_impl->getMinimumSize()->x && maximumSize->y >= m_impl->getMinimumSize()->y;
         };
-        assert(validateMaxiumSize() &&
-               "Maximum size cannot be smaller than the minimum size along either "
-               "axis");
+        assert(validateMaxiumSize() && "Maximum size cannot be smaller than the minimum size along either axis");
 
         m_impl->setMaximumSize(maximumSize);
         setSize(getSize());

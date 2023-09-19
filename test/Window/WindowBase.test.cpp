@@ -48,8 +48,11 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
+    }
 
-        SECTION("Move construction")
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
         {
             sf::WindowBase       movedWindowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
             const sf::WindowBase windowBase(std::move(movedWindowBase));
@@ -58,7 +61,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
-        SECTION("Move assignment")
+        SECTION("Assignment")
         {
             sf::WindowBase movedWindowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
             sf::WindowBase windowBase;

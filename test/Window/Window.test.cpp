@@ -29,18 +29,25 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         CHECK(window.getSize() == sf::Vector2u(256, 256));
     }
 
-    SECTION("Move construction")
+    SECTION("Move semantics")
     {
-        sf::Window movedWindow(sf::VideoMode({256, 256}), "Window Title", sf::Style::Default, sf::ContextSettings());
-        const sf::Window window(std::move(movedWindow));
-        CHECK(window.getSize() == sf::Vector2u(256, 256));
-    }
+        SECTION("Construction")
+        {
+            sf::Window       movedWindow(sf::VideoMode({256, 256}), "Window Title");
+            const sf::Window window(std::move(movedWindow));
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(256, 256));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+        }
 
-    SECTION("Move assignment")
-    {
-        sf::Window movedWindow(sf::VideoMode({256, 256}), "Window Title", sf::Style::Default, sf::ContextSettings());
-        sf::Window window;
-        window = std::move(movedWindow);
-        CHECK(window.getSize() == sf::Vector2u(256, 256));
+        SECTION("Assignment")
+        {
+            sf::Window movedWindow(sf::VideoMode({256, 256}), "Window Title");
+            sf::Window window;
+            window = std::move(movedWindow);
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(256, 256));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+        }
     }
 }
