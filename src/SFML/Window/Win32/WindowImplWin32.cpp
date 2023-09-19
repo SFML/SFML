@@ -455,6 +455,21 @@ bool WindowImplWin32::hasFocus() const
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::setImePreEditPosition(const Vector2i& position)
+{
+    if (HIMC himc = ImmGetContext(m_handle); himc != nullptr)
+    {
+        COMPOSITIONFORM cf;
+        cf.ptCurrentPos.x = static_cast<LONG>(position.x);
+        cf.ptCurrentPos.y = static_cast<LONG>(position.y);
+        cf.dwStyle        = CFS_FORCE_POSITION; // Don't let the IME adjust the position
+        ImmSetCompositionWindow(himc, &cf);
+        ImmReleaseContext(m_handle, himc);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::registerWindowClass()
 {
     WNDCLASSW windowClass;
@@ -671,7 +686,7 @@ Keyboard::Scancode WindowImplWin32::toScancode(WPARAM wParam, LPARAM lParam)
         case 86: return Keyboard::Scan::NonUsBackslash;
         case 87: return Keyboard::Scan::F11;
         case 88: return Keyboard::Scan::F12;
-    
+
         case 91: return (HIWORD(lParam) & KF_EXTENDED) ? Keyboard::Scan::LSystem : Keyboard::Scan::Unknown;
         case 92: return (HIWORD(lParam) & KF_EXTENDED) ? Keyboard::Scan::RSystem : Keyboard::Scan::Unknown;
         case 93: return (HIWORD(lParam) & KF_EXTENDED) ? Keyboard::Scan::Menu    : Keyboard::Scan::Unknown;
