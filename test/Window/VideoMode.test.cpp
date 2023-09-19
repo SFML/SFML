@@ -3,9 +3,10 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
+#include <algorithm>
 #include <type_traits>
 
-TEST_CASE("[Window] sf::VideoMode")
+TEST_CASE("[Window] sf::VideoMode", runDisplayTests())
 {
     SECTION("Type traits")
     {
@@ -19,24 +20,36 @@ TEST_CASE("[Window] sf::VideoMode")
     {
         SECTION("Default constructor")
         {
-            sf::VideoMode videoMode;
+            const sf::VideoMode videoMode;
             CHECK(videoMode.size == sf::Vector2u(0, 0));
             CHECK(videoMode.bitsPerPixel == 0);
         }
 
         SECTION("Width, height constructor")
         {
-            sf::VideoMode videoMode({800, 600});
+            const sf::VideoMode videoMode({800, 600});
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 32);
         }
 
         SECTION("Width, height, bit depth constructor")
         {
-            sf::VideoMode videoMode({800, 600}, 24);
+            const sf::VideoMode videoMode({800, 600}, 24);
             CHECK(videoMode.size == sf::Vector2u(800, 600));
             CHECK(videoMode.bitsPerPixel == 24);
         }
+    }
+
+    SECTION("getFullscreenModes()")
+    {
+        const auto& modes = sf::VideoMode::getFullscreenModes();
+        CHECK(std::is_sorted(modes.begin(), modes.end(), std::greater<>()));
+    }
+
+    SECTION("isValid()")
+    {
+        const sf::VideoMode videoMode;
+        CHECK(!videoMode.isValid());
     }
 
     SECTION("Operators")
