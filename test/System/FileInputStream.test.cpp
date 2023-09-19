@@ -17,21 +17,13 @@ std::filesystem::path getTemporaryFilePath()
     static int counter = 0;
 
     std::ostringstream oss;
-    oss << "sfmltemp" << counter << ".tmp";
-    ++counter;
+    oss << "sfmltemp" << counter++ << ".tmp";
 
-    std::filesystem::path result;
-    result /= std::filesystem::temp_directory_path();
-    result /= oss.str();
-
-    return result;
+    return std::filesystem::temp_directory_path() / oss.str();
 }
 
 class TemporaryFile
 {
-private:
-    std::filesystem::path m_path;
-
 public:
     // Create a temporary file with a randomly generated path, containing 'contents'.
     TemporaryFile(const std::string& contents) : m_path(getTemporaryFilePath())
@@ -60,11 +52,16 @@ public:
     {
         return m_path;
     }
+
+private:
+    std::filesystem::path m_path;
 };
 } // namespace
 
 TEST_CASE("[System] sf::FileInputStream")
 {
+    using namespace std::string_view_literals;
+
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::FileInputStream>);
@@ -73,35 +70,55 @@ TEST_CASE("[System] sf::FileInputStream")
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::FileInputStream>);
     }
 
-    SECTION("Empty stream")
+    SECTION("Default constructor")
     {
-        sf::FileInputStream fis;
+        sf::FileInputStream fileInputStream;
+        CHECK(fileInputStream.read(nullptr, 0) == -1);
+        CHECK(fileInputStream.seek(0) == -1);
+        CHECK(fileInputStream.tell() == -1);
+        CHECK(fileInputStream.getSize() == -1);
+    }
 
-        CHECK(fis.read(nullptr, 0) == -1);
-        CHECK(fis.seek(0) == -1);
-        CHECK(fis.tell() == -1);
+    const TemporaryFile temporaryFile("Hello world");
+    char                buffer[32];
+
+    SECTION("Move semantics")
+    {
+        SECTION("Move constructor")
+        {
+            sf::FileInputStream movedFileInputStream;
+            REQUIRE(movedFileInputStream.open(temporaryFile.getPath()));
+
+            sf::FileInputStream fileInputStream = std::move(movedFileInputStream);
+            CHECK(fileInputStream.read(buffer, 6) == 6);
+            CHECK(fileInputStream.tell() == 6);
+            CHECK(fileInputStream.getSize() == 11);
+            CHECK(std::string_view(buffer, 6) == "Hello "sv);
+        }
+
+        SECTION("Move assignment")
+        {
+            sf::FileInputStream movedFileInputStream;
+            REQUIRE(movedFileInputStream.open(temporaryFile.getPath()));
+
+            sf::FileInputStream fileInputStream;
+            fileInputStream = std::move(movedFileInputStream);
+            CHECK(fileInputStream.read(buffer, 6) == 6);
+            CHECK(fileInputStream.tell() == 6);
+            CHECK(fileInputStream.getSize() == 11);
+            CHECK(std::string_view(buffer, 6) == "Hello "sv);
+        }
     }
 
     SECTION("Temporary file stream")
     {
-        const std::string fileContents = "hello world";
-
-        const TemporaryFile tmpFile(fileContents);
-        sf::FileInputStream fis;
-
-        REQUIRE(fis.open(tmpFile.getPath()));
-
-        char buffer[32];
-
-        CHECK(fis.read(buffer, 5) == 5);
-        CHECK(std::string_view(buffer, 5) == std::string_view(fileContents.c_str(), 5));
-
-        SECTION("Move semantics")
-        {
-            sf::FileInputStream fis2 = std::move(fis);
-
-            CHECK(fis2.read(buffer, 6) == 6);
-            CHECK(std::string_view(buffer, 6) == std::string_view(fileContents.c_str() + 5, 6));
-        }
+        sf::FileInputStream fileInputStream;
+        REQUIRE(fileInputStream.open(temporaryFile.getPath()));
+        CHECK(fileInputStream.read(buffer, 5) == 5);
+        CHECK(fileInputStream.tell() == 5);
+        CHECK(fileInputStream.getSize() == 11);
+        CHECK(std::string_view(buffer, 5) == "Hello"sv);
+        CHECK(fileInputStream.seek(6) == 6);
+        CHECK(fileInputStream.tell() == 6);
     }
 }
