@@ -22,10 +22,90 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
 
     SECTION("Construction")
     {
-        const sf::Window window(sf::VideoMode(sf::Vector2u(256, 256), 32),
-                                "Window Title",
-                                sf::Style::Default,
-                                sf::ContextSettings());
-        CHECK(window.getSize() == sf::Vector2u(256, 256));
+        SECTION("Default constructor")
+        {
+            const sf::Window window;
+            CHECK(!window.isOpen());
+            CHECK(window.getPosition() == sf::Vector2i());
+            CHECK(window.getSize() == sf::Vector2u());
+            CHECK(!window.hasFocus());
+            CHECK(window.getNativeHandle() == sf::WindowHandle());
+            CHECK(window.getSettings().depthBits == 0);
+            CHECK(window.getSettings().stencilBits == 0);
+            CHECK(window.getSettings().antialiasingLevel == 0);
+            CHECK(window.getSettings().majorVersion == 1);
+            CHECK(window.getSettings().minorVersion == 1);
+            CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
+            CHECK(!window.getSettings().sRgbCapable);
+        }
+
+        SECTION("Mode and title constructor")
+        {
+            const sf::Window window(sf::VideoMode({360, 240}), "Window Tests");
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(360, 240));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+            CHECK(window.getSettings().stencilBits == 0);
+            CHECK(window.getSettings().antialiasingLevel == 0);
+            CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
+            CHECK(!window.getSettings().sRgbCapable);
+        }
+
+        SECTION("Mode, title, and style constructor")
+        {
+            const sf::Window window(sf::VideoMode({360, 240}), "Window Tests", sf::Style::Resize);
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(360, 240));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+            CHECK(window.getSettings().stencilBits == 0);
+            CHECK(window.getSettings().antialiasingLevel == 0);
+            CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
+            CHECK(!window.getSettings().sRgbCapable);
+        }
+
+        SECTION("Mode, title, style, and context settings constructor")
+        {
+            const sf::Window window(sf::VideoMode({360, 240}), "Window Tests", sf::Style::Resize, sf::ContextSettings(1, 1, 1));
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(360, 240));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+        }
+    }
+
+    SECTION("create()")
+    {
+        sf::Window window;
+
+        SECTION("Mode and title")
+        {
+            window.create(sf::VideoMode({240, 360}), "Window Tests");
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(240, 360));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+            CHECK(window.getSettings().stencilBits == 0);
+            CHECK(window.getSettings().antialiasingLevel == 0);
+            CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
+            CHECK(!window.getSettings().sRgbCapable);
+        }
+
+        SECTION("Mode, title, and style")
+        {
+            window.create(sf::VideoMode({240, 360}), "Window Tests", sf::Style::Resize);
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(240, 360));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+            CHECK(window.getSettings().stencilBits == 0);
+            CHECK(window.getSettings().antialiasingLevel == 0);
+            CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
+            CHECK(!window.getSettings().sRgbCapable);
+        }
+
+        SECTION("Mode, title, style, and context settings")
+        {
+            window.create(sf::VideoMode({240, 360}), "Window Tests", sf::Style::Resize, sf::ContextSettings(1, 1, 1));
+            CHECK(window.isOpen());
+            CHECK(window.getSize() == sf::Vector2u(240, 360));
+            CHECK(window.getNativeHandle() != sf::WindowHandle());
+        }
     }
 }
