@@ -110,14 +110,14 @@ jobs:
         # brew update
         brew install gcovr ninja || true
 
-    - name: Install OpenCppCoverage and add to PATH
+    - name: Install Windows Tools
       uses: nick-fields/retry@v2
-      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
+      if: runner.os == 'Windows'
       with:
         max_attempts: 10
         timeout_minutes: 3
         command: |
-          choco install OpenCppCoverage -y
+          choco install ninja OpenCppCoverage -y
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Configure CMake
@@ -241,7 +241,9 @@ jobs:
 
     - name: Install Windows Dependencies
       if: runner.os == 'Windows'
-      run: curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
+      run: |
+        choco install ninja
+        curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
