@@ -26,11 +26,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/HIDInputManager.hpp>
-#include <SFML/Window/macOS/InputImpl.hpp>
 #import <SFML/Window/macOS/SFOpenGLView.h>
 
 #include <SFML/System/Err.hpp>
@@ -44,7 +44,7 @@
 ///
 ////////////////////////////////////////////////////////////
 
-namespace sf::priv
+namespace
 {
 ////////////////////////////////////////////////////////////
 /// \brief Extract the dedicated SFOpenGLView from the SFML window
@@ -53,7 +53,7 @@ namespace sf::priv
 /// \return nil if something went wrong or a SFOpenGLView*.
 ///
 ////////////////////////////////////////////////////////////
-SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
+SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const sf::WindowBase& window)
 {
     const id nsHandle = static_cast<id>(window.getNativeHandle());
 
@@ -115,10 +115,12 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const WindowBase& window)
 
     return view;
 }
+}
 
-
+namespace sf::priv::InputImpl
+{
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key key)
+bool isKeyPressed(Keyboard::Key key)
 {
     const AutoreleasePool pool;
     return HIDInputManager::getInstance().isKeyPressed(key);
@@ -126,42 +128,42 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Scancode code)
+bool isKeyPressed(Keyboard::Scancode code)
 {
     return HIDInputManager::getInstance().isKeyPressed(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
+Keyboard::Key localize(Keyboard::Scancode code)
 {
     return HIDInputManager::getInstance().localize(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
+Keyboard::Scancode delocalize(Keyboard::Key key)
 {
     return HIDInputManager::getInstance().delocalize(key);
 }
 
 
 ////////////////////////////////////////////////////////////
-String InputImpl::getDescription(Keyboard::Scancode code)
+String getDescription(Keyboard::Scancode code)
 {
     return HIDInputManager::getInstance().getDescription(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
+void setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isMouseButtonPressed(Mouse::Button button)
+bool isMouseButtonPressed(Mouse::Button button)
 {
     const AutoreleasePool pool;
     const NSUInteger      state = [NSEvent pressedMouseButtons];
@@ -171,7 +173,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition()
+Vector2i getMousePosition()
 {
     const AutoreleasePool pool;
     // Reverse Y axis to match SFML coord.
@@ -184,7 +186,7 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
+Vector2i getMousePosition(const sf::WindowBase& relativeTo)
 {
     const AutoreleasePool pool;
     SFOpenGLView* const   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
@@ -202,7 +204,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void setMousePosition(const Vector2i& position)
 {
     const AutoreleasePool pool;
     // Here we don't need to reverse the coordinates.
@@ -221,7 +223,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     const AutoreleasePool pool;
     SFOpenGLView* const   view = getSFOpenGLViewFromSFMLWindow(relativeTo);
@@ -239,7 +241,7 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int /*finger*/)
+bool isTouchDown(unsigned int /*finger*/)
 {
     // Not applicable
     return false;
@@ -247,7 +249,7 @@ bool InputImpl::isTouchDown(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+Vector2i getTouchPosition(unsigned int /*finger*/)
 {
     // Not applicable
     return {};
@@ -255,7 +257,7 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
+Vector2i getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
     return {};

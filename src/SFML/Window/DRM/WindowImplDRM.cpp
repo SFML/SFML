@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/DRM/DRMContext.hpp>
-#include <SFML/Window/DRM/InputImplUDev.hpp>
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -36,6 +36,32 @@
 
 namespace sf::priv
 {
+
+// Defined in DRM/InputImpl.cpp because they require access to that file's global state
+namespace InputImpl
+{
+////////////////////////////////////////////////////////////
+/// \brief Fetch input event from event queue
+///
+/// \return False if event queue is empty
+///
+////////////////////////////////////////////////////////////
+bool checkEvent(sf::Event& event);
+
+////////////////////////////////////////////////////////////
+/// \brief Backup terminal configuration and disable console feedback
+///
+////////////////////////////////////////////////////////////
+void setTerminalConfig();
+
+////////////////////////////////////////////////////////////
+/// \brief Restore terminal configuration from backup
+///
+////////////////////////////////////////////////////////////
+void restoreTerminalConfig();
+} // namespace InputImpl
+
+
 ////////////////////////////////////////////////////////////
 WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
 {

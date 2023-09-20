@@ -25,7 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/DRM/InputImplUDev.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/InputImpl.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -566,10 +567,10 @@ void update()
 }
 } // namespace
 
-namespace sf::priv
+namespace sf::priv::InputImpl
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key key)
+bool isKeyPressed(Keyboard::Key key)
 {
     const std::lock_guard lock(inputMutex);
     if ((key < 0) || (key >= static_cast<int>(keyMap.size())))
@@ -579,8 +580,9 @@ bool InputImpl::isKeyPressed(Keyboard::Key key)
     return keyMap[static_cast<std::size_t>(key)];
 }
 
+
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Scancode /* code */)
+bool isKeyPressed(Keyboard::Scancode /* code */)
 {
     // TODO: not implemented
     err() << "sf::Keyboard::isKeyPressed(Keyboard::Scancode) is not implemented for DRM." << std::endl;
@@ -589,7 +591,7 @@ bool InputImpl::isKeyPressed(Keyboard::Scancode /* code */)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
+Keyboard::Key localize(Keyboard::Scancode /* code */)
 {
     // TODO: not implemented
     err() << "sf::Keyboard::localize is not implemented for DRM." << std::endl;
@@ -598,7 +600,7 @@ Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
+Keyboard::Scancode delocalize(Keyboard::Key /* key */)
 {
     // TODO: not implemented
     err() << "sf::Keyboard::delocalize is not implemented for DRM." << std::endl;
@@ -607,7 +609,7 @@ Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
 
 
 ////////////////////////////////////////////////////////////
-String InputImpl::getDescription(Keyboard::Scancode /* code */)
+String getDescription(Keyboard::Scancode /* code */)
 {
     // TODO: not implemented
     err() << "sf::Keyboard::getDescription is not implemented for DRM." << std::endl;
@@ -616,14 +618,14 @@ String InputImpl::getDescription(Keyboard::Scancode /* code */)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
+void setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isMouseButtonPressed(Mouse::Button button)
+bool isMouseButtonPressed(Mouse::Button button)
 {
     const std::lock_guard lock(inputMutex);
     if ((button < 0) || (button >= static_cast<int>(mouseMap.size())))
@@ -635,7 +637,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition()
+Vector2i getMousePosition()
 {
     const std::lock_guard lock(inputMutex);
     return mousePos;
@@ -643,14 +645,14 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& /*relativeTo*/)
+Vector2i getMousePosition(const WindowBase& /*relativeTo*/)
 {
     return getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void setMousePosition(const Vector2i& position)
 {
     const std::lock_guard lock(inputMutex);
     mousePos = position;
@@ -658,14 +660,14 @@ void InputImpl::setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& /*relativeTo*/)
+void setMousePosition(const Vector2i& position, const WindowBase& /*relativeTo*/)
 {
     setMousePosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int finger)
+bool isTouchDown(unsigned int finger)
 {
     return std::any_of(touchSlots.cbegin(),
                        touchSlots.cend(),
@@ -674,7 +676,7 @@ bool InputImpl::isTouchDown(unsigned int finger)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger)
+Vector2i getTouchPosition(unsigned int finger)
 {
     for (const auto& slot : touchSlots)
     {
@@ -687,14 +689,14 @@ Vector2i InputImpl::getTouchPosition(unsigned int finger)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /*relativeTo*/)
+Vector2i getTouchPosition(unsigned int finger, const WindowBase& /*relativeTo*/)
 {
     return getTouchPosition(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::checkEvent(sf::Event& event)
+bool checkEvent(sf::Event& event)
 {
     const std::lock_guard lock(inputMutex);
     if (!eventQueue.empty())
@@ -728,7 +730,7 @@ bool InputImpl::checkEvent(sf::Event& event)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setTerminalConfig()
+void setTerminalConfig()
 {
     const std::lock_guard lock(inputMutex);
     initFileDescriptors();
@@ -745,7 +747,7 @@ void InputImpl::setTerminalConfig()
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::restoreTerminalConfig()
+void restoreTerminalConfig()
 {
     const std::lock_guard lock(inputMutex);
     initFileDescriptors();
@@ -754,4 +756,4 @@ void InputImpl::restoreTerminalConfig()
     tcflush(STDIN_FILENO, TCIFLUSH);                      // flush the buffer
 }
 
-} // namespace sf::priv
+} // namespace sf::priv::InputImpl

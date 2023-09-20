@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>

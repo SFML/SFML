@@ -60,7 +60,6 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/ClipboardImpl.hpp
         ${SRCROOT}/Win32/ClipboardImpl.cpp
         ${SRCROOT}/Win32/InputImpl.cpp
-        ${SRCROOT}/Win32/InputImpl.hpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
         ${SRCROOT}/Win32/JoystickImpl.hpp
         ${SRCROOT}/Win32/SensorImpl.hpp
@@ -97,8 +96,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/DRM/ClipboardImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
-            ${SRCROOT}/DRM/InputImplUDev.cpp
-            ${SRCROOT}/DRM/InputImplUDev.hpp
+            ${SRCROOT}/DRM/InputImpl.cpp
             ${SRCROOT}/DRM/VideoModeImpl.cpp
             ${SRCROOT}/DRM/DRMContext.cpp
             ${SRCROOT}/DRM/DRMContext.hpp
@@ -112,7 +110,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/ClipboardImpl.hpp
             ${SRCROOT}/Unix/ClipboardImpl.cpp
             ${SRCROOT}/Unix/InputImpl.cpp
-            ${SRCROOT}/Unix/InputImpl.hpp
             ${SRCROOT}/Unix/KeyboardImpl.hpp
             ${SRCROOT}/Unix/KeyboardImpl.cpp
             ${SRCROOT}/Unix/KeySymToKeyMapping.hpp
@@ -178,7 +175,6 @@ elseif(SFML_OS_MACOS)
         ${SRCROOT}/macOS/ClipboardImpl.hpp
         ${SRCROOT}/macOS/ClipboardImpl.mm
         ${SRCROOT}/macOS/InputImpl.mm
-        ${SRCROOT}/macOS/InputImpl.hpp
         ${SRCROOT}/macOS/HIDInputManager.hpp
         ${SRCROOT}/macOS/HIDInputManager.mm
         ${SRCROOT}/macOS/HIDJoystickManager.hpp
@@ -230,7 +226,6 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/EaglContext.mm
         ${SRCROOT}/iOS/EaglContext.hpp
         ${SRCROOT}/iOS/InputImpl.mm
-        ${SRCROOT}/iOS/InputImpl.hpp
         ${SRCROOT}/iOS/JoystickImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.hpp
         ${SRCROOT}/iOS/SensorImpl.mm
@@ -262,7 +257,6 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
-        ${SRCROOT}/Android/InputImpl.hpp
         ${SRCROOT}/Android/InputImpl.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
         ${SRCROOT}/Android/JoystickImpl.cpp

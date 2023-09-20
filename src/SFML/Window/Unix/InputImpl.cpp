@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/InputImpl.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <SFML/Window/WindowHandle.hpp>
@@ -37,52 +37,52 @@
 #include <X11/keysym.h>
 
 
-namespace sf::priv
+namespace sf::priv::InputImpl
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key key)
+bool isKeyPressed(Keyboard::Key key)
 {
     return KeyboardImpl::isKeyPressed(key);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Scancode code)
+bool isKeyPressed(Keyboard::Scancode code)
 {
     return KeyboardImpl::isKeyPressed(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key InputImpl::localize(Keyboard::Scancode code)
+Keyboard::Key localize(Keyboard::Scancode code)
 {
     return KeyboardImpl::localize(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Scancode InputImpl::delocalize(Keyboard::Key key)
+Keyboard::Scancode delocalize(Keyboard::Key key)
 {
     return KeyboardImpl::delocalize(key);
 }
 
 
 ////////////////////////////////////////////////////////////
-String InputImpl::getDescription(Keyboard::Scancode code)
+String getDescription(Keyboard::Scancode code)
 {
     return KeyboardImpl::getDescription(code);
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool /*visible*/)
+void setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isMouseButtonPressed(Mouse::Button button)
+bool isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
     Display* display = openDisplay();
@@ -119,7 +119,7 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button button)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition()
+Vector2i getMousePosition()
 {
     // Open a connection with the X server
     Display* display = openDisplay();
@@ -143,7 +143,7 @@ Vector2i InputImpl::getMousePosition()
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
+Vector2i getMousePosition(const WindowBase& relativeTo)
 {
     const WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
@@ -175,7 +175,7 @@ Vector2i InputImpl::getMousePosition(const WindowBase& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position)
+void setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
     Display* display = openDisplay();
@@ -189,7 +189,7 @@ void InputImpl::setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
     Display* display = openDisplay();
@@ -207,7 +207,7 @@ void InputImpl::setMousePosition(const Vector2i& position, const WindowBase& rel
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int /*finger*/)
+bool isTouchDown(unsigned int /*finger*/)
 {
     // Not applicable
     return false;
@@ -215,7 +215,7 @@ bool InputImpl::isTouchDown(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
+Vector2i getTouchPosition(unsigned int /*finger*/)
 {
     // Not applicable
     return {};
@@ -223,10 +223,10 @@ Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
+Vector2i getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeTo*/)
 {
     // Not applicable
     return {};
 }
 
-} // namespace sf::priv
+} // namespace sf::priv::InputImpl
