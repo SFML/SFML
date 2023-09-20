@@ -75,10 +75,10 @@ TEST_CASE("[System] sf::String")
         SECTION("Default constructor")
         {
             const sf::String string;
-            CHECK(std::string(string) == ""s);
-            CHECK(std::wstring(string) == L""s);
-            CHECK(string.toAnsiString() == ""s);
-            CHECK(string.toWideString() == L""s);
+            CHECK(std::string(string).empty());
+            CHECK(std::wstring(string).empty());
+            CHECK(string.toAnsiString().empty());
+            CHECK(string.toWideString().empty());
             CHECK(string.toUtf8().empty());
             CHECK(string.toUtf16().empty());
             CHECK(string.toUtf32().empty());
