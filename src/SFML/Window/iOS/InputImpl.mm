@@ -25,56 +25,65 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
-#include <SFML/Window/iOS/InputImpl.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 
 #include <SFML/System/Err.hpp>
 
 
-namespace sf::priv
+namespace sf::priv::InputImpl
 {
 ////////////////////////////////////////////////////////////
-bool InputImpl::isKeyPressed(Keyboard::Key /* key */)
+bool isKeyPressed(Keyboard::Key /* key */)
 {
     // Not applicable
     return false;
 }
 
-bool InputImpl::isKeyPressed(Keyboard::Scancode /* codes */)
+
+////////////////////////////////////////////////////////////
+bool isKeyPressed(Keyboard::Scancode /* codes */)
 {
     // Not applicable
     return false;
 }
 
-Keyboard::Key InputImpl::localize(Keyboard::Scancode /* code */)
+
+////////////////////////////////////////////////////////////
+Keyboard::Key localize(Keyboard::Scancode /* code */)
 {
     // Not applicable
     return Keyboard::Unknown;
 }
 
-Keyboard::Scancode InputImpl::delocalize(Keyboard::Key /* key */)
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode delocalize(Keyboard::Key /* key */)
 {
     // Not applicable
     return Keyboard::Scan::Unknown;
 }
 
-String InputImpl::getDescription(Keyboard::Scancode /* code */)
+
+////////////////////////////////////////////////////////////
+String getDescription(Keyboard::Scancode /* code */)
 {
     // Not applicable
     return "";
 }
 
+
 ////////////////////////////////////////////////////////////
-void InputImpl::setVirtualKeyboardVisible(bool visible)
+void setVirtualKeyboardVisible(bool visible)
 {
     [[SFAppDelegate getInstance] setVirtualKeyboardVisible:visible];
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isMouseButtonPressed(Mouse::Button /* button */)
+bool isMouseButtonPressed(Mouse::Button /* button */)
 {
     // Not applicable
     return false;
@@ -82,49 +91,49 @@ bool InputImpl::isMouseButtonPressed(Mouse::Button /* button */)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition()
+Vector2i getMousePosition()
 {
     return {};
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getMousePosition(const WindowBase& /* relativeTo */)
+Vector2i getMousePosition(const WindowBase& /* relativeTo */)
 {
     return getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& /* position */)
+void setMousePosition(const Vector2i& /* position */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void InputImpl::setMousePosition(const Vector2i& /* position */, const WindowBase& /* relativeTo */)
+void setMousePosition(const Vector2i& /* position */, const WindowBase& /* relativeTo */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-bool InputImpl::isTouchDown(unsigned int finger)
+bool isTouchDown(unsigned int finger)
 {
     return [[SFAppDelegate getInstance] getTouchPosition:finger] != Vector2i(-1, -1);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger)
+Vector2i getTouchPosition(unsigned int finger)
 {
     return [[SFAppDelegate getInstance] getTouchPosition:finger];
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i InputImpl::getTouchPosition(unsigned int finger, const WindowBase& /* relativeTo */)
+Vector2i getTouchPosition(unsigned int finger, const WindowBase& /* relativeTo */)
 {
     return getTouchPosition(finger);
 }
