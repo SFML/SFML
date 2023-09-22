@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 # all source files
 set(SRC Island.cpp)
 
@@ -10,7 +12,4 @@ sfml_add_example(island GUI_APP
 # external dependency headers
 target_include_directories(island SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/island)
 
-# link against pthread
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOS)
-    target_link_libraries(island PRIVATE pthread)
-endif()
+target_link_libraries(island PRIVATE Threads::Threads)

@@ -65,6 +65,8 @@ else()
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()
 
+find_package(Threads REQUIRED)
+
 # define the sfml-system target
 sfml_add_library(System
                  SOURCES ${SRC} ${PLATFORM_SRC})
@@ -80,10 +82,7 @@ if(SFML_OS_ANDROID)
     target_include_directories(sfml-system SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 endif()
 
-# setup dependencies
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOS)
-    target_link_libraries(sfml-system PRIVATE pthread)
-endif()
+target_link_libraries(sfml-system PRIVATE Threads::Threads)
 
 if(SFML_OS_LINUX)
     target_link_libraries(sfml-system PRIVATE rt)
