@@ -25,7 +25,6 @@ Checks: >
   -clang-analyzer-optin.osx.*,
   -clang-analyzer-osx.*,
   -clang-analyzer-unix.Malloc,
-  -misc-header-include-cycle,
   -misc-include-cleaner,
   -misc-misplaced-const,
   -misc-no-recursion,
