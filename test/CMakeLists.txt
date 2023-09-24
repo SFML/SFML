@@ -68,6 +68,7 @@ set(WINDOW_SRC
     Window/GlResource.test.cpp
     Window/Keyboard.test.cpp
     Window/VideoMode.test.cpp
+    Window/Vulkan.test.cpp
     Window/Window.test.cpp
     Window/WindowBase.test.cpp
 )
