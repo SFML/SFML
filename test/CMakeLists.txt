@@ -66,6 +66,7 @@ set(WINDOW_SRC
     Window/Cursor.test.cpp
     Window/Event.test.cpp
     Window/GlResource.test.cpp
+    Window/Joystick.test.cpp
     Window/Keyboard.test.cpp
     Window/VideoMode.test.cpp
     Window/Window.test.cpp
