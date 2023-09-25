@@ -11,11 +11,6 @@ function(set_public_symbols_hidden target)
                           VISIBILITY_INLINES_HIDDEN YES)
 endfunction()
 
-# This little macro lets you set any Xcode specific property
-macro(sfml_set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
-    set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
-endmacro()
-
 # set the appropriate standard library on each platform for the given target
 # example: sfml_set_stdlib(sfml-system)
 function(sfml_set_stdlib target)
@@ -37,9 +32,7 @@ endfunction()
 
 function(sfml_set_common_ios_properties target)
     # enable automatic reference counting on iOS
-    sfml_set_xcode_property(${target} CLANG_ENABLE_OBJC_ARC YES)
-    sfml_set_xcode_property(${target} IPHONEOS_DEPLOYMENT_TARGET "${SFML_IOS_DEPLOYMENT_TARGET}")
-    sfml_set_xcode_property(${target} CODE_SIGN_IDENTITY "${SFML_CODE_SIGN_IDENTITY}")
+    set_property(TARGET ${target} PROPERTY XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES)
 
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL "EXECUTABLE")
