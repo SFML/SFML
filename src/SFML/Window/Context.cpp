@@ -32,6 +32,8 @@
 
 #include <ostream>
 
+#include <cassert>
+
 
 namespace
 {
@@ -107,6 +109,7 @@ std::uint64_t Context::getActiveContextId()
 ////////////////////////////////////////////////////////////
 bool Context::isExtensionAvailable(const char* name)
 {
+    assert(name && "Context::isExtensionAvailable() Extension name cannot be a null pointer");
     return priv::GlContext::isExtensionAvailable(name);
 }
 
@@ -114,6 +117,7 @@ bool Context::isExtensionAvailable(const char* name)
 ////////////////////////////////////////////////////////////
 GlFunctionPointer Context::getFunction(const char* name)
 {
+    assert(name && "Context::getFunction() Function name cannot be a null pointer");
     return priv::GlContext::getFunction(name);
 }
 
