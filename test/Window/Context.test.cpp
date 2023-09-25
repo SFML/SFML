@@ -28,20 +28,45 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
     SECTION("Construction")
     {
         const sf::Context context;
-
         CHECK(context.getSettings().majorVersion > 0);
+        CHECK(context.getActiveContext() == &context);
+        CHECK(context.getActiveContextId() != 0);
+    }
+
+    SECTION("setActive()")
+    {
+        sf::Context context;
+        CHECK(context.setActive(false));
+        CHECK(context.getActiveContext() == nullptr);
+        CHECK(context.getActiveContextId() == 0);
+        CHECK(context.setActive(true));
+        CHECK(context.getActiveContext() == &context);
+        CHECK(context.getActiveContextId() != 0);
+    }
+
+    SECTION("getActiveContext()/getActiveContextId()")
+    {
+        CHECK(sf::Context::getActiveContext() == nullptr);
+        CHECK(sf::Context::getActiveContextId() == 0);
+
+        {
+            const sf::Context context;
+            CHECK(context.getSettings().majorVersion > 0);
+            CHECK(sf::Context::getActiveContext() == &context);
+            CHECK(sf::Context::getActiveContextId() != 0);
+        }
+
+        CHECK(sf::Context::getActiveContext() == nullptr);
+        CHECK(sf::Context::getActiveContextId() == 0);
     }
 
     SECTION("Version String")
     {
         sf::Context context;
-
         CHECK(context.setActive(true));
 
-        using glGetStringFuncType = const char*(GLAPI*)(unsigned int);
-
-        auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::Context::getFunction("glGetString"));
-
+        using glGetStringFuncType  = const char*(GLAPI*)(unsigned int);
+        const auto glGetStringFunc = reinterpret_cast<glGetStringFuncType>(sf::Context::getFunction("glGetString"));
         REQUIRE(glGetStringFunc);
 
         constexpr unsigned int glVendor   = 0x1F00;
