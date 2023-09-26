@@ -202,6 +202,10 @@ if(SFML_OS_MACOS)
 
     # configure Xcode templates
     set(XCODE_TEMPLATES_ARCH "\$(NATIVE_ARCH_ACTUAL)")
+
+    if(NOT SFML_COMPILER_CLANG)
+        message(FATAL_ERROR "Clang is the only supported compiler on macOS")
+    endif()
 endif()
 
 # set the output directory for SFML DLLs and executables
