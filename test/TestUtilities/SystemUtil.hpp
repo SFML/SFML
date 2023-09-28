@@ -54,4 +54,7 @@ bool operator==(const sf::Vector3<float>& lhs, const Approx<sf::Vector3<float>>&
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Approx<T>& approx);
+std::ostream& operator<<(std::ostream& os, const Approx<T>& approx)
+{
+    return os << approx.value;
+}
