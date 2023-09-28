@@ -51,9 +51,8 @@ namespace sf
 /// Make sure this implementation is required for your use case.
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API SuspendAwareClock
+struct SFML_SYSTEM_API SuspendAwareClock
 {
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Type traits and static members
     ///
