@@ -76,15 +76,3 @@ bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs)
 {
     return lhs.asDegrees() == Approx(rhs.value.asDegrees());
 }
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const Approx<T>& approx)
-{
-    return os << approx.value;
-}
-
-template std::ostream& operator<<(std::ostream&, const Approx<int>&);
-template std::ostream& operator<<(std::ostream&, const Approx<float>&);
-template std::ostream& operator<<(std::ostream&, const Approx<sf::Vector2<float>>&);
-template std::ostream& operator<<(std::ostream&, const Approx<sf::Vector3<float>>&);
-template std::ostream& operator<<(std::ostream&, const Approx<sf::Angle>&);

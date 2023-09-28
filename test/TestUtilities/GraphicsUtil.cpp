@@ -57,9 +57,3 @@ bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
            lhs.getMatrix()[7] == Approx(rhs.value.getMatrix()[7]) &&
            lhs.getMatrix()[15] == Approx(rhs.value.getMatrix()[15]);
 }
-
-template <>
-std::ostream& operator<<(std::ostream& os, const Approx<sf::Transform>& approx)
-{
-    return os << approx.value;
-}
