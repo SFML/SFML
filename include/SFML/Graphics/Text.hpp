@@ -70,6 +70,17 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enumeration of the text alignment options
+    ///
+    ////////////////////////////////////////////////////////////
+    enum LineAlignment
+    {
+        Left,   //!< Align lines to the left
+        Center, //!< Align lines centrally
+        Right   //!< Align lines to the right
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct the text from a string, font and size
     ///
     /// Note that if the used font is a bitmap font, it is not
@@ -244,6 +255,18 @@ public:
     void setOutlineThickness(float thickness);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the line alignment for a multi-line text
+    ///
+    /// By default, the line alignment is Left.
+    ///
+    /// \param lineAlignment New line alignment
+    ///
+    /// \see getLineAlignment
+    ///
+    ////////////////////////////////////////////////////////////
+    void setLineAlignment(LineAlignment lineAlignment);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
     ///
     /// The returned string is a `sf::String`, which can automatically
@@ -346,6 +369,16 @@ public:
     [[nodiscard]] float getOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the line alignment for a multi-line text
+    ///
+    /// \return Line alignment
+    ///
+    /// \see setLineAlignment
+    ///
+    ////////////////////////////////////////////////////////////
+    LineAlignment getLineAlignment() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Return the position of the `index`-th character
     ///
     /// This function computes the visual position of a character
@@ -410,6 +443,16 @@ private:
     void ensureGeometryUpdate() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Calculate and update the line offsets
+    ///
+    /// This is required before updating geometry or
+    /// finding the character position as this information
+    /// is needed in both places.
+    ///
+    ////////////////////////////////////////////////////////////
+    void updateLineOffsets() const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     String                m_string;                                    //!< String to display
@@ -421,11 +464,13 @@ private:
     Color                 m_fillColor{Color::White};                   //!< Text fill color
     Color                 m_outlineColor{Color::Black};                //!< Text outline color
     float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
+    LineAlignment         m_lineAlignment{Left};                       //!< Line alignment for a multi-line text
     mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
     mutable bool          m_geometryNeedUpdate{}; //!< Does the geometry need to be recomputed?
     mutable std::uint64_t m_fontTextureId{};      //!< The font texture id
+    mutable std::vector<float> m_lineOffsets;     //!< The horizontal offsets of each line of a multi-line text
 };
 
 } // namespace sf

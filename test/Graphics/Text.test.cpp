@@ -37,6 +37,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK(text.getFillColor() == sf::Color::White);
             CHECK(text.getOutlineColor() == sf::Color::Black);
             CHECK(text.getOutlineThickness() == 0);
+            CHECK(text.getLineAlignment() == sf::Text::Left);
             CHECK(text.findCharacterPos(0) == sf::Vector2f());
             CHECK(text.getLocalBounds() == sf::FloatRect());
             CHECK(text.getGlobalBounds() == sf::FloatRect());
@@ -54,6 +55,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK(text.getFillColor() == sf::Color::White);
             CHECK(text.getOutlineColor() == sf::Color::Black);
             CHECK(text.getOutlineThickness() == 0);
+            CHECK(text.getLineAlignment() == sf::Text::Left);
             CHECK(text.findCharacterPos(0) == sf::Vector2f());
             CHECK(text.getLocalBounds() == sf::FloatRect({1, 8}, {357, 28}));
             CHECK(text.getGlobalBounds() == sf::FloatRect({1, 8}, {357, 28}));
@@ -71,6 +73,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK(text.getFillColor() == sf::Color::White);
             CHECK(text.getOutlineColor() == sf::Color::Black);
             CHECK(text.getOutlineThickness() == 0);
+            CHECK(text.getLineAlignment() == sf::Text::Left);
             CHECK(text.findCharacterPos(0) == sf::Vector2f());
             CHECK(text.getLocalBounds() == sf::FloatRect({1, 7}, {290, 22}));
             CHECK(text.getGlobalBounds() == sf::FloatRect({1, 7}, {290, 22}));
@@ -141,6 +144,19 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
         CHECK(text.getOutlineThickness() == 3.14f);
     }
 
+    SECTION("Set get line alignment")
+    {
+        sf::Text text(font, "QWERTY");
+        text.setPosition({50, 25});
+        CHECK(text.findCharacterPos(0) == sf::Vector2f(50, 25));
+        text.setLineAlignment(sf::Text::Center);
+        CHECK(text.getLineAlignment() == sf::Text::Center);
+        CHECK(text.findCharacterPos(0) == sf::Vector2f(-6.5, 25));
+        text.setLineAlignment(sf::Text::Right);
+        CHECK(text.getLineAlignment() == sf::Text::Right);
+        CHECK(text.findCharacterPos(0) == sf::Vector2f(-63, 25));
+    }
+
     SECTION("findCharacterPos()")
     {
         sf::Text text(font, "\tabcdefghijklmnopqrstuvwxyz \n");
@@ -181,6 +197,16 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             text.setRotation(sf::degrees(180));
             CHECK(text.getLocalBounds() == sf::FloatRect({1, 5}, {33, 13}));
             CHECK(text.getGlobalBounds() == Approx(sf::FloatRect({66, 182}, {33, 13})));
+        }
+
+        SECTION("Change alignment")
+        {
+            text.setLineAlignment(sf::Text::Center);
+            CHECK(text.getLocalBounds() == sf::FloatRect({-16.5, 5}, {33, 13}));
+            CHECK(text.getGlobalBounds() == sf::FloatRect({83.5, 205}, {33, 13}));
+            text.setLineAlignment(sf::Text::Right);
+            CHECK(text.getLocalBounds() == sf::FloatRect({-34, 5}, {34, 13}));
+            CHECK(text.getGlobalBounds() == sf::FloatRect({66, 205}, {34, 13}));
         }
     }
 }

@@ -42,7 +42,8 @@ namespace
 {
 // Add an underline or strikethrough line to the vertex array
 void addLine(sf::VertexArray& vertices,
-             float            lineLength,
+             float            lineLeft,
+             float            lineRight,
              float            lineTop,
              sf::Color        color,
              float            offset,
@@ -52,12 +53,12 @@ void addLine(sf::VertexArray& vertices,
     const float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
     const float bottom = top + std::floor(thickness + 0.5f);
 
-    vertices.append({{-outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLeft - outlineThickness, top - outlineThickness}, color, {1.f, 1.f}});
+    vertices.append({{lineRight + outlineThickness, top - outlineThickness}, color, {1.f, 1.f}});
+    vertices.append({{lineLeft - outlineThickness, bottom + outlineThickness}, color, {1.f, 1.f}});
+    vertices.append({{lineLeft - outlineThickness, bottom + outlineThickness}, color, {1.f, 1.f}});
+    vertices.append({{lineRight + outlineThickness, top - outlineThickness}, color, {1.f, 1.f}});
+    vertices.append({{lineRight + outlineThickness, bottom + outlineThickness}, color, {1.f, 1.f}});
 }
 
 // Add a glyph quad to the vertex array
@@ -206,6 +207,15 @@ void Text::setOutlineThickness(float thickness)
 
 
 ////////////////////////////////////////////////////////////
+void Text::setLineAlignment(LineAlignment lineAlignment)
+{
+    if (m_lineAlignment != lineAlignment)
+        m_geometryNeedUpdate = true;
+    m_lineAlignment = lineAlignment;
+}
+
+
+////////////////////////////////////////////////////////////
 const String& Text::getString() const
 {
     return m_string;
@@ -269,10 +279,20 @@ float Text::getOutlineThickness() const
 
 
 ////////////////////////////////////////////////////////////
+Text::LineAlignment Text::getLineAlignment() const
+{
+    return m_lineAlignment;
+}
+
+
+////////////////////////////////////////////////////////////
 Vector2f Text::findCharacterPos(std::size_t index) const
 {
     // Adjust the index if it's out of range
     index = std::min(index, m_string.getSize());
+
+    // Calculate and update the line offsets
+    updateLineOffsets();
 
     // Precompute the variables needed by the algorithm
     const bool  isBold          = m_style & Bold;
@@ -282,7 +302,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Compute the position
-    Vector2f position;
+    Vector2f position(m_lineOffsets[0], 0.f); // There will always be at least one line
     char32_t prevChar = 0;
     for (std::size_t i = 0; i < index; ++i)
     {
@@ -371,6 +391,9 @@ void Text::ensureGeometryUpdate() const
     if (m_string.isEmpty())
         return;
 
+    // Calculate and update the line offsets
+    updateLineOffsets();
+
     // Compute values related to the text style
     const bool  isBold             = m_style & Bold;
     const bool  isUnderlined       = m_style & Underlined;
@@ -389,15 +412,17 @@ void Text::ensureGeometryUpdate() const
     const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
     whitespaceWidth += letterSpacing;
     const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
-    float       x           = 0.f;
+    float       x           = m_lineOffsets[0]; // there will always be at least one line
     auto        y           = static_cast<float>(m_characterSize);
 
     // Create one quad for each character
-    auto     minX     = static_cast<float>(m_characterSize);
-    auto     minY     = static_cast<float>(m_characterSize);
-    float    maxX     = 0.f;
-    float    maxY     = 0.f;
-    char32_t prevChar = 0;
+    auto        minX             = static_cast<float>(m_characterSize);
+    auto        minY             = static_cast<float>(m_characterSize);
+    float       maxX             = 0.f;
+    float       maxY             = 0.f;
+    char32_t    prevChar         = 0;
+    std::size_t line             = 0;
+    float       horizontalOffset = x;
     for (const auto curChar : m_string)
     {
         // Skip the \r char to avoid weird graphical issues
@@ -410,19 +435,26 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+            addLine(m_vertices, horizontalOffset, x, y, m_fillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices, horizontalOffset, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+            addLine(m_vertices, horizontalOffset, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVertices,
+                        horizontalOffset,
+                        x,
+                        y,
+                        m_outlineColor,
+                        strikeThroughOffset,
+                        underlineThickness,
+                        m_outlineThickness);
         }
 
         prevChar = curChar;
@@ -444,7 +476,9 @@ void Text::ensureGeometryUpdate() const
                     break;
                 case U'\n':
                     y += lineSpacing;
-                    x = 0;
+                    ++line;
+                    horizontalOffset = (line < m_lineOffsets.size()) ? m_lineOffsets[line] : 0.f;
+                    x                = horizontalOffset;
                     break;
             }
 
@@ -497,24 +531,92 @@ void Text::ensureGeometryUpdate() const
     // If we're using the underlined style, add the last line
     if (isUnderlined && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+        addLine(m_vertices, horizontalOffset, x, y, m_fillColor, underlineOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, horizontalOffset, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
     if (isStrikeThrough && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+        addLine(m_vertices, horizontalOffset, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVertices, horizontalOffset, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
     }
 
     // Update the bounding rectangle
     m_bounds.position = Vector2f(minX, minY);
     m_bounds.size     = Vector2f(maxX, maxY) - Vector2f(minX, minY);
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::updateLineOffsets() const
+{
+    // widths of each line
+    std::vector<float> lineWidths;
+
+    // Precompute the variables needed by the algorithm
+    const bool  isBold          = m_style & Bold;
+    float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
+    const float letterSpacing   = (whitespaceWidth / 3.f) * (m_letterSpacingFactor - 1.f);
+    whitespaceWidth += letterSpacing;
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+
+    Vector2f position;
+    char32_t prevChar = 0;
+    float    maxWidth = 0.f;
+    for (const auto curChar : m_string)
+    {
+        // Apply the kerning offset
+        position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
+        prevChar = curChar;
+
+        // Handle special characters
+        switch (curChar)
+        {
+            case U' ':
+                position.x += whitespaceWidth;
+                continue;
+            case U'\t':
+                position.x += whitespaceWidth * 4;
+                continue;
+            case U'\n':
+                position.y += lineSpacing;
+                if (position.x > maxWidth)
+                    maxWidth = position.x;
+                lineWidths.push_back(position.x);
+                position.x = 0;
+                continue;
+        }
+
+        // For regular characters, add the advance offset of the glyph
+        position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
+    }
+
+    // add final part of the string since last newline as the final line
+    // (this is the entire string if text is single line without newlines)
+    lineWidths.push_back(position.x);
+
+    // update line offsets from widths depending on line alignment
+    m_lineOffsets.resize(lineWidths.size());
+    for (std::size_t i = 0; i < m_lineOffsets.size(); ++i)
+    {
+        switch (m_lineAlignment)
+        {
+            case Right:
+                m_lineOffsets[i] = maxWidth - lineWidths[i];
+                break;
+            case Center:
+                m_lineOffsets[i] = (maxWidth - lineWidths[i]) / 2.f;
+                break;
+            case Left:
+                m_lineOffsets[i] = 0.f;
+                break;
+        }
+    }
 }
 
 } // namespace sf
