@@ -414,10 +414,8 @@ void Text::ensureGeometryUpdate() const
     float         maxX     = 0.f;
     float         maxY     = 0.f;
     std::uint32_t prevChar = 0;
-    for (std::size_t i = 0; i < m_string.getSize(); ++i)
+    for (const std::uint32_t curChar : m_string)
     {
-        const std::uint32_t curChar = m_string[i];
-
         // Skip the \r char to avoid weird graphical issues
         if (curChar == U'\r')
             continue;
