@@ -105,10 +105,14 @@ jobs:
         max_attempts: 10
         timeout_minutes: 3
         command: |
-          choco uninstall mingw
-          choco install mingw --version 11.2.0
           choco install ninja OpenCppCoverage -y
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+
+    - name: Install MinGW
+      if: matrix.platform.name == 'Windows MinGW'
+      run: |
+        choco uninstall mingw
+        choco install mingw --version 11.2.0
 
     - name: Configure CMake
       shell: bash
