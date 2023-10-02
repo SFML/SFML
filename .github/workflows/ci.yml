@@ -10,6 +10,10 @@ env:
   DISPLAY: ":99" # Display number to use for the X server
   GALLIUM_DRIVER: llvmpipe # Use Mesa 3D software OpenGL renderer
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
@@ -136,7 +140,6 @@ jobs:
 
     - name: Install MinGW
       if: matrix.platform.name == 'Windows MinGW' && steps.mingw-cache.outputs.cache-hit != 'true'
-      shell: bash
       run: |
         curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/12.2.0-16.0.0-10.0.0-msvcrt-r5/winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
@@ -144,19 +147,16 @@ jobs:
     - name: Add OpenCppCoverage and MinGW to PATH
       if: runner.os == 'Windows'
       run: |
-        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
-        echo "C:\Program Files\mingw64\bin" >> $env:GITHUB_PATH
+        echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
+        echo "C:\Program Files\mingw64\bin" >> $GITHUB_PATH
 
     - name: Configure CMake
-      shell: bash
       run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
 
     - name: Build
-      shell: bash
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
 
     - name: Prepare Test
-      shell: bash
       run: |
         set -e
         # Start up Xvfb and fluxbox to host display tests
@@ -173,12 +173,10 @@ jobs:
 
     - name: Test
       if: runner.os == 'Windows'
-      shell: bash
       run: cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
     - name: Test
       if: runner.os != 'Windows'
-      shell: bash
       run: |
         ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
         # Run gcovr to extract coverage information from the test run
@@ -188,7 +186,6 @@ jobs:
 
     - name: Download Codecov Uploader
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
-      shell: bash
       run: |
         platform=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
         if [ "$platform" == "windows" ]; then CODECOV_BINARY="codecov.exe"; else CODECOV_BINARY="codecov"; fi
@@ -214,7 +211,6 @@ jobs:
 
     - name: Test Install Interface
       if: matrix.platform.name != 'Android'
-      shell: bash
       run: |
         cmake -S test/install -B test/install/build -DSFML_ROOT=build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
         cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
@@ -285,9 +281,7 @@ jobs:
         unzip -qq -d $GITHUB_WORKSPACE android-ndk-r23b-linux.zip
 
     - name: Configure
-      shell: bash
       run: cmake --preset dev -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
 
     - name: Analyze Code
-      shell: bash
       run: cmake --build build --target tidy
