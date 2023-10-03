@@ -80,9 +80,15 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: ${{ runner.os == 'Windows' && '3.24' || '3.22' }} # Set to minimum required version (3.24 on Windows and 3.22 elsewhere) as specified in CMakeLists.txt to test compatibility
+        ninjaVersion: latest
+
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install ninja-build xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -102,18 +108,23 @@ jobs:
       run: |
         # Do not run updates until GitHub has fixed all the issues: https://github.com/orgs/Homebrew/discussions/4612
         # brew update
-        brew install gcovr ninja || true
+        brew install gcovr || true
 
-    - name: Install Windows Tools
+    - name: Cache OpenCppCoverage
+      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
+      id: opencppcoverage-cache
+      uses: actions/cache@v3
+      with:
+        path: C:\Program Files\OpenCppCoverage
+        key: opencppcoverage
+
+    - name: Install OpenCppCoverage
       uses: nick-fields/retry@v2
-      if: runner.os == 'Windows'
+      if: matrix.type.name == 'Debug' && runner.os == 'Windows' && steps.opencppcoverage-cache.outputs.cache-hit != 'true'
       with:
         max_attempts: 10
         timeout_minutes: 3
-        command: |
-          choco install ninja OpenCppCoverage -y
-          echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
-          echo "C:\Program Files\mingw64\bin" >> $env:GITHUB_PATH
+        command: choco install OpenCppCoverage -y
 
     - name: Cache MinGW
       if: matrix.platform.name == 'Windows MinGW'
@@ -129,6 +140,12 @@ jobs:
       run: |
         curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/12.2.0-16.0.0-10.0.0-msvcrt-r5/winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
+
+    - name: Add OpenCppCoverage and MinGW to PATH
+      if: runner.os == 'Windows'
+      run: |
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+        echo "C:\Program Files\mingw64\bin" >> $env:GITHUB_PATH
 
     - name: Configure CMake
       shell: bash
@@ -238,10 +255,15 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: latest
+        ninjaVersion: latest
+
     - name: Install Windows Dependencies
       if: runner.os == 'Windows'
       run: |
-        choco install ninja
         curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
 
     - name: Install Linux Dependencies
