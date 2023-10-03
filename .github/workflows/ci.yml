@@ -107,12 +107,22 @@ jobs:
         command: |
           choco install ninja OpenCppCoverage -y
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+          echo "C:\Program Files\mingw64\bin" >> $env:GITHUB_PATH
+
+    - name: Cache MinGW
+      if: matrix.platform.name == 'Windows MinGW'
+      id: mingw-cache
+      uses: actions/cache@v3
+      with:
+        path: "C:\\Program Files\\mingw64"
+        key: winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5
 
     - name: Install MinGW
-      if: matrix.platform.name == 'Windows MinGW'
+      if: matrix.platform.name == 'Windows MinGW' && steps.mingw-cache.outputs.cache-hit != 'true'
+      shell: bash
       run: |
-        choco uninstall mingw
-        choco install mingw --version 11.2.0
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/12.2.0-16.0.0-10.0.0-msvcrt-r5/winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5.zip
+        unzip -qq -d "C:\Program Files" mingw64.zip
 
     - name: Configure CMake
       shell: bash
