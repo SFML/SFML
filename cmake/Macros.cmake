@@ -20,11 +20,17 @@ endmacro()
 # example: sfml_set_stdlib(sfml-system)
 function(sfml_set_stdlib target)
     # for gcc on Windows, apply the SFML_USE_STATIC_STD_LIBS option if it is enabled
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_GCC)
-        if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
-            target_link_libraries(${target} PRIVATE "-static-libgcc" "-static-libstdc++")
-        elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
-            target_link_libraries(${target} PRIVATE "-shared-libgcc" "-shared-libstdc++")
+    if(SFML_OS_WINDOWS)
+        if(SFML_COMPILER_GCC)
+            if(SFML_USE_STATIC_STD_LIBS AND NOT SFML_COMPILER_GCC_TDM)
+                target_link_libraries(${target} PRIVATE "-static-libgcc" "-static-libstdc++")
+            elseif(NOT SFML_USE_STATIC_STD_LIBS AND SFML_COMPILER_GCC_TDM)
+                target_link_libraries(${target} PRIVATE "-shared-libgcc" "-shared-libstdc++")
+            endif()
+        elseif(SFML_COMPILER_MSVC)
+            if(SFML_USE_STATIC_STD_LIBS)
+                set_property(TARGET ${target} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+            endif()
         endif()
     endif()
 endfunction()
@@ -134,10 +140,6 @@ macro(sfml_add_library module)
         set_target_properties(${target} PROPERTIES RELEASE_POSTFIX -s)
         set_target_properties(${target} PROPERTIES MINSIZEREL_POSTFIX -s)
         set_target_properties(${target} PROPERTIES RELWITHDEBINFO_POSTFIX -s)
-
-        if(SFML_USE_STATIC_STD_LIBS)
-            set_property(TARGET ${target} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-        endif()
     endif()
 
     # set the version and soversion of the target (for compatible systems -- mostly Linuxes)
@@ -289,10 +291,6 @@ macro(sfml_add_example target)
         add_executable(${target} ${target_input})
     endif()
 
-    if(SFML_USE_STATIC_STD_LIBS)
-        set_property(TARGET ${target} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
-
     # enable precompiled headers
     if (SFML_ENABLE_PCH)
         message(VERBOSE "enabling PCH for SFML example '${target}'")
@@ -348,6 +346,9 @@ function(sfml_add_test target SOURCES DEPENDS)
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
+
+    # set the target flags to use the appropriate C++ standard library
+    sfml_set_stdlib(${target})
 
     # link the target to its SFML dependencies
     target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)

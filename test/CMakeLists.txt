@@ -33,6 +33,11 @@ target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
 set_target_warnings(sfml-test-main)
 
+# set the target flags to use the appropriate C++ standard library
+sfml_set_stdlib(Catch2)
+sfml_set_stdlib(Catch2WithMain)
+sfml_set_stdlib(sfml-test-main)
+
 sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "TRUE to run tests that require a display, FALSE to ignore it")
 if(SFML_RUN_DISPLAY_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_DISPLAY_TESTS)
