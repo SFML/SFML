@@ -1,4 +1,12 @@
-cmake_minimum_required(VERSION 3.22)
+if(CMAKE_HOST_WIN32)
+    # We require a CMake version greater than or equal to 3.24 on Windows in order to
+    # support specifying target_include_directories with SYSTEM for Visual Studio Generators
+    # see: https://cmake.org/cmake/help/latest/release/3.24.html#generators
+    cmake_minimum_required(VERSION 3.24)
+else()
+    # For all other systems, 3.22 will suffice
+    cmake_minimum_required(VERSION 3.22)
+endif()
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
