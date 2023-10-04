@@ -35,6 +35,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
 #include <atomic>
 #include <ostream>
 #include <utility>
@@ -400,6 +401,22 @@ Image Texture::copyToImage() const
         glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, static_cast<GLuint>(previousFrameBuffer)));
+
+        if (m_pixelsFlipped)
+        {
+            // Flip the texture vertically
+            const auto stride             = static_cast<std::ptrdiff_t>(m_size.x * 4);
+            auto       currentRowIterator = pixels.begin();
+            auto       nextRowIterator    = pixels.begin() + stride;
+            auto       reverseRowIterator = pixels.begin() + (stride * static_cast<std::ptrdiff_t>(m_size.y - 1));
+            for (unsigned int i = 0; i < m_size.y / 2; ++i)
+            {
+                std::swap_ranges(currentRowIterator, nextRowIterator, reverseRowIterator);
+                currentRowIterator = nextRowIterator;
+                nextRowIterator += stride;
+                reverseRowIterator -= stride;
+            }
+        }
     }
 
 #else
