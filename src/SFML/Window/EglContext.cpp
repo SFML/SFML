@@ -427,7 +427,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
 
     // Get X11 visuals compatible with this EGL config
     int  visualCount      = 0;
-    auto availableVisuals = X11Ptr<XVisualInfo[]> XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount));
+    auto availableVisuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount));
 
     if (visualCount == 0)
     {
