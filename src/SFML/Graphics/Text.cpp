@@ -471,7 +471,7 @@ void Text::ensureGeometryUpdate() const
                 case U'\n':
                     y += lineSpacing;
                     ++line;
-                    horizontalOffset = (line < m_lineOffsets.size()) ? m_lineOffsets[line] : 0.f;
+                    horizontalOffset = m_lineOffsets[line];
                     x                = horizontalOffset;
                     break;
             }
@@ -549,8 +549,8 @@ void Text::ensureGeometryUpdate() const
 ////////////////////////////////////////////////////////////
 void Text::updateLineOffsets() const
 {
-    // widths of each line
-    std::vector<float> lineWidths;
+    // temporary use m_lineOffsets to store widths of each line
+    m_lineOffsets.clear();
 
     // Precompute the variables needed by the algorithm
     const bool isBold                                        = m_style & Bold;
@@ -578,7 +578,7 @@ void Text::updateLineOffsets() const
                 position.y += lineSpacing;
                 if (position.x > maxWidth)
                     maxWidth = position.x;
-                lineWidths.push_back(position.x);
+                m_lineOffsets.push_back(position.x);
                 position.x = 0;
                 continue;
         }
@@ -589,24 +589,24 @@ void Text::updateLineOffsets() const
 
     // add final part of the string since last newline as the final line
     // (this is the entire string if text is single line without newlines)
-    lineWidths.push_back(position.x);
+    m_lineOffsets.push_back(position.x);
 
-    // update line offsets from widths depending on line alignment
-    m_lineOffsets.resize(lineWidths.size());
+    // convert widths into offsets depending on line alignment
     for (std::size_t i = 0; i < m_lineOffsets.size(); ++i)
     {
         switch (m_lineAlignment)
         {
             case Right:
-                m_lineOffsets[i] = maxWidth - lineWidths[i];
+                m_lineOffsets[i] = maxWidth - m_lineOffsets[i];
                 break;
             case Center:
-                m_lineOffsets[i] = (maxWidth - lineWidths[i]) / 2.f;
+                m_lineOffsets[i] = (maxWidth - m_lineOffsets[i]) / 2.f;
                 break;
             case Left:
                 m_lineOffsets[i] = 0.f;
                 break;
         }
+        m_lineOffsets[i] = std::round(m_lineOffsets[i]);
     }
 }
 
