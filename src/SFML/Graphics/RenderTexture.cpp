@@ -85,7 +85,7 @@ bool RenderTexture::create(const Vector2u& size, const ContextSettings& settings
     }
 
     // Initialize the render texture
-    if (!m_impl->create(size, m_texture.m_texture, settings))
+    if (!m_impl->create(size, m_texture.m_texture.get(), settings))
         return false;
 
     // We can now initialize the render target part
@@ -161,7 +161,7 @@ void RenderTexture::display()
     // Update the target texture
     if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
     {
-        m_impl->updateTexture(m_texture.m_texture);
+        m_impl->updateTexture(m_texture.m_texture.get());
         m_texture.m_pixelsFlipped = true;
         m_texture.invalidateMipmap();
     }
