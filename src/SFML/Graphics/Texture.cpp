@@ -231,6 +231,12 @@ bool Texture::create(const Vector2u& size)
         m_sRgb = false;
     }
 
+#ifndef SFML_OPENGL_ES
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP);
+#else
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : GLEXT_GL_CLAMP_TO_EDGE;
+#endif
+
     // Initialize the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     glCheck(glTexImage2D(GL_TEXTURE_2D,
@@ -242,12 +248,8 @@ bool Texture::create(const Vector2u& size)
                          GL_RGBA,
                          GL_UNSIGNED_BYTE,
                          nullptr));
-    glCheck(glTexParameteri(GL_TEXTURE_2D,
-                            GL_TEXTURE_WRAP_S,
-                            m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
-    glCheck(glTexParameteri(GL_TEXTURE_2D,
-                            GL_TEXTURE_WRAP_T,
-                            m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     m_cacheId = TextureImpl::getUniqueId();
@@ -388,10 +390,16 @@ Image Texture::copyToImage() const
 
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
         glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
-        glCheck(glReadPixels(0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data()));
+        glCheck(glReadPixels(0,
+                             0,
+                             static_cast<GLsizei>(m_size.x),
+                             static_cast<GLsizei>(m_size.y),
+                             GL_RGBA,
+                             GL_UNSIGNED_BYTE,
+                             pixels.data()));
         glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
-        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, previousFrameBuffer));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, static_cast<GLuint>(previousFrameBuffer)));
     }
 
 #else
@@ -745,15 +753,16 @@ void Texture::setRepeated(bool repeated)
                 }
             }
 
+#ifndef SFML_OPENGL_ES
+            const GLint textureWrapParam = m_isRepeated ? GL_REPEAT
+                                                        : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP);
+#else
+            const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : GLEXT_GL_CLAMP_TO_EDGE;
+#endif
+
             glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-            glCheck(
-                glTexParameteri(GL_TEXTURE_2D,
-                                GL_TEXTURE_WRAP_S,
-                                m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
-            glCheck(
-                glTexParameteri(GL_TEXTURE_2D,
-                                GL_TEXTURE_WRAP_T,
-                                m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP)));
+            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
+            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
         }
     }
 }

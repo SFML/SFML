@@ -68,6 +68,12 @@ jobs:
           config: { name: Static DRM, flags: -GNinja -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
         - platform: { name: Linux GCC, os: ubuntu-22.04  }
           config: { name: Shared DRM, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
+        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+          config: { name: OpenGL ES, flags: -GNinja -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=ON }
+          type: { name: Release }
+        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+          config: { name: OpenGL ES, flags: -GNinja -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=ON }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
         - platform: { name: macOS , os: macos-12 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
     steps:
