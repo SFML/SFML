@@ -191,6 +191,7 @@ constexpr Angle& operator*=(Angle& left, float right)
 ////////////////////////////////////////////////////////////
 constexpr Angle operator/(Angle left, float right)
 {
+    assert(right != 0 && "Angle::operator/ cannot divide by 0");
     return degrees(left.asDegrees() / right);
 }
 
@@ -198,6 +199,7 @@ constexpr Angle operator/(Angle left, float right)
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator/=(Angle& left, float right)
 {
+    assert(right != 0 && "Angle::operator/= cannot divide by 0");
     return left = left / right;
 }
 
@@ -205,6 +207,7 @@ constexpr Angle& operator/=(Angle& left, float right)
 ////////////////////////////////////////////////////////////
 constexpr float operator/(Angle left, Angle right)
 {
+    assert(right.asDegrees() != 0 && "Angle::operator/ cannot divide by 0");
     return left.asDegrees() / right.asDegrees();
 }
 
@@ -212,6 +215,7 @@ constexpr float operator/(Angle left, Angle right)
 ////////////////////////////////////////////////////////////
 constexpr Angle operator%(Angle left, Angle right)
 {
+    assert(right.asDegrees() != 0 && "Angle::operator% cannot divide by 0");
     return degrees(priv::positiveRemainder(left.asDegrees(), right.asDegrees()));
 }
 
@@ -219,6 +223,7 @@ constexpr Angle operator%(Angle left, Angle right)
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator%=(Angle& left, Angle right)
 {
+    assert(right.asDegrees() != 0 && "Angle::operator%= cannot modulus by 0");
     return left = left % right;
 }
 
