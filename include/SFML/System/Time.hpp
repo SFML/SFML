@@ -32,6 +32,7 @@
 #include <chrono>
 #include <ratio>
 
+#include <cassert>
 #include <cstdint>
 
 

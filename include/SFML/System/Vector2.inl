@@ -177,6 +177,7 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right)
 template <typename T>
 constexpr Vector2<T> operator/(const Vector2<T>& left, T right)
 {
+    assert(right != 0 && "Vector2::operator/ cannot divide by 0");
     return Vector2<T>(left.x / right, left.y / right);
 }
 
@@ -185,6 +186,7 @@ constexpr Vector2<T> operator/(const Vector2<T>& left, T right)
 template <typename T>
 constexpr Vector2<T>& operator/=(Vector2<T>& left, T right)
 {
+    assert(right != 0 && "Vector2::operator/= cannot divide by 0");
     left.x /= right;
     left.y /= right;
 
