@@ -158,9 +158,22 @@ bool RenderTexture::setActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTexture::display()
 {
-    // Update the target texture
-    if (m_impl && (priv::RenderTextureImplFBO::isAvailable() || setActive(true)))
+    if (m_impl)
     {
+        if (priv::RenderTextureImplFBO::isAvailable())
+        {
+            // Perform a RenderTarget-only activation if we are using FBOs
+            if (!RenderTarget::setActive())
+                return;
+        }
+        else
+        {
+            // Perform a full activation if we are not using FBOs
+            if (!setActive())
+                return;
+        }
+
+        // Update the target texture
         m_impl->updateTexture(m_texture.m_texture);
         m_texture.m_pixelsFlipped = true;
         m_texture.invalidateMipmap();
