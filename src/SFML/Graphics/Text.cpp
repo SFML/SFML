@@ -369,11 +369,11 @@ void Text::draw(RenderTarget& target, const RenderStates& states) const
 void Text::ensureGeometryUpdate() const
 {
     // Do nothing, if geometry has not changed and the font texture has not changed
-    if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).m_cacheId == m_fontTextureId)
+    if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).getCacheId() == m_fontTextureId)
         return;
 
     // Save the current fonts texture id
-    m_fontTextureId = m_font->getTexture(m_characterSize).m_cacheId;
+    m_fontTextureId = m_font->getTexture(m_characterSize).getCacheId();
 
     // Mark geometry as updated
     m_geometryNeedUpdate = false;

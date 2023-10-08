@@ -938,6 +938,13 @@ unsigned int Texture::getNativeHandle() const
 
 
 ////////////////////////////////////////////////////////////
+std::uint64_t Texture::getCacheId() const
+{
+    return m_cacheId;
+}
+
+
+////////////////////////////////////////////////////////////
 unsigned int Texture::getValidSize(unsigned int size)
 {
     if (GLEXT_texture_non_power_of_two)

@@ -548,6 +548,20 @@ public:
     unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the unique number that identifies the texture to
+    /// the render target's cache
+    ///
+    /// Can be stored in classes that utilize the sf::Texture class
+    /// and compared on subsequent calls to member functions of
+    /// that class to determine if the texture has fundamentally
+    /// changed.
+    ///
+    /// \return Unique number of the texture
+    ///
+    ////////////////////////////////////////////////////////////
+    std::uint64_t getCacheId() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind a texture for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be
@@ -593,7 +607,6 @@ public:
     static unsigned int getMaximumSize();
 
 private:
-    friend class Text;
     friend class RenderTexture;
     friend class RenderTarget;
 
