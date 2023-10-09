@@ -215,7 +215,7 @@ constexpr float operator/(Angle left, Angle right)
 ////////////////////////////////////////////////////////////
 constexpr Angle operator%(Angle left, Angle right)
 {
-    assert(right.asDegrees() != 0 && "Angle::operator% cannot divide by 0");
+    assert(right.asDegrees() != 0 && "Angle::operator% cannot modulus by 0");
     return degrees(priv::positiveRemainder(left.asDegrees(), right.asDegrees()));
 }
 
