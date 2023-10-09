@@ -350,6 +350,22 @@ Image Texture::copyToImage() const
         glCheck(GLEXT_glDeleteFramebuffers(1, &frameBuffer));
 
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, previousFrameBuffer));
+
+        if (m_pixelsFlipped)
+        {
+            // Flip the texture vertically
+            const int stride        = static_cast<int>(m_size.x * 4);
+            Uint8*    currentRowPtr = pixels.data();
+            Uint8*    nextRowPtr    = pixels.data() + stride;
+            Uint8*    reverseRowPtr = pixels.data() + (stride * static_cast<int>(m_size.y - 1));
+            for (unsigned int y = 0; y < m_size.y / 2; ++y)
+            {
+                std::swap_ranges(currentRowPtr, nextRowPtr, reverseRowPtr);
+                currentRowPtr = nextRowPtr;
+                nextRowPtr += stride;
+                reverseRowPtr -= stride;
+            }
+        }
     }
 
 #else
