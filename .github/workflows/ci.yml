@@ -32,6 +32,7 @@ jobs:
         - { name: Windows MinGW,          os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
         - { name: Linux GCC,            os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=ON -GNinja }
         - { name: Linux Clang,          os: ubuntu-22.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_DISPLAY_TESTS=ON -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC DRM,        os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: macOS,                os: macos-12, flags: -GNinja }
         - { name: macOS Xcode,          os: macos-12, flags: -GXcode }
         - { name: iOS,                  os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
@@ -68,10 +69,6 @@ jobs:
           config: { name: arm64-v8a, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r23b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 -DANDROID_PLATFORM=26 }
         - platform: { name: Android, os: ubuntu-22.04  }
           config: { name: x86_64, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r23b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r23b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 -DANDROID_PLATFORM=26 }
-        - platform: { name: Linux GCC, os: ubuntu-22.04  }
-          config: { name: Static DRM, flags: -GNinja -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
-        - platform: { name: Linux GCC, os: ubuntu-22.04  }
-          config: { name: Shared DRM, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE -DSFML_RUN_DISPLAY_TESTS=FALSE }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
           config: { name: OpenGL ES, flags: -GNinja -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=ON }
           type: { name: Release }
