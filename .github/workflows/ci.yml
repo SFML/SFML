@@ -30,6 +30,7 @@ jobs:
         - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -T ClangCL }
         - { name: Windows VS2022 Clang,   os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
         - { name: Windows MinGW,          os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
+        - { name: Windows OpenGL ES,      os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DSFML_OPENGL_ES=ON }
         - { name: Linux GCC,            os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=ON -GNinja }
         - { name: Linux Clang,          os: ubuntu-22.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_RUN_DISPLAY_TESTS=ON -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: Linux GCC DRM,        os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
@@ -51,12 +52,6 @@ jobs:
           type: { name: Release }
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: Unity, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
-          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
-        - platform: { name: Windows VS2022, os: windows-2022 }
-          config: { name: OpenGL ES, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DSFML_OPENGL_ES=ON }
-          type: { name: Release }
-        - platform: { name: Windows VS2022, os: windows-2022 }
-          config: { name: OpenGL ES, flags: -DSFML_USE_MESA3D=TRUE -DBUILD_SHARED_LIBS=TRUE -DSFML_OPENGL_ES=ON }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
