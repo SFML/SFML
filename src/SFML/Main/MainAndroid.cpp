@@ -500,7 +500,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
 
     if (savedState != nullptr)
     {
-        states->savedState     = malloc(savedStateSize);
+        states->savedState     = std::malloc(savedStateSize);
         states->savedStateSize = savedStateSize;
         std::memcpy(states->savedState, savedState, savedStateSize);
     }
