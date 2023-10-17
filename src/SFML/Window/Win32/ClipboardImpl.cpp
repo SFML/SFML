@@ -33,6 +33,8 @@
 
 #include <ostream>
 
+#include <cstring>
+
 
 namespace sf::priv
 {
@@ -91,7 +93,7 @@ void ClipboardImpl::setString(const String& text)
 
     if (stringHandle)
     {
-        memcpy(GlobalLock(stringHandle), text.toWideString().data(), stringSize);
+        std::memcpy(GlobalLock(stringHandle), text.toWideString().data(), stringSize);
         GlobalUnlock(stringHandle);
         SetClipboardData(CF_UNICODETEXT, stringHandle);
     }

@@ -40,6 +40,8 @@
 #include <iterator>
 #include <ostream>
 
+#include <cstring>
+
 
 namespace
 {
@@ -109,7 +111,7 @@ bool ImageLoader::loadImageFromFile(const std::filesystem::path& filename, std::
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(static_cast<std::size_t>(width * height * 4));
-            memcpy(pixels.data(), ptr, pixels.size());
+            std::memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
@@ -154,7 +156,7 @@ bool ImageLoader::loadImageFromMemory(const void* data, std::size_t dataSize, st
             {
                 // Copy the loaded pixels to the pixel buffer
                 pixels.resize(static_cast<std::size_t>(width * height * 4));
-                memcpy(pixels.data(), ptr, pixels.size());
+                std::memcpy(pixels.data(), ptr, pixels.size());
             }
 
             // Free the loaded pixels (they are now in our own pixel buffer)
@@ -213,7 +215,7 @@ bool ImageLoader::loadImageFromStream(InputStream& stream, std::vector<std::uint
         {
             // Copy the loaded pixels to the pixel buffer
             pixels.resize(static_cast<std::size_t>(width * height * 4));
-            memcpy(pixels.data(), ptr, pixels.size());
+            std::memcpy(pixels.data(), ptr, pixels.size());
         }
 
         // Free the loaded pixels (they are now in our own pixel buffer)
