@@ -2595,7 +2595,7 @@ private:
     VkImageView                     depthImageView{};
     VkShaderModule                  vertexShaderModule{};
     VkShaderModule                  fragmentShaderModule{};
-    VkPipelineShaderStageCreateInfo shaderStages[2];
+    VkPipelineShaderStageCreateInfo shaderStages[2]{};
     VkDescriptorSetLayout           descriptorSetLayout{};
     VkPipelineLayout                pipelineLayout{};
     VkRenderPass                    renderPass{};

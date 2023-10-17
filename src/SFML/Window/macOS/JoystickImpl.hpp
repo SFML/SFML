@@ -115,9 +115,9 @@ private:
     using ButtonsVector = std::vector<IOHIDElementRef>;
 
     AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
-    IOHIDElementRef          m_hat;            ///< POV/Hat axis of the joystick
+    IOHIDElementRef          m_hat{};          ///< POV/Hat axis of the joystick
     ButtonsVector            m_buttons;        ///< Buttons of the joystick
-    unsigned int             m_index;          ///< SFML index
+    unsigned int             m_index{};        ///< SFML index
     Joystick::Identification m_identification; ///< Joystick identification
 
     // NOLINTNEXTLINE(readability-identifier-naming)

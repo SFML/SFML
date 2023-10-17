@@ -61,31 +61,31 @@ struct ActivityStates
     AInputQueue*    inputQueue{};
     AConfiguration* config{};
 
-    EGLDisplay  display;
-    EglContext* context;
+    EGLDisplay  display{};
+    EglContext* context{};
 
-    void*       savedState;
-    std::size_t savedStateSize;
+    void*       savedState{};
+    std::size_t savedStateSize{};
 
     std::recursive_mutex mutex;
 
-    void (*forwardEvent)(const Event& event);
-    int (*processEvent)(int fd, int events, void* data);
+    void (*forwardEvent)(const Event& event){};
+    int (*processEvent)(int fd, int events, void* data){};
 
     std::unordered_map<int, Vector2i> touchEvents;
     Vector2i                          mousePosition;
-    bool                              isButtonPressed[Mouse::ButtonCount];
+    bool                              isButtonPressed[Mouse::ButtonCount]{};
 
-    bool mainOver;
+    bool mainOver{};
 
     Vector2i screenSize;
 
-    bool initialized;
-    bool terminated;
+    bool initialized{};
+    bool terminated{};
 
-    bool fullscreen;
+    bool fullscreen{};
 
-    bool updated;
+    bool updated{};
 
     LogcatStream logcat;
 };

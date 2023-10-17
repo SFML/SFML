@@ -61,7 +61,7 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("create(Vector2, std::uint8_t*)")
         {
             // 10 x 10, with 4 colour channels array
-            std::array<std::uint8_t, 400> pixels;
+            std::array<std::uint8_t, 400> pixels{};
             for (std::size_t i = 0; i < pixels.size(); i += 4)
             {
                 pixels[i]     = 255; // r

@@ -177,12 +177,12 @@ public:
         ////////////////////////////////////////////////////////////
         // Member data
         ////////////////////////////////////////////////////////////
-        FieldTable   m_fields;       //!< Fields of the header associated to their value
-        Method       m_method;       //!< Method to use for the request
-        std::string  m_uri;          //!< Target URI of the request
-        unsigned int m_majorVersion; //!< Major HTTP version
-        unsigned int m_minorVersion; //!< Minor HTTP version
-        std::string  m_body;         //!< Body of the request
+        FieldTable   m_fields;          //!< Fields of the header associated to their value
+        Method       m_method;          //!< Method to use for the request
+        std::string  m_uri;             //!< Target URI of the request
+        unsigned int m_majorVersion{1}; //!< Major HTTP version
+        unsigned int m_minorVersion{};  //!< Minor HTTP version
+        std::string  m_body;            //!< Body of the request
     };
 
     ////////////////////////////////////////////////////////////

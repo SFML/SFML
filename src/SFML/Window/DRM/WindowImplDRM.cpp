@@ -186,9 +186,9 @@ bool WindowImplDRM::hasFocus() const
 
 void WindowImplDRM::processEvents()
 {
-    sf::Event ev;
-    while (sf::priv::InputImpl::checkEvent(ev))
-        pushEvent(ev);
+    sf::Event event;
+    while (sf::priv::InputImpl::checkEvent(event))
+        pushEvent(event);
 }
 
 } // namespace sf::priv

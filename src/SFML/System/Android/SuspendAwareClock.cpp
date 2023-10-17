@@ -34,7 +34,7 @@ namespace sf
 
 SuspendAwareClock::time_point SuspendAwareClock::now() noexcept
 {
-    ::timespec ts;
+    ::timespec ts{};
 #ifdef CLOCK_BOOTTIME
     clock_gettime(CLOCK_BOOTTIME, &ts);
 #else

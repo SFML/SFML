@@ -81,7 +81,7 @@ struct Matrix
         copyMatrix(transform, *this);
     }
 
-    float array[Columns * Rows]; //!< Array holding matrix data
+    float array[Columns * Rows]{}; //!< Array holding matrix data
 };
 
 ////////////////////////////////////////////////////////////

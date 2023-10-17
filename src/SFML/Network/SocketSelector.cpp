@@ -171,7 +171,7 @@ void SocketSelector::clear()
 bool SocketSelector::wait(Time timeout)
 {
     // Setup the timeout
-    timeval time;
+    timeval time{};
     time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
     time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
 

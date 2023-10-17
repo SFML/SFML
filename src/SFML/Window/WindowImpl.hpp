@@ -334,7 +334,7 @@ private:
     std::unique_ptr<JoystickStatesImpl> m_joystickStatesImpl;         //!< Previous state of the joysticks (PImpl)
     Vector3f                            m_sensorValue[Sensor::Count]; //!< Previous value of the sensors
     float m_joystickThreshold{0.1f}; //!< Joystick threshold (minimum motion for "move" event to be generated)
-    float m_previousAxes[Joystick::Count][Joystick::AxisCount]; //!< Position of each axis last time a move event triggered, in range [-100, 100]
+    float m_previousAxes[Joystick::Count][Joystick::AxisCount]{}; //!< Position of each axis last time a move event triggered, in range [-100, 100]
     std::optional<Vector2u> m_minimumSize; //!< Minimum window size
     std::optional<Vector2u> m_maximumSize; //!< Maximum window size
 };
