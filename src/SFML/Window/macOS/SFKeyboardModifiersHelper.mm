@@ -153,7 +153,7 @@ void initialiseKeyboardHelper()
 ////////////////////////////////////////////////////////
 sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
 {
-    sf::Event::KeyEvent event;
+    sf::Event::KeyEvent event{};
     event.code     = key;
     event.scancode = code;
     event.alt      = modifiers & NSAlternateKeyMask;

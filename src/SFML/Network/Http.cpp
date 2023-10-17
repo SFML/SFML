@@ -39,11 +39,9 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Http::Request::Request(const std::string& uri, Method method, const std::string& body)
+Http::Request::Request(const std::string& uri, Method method, const std::string& body) : m_method(method)
 {
-    setMethod(method);
     setUri(uri);
-    setHttpVersion(1, 0);
     setBody(body);
 }
 

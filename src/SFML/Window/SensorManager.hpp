@@ -124,10 +124,10 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        bool       available; //!< Is the sensor available on this device?
-        bool       enabled;   //!< Current enable state of the sensor
-        SensorImpl sensor;    //!< Sensor implementation
-        Vector3f   value;     //!< The current sensor value
+        bool       available{}; //!< Is the sensor available on this device?
+        bool       enabled{};   //!< Current enable state of the sensor
+        SensorImpl sensor{};    //!< Sensor implementation
+        Vector3f   value;       //!< The current sensor value
     };
 
     ////////////////////////////////////////////////////////////

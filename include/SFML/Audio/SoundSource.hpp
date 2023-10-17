@@ -290,7 +290,7 @@ protected:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_source; //!< OpenAL source identifier
+    unsigned int m_source{}; //!< OpenAL source identifier
 };
 
 // NOLINTEND(readability-make-member-function-const)

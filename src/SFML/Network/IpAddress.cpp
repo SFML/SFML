@@ -73,7 +73,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
     addrinfo* result = nullptr;
     if (getaddrinfo(address.data(), nullptr, &hints, &result) == 0 && result != nullptr)
     {
-        sockaddr_in sin;
+        sockaddr_in sin{};
         std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
 
         const std::uint32_t ip = sin.sin_addr.s_addr;
@@ -102,7 +102,7 @@ IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
 ////////////////////////////////////////////////////////////
 std::string IpAddress::toString() const
 {
-    in_addr address;
+    in_addr address{};
     address.s_addr = m_address;
 
     return inet_ntoa(address);

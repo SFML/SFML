@@ -50,7 +50,7 @@ struct JoystickRecord
 {
     std::string deviceNode;
     std::string systemPath;
-    bool        plugged;
+    bool        plugged{};
 };
 
 using JoystickList = std::vector<JoystickRecord>;
@@ -639,7 +639,7 @@ JoystickState JoystickImpl::JoystickImpl::update()
     }
 
     // pop events from the joystick file
-    js_event joyState;
+    js_event joyState{};
     ssize_t  result = read(m_file, &joyState, sizeof(joyState));
     while (result > 0)
     {

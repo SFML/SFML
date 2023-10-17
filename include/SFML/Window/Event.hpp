@@ -35,6 +35,8 @@
 #include <SFML/Window/Sensor.hpp>
 
 
+// NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -200,7 +202,7 @@ struct Event
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EventType type; //!< Type of the event
+    EventType type{}; //!< Type of the event
 
     union
     {
@@ -219,6 +221,8 @@ struct Event
 };
 
 } // namespace sf
+
+// NOLINTEND(cppcoreguidelines-pro-type-member-init)
 
 
 ////////////////////////////////////////////////////////////

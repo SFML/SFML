@@ -790,8 +790,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     {
                         if (m_identification.vendorId && m_identification.productId)
                         {
-                            JoystickBlacklistEntry entry;
-
+                            JoystickBlacklistEntry entry{};
                             entry.vendorId  = m_identification.vendorId;
                             entry.productId = m_identification.productId;
 

@@ -51,9 +51,7 @@ void SoundFileFactory::registerReader()
     unregisterReader<T>();
 
     // Create a new factory with the functions provided by the class
-    ReaderFactory factory;
-    factory.check  = &T::check;
-    factory.create = &priv::createReader<T>;
+    const ReaderFactory factory{&T::check, &priv::createReader<T>};
 
     // Add it
     s_readers.push_back(factory);
@@ -82,9 +80,7 @@ void SoundFileFactory::registerWriter()
     unregisterWriter<T>();
 
     // Create a new factory with the functions provided by the class
-    WriterFactory factory;
-    factory.check  = &T::check;
-    factory.create = &priv::createWriter<T>;
+    const WriterFactory factory{&T::check, &priv::createWriter<T>};
 
     // Add it
     s_writers.push_back(factory);

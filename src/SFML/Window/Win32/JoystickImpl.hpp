@@ -212,15 +212,15 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int          m_index;        //!< Index of the joystick
-    JOYCAPS               m_caps;         //!< Joystick capabilities
-    IDirectInputDevice8W* m_device;       //!< DirectInput 8.x device
-    DIDEVCAPS             m_deviceCaps;   //!< DirectInput device capabilities
-    int m_axes[Joystick::AxisCount];      //!< Offsets to the bytes containing the axes states, -1 if not available
-    int m_buttons[Joystick::ButtonCount]; //!< Offsets to the bytes containing the button states, -1 if not available
+    unsigned int          m_index{};        //!< Index of the joystick
+    JOYCAPS               m_caps{};         //!< Joystick capabilities
+    IDirectInputDevice8W* m_device{};       //!< DirectInput 8.x device
+    DIDEVCAPS             m_deviceCaps{};   //!< DirectInput device capabilities
+    int m_axes[Joystick::AxisCount]{};      //!< Offsets to the bytes containing the axes states, -1 if not available
+    int m_buttons[Joystick::ButtonCount]{}; //!< Offsets to the bytes containing the button states, -1 if not available
     Joystick::Identification m_identification; //!< Joystick identification
     JoystickState            m_state;          //!< Buffered joystick state
-    bool                     m_buffered;       //!< true if the device uses buffering, false if the device uses polling
+    bool                     m_buffered{};     //!< true if the device uses buffering, false if the device uses polling
 };
 
 } // namespace sf::priv

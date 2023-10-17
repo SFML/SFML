@@ -66,7 +66,7 @@ unsigned short TcpSocket::getLocalPort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
-        sockaddr_in                  address;
+        sockaddr_in                  address{};
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
@@ -85,7 +85,7 @@ std::optional<IpAddress> TcpSocket::getRemoteAddress() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the remote end of the socket
-        sockaddr_in                  address;
+        sockaddr_in                  address{};
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
@@ -104,7 +104,7 @@ unsigned short TcpSocket::getRemotePort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the remote end of the socket
-        sockaddr_in                  address;
+        sockaddr_in                  address{};
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {
@@ -175,7 +175,7 @@ Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short
             FD_SET(getNativeHandle(), &selector);
 
             // Setup the timeout
-            timeval time;
+            timeval time{};
             time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
             time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
 

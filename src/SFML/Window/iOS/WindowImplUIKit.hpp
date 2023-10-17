@@ -232,11 +232,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    UIWindow*         m_window;         ///< Pointer to the internal UIKit window
-    SFView*           m_view;           ///< OpenGL view of the window
-    SFViewController* m_viewController; ///< Controller attached to the view
-    bool              m_hasFocus;       ///< Current focus state of the window
-    float             m_backingScale;   ///< Converts from points to pixels and vice versa
+    UIWindow*         m_window{};         ///< Pointer to the internal UIKit window
+    SFView*           m_view{};           ///< OpenGL view of the window
+    SFViewController* m_viewController{}; ///< Controller attached to the view
+    bool              m_hasFocus{};       ///< Current focus state of the window
+    float             m_backingScale{};   ///< Converts from points to pixels and vice versa
 };
 
 } // namespace sf::priv

@@ -51,7 +51,7 @@ unsigned short UdpSocket::getLocalPort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
-        sockaddr_in                  address;
+        sockaddr_in                  address{};
         priv::SocketImpl::AddrLength size = sizeof(address);
         if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
         {

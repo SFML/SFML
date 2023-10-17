@@ -377,7 +377,7 @@ bool eventProcess(sf::Event& event)
     // Check all the open file descriptors for the next event
     for (auto& fileDescriptor : fileDescriptors)
     {
-        input_event inputEvent;
+        input_event inputEvent{};
         bytesRead = read(fileDescriptor, &inputEvent, sizeof(inputEvent));
 
         while (bytesRead > 0)
@@ -509,7 +509,7 @@ bool eventProcess(sf::Event& event)
     newTerminalConfig.c_lflag &= ~static_cast<tcflag_t>(ICANON);
     tcsetattr(STDIN_FILENO, TCSANOW, &newTerminalConfig);
 
-    timeval timeout;
+    timeval timeout{};
     timeout.tv_sec  = 0;
     timeout.tv_usec = 0;
 

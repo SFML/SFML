@@ -40,7 +40,7 @@ void sleepImpl(Time time)
     const std::int64_t usecs = time.asMicroseconds();
 
     // Construct the time to wait
-    timespec ti;
+    timespec ti{};
     ti.tv_sec  = static_cast<time_t>(usecs / 1000000);
     ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
 
