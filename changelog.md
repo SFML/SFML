@@ -24,6 +24,7 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.6.1
 **Bugfixes**
 
 -   Ensure OpenGL extensions are loaded before querying maximum texture size (#2603)
+-   Fixed RenderTexture being upside down on Android (#2730)
 -   Fix warnings in Linux OpenGL ES codepaths (#2747)
 
 ### Audio
