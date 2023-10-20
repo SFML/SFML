@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <ostream>
 
+#include <cassert>
 #include <cstring>
 
 
@@ -263,7 +264,9 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 ////////////////////////////////////////////////////////////
 void Image::setPixel(const Vector2u& coords, const Color& color)
 {
-    std::uint8_t* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
+    const auto index = (coords.x + coords.y * m_size.x) * 4;
+    assert(index < m_pixels.size() && "Image::setPixel() cannot access out of bounds pixel");
+    std::uint8_t* pixel = &m_pixels[index];
     *pixel++            = color.r;
     *pixel++            = color.g;
     *pixel++            = color.b;
@@ -274,7 +277,9 @@ void Image::setPixel(const Vector2u& coords, const Color& color)
 ////////////////////////////////////////////////////////////
 Color Image::getPixel(const Vector2u& coords) const
 {
-    const std::uint8_t* pixel = &m_pixels[(coords.x + coords.y * m_size.x) * 4];
+    const auto index = (coords.x + coords.y * m_size.x) * 4;
+    assert(index < m_pixels.size() && "Image::getPixel() cannot access out of bounds pixel");
+    const std::uint8_t* pixel = &m_pixels[index];
     return {pixel[0], pixel[1], pixel[2], pixel[3]};
 }
 
