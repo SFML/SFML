@@ -269,6 +269,10 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path&     filename,
             if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
                 return true;
         }
+        else
+        {
+            err() << "Image file extension " << extension << " not supported\n";
+        }
     }
 
     err() << "Failed to save image\n" << formatDebugPathInfo(filename) << std::endl;
