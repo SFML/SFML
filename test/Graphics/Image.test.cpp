@@ -129,6 +129,82 @@ TEST_CASE("[Graphics] sf::Image")
         CHECK(image.getPixelsPtr() != nullptr);
     }
 
+    SECTION("saveToFile()")
+    {
+        sf::Image image;
+
+        SECTION("Empty")
+        {
+            CHECK(!image.saveToFile("test.jpg"));
+        }
+
+        SECTION("Invalid size")
+        {
+            image.create({10, 0}, sf::Color::Magenta);
+            CHECK(!image.saveToFile("test.jpg"));
+            image.create({0, 10}, sf::Color::Magenta);
+            CHECK(!image.saveToFile("test.jpg"));
+        }
+
+        image.create({256, 256}, sf::Color::Magenta);
+
+        SECTION("No extension")
+        {
+            CHECK(!image.saveToFile("wheresmyextension"));
+            CHECK(!image.saveToFile("pls/add/extension"));
+        }
+
+        SECTION("Invalid extension")
+        {
+            CHECK(!image.saveToFile("test.ps"));
+            CHECK(!image.saveToFile("test.foo"));
+        }
+
+        SECTION("Successful save")
+        {
+            auto filename = std::filesystem::temp_directory_path();
+
+            SECTION("To .bmp")
+            {
+                filename /= "test.bmp";
+                CHECK(image.saveToFile(filename));
+            }
+
+            SECTION("To .tga")
+            {
+                filename /= "test.tga";
+                CHECK(image.saveToFile(filename));
+            }
+
+            SECTION("To .png")
+            {
+                filename /= "test.png";
+                CHECK(image.saveToFile(filename));
+            }
+
+            SECTION("To .jpg")
+            {
+                filename /= "test.jpg";
+                CHECK(image.saveToFile(filename));
+            }
+
+            SECTION("To .jpeg")
+            {
+                filename /= "test.jpeg";
+                CHECK(image.saveToFile(filename));
+            }
+
+            sf::Image loadedImage;
+            REQUIRE(loadedImage.loadFromFile(filename));
+            CHECK(image.getPixel({0, 0}) == sf::Color::Magenta);
+            CHECK(image.getPixel({255, 255}) == sf::Color::Magenta);
+            CHECK(image.getSize() == sf::Vector2u(256, 256));
+            CHECK(image.getPixelsPtr() != nullptr);
+
+            CHECK(std::filesystem::remove(filename));
+        }
+    }
+
     SECTION("Set/get pixel")
     {
         sf::Image image;
