@@ -196,10 +196,8 @@ TEST_CASE("[Graphics] sf::Image")
 
             sf::Image loadedImage;
             REQUIRE(loadedImage.loadFromFile(filename));
-            CHECK(image.getPixel({0, 0}) == sf::Color::Magenta);
-            CHECK(image.getPixel({255, 255}) == sf::Color::Magenta);
-            CHECK(image.getSize() == sf::Vector2u(256, 256));
-            CHECK(image.getPixelsPtr() != nullptr);
+            CHECK(loadedImage.getSize() == sf::Vector2u(256, 256));
+            CHECK(loadedImage.getPixelsPtr() != nullptr);
 
             CHECK(std::filesystem::remove(filename));
         }
