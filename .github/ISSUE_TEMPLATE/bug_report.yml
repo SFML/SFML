@@ -1,0 +1,88 @@
+name: "Bug report"
+description: Report a Bug for SFML
+labels: ["bug"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thank you for raising your issue here and taking the time to fill out this bug report! 🙂
+
+    - type: checkboxes
+      attributes:
+          label: Prerequisite Checklist
+          description: "Before you submit the issue, we'd like you to consider the follow points."
+          options:
+              - label: "I searched for [existing issues](https://github.com/search?q=repo%3ASFML%2FSFML&type=issues) to prevent duplicates"
+                required: true
+              - label: "I searched for [existing discussions on the forum](https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fen.sfml-dev.org) to prevent duplicates"
+                required: true
+              - label: "I am here to report an issue and not to just ask a question or look for help (use the [forum](https://en.sfml-dev.org/forums/index.php#c3) or [Discord](https://discord.gg/nr4X7Fh) instead)"
+                required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Describe your issue here
+          description: A clear and concise description of what the issue is.
+          placeholder: "Tell us what you see! And don't forget to add error message in full"
+      validations:
+          required: true
+    - type: textarea
+      id: environment
+      attributes:
+          label: Your Environment
+          description: Please provide some information about your environment
+          value: |
+              - OS / distro / window manager: 
+              - SFML version: 
+              - Compiler / toolchain: 
+              - Special compiler / CMake flags:
+      validations:
+          required: true
+    - type: textarea
+      id: repro-bug
+      attributes:
+          label: Steps to reproduce
+          description: Tell us how to reproduce this issue and provide a [minimal, complete and verifiable example](https://stackoverflow.com/help/mcve), you can use the template below
+          value: |
+              1. 
+              2. 
+
+              ```cpp
+              #include <SFML/Graphics.hpp>
+
+              int main()
+              {
+                  sf::RenderWindow window(sf::VideoMode({1280, 720}), "Minimal, complete and verifiable example");
+                  window.setFramerateLimit(60);
+
+                  while (window.isOpen())
+                  {
+                      for (sf::Event event; window.pollEvent(event);)
+                      {
+                          if (event.type == sf::Event::Closed)
+                              window.close();
+                      }
+
+                      window.clear();
+                      window.display();
+                  }
+              }
+              ```
+      validations:
+          required: true
+    - type: textarea
+      id: expected-behavior
+      attributes:
+          label: Expected behavior
+          description: Tell us what should happen
+          placeholder: The circle should be green
+      validations:
+          required: true
+    - type: textarea
+      id: actual-behavior
+      attributes:
+          label: Actual behavior
+          description: Tell us what happens instead
+          placeholder: The circle is red
+      validations:
+          required: true

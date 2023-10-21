@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+    - name: Ask a Question
+      url: https://en.sfml-dev.org/forums/index.php#c3
+      about: Please use the forum to ask questions
+    - name: Chat with the Community
+      url: https://discord.gg/nr4X7Fh
+      about: Join Discord to chat about your problems and ideas
+    - name: Report an issue with the Website or Tutorials
+      url: https://github.com/SFML/SFML-Website/issues/new
+      about: Use the dedicated issue tracker for the SFML Website
+    - name: Report a bug or request a feature for CSFML
+      url: https://github.com/SFML/CSFML/issues/new
+      about: Use the dedicated CSFML issue tracker
+    - name: Report a bug or request a feature for SFML.Net
+      url: https://github.com/SFML/CSFML/issues/new
+      about: Use the dedicated SFML.Net issue tracker
