@@ -466,7 +466,6 @@ WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings) :
-m_isExternal(false),
 m_fullscreen((style & Style::Fullscreen) != 0),
 m_cursorGrabbed(m_fullscreen)
 {
