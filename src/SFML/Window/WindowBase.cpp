@@ -85,7 +85,6 @@ m_size(std::exchange(windowBase.m_size, {}))
     if (&windowBase == getFullscreenWindow())
         setFullscreenWindow(this);
 
-    windowBase.close();
 }
 
 
