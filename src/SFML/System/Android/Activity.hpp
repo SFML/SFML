@@ -39,6 +39,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <cstddef>
+
 class SFML_SYSTEM_API LogcatStream : public std::streambuf
 {
 public:
@@ -64,8 +66,7 @@ struct ActivityStates
     EGLDisplay  display{};
     EglContext* context{};
 
-    void*       savedState{};
-    std::size_t savedStateSize{};
+    std::vector<std::byte> savedState;
 
     std::recursive_mutex mutex;
 

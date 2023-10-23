@@ -500,9 +500,9 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
 
     if (savedState != nullptr)
     {
-        states->savedState     = std::malloc(savedStateSize);
-        states->savedStateSize = savedStateSize;
-        std::memcpy(states->savedState, savedState, savedStateSize);
+        const auto* begin = static_cast<const std::byte*>(savedState);
+        const auto* end   = begin + savedStateSize;
+        states->savedState.assign(begin, end);
     }
 
     states->mainOver = false;
