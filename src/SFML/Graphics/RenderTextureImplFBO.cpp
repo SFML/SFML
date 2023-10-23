@@ -387,7 +387,7 @@ bool RenderTextureImplFBO::create(unsigned int width, unsigned int height, unsig
     if (createFrameBuffer())
     {
         // Restore previously bound framebuffer
-        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
+        glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, static_cast<GLuint>(frameBuffer)));
 
         return true;
     }

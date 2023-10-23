@@ -16,6 +16,7 @@ jobs:
         - { name: Windows VS2022 Clang, os: windows-2022, flags: -T ClangCL }
         - { name: Linux GCC,      os: ubuntu-20.04  }
         - { name: Linux Clang,    os: ubuntu-20.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-20.04, flags: -DSFML_OPENGL_ES=ON }
         - { name: MacOS XCode,    os: macos-11   }
         config:
         - { name: Shared,       flags: -DBUILD_SHARED_LIBS=TRUE }
