@@ -39,7 +39,7 @@
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), text(font), sprite(logo), background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win)
     {
         std::filesystem::path resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath / "logo.png"))
@@ -62,10 +62,10 @@ struct SFMLmainWindow
 
     sf::RenderWindow renderWindow;
     sf::Font         font;
-    sf::Text         text;
+    sf::Text         text{font};
     sf::Texture      logo;
-    sf::Sprite       sprite;
-    sf::Color        background;
+    sf::Sprite       sprite{logo};
+    sf::Color        background{sf::Color::Blue};
 };
 
 // Private stuff

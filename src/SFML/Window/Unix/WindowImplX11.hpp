@@ -325,7 +325,7 @@ private:
     int        m_screen;         ///< Screen identifier
     XIM        m_inputMethod{};  ///< Input method linked to the X display
     XIC        m_inputContext{}; ///< Input context used to get unicode input in our window
-    bool       m_isExternal;     ///< Tell whether the window has been created externally or by SFML
+    bool       m_isExternal{};   ///< Tell whether the window has been created externally or by SFML
     RRMode     m_oldVideoMode{}; ///< Video mode in use before we switch to fullscreen
     RRCrtc     m_oldRRCrtc{};    ///< RRCrtc in use before we switch to fullscreen
     ::Cursor   m_hiddenCursor{}; ///< As X11 doesn't provide cursor hiding, we must create a transparent one
