@@ -101,7 +101,6 @@ WindowBase& WindowBase::operator=(WindowBase&& windowBase) noexcept
     if (&windowBase == getFullscreenWindow())
         setFullscreenWindow(this);
 
-    windowBase.close();
     return *this;
 }
 
