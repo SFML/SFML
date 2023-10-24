@@ -267,3 +267,6 @@ jobs:
 
     - name: Analyze Code
       run: cmake --build build --target tidy
+
+    - name: clang-tidy version
+      run: clang-tidy --version
