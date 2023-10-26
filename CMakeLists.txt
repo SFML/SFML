@@ -216,6 +216,11 @@ if(SFML_OS_MACOS)
     endif()
 endif()
 
+option(SFML_ENABLE_SANITIZERS "Enable sanitizers" OFF)
+if(SFML_ENABLE_SANITIZERS)
+    list(APPEND CMAKE_CXX_FLAGS "-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
+endif()
+
 # set the output directory for SFML DLLs and executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
