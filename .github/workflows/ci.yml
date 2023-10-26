@@ -268,3 +268,49 @@ jobs:
 
     - name: Analyze Code
       run: cmake --build build --target tidy
+
+  sanitize:
+    name: Sanitizing on ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Linux,               os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=ON }
+        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=ON -DSFML_OPENGL_ES=ON }
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: latest
+        ninjaVersion: latest
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox
+
+    - name: Configure
+      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Prepare Test
+      run: |
+        set -e
+        # Start up Xvfb and fluxbox to host display tests
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          Xvfb $DISPLAY -screen 0 1920x1080x24 &
+          sleep 5
+          fluxbox > /dev/null 2>&1 &
+          sleep 5
+        fi
+
+    - name: Test
+      run: ctest --test-dir build --output-on-failure
