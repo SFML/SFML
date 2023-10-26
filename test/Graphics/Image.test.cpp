@@ -193,6 +193,85 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
+    SECTION("saveToMemory()")
+    {
+        sf::Image                 image;
+        std::vector<std::uint8_t> output;
+
+        SECTION("Empty")
+        {
+            CHECK(!image.saveToMemory(output, "test.jpg"));
+            CHECK(output.empty());
+        }
+
+        SECTION("Invalid size")
+        {
+            image.create({10, 0}, sf::Color::Magenta);
+            CHECK(!image.saveToMemory(output, "test.jpg"));
+            CHECK(output.empty());
+            image.create({0, 10}, sf::Color::Magenta);
+            CHECK(!image.saveToMemory(output, "test.jpg"));
+            CHECK(output.empty());
+        }
+
+        image.create({16, 16}, sf::Color::Magenta);
+
+        SECTION("No extension")
+        {
+            CHECK(!image.saveToMemory(output, ""));
+            CHECK(output.empty());
+        }
+
+        SECTION("Invalid extension")
+        {
+            CHECK(!image.saveToMemory(output, "."));
+            CHECK(output.empty());
+            CHECK(!image.saveToMemory(output, "gif"));
+            CHECK(output.empty());
+            CHECK(!image.saveToMemory(output, ".jpg")); // Supposed to be "jpg"
+            CHECK(output.empty());
+        }
+
+        SECTION("Successful save")
+        {
+            SECTION("To bmp")
+            {
+                REQUIRE(image.saveToMemory(output, "bmp"));
+                REQUIRE(output.size() == 1146);
+                CHECK(output[0] == 66);
+                CHECK(output[1] == 77);
+                CHECK(output[2] == 122);
+                CHECK(output[3] == 4);
+                CHECK(output[1000] == 255);
+                CHECK(output[1001] == 255);
+                CHECK(output[1002] == 255);
+                CHECK(output[1003] == 0);
+            }
+
+            SECTION("To tga")
+            {
+                REQUIRE(image.saveToMemory(output, "tga"));
+                REQUIRE(output.size() == 98);
+                CHECK(output[0] == 0);
+                CHECK(output[1] == 0);
+                CHECK(output[2] == 10);
+                CHECK(output[3] == 0);
+            }
+
+            SECTION("To png")
+            {
+                REQUIRE(image.saveToMemory(output, "png"));
+                REQUIRE(output.size() == 92);
+                CHECK(output[0] == 137);
+                CHECK(output[1] == 80);
+                CHECK(output[2] == 78);
+                CHECK(output[3] == 71);
+            }
+
+            // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
+        }
+    }
+
     SECTION("Set/get pixel")
     {
         sf::Image image;
