@@ -33,6 +33,7 @@
 #include <SFML/Graphics/Rect.hpp>
 
 #include <filesystem>
+#include <optional>
 #include <string_view>
 #include <vector>
 
@@ -148,15 +149,15 @@ public:
     /// This function fails if the image is empty, or if
     /// the format was invalid.
     ///
-    /// \param output Buffer to fill with encoded data
     /// \param format Encoding format to use
     ///
-    /// \return True if saving was successful
+    /// \return Buffer with encoded data if saving was successful,
+    ///     otherwise std::nullopt
     ///
     /// \see create, loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool saveToMemory(std::vector<std::uint8_t>& output, std::string_view format) const;
+    [[nodiscard]] std::optional<std::vector<std::uint8_t>> saveToMemory(std::string_view format) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image

@@ -207,48 +207,44 @@ TEST_CASE("[Graphics] sf::Image")
 
     SECTION("saveToMemory()")
     {
-        sf::Image                 image;
-        std::vector<std::uint8_t> output;
+        sf::Image image;
 
         SECTION("Empty")
         {
-            CHECK(!image.saveToMemory(output, "test.jpg"));
-            CHECK(output.empty());
+            CHECK(!image.saveToMemory("test.jpg"));
         }
 
         SECTION("Invalid size")
         {
             image.create({10, 0}, sf::Color::Magenta);
-            CHECK(!image.saveToMemory(output, "test.jpg"));
-            CHECK(output.empty());
+            CHECK(!image.saveToMemory("test.jpg"));
             image.create({0, 10}, sf::Color::Magenta);
-            CHECK(!image.saveToMemory(output, "test.jpg"));
-            CHECK(output.empty());
+            CHECK(!image.saveToMemory("test.jpg"));
         }
 
         image.create({16, 16}, sf::Color::Magenta);
 
         SECTION("No extension")
         {
-            CHECK(!image.saveToMemory(output, ""));
-            CHECK(output.empty());
+            CHECK(!image.saveToMemory(""));
         }
 
         SECTION("Invalid extension")
         {
-            CHECK(!image.saveToMemory(output, "."));
-            CHECK(output.empty());
-            CHECK(!image.saveToMemory(output, "gif"));
-            CHECK(output.empty());
-            CHECK(!image.saveToMemory(output, ".jpg")); // Supposed to be "jpg"
-            CHECK(output.empty());
+            CHECK(!image.saveToMemory("."));
+            CHECK(!image.saveToMemory("gif"));
+            CHECK(!image.saveToMemory(".jpg")); // Supposed to be "jpg"
         }
 
         SECTION("Successful save")
         {
+            std::optional<std::vector<std::uint8_t>> maybeOutput;
+
             SECTION("To bmp")
             {
-                REQUIRE(image.saveToMemory(output, "bmp"));
+                maybeOutput = image.saveToMemory("bmp");
+                REQUIRE(maybeOutput.has_value());
+                const auto& output = *maybeOutput;
                 REQUIRE(output.size() == 1146);
                 CHECK(output[0] == 66);
                 CHECK(output[1] == 77);
@@ -262,7 +258,9 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("To tga")
             {
-                REQUIRE(image.saveToMemory(output, "tga"));
+                maybeOutput = image.saveToMemory("tga");
+                REQUIRE(maybeOutput.has_value());
+                const auto& output = *maybeOutput;
                 REQUIRE(output.size() == 98);
                 CHECK(output[0] == 0);
                 CHECK(output[1] == 0);
@@ -272,7 +270,9 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("To png")
             {
-                REQUIRE(image.saveToMemory(output, "png"));
+                maybeOutput = image.saveToMemory("png");
+                REQUIRE(maybeOutput.has_value());
+                const auto& output = *maybeOutput;
                 REQUIRE(output.size() == 92);
                 CHECK(output[0] == 137);
                 CHECK(output[1] == 80);

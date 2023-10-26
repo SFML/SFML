@@ -282,47 +282,47 @@ bool ImageLoader::saveImageToFile(const std::filesystem::path&     filename,
 }
 
 ////////////////////////////////////////////////////////////
-bool ImageLoader::saveImageToMemory(const std::string&               format,
-                                    std::vector<std::uint8_t>&       output,
-                                    const std::vector<std::uint8_t>& pixels,
-                                    const Vector2u&                  size)
+std::optional<std::vector<std::uint8_t>> ImageLoader::saveImageToMemory(const std::string&               format,
+                                                                        const std::vector<std::uint8_t>& pixels,
+                                                                        const Vector2u&                  size)
 {
     // Make sure the image is not empty
     if (!pixels.empty() && (size.x > 0) && (size.y > 0))
     {
         // Choose function based on format
-
         const std::string specified     = toLower(format);
         const Vector2i    convertedSize = Vector2i(size);
+
+        std::vector<std::uint8_t> buffer;
 
         if (specified == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data()))
-                return true;
+            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, pixels.data()))
+                return buffer;
         }
         else if (specified == "tga")
         {
             // TGA format
-            if (stbi_write_tga_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data()))
-                return true;
+            if (stbi_write_tga_to_func(&bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, pixels.data()))
+                return buffer;
         }
         else if (specified == "png")
         {
             // PNG format
-            if (stbi_write_png_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
-                return true;
+            if (stbi_write_png_to_func(&bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, pixels.data(), 0))
+                return buffer;
         }
         else if (specified == "jpg" || specified == "jpeg")
         {
             // JPG format
-            if (stbi_write_jpg_to_func(&bufferFromCallback, &output, convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
-                return true;
+            if (stbi_write_jpg_to_func(&bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, pixels.data(), 90))
+                return buffer;
         }
     }
 
     err() << "Failed to save image with format " << std::quoted(format) << std::endl;
-    return false;
+    return std::nullopt;
 }
 
 } // namespace sf::priv

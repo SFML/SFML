@@ -32,6 +32,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -122,17 +123,15 @@ public:
     /// \brief Save an array of pixels as an encoded image buffer
     ///
     /// \param format   Must be "bmp", "png", "tga" or "jpg"/"jpeg".
-    /// \param output   Buffer to fill with encoded data
     /// \param pixels   Array of pixels to save to image
     /// \param size     Size of image to save, in pixels
     ///
-    /// \return True if saving was successful
+    /// \return Buffer with encoded data if saving was successful
     ///
     ////////////////////////////////////////////////////////////
-    bool saveImageToMemory(const std::string&               format,
-                           std::vector<std::uint8_t>&       output,
-                           const std::vector<std::uint8_t>& pixels,
-                           const Vector2u&                  size);
+    std::optional<std::vector<std::uint8_t>> saveImageToMemory(const std::string&               format,
+                                                               const std::vector<std::uint8_t>& pixels,
+                                                               const Vector2u&                  size);
 
 private:
     ////////////////////////////////////////////////////////////
