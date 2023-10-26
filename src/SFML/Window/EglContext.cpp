@@ -399,7 +399,7 @@ void EglContext::updateSettings()
 
 #if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
 ////////////////////////////////////////////////////////////
-XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
+XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
     EglContextImpl::ensureInit();
 
@@ -419,7 +419,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
         // Should never happen...
         err() << "No EGL visual found. You should check your graphics driver" << std::endl;
 
-        return XVisualInfo();
+        return {};
     }
 
     XVisualInfo vTemplate;
@@ -427,14 +427,14 @@ XVisualInfo EglContext::selectBestVisual(::Display* XDisplay, unsigned int bitsP
 
     // Get X11 visuals compatible with this EGL config
     int  visualCount      = 0;
-    auto availableVisuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(XDisplay, VisualIDMask, &vTemplate, &visualCount));
+    auto availableVisuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(xDisplay, VisualIDMask, &vTemplate, &visualCount));
 
     if (visualCount == 0)
     {
         // Can't happen...
         err() << "No X11 visual found. Bug in your EGL implementation ?" << std::endl;
 
-        return XVisualInfo();
+        return {};
     }
 
     // Pick up the best one
