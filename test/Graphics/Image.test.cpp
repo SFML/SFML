@@ -90,43 +90,55 @@ TEST_CASE("[Graphics] sf::Image")
     {
         sf::Image image;
 
-        SECTION("bmp")
+        SECTION("Invalid file")
         {
-            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.bmp"));
-            CHECK(image.getPixel({0, 0}) == sf::Color::White);
-            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            CHECK(!image.loadFromFile("."));
+            CHECK(!image.loadFromFile("this/does/not/exist.jpg"));
+
+            CHECK(image.getSize() == sf::Vector2u(0, 0));
+            CHECK(image.getPixelsPtr() == nullptr);
         }
 
-        SECTION("png")
+        SECTION("Successful load")
         {
-            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.png"));
-            CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
-            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
-        }
+            SECTION("bmp")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.bmp"));
+                CHECK(image.getPixel({0, 0}) == sf::Color::White);
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
 
-        SECTION("jpg")
-        {
-            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.jpg"));
-            CHECK(image.getPixel({0, 0}) == sf::Color::White);
-            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
-        }
+            SECTION("png")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.png"));
+                CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
 
-        SECTION("gif")
-        {
-            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.gif"));
-            CHECK(image.getPixel({0, 0}) == sf::Color::White);
-            CHECK(image.getPixel({200, 150}) == sf::Color(146, 210, 62));
-        }
+            SECTION("jpg")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.jpg"));
+                CHECK(image.getPixel({0, 0}) == sf::Color::White);
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
 
-        SECTION("psd")
-        {
-            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.psd"));
-            CHECK(image.getPixel({0, 0}) == sf::Color::White);
-            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
-        }
+            SECTION("gif")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.gif"));
+                CHECK(image.getPixel({0, 0}) == sf::Color::White);
+                CHECK(image.getPixel({200, 150}) == sf::Color(146, 210, 62));
+            }
 
-        CHECK(image.getSize() == sf::Vector2u(1001, 304));
-        CHECK(image.getPixelsPtr() != nullptr);
+            SECTION("psd")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.psd"));
+                CHECK(image.getPixel({0, 0}) == sf::Color::White);
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
+
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
+        }
     }
 
     SECTION("saveToFile()")
