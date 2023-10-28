@@ -26,17 +26,56 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/ImageLoader.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/InputStream.hpp>
+#include <SFML/System/Utils.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 #include <algorithm>
 #include <ostream>
 
 #include <cassert>
 #include <cstring>
+
+
+namespace
+{
+// stb_image callbacks that operate on a sf::InputStream
+int read(void* user, char* data, int size)
+{
+    auto& stream = *static_cast<sf::InputStream*>(user);
+    return static_cast<int>(stream.read(data, size));
+}
+
+void skip(void* user, int size)
+{
+    auto& stream = *static_cast<sf::InputStream*>(user);
+    if (stream.seek(stream.tell() + size) == -1)
+        sf::err() << "Failed to seek image loader input stream" << std::endl;
+}
+
+int eof(void* user)
+{
+    auto& stream = *static_cast<sf::InputStream*>(user);
+    return stream.tell() >= stream.getSize();
+}
+
+// stb_image callback for constructing a buffer
+void bufferFromCallback(void* context, void* data, int size)
+{
+    const auto* source = static_cast<std::uint8_t*>(data);
+    auto*       dest   = static_cast<std::vector<std::uint8_t>*>(context);
+    std::copy(source, source + size, std::back_inserter(*dest));
+}
+} // namespace
 
 
 namespace sf
@@ -109,7 +148,36 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 {
 #ifndef SFML_SYSTEM_ANDROID
 
-    return priv::ImageLoader::getInstance().loadImageFromFile(filename, m_pixels, m_size);
+    // Clear the array (just in case)
+    m_pixels.clear();
+
+    // Load the image and get a pointer to the pixels in memory
+    int   width    = 0;
+    int   height   = 0;
+    int   channels = 0;
+    auto* ptr      = stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+
+    if (ptr)
+    {
+        // Assign the image properties
+        m_size = Vector2u(Vector2i(width, height));
+
+        // Copy the loaded pixels to the pixel buffer
+        m_pixels.assign(ptr, ptr + width * height * 4);
+
+        // Free the loaded pixels (they are now in our own pixel buffer)
+        stbi_image_free(ptr);
+
+        return true;
+    }
+    else
+    {
+        // Error, failed to load the image
+        err() << "Failed to load image\n"
+              << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
+
+        return false;
+    }
 
 #else
 
@@ -123,27 +191,182 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 ////////////////////////////////////////////////////////////
 bool Image::loadFromMemory(const void* data, std::size_t size)
 {
-    return priv::ImageLoader::getInstance().loadImageFromMemory(data, size, m_pixels, m_size);
+    // Check input parameters
+    if (data && size)
+    {
+        // Clear the array (just in case)
+        m_pixels.clear();
+
+        // Load the image and get a pointer to the pixels in memory
+        int         width    = 0;
+        int         height   = 0;
+        int         channels = 0;
+        const auto* buffer   = static_cast<const unsigned char*>(data);
+        auto* ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha);
+
+        if (ptr)
+        {
+            // Assign the image properties
+            m_size = Vector2u(Vector2i(width, height));
+
+            // Copy the loaded pixels to the pixel buffer
+            m_pixels.assign(ptr, ptr + width * height * 4);
+
+            // Free the loaded pixels (they are now in our own pixel buffer)
+            stbi_image_free(ptr);
+
+            return true;
+        }
+        else
+        {
+            // Error, failed to load the image
+            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+
+            return false;
+        }
+    }
+    else
+    {
+        err() << "Failed to load image from memory, no data provided" << std::endl;
+        return false;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Image::loadFromStream(InputStream& stream)
 {
-    return priv::ImageLoader::getInstance().loadImageFromStream(stream, m_pixels, m_size);
+    // Clear the array (just in case)
+    m_pixels.clear();
+
+    // Make sure that the stream's reading position is at the beginning
+    if (stream.seek(0) == -1)
+    {
+        err() << "Failed to seek image stream" << std::endl;
+        return false;
+    }
+
+    // Setup the stb_image callbacks
+    stbi_io_callbacks callbacks;
+    callbacks.read = read;
+    callbacks.skip = skip;
+    callbacks.eof  = eof;
+
+    // Load the image and get a pointer to the pixels in memory
+    int   width    = 0;
+    int   height   = 0;
+    int   channels = 0;
+    auto* ptr      = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
+
+    if (ptr)
+    {
+        // Assign the image properties
+        m_size = Vector2u(Vector2i(width, height));
+
+        // Copy the loaded pixels to the pixel buffer
+        m_pixels.assign(ptr, ptr + width * height * 4);
+
+        // Free the loaded pixels (they are now in our own pixel buffer)
+        stbi_image_free(ptr);
+
+        return true;
+    }
+    else
+    {
+        // Error, failed to load the image
+        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+        return false;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Image::saveToFile(const std::filesystem::path& filename) const
 {
-    return priv::ImageLoader::getInstance().saveImageToFile(filename, m_pixels, m_size);
+    // Make sure the image is not empty
+    if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
+    {
+        // Deduce the image type from its extension
+
+        // Extract the extension
+        const std::filesystem::path extension     = filename.extension();
+        const Vector2i              convertedSize = Vector2i(m_size);
+
+        if (extension == ".bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return true;
+        }
+        else if (extension == ".tga")
+        {
+            // TGA format
+            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return true;
+        }
+        else if (extension == ".png")
+        {
+            // PNG format
+            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                return true;
+        }
+        else if (extension == ".jpg" || extension == ".jpeg")
+        {
+            // JPG format
+            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                return true;
+        }
+        else
+        {
+            err() << "Image file extension " << extension << " not supported\n";
+        }
+    }
+
+    err() << "Failed to save image\n" << formatDebugPathInfo(filename) << std::endl;
+    return false;
 }
+
 
 ////////////////////////////////////////////////////////////
 std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view format) const
 {
-    return priv::ImageLoader::getInstance().saveImageToMemory(std::string(format), m_pixels, m_size);
+    // Make sure the image is not empty
+    if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
+    {
+        // Choose function based on format
+        const std::string specified     = toLower(std::string(format));
+        const Vector2i    convertedSize = Vector2i(m_size);
+
+        std::vector<std::uint8_t> buffer;
+
+        if (specified == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return buffer;
+        }
+        else if (specified == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return buffer;
+        }
+        else if (specified == "png")
+        {
+            // PNG format
+            if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                return buffer;
+        }
+        else if (specified == "jpg" || specified == "jpeg")
+        {
+            // JPG format
+            if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                return buffer;
+        }
+    }
+
+    err() << "Failed to save image with format " << std::quoted(format) << std::endl;
+    return std::nullopt;
 }
 
 
