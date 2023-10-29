@@ -68,6 +68,7 @@ class WindowImplCocoa;
 /// the cursor (that was disconnected from the system).
 ///
 ////////////////////////////////////////////////////////////
+// NOLINTBEGIN(readability-identifier-naming)
 @interface SFOpenGLView : NSOpenGLView
 {
     sf::priv::WindowImplCocoa* m_requester;     ///< View's requester
@@ -87,6 +88,7 @@ class WindowImplCocoa;
     SFSilentResponder* m_silentResponder;
     NSTextView*        m_hiddenTextView;
 }
+// NOLINTEND(readability-identifier-naming)
 
 ////////////////////////////////////////////////////////////
 /// \brief Create the SFML OpenGL view

@@ -37,14 +37,14 @@ namespace sf
 ////////////////////////////////////////////////////////
 AutoreleasePool::AutoreleasePool()
 {
-    pool = [[NSAutoreleasePool alloc] init];
+    m_pool = [[NSAutoreleasePool alloc] init];
 }
 
 
 ////////////////////////////////////////////////////////
 AutoreleasePool::~AutoreleasePool()
 {
-    [pool drain];
+    [m_pool drain];
 }
 
 } // namespace sf

@@ -221,9 +221,9 @@ private:
     ////////////////////////////////////////////////////////////
     struct PendingPacket
     {
-        std::uint32_t          Size{};         //!< Data of packet size
-        std::size_t            SizeReceived{}; //!< Number of size bytes received so far
-        std::vector<std::byte> Data;           //!< Data of the packet
+        std::uint32_t          size{};         //!< Data of packet size
+        std::size_t            sizeReceived{}; //!< Number of size bytes received so far
+        std::vector<std::byte> data;           //!< Data of the packet
     };
 
     ////////////////////////////////////////////////////////////

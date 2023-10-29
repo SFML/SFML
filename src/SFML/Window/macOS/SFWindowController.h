@@ -53,6 +53,7 @@ class WindowImplCocoa;
 /// style is restored.
 ///
 ////////////////////////////////////////////////////////////
+// NOLINTBEGIN(readability-identifier-naming)
 @interface SFWindowController : NSResponder<WindowImplDelegateProtocol, NSWindowDelegate>
 {
     NSWindow*                  m_window;        ///< Underlying Cocoa window to be controlled
@@ -62,6 +63,7 @@ class WindowImplCocoa;
     BOOL                       m_restoreResize; ///< See note above
     BOOL                       m_highDpi;       ///< Support high-DPI rendering or not
 }
+// NOLINTEND(readability-identifier-naming)
 
 ////////////////////////////////////////////////////////////
 /// \brief Create the SFML window with an external Cocoa window

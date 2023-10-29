@@ -377,35 +377,35 @@ Socket::Status TcpSocket::receive(Packet& packet)
     // We start by getting the size of the incoming packet
     std::uint32_t packetSize = 0;
     std::size_t   received   = 0;
-    if (m_pendingPacket.SizeReceived < sizeof(m_pendingPacket.Size))
+    if (m_pendingPacket.sizeReceived < sizeof(m_pendingPacket.size))
     {
         // Loop until we've received the entire size of the packet
         // (even a 4 byte variable may be received in more than one call)
-        while (m_pendingPacket.SizeReceived < sizeof(m_pendingPacket.Size))
+        while (m_pendingPacket.sizeReceived < sizeof(m_pendingPacket.size))
         {
-            char*        data   = reinterpret_cast<char*>(&m_pendingPacket.Size) + m_pendingPacket.SizeReceived;
-            const Status status = receive(data, sizeof(m_pendingPacket.Size) - m_pendingPacket.SizeReceived, received);
-            m_pendingPacket.SizeReceived += received;
+            char*        data   = reinterpret_cast<char*>(&m_pendingPacket.size) + m_pendingPacket.sizeReceived;
+            const Status status = receive(data, sizeof(m_pendingPacket.size) - m_pendingPacket.sizeReceived, received);
+            m_pendingPacket.sizeReceived += received;
 
             if (status != Status::Done)
                 return status;
         }
 
         // The packet size has been fully received
-        packetSize = ntohl(m_pendingPacket.Size);
+        packetSize = ntohl(m_pendingPacket.size);
     }
     else
     {
         // The packet size has already been received in a previous call
-        packetSize = ntohl(m_pendingPacket.Size);
+        packetSize = ntohl(m_pendingPacket.size);
     }
 
     // Loop until we receive all the packet data
     char buffer[1024];
-    while (m_pendingPacket.Data.size() < packetSize)
+    while (m_pendingPacket.data.size() < packetSize)
     {
         // Receive a chunk of data
-        const std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.Data.size(), sizeof(buffer));
+        const std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.data.size(), sizeof(buffer));
         const Status      status    = receive(buffer, sizeToGet, received);
         if (status != Status::Done)
             return status;
@@ -413,15 +413,15 @@ Socket::Status TcpSocket::receive(Packet& packet)
         // Append it into the packet
         if (received > 0)
         {
-            m_pendingPacket.Data.resize(m_pendingPacket.Data.size() + received);
-            std::byte* begin = m_pendingPacket.Data.data() + m_pendingPacket.Data.size() - received;
+            m_pendingPacket.data.resize(m_pendingPacket.data.size() + received);
+            std::byte* begin = m_pendingPacket.data.data() + m_pendingPacket.data.size() - received;
             std::memcpy(begin, buffer, received);
         }
     }
 
     // We have received all the packet data: we can copy it to the user packet
-    if (!m_pendingPacket.Data.empty())
-        packet.onReceive(m_pendingPacket.Data.data(), m_pendingPacket.Data.size());
+    if (!m_pendingPacket.data.empty())
+        packet.onReceive(m_pendingPacket.data.data(), m_pendingPacket.data.size());
 
     // Clear the pending packet data
     m_pendingPacket = PendingPacket();
