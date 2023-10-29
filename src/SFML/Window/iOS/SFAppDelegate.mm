@@ -43,6 +43,7 @@ std::vector<sf::Vector2i> touchPositions;
 
 @interface SFAppDelegate ()
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 @property (nonatomic) CMMotionManager* motionManager;
 
 @end

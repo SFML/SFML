@@ -66,7 +66,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    NSAutoreleasePoolRef pool; ///< The autorelease pool.
+    NSAutoreleasePoolRef m_pool; ///< The autorelease pool.
 };
 
 } // namespace sf

@@ -408,13 +408,7 @@ struct GlContext::Impl
     /// \brief Constructor
     ///
     ////////////////////////////////////////////////////////////
-    Impl() :
-    m_id(
-        []()
-        {
-            static std::atomic<std::uint64_t> id(1); // start at 1, zero is "no context"
-            return id.fetch_add(1);
-        }())
+    Impl()
     {
         auto& weakUnsharedGlObjects = getWeakUnsharedGlObjects();
         unsharedGlObjects           = weakUnsharedGlObjects.lock();
@@ -465,7 +459,12 @@ struct GlContext::Impl
     // Member data
     ////////////////////////////////////////////////////////////
     std::shared_ptr<UnsharedGlObjects> unsharedGlObjects; //!< The current object's handle to unshared objects
-    const std::uint64_t m_id; //!< Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
+    const std::uint64_t                id{
+        []()
+        {
+            static std::atomic<std::uint64_t> atomicId(1); // start at 1, zero is "no context"
+            return atomicId.fetch_add(1);
+        }()}; //!< Unique identifier, used for identifying contexts when managing unshareable OpenGL resources
 };
 
 
@@ -714,7 +713,7 @@ GlContext::~GlContext()
 {
     auto& currentContext = GlContextImpl::CurrentContext::get();
 
-    if (m_impl->m_id == currentContext.id)
+    if (m_impl->id == currentContext.id)
     {
         currentContext.id  = 0;
         currentContext.ptr = nullptr;
@@ -740,7 +739,7 @@ bool GlContext::setActive(bool active)
 
     if (active)
     {
-        if (m_impl->m_id != currentContext.id)
+        if (m_impl->id != currentContext.id)
         {
             // We can't and don't need to lock when we are currently creating the shared context
             std::unique_lock<std::recursive_mutex> lock;
@@ -752,7 +751,7 @@ bool GlContext::setActive(bool active)
             if (makeCurrent(true))
             {
                 // Set it as the new current context for this thread
-                currentContext.id  = m_impl->m_id;
+                currentContext.id  = m_impl->id;
                 currentContext.ptr = this;
                 return true;
             }
@@ -769,7 +768,7 @@ bool GlContext::setActive(bool active)
     }
     else
     {
-        if (m_impl->m_id == currentContext.id)
+        if (m_impl->id == currentContext.id)
         {
             // We can't and don't need to lock when we are currently creating the shared context
             std::unique_lock<std::recursive_mutex> lock;
@@ -851,7 +850,7 @@ void GlContext::cleanupUnsharedResources()
     GlContext* contextToRestore = currentContext.ptr;
 
     // If this context is already active there is no need to save it
-    if (m_impl->m_id == currentContext.id)
+    if (m_impl->id == currentContext.id)
         contextToRestore = nullptr;
 
     // Make this context active so resources can be freed
@@ -863,7 +862,7 @@ void GlContext::cleanupUnsharedResources()
         // Destroy the unshared objects contained in this context
         for (auto iter = m_impl->unsharedGlObjects->begin(); iter != m_impl->unsharedGlObjects->end();)
         {
-            if (iter->contextId == m_impl->m_id)
+            if (iter->contextId == m_impl->id)
             {
                 iter = m_impl->unsharedGlObjects->erase(iter);
             }

@@ -97,7 +97,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
-    JoystickState m_states[Joystick::Count]; //!< Previous state of the joysticks
+    JoystickState states[Joystick::Count]; //!< Previous state of the joysticks
 };
 
 ////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
     JoystickManager::getInstance().update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
-        m_joystickStatesImpl->m_states[i] = JoystickManager::getInstance().getState(i);
+        m_joystickStatesImpl->states[i] = JoystickManager::getInstance().getState(i);
         std::fill_n(m_previousAxes[i], static_cast<std::size_t>(Joystick::AxisCount), 0.f);
     }
 
@@ -226,11 +226,11 @@ void WindowImpl::processJoystickEvents()
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         // Copy the previous state of the joystick and get the new one
-        const JoystickState previousState = m_joystickStatesImpl->m_states[i];
-        m_joystickStatesImpl->m_states[i] = JoystickManager::getInstance().getState(i);
+        const JoystickState previousState = m_joystickStatesImpl->states[i];
+        m_joystickStatesImpl->states[i]   = JoystickManager::getInstance().getState(i);
 
         // Connection state
-        const bool connected = m_joystickStatesImpl->m_states[i].connected;
+        const bool connected = m_joystickStatesImpl->states[i].connected;
         if (previousState.connected ^ connected)
         {
             Event event;
@@ -254,7 +254,7 @@ void WindowImpl::processJoystickEvents()
                 {
                     const auto  axis    = static_cast<Joystick::Axis>(j);
                     const float prevPos = m_previousAxes[i][axis];
-                    const float currPos = m_joystickStatesImpl->m_states[i].axes[axis];
+                    const float currPos = m_joystickStatesImpl->states[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
@@ -273,7 +273,7 @@ void WindowImpl::processJoystickEvents()
             for (unsigned int j = 0; j < caps.buttonCount; ++j)
             {
                 const bool prevPressed = previousState.buttons[j];
-                const bool currPressed = m_joystickStatesImpl->m_states[i].buttons[j];
+                const bool currPressed = m_joystickStatesImpl->states[i].buttons[j];
 
                 if (prevPressed ^ currPressed)
                 {

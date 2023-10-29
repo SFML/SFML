@@ -38,6 +38,7 @@
 
 @interface SFView ()
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 @property (nonatomic) NSMutableArray* touches;
 
 @end
