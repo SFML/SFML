@@ -1,5 +1,8 @@
 #include <SFML/Graphics/Shape.hpp>
 
+// Other 1st party headers
+#include <SFML/Graphics/Texture.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
@@ -36,7 +39,7 @@ private:
     sf::Vector2f m_size;
 };
 
-TEST_CASE("[Graphics] sf::Shape")
+TEST_CASE("[Graphics] sf::Shape", runDisplayTests())
 {
     SECTION("Type traits")
     {
@@ -58,6 +61,14 @@ TEST_CASE("[Graphics] sf::Shape")
         CHECK(triangleShape.getOutlineThickness() == 0.0f);
         CHECK(triangleShape.getLocalBounds() == sf::FloatRect());
         CHECK(triangleShape.getGlobalBounds() == sf::FloatRect());
+    }
+
+    SECTION("Set/get texture")
+    {
+        const sf::Texture texture;
+        TriangleShape     triangleShape({});
+        triangleShape.setTexture(&texture, true);
+        CHECK(triangleShape.getTexture() == &texture);
     }
 
     SECTION("Set/get texture rect")
@@ -100,15 +111,23 @@ TEST_CASE("[Graphics] sf::Shape")
 
     SECTION("Get bounds")
     {
-        TriangleShape triangleShape({2, 3});
-        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        triangleShape.move({1, 1});
-        triangleShape.rotate(sf::degrees(90));
-        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds().left == Approx(-2.f));
-        CHECK(triangleShape.getGlobalBounds().top == Approx(1.f));
-        CHECK(triangleShape.getGlobalBounds().width == Approx(3.f));
-        CHECK(triangleShape.getGlobalBounds().height == Approx(2.f));
+        TriangleShape triangleShape({30, 40});
+        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+        CHECK(triangleShape.getGlobalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+
+        SECTION("Move and rotate")
+        {
+            triangleShape.move({1, 1});
+            triangleShape.rotate(sf::degrees(90));
+            CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+            CHECK(triangleShape.getGlobalBounds() == Approx(sf::FloatRect({-39, 1}, {40, 30})));
+        }
+
+        SECTION("Add outline")
+        {
+            triangleShape.setOutlineThickness(5);
+            CHECK(triangleShape.getLocalBounds() == Approx(sf::FloatRect({-7.2150f, -14.2400f}, {44.4300f, 59.2400f})));
+            CHECK(triangleShape.getGlobalBounds() == Approx(sf::FloatRect({-7.2150f, -14.2400f}, {44.4300f, 59.2400f})));
+        }
     }
 }
