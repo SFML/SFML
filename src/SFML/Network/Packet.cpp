@@ -66,9 +66,9 @@ void Packet::append(const void* data, std::size_t sizeInBytes)
 {
     if (data && (sizeInBytes > 0))
     {
-        const std::size_t start = m_data.size();
-        m_data.resize(start + sizeInBytes);
-        std::memcpy(&m_data[start], data, sizeInBytes);
+        const auto* begin = reinterpret_cast<const std::byte*>(data);
+        const auto* end   = begin + sizeInBytes;
+        m_data.insert(m_data.end(), begin, end);
     }
 }
 
