@@ -40,6 +40,7 @@
 #include <stb_image_write.h>
 
 #include <algorithm>
+#include <memory>
 #include <ostream>
 
 #include <cassert>
@@ -75,6 +76,16 @@ void bufferFromCallback(void* context, void* data, int size)
     auto*       dest   = static_cast<std::vector<std::uint8_t>*>(context);
     std::copy(source, source + size, std::back_inserter(*dest));
 }
+
+// Deleter for STB pointers
+struct StbDeleter
+{
+    void operator()(stbi_uc* image) const
+    {
+        stbi_image_free(image);
+    }
+};
+using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
 } // namespace
 
 
@@ -152,10 +163,10 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     m_pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    int   width    = 0;
-    int   height   = 0;
-    int   channels = 0;
-    auto* ptr      = stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+    int        width    = 0;
+    int        height   = 0;
+    int        channels = 0;
+    const auto ptr      = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha));
 
     if (ptr)
     {
@@ -163,10 +174,7 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
         m_size = Vector2u(Vector2i(width, height));
 
         // Copy the loaded pixels to the pixel buffer
-        m_pixels.assign(ptr, ptr + width * height * 4);
-
-        // Free the loaded pixels (they are now in our own pixel buffer)
-        stbi_image_free(ptr);
+        m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
 
         return true;
     }
@@ -202,7 +210,8 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
         int         height   = 0;
         int         channels = 0;
         const auto* buffer   = static_cast<const unsigned char*>(data);
-        auto* ptr = stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha);
+        const auto  ptr      = StbPtr(
+            stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha));
 
         if (ptr)
         {
@@ -210,10 +219,7 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
             m_size = Vector2u(Vector2i(width, height));
 
             // Copy the loaded pixels to the pixel buffer
-            m_pixels.assign(ptr, ptr + width * height * 4);
-
-            // Free the loaded pixels (they are now in our own pixel buffer)
-            stbi_image_free(ptr);
+            m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
 
             return true;
         }
@@ -253,10 +259,10 @@ bool Image::loadFromStream(InputStream& stream)
     callbacks.eof  = eof;
 
     // Load the image and get a pointer to the pixels in memory
-    int   width    = 0;
-    int   height   = 0;
-    int   channels = 0;
-    auto* ptr      = stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha);
+    int        width    = 0;
+    int        height   = 0;
+    int        channels = 0;
+    const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha));
 
     if (ptr)
     {
@@ -264,10 +270,7 @@ bool Image::loadFromStream(InputStream& stream)
         m_size = Vector2u(Vector2i(width, height));
 
         // Copy the loaded pixels to the pixel buffer
-        m_pixels.assign(ptr, ptr + width * height * 4);
-
-        // Free the loaded pixels (they are now in our own pixel buffer)
-        stbi_image_free(ptr);
+        m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
 
         return true;
     }
