@@ -18,6 +18,12 @@ endmacro()
 
 # these options have to be set before CMake detects/configures the toolchain
 
+# use new MSVC debug information format specification mechanism if available
+# we use this mechanism to embed debug information into the object file to allow ccache to cache it
+if(POLICY CMP0141)
+    cmake_policy(SET CMP0141 NEW)
+endif()
+
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
 sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 13.0")
@@ -155,10 +161,14 @@ if(SFML_USE_SYSTEM_DEPS)
     list(REMOVE_DUPLICATES CMAKE_IGNORE_PATH)
 endif()
 
-# Visual C++: remove warnings regarding SL security and algorithms on pointers
 if(SFML_COMPILER_MSVC)
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
     sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise.")
+
+    # if building using a compiler launcher, embed the MSVC debugging information to allow for caching
+    if(CMAKE_CXX_COMPILER_LAUNCHER)
+        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
+    endif()
 endif()
 
 # define SFML_OPENGL_ES if needed
