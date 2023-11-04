@@ -680,12 +680,12 @@ int main()
         for (sf::Event event; window.pollEvent(event);)
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
+            if (event.is<sf::Event::Closed>())
                 window.close();
 
-            if (event.type == sf::Event::KeyPressed)
+            if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
             {
-                switch (event.key.code)
+                switch (keyPressed->code)
                 {
                     // Escape key: exit
                     case sf::Keyboard::Key::Escape:
@@ -715,7 +715,7 @@ int main()
                         break;
 
                     default:
-                        effects[current]->handleKey(event.key.code);
+                        effects[current]->handleKey(keyPressed->code);
                         break;
                 }
             }

@@ -115,46 +115,49 @@ int main(int argc, char* argv[])
     {
         for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
         {
-            switch (event.type)
+            if (event.is<sf::Event::Closed>())
             {
-                case sf::Event::Closed:
+                window.close();
+            }
+            else if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->code == sf::Keyboard::Key::Escape)
                     window.close();
-                    break;
-                case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Key::Escape)
-                        window.close();
-                    break;
-                case sf::Event::Resized:
-                    view.setSize(sf::Vector2f(event.size.width, event.size.height));
-                    view.setCenter(sf::Vector2f(event.size.width, event.size.height) / 2.f);
-                    window.setView(view);
-                    break;
-                case sf::Event::LostFocus:
-                    background = sf::Color::Black;
-                    break;
-                case sf::Event::GainedFocus:
-                    background = sf::Color::White;
-                    break;
-
-                // On Android MouseLeft/MouseEntered are (for now) triggered,
-                // whenever the app loses or gains focus.
-                case sf::Event::MouseLeft:
-                    active = false;
-                    break;
-                case sf::Event::MouseEntered:
-                    active = true;
-                    break;
-                case sf::Event::TouchBegan:
-                    if (event.touch.finger == 0)
-                    {
-                        image.setPosition({static_cast<float>(event.touch.x), static_cast<float>(event.touch.y)});
+            }
+            else if (const auto* resized = event.getIf<sf::Event::Resized>())
+            {
+                const auto size = sf::Vector2f(resized->size);
+                view.setSize(size);
+                view.setCenter(size / 2.f);
+                window.setView(view);
+            }
+            else if (event.is<sf::Event::FocusLost>())
+            {
+                background = sf::Color::Black;
+            }
+            else if (event.is<sf::Event::FocusGained>())
+            {
+                background = sf::Color::White;
+            }
+            // On Android MouseLeft/MouseEntered are (for now) triggered,
+            // whenever the app loses or gains focus.
+            else if (event.is<sf::Event::MouseLeft>())
+            {
+                active = false;
+            }
+            else if (event.is<sf::Event::MouseEntered>())
+            {
+                active = true;
+            }
+            else if (const auto* touchBegan = event.getIf<sf::Event::TouchBegan>())
+            {
+                if (touchBegan->finger == 0)
+                {
+                    image.setPosition(sf::Vector2f(touchBegan->position));
 #if defined(USE_JNI)
-                        vibrate(sf::milliseconds(10));
+                    vibrate(sf::milliseconds(10));
 #endif
-                    }
-                    break;
-                default:
-                    break;
+                }
             }
         }
 

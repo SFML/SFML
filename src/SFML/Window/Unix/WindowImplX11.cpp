@@ -1712,9 +1712,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     err() << "Failed to grab mouse cursor" << std::endl;
             }
 
-            Event event;
-            event.type = Event::GainedFocus;
-            pushEvent(event);
+            pushEvent(Event::FocusGained{});
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
             const auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
@@ -1739,9 +1737,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (m_cursorGrabbed)
                 XUngrabPointer(m_display.get(), CurrentTime);
 
-            Event event;
-            event.type = Event::LostFocus;
-            pushEvent(event);
+            pushEvent(Event::FocusLost{});
             break;
         }
 
@@ -1751,11 +1747,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
-                Event event;
-                event.type        = Event::Resized;
-                event.size.width  = static_cast<unsigned int>(windowEvent.xconfigure.width);
-                event.size.height = static_cast<unsigned int>(windowEvent.xconfigure.height);
-                pushEvent(event);
+                pushEvent(Event::Resized{Vector2u(Vector2(windowEvent.xconfigure.width, windowEvent.xconfigure.height))});
 
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
@@ -1781,9 +1773,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
                     {
                         // Handle the WM_DELETE_WINDOW message
-                        Event event;
-                        event.type = Event::Closed;
-                        pushEvent(event);
+                        pushEvent(Event::Closed{});
                     }
                     else if (netWmPing && (windowEvent.xclient.format == 32) &&
                              (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
@@ -1807,14 +1797,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         {
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
-            Event event;
-            event.type         = Event::KeyPressed;
-            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
-            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
-            event.key.control  = windowEvent.xkey.state & ControlMask;
-            event.key.shift    = windowEvent.xkey.state & ShiftMask;
-            event.key.system   = windowEvent.xkey.state & Mod4Mask;
+            Event::KeyPressed event;
+            event.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.control  = windowEvent.xkey.state & ControlMask;
+            event.shift    = windowEvent.xkey.state & ShiftMask;
+            event.system   = windowEvent.xkey.state & Mod4Mask;
 
             const bool filtered = XFilterEvent(&windowEvent, None);
 
@@ -1868,12 +1857,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         {
                             iter = Utf8::decode(iter, keyBuffer + length, unicode, 0);
                             if (unicode != 0)
-                            {
-                                Event textEvent;
-                                textEvent.type         = Event::TextEntered;
-                                textEvent.text.unicode = unicode;
-                                pushEvent(textEvent);
-                            }
+                                pushEvent(Event::TextEntered{unicode});
                         }
                     }
                 }
@@ -1883,12 +1867,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     static XComposeStatus status;
                     char                  keyBuffer[16];
                     if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
-                    {
-                        Event textEvent;
-                        textEvent.type         = Event::TextEntered;
-                        textEvent.text.unicode = static_cast<std::uint32_t>(keyBuffer[0]);
-                        pushEvent(textEvent);
-                    }
+                        pushEvent(Event::TextEntered{static_cast<std::uint32_t>(keyBuffer[0])});
                 }
             }
 
@@ -1901,14 +1880,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case KeyRelease:
         {
             // Fill the event parameters
-            Event event;
-            event.type         = Event::KeyReleased;
-            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
-            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
-            event.key.control  = windowEvent.xkey.state & ControlMask;
-            event.key.shift    = windowEvent.xkey.state & ShiftMask;
-            event.key.system   = windowEvent.xkey.state & Mod4Mask;
+            Event::KeyReleased event;
+            event.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.control  = windowEvent.xkey.state & ControlMask;
+            event.shift    = windowEvent.xkey.state & ShiftMask;
+            event.system   = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             break;
@@ -1921,19 +1899,17 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event event;
-                event.type          = Event::MouseButtonPressed;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
+                Event::MouseButtonPressed event;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
 
                 // clang-format off
                 switch(button)
                 {
-                    case Button1: event.mouseButton.button = Mouse::Button::Left;   break;
-                    case Button2: event.mouseButton.button = Mouse::Button::Middle; break;
-                    case Button3: event.mouseButton.button = Mouse::Button::Right;  break;
-                    case 8:       event.mouseButton.button = Mouse::Button::Extra1; break;
-                    case 9:       event.mouseButton.button = Mouse::Button::Extra2; break;
+                    case Button1: event.button = Mouse::Button::Left;     break;
+                    case Button2: event.button = Mouse::Button::Middle;   break;
+                    case Button3: event.button = Mouse::Button::Right;    break;
+                    case 8:       event.button = Mouse::Button::Extra1;   break;
+                    case 9:       event.button = Mouse::Button::Extra2;   break;
                 }
                 // clang-format on
 
@@ -1951,49 +1927,42 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event event;
-                event.type          = Event::MouseButtonReleased;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
+                Event::MouseButtonReleased event;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 switch (button)
                 {
                     case Button1:
-                        event.mouseButton.button = Mouse::Button::Left;
+                        event.button = Mouse::Button::Left;
                         break;
                     case Button2:
-                        event.mouseButton.button = Mouse::Button::Middle;
+                        event.button = Mouse::Button::Middle;
                         break;
                     case Button3:
-                        event.mouseButton.button = Mouse::Button::Right;
+                        event.button = Mouse::Button::Right;
                         break;
                     case 8:
-                        event.mouseButton.button = Mouse::Button::Extra1;
+                        event.button = Mouse::Button::Extra1;
                         break;
                     case 9:
-                        event.mouseButton.button = Mouse::Button::Extra2;
+                        event.button = Mouse::Button::Extra2;
                         break;
                 }
                 pushEvent(event);
             }
             else if ((button == Button4) || (button == Button5))
             {
-                Event event;
-
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
-                event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                Event::MouseWheelScrolled event;
+                event.wheel    = Mouse::Wheel::Vertical;
+                event.delta    = (button == Button4) ? 1 : -1;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 pushEvent(event);
             }
             else if ((button == 6) || (button == 7))
             {
-                Event event;
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::Wheel::Horizontal;
-                event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                Event::MouseWheelScrolled event;
+                event.wheel    = Mouse::Wheel::Horizontal;
+                event.delta    = (button == 6) ? 1 : -1;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 pushEvent(event);
             }
             break;
@@ -2002,11 +1971,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse moved
         case MotionNotify:
         {
-            Event event;
-            event.type        = Event::MouseMoved;
-            event.mouseMove.x = windowEvent.xmotion.x;
-            event.mouseMove.y = windowEvent.xmotion.y;
-            pushEvent(event);
+            pushEvent(Event::MouseMoved{{windowEvent.xmotion.x, windowEvent.xmotion.y}});
             break;
         }
 
@@ -2014,11 +1979,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case EnterNotify:
         {
             if (windowEvent.xcrossing.mode == NotifyNormal)
-            {
-                Event event;
-                event.type = Event::MouseEntered;
-                pushEvent(event);
-            }
+                pushEvent(Event::MouseEntered{});
             break;
         }
 
@@ -2026,11 +1987,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case LeaveNotify:
         {
             if (windowEvent.xcrossing.mode == NotifyNormal)
-            {
-                Event event;
-                event.type = Event::MouseLeft;
-                pushEvent(event);
-            }
+                pushEvent(Event::MouseLeft{});
             break;
         }
 
