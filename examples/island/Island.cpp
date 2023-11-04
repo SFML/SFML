@@ -182,17 +182,17 @@ int main()
         for (sf::Event event; window.pollEvent(event);)
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
+            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
+                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
 
             // Arrow key pressed:
-            if (prerequisitesSupported && (event.type == sf::Event::KeyPressed))
+            if (prerequisitesSupported && event.is<sf::Event::KeyPressed>())
             {
-                switch (event.key.code)
+                switch (event.getIf<sf::Event::KeyPressed>()->code)
                 {
                     case sf::Keyboard::Key::Enter:
                         generateTerrain(terrainStagingBuffer.data());

@@ -2545,15 +2545,16 @@ public:
             for (sf::Event event; window.pollEvent(event);)
             {
                 // Close window: exit
-                if (event.type == sf::Event::Closed)
+                if (event.is<sf::Event::Closed>())
                     window.close();
 
                 // Escape key: exit
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape))
+                if (event.is<sf::Event::KeyPressed>() &&
+                    event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
                     window.close();
 
                 // Re-create the swapchain when the window is resized
-                if (event.type == sf::Event::Resized)
+                if (event.is<sf::Event::Resized>())
                     swapchainOutOfDate = true;
             }
 

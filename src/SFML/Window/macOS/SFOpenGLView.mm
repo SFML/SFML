@@ -289,7 +289,7 @@
     [self updateCursorGrabbed];
 
     if (m_requester)
-        m_requester->windowGainedFocus();
+        m_requester->windowFocusGained();
 
     if (m_fullscreen)
         [self enterFullscreen];
@@ -304,7 +304,7 @@
     [self updateCursorGrabbed];
 
     if (m_requester)
-        m_requester->windowLostFocus();
+        m_requester->windowFocusLost();
 
     if (m_fullscreen)
         [self exitFullscreen];
