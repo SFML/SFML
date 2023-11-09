@@ -259,20 +259,6 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Processes an event before it is sent to the user
-    ///
-    /// This function is called every time an event is received
-    /// from the internal window (through pollEvent or waitEvent).
-    /// It filters out unwanted events, and performs whatever internal
-    /// stuff the window needs before the event is returned to the
-    /// user.
-    ///
-    /// \param event Event to filter
-    ///
-    ////////////////////////////////////////////////////////////
-    bool filterEvent(const Event& event);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Perform some common internal initializations
     ///
     ////////////////////////////////////////////////////////////
