@@ -48,7 +48,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Context::Context() : m_context(priv::GlContext::create())
 {
-    if (!setActive(true))
+    if (m_context && !setActive(true))
     {
         err() << "Failed to set context as active during construction" << std::endl;
     }

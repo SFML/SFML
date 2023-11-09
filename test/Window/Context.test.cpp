@@ -21,8 +21,8 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Context>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Context>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Context>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Context>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Context>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Context>);
     }
 
     SECTION("Construction")
@@ -30,6 +30,23 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
         const sf::Context context;
 
         CHECK(context.getSettings().majorVersion > 0);
+    }
+
+    SECTION("Move Construction")
+    {
+        sf::Context first;
+        sf::Context second{std::move(first)};
+
+        CHECK(second.getSettings().majorVersion > 0);
+    }
+
+    SECTION("Move Assignment")
+    {
+        sf::Context first;
+        sf::Context second;
+        second = std::move(first);
+
+        CHECK(second.getSettings().majorVersion > 0);
     }
 
     SECTION("Version String")
