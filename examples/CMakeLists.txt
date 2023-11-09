@@ -26,6 +26,7 @@ if(SFML_BUILD_GRAPHICS)
         add_subdirectory(shader)
         add_subdirectory(island)
         add_subdirectory(vulkan)
+        add_subdirectory(sprite_batch)
     endif()
 
     if(SFML_OS_WINDOWS)

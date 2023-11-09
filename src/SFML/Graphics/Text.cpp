@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/SpriteBatch.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
@@ -346,6 +347,33 @@ FloatRect Text::getGlobalBounds() const
     return getTransform().transformRect(getLocalBounds());
 }
 
+
+////////////////////////////////////////////////////////////
+void Text::batch(SpriteBatch& spriteBatch, float depth) const
+{
+    if (m_font)
+    {
+        ensureGeometryUpdate();
+        const Texture* texture = &m_font->getTexture(m_characterSize);
+
+        // Draw outline
+        if (m_outlineThickness != 0)
+        {
+            const std::size_t outlineCount = m_outlineVertices.getVertexCount();
+            const Vertex*     outlinePtr   = outlineCount > 0 ? &m_outlineVertices[0] : nullptr;
+
+            spriteBatch.batch(outlinePtr, outlineCount, m_outlineVertices.getPrimitiveType(), texture, getTransform(), depth);
+        }
+
+        // Draw the text itself
+        {
+            const std::size_t textCount = m_vertices.getVertexCount();
+            const Vertex*     textPtr   = textCount > 0 ? &m_vertices[0] : nullptr;
+
+            spriteBatch.batch(textPtr, textCount, m_vertices.getPrimitiveType(), texture, getTransform(), depth);
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void Text::draw(RenderTarget& target, const RenderStates& states) const

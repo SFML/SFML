@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Batchable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -44,7 +45,7 @@ class Texture;
 /// \brief Base class for textured shapes with outline
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Shape : public Drawable, public Transformable
+class SFML_GRAPHICS_API Shape : public Drawable, public Transformable, public Batchable
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -254,6 +255,15 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     FloatRect getGlobalBounds() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Batch the Shape using the given SpriteBatch
+    ///
+    /// \param spriteBatch The SpriteBatch to use
+    /// \param depth       The depth at which to render the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    void batch(SpriteBatch& spriteBatch, float depth = 0.f) const override;
 
 protected:
     ////////////////////////////////////////////////////////////
