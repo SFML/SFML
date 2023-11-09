@@ -64,10 +64,6 @@ void ensureDefaultReadersWritersRegistered()
 
 namespace sf
 {
-SoundFileFactory::ReaderFactoryArray SoundFileFactory::s_readers;
-SoundFileFactory::WriterFactoryArray SoundFileFactory::s_writers;
-
-
 ////////////////////////////////////////////////////////////
 std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(const std::filesystem::path& filename)
 {

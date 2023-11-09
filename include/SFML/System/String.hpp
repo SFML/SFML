@@ -58,7 +58,7 @@ public:
     ////////////////////////////////////////////////////////////
     // NOLINTBEGIN(readability-identifier-naming)
     /// Represents an invalid position in the string
-    static const std::size_t InvalidPos{std::u32string::npos};
+    static inline const std::size_t InvalidPos{std::u32string::npos};
     // NOLINTEND(readability-identifier-naming)
 
     ////////////////////////////////////////////////////////////
