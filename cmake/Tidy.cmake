@@ -27,8 +27,13 @@ if(NOT RUN_CLANG_TIDY)
     message(FATAL_ERROR "Failed to find run-clang-tidy script")
 endif()
 
+# Set job count to 0 (the default) if it is not set
+if(NOT CLANG_TIDY_JOBS)
+   set(CLANG_TIDY_JOBS "0")
+endif()
+
 # Run
-execute_process(COMMAND ${Python_EXECUTABLE} ${RUN_CLANG_TIDY} -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -quiet -p ${PROJECT_BINARY_DIR} RESULTS_VARIABLE EXIT_CODE)
+execute_process(COMMAND ${Python_EXECUTABLE} ${RUN_CLANG_TIDY} -j ${CLANG_TIDY_JOBS} -clang-tidy-binary ${CLANG_TIDY_EXECUTABLE} -quiet -p ${PROJECT_BINARY_DIR} RESULTS_VARIABLE EXIT_CODE)
 if(NOT EXIT_CODE STREQUAL 0)
     message(FATAL_ERROR "Analysis failed")
 endif()
