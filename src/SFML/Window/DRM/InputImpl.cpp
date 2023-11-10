@@ -696,7 +696,7 @@ Vector2i getTouchPosition(unsigned int finger, const WindowBase& /*relativeTo*/)
 
 
 ////////////////////////////////////////////////////////////
-bool checkEvent(sf::Event& event)
+bool checkEvent(Event& event)
 {
     const std::lock_guard lock(inputMutex);
     if (!eventQueue.empty())

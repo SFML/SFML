@@ -46,7 +46,7 @@ namespace InputImpl
 /// \return False if event queue is empty
 ///
 ////////////////////////////////////////////////////////////
-bool checkEvent(sf::Event& event);
+bool checkEvent(Event& event);
 
 ////////////////////////////////////////////////////////////
 /// \brief Backup terminal configuration and disable console feedback
@@ -65,7 +65,7 @@ void restoreTerminalConfig();
 ////////////////////////////////////////////////////////////
 WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
 {
-    sf::priv::InputImpl::setTerminalConfig();
+    InputImpl::setTerminalConfig();
 }
 
 
@@ -73,21 +73,21 @@ WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
 WindowImplDRM::WindowImplDRM(VideoMode mode, const String& /*title*/, unsigned long /*style*/, const ContextSettings& /*settings*/) :
 m_size(mode.size)
 {
-    sf::priv::InputImpl::setTerminalConfig();
+    InputImpl::setTerminalConfig();
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplDRM::~WindowImplDRM()
 {
-    sf::priv::InputImpl::restoreTerminalConfig();
+    InputImpl::restoreTerminalConfig();
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplDRM::getNativeHandle() const
 {
-    const Drm& drm = sf::priv::DRMContext::getDRM();
+    const Drm& drm = DRMContext::getDRM();
     return static_cast<WindowHandle>(drm.fileDescriptor);
 }
 
@@ -186,8 +186,8 @@ bool WindowImplDRM::hasFocus() const
 
 void WindowImplDRM::processEvents()
 {
-    sf::Event event;
-    while (sf::priv::InputImpl::checkEvent(event))
+    Event event;
+    while (InputImpl::checkEvent(event))
         pushEvent(event);
 }
 
