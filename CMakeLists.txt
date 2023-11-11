@@ -477,11 +477,7 @@ elseif(SFML_OS_ANDROID)
     if(NOT SFML_USE_SYSTEM_DEPS)
         # install extlibs
         install(DIRECTORY extlibs/libs-android/${CMAKE_ANDROID_ARCH_ABI} DESTINATION extlibs/lib)
-        install(FILES extlibs/Android.mk DESTINATION extlibs)
     endif()
-
-    # install Android.mk so the NDK knows how to set up SFML
-    install(FILES src/SFML/Android.mk DESTINATION .)
 
 endif()
 
