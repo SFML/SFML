@@ -153,6 +153,8 @@ int main(int argc, char* argv[])
 #endif
                     }
                     break;
+                default:
+                    break;
             }
         }
 
