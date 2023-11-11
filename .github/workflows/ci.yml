@@ -56,15 +56,20 @@ jobs:
         - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: x86, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r24 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+          config: { name: x86 (API 21), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86, api: 21 }
+          type: { name: Release }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: armeabi-v7a, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r24 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-        - platform: { name: Android, os: ubuntu-22.04  }
-          config: { name: arm64-v8a, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r24/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r24 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 -DANDROID_PLATFORM=26 }
-        - platform: { name: Android, os: ubuntu-22.04  }
-          config: { name: x86_64, flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r24/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r24 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 -DANDROID_PLATFORM=26 }
+          config: { name: x86_64 (API 24), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86_64, api: 24 }
+          type: { name: Release }
+        - platform: { name: Android, os: ubuntu-22.04 }
+          config: { name: armeabi-v7a (API 29), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: armeabi-v7a, api: 29 }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
+        - platform: { name: Android, os: ubuntu-22.04 }
+          config: { name: arm64-v8a (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: arm64-v8a, api: 33 }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         - platform: { name: macOS , os: macos-12 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -95,8 +100,8 @@ jobs:
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
       run: |
-        wget -nv https://dl.google.com/android/repository/android-ndk-r24-linux.zip -P $GITHUB_WORKSPACE
-        unzip -qq -d $GITHUB_WORKSPACE android-ndk-r24-linux.zip
+        echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager --install "build-tools;33.0.2"
+        echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;26.1.10909125"
 
     - name: Install macOS Tools
       if: runner.os == 'macOS'
@@ -157,6 +162,11 @@ jobs:
 
     - name: Build
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+
+    - name: Build Android example
+      if: matrix.platform.name == 'Android'
+      shell: bash
+      run: examples/android/gradlew ${{ matrix.type.name == 'Debug' && 'assembleDebug' || 'assembleRelease' }} -p examples/android -P ARCH_ABI=${{matrix.config.arch}} -P MIN_SDK=${{matrix.config.api}}
 
     - name: Prepare Test
       run: |
@@ -248,7 +258,7 @@ jobs:
         - { name: Linux OpenGL ES, os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON }
         - { name: macOS,           os: macos-12 }
         - { name: iOS,             os: macos-12,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
-        - { name: Android,         os: ubuntu-22.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r24 -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - { name: Android,         os: ubuntu-22.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
 
     steps:
     - name: Checkout Code
@@ -276,12 +286,6 @@ jobs:
         # brew update
         brew install llvm || true
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
-
-    - name: Install Android Components
-      if: matrix.platform.name == 'Android'
-      run: |
-        wget -nv https://dl.google.com/android/repository/android-ndk-r24-linux.zip -P $GITHUB_WORKSPACE
-        unzip -qq -d $GITHUB_WORKSPACE android-ndk-r24-linux.zip
 
     - name: Configure
       run: cmake --preset dev -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
