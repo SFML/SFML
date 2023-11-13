@@ -103,6 +103,12 @@ TEST_CASE("[Graphics] sf::Rect")
         STATIC_CHECK(sf::IntRect({1, 2}, {3, 4}).getSize() == sf::Vector2i(3, 4));
     }
 
+    SECTION("getCenter()")
+    {
+        STATIC_CHECK(sf::IntRect({}, {}).getCenter() == sf::Vector2i());
+        STATIC_CHECK(sf::IntRect({1, 2}, {4, 6}).getCenter() == sf::Vector2i(3, 5));
+    }
+
     SECTION("Operators")
     {
         SECTION("operator==")

@@ -129,6 +129,14 @@ constexpr Vector2<T> Rect<T>::getSize() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+constexpr Vector2<T> Rect<T>::getCenter() const
+{
+    return getPosition() + getSize() / T{2};
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 constexpr bool operator==(const Rect<T>& left, const Rect<T>& right)
 {
     return (left.left == right.left) && (left.width == right.width) && (left.top == right.top) &&

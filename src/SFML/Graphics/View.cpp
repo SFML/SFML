@@ -90,7 +90,7 @@ void View::setViewport(const FloatRect& viewport)
 ////////////////////////////////////////////////////////////
 void View::reset(const FloatRect& rectangle)
 {
-    m_center   = rectangle.getPosition() + rectangle.getSize() / 2.f;
+    m_center   = rectangle.getCenter();
     m_size     = rectangle.getSize();
     m_rotation = Angle::Zero;
 

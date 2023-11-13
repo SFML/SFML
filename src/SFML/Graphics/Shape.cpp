@@ -221,7 +221,7 @@ void Shape::update()
     m_insideBounds = m_vertices.getBounds();
 
     // Compute the center and make it the first vertex
-    m_vertices[0].position = m_insideBounds.getPosition() + m_insideBounds.getSize() / 2.f;
+    m_vertices[0].position = m_insideBounds.getCenter();
 
     // Color
     updateFillColors();
