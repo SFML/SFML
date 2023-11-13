@@ -155,7 +155,7 @@ void WindowImplDRM::setMouseCursorVisible(bool /*visible*/)
 ////////////////////////////////////////////////////////////
 void WindowImplDRM::setMouseCursorGrabbed(bool /*grabbed*/)
 {
-    //TODO: not implemented
+    // TODO: not implemented
 }
 
 ////////////////////////////////////////////////////////////

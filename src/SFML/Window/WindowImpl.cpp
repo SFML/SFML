@@ -307,7 +307,7 @@ void WindowImpl::processSensorEvents()
             m_sensorValue[i]             = SensorManager::getInstance().getValue(sensor);
 
             // If the value has changed, trigger an event
-            if (m_sensorValue[i] != previousValue) // @todo use a threshold?
+            if (m_sensorValue[i] != previousValue) // TODO use a threshold?
             {
                 Event event;
                 event.type        = Event::SensorChanged;
