@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <algorithm>
 #include <filesystem>
 #include <memory>
 #include <vector>
