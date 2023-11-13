@@ -144,18 +144,6 @@ public:
     void setScissor(const FloatRect& scissor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Reset the view to the given rectangle
-    ///
-    /// Note that this function resets the rotation angle to 0.
-    ///
-    /// \param rectangle Rectangle defining the zone to display
-    ///
-    /// \see setCenter, setSize, setRotation
-    ///
-    ////////////////////////////////////////////////////////////
-    void reset(const FloatRect& rectangle);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the center of the view
     ///
     /// \return Center of the view
@@ -339,10 +327,9 @@ private:
 /// Usage example:
 /// \code
 /// sf::RenderWindow window;
-/// sf::View view;
 ///
 /// // Initialize the view to a rectangle located at (100, 100) and with a size of 400x200
-/// view.reset(sf::FloatRect({100, 100}, {400, 200}));
+/// sf::View view(sf::FloatRect({100, 100}, {400, 200}));
 ///
 /// // Rotate it by 45 degrees
 /// view.rotate(sf::degrees(45));

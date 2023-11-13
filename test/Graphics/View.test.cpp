@@ -107,24 +107,6 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getViewport() == sf::FloatRect({0, 0}, {1, 1}));
     }
 
-    SECTION("reset()")
-    {
-        sf::View view;
-        view.setCenter({3.14f, 4.2f});
-        view.setSize({600, 900});
-        view.setRotation(sf::degrees(15));
-        view.setViewport({{150, 250}, {500, 750}});
-        view.setScissor({{0.2f, 0.3f}, {0.4f, 0.5f}});
-        view.reset({{1, 2}, {3, 4}});
-        CHECK(view.getCenter() == sf::Vector2f(2.5f, 4));
-        CHECK(view.getSize() == sf::Vector2f(3, 4));
-        CHECK(view.getRotation() == sf::Angle::Zero);
-        CHECK(view.getViewport() == sf::FloatRect({150, 250}, {500, 750}));
-        CHECK(view.getScissor() == sf::FloatRect({0.2f, 0.3f}, {0.4f, 0.5f}));
-        CHECK(view.getTransform() == Approx(sf::Transform(0.666667f, 0, -1.66667f, 0, -0.5f, 2, 0, 0, 1)));
-        CHECK(view.getInverseTransform() == Approx(sf::Transform(1.5f, 0, 2.5f, 0, -2, 4, 0, 0, 1)));
-    }
-
     SECTION("move()")
     {
         sf::View view;
