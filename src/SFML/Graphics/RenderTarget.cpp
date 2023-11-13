@@ -655,6 +655,9 @@ void RenderTarget::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 {
+    // GL_FRAMEBUFFER_SRGB is not available on OpenGL ES
+    // If a framebuffer supports sRGB, it will always be enabled on OpenGL ES
+#ifndef SFML_OPENGL_ES
     // Enable or disable sRGB encoding
     // This is needed for drivers that do not check the format of the surface drawn to before applying sRGB conversion
     if (!m_cache.enable)
@@ -664,6 +667,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
         else
             glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
     }
+#endif
 
     // First set the persistent OpenGL states if it's the very first call
     if (!m_cache.glStatesSet)
