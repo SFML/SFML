@@ -1,28 +1,25 @@
 #include <SFML/System/Vector3.hpp>
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <type_traits>
 
-// Use sf::Vector3i for tests (except for float vector algebra).
-// Test coverage is given, as there are no template specializations.
-
-TEST_CASE("[System] sf::Vector3")
+TEMPLATE_TEST_CASE("[System] sf::Vector3", "", int, float)
 {
     SECTION("Type traits")
     {
         STATIC_CHECK(std::is_copy_constructible_v<sf::Vector3i>);
-        STATIC_CHECK(std::is_copy_assignable_v<sf::Vector3i>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Vector3i>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Vector3i>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Vector3<TestType>>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Vector3<TestType>>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Vector3<TestType>>);
     }
 
     SECTION("Construction")
     {
         SECTION("Default constructor")
         {
-            constexpr sf::Vector3i vector;
+            constexpr sf::Vector3<TestType> vector;
             STATIC_CHECK(vector.x == 0);
             STATIC_CHECK(vector.y == 0);
             STATIC_CHECK(vector.z == 0);
@@ -30,7 +27,7 @@ TEST_CASE("[System] sf::Vector3")
 
         SECTION("(x, y, z) coordinate constructor")
         {
-            constexpr sf::Vector3i vector(1, 2, 3);
+            constexpr sf::Vector3<TestType> vector(1, 2, 3);
             STATIC_CHECK(vector.x == 1);
             STATIC_CHECK(vector.y == 2);
             STATIC_CHECK(vector.z == 3);
@@ -51,8 +48,8 @@ TEST_CASE("[System] sf::Vector3")
     {
         SECTION("-vector")
         {
-            constexpr sf::Vector3i vector(1, 2, 3);
-            constexpr sf::Vector3i negatedVector = -vector;
+            constexpr sf::Vector3<TestType> vector(1, 2, 3);
+            constexpr sf::Vector3<TestType> negatedVector = -vector;
 
             STATIC_CHECK(negatedVector.x == -1);
             STATIC_CHECK(negatedVector.y == -2);
@@ -62,8 +59,8 @@ TEST_CASE("[System] sf::Vector3")
 
     SECTION("Arithmetic operations between two vectors")
     {
-        sf::Vector3i           firstVector(2, 5, 6);
-        constexpr sf::Vector3i secondVector(8, 3, 7);
+        sf::Vector3<TestType>           firstVector(2, 5, 6);
+        constexpr sf::Vector3<TestType> secondVector(8, 3, 7);
 
         SECTION("vector += vector")
         {
@@ -85,7 +82,7 @@ TEST_CASE("[System] sf::Vector3")
 
         SECTION("vector + vector")
         {
-            const sf::Vector3i result = firstVector + secondVector;
+            const sf::Vector3<TestType> result = firstVector + secondVector;
 
             CHECK(result.x == 10);
             CHECK(result.y == 8);
@@ -94,7 +91,7 @@ TEST_CASE("[System] sf::Vector3")
 
         SECTION("vector - vector")
         {
-            const sf::Vector3i result = firstVector - secondVector;
+            const sf::Vector3<TestType> result = firstVector - secondVector;
 
             CHECK(result.x == -6);
             CHECK(result.y == 2);
@@ -104,12 +101,12 @@ TEST_CASE("[System] sf::Vector3")
 
     SECTION("Arithmetic operations between vector and scalar value")
     {
-        sf::Vector3i  vector(26, 12, 6);
-        constexpr int scalar = 2;
+        sf::Vector3<TestType> vector(26, 12, 6);
+        constexpr TestType    scalar = 2;
 
         SECTION("vector * scalar")
         {
-            const sf::Vector3i result = vector * scalar;
+            const sf::Vector3<TestType> result = vector * scalar;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -118,7 +115,7 @@ TEST_CASE("[System] sf::Vector3")
 
         SECTION("scalar * vector")
         {
-            const sf::Vector3i result = scalar * vector;
+            const sf::Vector3<TestType> result = scalar * vector;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -136,7 +133,7 @@ TEST_CASE("[System] sf::Vector3")
 
         SECTION("vector / scalar")
         {
-            const sf::Vector3i result = vector / scalar;
+            const sf::Vector3<TestType> result = vector / scalar;
 
             CHECK(result.x == 13);
             CHECK(result.y == 6);
@@ -155,9 +152,9 @@ TEST_CASE("[System] sf::Vector3")
 
     SECTION("Comparison operations (two equal and one different vector)")
     {
-        constexpr sf::Vector3i firstEqualVector(1, 5, 6);
-        constexpr sf::Vector3i secondEqualVector(1, 5, 6);
-        constexpr sf::Vector3i differentVector(6, 9, 7);
+        constexpr sf::Vector3<TestType> firstEqualVector(1, 5, 6);
+        constexpr sf::Vector3<TestType> secondEqualVector(1, 5, 6);
+        constexpr sf::Vector3<TestType> differentVector(6, 9, 7);
 
         SECTION("vector == vector")
         {
@@ -174,7 +171,7 @@ TEST_CASE("[System] sf::Vector3")
 
     SECTION("Structured bindings")
     {
-        sf::Vector3i vector(1, 2, 3); // NOLINT(misc-const-correctness)
+        sf::Vector3<TestType> vector(1, 2, 3); // NOLINT(misc-const-correctness)
 
         SECTION("destructure by value")
         {

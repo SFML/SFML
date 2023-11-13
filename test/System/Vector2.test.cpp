@@ -1,6 +1,6 @@
 #include <SFML/System/Vector2.hpp>
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <type_traits>
@@ -9,31 +9,28 @@
 
 using namespace sf::Literals;
 
-// Use sf::Vector2i for tests (except for float vector algebra).
-// Test coverage is given, as there are no template specializations.
-
-TEST_CASE("[System] sf::Vector2")
+TEMPLATE_TEST_CASE("[System] sf::Vector2", "", int, float)
 {
     SECTION("Type traits")
     {
-        STATIC_CHECK(std::is_copy_constructible_v<sf::Vector2i>);
-        STATIC_CHECK(std::is_copy_assignable_v<sf::Vector2i>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Vector2i>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Vector2i>);
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Vector2<TestType>>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Vector2<TestType>>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Vector2<TestType>>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Vector2<TestType>>);
     }
 
     SECTION("Construction")
     {
         SECTION("Default constructor")
         {
-            constexpr sf::Vector2i vector;
+            constexpr sf::Vector2<TestType> vector;
             STATIC_CHECK(vector.x == 0);
             STATIC_CHECK(vector.y == 0);
         }
 
         SECTION("(x, y) coordinate constructor")
         {
-            constexpr sf::Vector2i vector(1, 2);
+            constexpr sf::Vector2<TestType> vector(1, 2);
             STATIC_CHECK(vector.x == 1);
             STATIC_CHECK(vector.y == 2);
         }
@@ -105,8 +102,8 @@ TEST_CASE("[System] sf::Vector2")
     {
         SECTION("-vector")
         {
-            constexpr sf::Vector2i vector(1, 2);
-            constexpr sf::Vector2i negatedVector = -vector;
+            constexpr sf::Vector2<TestType> vector(1, 2);
+            constexpr sf::Vector2<TestType> negatedVector = -vector;
 
             STATIC_CHECK(negatedVector.x == -1);
             STATIC_CHECK(negatedVector.y == -2);
@@ -115,8 +112,8 @@ TEST_CASE("[System] sf::Vector2")
 
     SECTION("Arithmetic operations between two vectors")
     {
-        sf::Vector2i           firstVector(2, 5);
-        constexpr sf::Vector2i secondVector(8, 3);
+        sf::Vector2<TestType>           firstVector(2, 5);
+        constexpr sf::Vector2<TestType> secondVector(8, 3);
 
         SECTION("vector += vector")
         {
@@ -136,7 +133,7 @@ TEST_CASE("[System] sf::Vector2")
 
         SECTION("vector + vector")
         {
-            const sf::Vector2i result = firstVector + secondVector;
+            const sf::Vector2<TestType> result = firstVector + secondVector;
 
             CHECK(result.x == 10);
             CHECK(result.y == 8);
@@ -144,7 +141,7 @@ TEST_CASE("[System] sf::Vector2")
 
         SECTION("vector - vector")
         {
-            const sf::Vector2i result = firstVector - secondVector;
+            const sf::Vector2<TestType> result = firstVector - secondVector;
 
             CHECK(result.x == -6);
             CHECK(result.y == 2);
@@ -153,12 +150,12 @@ TEST_CASE("[System] sf::Vector2")
 
     SECTION("Arithmetic operations between vector and scalar value")
     {
-        sf::Vector2i vector(26, 12);
-        const int    scalar = 2;
+        sf::Vector2<TestType> vector(26, 12);
+        const TestType        scalar = 2;
 
         SECTION("vector * scalar")
         {
-            const sf::Vector2i result = vector * scalar;
+            const sf::Vector2<TestType> result = vector * scalar;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -166,7 +163,7 @@ TEST_CASE("[System] sf::Vector2")
 
         SECTION("scalar * vector")
         {
-            const sf::Vector2i result = scalar * vector;
+            const sf::Vector2<TestType> result = scalar * vector;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
@@ -182,7 +179,7 @@ TEST_CASE("[System] sf::Vector2")
 
         SECTION("vector / scalar")
         {
-            const sf::Vector2i result = vector / scalar;
+            const sf::Vector2<TestType> result = vector / scalar;
 
             CHECK(result.x == 13);
             CHECK(result.y == 6);
@@ -199,9 +196,9 @@ TEST_CASE("[System] sf::Vector2")
 
     SECTION("Comparison operations (two equal and one different vector)")
     {
-        constexpr sf::Vector2i firstEqualVector(1, 5);
-        constexpr sf::Vector2i secondEqualVector(1, 5);
-        constexpr sf::Vector2i differentVector(6, 9);
+        constexpr sf::Vector2<TestType> firstEqualVector(1, 5);
+        constexpr sf::Vector2<TestType> secondEqualVector(1, 5);
+        constexpr sf::Vector2<TestType> differentVector(6, 9);
 
         SECTION("vector == vector")
         {
@@ -218,7 +215,7 @@ TEST_CASE("[System] sf::Vector2")
 
     SECTION("Structured bindings")
     {
-        sf::Vector2i vector(1, 2); // NOLINT(misc-const-correctness)
+        sf::Vector2<TestType> vector(1, 2); // NOLINT(misc-const-correctness)
 
         SECTION("destructure by value")
         {
@@ -329,19 +326,19 @@ TEST_CASE("[System] sf::Vector2")
 
     SECTION("Constexpr support")
     {
-        constexpr sf::Vector2i v(1, 2);
-        constexpr sf::Vector2i w(2, -3);
+        constexpr sf::Vector2<TestType> v(1, 2);
+        constexpr sf::Vector2<TestType> w(2, -6);
 
         STATIC_CHECK(v.x == 1);
         STATIC_CHECK(v.y == 2);
-        STATIC_CHECK(v + w == sf::Vector2i(3, -1));
+        STATIC_CHECK(v + w == sf::Vector2<TestType>(3, -4));
 
         STATIC_CHECK(v.lengthSq() == 5);
-        STATIC_CHECK(v.perpendicular() == sf::Vector2i(-2, 1));
+        STATIC_CHECK(v.perpendicular() == sf::Vector2<TestType>(-2, 1));
 
-        STATIC_CHECK(v.dot(w) == -4);
-        STATIC_CHECK(v.cross(w) == -7);
-        STATIC_CHECK(v.cwiseMul(w) == sf::Vector2i(2, -6));
-        STATIC_CHECK(w.cwiseDiv(v) == sf::Vector2i(2, -1));
+        STATIC_CHECK(v.dot(w) == -10);
+        STATIC_CHECK(v.cross(w) == -10);
+        STATIC_CHECK(v.cwiseMul(w) == sf::Vector2<TestType>(2, -12));
+        STATIC_CHECK(w.cwiseDiv(v) == sf::Vector2<TestType>(2, -3));
     }
 }
