@@ -63,13 +63,11 @@ template <typename T>
 void SoundFileFactory::unregisterReader()
 {
     // Remove the instance(s) of the reader from the array of factories
-    for (auto it = s_readers.begin(); it != s_readers.end(); /* noop */)
-    {
-        if (it->create == &priv::createReader<T>)
-            it = s_readers.erase(it);
-        else
-            ++it;
-    }
+    s_readers.erase(std::remove_if(s_readers.begin(),
+                                   s_readers.end(),
+                                   [](const ReaderFactory& readerFactory)
+                                   { return readerFactory.create == &priv::createReader<T>; }),
+                    s_readers.end());
 }
 
 ////////////////////////////////////////////////////////////
@@ -92,13 +90,11 @@ template <typename T>
 void SoundFileFactory::unregisterWriter()
 {
     // Remove the instance(s) of the writer from the array of factories
-    for (auto it = s_writers.begin(); it != s_writers.end(); /* noop */)
-    {
-        if (it->create == &priv::createWriter<T>)
-            it = s_writers.erase(it);
-        else
-            ++it;
-    }
+    s_writers.erase(std::remove_if(s_writers.begin(),
+                                   s_writers.end(),
+                                   [](const WriterFactory& writerFactory)
+                                   { return writerFactory.create == &priv::createWriter<T>; }),
+                    s_writers.end());
 }
 
 } // namespace sf
