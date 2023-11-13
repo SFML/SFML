@@ -641,8 +641,8 @@ void RenderTarget::resetGLStates()
 void RenderTarget::initialize()
 {
     // Setup the default and current views
-    m_defaultView.reset(FloatRect({0, 0}, Vector2f(getSize())));
-    m_view = m_defaultView;
+    m_defaultView = View(FloatRect({0, 0}, Vector2f(getSize())));
+    m_view        = m_defaultView;
 
     // Set GL states only on first draw, so that we don't pollute user's states
     m_cache.glStatesSet = false;

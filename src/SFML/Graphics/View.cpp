@@ -34,9 +34,8 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-View::View(const FloatRect& rectangle)
+View::View(const FloatRect& rectangle) : m_center(rectangle.getCenter()), m_size(rectangle.getSize())
 {
-    reset(rectangle);
 }
 
 
@@ -53,6 +52,7 @@ void View::setCenter(const Vector2f& center)
     m_transformUpdated    = false;
     m_invTransformUpdated = false;
 }
+
 
 ////////////////////////////////////////////////////////////
 void View::setSize(const Vector2f& size)
@@ -92,18 +92,6 @@ void View::setScissor(const FloatRect& scissor)
     assert(scissor.top + scissor.height <= 1.0f && "scissor.top + scissor.height must lie within [0, 1]");
 
     m_scissor = scissor;
-}
-
-
-////////////////////////////////////////////////////////////
-void View::reset(const FloatRect& rectangle)
-{
-    m_center   = rectangle.getCenter();
-    m_size     = rectangle.getSize();
-    m_rotation = Angle::Zero;
-
-    m_transformUpdated    = false;
-    m_invTransformUpdated = false;
 }
 
 
