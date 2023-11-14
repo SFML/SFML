@@ -404,6 +404,15 @@ void SoundStream::streamData()
             }
         }
 
+        // Check if any error has occurred
+        if (alGetLastError() != AL_NO_ERROR)
+        {
+            // Abort streaming (exit main loop)
+            Lock lock(m_threadMutex);
+            m_isStreaming = false;
+            break;
+        }
+
         // Leave some time for the other threads if the stream is still playing
         if (SoundSource::getStatus() != Stopped)
             sleep(m_processingInterval);
