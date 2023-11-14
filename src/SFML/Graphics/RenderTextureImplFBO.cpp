@@ -510,7 +510,7 @@ bool RenderTextureImplFBO::activate(bool active)
 
         if (it != m_multisampleFrameBuffers.end())
         {
-            auto frameBuffer = it->second.lock();
+            const auto frameBuffer = it->second.lock();
 
             if (frameBuffer)
             {
@@ -526,7 +526,7 @@ bool RenderTextureImplFBO::activate(bool active)
 
         if (it != m_frameBuffers.end())
         {
-            auto frameBuffer = it->second.lock();
+            const auto frameBuffer = it->second.lock();
 
             if (frameBuffer)
             {
@@ -568,8 +568,8 @@ void RenderTextureImplFBO::updateTexture(unsigned int)
 
         if ((frameBufferIt != m_frameBuffers.end()) && (multisampleIt != m_multisampleFrameBuffers.end()))
         {
-            auto frameBuffer            = frameBufferIt->second.lock();
-            auto multiSampleFrameBuffer = multisampleIt->second.lock();
+            const auto frameBuffer            = frameBufferIt->second.lock();
+            const auto multiSampleFrameBuffer = multisampleIt->second.lock();
 
             if (frameBuffer && multiSampleFrameBuffer)
             {

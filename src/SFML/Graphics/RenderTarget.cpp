@@ -406,8 +406,8 @@ bool RenderTarget::setActive(bool active)
         const std::uint64_t contextId = Context::getActiveContextId();
 
         using RenderTargetImpl::getContextRenderTargetMap;
-        auto& contextRenderTargetMap = getContextRenderTargetMap();
-        auto  it                     = contextRenderTargetMap.find(contextId);
+        auto&      contextRenderTargetMap = getContextRenderTargetMap();
+        const auto it                     = contextRenderTargetMap.find(contextId);
 
         if (active)
         {

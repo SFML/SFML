@@ -868,7 +868,7 @@ void HIDInputManager::buildMappings()
             UniChar             string[maxLength];
             UniCharCount        length       = 0;
             std::uint32_t       deadKeyState = 0;     // unused value
-            std::uint32_t const modifiers    = 0x100; // no modifiers
+            const std::uint32_t modifiers    = 0x100; // no modifiers
 
             // Use current layout for translation
             const OSStatus error = UCKeyTranslate(layout,

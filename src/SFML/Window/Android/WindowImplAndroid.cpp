@@ -63,8 +63,8 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const ContextSettings& /* settings */) :
 m_size(mode.size)
 {
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     if (style & Style::Fullscreen)
         states.fullscreen = true;
@@ -89,8 +89,8 @@ WindowImplAndroid::~WindowImplAndroid()
 ////////////////////////////////////////////////////////////
 WindowHandle WindowImplAndroid::getNativeHandle() const
 {
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     return states.window;
 }
@@ -102,8 +102,8 @@ void WindowImplAndroid::processEvents()
     // Process incoming OS events
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     if (m_windowBeingCreated)
     {
@@ -254,8 +254,8 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* data */)
 {
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     AInputEvent* inputEvent = nullptr;
 
@@ -708,8 +708,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
 int WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     // Initializes JNI
     jint lResult;
