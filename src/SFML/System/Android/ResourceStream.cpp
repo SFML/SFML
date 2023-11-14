@@ -38,8 +38,8 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 ResourceStream::ResourceStream(const std::filesystem::path& filename)
 {
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
     m_file.reset(AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN));
 }
 

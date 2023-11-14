@@ -83,8 +83,8 @@ void setVirtualKeyboardVisible(bool visible)
 {
     // todo: Check if the window is active
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     // Initializes JNI
     jint lFlags = 0;
@@ -168,8 +168,8 @@ bool isMouseButtonPressed(Mouse::Button button)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     return states.isButtonPressed[button];
 }
@@ -180,8 +180,8 @@ Vector2i getMousePosition()
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     return states.mousePosition;
 }
@@ -213,8 +213,8 @@ bool isTouchDown(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     return states.touchEvents.find(static_cast<int>(finger)) != states.touchEvents.end();
 }
@@ -225,8 +225,8 @@ Vector2i getTouchPosition(unsigned int finger)
 {
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     return states.touchEvents.find(static_cast<int>(finger))->second;
 }

@@ -63,7 +63,7 @@ EGLDisplay getInitializedDisplay()
 
     // On Android, its native activity handles this for us
     sf::priv::ActivityStates& states = sf::priv::getActivity();
-    std::lock_guard           lock(states.mutex);
+    const std::lock_guard     lock(states.mutex);
 
     return states.display;
 
@@ -146,8 +146,8 @@ EglContext::EglContext(EglContext*                        shared,
 #ifdef SFML_SYSTEM_ANDROID
 
     // On Android, we must save the created context
-    ActivityStates& states = getActivity();
-    std::lock_guard lock(states.mutex);
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
 
     states.context = this;
 

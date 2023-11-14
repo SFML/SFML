@@ -50,7 +50,7 @@ VideoMode VideoModeImpl::getDesktopMode()
 {
     // Get the activity states
     priv::ActivityStates& states = priv::getActivity();
-    std::lock_guard       lock(states.mutex);
+    const std::lock_guard lock(states.mutex);
 
     return VideoMode(Vector2u(states.screenSize));
 }

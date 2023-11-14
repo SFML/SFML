@@ -479,7 +479,7 @@ std::shared_ptr<void> GlContext::getSharedContext()
 void GlContext::registerUnsharedGlObject(std::shared_ptr<void> object)
 {
     if (const std::lock_guard lock(Impl::getUnsharedGlObjectsMutex());
-        auto                  unsharedGlObjects = Impl::getWeakUnsharedGlObjects().lock())
+        const auto            unsharedGlObjects = Impl::getWeakUnsharedGlObjects().lock())
         unsharedGlObjects->emplace_back(Impl::UnsharedGlObject{GlContextImpl::CurrentContext::get().id, std::move(object)});
 }
 
@@ -488,17 +488,17 @@ void GlContext::registerUnsharedGlObject(std::shared_ptr<void> object)
 void GlContext::unregisterUnsharedGlObject(std::shared_ptr<void> object)
 {
     if (const std::lock_guard lock(Impl::getUnsharedGlObjectsMutex());
-        auto                  unsharedGlObjects = Impl::getWeakUnsharedGlObjects().lock())
+        const auto            unsharedGlObjects = Impl::getWeakUnsharedGlObjects().lock())
     {
         // Find the object in unshared objects and remove it if its associated context is currently active
         // This will trigger the destructor of the object since shared_ptr
         // in unshared objects should be the only one existing
-        auto iter = std::find_if(unsharedGlObjects->begin(),
-                                 unsharedGlObjects->end(),
-                                 [&](const Impl::UnsharedGlObject& obj) {
-                                     return (obj.object == object) &&
-                                            (obj.contextId == GlContextImpl::CurrentContext::get().id);
-                                 });
+        const auto iter = std::find_if(unsharedGlObjects->begin(),
+                                       unsharedGlObjects->end(),
+                                       [&](const Impl::UnsharedGlObject& obj) {
+                                           return (obj.object == object) &&
+                                                  (obj.contextId == GlContextImpl::CurrentContext::get().id);
+                                       });
 
         if (iter != unsharedGlObjects->end())
             unsharedGlObjects->erase(iter);
@@ -555,7 +555,7 @@ void GlContext::releaseTransientContext()
 std::unique_ptr<GlContext> GlContext::create()
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    auto sharedContext = SharedContext::get();
+    const auto sharedContext = SharedContext::get();
 
     const std::lock_guard lock(sharedContext->mutex);
 
@@ -581,7 +581,7 @@ std::unique_ptr<GlContext> GlContext::create()
 std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    auto sharedContext = SharedContext::get();
+    const auto sharedContext = SharedContext::get();
 
     const std::lock_guard lock(sharedContext->mutex);
 
@@ -625,7 +625,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
 std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, const Vector2u& size)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
-    auto sharedContext = SharedContext::get();
+    const auto sharedContext = SharedContext::get();
 
     const std::lock_guard lock(sharedContext->mutex);
 
@@ -646,15 +646,13 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         sharedContext->loadExtensions();
     }
 
-    std::unique_ptr<GlContext> context;
-
     // We don't use acquireTransientContext here since we have
     // to ensure we have exclusive access to the shared context
     // in order to make sure it is not active during context creation
     sharedContext->context->setActive(true);
 
     // Create the context
-    context = std::make_unique<ContextType>(&sharedContext->context.value(), settings, size);
+    auto context = std::make_unique<ContextType>(&sharedContext->context.value(), settings, size);
 
     sharedContext->context->setActive(false);
 
