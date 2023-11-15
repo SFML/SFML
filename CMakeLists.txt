@@ -81,11 +81,6 @@ if(SFML_OS_ANDROID)
     # avoid missing libraries when building SFML for Android with NDK r19c and later
     list(PREPEND CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR}")
 
-    # make sure there's the android library available
-    if(CMAKE_ANDROID_API LESS 26)
-        message(FATAL_ERROR "Android API level (${CMAKE_ANDROID_API}) must be equal or greater than 26.")
-    endif()
-
     # CMake doesn't support defining the STL to be used with Nsight Tegra, so warn the user
     if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
         message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
