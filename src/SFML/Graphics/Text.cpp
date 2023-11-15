@@ -398,8 +398,7 @@ void Text::ensureGeometryUpdate() const
     // Compute the location of the strike through dynamically
     // We use the center point of the lowercase 'x' glyph as the reference
     // We reuse the underline thickness as the thickness of the strike through as well
-    const FloatRect xBounds             = m_font->getGlyph(U'x', m_characterSize, isBold).bounds;
-    const float     strikeThroughOffset = xBounds.top + xBounds.height / 2.f;
+    const float strikeThroughOffset = m_font->getGlyph(U'x', m_characterSize, isBold).bounds.getCenter().y;
 
     // Precompute the variables needed by the algorithm
     float       whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;

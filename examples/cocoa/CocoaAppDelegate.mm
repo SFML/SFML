@@ -47,9 +47,7 @@ struct SFMLmainWindow
 
         logo.setSmooth(true);
 
-        sf::FloatRect rect = sprite.getLocalBounds();
-        sf::Vector2f  size(rect.width, rect.height);
-        sprite.setOrigin(size / 2.f);
+        sprite.setOrigin(sprite.getLocalBounds().getCenter());
         sprite.scale({0.3f, 0.3f});
 
         unsigned int ww = renderWindow.getSize().x;
