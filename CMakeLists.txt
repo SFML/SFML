@@ -81,11 +81,6 @@ if(SFML_OS_ANDROID)
     # avoid missing libraries when building SFML for Android with NDK r19c and later
     list(PREPEND CMAKE_FIND_ROOT_PATH "${PROJECT_SOURCE_DIR}")
 
-    # CMake doesn't support defining the STL to be used with Nsight Tegra, so warn the user
-    if(CMAKE_VS_PLATFORM_NAME STREQUAL "Tegra-Android")
-        message(WARNING "CMake might not properly support setting the STL. Make sure to adjust all generated library projects!")
-    endif()
-
     # install everything in $NDK/sources/ because this path is appended by the NDK (convenient)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_ANDROID_NDK}/sources/third_party/sfml)
 
