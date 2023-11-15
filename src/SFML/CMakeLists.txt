@@ -42,7 +42,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 # sfml-system
 add_subdirectory(System)
 
-# sfml-main and sfml-activity
+# sfml-main
 if(SFML_OS_WINDOWS OR SFML_OS_ANDROID OR SFML_OS_IOS)
     add_subdirectory(Main)
 endif()

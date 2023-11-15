@@ -96,18 +96,9 @@ if(SFML_OS_ANDROID)
 
     # we install libs in a subdirectory named after the ABI
     set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${CMAKE_ANDROID_ARCH_ABI}")
-    # pass shared STL configuration (if any)
-    if(CMAKE_ANDROID_STL_TYPE MATCHES "_shared")
-        add_definitions("-DSTL_LIBRARY=${CMAKE_ANDROID_STL_TYPE}")
-    endif()
 
     # let the user switch ABIs
     set(ANDROID_ABI "armeabi-v7a" CACHE STRING "Look at the NDK docs for currently supported ABIs")
-
-    # this is a workaround to compile sfml-activity without the stl library as a dependency
-    # we save the original compilation command line to restore it later in Macro.cmake
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL ${CMAKE_CXX_CREATE_SHARED_LIBRARY})
-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL "<CMAKE_CXX_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 endif()
 
 # Install directories
