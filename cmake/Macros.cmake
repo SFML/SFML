@@ -212,6 +212,12 @@ macro(sfml_add_library module)
         sfml_set_common_ios_properties(${target})
     endif()
 
+    if(SFML_OS_ANDROID)
+        # Always use position-independent code on Android, even when linking statically.
+        # This is needed because all c++ code is placed in a shared library on Android.
+        set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
+
     # add the install rule
     install(TARGETS ${target} EXPORT SFMLConfigExport
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
