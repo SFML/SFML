@@ -7,7 +7,7 @@ set(SFML_DIR "${CMAKE_ANDROID_NDK}/sources/third_party/sfml/lib/${CMAKE_ANDROID_
 add_library(sfml-example SHARED main.cpp)
 
 # Find and link SFML
-find_package(SFML 3 REQUIRED COMPONENTS Graphics Audio Network)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics)
 target_link_libraries(sfml-example PRIVATE SFML::Graphics android log)
 
 # The ANativeActivity_onCreate function from SFML::Main needs to be exposed in
