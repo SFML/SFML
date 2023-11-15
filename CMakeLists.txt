@@ -86,9 +86,6 @@ if(SFML_OS_ANDROID)
 
     # we install libs in a subdirectory named after the ABI
     set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${CMAKE_ANDROID_ARCH_ABI}")
-
-    # let the user switch ABIs
-    set(ANDROID_ABI "armeabi-v7a" CACHE STRING "Look at the NDK docs for currently supported ABIs")
 endif()
 
 # Install directories
