@@ -212,18 +212,6 @@ macro(sfml_add_library module)
         sfml_set_common_ios_properties(${target})
     endif()
 
-    # sfml-activity library is our bootstrap activity and must not depend on stlport_shared
-    # (otherwise Android will fail to load it)
-    if(SFML_OS_ANDROID)
-        if(${target} MATCHES "sfml-activity")
-            set_target_properties(${target} PROPERTIES COMPILE_FLAGS -fpermissive)
-            set_target_properties(${target} PROPERTIES LINK_FLAGS "-landroid -llog")
-            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITHOUT_STL})
-        else()
-            set(CMAKE_CXX_CREATE_SHARED_LIBRARY ${CMAKE_CXX_CREATE_SHARED_LIBRARY_WITH_STL})
-        endif()
-    endif()
-
     # add the install rule
     install(TARGETS ${target} EXPORT SFMLConfigExport
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin

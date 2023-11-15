@@ -16,8 +16,7 @@
               android:configChanges="keyboardHidden|orientation|screenSize"
               android:exported="true">
 
-        <meta-data android:name="android.app.lib_name" android:value="sfml-activity-d" />
-        <meta-data android:name="sfml.app.lib_name" android:value="sfml-example" />
+        <meta-data android:name="android.app.lib_name" android:value="sfml-example" />
 
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
