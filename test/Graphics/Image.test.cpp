@@ -141,6 +141,55 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
+    SECTION("loadFromMemory()")
+    {
+        sf::Image image;
+
+        SECTION("Invalid pointer")
+        {
+            CHECK(!image.loadFromMemory(nullptr, 1));
+        }
+
+        SECTION("Invalid size")
+        {
+            const std::byte byte{0xAB};
+            CHECK(!image.loadFromMemory(&byte, 0));
+        }
+
+        SECTION("Failed load")
+        {
+            std::vector<std::uint8_t> memory;
+
+            SECTION("Empty")
+            {
+                memory.clear();
+            }
+
+            SECTION("Junk data")
+            {
+                memory = {1, 2, 3, 4};
+            }
+
+            CHECK(!image.loadFromMemory(memory.data(), memory.size()));
+        }
+
+        SECTION("Successful load")
+        {
+            const auto memory = []()
+            {
+                sf::Image savedImage;
+                savedImage.create({24, 24}, sf::Color::Green);
+                return savedImage.saveToMemory("png").value();
+            }();
+
+            CHECK(image.loadFromMemory(memory.data(), memory.size()));
+            CHECK(image.getSize() == sf::Vector2u(24, 24));
+            CHECK(image.getPixelsPtr() != nullptr);
+            CHECK(image.getPixel({0, 0}) == sf::Color::Green);
+            CHECK(image.getPixel({23, 23}) == sf::Color::Green);
+        }
+    }
+
     SECTION("saveToFile()")
     {
         sf::Image image;
