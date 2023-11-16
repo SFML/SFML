@@ -1,5 +1,8 @@
 #include <SFML/Graphics/Image.hpp>
 
+// Other 1st party headers
+#include <SFML/System/FileInputStream.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
@@ -187,6 +190,27 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(image.getPixelsPtr() != nullptr);
             CHECK(image.getPixel({0, 0}) == sf::Color::Green);
             CHECK(image.getPixel({23, 23}) == sf::Color::Green);
+        }
+    }
+
+    SECTION("loadFromStream()")
+    {
+        sf::Image           image;
+        sf::FileInputStream stream;
+
+        SECTION("Invalid stream")
+        {
+            CHECK(!image.loadFromStream(stream));
+        }
+
+        SECTION("Successful load")
+        {
+            CHECK(stream.open("Graphics/sfml-logo-big.png"));
+            REQUIRE(image.loadFromStream(stream));
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
+            CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
         }
     }
 

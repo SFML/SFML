@@ -3,6 +3,8 @@
 // Other 1st party headers
 #include <SFML/Graphics/Image.hpp>
 
+#include <SFML/System/FileInputStream.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
@@ -58,6 +60,19 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     {
         sf::Texture texture;
         REQUIRE(texture.loadFromFile("Graphics/sfml-logo-big.png"));
+        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+        CHECK(!texture.isSmooth());
+        CHECK(!texture.isSrgb());
+        CHECK(!texture.isRepeated());
+        CHECK(texture.getNativeHandle() != 0);
+    }
+
+    SECTION("loadFromStream()")
+    {
+        sf::Texture         texture;
+        sf::FileInputStream stream;
+        REQUIRE(stream.open("Graphics/sfml-logo-big.png"));
+        REQUIRE(texture.loadFromStream(stream));
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
