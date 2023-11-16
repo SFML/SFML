@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### General
+
+-   Ensure GNUInstallDirs cache vars are included before first used (#2778, #2779)
+-   [macOS] Fix incorrect variable expansion (#2780)
+
+### Audio
+
+**Bugfixes**
+
+-   Abort looping in SoundStream::streamData if an OpenAL error occurs (#1831, #2781)
+
 ## SFML 2.6.1
 
 Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.6.1
@@ -16,16 +29,16 @@ Also available on the website: https://www.sfml-dev.org/changelog.php#sfml-2.6.1
 
 **Bugfixes**
 
--   Fix macOS resize event bug (#2618)
--   Skip ClientMessage events with other window ID unless it is for IM (#2651)
+-   [macOS] Fix macOS resize event bug (#2618)
+-   [Linux] Skip ClientMessage events with other window ID unless it is for IM (#2651)
 
 ### Graphics
 
 **Bugfixes**
 
 -   Ensure OpenGL extensions are loaded before querying maximum texture size (#2603)
--   Fixed RenderTexture being upside down on Android (#2730)
--   Fix warnings in Linux OpenGL ES codepaths (#2747)
+-   [Android] Fixed RenderTexture being upside down on Android (#2730)
+-   [Linux] Fix warnings in Linux OpenGL ES codepaths (#2747)
 
 ### Audio
 
