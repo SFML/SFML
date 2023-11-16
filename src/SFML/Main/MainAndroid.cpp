@@ -36,8 +36,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#ifdef SFML_SYSTEM_ANDROID
-
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -568,5 +566,3 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     // Share this state with the callback functions
     activity->instance = states;
 }
-
-#endif // SFML_SYSTEM_ANDROID

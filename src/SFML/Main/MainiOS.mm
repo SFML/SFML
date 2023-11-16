@@ -43,8 +43,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#ifdef SFML_SYSTEM_IOS
-
 #include <UIKit/UIKit.h>
 
 
@@ -59,5 +57,3 @@ int main(int argc, char** argv)
 
     return UIApplicationMain(argc, argv, nil, @"SFAppDelegate");
 }
-
-#endif // SFML_SYSTEM_IOS

@@ -37,8 +37,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#ifdef SFML_SYSTEM_WINDOWS
-
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
 #include <cstdlib> // for `__argc` and `__argv`
@@ -53,5 +51,3 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
     return main(__argc, __argv);
 #pragma GCC diagnostic pop
 }
-
-#endif // SFML_SYSTEM_WINDOWS
