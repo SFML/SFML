@@ -1,4 +1,3 @@
-
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/Audio)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 

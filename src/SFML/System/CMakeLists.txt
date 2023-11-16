@@ -1,4 +1,3 @@
-
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/System)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/System)
 

@@ -1,4 +1,3 @@
-
 # find doxygen
 if(SFML_OS_MACOS)
     # Add some path to search doxygen in more directories.
