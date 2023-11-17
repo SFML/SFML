@@ -136,6 +136,9 @@ m_info(copy.m_info),
 m_pages(copy.m_pages),
 m_pixelBuffer(copy.m_pixelBuffer)
 {
+#ifdef SFML_SYSTEM_ANDROID
+    m_stream = copy.m_stream;
+#endif
 }
 
 
@@ -204,7 +207,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
 
 #else
 
-    m_stream = std::make_unique<priv::ResourceStream>(filename);
+    m_stream = std::make_shared<priv::ResourceStream>(filename);
     return loadFromStream(*m_stream);
 
 #endif
