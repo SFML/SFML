@@ -124,34 +124,6 @@ struct Font::FontHandles
 
 
 ////////////////////////////////////////////////////////////
-Font::Font() = default;
-
-
-////////////////////////////////////////////////////////////
-// NOLINTNEXTLINE(modernize-use-equals-default)
-Font::Font(const Font& copy) :
-m_fontHandles(copy.m_fontHandles),
-m_isSmooth(copy.m_isSmooth),
-m_info(copy.m_info),
-m_pages(copy.m_pages),
-m_pixelBuffer(copy.m_pixelBuffer)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-Font::~Font() = default;
-
-
-////////////////////////////////////////////////////////////
-Font::Font(Font&&) noexcept = default;
-
-
-////////////////////////////////////////////////////////////
-Font& Font::operator=(Font&&) noexcept = default;
-
-
-////////////////////////////////////////////////////////////
 bool Font::loadFromFile(const std::filesystem::path& filename)
 {
 #ifndef SFML_SYSTEM_ANDROID
@@ -204,7 +176,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
 
 #else
 
-    m_stream = std::make_unique<priv::ResourceStream>(filename);
+    m_stream = std::make_shared<priv::ResourceStream>(filename);
     return loadFromStream(*m_stream);
 
 #endif
@@ -499,25 +471,6 @@ void Font::setSmooth(bool smooth)
 bool Font::isSmooth() const
 {
     return m_isSmooth;
-}
-
-
-////////////////////////////////////////////////////////////
-Font& Font::operator=(const Font& right)
-{
-    Font temp(right);
-
-    std::swap(m_fontHandles, temp.m_fontHandles);
-    std::swap(m_isSmooth, temp.m_isSmooth);
-    std::swap(m_info, temp.m_info);
-    std::swap(m_pages, temp.m_pages);
-    std::swap(m_pixelBuffer, temp.m_pixelBuffer);
-
-#ifdef SFML_SYSTEM_ANDROID
-    std::swap(m_stream, temp.m_stream);
-#endif
-
-    return *this;
 }
 
 

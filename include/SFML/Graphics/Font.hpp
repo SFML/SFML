@@ -67,42 +67,6 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor defines an empty font
-    ///
-    ////////////////////////////////////////////////////////////
-    Font();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Copy constructor
-    ///
-    /// \param copy Instance to copy
-    ///
-    ////////////////////////////////////////////////////////////
-    Font(const Font& copy);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Font(Font&&) noexcept;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Move assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    Font& operator=(Font&&) noexcept;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    /// Cleans up all the internal resources used by the font
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Font();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Load the font from a file
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
@@ -317,16 +281,6 @@ public:
     ////////////////////////////////////////////////////////////
     bool isSmooth() const;
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Overload of assignment operator
-    ///
-    /// \param right Instance to assign
-    ///
-    /// \return Reference to self
-    ///
-    ////////////////////////////////////////////////////////////
-    Font& operator=(const Font& right);
-
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
@@ -427,7 +381,7 @@ private:
     mutable PageTable            m_pages;          //!< Table containing the glyphs pages by character size
     mutable std::vector<std::uint8_t> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture
 #ifdef SFML_SYSTEM_ANDROID
-    std::unique_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)
+    std::shared_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)
 #endif
 };
 
