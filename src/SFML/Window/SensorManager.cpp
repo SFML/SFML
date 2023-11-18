@@ -34,11 +34,22 @@
 
 namespace sf::priv
 {
+SensorManager* SensorManager::singleInstance = nullptr;
+
 ////////////////////////////////////////////////////////////
 SensorManager& SensorManager::getInstance()
 {
-    static SensorManager instance;
-    return instance;
+    if (singleInstance == nullptr)
+        singleInstance = new SensorManager();
+    return *singleInstance;
+}
+
+
+////////////////////////////////////////////////////////////
+void SensorManager::destroyInstance()
+{
+    delete singleInstance;
+    singleInstance = nullptr;
 }
 
 
