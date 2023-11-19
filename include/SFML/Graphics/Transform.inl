@@ -93,7 +93,7 @@ constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
 constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 {
     // Transform the 4 corners of the rectangle
-    const Vector2f points[] = {transformPoint({rectangle.left, rectangle.top}),
+    const std::array points = {transformPoint({rectangle.left, rectangle.top}),
                                transformPoint({rectangle.left, rectangle.top + rectangle.height}),
                                transformPoint({rectangle.left + rectangle.width, rectangle.top}),
                                transformPoint({rectangle.left + rectangle.width, rectangle.top + rectangle.height})};
@@ -104,7 +104,7 @@ constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
     float right  = points[0].x;
     float bottom = points[0].y;
 
-    for (int i = 1; i < 4; ++i)
+    for (std::size_t i = 1; i < points.size(); ++i)
     {
         // clang-format off
         if      (points[i].x < left)   left   = points[i].x;
