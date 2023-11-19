@@ -33,6 +33,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <array>
+
 
 namespace sf
 {

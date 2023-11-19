@@ -37,6 +37,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/View.hpp>
 
+#include <array>
+
 #include <cstddef>
 
 
@@ -506,17 +508,15 @@ private:
     ////////////////////////////////////////////////////////////
     struct StatesCache
     {
-        static constexpr std::size_t VertexCacheSize{4}; // NOLINT(readability-identifier-naming)
-
-        bool          enable;                       //!< Is the cache enabled?
-        bool          glStatesSet{};                //!< Are our internal GL states set yet?
-        bool          viewChanged;                  //!< Has the current view changed since last draw?
-        bool          scissorEnabled;               //!< Is scissor testing enabled?
-        BlendMode     lastBlendMode;                //!< Cached blending mode
-        std::uint64_t lastTextureId;                //!< Cached texture
-        bool          texCoordsArrayEnabled;        //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool          useVertexCache;               //!< Did we previously use the vertex cache?
-        Vertex        vertexCache[VertexCacheSize]; //!< Pre-transformed vertices cache
+        bool                  enable;                //!< Is the cache enabled?
+        bool                  glStatesSet{};         //!< Are our internal GL states set yet?
+        bool                  viewChanged;           //!< Has the current view changed since last draw?
+        bool                  scissorEnabled;        //!< Is scissor testing enabled?
+        BlendMode             lastBlendMode;         //!< Cached blending mode
+        std::uint64_t         lastTextureId;         //!< Cached texture
+        bool                  texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool                  useVertexCache;        //!< Did we previously use the vertex cache?
+        std::array<Vertex, 4> vertexCache;           //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////

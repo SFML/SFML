@@ -82,10 +82,8 @@ void Sprite::setTextureRect(const IntRect& rectangle)
 void Sprite::setColor(const Color& color)
 {
     // Update the vertices' color
-    m_vertices[0].color = color;
-    m_vertices[1].color = color;
-    m_vertices[2].color = color;
-    m_vertices[3].color = color;
+    for (auto& vertex : m_vertices)
+        vertex.color = color;
 }
 
 
@@ -134,7 +132,7 @@ void Sprite::draw(RenderTarget& target, const RenderStates& states) const
 
     statesCopy.transform *= getTransform();
     statesCopy.texture = m_texture;
-    target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
+    target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, statesCopy);
 }
 
 
