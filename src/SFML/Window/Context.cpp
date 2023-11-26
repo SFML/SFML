@@ -49,19 +49,37 @@ namespace sf
 Context::Context() : m_context(priv::GlContext::create())
 {
     if (!setActive(true))
-    {
         err() << "Failed to set context as active during construction" << std::endl;
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
 Context::~Context()
 {
-    if (!setActive(false))
-    {
+    if (m_context && !setActive(false))
         err() << "Failed to set context as inactive during destruction" << std::endl;
-    }
+}
+
+
+////////////////////////////////////////////////////////////
+Context::Context(Context&& context) noexcept : m_context(std::move(context.m_context))
+{
+    if (&context == ContextImpl::currentContext)
+        ContextImpl::currentContext = this;
+}
+
+
+////////////////////////////////////////////////////////////
+Context& Context::operator=(Context&& context) noexcept
+{
+    if (this == &context)
+        return *this;
+
+    m_context = std::move(context.m_context);
+    if (&context == ContextImpl::currentContext)
+        ContextImpl::currentContext = this;
+
+    return *this;
 }
 
 
@@ -125,9 +143,7 @@ Context::Context(const ContextSettings& settings, const Vector2u& size) :
 m_context(priv::GlContext::create(settings, size))
 {
     if (!setActive(true))
-    {
         err() << "Failed to set context as active during construction" << std::endl;
-    }
 }
 
 } // namespace sf
