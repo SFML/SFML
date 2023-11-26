@@ -21,8 +21,8 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Context>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Context>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Context>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Context>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Context>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Context>);
     }
 
     SECTION("Construction")
@@ -31,6 +31,65 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
         CHECK(context.getSettings().majorVersion > 0);
         CHECK(sf::Context::getActiveContext() == &context);
         CHECK(sf::Context::getActiveContextId() != 0);
+    }
+
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            SECTION("From active context")
+            {
+                sf::Context       movedContext;
+                const sf::Context context(std::move(movedContext));
+                CHECK(context.getSettings().majorVersion > 0);
+                CHECK(sf::Context::getActiveContext() == &context);
+                CHECK(sf::Context::getActiveContextId() != 0);
+            }
+
+            SECTION("From inactive context")
+            {
+                sf::Context movedContext;
+                CHECK(movedContext.setActive(false));
+                CHECK(sf::Context::getActiveContext() == nullptr);
+                CHECK(sf::Context::getActiveContextId() == 0);
+
+                const sf::Context context(std::move(movedContext));
+                CHECK(context.getSettings().majorVersion > 0);
+                CHECK(sf::Context::getActiveContext() == nullptr);
+                CHECK(sf::Context::getActiveContextId() == 0);
+            }
+        }
+
+        SECTION("Assignment")
+        {
+            SECTION("From active context")
+            {
+                sf::Context movedContext;
+                sf::Context context;
+                CHECK(movedContext.setActive(true));
+                CHECK(sf::Context::getActiveContext() == &movedContext);
+                CHECK(sf::Context::getActiveContextId() != 0);
+
+                context = std::move(movedContext);
+                CHECK(context.getSettings().majorVersion > 0);
+                CHECK(sf::Context::getActiveContext() == &context);
+                CHECK(sf::Context::getActiveContextId() != 0);
+            }
+
+            SECTION("From inactive context")
+            {
+                sf::Context movedContext;
+                CHECK(movedContext.setActive(false));
+                CHECK(sf::Context::getActiveContext() == nullptr);
+                CHECK(sf::Context::getActiveContextId() == 0);
+
+                sf::Context context;
+                context = std::move(movedContext);
+                CHECK(context.getSettings().majorVersion > 0);
+                CHECK(sf::Context::getActiveContext() == nullptr);
+                CHECK(sf::Context::getActiveContextId() == 0);
+            }
+        }
     }
 
     SECTION("setActive()")
