@@ -33,10 +33,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile() = default;
-
-
-////////////////////////////////////////////////////////////
 bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // If the file is already open, first close it
