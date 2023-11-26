@@ -50,12 +50,6 @@ class SFML_AUDIO_API InputSoundFile
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    InputSoundFile();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading
     ///
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.
