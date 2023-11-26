@@ -61,9 +61,9 @@ void ensureExtensionsInit()
         initialized = true;
 
 #ifdef SFML_OPENGL_ES
-        gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+        gladLoadGLES1(sf::Context::getFunction);
 #else
-        gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+        gladLoadGL(sf::Context::getFunction);
 #endif
 
         // Retrieve the context version number

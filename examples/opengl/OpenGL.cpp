@@ -94,9 +94,9 @@ int main()
 
         // Load OpenGL or OpenGL ES entry points using glad
 #ifdef SFML_OPENGL_ES
-        gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+        gladLoadGLES1(sf::Context::getFunction);
 #else
-        gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+        gladLoadGL(sf::Context::getFunction);
 #endif
 
         // Enable Z-buffer read and write
