@@ -57,10 +57,11 @@ public:
     /// \brief Open a sound file for reading
     ///
     /// \param stream Stream to open
-    /// \param info   Structure to fill with the attributes of the loaded sound
+    ///
+    /// \return Properties of the loaded sound if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override;
+    [[nodiscard]] std::optional<Info> open(sf::InputStream& stream) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset

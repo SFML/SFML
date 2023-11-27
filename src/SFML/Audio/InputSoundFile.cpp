@@ -81,8 +81,8 @@ bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
         return false;
 
     // Pass the stream to the reader
-    SoundFileReader::Info info;
-    if (!reader->open(*file, info))
+    const auto info = reader->open(*file);
+    if (!info)
         return false;
 
     // Take ownership of successfully opened reader and stream
@@ -90,9 +90,9 @@ bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
     m_stream = std::move(file);
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info.sampleCount;
-    m_channelCount = info.channelCount;
-    m_sampleRate   = info.sampleRate;
+    m_sampleCount  = info->sampleCount;
+    m_channelCount = info->channelCount;
+    m_sampleRate   = info->sampleRate;
 
     return true;
 }
@@ -116,8 +116,8 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     memory->open(data, sizeInBytes);
 
     // Pass the stream to the reader
-    SoundFileReader::Info info;
-    if (!reader->open(*memory, info))
+    const auto info = reader->open(*memory);
+    if (!info)
         return false;
 
     // Take ownership of successfully opened reader and stream
@@ -125,9 +125,9 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     m_stream = std::move(memory);
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info.sampleCount;
-    m_channelCount = info.channelCount;
-    m_sampleRate   = info.sampleRate;
+    m_sampleCount  = info->sampleCount;
+    m_channelCount = info->channelCount;
+    m_sampleRate   = info->sampleRate;
 
     return true;
 }
@@ -152,8 +152,8 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     }
 
     // Pass the stream to the reader
-    SoundFileReader::Info info;
-    if (!reader->open(stream, info))
+    const auto info = reader->open(stream);
+    if (!info)
         return false;
 
     // Take ownership of reader and store a reference to the stream without taking ownership
@@ -161,9 +161,9 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     m_stream = {&stream, false};
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info.sampleCount;
-    m_channelCount = info.channelCount;
-    m_sampleRate   = info.sampleRate;
+    m_sampleCount  = info->sampleCount;
+    m_channelCount = info->channelCount;
+    m_sampleRate   = info->sampleRate;
 
     return true;
 }
