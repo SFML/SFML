@@ -255,17 +255,7 @@ std::uint64_t InputSoundFile::read(std::int16_t* samples, std::uint64_t maxCount
 ////////////////////////////////////////////////////////////
 void InputSoundFile::close()
 {
-    // Destroy the reader
-    m_reader.reset();
-
-    // Destroy the stream if we own it
-    m_stream.reset();
-
-    // Reset the sound file attributes
-    m_sampleOffset = 0;
-    m_sampleCount  = 0;
-    m_channelCount = 0;
-    m_sampleRate   = 0;
+    *this = {};
 }
 
 } // namespace sf
