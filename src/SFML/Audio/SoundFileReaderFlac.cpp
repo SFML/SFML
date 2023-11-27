@@ -227,14 +227,14 @@ bool SoundFileReaderFlac::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
+std::optional<SoundFileReader::Info> SoundFileReaderFlac::open(InputStream& stream)
 {
     // Create the decoder
     m_decoder.reset(FLAC__stream_decoder_new());
     if (!m_decoder)
     {
         err() << "Failed to open FLAC file (failed to allocate the decoder)" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Initialize the decoder with our callbacks
@@ -255,13 +255,11 @@ bool SoundFileReaderFlac::open(InputStream& stream, Info& info)
     {
         m_decoder.reset();
         err() << "Failed to open FLAC file (failed to read metadata)" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
     // Retrieve the sound properties
-    info = m_clientData.info; // was filled in the "metadata" callback
-
-    return true;
+    return m_clientData.info; // was filled in the "metadata" callback
 }
 
 
