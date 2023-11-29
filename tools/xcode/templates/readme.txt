@@ -1,7 +1,7 @@
-XCODE TEMPLATES FOR SFML 2
-==========================
+XCODE TEMPLATES FOR SFML
+========================
 
-These templates help you to easily create a new SFML 2 project for Xcode 4 or greater.
+These templates help you to easily create a new SFML project for Xcode 4 or greater.
 
 
 
@@ -39,7 +39,7 @@ Before installing the template, make sure you have installed:
 
  - Xcode 4 or greater, up to date;
  - the Command Line Tools;
- - SFML 2, either as frameworks or dylibs, as described in the official tutorials.
+ - SFML, either as frameworks or dylibs, as described in the official tutorials.
 
 
 You should also be familiar with Xcode. If needed checkout this document:
@@ -79,12 +79,6 @@ FAQ
 
     No, Xcode 3 and 4 don't have the same template system. Therefore these templates won't work with
     a older version of Xcode.
-
-
-
-  * I'm still using SFML 1.6. Can I use these templates anyway?
-
-    No, these templates were made for SFML 2 only.
 
 
 

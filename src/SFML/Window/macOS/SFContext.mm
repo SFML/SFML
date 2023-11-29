@@ -209,7 +209,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
     }
 
     // Support for OpenGL 3.2 on Mac OS X Lion and later:
-    // SFML 2 Graphics module uses some OpenGL features that are deprecated in
+    // The SFML Graphics module uses some OpenGL features that are deprecated in
     // OpenGL 3.0 and that are no longer available in 3.1 and 3.2+ with a core context.
     // Therefore the Graphics module won't work as expected.
 
