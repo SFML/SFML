@@ -1,4 +1,3 @@
-
 XCODE TEMPLATES FOR SFML 2
 ==========================
 
