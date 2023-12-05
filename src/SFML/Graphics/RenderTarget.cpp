@@ -638,7 +638,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
                 equationToGlConstant(mode.colorEquation),
                 equationToGlConstant(mode.alphaEquation)));
         }
-        else
+        else if (GLEXT_glBlendEquation)
         {
             glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
         }
