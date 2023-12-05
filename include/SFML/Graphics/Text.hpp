@@ -202,6 +202,8 @@ public:
     /// By default, the text's fill color is opaque white.
     /// Setting the fill color to a transparent color with an outline
     /// will cause the outline to be displayed in the fill area of the text.
+    /// This function also overwrites all of the character fill
+    /// colors set by setCharacterFillColor().
     ///
     /// \param color New fill color of the text
     ///
@@ -211,9 +213,30 @@ public:
     void setFillColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the fill color of a specific character in text
+    ///
+    /// By default, the text's fill color is opaque white.
+    /// Setting the fill color to a transparent color with an outline
+    /// will cause the outline to be displayed in the fill area of the text.
+    /// If the index is out of bounds (index > size - 1), the change won't be
+    /// seen as long as the character count is < index + 1.
+    /// Calling setFillColor() will overwrite all character fill colors
+    /// in the current string.
+    ///
+    /// \param color New fill color of the character
+    /// \param index Index of the character in the string
+    ///
+    /// \see getCharacterFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setCharacterFillColor(unsigned int index, const Color& color);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the outline color of the text
     ///
     /// By default, the text's outline color is opaque black.
+    /// This function also overwrites all of the character outline
+    /// colors set by setCharacterOutlineColor().
     ///
     /// \param color New outline color of the text
     ///
@@ -221,6 +244,23 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline color of a specific character in text
+    ///
+    /// By default, the text's outline color is opaque black.
+    /// If the index is out of bounds (index > size - 1), the change won't be
+    /// seen as long as the character count is < index + 1.
+    /// Calling setOutlineColor() will overwrite all character outline colors
+    /// in the current string.
+    ///
+    /// \param color New outline color of the character
+    /// \param index Index of the character in the string
+    ///
+    /// \see getCharacterOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setCharacterOutlineColor(unsigned int index, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the thickness of the text's outline
@@ -236,6 +276,30 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineThickness(float thickness);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the underline/strikethrough color of the text
+    ///
+    /// By default, the text's outline color is opaque white.
+    ///
+    /// \param color New underline/strikethrough color of the text
+    ///
+    /// \see getUnderlineFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUnderlineFillColor(const Color& color);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the outline underline/strikethrough color of the text
+    ///
+    /// By default, the text's outline color is opaque black.
+    ///
+    /// \param color New outline underline/strikethrough color of the text
+    ///
+    /// \see getUnderlineOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUnderlineOutlineColor(const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's string
@@ -320,6 +384,21 @@ public:
     const Color& getFillColor() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the fill color of the character
+    ///
+    /// The validity of the index is not checked, passing an invalid
+    /// index results in an undefined behaviour.
+    ///
+    /// \return Fill color of the character
+    ///
+    /// \param Index of the character
+    ///
+    /// \see setCharacterFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getCharacterFillColor(unsigned int index) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the outline color of the text
     ///
     /// \return Outline color of the text
@@ -330,6 +409,21 @@ public:
     const Color& getOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the outline color of the character
+    ///
+    /// The validity of the index is not checked, passing an invalid
+    /// index results in an undefined behaviour.
+    ///
+    /// \return Outline color of the character
+    ///
+    /// \param Index of the character
+    ///
+    /// \see setCharacterOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getCharacterOutlineColor(unsigned int index) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the outline thickness of the text
     ///
     /// \return Outline thickness of the text, in pixels
@@ -338,6 +432,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     float getOutlineThickness() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the underline/strikethrough color of the text
+    ///
+    /// \param color New underline/strikethrough color of the text
+    ///
+    /// \see setUnderlineFillColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getUnderlineFillColor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the outline underline/strikethrough color of the text
+    ///
+    /// \param color New outline underline/strikethrough color of the text
+    ///
+    /// \see setUnderlineOutlineColor
+    ///
+    ////////////////////////////////////////////////////////////
+    const Color& getUnderlineOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the position of the \a index-th character
@@ -404,18 +518,30 @@ private:
     void ensureGeometryUpdate() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Update underline fill/outline color
+    ///
+    /// If there is no need to update geometry, update colors only.
+    ///
+    ////////////////////////////////////////////////////////////
+    void updateUnderline(VertexArray& arr, const Color& color) const;
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String                m_string;                                    //!< String to display
-    const Font*           m_font{};                                    //!< Font used to display the string
-    unsigned int          m_characterSize{30};                         //!< Base size of characters, in pixels
-    float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
-    float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines
-    std::uint32_t         m_style{Regular};                            //!< Text style (see Style enum)
-    Color                 m_fillColor{Color::White};                   //!< Text fill color
-    Color                 m_outlineColor{Color::Black};                //!< Text outline color
-    float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
-    mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
+    String                     m_string;                              //!< String to display
+    const Font*                m_font{};                              //!< Font used to display the string
+    unsigned int               m_characterSize{30};                   //!< Base size of characters, in pixels
+    float                      m_letterSpacingFactor{1.f};            //!< Spacing factor between letters
+    float                      m_lineSpacingFactor{1.f};              //!< Spacing factor between lines
+    std::uint32_t              m_style{Regular};                      //!< Text style (see Style enum)
+    Color                      m_underlineFillColor{Color::White};    //!< Text underline/strikethrough fill color
+    Color                      m_underlineOutlineColor{Color::Black}; //!< Text underline/strikethrough outline color
+    bool                       m_multiFillColor{0};          //!< Should the text have more than a single fill color
+    bool                       m_multiOutlineColor{0};       //!< Should the text have more than a single outline color
+    float                      m_outlineThickness{0.f};      //!< Thickness of the text's outline
+    mutable std::vector<Color> m_fillColors{Color::White};    //!< Text fill color(s)
+    mutable std::vector<Color> m_outlineColors{Color::Black}; //!< Text outline color(s)
+    mutable VertexArray        m_vertices{PrimitiveType::Triangles};   //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
     mutable bool          m_geometryNeedUpdate{}; //!< Does the geometry need to be recomputed?
