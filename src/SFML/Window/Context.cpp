@@ -68,12 +68,14 @@ Context::~Context()
 ////////////////////////////////////////////////////////////
 bool Context::setActive(bool active)
 {
-    const bool result = m_context->setActive(active);
+    if (!m_context->setActive(active))
+        return false;
 
-    if (result)
-        ContextImpl::currentContext = (active ? this : nullptr);
-
-    return result;
+    if (active)
+        ContextImpl::currentContext = this;
+    else if (this == ContextImpl::currentContext)
+        ContextImpl::currentContext = nullptr;
+    return true;
 }
 
 
