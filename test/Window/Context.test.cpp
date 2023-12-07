@@ -29,19 +29,40 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
     {
         const sf::Context context;
         CHECK(context.getSettings().majorVersion > 0);
-        CHECK(context.getActiveContext() == &context);
-        CHECK(context.getActiveContextId() != 0);
+        CHECK(sf::Context::getActiveContext() == &context);
+        CHECK(sf::Context::getActiveContextId() != 0);
     }
 
     SECTION("setActive()")
     {
         sf::Context context;
+        const auto  contextId = sf::Context::getActiveContextId();
+
+        // Set inactive
         CHECK(context.setActive(false));
-        CHECK(context.getActiveContext() == nullptr);
-        CHECK(context.getActiveContextId() == 0);
+        CHECK(sf::Context::getActiveContext() == nullptr);
+        CHECK(sf::Context::getActiveContextId() == 0);
+
+        // Set active
         CHECK(context.setActive(true));
-        CHECK(context.getActiveContext() == &context);
-        CHECK(context.getActiveContextId() != 0);
+        CHECK(sf::Context::getActiveContext() == &context);
+        CHECK(sf::Context::getActiveContextId() == contextId);
+
+        // Create new context which becomes active automatically
+        const sf::Context newContext;
+        CHECK(sf::Context::getActiveContext() == &newContext);
+        const auto newContextId = sf::Context::getActiveContextId();
+        CHECK(newContextId != 0);
+
+        // Set old context as inactive but new context remains active
+        CHECK(context.setActive(false));
+        CHECK(sf::Context::getActiveContext() == &newContext);
+        CHECK(sf::Context::getActiveContextId() == newContextId);
+
+        // Set old context as active again
+        CHECK(context.setActive(true));
+        CHECK(sf::Context::getActiveContext() == &context);
+        CHECK(sf::Context::getActiveContextId() == contextId);
     }
 
     SECTION("getActiveContext()/getActiveContextId()")
