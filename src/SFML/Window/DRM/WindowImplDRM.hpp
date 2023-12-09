@@ -52,7 +52,7 @@ public:
     ///
     /// \param mode     Video mode to use
     /// \param title    Title of the window
-    /// \param style    Window style (resizable, fixed, or fullscren)
+    /// \param style    Window style (resizable, fixed, or fullscreen)
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
