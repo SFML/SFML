@@ -38,10 +38,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-String::String() = default;
-
-
-////////////////////////////////////////////////////////////
 String::String(char ansiChar, const std::locale& locale)
 {
     m_string += Utf32::decodeAnsi(ansiChar, locale);

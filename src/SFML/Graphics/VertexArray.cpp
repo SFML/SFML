@@ -34,10 +34,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexArray::VertexArray() = default;
-
-
-////////////////////////////////////////////////////////////
 VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) : m_vertices(vertexCount), m_primitiveType(type)
 {
 }

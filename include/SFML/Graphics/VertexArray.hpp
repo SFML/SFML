@@ -52,7 +52,7 @@ public:
     /// Creates an empty vertex array.
     ///
     ////////////////////////////////////////////////////////////
-    VertexArray();
+    VertexArray() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vertex array with a type and an initial number of vertices

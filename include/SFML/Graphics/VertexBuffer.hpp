@@ -72,7 +72,7 @@ public:
     /// Creates an empty vertex buffer.
     ///
     ////////////////////////////////////////////////////////////
-    VertexBuffer();
+    VertexBuffer() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a VertexBuffer with a specific PrimitiveType

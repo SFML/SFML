@@ -193,7 +193,7 @@ protected:
     /// This constructor is only meant to be called by derived classes.
     ///
     ////////////////////////////////////////////////////////////
-    SoundRecorder();
+    SoundRecorder() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the processing interval
