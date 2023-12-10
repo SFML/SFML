@@ -31,6 +31,8 @@
 
 #include <android/looper.h>
 
+#include <optional>
+
 #if defined(__clang__) || defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -147,7 +149,7 @@ const ASensor* SensorImpl::getDefaultSensor(Sensor::Type sensor)
                           ASENSOR_TYPE_LINEAR_ACCELERATION,
                           ASENSOR_TYPE_ORIENTATION};
 
-    int type = types[sensor];
+    int type = types[static_cast<int>(sensor)];
 
     // Retrieve the default sensor matching this type
     return ASensorManager_getDefaultSensor(sensorManager, type);
@@ -161,48 +163,48 @@ int SensorImpl::processSensorEvents(int /* fd */, int /* events */, void* /* sen
 
     while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0)
     {
-        unsigned int type = Sensor::Count;
-        Vector3f     data;
+        std::optional<Sensor::Type> type;
+        Vector3f                    data;
 
         switch (event.type)
         {
             case ASENSOR_TYPE_ACCELEROMETER:
-                type   = Sensor::Accelerometer;
+                type   = Sensor::Type::Accelerometer;
                 data.x = event.acceleration.x;
                 data.y = event.acceleration.y;
                 data.z = event.acceleration.z;
                 break;
 
             case ASENSOR_TYPE_GYROSCOPE:
-                type   = Sensor::Gyroscope;
+                type   = Sensor::Type::Gyroscope;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
                 break;
 
             case ASENSOR_TYPE_MAGNETIC_FIELD:
-                type   = Sensor::Magnetometer;
+                type   = Sensor::Type::Magnetometer;
                 data.x = event.magnetic.x;
                 data.y = event.magnetic.y;
                 data.z = event.magnetic.z;
                 break;
 
             case ASENSOR_TYPE_GRAVITY:
-                type   = Sensor::Gravity;
+                type   = Sensor::Type::Gravity;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
                 break;
 
             case ASENSOR_TYPE_LINEAR_ACCELERATION:
-                type   = Sensor::UserAcceleration;
+                type   = Sensor::Type::UserAcceleration;
                 data.x = event.acceleration.x;
                 data.y = event.acceleration.y;
                 data.z = event.acceleration.z;
                 break;
 
             case ASENSOR_TYPE_ORIENTATION:
-                type   = Sensor::Orientation;
+                type   = Sensor::Type::Orientation;
                 data.x = event.vector.x;
                 data.y = event.vector.y;
                 data.z = event.vector.z;
@@ -210,10 +212,10 @@ int SensorImpl::processSensorEvents(int /* fd */, int /* events */, void* /* sen
         }
 
         // An unknown sensor event has been detected, we don't know how to process it
-        if (type == Sensor::Count)
+        if (!type)
             continue;
 
-        sensorData[type] = data;
+        sensorData[static_cast<int>(*type)] = data;
     }
 
     return 1;
