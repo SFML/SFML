@@ -38,14 +38,14 @@ TEST_CASE("[Window] sf::Joystick")
 
     SECTION("hasAxis()")
     {
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::X));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Y));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Z));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::R));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::U));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::V));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::PovX));
-        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::PovY));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::X));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::Y));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::Z));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::R));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::U));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::V));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::PovX));
+        CHECK(!sf::Joystick::hasAxis(joystick, sf::Joystick::Axis::PovY));
     }
 
     SECTION("isButtonPressed()")
@@ -56,14 +56,14 @@ TEST_CASE("[Window] sf::Joystick")
 
     SECTION("getAxisPosition")
     {
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::X) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Y) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Z) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::R) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::U) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::V) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::PovX) == 0);
-        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::PovY) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::X) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::Y) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::Z) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::R) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::U) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::V) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::PovX) == 0);
+        CHECK(sf::Joystick::getAxisPosition(joystick, sf::Joystick::Axis::PovY) == 0);
     }
 
     SECTION("getIdentification()")

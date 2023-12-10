@@ -252,19 +252,18 @@ void WindowImpl::processJoystickEvents()
             {
                 if (caps.axes[j])
                 {
-                    const auto  axis    = static_cast<Joystick::Axis>(j);
-                    const float prevPos = m_previousAxes[i][axis];
-                    const float currPos = m_joystickStatesImpl->states[i].axes[axis];
+                    const float prevPos = m_previousAxes[i][j];
+                    const float currPos = m_joystickStatesImpl->states[i].axes[j];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
                         event.type                    = Event::JoystickMoved;
                         event.joystickMove.joystickId = i;
-                        event.joystickMove.axis       = axis;
+                        event.joystickMove.axis       = static_cast<Joystick::Axis>(j);
                         event.joystickMove.position   = currPos;
                         pushEvent(event);
 
-                        m_previousAxes[i][axis] = currPos;
+                        m_previousAxes[i][j] = currPos;
                     }
                 }
             }

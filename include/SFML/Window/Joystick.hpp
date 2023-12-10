@@ -51,7 +51,7 @@ static constexpr unsigned int AxisCount{8};    //!< Maximum number of supported 
 /// \brief Axes supported by SFML joysticks
 ///
 ////////////////////////////////////////////////////////////
-enum Axis
+enum class Axis
 {
     X,    //!< The X axis
     Y,    //!< The Y axis
@@ -199,13 +199,13 @@ SFML_WINDOW_API void update();
 /// unsigned int buttons = sf::Joystick::getButtonCount(0);
 ///
 /// // Does joystick #0 define a X axis?
-/// bool hasX = sf::Joystick::hasAxis(0, sf::Joystick::X);
+/// bool hasX = sf::Joystick::hasAxis(0, sf::Joystick::Axis::X);
 ///
 /// // Is button #2 pressed on joystick #0?
 /// bool pressed = sf::Joystick::isButtonPressed(0, 2);
 ///
 /// // What's the current position of the Y axis on joystick #0?
-/// float position = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+/// float position = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
 /// \endcode
 ///
 /// \see sf::Keyboard, sf::Mouse
