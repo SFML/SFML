@@ -135,27 +135,27 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     // clang-format off
     switch (type)
     {
-        case Cursor::Arrow:                  shape = IDC_ARROW;       break;
-        case Cursor::ArrowWait:              shape = IDC_APPSTARTING; break;
-        case Cursor::Wait:                   shape = IDC_WAIT;        break;
-        case Cursor::Text:                   shape = IDC_IBEAM;       break;
-        case Cursor::Hand:                   shape = IDC_HAND;        break;
-        case Cursor::SizeHorizontal:         shape = IDC_SIZEWE;      break;
-        case Cursor::SizeVertical:           shape = IDC_SIZENS;      break;
-        case Cursor::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
-        case Cursor::SizeLeft:               shape = IDC_SIZEWE;      break;
-        case Cursor::SizeRight:              shape = IDC_SIZEWE;      break;
-        case Cursor::SizeTop:                shape = IDC_SIZENS;      break;
-        case Cursor::SizeBottom:             shape = IDC_SIZENS;      break;
-        case Cursor::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
-        case Cursor::SizeTopRight:           shape = IDC_SIZENESW;    break;
-        case Cursor::SizeAll:                shape = IDC_SIZEALL;     break;
-        case Cursor::Cross:                  shape = IDC_CROSS;       break;
-        case Cursor::Help:                   shape = IDC_HELP;        break;
-        case Cursor::NotAllowed:             shape = IDC_NO;          break;
+        case Cursor::Type::Arrow:                  shape = IDC_ARROW;       break;
+        case Cursor::Type::ArrowWait:              shape = IDC_APPSTARTING; break;
+        case Cursor::Type::Wait:                   shape = IDC_WAIT;        break;
+        case Cursor::Type::Text:                   shape = IDC_IBEAM;       break;
+        case Cursor::Type::Hand:                   shape = IDC_HAND;        break;
+        case Cursor::Type::SizeHorizontal:         shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeVertical:           shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeLeft:               shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeRight:              shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeTop:                shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeBottom:             shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeTopRight:           shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeAll:                shape = IDC_SIZEALL;     break;
+        case Cursor::Type::Cross:                  shape = IDC_CROSS;       break;
+        case Cursor::Type::Help:                   shape = IDC_HELP;        break;
+        case Cursor::Type::NotAllowed:             shape = IDC_NO;          break;
     }
     // clang-format on
 

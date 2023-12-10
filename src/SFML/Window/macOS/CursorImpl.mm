@@ -87,34 +87,34 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     {
         default: return false;
 
-        case Cursor::Arrow:           newCursor = [NSCursor arrowCursor];               break;
-        case Cursor::Text:            newCursor = [NSCursor IBeamCursor];               break;
-        case Cursor::Hand:            newCursor = [NSCursor pointingHandCursor];        break;
-        case Cursor::SizeHorizontal:  newCursor = [NSCursor resizeLeftRightCursor];     break;
-        case Cursor::SizeVertical:    newCursor = [NSCursor resizeUpDownCursor];        break;
-        case Cursor::Cross:           newCursor = [NSCursor crosshairCursor];           break;
-        case Cursor::NotAllowed:      newCursor = [NSCursor operationNotAllowedCursor]; break;
-        case Cursor::SizeLeft:        newCursor = [NSCursor resizeLeftRightCursor];     break;
-        case Cursor::SizeRight:       newCursor = [NSCursor resizeLeftRightCursor];     break;
-        case Cursor::SizeTop:         newCursor = [NSCursor resizeUpDownCursor];        break;
-        case Cursor::SizeBottom:      newCursor = [NSCursor resizeUpDownCursor];        break;
+        case Cursor::Type::Arrow:           newCursor = [NSCursor arrowCursor];               break;
+        case Cursor::Type::Text:            newCursor = [NSCursor IBeamCursor];               break;
+        case Cursor::Type::Hand:            newCursor = [NSCursor pointingHandCursor];        break;
+        case Cursor::Type::SizeHorizontal:  newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::Type::SizeVertical:    newCursor = [NSCursor resizeUpDownCursor];        break;
+        case Cursor::Type::Cross:           newCursor = [NSCursor crosshairCursor];           break;
+        case Cursor::Type::NotAllowed:      newCursor = [NSCursor operationNotAllowedCursor]; break;
+        case Cursor::Type::SizeLeft:        newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::Type::SizeRight:       newCursor = [NSCursor resizeLeftRightCursor];     break;
+        case Cursor::Type::SizeTop:         newCursor = [NSCursor resizeUpDownCursor];        break;
+        case Cursor::Type::SizeBottom:      newCursor = [NSCursor resizeUpDownCursor];        break;
 
         // These cursor types are undocumented, may not be available on some platforms
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wundeclared-selector"
-        case Cursor::SizeTopRight:
-        case Cursor::SizeBottomLeft:
-        case Cursor::SizeBottomLeftTopRight:
+        case Cursor::Type::SizeTopRight:
+        case Cursor::Type::SizeBottomLeft:
+        case Cursor::Type::SizeBottomLeftTopRight:
             newCursor = loadFromSelector(@selector(_windowResizeNorthEastSouthWestCursor));
             break;
 
-        case Cursor::SizeTopLeft:
-        case Cursor::SizeBottomRight:
-        case Cursor::SizeTopLeftBottomRight:
+        case Cursor::Type::SizeTopLeft:
+        case Cursor::Type::SizeBottomRight:
+        case Cursor::Type::SizeTopLeftBottomRight:
             newCursor = loadFromSelector(@selector(_windowResizeNorthWestSouthEastCursor));
             break;
 
-        case Cursor::Help:
+        case Cursor::Type::Help:
             newCursor = loadFromSelector(@selector(_helpCursor));
             break;
 #pragma GCC diagnostic pop
