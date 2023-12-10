@@ -57,7 +57,7 @@ public:
     /// \li a null shader
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates();
+    RenderStates() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom blend mode

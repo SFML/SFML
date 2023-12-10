@@ -192,7 +192,7 @@ protected:
     /// This constructor is only meant to be called by derived classes.
     ///
     ////////////////////////////////////////////////////////////
-    SoundStream();
+    SoundStream() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Define the audio stream parameters

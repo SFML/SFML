@@ -67,7 +67,7 @@ public:
     /// This constructor creates an empty string.
     ///
     ////////////////////////////////////////////////////////////
-    String();
+    String() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a single ANSI character and a locale

@@ -62,10 +62,6 @@ GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VertexBuffer::VertexBuffer() = default;
-
-
-////////////////////////////////////////////////////////////
 VertexBuffer::VertexBuffer(PrimitiveType type) : m_primitiveType(type)
 {
 }

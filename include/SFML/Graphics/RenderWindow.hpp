@@ -52,7 +52,7 @@ public:
     /// use the other constructors or call create() to do so.
     ///
     ////////////////////////////////////////////////////////////
-    RenderWindow();
+    RenderWindow() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a new window

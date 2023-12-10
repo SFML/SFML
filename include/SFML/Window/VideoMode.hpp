@@ -49,7 +49,7 @@ public:
     /// This constructors initializes all members to 0.
     ///
     ////////////////////////////////////////////////////////////
-    VideoMode();
+    VideoMode() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the video mode with its attributes

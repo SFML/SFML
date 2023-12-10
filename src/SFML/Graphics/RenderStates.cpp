@@ -45,10 +45,6 @@ const RenderStates RenderStates::Default(BlendMode(
 
 
 ////////////////////////////////////////////////////////////
-RenderStates::RenderStates() = default;
-
-
-////////////////////////////////////////////////////////////
 RenderStates::RenderStates(const Transform& theTransform) : transform(theTransform)
 {
 }

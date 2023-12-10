@@ -53,10 +53,6 @@ ALCdevice* captureDevice = nullptr;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundRecorder::SoundRecorder() = default;
-
-
-////////////////////////////////////////////////////////////
 SoundRecorder::~SoundRecorder()
 {
     // This assertion is triggered if the recording is still running while

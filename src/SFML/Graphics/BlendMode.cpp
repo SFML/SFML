@@ -47,10 +47,6 @@ const BlendMode BlendNone(BlendMode::One, BlendMode::Zero, BlendMode::Add);
 
 
 ////////////////////////////////////////////////////////////
-BlendMode::BlendMode() = default;
-
-
-////////////////////////////////////////////////////////////
 BlendMode::BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation) :
 colorSrcFactor(sourceFactor),
 colorDstFactor(destinationFactor),
