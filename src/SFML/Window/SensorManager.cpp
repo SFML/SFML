@@ -45,17 +45,17 @@ SensorManager& SensorManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool SensorManager::isAvailable(Sensor::Type sensor)
 {
-    return m_sensors[sensor].available;
+    return m_sensors[static_cast<int>(sensor)].available;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 {
-    if (m_sensors[sensor].available)
+    if (m_sensors[static_cast<int>(sensor)].available)
     {
-        m_sensors[sensor].enabled = enabled;
-        m_sensors[sensor].sensor.setEnabled(enabled);
+        m_sensors[static_cast<int>(sensor)].enabled = enabled;
+        m_sensors[static_cast<int>(sensor)].sensor.setEnabled(enabled);
     }
     else
     {
@@ -68,14 +68,14 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 ////////////////////////////////////////////////////////////
 bool SensorManager::isEnabled(Sensor::Type sensor) const
 {
-    return m_sensors[sensor].enabled;
+    return m_sensors[static_cast<int>(sensor)].enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorManager::getValue(Sensor::Type sensor) const
 {
-    return m_sensors[sensor].value;
+    return m_sensors[static_cast<int>(sensor)].value;
 }
 
 
@@ -98,7 +98,7 @@ SensorManager::SensorManager()
     SensorImpl::initialize();
 
     // Per sensor initialization
-    for (int i = 0; i < Sensor::Count; ++i)
+    for (unsigned int i = 0; i < Sensor::Count; ++i)
     {
         // Check which sensors are available
         m_sensors[i].available = SensorImpl::isAvailable(static_cast<Sensor::Type>(i));
