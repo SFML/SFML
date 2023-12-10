@@ -171,7 +171,7 @@ bool isMouseButtonPressed(Mouse::Button button)
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
-    return states.isButtonPressed[button];
+    return states.isButtonPressed[static_cast<int>(button)];
 }
 
 

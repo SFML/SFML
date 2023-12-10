@@ -298,7 +298,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, in
     Event event;
 
     event.type                   = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+    event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
     event.mouseWheelScroll.delta = deltaY;
     event.mouseWheelScroll.x     = x;
     event.mouseWheelScroll.y     = y;
@@ -306,7 +306,7 @@ void WindowImplCocoa::mouseWheelScrolledAt(float deltaX, float deltaY, int x, in
     pushEvent(event);
 
     event.type                   = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+    event.mouseWheelScroll.wheel = Mouse::Wheel::Horizontal;
     event.mouseWheelScroll.delta = deltaX;
     event.mouseWheelScroll.x     = x;
     event.mouseWheelScroll.y     = y;

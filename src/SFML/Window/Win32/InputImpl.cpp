@@ -622,19 +622,19 @@ bool isMouseButtonPressed(Mouse::Button button)
     int virtualKey = 0;
     switch (button)
     {
-        case Mouse::Left:
+        case Mouse::Button::Left:
             virtualKey = GetSystemMetrics(SM_SWAPBUTTON) ? VK_RBUTTON : VK_LBUTTON;
             break;
-        case Mouse::Right:
+        case Mouse::Button::Right:
             virtualKey = GetSystemMetrics(SM_SWAPBUTTON) ? VK_LBUTTON : VK_RBUTTON;
             break;
-        case Mouse::Middle:
+        case Mouse::Button::Middle:
             virtualKey = VK_MBUTTON;
             break;
-        case Mouse::XButton1:
+        case Mouse::Button::XButton1:
             virtualKey = VK_XBUTTON1;
             break;
-        case Mouse::XButton2:
+        case Mouse::Button::XButton2:
             virtualKey = VK_XBUTTON2;
             break;
         default:

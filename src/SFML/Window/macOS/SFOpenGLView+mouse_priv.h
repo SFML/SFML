@@ -30,6 +30,7 @@
 #import <SFML/Window/macOS/SFOpenGLView.h>
 
 #import <AppKit/AppKit.h>
+#include <optional>
 
 
 ////////////////////////////////////////////////////////////
@@ -98,13 +99,13 @@
 - (CGDirectDisplayID)displayId;
 
 ////////////////////////////////////////////////////////////
-/// \brief Convert the NSEvent mouse button type to SFML type
+/// \brief Try to convert the NSEvent mouse button type to SFML type
 ///
 /// \param event a mouse button event
 ///
-/// \return Left, Right, ..., or ButtonCount if the button is unknown
+/// \return Left, Right, ..., or std::nullopt if the button is unknown
 ///
 ////////////////////////////////////////////////////////////
-+ (sf::Mouse::Button)mouseButtonFromEvent:(NSEvent*)event;
++ (std::optional<sf::Mouse::Button>)mouseButtonFromEvent:(NSEvent*)event;
 
 @end

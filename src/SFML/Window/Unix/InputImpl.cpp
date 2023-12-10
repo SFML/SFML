@@ -103,16 +103,16 @@ bool isMouseButtonPressed(Mouse::Button button)
 
     // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
     // There is no mask for buttons 8 and 9, so checking the state of buttons
-    // Mouse::XButton1 and Mouse::XButton2 is not supported.
+    // Mouse::Button::XButton1 and Mouse::Button::XButton2 is not supported.
     // clang-format off
     switch (button)
     {
-        case Mouse::Left:     return buttons & Button1Mask;
-        case Mouse::Right:    return buttons & Button3Mask;
-        case Mouse::Middle:   return buttons & Button2Mask;
-        case Mouse::XButton1: return false; // not supported by X
-        case Mouse::XButton2: return false; // not supported by X
-        default:              return false;
+        case Mouse::Button::Left:     return buttons & Button1Mask;
+        case Mouse::Button::Right:    return buttons & Button3Mask;
+        case Mouse::Button::Middle:   return buttons & Button2Mask;
+        case Mouse::Button::XButton1: return false; // not supported by X
+        case Mouse::Button::XButton2: return false; // not supported by X
+        default:                      return false;
     }
     // clang-format on
 }

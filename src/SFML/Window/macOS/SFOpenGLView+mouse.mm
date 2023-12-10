@@ -131,14 +131,14 @@
 ////////////////////////////////////////////////////////
 - (void)handleMouseDown:(NSEvent*)theEvent
 {
-    sf::Mouse::Button button = [SFOpenGLView mouseButtonFromEvent:theEvent];
+    const std::optional<sf::Mouse::Button> button = [SFOpenGLView mouseButtonFromEvent:theEvent];
 
     if (m_requester != nil)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
-        if (button != sf::Mouse::ButtonCount)
-            m_requester->mouseDownAt(button, static_cast<int>(loc.x), static_cast<int>(loc.y));
+        if (button)
+            m_requester->mouseDownAt(*button, static_cast<int>(loc.x), static_cast<int>(loc.y));
     }
 }
 
@@ -176,14 +176,14 @@
 ////////////////////////////////////////////////////////////
 - (void)handleMouseUp:(NSEvent*)theEvent
 {
-    sf::Mouse::Button button = [SFOpenGLView mouseButtonFromEvent:theEvent];
+    const std::optional<sf::Mouse::Button> button = [SFOpenGLView mouseButtonFromEvent:theEvent];
 
     if (m_requester != nil)
     {
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
-        if (button != sf::Mouse::ButtonCount)
-            m_requester->mouseUpAt(button, static_cast<int>(loc.x), static_cast<int>(loc.y));
+        if (button)
+            m_requester->mouseUpAt(*button, static_cast<int>(loc.x), static_cast<int>(loc.y));
     }
 }
 
@@ -407,22 +407,22 @@
 
 
 ////////////////////////////////////////////////////////
-+ (sf::Mouse::Button)mouseButtonFromEvent:(NSEvent*)event
++ (std::optional<sf::Mouse::Button>)mouseButtonFromEvent:(NSEvent*)event
 {
     switch ([event buttonNumber])
     {
         case 0:
-            return sf::Mouse::Left;
+            return sf::Mouse::Button::Left;
         case 1:
-            return sf::Mouse::Right;
+            return sf::Mouse::Button::Right;
         case 2:
-            return sf::Mouse::Middle;
+            return sf::Mouse::Button::Middle;
         case 3:
-            return sf::Mouse::XButton1;
+            return sf::Mouse::Button::XButton1;
         case 4:
-            return sf::Mouse::XButton2;
+            return sf::Mouse::Button::XButton2;
         default:
-            return sf::Mouse::ButtonCount; // Never happens! (hopefully)
+            return std::nullopt; // Never happens! (hopefully)
     }
 }
 
