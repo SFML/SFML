@@ -179,24 +179,24 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     {
         default: return false;
 
-        case Cursor::Arrow:           shape = XC_arrow;               break;
-        case Cursor::Wait:            shape = XC_watch;               break;
-        case Cursor::Text:            shape = XC_xterm;               break;
-        case Cursor::Hand:            shape = XC_hand2;               break;
-        case Cursor::SizeHorizontal:  shape = XC_sb_h_double_arrow;   break;
-        case Cursor::SizeVertical:    shape = XC_sb_v_double_arrow;   break;
-        case Cursor::SizeLeft:        shape = XC_left_side;           break;
-        case Cursor::SizeRight:       shape = XC_right_side;          break;
-        case Cursor::SizeTop:         shape = XC_top_side;            break;
-        case Cursor::SizeBottom:      shape = XC_bottom_side;         break;
-        case Cursor::SizeTopLeft:     shape = XC_top_left_corner;     break;
-        case Cursor::SizeBottomRight: shape = XC_bottom_right_corner; break;
-        case Cursor::SizeBottomLeft:  shape = XC_bottom_left_corner;  break;
-        case Cursor::SizeTopRight:    shape = XC_top_right_corner;    break;
-        case Cursor::SizeAll:         shape = XC_fleur;               break;
-        case Cursor::Cross:           shape = XC_crosshair;           break;
-        case Cursor::Help:            shape = XC_question_arrow;      break;
-        case Cursor::NotAllowed:      shape = XC_X_cursor;            break;
+        case Cursor::Type::Arrow:           shape = XC_arrow;               break;
+        case Cursor::Type::Wait:            shape = XC_watch;               break;
+        case Cursor::Type::Text:            shape = XC_xterm;               break;
+        case Cursor::Type::Hand:            shape = XC_hand2;               break;
+        case Cursor::Type::SizeHorizontal:  shape = XC_sb_h_double_arrow;   break;
+        case Cursor::Type::SizeVertical:    shape = XC_sb_v_double_arrow;   break;
+        case Cursor::Type::SizeLeft:        shape = XC_left_side;           break;
+        case Cursor::Type::SizeRight:       shape = XC_right_side;          break;
+        case Cursor::Type::SizeTop:         shape = XC_top_side;            break;
+        case Cursor::Type::SizeBottom:      shape = XC_bottom_side;         break;
+        case Cursor::Type::SizeTopLeft:     shape = XC_top_left_corner;     break;
+        case Cursor::Type::SizeBottomRight: shape = XC_bottom_right_corner; break;
+        case Cursor::Type::SizeBottomLeft:  shape = XC_bottom_left_corner;  break;
+        case Cursor::Type::SizeTopRight:    shape = XC_top_right_corner;    break;
+        case Cursor::Type::SizeAll:         shape = XC_fleur;               break;
+        case Cursor::Type::Cross:           shape = XC_crosshair;           break;
+        case Cursor::Type::Help:            shape = XC_question_arrow;      break;
+        case Cursor::Type::NotAllowed:      shape = XC_X_cursor;            break;
     }
     // clang-format on
 

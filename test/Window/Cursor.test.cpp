@@ -51,19 +51,19 @@ TEST_CASE("[Window] sf::Cursor", runDisplayTests())
     SECTION("loadFromSystem()")
     {
         sf::Cursor cursor;
-        CHECK(cursor.loadFromSystem(sf::Cursor::Hand));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeHorizontal));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeVertical));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeLeft));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeRight));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeTop));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeBottom));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeTopLeft));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeTopRight));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeBottomLeft));
-        CHECK(cursor.loadFromSystem(sf::Cursor::SizeBottomRight));
-        CHECK(cursor.loadFromSystem(sf::Cursor::Cross));
-        CHECK(cursor.loadFromSystem(sf::Cursor::Help));
-        CHECK(cursor.loadFromSystem(sf::Cursor::NotAllowed));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::Hand));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeHorizontal));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeVertical));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeLeft));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeRight));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeTop));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeBottom));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeTopLeft));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeTopRight));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeBottomLeft));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::SizeBottomRight));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::Cross));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::Help));
+        CHECK(cursor.loadFromSystem(sf::Cursor::Type::NotAllowed));
     }
 }
