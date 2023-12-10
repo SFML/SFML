@@ -195,6 +195,8 @@ if(SFML_USE_SYSTEM_DEPS)
     endforeach()
 
     list(REMOVE_DUPLICATES CMAKE_IGNORE_PATH)
+elseif(SFML_COMPILER_GCC AND GCC_COMPILER_VERSION MATCHES "ucrt")
+    message(FATAL_ERROR "The pre-compiled SFML dependencies for MinGW are not compatible with the UCRT. Either switch to the MSVCRT or build the dependencies yourself.")
 endif()
 
 # Visual C++: remove warnings regarding SL security and algorithms on pointers
