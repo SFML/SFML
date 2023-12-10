@@ -393,7 +393,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     // Create and send our mouse wheel event
     Event event;
     event.type                   = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+    event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
     event.mouseWheelScroll.delta = static_cast<float>(delta);
     event.mouseWheelScroll.x     = static_cast<int>(AMotionEvent_getX(inputEvent, 0));
     event.mouseWheelScroll.y     = static_cast<int>(AMotionEvent_getY(inputEvent, 0));
@@ -539,7 +539,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
             event.mouseButton.x      = x;
             event.mouseButton.y      = y;
 
-            if (id >= 0 && id < Mouse::ButtonCount)
+            if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[id] = true;
         }
         else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
@@ -561,7 +561,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
             event.mouseButton.x      = x;
             event.mouseButton.y      = y;
 
-            if (id >= 0 && id < Mouse::ButtonCount)
+            if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[id] = false;
         }
         else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)

@@ -1937,11 +1937,11 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 // clang-format off
                 switch(button)
                 {
-                    case Button1: event.mouseButton.button = Mouse::Left;     break;
-                    case Button2: event.mouseButton.button = Mouse::Middle;   break;
-                    case Button3: event.mouseButton.button = Mouse::Right;    break;
-                    case 8:       event.mouseButton.button = Mouse::XButton1; break;
-                    case 9:       event.mouseButton.button = Mouse::XButton2; break;
+                    case Button1: event.mouseButton.button = Mouse::Button::Left;     break;
+                    case Button2: event.mouseButton.button = Mouse::Button::Middle;   break;
+                    case Button3: event.mouseButton.button = Mouse::Button::Right;    break;
+                    case 8:       event.mouseButton.button = Mouse::Button::XButton1; break;
+                    case 9:       event.mouseButton.button = Mouse::Button::XButton2; break;
                 }
                 // clang-format on
 
@@ -1966,19 +1966,19 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 switch (button)
                 {
                     case Button1:
-                        event.mouseButton.button = Mouse::Left;
+                        event.mouseButton.button = Mouse::Button::Left;
                         break;
                     case Button2:
-                        event.mouseButton.button = Mouse::Middle;
+                        event.mouseButton.button = Mouse::Button::Middle;
                         break;
                     case Button3:
-                        event.mouseButton.button = Mouse::Right;
+                        event.mouseButton.button = Mouse::Button::Right;
                         break;
                     case 8:
-                        event.mouseButton.button = Mouse::XButton1;
+                        event.mouseButton.button = Mouse::Button::XButton1;
                         break;
                     case 9:
-                        event.mouseButton.button = Mouse::XButton2;
+                        event.mouseButton.button = Mouse::Button::XButton2;
                         break;
                 }
                 pushEvent(event);
@@ -1988,7 +1988,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 Event event;
 
                 event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+                event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
                 event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
                 event.mouseWheelScroll.x     = windowEvent.xbutton.x;
                 event.mouseWheelScroll.y     = windowEvent.xbutton.y;
@@ -1998,7 +1998,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             {
                 Event event;
                 event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+                event.mouseWheelScroll.wheel = Mouse::Wheel::Horizontal;
                 event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
                 event.mouseWheelScroll.x     = windowEvent.xbutton.x;
                 event.mouseWheelScroll.y     = windowEvent.xbutton.y;

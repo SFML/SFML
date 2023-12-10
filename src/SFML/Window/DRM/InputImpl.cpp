@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <linux/input.h>
 #include <mutex>
+#include <optional>
 #include <queue>
 #include <sstream>
 #include <sys/stat.h>
@@ -165,23 +166,23 @@ void initFileDescriptors()
     std::atexit(uninitFileDescriptors);
 }
 
-sf::Mouse::Button toMouseButton(int code)
+std::optional<sf::Mouse::Button> toMouseButton(int code)
 {
     switch (code)
     {
         case BTN_LEFT:
-            return sf::Mouse::Left;
+            return sf::Mouse::Button::Left;
         case BTN_RIGHT:
-            return sf::Mouse::Right;
+            return sf::Mouse::Button::Right;
         case BTN_MIDDLE:
-            return sf::Mouse::Middle;
+            return sf::Mouse::Button::Middle;
         case BTN_SIDE:
-            return sf::Mouse::XButton1;
+            return sf::Mouse::Button::XButton1;
         case BTN_EXTRA:
-            return sf::Mouse::XButton2;
+            return sf::Mouse::Button::XButton2;
 
         default:
-            return sf::Mouse::ButtonCount;
+            return std::nullopt;
     }
 }
 
@@ -384,15 +385,14 @@ bool eventProcess(sf::Event& event)
         {
             if (inputEvent.type == EV_KEY)
             {
-                const sf::Mouse::Button mb = toMouseButton(inputEvent.code);
-                if (mb != sf::Mouse::ButtonCount)
+                if (const std::optional<sf::Mouse::Button> mb = toMouseButton(inputEvent.code))
                 {
                     event.type = inputEvent.value ? sf::Event::MouseButtonPressed : sf::Event::MouseButtonReleased;
-                    event.mouseButton.button = mb;
+                    event.mouseButton.button = *mb;
                     event.mouseButton.x      = mousePos.x;
                     event.mouseButton.y      = mousePos.y;
 
-                    mouseMap[mb] = inputEvent.value;
+                    mouseMap[static_cast<std::size_t>(*mb)] = inputEvent.value;
                     return true;
                 }
                 else
@@ -628,11 +628,11 @@ void setVirtualKeyboardVisible(bool /*visible*/)
 bool isMouseButtonPressed(Mouse::Button button)
 {
     const std::lock_guard lock(inputMutex);
-    if ((button < 0) || (button >= static_cast<int>(mouseMap.size())))
+    if ((static_cast<int>(button) < 0) || (static_cast<int>(button) >= static_cast<int>(mouseMap.size())))
         return false;
 
     update();
-    return mouseMap[button];
+    return mouseMap[static_cast<std::size_t>(button)];
 }
 
 

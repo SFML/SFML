@@ -921,7 +921,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             Event event;
 
             event.type                   = Event::MouseWheelScrolled;
-            event.mouseWheelScroll.wheel = Mouse::VerticalWheel;
+            event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
             event.mouseWheelScroll.delta = static_cast<float>(delta) / 120.f;
             event.mouseWheelScroll.x     = position.x;
             event.mouseWheelScroll.y     = position.y;
@@ -942,7 +942,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             Event event;
             event.type                   = Event::MouseWheelScrolled;
-            event.mouseWheelScroll.wheel = Mouse::HorizontalWheel;
+            event.mouseWheelScroll.wheel = Mouse::Wheel::Horizontal;
             event.mouseWheelScroll.delta = -static_cast<float>(delta) / 120.f;
             event.mouseWheelScroll.x     = position.x;
             event.mouseWheelScroll.y     = position.y;
@@ -955,7 +955,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Left;
+            event.mouseButton.button = Mouse::Button::Left;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -967,7 +967,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Left;
+            event.mouseButton.button = Mouse::Button::Left;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -979,7 +979,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Right;
+            event.mouseButton.button = Mouse::Button::Right;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -991,7 +991,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Right;
+            event.mouseButton.button = Mouse::Button::Right;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -1003,7 +1003,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = Mouse::Middle;
+            event.mouseButton.button = Mouse::Button::Middle;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -1015,7 +1015,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = Mouse::Middle;
+            event.mouseButton.button = Mouse::Button::Middle;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -1027,7 +1027,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
+            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::XButton1 : Mouse::Button::XButton2;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);
@@ -1039,7 +1039,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             Event event;
             event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::XButton1 : Mouse::XButton2;
+            event.mouseButton.button = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::XButton1 : Mouse::Button::XButton2;
             event.mouseButton.x      = static_cast<std::int16_t>(LOWORD(lParam));
             event.mouseButton.y      = static_cast<std::int16_t>(HIWORD(lParam));
             pushEvent(event);

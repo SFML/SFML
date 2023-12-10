@@ -167,7 +167,7 @@ bool isMouseButtonPressed(Mouse::Button button)
 {
     const AutoreleasePool pool;
     const NSUInteger      state = [NSEvent pressedMouseButtons];
-    const NSUInteger      flag  = 1 << button;
+    const NSUInteger      flag  = 1 << static_cast<int>(button);
     return (state & flag) != 0;
 }
 
