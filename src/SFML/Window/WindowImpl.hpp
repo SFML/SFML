@@ -47,7 +47,6 @@
 namespace sf
 {
 class String;
-class WindowListener;
 
 namespace priv
 {
