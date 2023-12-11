@@ -137,6 +137,8 @@ if(SFML_USE_SYSTEM_DEPS)
     endforeach()
 
     list(REMOVE_DUPLICATES CMAKE_IGNORE_PATH)
+elseif(SFML_COMPILER_GCC AND GCC_COMPILER_VERSION MATCHES "ucrt")
+    message(FATAL_ERROR "The pre-compiled SFML dependencies for MinGW are not compatible with the UCRT. Either switch to the MSVCRT or build the dependencies yourself.")
 endif()
 
 if(SFML_COMPILER_MSVC)
@@ -222,6 +224,14 @@ endif()
 sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES ${SFML_INSTALL_PKGCONFIG_DEFAULT} BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
 
 if(SFML_INSTALL_PKGCONFIG_FILES)
+    # set pkgconfig install directory
+    # this could be e.g. macports on mac or msys2 on windows etc.
+    set(SFML_PKGCONFIG_DIR "/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+    if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
+        set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
+    endif()
+
     sfml_set_option(SFML_PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
 
     foreach(sfml_module IN ITEMS all system window graphics audio network)
@@ -350,7 +360,7 @@ else()
     # NOTE: it's not required to link against SFML.framework
     set_target_properties(SFML PROPERTIES INSTALL_NAME_DIR "@rpath")
     if(NOT CMAKE_SKIP_BUILD_RPATH)
-        set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
+        set_target_properties(SFML PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
     endif()
 
     # install rule
