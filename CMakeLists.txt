@@ -303,9 +303,12 @@ endif()
 sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES ${SFML_INSTALL_PKGCONFIG_DEFAULT} BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
 
 if(SFML_INSTALL_PKGCONFIG_FILES)
+    # account for CMAKE_INSTALL_LIBDIR potentially being an absolute path
+    file(RELATIVE_PATH SFML_RELATIVE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_FULL_LIBDIR})
+
     # set pkgconfig install directory
     # this could be e.g. macports on mac or msys2 on windows etc.
-    set(SFML_PKGCONFIG_DIR "/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+    set(SFML_PKGCONFIG_DIR "/${SFML_RELATIVE_INSTALL_LIBDIR}/pkgconfig")
 
     if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
