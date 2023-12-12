@@ -51,7 +51,7 @@ public:
     /// This constructor creates a default view of (0, 0, 1000, 1000)
     ///
     ////////////////////////////////////////////////////////////
-    View();
+    View() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the view from a rectangle
@@ -270,8 +270,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f  m_center;                     //!< Center of the view, in scene coordinates
-    Vector2f  m_size;                       //!< Size of the view, in scene coordinates
+    Vector2f  m_center{500, 500};           //!< Center of the view, in scene coordinates
+    Vector2f  m_size{1000, 1000};           //!< Size of the view, in scene coordinates
     Angle     m_rotation;                   //!< Angle of rotation of the view rectangle
     FloatRect m_viewport{{0, 0}, {1, 1}};   //!< Viewport rectangle, expressed as a factor of the render-target's size
     FloatRect m_scissor{{0, 0}, {1, 1}};    //!< Scissor rectangle, expressed as a factor of the render-target's size
