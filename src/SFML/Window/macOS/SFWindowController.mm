@@ -174,7 +174,7 @@
 {
     // Create a screen-sized window on the main display
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    sf::priv::scaleInWidthHeight(desktop, nil);
+    sf::priv::scaleInXY(desktop.size, nil);
     NSRect windowRect = NSMakeRect(0, 0, desktop.size.x, desktop.size.y);
     m_window          = [[SFWindow alloc]
         initWithContentRect:windowRect
@@ -434,7 +434,7 @@
         // Special case when fullscreen: only resize the opengl view
         // and make sure the requested size is not bigger than the window.
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-        sf::priv::scaleInWidthHeight(desktop, nil);
+        sf::priv::scaleInXY(desktop.size, nil);
 
         width  = std::min(width, desktop.size.x);
         height = std::min(height, desktop.size.y);

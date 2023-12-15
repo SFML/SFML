@@ -56,13 +56,6 @@ void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
 }
 
 template <class T>
-void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleIn(in.size.x, delegate);
-    scaleIn(in.size.y, delegate);
-}
-
-template <class T>
 void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
 {
     scaleIn(in.x, delegate);
