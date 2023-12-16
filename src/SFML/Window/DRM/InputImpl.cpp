@@ -177,9 +177,9 @@ std::optional<sf::Mouse::Button> toMouseButton(int code)
         case BTN_MIDDLE:
             return sf::Mouse::Button::Middle;
         case BTN_SIDE:
-            return sf::Mouse::Button::XButton1;
+            return sf::Mouse::Button::Extra1;
         case BTN_EXTRA:
-            return sf::Mouse::Button::XButton2;
+            return sf::Mouse::Button::Extra2;
 
         default:
             return std::nullopt;

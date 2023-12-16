@@ -418,9 +418,9 @@
         case 2:
             return sf::Mouse::Button::Middle;
         case 3:
-            return sf::Mouse::Button::XButton1;
+            return sf::Mouse::Button::Extra1;
         case 4:
-            return sf::Mouse::Button::XButton2;
+            return sf::Mouse::Button::Extra2;
         default:
             return std::nullopt; // Never happens! (hopefully)
     }
