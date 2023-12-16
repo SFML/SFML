@@ -331,14 +331,14 @@ JoystickCaps JoystickImpl::getCapabilities() const
     if (caps.buttonCount > Joystick::ButtonCount)
         caps.buttonCount = Joystick::ButtonCount;
 
-    caps.axes[static_cast<int>(Joystick::Axis::X)]    = true;
-    caps.axes[static_cast<int>(Joystick::Axis::Y)]    = true;
-    caps.axes[static_cast<int>(Joystick::Axis::Z)]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
-    caps.axes[static_cast<int>(Joystick::Axis::R)]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
-    caps.axes[static_cast<int>(Joystick::Axis::U)]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
-    caps.axes[static_cast<int>(Joystick::Axis::V)]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
-    caps.axes[static_cast<int>(Joystick::Axis::PovX)] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
-    caps.axes[static_cast<int>(Joystick::Axis::PovY)] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::Axis::X]    = true;
+    caps.axes[Joystick::Axis::Y]    = true;
+    caps.axes[Joystick::Axis::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
+    caps.axes[Joystick::Axis::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
+    caps.axes[Joystick::Axis::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
+    caps.axes[Joystick::Axis::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
+    caps.axes[Joystick::Axis::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::Axis::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
 
     return caps;
 }
@@ -379,36 +379,36 @@ JoystickState JoystickImpl::update()
         state.connected = true;
 
         // Axes
-        state.axes[static_cast<int>(Joystick::Axis::X)] = (static_cast<float>(pos.dwXpos) -
-                                                           static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
-        state.axes[static_cast<int>(Joystick::Axis::Y)] = (static_cast<float>(pos.dwYpos) -
-                                                           static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
-        state.axes[static_cast<int>(Joystick::Axis::Z)] = (static_cast<float>(pos.dwZpos) -
-                                                           static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
-        state.axes[static_cast<int>(Joystick::Axis::R)] = (static_cast<float>(pos.dwRpos) -
-                                                           static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
-        state.axes[static_cast<int>(Joystick::Axis::U)] = (static_cast<float>(pos.dwUpos) -
-                                                           static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
-        state.axes[static_cast<int>(Joystick::Axis::V)] = (static_cast<float>(pos.dwVpos) -
-                                                           static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) *
-                                                          200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
+        state.axes[Joystick::Axis::X] = (static_cast<float>(pos.dwXpos) -
+                                         static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
+        state.axes[Joystick::Axis::Y] = (static_cast<float>(pos.dwYpos) -
+                                         static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
+        state.axes[Joystick::Axis::Z] = (static_cast<float>(pos.dwZpos) -
+                                         static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
+        state.axes[Joystick::Axis::R] = (static_cast<float>(pos.dwRpos) -
+                                         static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
+        state.axes[Joystick::Axis::U] = (static_cast<float>(pos.dwUpos) -
+                                         static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
+        state.axes[Joystick::Axis::V] = (static_cast<float>(pos.dwVpos) -
+                                         static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            const float angle                                  = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
-            state.axes[static_cast<int>(Joystick::Axis::PovX)] = std::sin(angle) * 100;
-            state.axes[static_cast<int>(Joystick::Axis::PovY)] = std::cos(angle) * 100;
+            const float angle                = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
+            state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100;
+            state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100;
         }
         else
         {
-            state.axes[static_cast<int>(Joystick::Axis::PovX)] = 0;
-            state.axes[static_cast<int>(Joystick::Axis::PovY)] = 0;
+            state.axes[Joystick::Axis::PovX] = 0;
+            state.axes[Joystick::Axis::PovY] = 0;
         }
 
         // Buttons
@@ -877,7 +877,10 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
 
     // Check which axes have valid offsets
     for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
-        caps.axes[i] = (m_axes[i] != -1);
+    {
+        const auto axis = static_cast<Joystick::Axis>(i);
+        caps.axes[axis] = (m_axes[axis] != -1);
+    }
 
     return caps;
 }
@@ -929,9 +932,10 @@ JoystickState JoystickImpl::updateDInputBuffered()
         // Get the current state of each axis
         for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
         {
-            if (m_axes[j] == static_cast<int>(events[i].dwOfs))
+            const auto axis = static_cast<Joystick::Axis>(j);
+            if (m_axes[axis] == static_cast<int>(events[i].dwOfs))
             {
-                if ((j == static_cast<int>(Joystick::Axis::PovX)) || (j == static_cast<int>(Joystick::Axis::PovY)))
+                if ((axis == Joystick::Axis::PovX) || (axis == Joystick::Axis::PovY))
                 {
                     const unsigned short value = LOWORD(events[i].dwData);
 
@@ -939,18 +943,18 @@ JoystickState JoystickImpl::updateDInputBuffered()
                     {
                         const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
-                        m_state.axes[static_cast<int>(Joystick::Axis::PovX)] = std::sin(angle) * 100.f;
-                        m_state.axes[static_cast<int>(Joystick::Axis::PovY)] = std::cos(angle) * 100.f;
+                        m_state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100.f;
+                        m_state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100.f;
                     }
                     else
                     {
-                        m_state.axes[static_cast<int>(Joystick::Axis::PovX)] = 0.f;
-                        m_state.axes[static_cast<int>(Joystick::Axis::PovY)] = 0.f;
+                        m_state.axes[Joystick::Axis::PovX] = 0.f;
+                        m_state.axes[Joystick::Axis::PovY] = 0.f;
                     }
                 }
                 else
                 {
-                    m_state.axes[j] = (static_cast<float>(static_cast<short>(events[i].dwData)) + 0.5f) * 100.f / 32767.5f;
+                    m_state.axes[axis] = (static_cast<float>(static_cast<short>(events[i].dwData)) + 0.5f) * 100.f / 32767.5f;
                 }
 
                 eventHandled = true;
@@ -1018,37 +1022,38 @@ JoystickState JoystickImpl::updateDInputPolled()
         // Get the current state of each axis
         for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
         {
-            if (m_axes[i] != -1)
+            const auto axis = static_cast<Joystick::Axis>(i);
+            if (m_axes[axis] != -1)
             {
-                if ((i == static_cast<int>(Joystick::Axis::PovX)) || (i == static_cast<int>(Joystick::Axis::PovY)))
+                if ((axis == Joystick::Axis::PovX) || (axis == Joystick::Axis::PovY))
                 {
                     const unsigned short value = LOWORD(
-                        *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[i]));
+                        *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[axis]));
 
                     if (value != 0xFFFF)
                     {
                         const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
-                        state.axes[static_cast<int>(Joystick::Axis::PovX)] = std::sin(angle) * 100.f;
-                        state.axes[static_cast<int>(Joystick::Axis::PovY)] = std::cos(angle) * 100.f;
+                        state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100.f;
+                        state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100.f;
                     }
                     else
                     {
-                        state.axes[static_cast<int>(Joystick::Axis::PovX)] = 0.f;
-                        state.axes[static_cast<int>(Joystick::Axis::PovY)] = 0.f;
+                        state.axes[Joystick::Axis::PovX] = 0.f;
+                        state.axes[Joystick::Axis::PovY] = 0.f;
                     }
                 }
                 else
                 {
-                    state.axes[i] = (static_cast<float>(*reinterpret_cast<const LONG*>(
-                                         reinterpret_cast<const char*>(&joystate) + m_axes[i])) +
-                                     0.5f) *
-                                    100.f / 32767.5f;
+                    state.axes[axis] = (static_cast<float>(*reinterpret_cast<const LONG*>(
+                                            reinterpret_cast<const char*>(&joystate) + m_axes[axis])) +
+                                        0.5f) *
+                                       100.f / 32767.5f;
                 }
             }
             else
             {
-                state.axes[i] = 0.f;
+                state.axes[axis] = 0.f;
             }
         }
 
@@ -1103,23 +1108,23 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
     {
         // Axes
         if (deviceObjectInstance->guidType == guids::GUID_XAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::X)] = DIJOFS_X;
+            joystick.m_axes[Joystick::Axis::X] = DIJOFS_X;
         else if (deviceObjectInstance->guidType == guids::GUID_YAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::Y)] = DIJOFS_Y;
+            joystick.m_axes[Joystick::Axis::Y] = DIJOFS_Y;
         else if (deviceObjectInstance->guidType == guids::GUID_ZAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::Z)] = DIJOFS_Z;
+            joystick.m_axes[Joystick::Axis::Z] = DIJOFS_Z;
         else if (deviceObjectInstance->guidType == guids::GUID_RzAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::R)] = DIJOFS_RZ;
+            joystick.m_axes[Joystick::Axis::R] = DIJOFS_RZ;
         else if (deviceObjectInstance->guidType == guids::GUID_RxAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::U)] = DIJOFS_RX;
+            joystick.m_axes[Joystick::Axis::U] = DIJOFS_RX;
         else if (deviceObjectInstance->guidType == guids::GUID_RyAxis)
-            joystick.m_axes[static_cast<int>(Joystick::Axis::V)] = DIJOFS_RY;
+            joystick.m_axes[Joystick::Axis::V] = DIJOFS_RY;
         else if (deviceObjectInstance->guidType == guids::GUID_Slider)
         {
-            if (joystick.m_axes[static_cast<int>(Joystick::Axis::U)] == -1)
-                joystick.m_axes[static_cast<int>(Joystick::Axis::U)] = DIJOFS_SLIDER(0);
+            if (joystick.m_axes[Joystick::Axis::U] == -1)
+                joystick.m_axes[Joystick::Axis::U] = DIJOFS_SLIDER(0);
             else
-                joystick.m_axes[static_cast<int>(Joystick::Axis::V)] = DIJOFS_SLIDER(1);
+                joystick.m_axes[Joystick::Axis::V] = DIJOFS_SLIDER(1);
         }
         else
             return DIENUM_CONTINUE;
@@ -1145,10 +1150,10 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
         // POVs
         if (deviceObjectInstance->guidType == guids::GUID_POV)
         {
-            if (joystick.m_axes[static_cast<int>(Joystick::Axis::PovX)] == -1)
+            if (joystick.m_axes[Joystick::Axis::PovX] == -1)
             {
-                joystick.m_axes[static_cast<int>(Joystick::Axis::PovX)] = DIJOFS_POV(0);
-                joystick.m_axes[static_cast<int>(Joystick::Axis::PovY)] = DIJOFS_POV(0);
+                joystick.m_axes[Joystick::Axis::PovX] = DIJOFS_POV(0);
+                joystick.m_axes[Joystick::Axis::PovY] = DIJOFS_POV(0);
             }
         }
 

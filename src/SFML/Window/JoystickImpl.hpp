@@ -31,6 +31,8 @@
 
 #include <SFML/Window/Joystick.hpp>
 
+#include <SFML/System/EnumArray.hpp>
+
 
 namespace sf::priv
 {
@@ -40,8 +42,8 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct JoystickCaps
 {
-    unsigned int buttonCount{};               //!< Number of buttons supported by the joystick
-    bool         axes[Joystick::AxisCount]{}; //!< Support for each axis
+    unsigned int                                         buttonCount{}; //!< Number of buttons supported by the joystick
+    EnumArray<Joystick::Axis, bool, Joystick::AxisCount> axes{};        //!< Support for each axis
 };
 
 
@@ -51,9 +53,9 @@ struct JoystickCaps
 ////////////////////////////////////////////////////////////
 struct JoystickState
 {
-    bool  connected{};                      //!< Is the joystick currently connected?
-    float axes[Joystick::AxisCount]{};      //!< Position of each axis, in range [-100, 100]
-    bool  buttons[Joystick::ButtonCount]{}; //!< Status of each button (true = pressed)
+    bool                                                  connected{}; //!< Is the joystick currently connected?
+    EnumArray<Joystick::Axis, float, Joystick::AxisCount> axes{};      //!< Position of each axis, in range [-100, 100]
+    bool buttons[Joystick::ButtonCount]{};                             //!< Status of each button (true = pressed)
 };
 
 } // namespace sf::priv
