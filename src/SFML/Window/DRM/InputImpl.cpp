@@ -28,6 +28,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/InputImpl.hpp>
 
+#include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
@@ -60,9 +61,9 @@ struct TouchSlot
 std::recursive_mutex inputMutex; // threadsafe? maybe...
 sf::Vector2i         mousePos;   // current mouse position
 
-std::vector<int>  fileDescriptors;                         // list of open file descriptors for /dev/input
-std::vector<bool> mouseMap(sf::Mouse::ButtonCount, false); // track whether keys are down
-std::vector<bool> keyMap(sf::Keyboard::KeyCount, false);   // track whether mouse buttons are down
+std::vector<int> fileDescriptors; // list of open file descriptors for /dev/input
+sf::priv::EnumArray<sf::Mouse::Button, bool, sf::Mouse::ButtonCount> mouseMap{}; // track whether mouse buttons are down
+std::vector<bool> keyMap(sf::Keyboard::KeyCount, false);                         // track whether keys are down
 
 int                    touchFd = -1;    // file descriptor we have seen MT events on; assumes only 1
 std::vector<TouchSlot> touchSlots;      // track the state of each touch "slot"
@@ -392,7 +393,7 @@ bool eventProcess(sf::Event& event)
                     event.mouseButton.x      = mousePos.x;
                     event.mouseButton.y      = mousePos.y;
 
-                    mouseMap[static_cast<std::size_t>(*mb)] = inputEvent.value;
+                    mouseMap[*mb] = inputEvent.value;
                     return true;
                 }
                 else
@@ -632,7 +633,7 @@ bool isMouseButtonPressed(Mouse::Button button)
         return false;
 
     update();
-    return mouseMap[static_cast<std::size_t>(button)];
+    return mouseMap[button];
 }
 
 

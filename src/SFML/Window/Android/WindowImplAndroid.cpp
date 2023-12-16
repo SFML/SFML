@@ -524,6 +524,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
 
     std::size_t  index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
     std::int32_t id    = AMotionEvent_getPointerId(inputEvent, index);
+    const auto   button = static_cast<Mouse::Button>(id);
 
     int x = static_cast<int>(AMotionEvent_getX(inputEvent, index));
     int y = static_cast<int>(AMotionEvent_getY(inputEvent, index));
@@ -535,12 +536,12 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
         if (device == AINPUT_SOURCE_MOUSE)
         {
             event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = static_cast<Mouse::Button>(id);
+            event.mouseButton.button = button;
             event.mouseButton.x      = x;
             event.mouseButton.y      = y;
 
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
-                states.isButtonPressed[id] = true;
+                states.isButtonPressed[button] = true;
         }
         else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
@@ -557,12 +558,12 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
         if (device == AINPUT_SOURCE_MOUSE)
         {
             event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = static_cast<Mouse::Button>(id);
+            event.mouseButton.button = button;
             event.mouseButton.x      = x;
             event.mouseButton.y      = y;
 
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
-                states.isButtonPressed[id] = false;
+                states.isButtonPressed[button] = false;
         }
         else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
