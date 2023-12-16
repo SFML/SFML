@@ -631,10 +631,10 @@ bool isMouseButtonPressed(Mouse::Button button)
         case Mouse::Button::Middle:
             virtualKey = VK_MBUTTON;
             break;
-        case Mouse::Button::XButton1:
+        case Mouse::Button::Extra1:
             virtualKey = VK_XBUTTON1;
             break;
-        case Mouse::Button::XButton2:
+        case Mouse::Button::Extra2:
             virtualKey = VK_XBUTTON2;
             break;
         default:

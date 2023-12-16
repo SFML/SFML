@@ -48,11 +48,11 @@ namespace Mouse
 ////////////////////////////////////////////////////////////
 enum class Button
 {
-    Left,     //!< The left mouse button
-    Right,    //!< The right mouse button
-    Middle,   //!< The middle (wheel) mouse button
-    XButton1, //!< The first extra mouse button
-    XButton2  //!< The second extra mouse button
+    Left,   //!< The left mouse button
+    Right,  //!< The right mouse button
+    Middle, //!< The middle (wheel) mouse button
+    Extra1, //!< The first extra mouse button
+    Extra2  //!< The second extra mouse button
 };
 
 // NOLINTNEXTLINE(readability-identifier-naming)
@@ -71,8 +71,8 @@ enum class Wheel
 ////////////////////////////////////////////////////////////
 /// \brief Check if a mouse button is pressed
 ///
-/// \warning Checking the state of buttons Mouse::Button::XButton1 and
-/// Mouse::Button::XButton2 is not supported on Linux with X11.
+/// \warning Checking the state of buttons Mouse::Button::Extra1 and
+/// Mouse::Button::Extra2 is not supported on Linux with X11.
 ///
 /// \param button Button to check
 ///
