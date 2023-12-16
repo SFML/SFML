@@ -72,7 +72,7 @@ void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
 template <class T>
 void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 {
-    out = out * static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
+    out *= static_cast<T>(delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor());
 }
 
 template <class T>
