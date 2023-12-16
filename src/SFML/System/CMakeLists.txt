@@ -7,6 +7,7 @@ set(SRC
     ${INCROOT}/Angle.inl
     ${SRCROOT}/Clock.cpp
     ${INCROOT}/Clock.hpp
+    ${SRCROOT}/EnumArray.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
     ${INCROOT}/Export.hpp
