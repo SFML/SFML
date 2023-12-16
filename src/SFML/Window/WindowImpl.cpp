@@ -302,18 +302,18 @@ void WindowImpl::processSensorEvents()
         if (SensorManager::getInstance().isEnabled(sensor))
         {
             // Copy the previous value of the sensor and get the new one
-            const Vector3f previousValue = m_sensorValue[i];
-            m_sensorValue[i]             = SensorManager::getInstance().getValue(sensor);
+            const Vector3f previousValue = m_sensorValue[sensor];
+            m_sensorValue[sensor]        = SensorManager::getInstance().getValue(sensor);
 
             // If the value has changed, trigger an event
-            if (m_sensorValue[i] != previousValue) // TODO use a threshold?
+            if (m_sensorValue[sensor] != previousValue) // TODO use a threshold?
             {
                 Event event;
                 event.type        = Event::SensorChanged;
                 event.sensor.type = sensor;
-                event.sensor.x    = m_sensorValue[i].x;
-                event.sensor.y    = m_sensorValue[i].y;
-                event.sensor.z    = m_sensorValue[i].z;
+                event.sensor.x    = m_sensorValue[sensor].x;
+                event.sensor.y    = m_sensorValue[sensor].y;
+                event.sensor.z    = m_sensorValue[sensor].z;
                 pushEvent(event);
             }
         }

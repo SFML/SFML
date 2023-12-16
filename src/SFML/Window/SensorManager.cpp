@@ -45,17 +45,17 @@ SensorManager& SensorManager::getInstance()
 ////////////////////////////////////////////////////////////
 bool SensorManager::isAvailable(Sensor::Type sensor)
 {
-    return m_sensors[static_cast<int>(sensor)].available;
+    return m_sensors[sensor].available;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 {
-    if (m_sensors[static_cast<int>(sensor)].available)
+    if (m_sensors[sensor].available)
     {
-        m_sensors[static_cast<int>(sensor)].enabled = enabled;
-        m_sensors[static_cast<int>(sensor)].sensor.setEnabled(enabled);
+        m_sensors[sensor].enabled = enabled;
+        m_sensors[sensor].sensor.setEnabled(enabled);
     }
     else
     {
@@ -68,14 +68,14 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
 ////////////////////////////////////////////////////////////
 bool SensorManager::isEnabled(Sensor::Type sensor) const
 {
-    return m_sensors[static_cast<int>(sensor)].enabled;
+    return m_sensors[sensor].enabled;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorManager::getValue(Sensor::Type sensor) const
 {
-    return m_sensors[static_cast<int>(sensor)].value;
+    return m_sensors[sensor].value;
 }
 
 
@@ -100,19 +100,21 @@ SensorManager::SensorManager()
     // Per sensor initialization
     for (unsigned int i = 0; i < Sensor::Count; ++i)
     {
+        const auto sensor = static_cast<Sensor::Type>(i);
+
         // Check which sensors are available
-        m_sensors[i].available = SensorImpl::isAvailable(static_cast<Sensor::Type>(i));
+        m_sensors[sensor].available = SensorImpl::isAvailable(sensor);
 
         // Open the available sensors
-        if (m_sensors[i].available)
+        if (m_sensors[sensor].available)
         {
-            if (m_sensors[i].sensor.open(static_cast<Sensor::Type>(i)))
+            if (m_sensors[sensor].sensor.open(sensor))
             {
-                m_sensors[i].sensor.setEnabled(false);
+                m_sensors[sensor].sensor.setEnabled(false);
             }
             else
             {
-                m_sensors[i].available = false;
+                m_sensors[sensor].available = false;
                 err() << "Warning: sensor " << i << " failed to open, will not be available" << std::endl;
             }
         }
