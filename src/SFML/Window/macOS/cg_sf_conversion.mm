@@ -37,9 +37,9 @@ namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-std::size_t modeBitsPerPixel(CGDisplayModeRef mode)
+unsigned int modeBitsPerPixel(CGDisplayModeRef mode)
 {
-    std::size_t bpp = 0; // no match
+    unsigned int bpp = 0; // no match
 
     // Compare encoding.
     CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
@@ -58,13 +58,13 @@ std::size_t modeBitsPerPixel(CGDisplayModeRef mode)
 
 
 ////////////////////////////////////////////////////////////
-std::size_t displayBitsPerPixel(CGDirectDisplayID displayId)
+unsigned int displayBitsPerPixel(CGDirectDisplayID displayId)
 {
     // Get the display mode.
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
 
     // Get bpp for the mode.
-    const std::size_t bpp = modeBitsPerPixel(mode);
+    const auto bpp = modeBitsPerPixel(mode);
 
     // Clean up Memory.
     CGDisplayModeRelease(mode);
@@ -87,11 +87,9 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     //
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
-    VideoMode mode({static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)),
-                    static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode))},
-                   static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
-    scaleOutWidthHeight(mode.size.x, mode.size.y, nil);
-    return mode;
+    auto size = Vector2u(Vector2(CGDisplayModeGetWidth(cgmode), CGDisplayModeGetHeight(cgmode)));
+    scaleOutXY(size, nil);
+    return VideoMode(size, modeBitsPerPixel(cgmode));
 }
 
 } // namespace sf::priv

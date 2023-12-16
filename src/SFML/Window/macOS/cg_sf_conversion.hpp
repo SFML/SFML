@@ -41,7 +41,7 @@ namespace sf::priv
 /// to represent video mode. Instead it uses a CGDisplayMode opaque type.
 ///
 ////////////////////////////////////////////////////////////
-std::size_t modeBitsPerPixel(CGDisplayModeRef mode);
+unsigned int modeBitsPerPixel(CGDisplayModeRef mode);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get bpp for all OS X version
@@ -50,7 +50,7 @@ std::size_t modeBitsPerPixel(CGDisplayModeRef mode);
 /// display bits per pixel information for a given display id.
 ///
 ////////////////////////////////////////////////////////////
-std::size_t displayBitsPerPixel(CGDirectDisplayID displayId);
+unsigned int displayBitsPerPixel(CGDirectDisplayID displayId);
 
 ////////////////////////////////////////////////////////////
 /// \brief Convert a Quartz video mode into a sf::VideoMode object
