@@ -34,7 +34,6 @@
 #import <SFML/Window/macOS/SFWindowController.h>
 #import <SFML/Window/macOS/Scaling.h>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
-#import <SFML/Window/macOS/cpp_objc_conversion.h>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
@@ -55,6 +54,21 @@ namespace sf::priv
 namespace
 {
 bool isCursorHidden = false; // initially, the cursor is visible
+
+NSString* sfStringToNSString(const sf::String& string)
+{
+    const auto  length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
+    const void* data   = reinterpret_cast<const void*>(string.getData());
+
+    NSStringEncoding encoding;
+    if (NSHostByteOrder() == NS_LittleEndian)
+        encoding = NSUTF32LittleEndianStringEncoding;
+    else
+        encoding = NSUTF32BigEndianStringEncoding;
+
+    NSString* const str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
+    return [str autorelease];
+}
 }
 
 
