@@ -475,7 +475,7 @@ private:
     /// \param event Event to filter
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool filterEvent(const Event& event);
+    void filterEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Perform some common internal initializations
