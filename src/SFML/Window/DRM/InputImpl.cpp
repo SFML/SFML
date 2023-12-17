@@ -63,7 +63,7 @@ sf::Vector2i         mousePos;   // current mouse position
 
 std::vector<int> fileDescriptors; // list of open file descriptors for /dev/input
 sf::priv::EnumArray<sf::Mouse::Button, bool, sf::Mouse::ButtonCount> mouseMap{}; // track whether mouse buttons are down
-std::vector<bool> keyMap(sf::Keyboard::KeyCount, false);                         // track whether keys are down
+sf::priv::EnumArray<sf::Keyboard::Key, bool, sf::Keyboard::KeyCount> keyMap{};   // track whether keys are down
 
 int                    touchFd = -1;    // file descriptor we have seen MT events on; assumes only 1
 std::vector<TouchSlot> touchSlots;      // track the state of each touch "slot"
@@ -427,7 +427,7 @@ bool eventProcess(sf::Event& event)
                         event.key.shift    = shiftDown();
                         event.key.system   = systemDown();
 
-                        keyMap[static_cast<std::size_t>(kb)] = inputEvent.value;
+                        keyMap[kb] = inputEvent.value;
 
                         if (special && inputEvent.value)
                             doDeferredText = special;
@@ -578,7 +578,7 @@ bool isKeyPressed(Keyboard::Key key)
         return false;
 
     update();
-    return keyMap[static_cast<std::size_t>(key)];
+    return keyMap[key];
 }
 
 

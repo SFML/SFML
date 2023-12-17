@@ -28,13 +28,14 @@
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Window.hpp>
 
+#include <SFML/System/EnumArray.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
 namespace
 {
-sf::Keyboard::Scancode keyToScancodeMapping[sf::Keyboard::KeyCount];      ///< Mapping from Key to Scancode
-sf::Keyboard::Key      scancodeToKeyMapping[sf::Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
+sf::priv::EnumArray<sf::Keyboard::Key, sf::Keyboard::Scancode, sf::Keyboard::KeyCount> keyToScancodeMapping; ///< Mapping from Key to Scancode
+sf::priv::EnumArray<sf::Keyboard::Scancode, sf::Keyboard::Key, sf::Keyboard::ScancodeCount> scancodeToKeyMapping; ///< Mapping from Scancode to Key
 
 sf::Keyboard::Key virtualKeyToSfKey(UINT virtualKey)
 {
@@ -520,11 +521,8 @@ void ensureMappings()
         return;
 
     // Phase 1: Initialize mappings with default values
-    for (auto& scancode : keyToScancodeMapping)
-        scancode = sf::Keyboard::Scan::Unknown;
-
-    for (auto& key : scancodeToKeyMapping)
-        key = sf::Keyboard::Unknown;
+    keyToScancodeMapping.fill(sf::Keyboard::Scan::Unknown);
+    scancodeToKeyMapping.fill(sf::Keyboard::Key::Unknown);
 
     // Phase 2: Translate scancode to virtual code to key names
     for (unsigned int i = 0; i < sf::Keyboard::ScancodeCount; ++i)
@@ -534,7 +532,7 @@ void ensureMappings()
         const sf::Keyboard::Key key        = virtualKeyToSfKey(virtualKey);
         if (key != sf::Keyboard::Unknown && keyToScancodeMapping[key] == sf::Keyboard::Scan::Unknown)
             keyToScancodeMapping[key] = scan;
-        scancodeToKeyMapping[static_cast<std::size_t>(scan)] = key;
+        scancodeToKeyMapping[scan] = key;
     }
 
     isMappingInitialized = true;
@@ -578,7 +576,7 @@ Keyboard::Key localize(Keyboard::Scancode code)
 
     ensureMappings();
 
-    return scancodeToKeyMapping[static_cast<std::size_t>(code)];
+    return scancodeToKeyMapping[code];
 }
 
 
