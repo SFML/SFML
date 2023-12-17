@@ -153,8 +153,15 @@ enum Key
     F15,          //!< The F15 key
     Pause,        //!< The Pause key
 
-    KeyCount, //!< Keep last -- the total number of keyboard keys
+    Last = Pause, //!< Keep equal to last enumerator -- used to define KeyCount
 };
+
+////////////////////////////////////////////////////////////
+/// \brief The total number of keyboard keys, ignoring Key::Unknown
+///
+////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(readability-identifier-naming)
+static constexpr unsigned int KeyCount{static_cast<unsigned int>(Key::Last) + 1};
 
 ////////////////////////////////////////////////////////////
 /// \brief Scancodes
@@ -320,10 +327,17 @@ enum class Scan
     LaunchMail,         //!< Keyboard Launch Mail key
     LaunchMediaSelect,  //!< Keyboard Launch Media Select key
 
-    ScancodeCount //!< Keep last -- the total number of scancodes
+    Last = LaunchMediaSelect, //!< Keep equal to last enumerator -- used to define ScancodeCount
 };
 
 using Scancode = Scan;
+
+////////////////////////////////////////////////////////////
+/// \brief The total number of scancodes, ignoring Scan::Unknown
+///
+////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(readability-identifier-naming)
+static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Last) + 1};
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if a key is pressed
