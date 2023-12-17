@@ -30,6 +30,8 @@
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <SFML/System/EnumArray.hpp>
+
 #include <android/configuration.h>
 #include <android/native_activity.h>
 
@@ -73,9 +75,9 @@ struct ActivityStates
     void (*forwardEvent)(const Event& event){};
     int (*processEvent)(int fd, int events, void* data){};
 
-    std::unordered_map<int, Vector2i> touchEvents;
-    Vector2i                          mousePosition;
-    bool                              isButtonPressed[Mouse::ButtonCount]{};
+    std::unordered_map<int, Vector2i>                  touchEvents;
+    Vector2i                                           mousePosition;
+    EnumArray<Mouse::Button, bool, Mouse::ButtonCount> isButtonPressed{};
 
     bool mainOver{};
 

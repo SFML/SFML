@@ -603,17 +603,17 @@ JoystickCaps JoystickImpl::getCapabilities() const
         switch (m_mapping[i])
         {
             // clang-format off
-            case ABS_X:        caps.axes[static_cast<int>(Joystick::Axis::X)]    = true; break;
-            case ABS_Y:        caps.axes[static_cast<int>(Joystick::Axis::Y)]    = true; break;
+            case ABS_X:        caps.axes[Joystick::Axis::X]    = true; break;
+            case ABS_Y:        caps.axes[Joystick::Axis::Y]    = true; break;
             case ABS_Z:
-            case ABS_THROTTLE: caps.axes[static_cast<int>(Joystick::Axis::Z)]    = true; break;
+            case ABS_THROTTLE: caps.axes[Joystick::Axis::Z]    = true; break;
             case ABS_RZ:
-            case ABS_RUDDER:   caps.axes[static_cast<int>(Joystick::Axis::R)]    = true; break;
-            case ABS_RX:       caps.axes[static_cast<int>(Joystick::Axis::U)]    = true; break;
-            case ABS_RY:       caps.axes[static_cast<int>(Joystick::Axis::V)]    = true; break;
-            case ABS_HAT0X:    caps.axes[static_cast<int>(Joystick::Axis::PovX)] = true; break;
-            case ABS_HAT0Y:    caps.axes[static_cast<int>(Joystick::Axis::PovY)] = true; break;
-            default:                                                                     break;
+            case ABS_RUDDER:   caps.axes[Joystick::Axis::R]    = true; break;
+            case ABS_RX:       caps.axes[Joystick::Axis::U]    = true; break;
+            case ABS_RY:       caps.axes[Joystick::Axis::V]    = true; break;
+            case ABS_HAT0X:    caps.axes[Joystick::Axis::PovX] = true; break;
+            case ABS_HAT0Y:    caps.axes[Joystick::Axis::PovY] = true; break;
+            default:                                                   break;
                 // clang-format on
         }
     }
@@ -655,30 +655,30 @@ JoystickState JoystickImpl::JoystickImpl::update()
                     switch (m_mapping[joyState.number])
                     {
                         case ABS_X:
-                            m_state.axes[static_cast<int>(Joystick::Axis::X)] = value;
+                            m_state.axes[Joystick::Axis::X] = value;
                             break;
                         case ABS_Y:
-                            m_state.axes[static_cast<int>(Joystick::Axis::Y)] = value;
+                            m_state.axes[Joystick::Axis::Y] = value;
                             break;
                         case ABS_Z:
                         case ABS_THROTTLE:
-                            m_state.axes[static_cast<int>(Joystick::Axis::Z)] = value;
+                            m_state.axes[Joystick::Axis::Z] = value;
                             break;
                         case ABS_RZ:
                         case ABS_RUDDER:
-                            m_state.axes[static_cast<int>(Joystick::Axis::R)] = value;
+                            m_state.axes[Joystick::Axis::R] = value;
                             break;
                         case ABS_RX:
-                            m_state.axes[static_cast<int>(Joystick::Axis::U)] = value;
+                            m_state.axes[Joystick::Axis::U] = value;
                             break;
                         case ABS_RY:
-                            m_state.axes[static_cast<int>(Joystick::Axis::V)] = value;
+                            m_state.axes[Joystick::Axis::V] = value;
                             break;
                         case ABS_HAT0X:
-                            m_state.axes[static_cast<int>(Joystick::Axis::PovX)] = value;
+                            m_state.axes[Joystick::Axis::PovX] = value;
                             break;
                         case ABS_HAT0Y:
-                            m_state.axes[static_cast<int>(Joystick::Axis::PovY)] = value;
+                            m_state.axes[Joystick::Axis::PovY] = value;
                             break;
                         default:
                             break;

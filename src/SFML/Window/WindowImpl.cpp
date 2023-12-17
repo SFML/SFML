@@ -34,7 +34,6 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <algorithm>
 #include <memory>
 
 #include <cmath>
@@ -122,7 +121,7 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
         m_joystickStatesImpl->states[i] = JoystickManager::getInstance().getState(i);
-        std::fill_n(m_previousAxes[i], static_cast<std::size_t>(Joystick::AxisCount), 0.f);
+        m_previousAxes[i].fill(0.f);
     }
 
     // Get the initial sensor states
@@ -240,7 +239,7 @@ void WindowImpl::processJoystickEvents()
 
             // Clear previous axes positions
             if (connected)
-                std::fill_n(m_previousAxes[i], static_cast<std::size_t>(Joystick::AxisCount), 0.f);
+                m_previousAxes[i].fill(0.f);
         }
 
         if (connected)
@@ -250,20 +249,21 @@ void WindowImpl::processJoystickEvents()
             // Axes
             for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
             {
-                if (caps.axes[j])
+                const auto axis = static_cast<Joystick::Axis>(j);
+                if (caps.axes[axis])
                 {
-                    const float prevPos = m_previousAxes[i][j];
-                    const float currPos = m_joystickStatesImpl->states[i].axes[j];
+                    const float prevPos = m_previousAxes[i][axis];
+                    const float currPos = m_joystickStatesImpl->states[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
                         Event event;
                         event.type                    = Event::JoystickMoved;
                         event.joystickMove.joystickId = i;
-                        event.joystickMove.axis       = static_cast<Joystick::Axis>(j);
+                        event.joystickMove.axis       = axis;
                         event.joystickMove.position   = currPos;
                         pushEvent(event);
 
-                        m_previousAxes[i][j] = currPos;
+                        m_previousAxes[i][axis] = currPos;
                     }
                 }
             }
@@ -302,18 +302,18 @@ void WindowImpl::processSensorEvents()
         if (SensorManager::getInstance().isEnabled(sensor))
         {
             // Copy the previous value of the sensor and get the new one
-            const Vector3f previousValue = m_sensorValue[i];
-            m_sensorValue[i]             = SensorManager::getInstance().getValue(sensor);
+            const Vector3f previousValue = m_sensorValue[sensor];
+            m_sensorValue[sensor]        = SensorManager::getInstance().getValue(sensor);
 
             // If the value has changed, trigger an event
-            if (m_sensorValue[i] != previousValue) // TODO use a threshold?
+            if (m_sensorValue[sensor] != previousValue) // TODO use a threshold?
             {
                 Event event;
                 event.type        = Event::SensorChanged;
                 event.sensor.type = sensor;
-                event.sensor.x    = m_sensorValue[i].x;
-                event.sensor.y    = m_sensorValue[i].y;
-                event.sensor.z    = m_sensorValue[i].z;
+                event.sensor.x    = m_sensorValue[sensor].x;
+                event.sensor.y    = m_sensorValue[sensor].y;
+                event.sensor.z    = m_sensorValue[sensor].z;
                 pushEvent(event);
             }
         }

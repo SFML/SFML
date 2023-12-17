@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorImpl.hpp>
 
+#include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <android/looper.h>
@@ -44,10 +45,10 @@
 
 namespace
 {
-ALooper*           looper;
-ASensorManager*    sensorManager;
-ASensorEventQueue* sensorEventQueue;
-sf::Vector3f       sensorData[sf::Sensor::Count];
+ALooper*                                                               looper;
+ASensorManager*                                                        sensorManager;
+ASensorEventQueue*                                                     sensorEventQueue;
+sf::priv::EnumArray<sf::Sensor::Type, sf::Vector3f, sf::Sensor::Count> sensorData;
 } // namespace
 
 
@@ -104,8 +105,8 @@ bool SensorImpl::open(Sensor::Type sensor)
     // Set the event rate (not to consume too much battery)
     ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<std::int32_t>(minimumDelay.asMicroseconds()));
 
-    // Save the index of the sensor
-    m_index = static_cast<unsigned int>(sensor);
+    // Save the type of the sensor
+    m_type = sensor;
 
     return true;
 }
@@ -124,7 +125,7 @@ Vector3f SensorImpl::update() const
     // Update our sensor data list
     ALooper_pollAll(0, nullptr, nullptr, nullptr);
 
-    return sensorData[m_index];
+    return sensorData[m_type];
 }
 
 
@@ -142,14 +143,15 @@ void SensorImpl::setEnabled(bool enabled)
 const ASensor* SensorImpl::getDefaultSensor(Sensor::Type sensor)
 {
     // Find the Android sensor type
-    static int types[] = {ASENSOR_TYPE_ACCELEROMETER,
-                          ASENSOR_TYPE_GYROSCOPE,
-                          ASENSOR_TYPE_MAGNETIC_FIELD,
-                          ASENSOR_TYPE_GRAVITY,
-                          ASENSOR_TYPE_LINEAR_ACCELERATION,
-                          ASENSOR_TYPE_ORIENTATION};
+    static EnumArray<Sensor::Type, int, Sensor::Count> types =
+        {ASENSOR_TYPE_ACCELEROMETER,
+         ASENSOR_TYPE_GYROSCOPE,
+         ASENSOR_TYPE_MAGNETIC_FIELD,
+         ASENSOR_TYPE_GRAVITY,
+         ASENSOR_TYPE_LINEAR_ACCELERATION,
+         ASENSOR_TYPE_ORIENTATION};
 
-    int type = types[static_cast<int>(sensor)];
+    int type = types[sensor];
 
     // Retrieve the default sensor matching this type
     return ASensorManager_getDefaultSensor(sensorManager, type);
@@ -215,7 +217,7 @@ int SensorImpl::processSensorEvents(int /* fd */, int /* events */, void* /* sen
         if (!type)
             continue;
 
-        sensorData[static_cast<int>(*type)] = data;
+        sensorData[*type] = data;
     }
 
     return 1;

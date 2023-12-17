@@ -377,10 +377,10 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
     // Axis:
     for (const auto& [axis, iohidElementRef] : m_axis)
-        caps.axes[static_cast<int>(axis)] = true;
+        caps.axes[axis] = true;
 
     if (m_hat != nullptr)
-        caps.axes[static_cast<int>(Joystick::Axis::PovX)] = caps.axes[static_cast<int>(Joystick::Axis::PovY)] = true;
+        caps.axes[Joystick::Axis::PovX] = caps.axes[Joystick::Axis::PovY] = true;
 
     return caps;
 }
@@ -480,7 +480,7 @@ JoystickState JoystickImpl::update()
         const double physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
         const auto   scaledValue   = static_cast<float>(
             (((physicalValue - physicalMin) * (scaledMax - scaledMin)) / (physicalMax - physicalMin)) + scaledMin);
-        state.axes[static_cast<int>(axis)] = scaledValue;
+        state.axes[axis] = scaledValue;
     }
 
     // Update POV/Hat state. Assuming model described in `open`, values are:
@@ -508,17 +508,17 @@ JoystickState JoystickImpl::update()
             case 1:
             case 2:
             case 3:
-                state.axes[static_cast<int>(Joystick::Axis::PovX)] = +100;
+                state.axes[Joystick::Axis::PovX] = +100;
                 break;
 
             case 5:
             case 6:
             case 7:
-                state.axes[static_cast<int>(Joystick::Axis::PovX)] = -100;
+                state.axes[Joystick::Axis::PovX] = -100;
                 break;
 
             default:
-                state.axes[static_cast<int>(Joystick::Axis::PovX)] = 0;
+                state.axes[Joystick::Axis::PovX] = 0;
                 break;
         }
 
@@ -528,17 +528,17 @@ JoystickState JoystickImpl::update()
             case 0:
             case 1:
             case 7:
-                state.axes[static_cast<int>(Joystick::Axis::PovY)] = +100;
+                state.axes[Joystick::Axis::PovY] = +100;
                 break;
 
             case 3:
             case 4:
             case 5:
-                state.axes[static_cast<int>(Joystick::Axis::PovY)] = -100;
+                state.axes[Joystick::Axis::PovY] = -100;
                 break;
 
             default:
-                state.axes[static_cast<int>(Joystick::Axis::PovY)] = 0;
+                state.axes[Joystick::Axis::PovY] = 0;
                 break;
         }
     }

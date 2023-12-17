@@ -159,8 +159,8 @@ std::optional<sf::Joystick::Axis> usageToAxis(int usage)
 
 void hatValueToSfml(int value, sf::priv::JoystickState& state)
 {
-    state.axes[static_cast<int>(sf::Joystick::Axis::PovX)] = static_cast<float>(hatValueMap[value].first);
-    state.axes[static_cast<int>(sf::Joystick::Axis::PovY)] = static_cast<float>(hatValueMap[value].second);
+    state.axes[sf::Joystick::Axis::PovX] = static_cast<float>(hatValueMap[value].first);
+    state.axes[sf::Joystick::Axis::PovY] = static_cast<float>(hatValueMap[value].second);
 }
 } // namespace
 
@@ -271,12 +271,12 @@ JoystickCaps JoystickImpl::getCapabilities() const
             {
                 if (usage == HUG_HAT_SWITCH)
                 {
-                    caps.axes[static_cast<int>(Joystick::Axis::PovX)] = true;
-                    caps.axes[static_cast<int>(Joystick::Axis::PovY)] = true;
+                    caps.axes[Joystick::Axis::PovX] = true;
+                    caps.axes[Joystick::Axis::PovY] = true;
                 }
                 else if (const std::optional<Joystick::Axis> axis = usageToAxis(usage))
                 {
-                    caps.axes[static_cast<int>(*axis)] = true;
+                    caps.axes[*axis] = true;
                 }
             }
         }
@@ -332,8 +332,8 @@ JoystickState JoystickImpl::JoystickImpl::update()
                         int minimum = item.logical_minimum;
                         int maximum = item.logical_maximum;
 
-                        value                                 = (value - minimum) * 200 / (maximum - minimum) - 100;
-                        m_state.axes[static_cast<int>(*axis)] = static_cast<float>(value);
+                        value               = (value - minimum) * 200 / (maximum - minimum) - 100;
+                        m_state.axes[*axis] = static_cast<float>(value);
                     }
                 }
             }

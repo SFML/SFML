@@ -122,7 +122,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     const ASensor* m_sensor; ///< Android sensor structure
-    unsigned int   m_index;  ///< Index of the sensor
+    Sensor::Type   m_type;   ///< Type of the sensor
 };
 
 } // namespace sf::priv
