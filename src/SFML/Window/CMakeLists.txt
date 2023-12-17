@@ -165,8 +165,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
 elseif(SFML_OS_MACOS)
     enable_language(OBJC OBJCXX)
     set(PLATFORM_SRC
-        ${SRCROOT}/macOS/cpp_objc_conversion.h
-        ${SRCROOT}/macOS/cpp_objc_conversion.mm
         ${SRCROOT}/macOS/cg_sf_conversion.hpp
         ${SRCROOT}/macOS/cg_sf_conversion.mm
         ${SRCROOT}/macOS/CursorImpl.hpp
