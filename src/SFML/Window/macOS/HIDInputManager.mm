@@ -562,7 +562,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 {
-    return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[static_cast<std::size_t>(code)]);
+    return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[code]);
 }
 
 
@@ -572,7 +572,7 @@ Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
     if (code == Keyboard::Scan::Unknown)
         return Keyboard::Unknown;
 
-    return m_scancodeToKeyMapping[static_cast<std::size_t>(code)];
+    return m_scancodeToKeyMapping[code];
 }
 
 
@@ -795,7 +795,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     if (code != Keyboard::Scan::Unknown)
     {
         CFRetain(key);
-        m_keys[static_cast<std::size_t>(code)].push_back(key);
+        m_keys[code].push_back(key);
     }
 }
 
@@ -804,10 +804,8 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
 void HIDInputManager::buildMappings()
 {
     // Reset the mappings
-    for (auto& scancode : m_keyToScancodeMapping)
-        scancode = Keyboard::Scan::Unknown;
-    for (auto& key : m_scancodeToKeyMapping)
-        key = Keyboard::Unknown;
+    m_keyToScancodeMapping.fill(Keyboard::Scan::Unknown);
+    m_scancodeToKeyMapping.fill(Keyboard::Key::Unknown);
 
     // Get the current keyboard layout
     TISInputSourceRef tis  = TISCopyCurrentKeyboardLayoutInputSource();
@@ -899,7 +897,7 @@ void HIDInputManager::buildMappings()
         // Register the bi-mapping
         if (m_keyToScancodeMapping[code] == Keyboard::Scan::Unknown)
             m_keyToScancodeMapping[code] = scan;
-        m_scancodeToKeyMapping[static_cast<std::size_t>(scan)] = code;
+        m_scancodeToKeyMapping[scan] = code;
     }
 
     CFRelease(tis);
