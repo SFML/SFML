@@ -81,7 +81,7 @@ private:
     ////////////////////////////////////////////////////////////
     void onStop() override
     {
-        // Send a "end-of-stream" packet
+        // Send an "end-of-stream" packet
         sf::Packet packet;
         packet << clientEndOfStream;
 

@@ -116,7 +116,7 @@ int main()
     // Staging buffer for our terrain data that we will upload to our VertexBuffer
     std::vector<sf::Vertex> terrainStagingBuffer;
 
-    // Check whether the prerequisites are suppprted
+    // Check whether the prerequisites are supported
     bool prerequisitesSupported = sf::VertexBuffer::isAvailable() && sf::Shader::isAvailable();
 
     // Set up our graphics resources and set the status text accordingly
