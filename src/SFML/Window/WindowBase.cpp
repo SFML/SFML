@@ -164,7 +164,8 @@ bool WindowBase::pollEvent(Event& event)
 {
     if (m_impl && m_impl->popEvent(event, false))
     {
-        return filterEvent(event);
+        filterEvent(event);
+        return true;
     }
     else
     {
@@ -178,7 +179,8 @@ bool WindowBase::waitEvent(Event& event)
 {
     if (m_impl && m_impl->popEvent(event, true))
     {
-        return filterEvent(event);
+        filterEvent(event);
+        return true;
     }
     else
     {
@@ -383,7 +385,7 @@ void WindowBase::onResize()
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::filterEvent(const Event& event)
+void WindowBase::filterEvent(const Event& event)
 {
     // Notify resize events to the derived class
     if (event.type == Event::Resized)
@@ -394,8 +396,6 @@ bool WindowBase::filterEvent(const Event& event)
         // Notify the derived class
         onResize();
     }
-
-    return true;
 }
 
 

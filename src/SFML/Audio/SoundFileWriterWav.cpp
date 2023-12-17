@@ -93,11 +93,7 @@ bool SoundFileWriterWav::open(const std::filesystem::path& filename, unsigned in
     }
 
     // Write the header
-    if (!writeHeader(sampleRate, channelCount))
-    {
-        err() << "Failed to write header of WAV sound file\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
-    }
+    writeHeader(sampleRate, channelCount);
 
     return true;
 }
@@ -114,7 +110,7 @@ void SoundFileWriterWav::write(const std::int16_t* samples, std::uint64_t count)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int channelCount)
+void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int channelCount)
 {
     assert(m_file.good() && "Most recent I/O operation failed");
 
@@ -152,8 +148,6 @@ bool SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     m_file.write(dataChunkId, sizeof(dataChunkId));
     const std::uint32_t dataChunkSize = 0; // placeholder, will be written later
     encode(m_file, dataChunkSize);
-
-    return true;
 }
 
 

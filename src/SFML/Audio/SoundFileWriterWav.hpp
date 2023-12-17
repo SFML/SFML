@@ -86,10 +86,8 @@ private:
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
     ///
-    /// \return True on success, false on error
-    ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool writeHeader(unsigned int sampleRate, unsigned int channelCount);
+    void writeHeader(unsigned int sampleRate, unsigned int channelCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the file
