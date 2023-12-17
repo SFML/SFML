@@ -824,7 +824,7 @@ void HIDInputManager::buildMappings()
 
     // For each scancode having a IOHIDElement, we translate the corresponding
     // virtual code to a localized Key.
-    for (int i = 0; i < static_cast<int>(Keyboard::Scan::ScancodeCount); ++i)
+    for (unsigned int i = 0; i < Keyboard::ScancodeCount; ++i)
     {
         const auto         scan        = static_cast<Keyboard::Scancode>(i);
         const std::uint8_t virtualCode = scanToVirtualCode(scan);

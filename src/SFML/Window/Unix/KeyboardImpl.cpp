@@ -48,8 +48,8 @@ namespace
 
 const KeyCode          nullKeyCode = 0;
 const int              maxKeyCode  = 256;
-KeyCode                scancodeToKeycode[static_cast<std::size_t>(sf::Keyboard::Scan::ScancodeCount)]; ///< Mapping of SFML scancode to X11 KeyCode
-sf::Keyboard::Scancode keycodeToScancode[maxKeyCode]; ///< Mapping of X11 KeyCode to SFML scancode
+KeyCode                scancodeToKeycode[sf::Keyboard::ScancodeCount]; ///< Mapping of SFML scancode to X11 KeyCode
+sf::Keyboard::Scancode keycodeToScancode[maxKeyCode];                  ///< Mapping of X11 KeyCode to SFML scancode
 
 ////////////////////////////////////////////////////////////
 bool isValidKeycode(KeyCode keycode)

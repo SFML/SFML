@@ -286,10 +286,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef m_manager{};                                                   ///< Underlying HID Manager
-    IOHIDElements m_keys[static_cast<std::size_t>(Keyboard::Scan::ScancodeCount)]; ///< All the keys on any connected keyboard
-    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount]{};               ///< Mapping from Key to Scancode
-    Keyboard::Key m_scancodeToKeyMapping[static_cast<std::size_t>(Keyboard::Scan::ScancodeCount)]{}; ///< Mapping from Scancode to Key
+    IOHIDManagerRef    m_manager{};                                       ///< Underlying HID Manager
+    IOHIDElements      m_keys[Keyboard::ScancodeCount];                   ///< All the keys on any connected keyboard
+    Keyboard::Scancode m_keyToScancodeMapping[Keyboard::KeyCount]{};      ///< Mapping from Key to Scancode
+    Keyboard::Key      m_scancodeToKeyMapping[Keyboard::ScancodeCount]{}; ///< Mapping from Scancode to Key
 
     ////////////////////////////////////////////////////////////
     /// m_keys' index corresponds to sf::Keyboard::Scancode enum.

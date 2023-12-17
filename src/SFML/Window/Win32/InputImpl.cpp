@@ -33,8 +33,8 @@
 
 namespace
 {
-sf::Keyboard::Scancode keyToScancodeMapping[sf::Keyboard::KeyCount]; ///< Mapping from Key to Scancode
-sf::Keyboard::Key scancodeToKeyMapping[static_cast<std::size_t>(sf::Keyboard::Scan::ScancodeCount)]; ///< Mapping from Scancode to Key
+sf::Keyboard::Scancode keyToScancodeMapping[sf::Keyboard::KeyCount];      ///< Mapping from Key to Scancode
+sf::Keyboard::Key      scancodeToKeyMapping[sf::Keyboard::ScancodeCount]; ///< Mapping from Scancode to Key
 
 sf::Keyboard::Key virtualKeyToSfKey(UINT virtualKey)
 {
@@ -527,7 +527,7 @@ void ensureMappings()
         key = sf::Keyboard::Unknown;
 
     // Phase 2: Translate scancode to virtual code to key names
-    for (int i = 0; i < static_cast<int>(sf::Keyboard::Scan::ScancodeCount); ++i)
+    for (unsigned int i = 0; i < sf::Keyboard::ScancodeCount; ++i)
     {
         const auto              scan       = static_cast<sf::Keyboard::Scancode>(i);
         const UINT              virtualKey = sfScanToVirtualKey(scan);
@@ -542,12 +542,12 @@ void ensureMappings()
 
 bool isValidScancode(sf::Keyboard::Scancode code)
 {
-    return code > sf::Keyboard::Scan::Unknown && code < sf::Keyboard::Scan::ScancodeCount;
+    return code > sf::Keyboard::Scan::Unknown && static_cast<unsigned int>(code) < sf::Keyboard::ScancodeCount;
 }
 
 bool isValidKey(sf::Keyboard::Key key)
 {
-    return key > sf::Keyboard::Unknown && key < sf::Keyboard::KeyCount;
+    return key > sf::Keyboard::Unknown && static_cast<unsigned int>(key) < sf::Keyboard::KeyCount;
 }
 
 } // namespace
