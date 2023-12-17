@@ -334,7 +334,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     }
     if (!toSend.hasField("User-Agent"))
     {
-        toSend.setField("User-Agent", "libsfml-network/2.x");
+        toSend.setField("User-Agent", "libsfml-network/3.x");
     }
     if (!toSend.hasField("Host"))
     {
