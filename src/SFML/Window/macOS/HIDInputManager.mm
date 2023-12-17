@@ -715,7 +715,7 @@ HIDInputManager::HIDInputManager()
         return;
     }
 
-    // Build up our knownledge of the hardware
+    // Build up our knowledge of the hardware
     initializeKeyboard();
     buildMappings();
 
