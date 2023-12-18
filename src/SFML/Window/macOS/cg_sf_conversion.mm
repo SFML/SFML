@@ -29,8 +29,6 @@
 #import <SFML/Window/macOS/Scaling.h>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
 
-#include <SFML/System/Err.hpp>
-
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 namespace sf::priv
@@ -52,22 +50,6 @@ unsigned int modeBitsPerPixel(CGDisplayModeRef mode)
 
     // Clean up memory.
     CFRelease(pixEnc);
-
-    return bpp;
-}
-
-
-////////////////////////////////////////////////////////////
-unsigned int displayBitsPerPixel(CGDirectDisplayID displayId)
-{
-    // Get the display mode.
-    CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayId);
-
-    // Get bpp for the mode.
-    const auto bpp = modeBitsPerPixel(mode);
-
-    // Clean up Memory.
-    CGDisplayModeRelease(mode);
 
     return bpp;
 }

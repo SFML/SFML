@@ -44,24 +44,9 @@ namespace sf::priv
 unsigned int modeBitsPerPixel(CGDisplayModeRef mode);
 
 ////////////////////////////////////////////////////////////
-/// \brief Get bpp for all OS X version
-///
-/// This function use only non-deprecated way to get the
-/// display bits per pixel information for a given display id.
-///
-////////////////////////////////////////////////////////////
-unsigned int displayBitsPerPixel(CGDirectDisplayID displayId);
-
-////////////////////////////////////////////////////////////
 /// \brief Convert a Quartz video mode into a sf::VideoMode object
 ///
 ////////////////////////////////////////////////////////////
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode);
-
-////////////////////////////////////////////////////////////
-/// \brief Convert a sf::VideoMode object into a Quartz video mode
-///
-////////////////////////////////////////////////////////////
-CGDisplayModeRef convertSFModeToCGMode(VideoMode sfmode);
 
 } // namespace sf::priv
