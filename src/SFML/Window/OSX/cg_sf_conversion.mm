@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/OSX/cg_sf_conversion.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Vector2.hpp>
 
 #import <SFML/Window/OSX/Scaling.h>
 
@@ -95,11 +96,10 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     //
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
-    VideoMode mode(static_cast<unsigned int>(CGDisplayModeGetWidth(cgmode)), static_cast<unsigned int>(CGDisplayModeGetHeight(cgmode)), static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
-    scaleOutWidthHeight(mode, nil);
-    return mode;
+    Vector2u size = Vector2u(Vector2<size_t>(CGDisplayModeGetPixelWidth(cgmode), CGDisplayModeGetPixelHeight(cgmode)));
+    scaleInXY(size, nil);
+    return VideoMode(size.x, size.y, static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
 }
 
 } // namespace priv
 } // namespace sf
-
