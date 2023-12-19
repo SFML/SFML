@@ -182,7 +182,7 @@ int main()
         {
             // Window closed or escape key pressed: exit
             if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
             {
                 window.close();
                 break;
@@ -193,19 +193,19 @@ int main()
             {
                 switch (event.key.code)
                 {
-                    case sf::Keyboard::Enter:
+                    case sf::Keyboard::Key::Enter:
                         generateTerrain(terrainStagingBuffer.data());
                         break;
-                    case sf::Keyboard::Down:
+                    case sf::Keyboard::Key::Down:
                         currentSetting = (currentSetting + 1) % settings.size();
                         break;
-                    case sf::Keyboard::Up:
+                    case sf::Keyboard::Key::Up:
                         currentSetting = (currentSetting + settings.size() - 1) % settings.size();
                         break;
-                    case sf::Keyboard::Left:
+                    case sf::Keyboard::Key::Left:
                         *(settings[currentSetting].value) -= 0.1f;
                         break;
-                    case sf::Keyboard::Right:
+                    case sf::Keyboard::Key::Right:
                         *(settings[currentSetting].value) += 0.1f;
                         break;
                     default:

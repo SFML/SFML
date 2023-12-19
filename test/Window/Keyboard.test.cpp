@@ -19,10 +19,10 @@ TEST_CASE("[Window] sf::Keyboard", runDisplayTests())
 {
     SECTION("isKeyPressed(Key)")
     {
-        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::W));
-        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::A));
-        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::S));
-        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::D));
+        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W));
+        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A));
+        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S));
+        CHECK(!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D));
     }
 
     SECTION("isKeyPressed(Scancode)")
@@ -35,12 +35,12 @@ TEST_CASE("[Window] sf::Keyboard", runDisplayTests())
 
     SECTION("localize(Scancode)")
     {
-        CHECK(sf::Keyboard::localize(sf::Keyboard::Scan::Space) == sf::Keyboard::Space);
+        CHECK(sf::Keyboard::localize(sf::Keyboard::Scan::Space) == sf::Keyboard::Key::Space);
     }
 
     SECTION("delocalize(Key)")
     {
-        CHECK(sf::Keyboard::delocalize(sf::Keyboard::Space) == sf::Keyboard::Scan::Space);
+        CHECK(sf::Keyboard::delocalize(sf::Keyboard::Key::Space) == sf::Keyboard::Scan::Space);
     }
 
     SECTION("getDescription(Scancode)")

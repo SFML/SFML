@@ -560,7 +560,7 @@ KeyCode keyToKeyCode(sf::Keyboard::Key key)
     }
 
     // Fallback for when XKeysymToKeycode cannot tell the KeyCode for XK_Alt_R
-    if (key == sf::Keyboard::RAlt)
+    if (key == sf::Keyboard::Key::RAlt)
         return scancodeToKeycode[sf::Keyboard::Scan::RAlt];
 
     return nullKeyCode;
@@ -805,11 +805,11 @@ Keyboard::Key KeyboardImpl::getKeyFromEvent(XKeyEvent& event)
         // Get the SFML keyboard code from the keysym of the key that has been pressed
         const KeySym        keysym = XLookupKeysym(&event, i);
         const Keyboard::Key key    = keySymToKey(keysym);
-        if (key != Keyboard::Unknown)
+        if (key != Keyboard::Key::Unknown)
             return key;
     }
 
-    return Keyboard::Unknown;
+    return Keyboard::Key::Unknown;
 }
 
 

@@ -55,7 +55,7 @@ bool isKeyPressed(Keyboard::Scancode /* codes */)
 Keyboard::Key localize(Keyboard::Scancode /* code */)
 {
     // Not applicable
-    return Keyboard::Unknown;
+    return Keyboard::Key::Unknown;
 }
 
 

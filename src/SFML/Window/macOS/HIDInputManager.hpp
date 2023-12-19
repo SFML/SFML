@@ -98,7 +98,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Try to convert a character into a SFML key code
     ///
-    /// Return sf::Keyboard::Unknown if it doesn't match any 'localized' keys.
+    /// Return sf::Keyboard::Key::Unknown if it doesn't match any 'localized' keys.
     ///
     /// By 'localized' we mean keys that depend on the keyboard layout
     /// and might not be the same as the US keycode for some countries

@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
                     window.close();
                     break;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Escape)
+                    if (event.key.code == sf::Keyboard::Key::Escape)
                         window.close();
                     break;
                 case sf::Event::Resized:

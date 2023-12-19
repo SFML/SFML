@@ -48,7 +48,7 @@ namespace Keyboard
 /// to `Y` or `Z`.
 ///
 ////////////////////////////////////////////////////////////
-enum Key
+enum class Key
 {
     Unknown = -1, //!< Unhandled key
     A       = 0,  //!< The A key
@@ -362,7 +362,7 @@ SFML_WINDOW_API bool isKeyPressed(Scancode code);
 ///
 /// \return The key corresponding to the scancode under the current
 ///         keyboard layout used by the operating system, or
-///         sf::Keyboard::Unknown when the scancode cannot be mapped
+///         sf::Keyboard::Key::Unknown when the scancode cannot be mapped
 ///         to a Key.
 ///
 /// \see delocalize
@@ -398,7 +398,7 @@ SFML_WINDOW_API Scancode delocalize(Key key);
 ///          "Left Command" on macOS.
 ///
 /// The current keyboard layout set by the operating system is used to
-/// interpret the scancode: for example, sf::Keyboard::Semicolon is
+/// interpret the scancode: for example, sf::Keyboard::Key::Semicolon is
 /// mapped to ";" for layout and to "é" for others.
 ///
 /// \return The localized description of the code
@@ -444,15 +444,15 @@ SFML_WINDOW_API void setVirtualKeyboardVisible(bool visible);
 ///
 /// Usage example:
 /// \code
-/// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+/// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
 /// {
 ///     // move left...
 /// }
-/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
 /// {
 ///     // move right...
 /// }
-/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+/// else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
 /// {
 ///     // quit...
 /// }

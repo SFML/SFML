@@ -253,7 +253,7 @@ struct Event
 ///         window.close();
 ///
 ///     // The escape key was pressed
-///     if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+///     if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape))
 ///         window.close();
 ///
 ///     // The window was resized
