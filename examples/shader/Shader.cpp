@@ -400,12 +400,12 @@ int main()
                 switch (event.key.code)
                 {
                     // Escape key: exit
-                    case sf::Keyboard::Escape:
+                    case sf::Keyboard::Key::Escape:
                         window.close();
                         break;
 
                     // Left arrow key: previous shader
-                    case sf::Keyboard::Left:
+                    case sf::Keyboard::Key::Left:
                         if (current == 0)
                             current = effects.size() - 1;
                         else
@@ -414,7 +414,7 @@ int main()
                         break;
 
                     // Right arrow key: next shader
-                    case sf::Keyboard::Right:
+                    case sf::Keyboard::Key::Right:
                         if (current == effects.size() - 1)
                             current = 0;
                         else

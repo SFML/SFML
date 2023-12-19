@@ -99,152 +99,152 @@ Keyboard::Key HIDInputManager::localizedKey(UniChar ch)
     // clang-format off
     switch (ch)
     {
-        case 0x41: return Keyboard::A; // uppercase A
-        case 0x42: return Keyboard::B;
-        case 0x43: return Keyboard::C;
-        case 0x44: return Keyboard::D;
-        case 0x45: return Keyboard::E;
-        case 0x46: return Keyboard::F;
-        case 0x47: return Keyboard::G;
-        case 0x48: return Keyboard::H;
-        case 0x49: return Keyboard::I;
-        case 0x4a: return Keyboard::J;
-        case 0x4b: return Keyboard::K;
-        case 0x4c: return Keyboard::L;
-        case 0x4d: return Keyboard::M;
-        case 0x4e: return Keyboard::N;
-        case 0x4f: return Keyboard::O;
-        case 0x50: return Keyboard::P;
-        case 0x51: return Keyboard::Q;
-        case 0x52: return Keyboard::R;
-        case 0x53: return Keyboard::S;
-        case 0x54: return Keyboard::T;
-        case 0x55: return Keyboard::U;
-        case 0x56: return Keyboard::V;
-        case 0x57: return Keyboard::W;
-        case 0x58: return Keyboard::X;
-        case 0x59: return Keyboard::Y;
-        case 0x5a: return Keyboard::Z;
+        case 0x41: return Keyboard::Key::A; // uppercase A
+        case 0x42: return Keyboard::Key::B;
+        case 0x43: return Keyboard::Key::C;
+        case 0x44: return Keyboard::Key::D;
+        case 0x45: return Keyboard::Key::E;
+        case 0x46: return Keyboard::Key::F;
+        case 0x47: return Keyboard::Key::G;
+        case 0x48: return Keyboard::Key::H;
+        case 0x49: return Keyboard::Key::I;
+        case 0x4a: return Keyboard::Key::J;
+        case 0x4b: return Keyboard::Key::K;
+        case 0x4c: return Keyboard::Key::L;
+        case 0x4d: return Keyboard::Key::M;
+        case 0x4e: return Keyboard::Key::N;
+        case 0x4f: return Keyboard::Key::O;
+        case 0x50: return Keyboard::Key::P;
+        case 0x51: return Keyboard::Key::Q;
+        case 0x52: return Keyboard::Key::R;
+        case 0x53: return Keyboard::Key::S;
+        case 0x54: return Keyboard::Key::T;
+        case 0x55: return Keyboard::Key::U;
+        case 0x56: return Keyboard::Key::V;
+        case 0x57: return Keyboard::Key::W;
+        case 0x58: return Keyboard::Key::X;
+        case 0x59: return Keyboard::Key::Y;
+        case 0x5a: return Keyboard::Key::Z;
 
-        case 0x61: return Keyboard::A; // lowercase A
-        case 0x62: return Keyboard::B;
-        case 0x63: return Keyboard::C;
-        case 0x64: return Keyboard::D;
-        case 0x65: return Keyboard::E;
-        case 0x66: return Keyboard::F;
-        case 0x67: return Keyboard::G;
-        case 0x68: return Keyboard::H;
-        case 0x69: return Keyboard::I;
-        case 0x6a: return Keyboard::J;
-        case 0x6b: return Keyboard::K;
-        case 0x6c: return Keyboard::L;
-        case 0x6d: return Keyboard::M;
-        case 0x6e: return Keyboard::N;
-        case 0x6f: return Keyboard::O;
-        case 0x70: return Keyboard::P;
-        case 0x71: return Keyboard::Q;
-        case 0x72: return Keyboard::R;
-        case 0x73: return Keyboard::S;
-        case 0x74: return Keyboard::T;
-        case 0x75: return Keyboard::U;
-        case 0x76: return Keyboard::V;
-        case 0x77: return Keyboard::W;
-        case 0x78: return Keyboard::X;
-        case 0x79: return Keyboard::Y;
-        case 0x7a: return Keyboard::Z;
+        case 0x61: return Keyboard::Key::A; // lowercase A
+        case 0x62: return Keyboard::Key::B;
+        case 0x63: return Keyboard::Key::C;
+        case 0x64: return Keyboard::Key::D;
+        case 0x65: return Keyboard::Key::E;
+        case 0x66: return Keyboard::Key::F;
+        case 0x67: return Keyboard::Key::G;
+        case 0x68: return Keyboard::Key::H;
+        case 0x69: return Keyboard::Key::I;
+        case 0x6a: return Keyboard::Key::J;
+        case 0x6b: return Keyboard::Key::K;
+        case 0x6c: return Keyboard::Key::L;
+        case 0x6d: return Keyboard::Key::M;
+        case 0x6e: return Keyboard::Key::N;
+        case 0x6f: return Keyboard::Key::O;
+        case 0x70: return Keyboard::Key::P;
+        case 0x71: return Keyboard::Key::Q;
+        case 0x72: return Keyboard::Key::R;
+        case 0x73: return Keyboard::Key::S;
+        case 0x74: return Keyboard::Key::T;
+        case 0x75: return Keyboard::Key::U;
+        case 0x76: return Keyboard::Key::V;
+        case 0x77: return Keyboard::Key::W;
+        case 0x78: return Keyboard::Key::X;
+        case 0x79: return Keyboard::Key::Y;
+        case 0x7a: return Keyboard::Key::Z;
 
-        case 0x30: return Keyboard::Num0;
-        case 0x31: return Keyboard::Num1;
-        case 0x32: return Keyboard::Num2;
-        case 0x33: return Keyboard::Num3;
-        case 0x34: return Keyboard::Num4;
-        case 0x35: return Keyboard::Num5;
-        case 0x36: return Keyboard::Num6;
-        case 0x37: return Keyboard::Num7;
-        case 0x38: return Keyboard::Num8;
-        case 0x39: return Keyboard::Num9;
+        case 0x30: return Keyboard::Key::Num0;
+        case 0x31: return Keyboard::Key::Num1;
+        case 0x32: return Keyboard::Key::Num2;
+        case 0x33: return Keyboard::Key::Num3;
+        case 0x34: return Keyboard::Key::Num4;
+        case 0x35: return Keyboard::Key::Num5;
+        case 0x36: return Keyboard::Key::Num6;
+        case 0x37: return Keyboard::Key::Num7;
+        case 0x38: return Keyboard::Key::Num8;
+        case 0x39: return Keyboard::Key::Num9;
 
-        case 0x1b: return Keyboard::Escape;
-
-        /* Those are not represented using Unicode.
-         * case 0x: return Keyboard::LControl;
-         * case 0x: return Keyboard::LShift;
-         * case 0x: return Keyboard::LAlt;
-         * case 0x: return Keyboard::LSystem;
-         * case 0x: return Keyboard::RControl;
-         * case 0x: return Keyboard::RShift;
-         * case 0x: return Keyboard::RAlt;
-         * case 0x: return Keyboard::RSystem;
-         */
-
-        case NSMenuFunctionKey: return Keyboard::Menu;
-
-        case 0x5b: return Keyboard::LBracket;
-        case 0x5d: return Keyboard::RBracket;
-        case 0x3b: return Keyboard::Semicolon;
-        case 0x2c: return Keyboard::Comma;
-        case 0x2e: return Keyboard::Period;
-        case 0x27: return Keyboard::Apostrophe;
-        case 0x2f: return Keyboard::Slash;
-        case 0x5c: return Keyboard::Backslash;
-        case 0x60: return Keyboard::Grave;
-        case 0x3d: return Keyboard::Equal;
-        case 0x2d: return Keyboard::Hyphen;
-        case 0x20: return Keyboard::Space;
-        case 0x0d: return Keyboard::Enter;
-        case 0x08: return Keyboard::Backspace;
-        case 0x09: return Keyboard::Tab;
-
-        case NSPageUpFunctionKey:   return Keyboard::PageUp;
-        case NSPageDownFunctionKey: return Keyboard::PageDown;
-        case NSEndFunctionKey:      return Keyboard::End;
-        case NSHomeFunctionKey:     return Keyboard::Home;
-        case NSInsertFunctionKey:   return Keyboard::Insert;
-        case NSDeleteFunctionKey:   return Keyboard::Delete;
-        case 0x7f:                  return Keyboard::Delete;
-
-        case 0x2b: return Keyboard::Add;
-        // case 0x: return Keyboard::Subtract; // collision with Keyboard::Hyphen
-        case 0x2a: return Keyboard::Multiply;
-        // case 0x: return Keyboard::Divide; // collision with Keyboard::Slash
-
-        case NSLeftArrowFunctionKey:  return Keyboard::Left;
-        case NSRightArrowFunctionKey: return Keyboard::Right;
-        case NSUpArrowFunctionKey:    return Keyboard::Up;
-        case NSDownArrowFunctionKey:  return Keyboard::Down;
+        case 0x1b: return Keyboard::Key::Escape;
 
         /* Those are not represented using Unicode.
-         * case 0x: return Keyboard::Numpad0;
-         * case 0x: return Keyboard::Numpad1;
-         * case 0x: return Keyboard::Numpad2;
-         * case 0x: return Keyboard::Numpad3;
-         * case 0x: return Keyboard::Numpad4;
-         * case 0x: return Keyboard::Numpad5;
-         * case 0x: return Keyboard::Numpad6;
-         * case 0x: return Keyboard::Numpad7;
-         * case 0x: return Keyboard::Numpad8;
-         * case 0x: return Keyboard::Numpad9;
+         * case 0x: return Keyboard::Key::LControl;
+         * case 0x: return Keyboard::Key::LShift;
+         * case 0x: return Keyboard::Key::LAlt;
+         * case 0x: return Keyboard::Key::LSystem;
+         * case 0x: return Keyboard::Key::RControl;
+         * case 0x: return Keyboard::Key::RShift;
+         * case 0x: return Keyboard::Key::RAlt;
+         * case 0x: return Keyboard::Key::RSystem;
          */
 
-        case NSF1FunctionKey:  return Keyboard::F1;
-        case NSF2FunctionKey:  return Keyboard::F2;
-        case NSF3FunctionKey:  return Keyboard::F3;
-        case NSF4FunctionKey:  return Keyboard::F4;
-        case NSF5FunctionKey:  return Keyboard::F5;
-        case NSF6FunctionKey:  return Keyboard::F6;
-        case NSF7FunctionKey:  return Keyboard::F7;
-        case NSF8FunctionKey:  return Keyboard::F8;
-        case NSF9FunctionKey:  return Keyboard::F9;
-        case NSF10FunctionKey: return Keyboard::F10;
-        case NSF11FunctionKey: return Keyboard::F11;
-        case NSF12FunctionKey: return Keyboard::F12;
-        case NSF13FunctionKey: return Keyboard::F13;
-        case NSF14FunctionKey: return Keyboard::F14;
-        case NSF15FunctionKey: return Keyboard::F15;
+        case NSMenuFunctionKey: return Keyboard::Key::Menu;
 
-        case NSPauseFunctionKey:  return Keyboard::Pause;
+        case 0x5b: return Keyboard::Key::LBracket;
+        case 0x5d: return Keyboard::Key::RBracket;
+        case 0x3b: return Keyboard::Key::Semicolon;
+        case 0x2c: return Keyboard::Key::Comma;
+        case 0x2e: return Keyboard::Key::Period;
+        case 0x27: return Keyboard::Key::Apostrophe;
+        case 0x2f: return Keyboard::Key::Slash;
+        case 0x5c: return Keyboard::Key::Backslash;
+        case 0x60: return Keyboard::Key::Grave;
+        case 0x3d: return Keyboard::Key::Equal;
+        case 0x2d: return Keyboard::Key::Hyphen;
+        case 0x20: return Keyboard::Key::Space;
+        case 0x0d: return Keyboard::Key::Enter;
+        case 0x08: return Keyboard::Key::Backspace;
+        case 0x09: return Keyboard::Key::Tab;
 
-        default:  return Keyboard::Unknown;
+        case NSPageUpFunctionKey:   return Keyboard::Key::PageUp;
+        case NSPageDownFunctionKey: return Keyboard::Key::PageDown;
+        case NSEndFunctionKey:      return Keyboard::Key::End;
+        case NSHomeFunctionKey:     return Keyboard::Key::Home;
+        case NSInsertFunctionKey:   return Keyboard::Key::Insert;
+        case NSDeleteFunctionKey:   return Keyboard::Key::Delete;
+        case 0x7f:                  return Keyboard::Key::Delete;
+
+        case 0x2b: return Keyboard::Key::Add;
+        // case 0x: return Keyboard::Key::Subtract; // collision with Keyboard::Key::Hyphen
+        case 0x2a: return Keyboard::Key::Multiply;
+        // case 0x: return Keyboard::Key::Divide; // collision with Keyboard::Key::Slash
+
+        case NSLeftArrowFunctionKey:  return Keyboard::Key::Left;
+        case NSRightArrowFunctionKey: return Keyboard::Key::Right;
+        case NSUpArrowFunctionKey:    return Keyboard::Key::Up;
+        case NSDownArrowFunctionKey:  return Keyboard::Key::Down;
+
+        /* Those are not represented using Unicode.
+         * case 0x: return Keyboard::Key::Numpad0;
+         * case 0x: return Keyboard::Key::Numpad1;
+         * case 0x: return Keyboard::Key::Numpad2;
+         * case 0x: return Keyboard::Key::Numpad3;
+         * case 0x: return Keyboard::Key::Numpad4;
+         * case 0x: return Keyboard::Key::Numpad5;
+         * case 0x: return Keyboard::Key::Numpad6;
+         * case 0x: return Keyboard::Key::Numpad7;
+         * case 0x: return Keyboard::Key::Numpad8;
+         * case 0x: return Keyboard::Key::Numpad9;
+         */
+
+        case NSF1FunctionKey:  return Keyboard::Key::F1;
+        case NSF2FunctionKey:  return Keyboard::Key::F2;
+        case NSF3FunctionKey:  return Keyboard::Key::F3;
+        case NSF4FunctionKey:  return Keyboard::Key::F4;
+        case NSF5FunctionKey:  return Keyboard::Key::F5;
+        case NSF6FunctionKey:  return Keyboard::Key::F6;
+        case NSF7FunctionKey:  return Keyboard::Key::F7;
+        case NSF8FunctionKey:  return Keyboard::Key::F8;
+        case NSF9FunctionKey:  return Keyboard::Key::F9;
+        case NSF10FunctionKey: return Keyboard::Key::F10;
+        case NSF11FunctionKey: return Keyboard::Key::F11;
+        case NSF12FunctionKey: return Keyboard::Key::F12;
+        case NSF13FunctionKey: return Keyboard::Key::F13;
+        case NSF14FunctionKey: return Keyboard::Key::F14;
+        case NSF15FunctionKey: return Keyboard::Key::F15;
+
+        case NSPauseFunctionKey: return Keyboard::Key::Pause;
+
+        default: return Keyboard::Key::Unknown;
     }
     // clang-format on
 }
@@ -256,122 +256,122 @@ UniChar HIDInputManager::toUnicode(Keyboard::Key key)
     // clang-format off
     switch (key)
     {
-        case Keyboard::A: return 0x41;
-        case Keyboard::B: return 0x42;
-        case Keyboard::C: return 0x43;
-        case Keyboard::D: return 0x44;
-        case Keyboard::E: return 0x45;
-        case Keyboard::F: return 0x46;
-        case Keyboard::G: return 0x47;
-        case Keyboard::H: return 0x48;
-        case Keyboard::I: return 0x49;
-        case Keyboard::J: return 0x4a;
-        case Keyboard::K: return 0x4b;
-        case Keyboard::L: return 0x4c;
-        case Keyboard::M: return 0x4d;
-        case Keyboard::N: return 0x4e;
-        case Keyboard::O: return 0x4f;
-        case Keyboard::P: return 0x50;
-        case Keyboard::Q: return 0x51;
-        case Keyboard::R: return 0x52;
-        case Keyboard::S: return 0x53;
-        case Keyboard::T: return 0x54;
-        case Keyboard::U: return 0x55;
-        case Keyboard::V: return 0x56;
-        case Keyboard::W: return 0x57;
-        case Keyboard::X: return 0x58;
-        case Keyboard::Y: return 0x59;
-        case Keyboard::Z: return 0x5a;
+        case Keyboard::Key::A: return 0x41;
+        case Keyboard::Key::B: return 0x42;
+        case Keyboard::Key::C: return 0x43;
+        case Keyboard::Key::D: return 0x44;
+        case Keyboard::Key::E: return 0x45;
+        case Keyboard::Key::F: return 0x46;
+        case Keyboard::Key::G: return 0x47;
+        case Keyboard::Key::H: return 0x48;
+        case Keyboard::Key::I: return 0x49;
+        case Keyboard::Key::J: return 0x4a;
+        case Keyboard::Key::K: return 0x4b;
+        case Keyboard::Key::L: return 0x4c;
+        case Keyboard::Key::M: return 0x4d;
+        case Keyboard::Key::N: return 0x4e;
+        case Keyboard::Key::O: return 0x4f;
+        case Keyboard::Key::P: return 0x50;
+        case Keyboard::Key::Q: return 0x51;
+        case Keyboard::Key::R: return 0x52;
+        case Keyboard::Key::S: return 0x53;
+        case Keyboard::Key::T: return 0x54;
+        case Keyboard::Key::U: return 0x55;
+        case Keyboard::Key::V: return 0x56;
+        case Keyboard::Key::W: return 0x57;
+        case Keyboard::Key::X: return 0x58;
+        case Keyboard::Key::Y: return 0x59;
+        case Keyboard::Key::Z: return 0x5a;
 
-        case Keyboard::Num0: return 0x30;
-        case Keyboard::Num1: return 0x31;
-        case Keyboard::Num2: return 0x32;
-        case Keyboard::Num3: return 0x33;
-        case Keyboard::Num4: return 0x34;
-        case Keyboard::Num5: return 0x35;
-        case Keyboard::Num6: return 0x36;
-        case Keyboard::Num7: return 0x37;
-        case Keyboard::Num8: return 0x38;
-        case Keyboard::Num9: return 0x39;
+        case Keyboard::Key::Num0: return 0x30;
+        case Keyboard::Key::Num1: return 0x31;
+        case Keyboard::Key::Num2: return 0x32;
+        case Keyboard::Key::Num3: return 0x33;
+        case Keyboard::Key::Num4: return 0x34;
+        case Keyboard::Key::Num5: return 0x35;
+        case Keyboard::Key::Num6: return 0x36;
+        case Keyboard::Key::Num7: return 0x37;
+        case Keyboard::Key::Num8: return 0x38;
+        case Keyboard::Key::Num9: return 0x39;
 
-        case Keyboard::Escape:  return 0x1b;
+        case Keyboard::Key::Escape:  return 0x1b;
 
         /* Not representable as Unicode:
-         * case Keyboard::LControl: return 0x;
-         * case Keyboard::LShift:   return 0x;
-         * case Keyboard::LAlt:     return 0x;
-         * case Keyboard::LSystem:  return 0x;
-         * case Keyboard::RControl: return 0x;
-         * case Keyboard::RShift:   return 0x;
-         * case Keyboard::RAlt:     return 0x;
-         * case Keyboard::RSystem:  return 0x;
+         * case Keyboard::Key::LControl: return 0x;
+         * case Keyboard::Key::LShift:   return 0x;
+         * case Keyboard::Key::LAlt:     return 0x;
+         * case Keyboard::Key::LSystem:  return 0x;
+         * case Keyboard::Key::RControl: return 0x;
+         * case Keyboard::Key::RShift:   return 0x;
+         * case Keyboard::Key::RAlt:     return 0x;
+         * case Keyboard::Key::RSystem:  return 0x;
          */
 
-        case Keyboard::Menu:  return NSMenuFunctionKey;
+        case Keyboard::Key::Menu:  return NSMenuFunctionKey;
 
-        case Keyboard::LBracket:   return 0x5b;
-        case Keyboard::RBracket:   return 0x5d;
-        case Keyboard::Semicolon:  return 0x3b;
-        case Keyboard::Comma:      return 0x2c;
-        case Keyboard::Period:     return 0x2e;
-        case Keyboard::Apostrophe: return 0x27;
-        case Keyboard::Slash:      return 0x2f;
-        case Keyboard::Backslash:  return 0x5c;
-        case Keyboard::Grave:      return 0x60;
-        case Keyboard::Equal:      return 0x3d;
-        case Keyboard::Hyphen:     return 0x2d;
-        case Keyboard::Space:      return 0x20;
-        case Keyboard::Enter:      return 0x0d;
-        case Keyboard::Backspace:  return 0x08;
-        case Keyboard::Tab:        return 0x09;
+        case Keyboard::Key::LBracket:   return 0x5b;
+        case Keyboard::Key::RBracket:   return 0x5d;
+        case Keyboard::Key::Semicolon:  return 0x3b;
+        case Keyboard::Key::Comma:      return 0x2c;
+        case Keyboard::Key::Period:     return 0x2e;
+        case Keyboard::Key::Apostrophe: return 0x27;
+        case Keyboard::Key::Slash:      return 0x2f;
+        case Keyboard::Key::Backslash:  return 0x5c;
+        case Keyboard::Key::Grave:      return 0x60;
+        case Keyboard::Key::Equal:      return 0x3d;
+        case Keyboard::Key::Hyphen:     return 0x2d;
+        case Keyboard::Key::Space:      return 0x20;
+        case Keyboard::Key::Enter:      return 0x0d;
+        case Keyboard::Key::Backspace:  return 0x08;
+        case Keyboard::Key::Tab:        return 0x09;
 
-        case Keyboard::PageUp:   return NSPageUpFunctionKey;
-        case Keyboard::PageDown: return NSPageDownFunctionKey;
-        case Keyboard::End:      return NSEndFunctionKey;
-        case Keyboard::Home:     return NSHomeFunctionKey;
-        case Keyboard::Insert:   return NSInsertFunctionKey;
-        case Keyboard::Delete:   return NSDeleteFunctionKey;
+        case Keyboard::Key::PageUp:   return NSPageUpFunctionKey;
+        case Keyboard::Key::PageDown: return NSPageDownFunctionKey;
+        case Keyboard::Key::End:      return NSEndFunctionKey;
+        case Keyboard::Key::Home:     return NSHomeFunctionKey;
+        case Keyboard::Key::Insert:   return NSInsertFunctionKey;
+        case Keyboard::Key::Delete:   return NSDeleteFunctionKey;
 
-        case Keyboard::Add:      return 0x2b;
-        case Keyboard::Subtract: return 0x2d;
-        case Keyboard::Multiply: return 0x2a;
-        case Keyboard::Divide:   return 0x2f;
+        case Keyboard::Key::Add:      return 0x2b;
+        case Keyboard::Key::Subtract: return 0x2d;
+        case Keyboard::Key::Multiply: return 0x2a;
+        case Keyboard::Key::Divide:   return 0x2f;
 
-        case Keyboard::Left:  return NSLeftArrowFunctionKey;
-        case Keyboard::Right: return NSRightArrowFunctionKey;
-        case Keyboard::Up:    return NSUpArrowFunctionKey;
-        case Keyboard::Down:  return NSDownArrowFunctionKey;
+        case Keyboard::Key::Left:  return NSLeftArrowFunctionKey;
+        case Keyboard::Key::Right: return NSRightArrowFunctionKey;
+        case Keyboard::Key::Up:    return NSUpArrowFunctionKey;
+        case Keyboard::Key::Down:  return NSDownArrowFunctionKey;
 
         /* Those are not represented using Unicode.
-         * case Keyboard::Numpad0: return 0x;
-         * case Keyboard::Numpad1: return 0x;
-         * case Keyboard::Numpad2: return 0x;
-         * case Keyboard::Numpad3: return 0x;
-         * case Keyboard::Numpad4: return 0x;
-         * case Keyboard::Numpad5: return 0x;
-         * case Keyboard::Numpad6: return 0x;
-         * case Keyboard::Numpad7: return 0x;
-         * case Keyboard::Numpad8: return 0x;
-         * case Keyboard::Numpad9: return 0x;
+         * case Keyboard::Key::Numpad0: return 0x;
+         * case Keyboard::Key::Numpad1: return 0x;
+         * case Keyboard::Key::Numpad2: return 0x;
+         * case Keyboard::Key::Numpad3: return 0x;
+         * case Keyboard::Key::Numpad4: return 0x;
+         * case Keyboard::Key::Numpad5: return 0x;
+         * case Keyboard::Key::Numpad6: return 0x;
+         * case Keyboard::Key::Numpad7: return 0x;
+         * case Keyboard::Key::Numpad8: return 0x;
+         * case Keyboard::Key::Numpad9: return 0x;
          */
 
-        case Keyboard::F1:  return NSF1FunctionKey;
-        case Keyboard::F2:  return NSF2FunctionKey;
-        case Keyboard::F3:  return NSF3FunctionKey;
-        case Keyboard::F4:  return NSF4FunctionKey;
-        case Keyboard::F5:  return NSF5FunctionKey;
-        case Keyboard::F6:  return NSF6FunctionKey;
-        case Keyboard::F7:  return NSF7FunctionKey;
-        case Keyboard::F8:  return NSF8FunctionKey;
-        case Keyboard::F9:  return NSF9FunctionKey;
-        case Keyboard::F10: return NSF10FunctionKey;
-        case Keyboard::F11: return NSF11FunctionKey;
-        case Keyboard::F12: return NSF12FunctionKey;
-        case Keyboard::F13: return NSF13FunctionKey;
-        case Keyboard::F14: return NSF14FunctionKey;
-        case Keyboard::F15: return NSF15FunctionKey;
+        case Keyboard::Key::F1:  return NSF1FunctionKey;
+        case Keyboard::Key::F2:  return NSF2FunctionKey;
+        case Keyboard::Key::F3:  return NSF3FunctionKey;
+        case Keyboard::Key::F4:  return NSF4FunctionKey;
+        case Keyboard::Key::F5:  return NSF5FunctionKey;
+        case Keyboard::Key::F6:  return NSF6FunctionKey;
+        case Keyboard::Key::F7:  return NSF7FunctionKey;
+        case Keyboard::Key::F8:  return NSF8FunctionKey;
+        case Keyboard::Key::F9:  return NSF9FunctionKey;
+        case Keyboard::Key::F10: return NSF10FunctionKey;
+        case Keyboard::Key::F11: return NSF11FunctionKey;
+        case Keyboard::Key::F12: return NSF12FunctionKey;
+        case Keyboard::Key::F13: return NSF13FunctionKey;
+        case Keyboard::Key::F14: return NSF14FunctionKey;
+        case Keyboard::Key::F15: return NSF15FunctionKey;
 
-        case Keyboard::Pause: return NSPauseFunctionKey;
+        case Keyboard::Key::Pause: return NSPauseFunctionKey;
 
         default: return 0x00;
     }
@@ -570,7 +570,7 @@ bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
 {
     if (code == Keyboard::Scan::Unknown)
-        return Keyboard::Unknown;
+        return Keyboard::Key::Unknown;
 
     return m_scancodeToKeyMapping[code];
 }
@@ -579,7 +579,7 @@ Keyboard::Key HIDInputManager::localize(Keyboard::Scancode code)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode HIDInputManager::delocalize(Keyboard::Key key)
 {
-    if (key == Keyboard::Unknown)
+    if (key == Keyboard::Key::Unknown)
         return Keyboard::Scan::Unknown;
 
     return m_keyToScancodeMapping[key];
@@ -858,7 +858,7 @@ void HIDInputManager::buildMappings()
                 break;
         }
 
-        Keyboard::Key code = Keyboard::Unknown;
+        Keyboard::Key code = Keyboard::Key::Unknown;
         if (translateToString)
         {
             // Unicode string length is usually less or equal to 4
@@ -889,9 +889,9 @@ void HIDInputManager::buildMappings()
             if (length > 0)
                 code = localizedKey(string[0]);
         }
-        if (code == Keyboard::Unknown)
+        if (code == Keyboard::Key::Unknown)
             code = localizedKeyFallback(scan);
-        if (code == Keyboard::Unknown)
+        if (code == Keyboard::Key::Unknown)
             continue;
 
         // Register the bi-mapping
@@ -1354,69 +1354,69 @@ Keyboard::Key HIDInputManager::localizedKeyFallback(Keyboard::Scancode code)
     // clang-format off
     switch (code)
     {
-        case Keyboard::Scan::Enter:      return Keyboard::Enter;
-        case Keyboard::Scan::Escape:     return Keyboard::Escape;
-        case Keyboard::Scan::Backspace:  return Keyboard::Backspace;
-        case Keyboard::Scan::Tab:        return Keyboard::Tab;
-        case Keyboard::Scan::Space:      return Keyboard::Space;
+        case Keyboard::Scan::Enter:      return Keyboard::Key::Enter;
+        case Keyboard::Scan::Escape:     return Keyboard::Key::Escape;
+        case Keyboard::Scan::Backspace:  return Keyboard::Key::Backspace;
+        case Keyboard::Scan::Tab:        return Keyboard::Key::Tab;
+        case Keyboard::Scan::Space:      return Keyboard::Key::Space;
 
-        case Keyboard::Scan::F1:   return Keyboard::F1;
-        case Keyboard::Scan::F2:   return Keyboard::F2;
-        case Keyboard::Scan::F3:   return Keyboard::F3;
-        case Keyboard::Scan::F4:   return Keyboard::F4;
-        case Keyboard::Scan::F5:   return Keyboard::F5;
-        case Keyboard::Scan::F6:   return Keyboard::F6;
-        case Keyboard::Scan::F7:   return Keyboard::F7;
-        case Keyboard::Scan::F8:   return Keyboard::F8;
-        case Keyboard::Scan::F9:   return Keyboard::F9;
-        case Keyboard::Scan::F10:  return Keyboard::F10;
-        case Keyboard::Scan::F11:  return Keyboard::F11;
-        case Keyboard::Scan::F12:  return Keyboard::F12;
-        case Keyboard::Scan::F13:  return Keyboard::F13;
-        case Keyboard::Scan::F14:  return Keyboard::F14;
-        case Keyboard::Scan::F15:  return Keyboard::F15;
+        case Keyboard::Scan::F1:   return Keyboard::Key::F1;
+        case Keyboard::Scan::F2:   return Keyboard::Key::F2;
+        case Keyboard::Scan::F3:   return Keyboard::Key::F3;
+        case Keyboard::Scan::F4:   return Keyboard::Key::F4;
+        case Keyboard::Scan::F5:   return Keyboard::Key::F5;
+        case Keyboard::Scan::F6:   return Keyboard::Key::F6;
+        case Keyboard::Scan::F7:   return Keyboard::Key::F7;
+        case Keyboard::Scan::F8:   return Keyboard::Key::F8;
+        case Keyboard::Scan::F9:   return Keyboard::Key::F9;
+        case Keyboard::Scan::F10:  return Keyboard::Key::F10;
+        case Keyboard::Scan::F11:  return Keyboard::Key::F11;
+        case Keyboard::Scan::F12:  return Keyboard::Key::F12;
+        case Keyboard::Scan::F13:  return Keyboard::Key::F13;
+        case Keyboard::Scan::F14:  return Keyboard::Key::F14;
+        case Keyboard::Scan::F15:  return Keyboard::Key::F15;
 
-        case Keyboard::Scan::Pause:    return Keyboard::Pause;
-        case Keyboard::Scan::Insert:   return Keyboard::Insert;
-        case Keyboard::Scan::Home:     return Keyboard::Home;
-        case Keyboard::Scan::PageUp:   return Keyboard::PageUp;
-        case Keyboard::Scan::Delete:   return Keyboard::Delete;
-        case Keyboard::Scan::End:      return Keyboard::End;
-        case Keyboard::Scan::PageDown: return Keyboard::PageDown;
+        case Keyboard::Scan::Pause:    return Keyboard::Key::Pause;
+        case Keyboard::Scan::Insert:   return Keyboard::Key::Insert;
+        case Keyboard::Scan::Home:     return Keyboard::Key::Home;
+        case Keyboard::Scan::PageUp:   return Keyboard::Key::PageUp;
+        case Keyboard::Scan::Delete:   return Keyboard::Key::Delete;
+        case Keyboard::Scan::End:      return Keyboard::Key::End;
+        case Keyboard::Scan::PageDown: return Keyboard::Key::PageDown;
 
-        case Keyboard::Scan::Right:  return Keyboard::Right;
-        case Keyboard::Scan::Left:   return Keyboard::Left;
-        case Keyboard::Scan::Down:   return Keyboard::Down;
-        case Keyboard::Scan::Up:     return Keyboard::Up;
+        case Keyboard::Scan::Right:  return Keyboard::Key::Right;
+        case Keyboard::Scan::Left:   return Keyboard::Key::Left;
+        case Keyboard::Scan::Down:   return Keyboard::Key::Down;
+        case Keyboard::Scan::Up:     return Keyboard::Key::Up;
 
-        case Keyboard::Scan::NumpadDivide:   return Keyboard::Divide;
-        case Keyboard::Scan::NumpadMultiply: return Keyboard::Multiply;
-        case Keyboard::Scan::NumpadMinus:    return Keyboard::Subtract;
-        case Keyboard::Scan::NumpadPlus:     return Keyboard::Add;
+        case Keyboard::Scan::NumpadDivide:   return Keyboard::Key::Divide;
+        case Keyboard::Scan::NumpadMultiply: return Keyboard::Key::Multiply;
+        case Keyboard::Scan::NumpadMinus:    return Keyboard::Key::Subtract;
+        case Keyboard::Scan::NumpadPlus:     return Keyboard::Key::Add;
 
-        case Keyboard::Scan::NumpadEnter: return Keyboard::Enter;
+        case Keyboard::Scan::NumpadEnter: return Keyboard::Key::Enter;
 
-        case Keyboard::Scan::Numpad1:  return Keyboard::Numpad1;
-        case Keyboard::Scan::Numpad2:  return Keyboard::Numpad2;
-        case Keyboard::Scan::Numpad3:  return Keyboard::Numpad3;
-        case Keyboard::Scan::Numpad4:  return Keyboard::Numpad4;
-        case Keyboard::Scan::Numpad5:  return Keyboard::Numpad5;
-        case Keyboard::Scan::Numpad6:  return Keyboard::Numpad6;
-        case Keyboard::Scan::Numpad7:  return Keyboard::Numpad7;
-        case Keyboard::Scan::Numpad8:  return Keyboard::Numpad8;
-        case Keyboard::Scan::Numpad9:  return Keyboard::Numpad9;
-        case Keyboard::Scan::Numpad0:  return Keyboard::Numpad0;
+        case Keyboard::Scan::Numpad1:  return Keyboard::Key::Numpad1;
+        case Keyboard::Scan::Numpad2:  return Keyboard::Key::Numpad2;
+        case Keyboard::Scan::Numpad3:  return Keyboard::Key::Numpad3;
+        case Keyboard::Scan::Numpad4:  return Keyboard::Key::Numpad4;
+        case Keyboard::Scan::Numpad5:  return Keyboard::Key::Numpad5;
+        case Keyboard::Scan::Numpad6:  return Keyboard::Key::Numpad6;
+        case Keyboard::Scan::Numpad7:  return Keyboard::Key::Numpad7;
+        case Keyboard::Scan::Numpad8:  return Keyboard::Key::Numpad8;
+        case Keyboard::Scan::Numpad9:  return Keyboard::Key::Numpad9;
+        case Keyboard::Scan::Numpad0:  return Keyboard::Key::Numpad0;
 
-        case Keyboard::Scan::LControl:  return Keyboard::LControl;
-        case Keyboard::Scan::LShift:    return Keyboard::LShift;
-        case Keyboard::Scan::LAlt:      return Keyboard::LAlt;
-        case Keyboard::Scan::LSystem:   return Keyboard::LSystem;
-        case Keyboard::Scan::RControl:  return Keyboard::RControl;
-        case Keyboard::Scan::RShift:    return Keyboard::RShift;
-        case Keyboard::Scan::RAlt:      return Keyboard::RAlt;
-        case Keyboard::Scan::RSystem:   return Keyboard::RSystem;
+        case Keyboard::Scan::LControl:  return Keyboard::Key::LControl;
+        case Keyboard::Scan::LShift:    return Keyboard::Key::LShift;
+        case Keyboard::Scan::LAlt:      return Keyboard::Key::LAlt;
+        case Keyboard::Scan::LSystem:   return Keyboard::Key::LSystem;
+        case Keyboard::Scan::RControl:  return Keyboard::Key::RControl;
+        case Keyboard::Scan::RShift:    return Keyboard::Key::RShift;
+        case Keyboard::Scan::RAlt:      return Keyboard::Key::RAlt;
+        case Keyboard::Scan::RSystem:   return Keyboard::Key::RSystem;
 
-        default: return Keyboard::Unknown;
+        default: return Keyboard::Key::Unknown;
     }
     // clang-format on
 }

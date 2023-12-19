@@ -76,19 +76,19 @@ termios newTerminalConfig, oldTerminalConfig; // Terminal configurations
 
 bool altDown()
 {
-    return keyMap[sf::Keyboard::LAlt] || keyMap[sf::Keyboard::RAlt];
+    return keyMap[sf::Keyboard::Key::LAlt] || keyMap[sf::Keyboard::Key::RAlt];
 }
 bool controlDown()
 {
-    return keyMap[sf::Keyboard::LControl] || keyMap[sf::Keyboard::RControl];
+    return keyMap[sf::Keyboard::Key::LControl] || keyMap[sf::Keyboard::Key::RControl];
 }
 bool shiftDown()
 {
-    return keyMap[sf::Keyboard::LShift] || keyMap[sf::Keyboard::RShift];
+    return keyMap[sf::Keyboard::Key::LShift] || keyMap[sf::Keyboard::Key::RShift];
 }
 bool systemDown()
 {
-    return keyMap[sf::Keyboard::LSystem] || keyMap[sf::Keyboard::RSystem];
+    return keyMap[sf::Keyboard::Key::LSystem] || keyMap[sf::Keyboard::Key::RSystem];
 }
 
 void uninitFileDescriptors()
@@ -192,108 +192,108 @@ sf::Keyboard::Key toKey(int code)
     switch (code)
     {
         // clang-format off
-        case KEY_ESC:           return sf::Keyboard::Escape;
-        case KEY_1:             return sf::Keyboard::Num1;
-        case KEY_2:             return sf::Keyboard::Num2;
-        case KEY_3:             return sf::Keyboard::Num3;
-        case KEY_4:             return sf::Keyboard::Num4;
-        case KEY_5:             return sf::Keyboard::Num5;
-        case KEY_6:             return sf::Keyboard::Num6;
-        case KEY_7:             return sf::Keyboard::Num7;
-        case KEY_8:             return sf::Keyboard::Num8;
-        case KEY_9:             return sf::Keyboard::Num9;
-        case KEY_0:             return sf::Keyboard::Num0;
-        case KEY_MINUS:         return sf::Keyboard::Hyphen;
-        case KEY_EQUAL:         return sf::Keyboard::Equal;
-        case KEY_BACKSPACE:     return sf::Keyboard::Backspace;
-        case KEY_TAB:           return sf::Keyboard::Tab;
-        case KEY_Q:             return sf::Keyboard::Q;
-        case KEY_W:             return sf::Keyboard::W;
-        case KEY_E:             return sf::Keyboard::E;
-        case KEY_R:             return sf::Keyboard::R;
-        case KEY_T:             return sf::Keyboard::T;
-        case KEY_Y:             return sf::Keyboard::Y;
-        case KEY_U:             return sf::Keyboard::U;
-        case KEY_I:             return sf::Keyboard::I;
-        case KEY_O:             return sf::Keyboard::O;
-        case KEY_P:             return sf::Keyboard::P;
-        case KEY_LEFTBRACE:     return sf::Keyboard::LBracket;
-        case KEY_RIGHTBRACE:    return sf::Keyboard::RBracket;
+        case KEY_ESC:           return sf::Keyboard::Key::Escape;
+        case KEY_1:             return sf::Keyboard::Key::Num1;
+        case KEY_2:             return sf::Keyboard::Key::Num2;
+        case KEY_3:             return sf::Keyboard::Key::Num3;
+        case KEY_4:             return sf::Keyboard::Key::Num4;
+        case KEY_5:             return sf::Keyboard::Key::Num5;
+        case KEY_6:             return sf::Keyboard::Key::Num6;
+        case KEY_7:             return sf::Keyboard::Key::Num7;
+        case KEY_8:             return sf::Keyboard::Key::Num8;
+        case KEY_9:             return sf::Keyboard::Key::Num9;
+        case KEY_0:             return sf::Keyboard::Key::Num0;
+        case KEY_MINUS:         return sf::Keyboard::Key::Hyphen;
+        case KEY_EQUAL:         return sf::Keyboard::Key::Equal;
+        case KEY_BACKSPACE:     return sf::Keyboard::Key::Backspace;
+        case KEY_TAB:           return sf::Keyboard::Key::Tab;
+        case KEY_Q:             return sf::Keyboard::Key::Q;
+        case KEY_W:             return sf::Keyboard::Key::W;
+        case KEY_E:             return sf::Keyboard::Key::E;
+        case KEY_R:             return sf::Keyboard::Key::R;
+        case KEY_T:             return sf::Keyboard::Key::T;
+        case KEY_Y:             return sf::Keyboard::Key::Y;
+        case KEY_U:             return sf::Keyboard::Key::U;
+        case KEY_I:             return sf::Keyboard::Key::I;
+        case KEY_O:             return sf::Keyboard::Key::O;
+        case KEY_P:             return sf::Keyboard::Key::P;
+        case KEY_LEFTBRACE:     return sf::Keyboard::Key::LBracket;
+        case KEY_RIGHTBRACE:    return sf::Keyboard::Key::RBracket;
         case KEY_KPENTER:
-        case KEY_ENTER:         return sf::Keyboard::Enter;
-        case KEY_LEFTCTRL:      return sf::Keyboard::LControl;
-        case KEY_A:             return sf::Keyboard::A;
-        case KEY_S:             return sf::Keyboard::S;
-        case KEY_D:             return sf::Keyboard::D;
-        case KEY_F:             return sf::Keyboard::F;
-        case KEY_G:             return sf::Keyboard::G;
-        case KEY_H:             return sf::Keyboard::H;
-        case KEY_J:             return sf::Keyboard::J;
-        case KEY_K:             return sf::Keyboard::K;
-        case KEY_L:             return sf::Keyboard::L;
-        case KEY_SEMICOLON:     return sf::Keyboard::Semicolon;
-        case KEY_APOSTROPHE:    return sf::Keyboard::Apostrophe;
-        case KEY_GRAVE:         return sf::Keyboard::Grave;
-        case KEY_LEFTSHIFT:     return sf::Keyboard::LShift;
-        case KEY_BACKSLASH:     return sf::Keyboard::Backslash;
-        case KEY_Z:             return sf::Keyboard::Z;
-        case KEY_X:             return sf::Keyboard::X;
-        case KEY_C:             return sf::Keyboard::C;
-        case KEY_V:             return sf::Keyboard::V;
-        case KEY_B:             return sf::Keyboard::B;
-        case KEY_N:             return sf::Keyboard::N;
-        case KEY_M:             return sf::Keyboard::M;
-        case KEY_COMMA:         return sf::Keyboard::Comma;
-        case KEY_DOT:           return sf::Keyboard::Period;
-        case KEY_SLASH:         return sf::Keyboard::Slash;
-        case KEY_RIGHTSHIFT:    return sf::Keyboard::RShift;
-        case KEY_KPASTERISK:    return sf::Keyboard::Multiply;
-        case KEY_LEFTALT:       return sf::Keyboard::LAlt;
-        case KEY_SPACE:         return sf::Keyboard::Space;
-        case KEY_F1:            return sf::Keyboard::F1;
-        case KEY_F2:            return sf::Keyboard::F2;
-        case KEY_F3:            return sf::Keyboard::F3;
-        case KEY_F4:            return sf::Keyboard::F4;
-        case KEY_F5:            return sf::Keyboard::F5;
-        case KEY_F6:            return sf::Keyboard::F6;
-        case KEY_F7:            return sf::Keyboard::F7;
-        case KEY_F8:            return sf::Keyboard::F8;
-        case KEY_F9:            return sf::Keyboard::F9;
-        case KEY_F10:           return sf::Keyboard::F10;
-        case KEY_F11:           return sf::Keyboard::F11;
-        case KEY_F12:           return sf::Keyboard::F12;
-        case KEY_F13:           return sf::Keyboard::F13;
-        case KEY_F14:           return sf::Keyboard::F14;
-        case KEY_F15:           return sf::Keyboard::F15;
-        case KEY_KP7:           return sf::Keyboard::Numpad7;
-        case KEY_KP8:           return sf::Keyboard::Numpad8;
-        case KEY_KP9:           return sf::Keyboard::Numpad9;
-        case KEY_KPMINUS:       return sf::Keyboard::Subtract;
-        case KEY_KP4:           return sf::Keyboard::Numpad4;
-        case KEY_KP5:           return sf::Keyboard::Numpad5;
-        case KEY_KP6:           return sf::Keyboard::Numpad6;
-        case KEY_KPPLUS:        return sf::Keyboard::Add;
-        case KEY_KP1:           return sf::Keyboard::Numpad1;
-        case KEY_KP2:           return sf::Keyboard::Numpad2;
-        case KEY_KP3:           return sf::Keyboard::Numpad3;
-        case KEY_KP0:           return sf::Keyboard::Numpad0;
-        case KEY_KPDOT:         return sf::Keyboard::Delete;
-        case KEY_RIGHTCTRL:     return sf::Keyboard::RControl;
-        case KEY_KPSLASH:       return sf::Keyboard::Divide;
-        case KEY_RIGHTALT:      return sf::Keyboard::RAlt;
-        case KEY_HOME:          return sf::Keyboard::Home;
-        case KEY_UP:            return sf::Keyboard::Up;
-        case KEY_PAGEUP:        return sf::Keyboard::PageUp;
-        case KEY_LEFT:          return sf::Keyboard::Left;
-        case KEY_RIGHT:         return sf::Keyboard::Right;
-        case KEY_END:           return sf::Keyboard::End;
-        case KEY_DOWN:          return sf::Keyboard::Down;
-        case KEY_PAGEDOWN:      return sf::Keyboard::PageDown;
-        case KEY_INSERT:        return sf::Keyboard::Insert;
-        case KEY_DELETE:        return sf::Keyboard::Delete;
-        case KEY_PAUSE:         return sf::Keyboard::Pause;
-        case KEY_LEFTMETA:      return sf::Keyboard::LSystem;
-        case KEY_RIGHTMETA:     return sf::Keyboard::RSystem;
+        case KEY_ENTER:         return sf::Keyboard::Key::Enter;
+        case KEY_LEFTCTRL:      return sf::Keyboard::Key::LControl;
+        case KEY_A:             return sf::Keyboard::Key::A;
+        case KEY_S:             return sf::Keyboard::Key::S;
+        case KEY_D:             return sf::Keyboard::Key::D;
+        case KEY_F:             return sf::Keyboard::Key::F;
+        case KEY_G:             return sf::Keyboard::Key::G;
+        case KEY_H:             return sf::Keyboard::Key::H;
+        case KEY_J:             return sf::Keyboard::Key::J;
+        case KEY_K:             return sf::Keyboard::Key::K;
+        case KEY_L:             return sf::Keyboard::Key::L;
+        case KEY_SEMICOLON:     return sf::Keyboard::Key::Semicolon;
+        case KEY_APOSTROPHE:    return sf::Keyboard::Key::Apostrophe;
+        case KEY_GRAVE:         return sf::Keyboard::Key::Grave;
+        case KEY_LEFTSHIFT:     return sf::Keyboard::Key::LShift;
+        case KEY_BACKSLASH:     return sf::Keyboard::Key::Backslash;
+        case KEY_Z:             return sf::Keyboard::Key::Z;
+        case KEY_X:             return sf::Keyboard::Key::X;
+        case KEY_C:             return sf::Keyboard::Key::C;
+        case KEY_V:             return sf::Keyboard::Key::V;
+        case KEY_B:             return sf::Keyboard::Key::B;
+        case KEY_N:             return sf::Keyboard::Key::N;
+        case KEY_M:             return sf::Keyboard::Key::M;
+        case KEY_COMMA:         return sf::Keyboard::Key::Comma;
+        case KEY_DOT:           return sf::Keyboard::Key::Period;
+        case KEY_SLASH:         return sf::Keyboard::Key::Slash;
+        case KEY_RIGHTSHIFT:    return sf::Keyboard::Key::RShift;
+        case KEY_KPASTERISK:    return sf::Keyboard::Key::Multiply;
+        case KEY_LEFTALT:       return sf::Keyboard::Key::LAlt;
+        case KEY_SPACE:         return sf::Keyboard::Key::Space;
+        case KEY_F1:            return sf::Keyboard::Key::F1;
+        case KEY_F2:            return sf::Keyboard::Key::F2;
+        case KEY_F3:            return sf::Keyboard::Key::F3;
+        case KEY_F4:            return sf::Keyboard::Key::F4;
+        case KEY_F5:            return sf::Keyboard::Key::F5;
+        case KEY_F6:            return sf::Keyboard::Key::F6;
+        case KEY_F7:            return sf::Keyboard::Key::F7;
+        case KEY_F8:            return sf::Keyboard::Key::F8;
+        case KEY_F9:            return sf::Keyboard::Key::F9;
+        case KEY_F10:           return sf::Keyboard::Key::F10;
+        case KEY_F11:           return sf::Keyboard::Key::F11;
+        case KEY_F12:           return sf::Keyboard::Key::F12;
+        case KEY_F13:           return sf::Keyboard::Key::F13;
+        case KEY_F14:           return sf::Keyboard::Key::F14;
+        case KEY_F15:           return sf::Keyboard::Key::F15;
+        case KEY_KP7:           return sf::Keyboard::Key::Numpad7;
+        case KEY_KP8:           return sf::Keyboard::Key::Numpad8;
+        case KEY_KP9:           return sf::Keyboard::Key::Numpad9;
+        case KEY_KPMINUS:       return sf::Keyboard::Key::Subtract;
+        case KEY_KP4:           return sf::Keyboard::Key::Numpad4;
+        case KEY_KP5:           return sf::Keyboard::Key::Numpad5;
+        case KEY_KP6:           return sf::Keyboard::Key::Numpad6;
+        case KEY_KPPLUS:        return sf::Keyboard::Key::Add;
+        case KEY_KP1:           return sf::Keyboard::Key::Numpad1;
+        case KEY_KP2:           return sf::Keyboard::Key::Numpad2;
+        case KEY_KP3:           return sf::Keyboard::Key::Numpad3;
+        case KEY_KP0:           return sf::Keyboard::Key::Numpad0;
+        case KEY_KPDOT:         return sf::Keyboard::Key::Delete;
+        case KEY_RIGHTCTRL:     return sf::Keyboard::Key::RControl;
+        case KEY_KPSLASH:       return sf::Keyboard::Key::Divide;
+        case KEY_RIGHTALT:      return sf::Keyboard::Key::RAlt;
+        case KEY_HOME:          return sf::Keyboard::Key::Home;
+        case KEY_UP:            return sf::Keyboard::Key::Up;
+        case KEY_PAGEUP:        return sf::Keyboard::Key::PageUp;
+        case KEY_LEFT:          return sf::Keyboard::Key::Left;
+        case KEY_RIGHT:         return sf::Keyboard::Key::Right;
+        case KEY_END:           return sf::Keyboard::Key::End;
+        case KEY_DOWN:          return sf::Keyboard::Key::Down;
+        case KEY_PAGEDOWN:      return sf::Keyboard::Key::PageDown;
+        case KEY_INSERT:        return sf::Keyboard::Key::Insert;
+        case KEY_DELETE:        return sf::Keyboard::Key::Delete;
+        case KEY_PAUSE:         return sf::Keyboard::Key::Pause;
+        case KEY_LEFTMETA:      return sf::Keyboard::Key::LSystem;
+        case KEY_RIGHTMETA:     return sf::Keyboard::Key::RSystem;
 
         case KEY_RESERVED:
         case KEY_SYSRQ:
@@ -301,7 +301,7 @@ sf::Keyboard::Key toKey(int code)
         case KEY_NUMLOCK:
         case KEY_SCROLLLOCK:
         default:
-            return sf::Keyboard::Unknown;
+            return sf::Keyboard::Key::Unknown;
             // clang-format on
     }
 }
@@ -401,8 +401,8 @@ bool eventProcess(sf::Event& event)
                     const sf::Keyboard::Key kb = toKey(inputEvent.code);
 
                     unsigned int special = 0;
-                    if ((kb == sf::Keyboard::Delete) || (kb == sf::Keyboard::Backspace))
-                        special = (kb == sf::Keyboard::Delete) ? 127 : 8;
+                    if ((kb == sf::Keyboard::Key::Delete) || (kb == sf::Keyboard::Key::Backspace))
+                        special = (kb == sf::Keyboard::Key::Delete) ? 127 : 8;
 
                     if (inputEvent.value == 2)
                     {
@@ -415,7 +415,7 @@ bool eventProcess(sf::Event& event)
                             return true;
                         }
                     }
-                    else if (kb != sf::Keyboard::Unknown)
+                    else if (kb != sf::Keyboard::Key::Unknown)
                     {
                         // key down and key up events
                         //
@@ -574,7 +574,7 @@ namespace sf::priv::InputImpl
 bool isKeyPressed(Keyboard::Key key)
 {
     const std::lock_guard lock(inputMutex);
-    if ((key < 0) || (key >= static_cast<int>(keyMap.size())))
+    if ((static_cast<int>(key) < 0) || (static_cast<int>(key) >= static_cast<int>(keyMap.size())))
         return false;
 
     update();
@@ -596,7 +596,7 @@ Keyboard::Key localize(Keyboard::Scancode /* code */)
 {
     // TODO: not implemented
     err() << "sf::Keyboard::localize is not implemented for DRM." << std::endl;
-    return Keyboard::Unknown;
+    return Keyboard::Key::Unknown;
 }
 
 

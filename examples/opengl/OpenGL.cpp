@@ -213,14 +213,14 @@ int main()
                 }
 
                 // Escape key: exit
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape))
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Return key: toggle mipmapping
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Enter))
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Enter))
                 {
                     if (mipmapEnabled)
                     {
@@ -237,7 +237,7 @@ int main()
                 }
 
                 // Space key: toggle sRGB conversion
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Space))
                 {
                     sRgb = !sRgb;
                     window.close();

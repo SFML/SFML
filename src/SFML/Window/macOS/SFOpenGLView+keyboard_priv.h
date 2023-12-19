@@ -48,7 +48,7 @@
 ///
 /// \param event a key event
 ///
-/// \return sf::Keyboard::Unknown as Code if the key is unknown
+/// \return sf::Keyboard::Key::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
 + (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
