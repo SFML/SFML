@@ -43,7 +43,7 @@
 + (id)stringWithstdwstring:(const std::wstring&)string
 {
     const void* data = static_cast<const void*>(string.data());
-    unsigned    size = static_cast<unsigned>(string.size() * sizeof(wchar_t));
+    auto        size = static_cast<unsigned>(string.size() * sizeof(wchar_t));
 
     NSString* str = [[[NSString alloc] initWithBytes:data length:size
                                             encoding:NSUTF32LittleEndianStringEncoding] autorelease];
