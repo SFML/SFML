@@ -41,7 +41,7 @@ struct SFMLmainWindow
 {
     SFMLmainWindow(sf::WindowHandle win) : renderWindow(win)
     {
-        std::filesystem::path resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
+        const std::filesystem::path resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath / "logo.png"))
             NSLog(@"Couldn't load the logo image");
 
@@ -144,7 +144,7 @@ struct SFMLmainWindow
     self.textField = nil;
 
     delete static_cast<SFMLmainWindow*>(self.mainWindow);
-    self.mainWindow  = 0;
+    self.mainWindow  = nil;
     self.renderTimer = nil;
 
     [super dealloc];

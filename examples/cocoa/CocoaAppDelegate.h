@@ -37,6 +37,7 @@
 
 struct SFMLmainWindow;
 
+// NOLINTBEGIN(readability-identifier-naming)
 @interface CocoaAppDelegate : NSObject<NSApplicationDelegate>
 {
 @private
@@ -48,6 +49,7 @@ struct SFMLmainWindow;
     BOOL            m_visible;
     BOOL            m_initialized;
 }
+// NOLINTEND(readability-identifier-naming)
 
 @property (retain) IBOutlet NSWindow* window;
 
