@@ -53,8 +53,8 @@ set_source_files_properties(${RESOURCES} PROPERTIES
 sfml_add_example(cocoa
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS SFML::System SFML::Window SFML::Graphics)
+                 DEPENDS SFML::Graphics)
 set_target_properties(cocoa PROPERTIES
                       MACOSX_BUNDLE TRUE
                       MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resources/Cocoa-Info.plist)
-target_link_libraries(cocoa PRIVATE "-framework Cocoa" "-framework Foundation" SFML::Graphics)
+target_link_libraries(cocoa PRIVATE "-framework Cocoa" "-framework Foundation")
