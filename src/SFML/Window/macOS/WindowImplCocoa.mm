@@ -428,7 +428,7 @@ void WindowImplCocoa::setPosition(const Vector2i& position)
     const AutoreleasePool pool;
     sf::Vector2i          backingPosition = position;
     scaleInXY(backingPosition, m_delegate);
-    [m_delegate setWindowPositionToX:backingPosition.x Y:backingPosition.y];
+    [m_delegate setWindowPositionTo:backingPosition];
 }
 
 
@@ -448,7 +448,7 @@ void WindowImplCocoa::setSize(const Vector2u& size)
 {
     sf::Vector2u backingSize = size;
     scaleInXY(backingSize, m_delegate);
-    [m_delegate resizeTo:backingSize.x by:backingSize.y];
+    [m_delegate resizeTo:backingSize];
 }
 
 
@@ -485,7 +485,7 @@ void WindowImplCocoa::setTitle(const String& title)
 void WindowImplCocoa::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     const AutoreleasePool pool;
-    [m_delegate setIconTo:size.x by:size.y with:pixels];
+    [m_delegate setIconTo:size with:pixels];
 }
 
 
