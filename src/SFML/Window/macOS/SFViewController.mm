@@ -147,10 +147,9 @@
 
 
 ////////////////////////////////////////////////////////.
-- (void)setWindowPositionToX:(int)x Y:(int)y
+- (void)setWindowPositionTo:(sf::Vector2i)position
 {
-    (void)x;
-    (void)y;
+    (void)position;
     sf::err() << "Cannot move SFML area when SFML is integrated in a NSView. Use the view handler directly instead."
               << std::endl;
 }
@@ -164,9 +163,9 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)resizeTo:(unsigned int)width by:(unsigned int)height
+- (void)resizeTo:(sf::Vector2u)size
 {
-    NSRect frame = NSMakeRect([m_view frame].origin.x, [m_view frame].origin.y, width, height);
+    NSRect frame = NSMakeRect([m_view frame].origin.x, [m_view frame].origin.y, size.x, size.y);
 
     [m_view setFrame:frame];
     [m_oglView setFrame:frame];
@@ -249,10 +248,9 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels
+- (void)setIconTo:(sf::Vector2u)size with:(const std::uint8_t*)pixels
 {
-    (void)width;
-    (void)height;
+    (void)size;
     (void)pixels;
     sf::err() << "Cannot set an icon when SFML is integrated in a NSView." << std::endl;
 }

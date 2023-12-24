@@ -30,6 +30,8 @@
 
 #include <SFML/Window/WindowHandle.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #import <AppKit/AppKit.h>
 
 #include <cstdint>
@@ -128,11 +130,10 @@ class WindowImplCocoa;
 ///
 /// Doesn't apply if the implementation is 'only' a view.
 ///
-/// \param x x position in SFML coordinates
-/// \param y y position in SFML coordinates
+/// \param position x and y position in SFML coordinates
 ///
 ////////////////////////////////////////////////////////////
-- (void)setWindowPositionToX:(int)x Y:(int)y;
+- (void)setWindowPositionTo:(sf::Vector2i)position;
 
 ////////////////////////////////////////////////////////////
 /// \brief Get window/view's size
@@ -145,11 +146,10 @@ class WindowImplCocoa;
 ////////////////////////////////////////////////////////////
 /// \brief Resize the window/view
 ///
-/// \param width new width
-/// \param height new height
+/// \param size new width and height
 ///
 ////////////////////////////////////////////////////////////
-- (void)resizeTo:(unsigned int)width by:(unsigned int)height;
+- (void)resizeTo:(sf::Vector2u)size;
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the minimize window/view size
@@ -231,12 +231,11 @@ class WindowImplCocoa;
 ////////////////////////////////////////////////////////////
 /// \brief Set an icon to the application
 ///
-/// \param width icon's width
-/// \param height icon's height
+/// \param size   icon's width and height
 /// \param pixels icon's data
 ///
 ////////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels;
+- (void)setIconTo:(sf::Vector2u)size with:(const std::uint8_t*)pixels;
 
 ////////////////////////////////////////////////////////////
 /// \brief Fetch new event

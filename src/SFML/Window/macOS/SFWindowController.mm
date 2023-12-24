@@ -404,9 +404,9 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)setWindowPositionToX:(int)x Y:(int)y
+- (void)setWindowPositionTo:(sf::Vector2i)position
 {
-    NSPoint point = NSMakePoint(x, y);
+    NSPoint point = NSMakePoint(position.x, position.y);
 
     // Flip for SFML window coordinate system and take titlebar into account
     point.y = static_cast<double>([self screenHeight]) - point.y + static_cast<double>([self titlebarHeight]);
@@ -427,7 +427,7 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)resizeTo:(unsigned int)width by:(unsigned int)height
+- (void)resizeTo:(sf::Vector2u)size
 {
     if (m_fullscreen)
     {
@@ -436,12 +436,11 @@
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
         sf::priv::scaleInXY(desktop.size, nil);
 
-        width  = std::min(width, desktop.size.x);
-        height = std::min(height, desktop.size.y);
+        size.x = std::min(size.x, desktop.size.x);
+        size.y = std::min(size.y, desktop.size.y);
 
-        CGFloat x       = (desktop.size.x - width) / 2.0;
-        CGFloat y       = (desktop.size.y - height) / 2.0;
-        NSRect  oglRect = NSMakeRect(x, y, width, height);
+        const auto origin  = sf::Vector2<CGFloat>(desktop.size - size) / CGFloat{2};
+        NSRect     oglRect = NSMakeRect(origin.x, origin.y, size.x, size.y);
 
         [m_oglView setFrame:oglRect];
         [m_oglView setNeedsDisplay:YES];
@@ -455,19 +454,19 @@
         [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
 
         // Add titlebar height.
-        height += static_cast<unsigned int>([self titlebarHeight]);
+        size.y += static_cast<unsigned int>([self titlebarHeight]);
 
         // Corner case: don't set the window height bigger than the screen height
         // or the view will be resized _later_ without generating a resize event.
         NSRect  screenFrame      = [[NSScreen mainScreen] visibleFrame];
         CGFloat maxVisibleHeight = screenFrame.size.height;
-        if (height > maxVisibleHeight)
-            height = static_cast<unsigned int>(maxVisibleHeight);
+        if (size.y > maxVisibleHeight)
+            size.y = static_cast<unsigned int>(maxVisibleHeight);
 
         if (m_requester != nil)
-            m_requester->windowResized({width, height - static_cast<unsigned int>([self titlebarHeight])});
+            m_requester->windowResized({size.x, size.y - static_cast<unsigned int>([self titlebarHeight])});
 
-        NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, width, height);
+        NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, size.x, size.y);
 
         [m_window setFrame:frame display:YES];
 
@@ -555,10 +554,10 @@
 
 
 ////////////////////////////////////////////////////////
-- (void)setIconTo:(unsigned int)width by:(unsigned int)height with:(const std::uint8_t*)pixels
+- (void)setIconTo:(sf::Vector2u)size with:(const std::uint8_t*)pixels
 {
     // Load image and set app icon.
-    NSImage* icon = [NSImage imageWithRawData:pixels andSize:NSMakeSize(width, height)];
+    NSImage* icon = [NSImage imageWithRawData:pixels andSize:NSMakeSize(size.x, size.y)];
 
     [[SFApplication sharedApplication] setApplicationIconImage:icon];
 
