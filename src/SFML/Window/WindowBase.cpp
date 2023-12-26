@@ -46,16 +46,6 @@
 #include <cstdlib>
 
 
-namespace
-{
-// A nested named namespace is used here to allow unity builds of SFML.
-namespace WindowsBaseImpl
-{
-const sf::WindowBase* fullscreenWindow = nullptr;
-} // namespace WindowsBaseImpl
-} // namespace
-
-
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -84,10 +74,7 @@ WindowBase::WindowBase(WindowHandle handle)
 
 
 ////////////////////////////////////////////////////////////
-WindowBase::~WindowBase()
-{
-    WindowBase::close();
-}
+WindowBase::~WindowBase() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -132,10 +119,6 @@ void WindowBase::close()
 {
     // Delete the window implementation
     m_impl.reset();
-
-    // Update the fullscreen window
-    if (this == getFullscreenWindow())
-        setFullscreenWindow(nullptr);
 }
 
 
@@ -385,7 +368,7 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
     if (state == State::Fullscreen)
     {
         // Make sure there's not already a fullscreen window (only one is allowed)
-        if (getFullscreenWindow())
+        if (m_impl->getFullscreenWindow())
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
             state = State::Windowed;
@@ -403,7 +386,7 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
             }
 
             // Update the fullscreen window
-            setFullscreenWindow(this);
+            m_impl->setFullscreenWindow();
         }
     }
 
@@ -448,20 +431,6 @@ void WindowBase::initialize()
 
     // Notify the derived class
     onCreate();
-}
-
-
-////////////////////////////////////////////////////////////
-const WindowBase* WindowBase::getFullscreenWindow()
-{
-    return WindowsBaseImpl::fullscreenWindow;
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowBase::setFullscreenWindow(const WindowBase* window)
-{
-    WindowsBaseImpl::fullscreenWindow = window;
 }
 
 } // namespace sf

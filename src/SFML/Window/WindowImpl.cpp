@@ -90,9 +90,19 @@ using WindowImplType = sf::priv::WindowImplAndroid;
 #endif
 
 
+namespace
+{
+// A nested named namespace is used here to allow unity builds of SFML.
+// Yes, this is a rather weird namespace.
+namespace WindowImplImpl
+{
+const sf::priv::WindowImpl* fullscreenWindow = nullptr;
+} // namespace WindowImplImpl
+} // namespace
+
+
 namespace sf::priv
 {
-
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
@@ -137,7 +147,11 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl::~WindowImpl() = default;
+WindowImpl::~WindowImpl()
+{
+    if (WindowImplImpl::fullscreenWindow == this)
+        WindowImplImpl::fullscreenWindow = nullptr;
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -346,6 +360,20 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
     return VulkanImpl::createVulkanSurface(instance, getNativeHandle(), surface, allocator);
 
 #endif
+}
+
+
+////////////////////////////////////////////////////////////
+const WindowImpl* WindowImpl::getFullscreenWindow() const
+{
+    return WindowImplImpl::fullscreenWindow;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::setFullscreenWindow() const
+{
+    WindowImplImpl::fullscreenWindow = this;
 }
 
 } // namespace sf::priv
