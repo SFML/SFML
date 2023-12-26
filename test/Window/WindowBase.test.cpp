@@ -16,10 +16,11 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
 {
     SECTION("Type traits")
     {
+        STATIC_CHECK(std::has_virtual_destructor_v<sf::WindowBase>);
         STATIC_CHECK(!std::is_copy_constructible_v<sf::WindowBase>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::WindowBase>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::WindowBase>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::WindowBase>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::WindowBase>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::WindowBase>);
     }
 
     SECTION("Construction")

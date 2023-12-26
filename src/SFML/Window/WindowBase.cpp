@@ -78,6 +78,14 @@ WindowBase::~WindowBase() = default;
 
 
 ////////////////////////////////////////////////////////////
+WindowBase::WindowBase(WindowBase&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+WindowBase& WindowBase::operator=(WindowBase&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style, State state)
 {
     WindowBase::create(mode, style, state);
