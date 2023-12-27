@@ -74,45 +74,8 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style)
 ////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
 {
-    // Destroy the previous window implementation
-    close();
-
-    // Fullscreen style requires some tests
-    if (style & Style::Fullscreen)
-    {
-        // Make sure there's not already a fullscreen window (only one is allowed)
-        if (getFullscreenWindow())
-        {
-            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            style &= ~static_cast<std::uint32_t>(Style::Fullscreen);
-        }
-        else
-        {
-            // Make sure that the chosen video mode is compatible
-            if (!mode.isValid())
-            {
-                err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
-                assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
-                mode = VideoMode::getFullscreenModes()[0];
-                err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
-                      << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
-            }
-
-            // Update the fullscreen window
-            setFullscreenWindow(this);
-        }
-    }
-
-// Check validity of style according to the underlying platform
-#if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
-    if (style & Style::Fullscreen)
-        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
-    else
-        style |= Style::Titlebar;
-#else
-    if ((style & Style::Close) || (style & Style::Resize))
-        style |= Style::Titlebar;
-#endif
+    // Delegate to base class for creation logic
+    WindowBase::create(mode, style);
 
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode, title, style, settings);
