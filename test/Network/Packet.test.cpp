@@ -1,5 +1,8 @@
 #include <SFML/Network/Packet.hpp>
 
+// Other 1st party headers
+#include <SFML/System/String.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <array>
@@ -30,6 +33,33 @@
         CHECK((expected) == received);                       \
     } while (false)
 
+#define CHECK_PACKET_STRING_STREAM_OPERATORS(expected, size) \
+    do                                                       \
+    {                                                        \
+        sf::Packet packet;                                   \
+        packet << (expected);                                \
+        CHECK(packet.getReadPosition() == 0);                \
+        CHECK(packet.getData() != nullptr);                  \
+        CHECK(packet.getDataSize() == (size));               \
+        CHECK(!packet.endOfPacket());                        \
+        CHECK(static_cast<bool>(packet));                    \
+                                                             \
+        std::remove_const_t<decltype(expected)> received;    \
+        packet >> received;                                  \
+        CHECK(packet.getReadPosition() == (size));           \
+        CHECK(packet.getData() != nullptr);                  \
+        CHECK(packet.getDataSize() == (size));               \
+        CHECK(packet.endOfPacket());                         \
+        CHECK(static_cast<bool>(packet));                    \
+        CHECK(sf::String(expected) == sf::String(received)); \
+    } while (false)
+
+struct Packet : sf::Packet
+{
+    using sf::Packet::onReceive;
+    using sf::Packet::onSend;
+};
+
 TEST_CASE("[Network] sf::Packet")
 {
     SECTION("Type traits")
@@ -50,10 +80,10 @@ TEST_CASE("[Network] sf::Packet")
         CHECK(static_cast<bool>(packet));
     }
 
+    static constexpr std::array data = {1, 2, 3, 4, 5, 6};
+
     SECTION("Append and clear")
     {
-        constexpr std::array data = {1, 2, 3, 4, 5, 6};
-
         sf::Packet packet;
         packet.append(data.data(), data.size());
         CHECK(packet.getReadPosition() == 0);
@@ -120,12 +150,26 @@ TEST_CASE("[Network] sf::Packet")
 
     SECTION("Stream operators")
     {
+        SECTION("bool")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(true);
+            CHECK_PACKET_STREAM_OPERATORS(false);
+        }
+
         SECTION("std::int8_t")
         {
             CHECK_PACKET_STREAM_OPERATORS(std::int8_t(0));
             CHECK_PACKET_STREAM_OPERATORS(std::int8_t(1));
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int8_t>::min());
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int8_t>::max());
+        }
+
+        SECTION("std::uint8_t")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(std::uint8_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::uint8_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint8_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint8_t>::max());
         }
 
         SECTION("std::int16_t")
@@ -136,12 +180,28 @@ TEST_CASE("[Network] sf::Packet")
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int16_t>::max());
         }
 
+        SECTION("std::uint16_t")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(std::uint16_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::uint16_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint16_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint16_t>::max());
+        }
+
         SECTION("std::int32_t")
         {
             CHECK_PACKET_STREAM_OPERATORS(std::int32_t(0));
             CHECK_PACKET_STREAM_OPERATORS(std::int32_t(1));
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int32_t>::min());
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int32_t>::max());
+        }
+
+        SECTION("std::uint32_t")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(std::uint32_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::uint32_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint32_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint32_t>::max());
         }
 
         SECTION("std::int64_t")
@@ -151,5 +211,80 @@ TEST_CASE("[Network] sf::Packet")
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::min());
             CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::int64_t>::max());
         }
+
+        SECTION("std::uint64_t")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(std::uint64_t(0));
+            CHECK_PACKET_STREAM_OPERATORS(std::uint64_t(1));
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint64_t>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<std::uint64_t>::max());
+        }
+
+        SECTION("float")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(0.f);
+            CHECK_PACKET_STREAM_OPERATORS(1.f);
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<float>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<float>::max());
+        }
+
+        SECTION("double")
+        {
+            CHECK_PACKET_STREAM_OPERATORS(0.);
+            CHECK_PACKET_STREAM_OPERATORS(1.);
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<double>::min());
+            CHECK_PACKET_STREAM_OPERATORS(std::numeric_limits<double>::max());
+        }
+
+        SECTION("char*")
+        {
+            const char string[] = "testing";
+            CHECK_PACKET_STRING_STREAM_OPERATORS(string, std::strlen(string) + 4);
+        }
+
+        SECTION("std::string")
+        {
+            const std::string string = "testing";
+            CHECK_PACKET_STRING_STREAM_OPERATORS(string, string.size() + 4);
+        }
+
+        SECTION("wchar_t*")
+        {
+            const wchar_t string[] = L"testing";
+            CHECK_PACKET_STRING_STREAM_OPERATORS(string, 4 * std::wcslen(string) + 4);
+        }
+
+        SECTION("std::wstring")
+        {
+            const std::wstring string = L"testing";
+            CHECK_PACKET_STRING_STREAM_OPERATORS(string, 4 * string.size() + 4);
+        }
+
+        SECTION("sf::String")
+        {
+            const sf::String string = "testing";
+            CHECK_PACKET_STRING_STREAM_OPERATORS(string, 4 * string.getSize() + 4);
+        }
+    }
+
+    SECTION("onSend")
+    {
+        Packet      packet;
+        std::size_t size;
+        CHECK(packet.onSend(size) == nullptr);
+        CHECK(size == 0);
+
+        packet.append(data.data(), data.size());
+        CHECK(packet.onSend(size) != nullptr);
+        CHECK(size == data.size());
+    }
+
+    SECTION("onReceive")
+    {
+        Packet packet;
+        packet.onReceive(data.data(), data.size());
+        CHECK(packet.getReadPosition() == 0);
+        CHECK(packet.getData() != nullptr);
+        CHECK(packet.getDataSize() == data.size());
     }
 }
