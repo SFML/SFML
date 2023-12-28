@@ -411,13 +411,6 @@ protected:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// Disallow comparisons between packets
-    ///
-    ////////////////////////////////////////////////////////////
-    bool operator==(const Packet& right) const;
-    bool operator!=(const Packet& right) const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Check if the packet can extract a given number of bytes
     ///
     /// This function updates accordingly the state of the packet.
