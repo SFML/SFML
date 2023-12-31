@@ -7,6 +7,6 @@ extlibs/**/* -text -eol linguist-vendored
 *.wav -text -eol
 *.ogg -text -eol
 *.flac -text -eol
-*.tff -text -eol
+*.ttf -text -eol
 *.icns -text -eol
 *.rtf -text -eol
